@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/instill-ai/connector-backend/blob/main/config/model/source_connector_definition.json",
+  "title": "SourceConnectorDefinition",
+  "description": "The standard source connector definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "connector_definition"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Resource name",
+      "description": "The resource name",
+      "readOnly": true,
+      "ui_order": 0,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "text"
+    },
+    "uid": {
+      "type": "string",
+      "format": "uuid",
+      "title": "UUID",
+      "description": "The unique UUID",
+      "readOnly": true,
+      "ui_order": 1,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "text"
+    },
+    "id": {
+      "type": "string",
+      "title": "Name",
+      "description": "The source definition name",
+      "pattern": "^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$",
+      "minLength": 1,
+      "maxLength": 63,
+      "ui_order": 2,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "text"
+    },
+    "connector_definition": {
+      "type": "object",
+      "title": "Definition",
+      "description": "Source connector definition",
+      "$ref": "connector_definition.json",
+      "additionalProperties": false,
+      "ui_order": 3,
+      "ui_hidden": true,
+      "ui_disabled": true
+    }
+  }
+}

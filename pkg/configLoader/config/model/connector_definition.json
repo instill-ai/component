@@ -1,0 +1,357 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/instill-ai/connector-backend/blob/main/config/model/connector_definition.json",
+  "type": "object",
+  "title": "ConnectorDefinition",
+  "description": "The connector definition data structure",
+  "required": [
+    "title",
+    "documentation_url",
+    "spec",
+    "tombstone",
+    "public",
+    "custom",
+    "release_stage"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Connector definition",
+      "description": "The source definition, e.g. HTTP",
+      "minLength": 1,
+      "ui_order": 0,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "text"
+    },
+    "docker_repository": {
+      "type": "string",
+      "title": "Docker repository",
+      "description": "The docker repository of the connector",
+      "minLength": 0,
+      "maxLength": 256,
+      "ui_order": 1,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "text"
+    },
+    "docker_image_tag": {
+      "type": "string",
+      "title": "Docker image tag",
+      "description": "The docker image tag of the connector",
+      "minLength": 0,
+      "maxLength": 256,
+      "ui_order": 2,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "text"
+    },
+    "documentation_url": {
+      "type": "string",
+      "format": "uri",
+      "title": "Setup guide",
+      "description": "Please check the setup guide for this connector definition",
+      "minLength": 1,
+      "maxLength": 1024,
+      "readOnly": true,
+      "ui_order": 3,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "text"
+    },
+    "icon": {
+      "type": "string",
+      "format": "uri-reference",
+      "title": "Connector definition icon",
+      "description": "Icon for this connector definition",
+      "minLength": 0,
+      "maxLength": 256,
+      "readOnly": true,
+      "ui_order": 4,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "text"
+    },
+    "spec": {
+      "type": "object",
+      "$ref": "#/definitions/Spec",
+      "readOnly": true,
+      "ui_order": 5
+    },
+    "tombstone": {
+      "type": "boolean",
+      "title": "Tombstone",
+      "description": "If not set or false, the configuration is active. if true, then this configuration is permanently off.",
+      "default": false,
+      "readOnly": true,
+      "ui_order": 6,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "toggle"
+    },
+    "public": {
+      "type": "boolean",
+      "title": "Public",
+      "description": "True if this connector definition is available to all users",
+      "default": true,
+      "readOnly": true,
+      "ui_order": 7,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "toggle"
+    },
+    "custom": {
+      "type": "boolean",
+      "title": "Custom",
+      "description": "Whether this is a custom connector definition",
+      "default": false,
+      "readOnly": true,
+      "ui_order": 8,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "toggle"
+    },
+    "release_stage": {
+      "type": "string",
+      "title": "Release stage",
+      "description": "The release stage of the connector",
+      "enum": [
+        "RELEASE_STAGE_UNSPECIFIED",
+        "RELEASE_STAGE_ALPHA",
+        "RELEASE_STAGE_BETA",
+        "RELEASE_STAGE_GENERALLY_AVAILABLE",
+        "RELEASE_STAGE_CUSTOM"
+      ],
+      "default": "RELEASE_STAGE_UNSPECIFIED",
+      "readOnly": true,
+      "ui_order": 9,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "select",
+      "ui_enum": ["", "Alpha", "Beta", "Generally available", "Custom"]
+    },
+    "release_data": {
+      "type": "string",
+      "format": "date",
+      "title": "Release date",
+      "description": "The date when this connector was first released, in yyyy-mm-dd format.",
+      "readOnly": true,
+      "ui_order": 10,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "text"
+    },
+    "resource_requirements": {
+      "type": "object",
+      "title": "Resource requirements",
+      "description": "Resource requirements blob. Must be a valid JSON that includes what resources are needed for the connector",
+      "additionalProperties": true,
+      "ui_order": 11,
+      "ui_hidden": true,
+      "ui_disabled": true
+    },
+    "create_time": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Create time",
+      "description": "The date when the connector definition is created in the format YYYY-MM-DDTHH:MM::SS",
+      "examples": ["2022-04-29T00:20:06.703547Z"],
+      "readOnly": true,
+      "ui_order": 12,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "text"
+    },
+    "update_time": {
+      "type": "string",
+      "format": "date-time",
+      "title": "Update time",
+      "description": "The date when the connector definition is updated in the format YYYY-MM-DDTHH:MM::SS",
+      "examples": ["2022-04-29T01:33:34.910865Z"],
+      "readOnly": true,
+      "ui_order": 13,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "text"
+    }
+  },
+  "definitions": {
+    "Spec": {
+      "type": "object",
+      "title": "ConnectorDefinition specification",
+      "description": "Specification of a connector definition (source/destination)",
+      "required": ["documentation_url", "connection_specification"],
+      "additionalProperties": false,
+      "properties": {
+        "documentation_url": {
+          "type": "string",
+          "format": "uri",
+          "title": "Setup guide",
+          "description": "Please check the setup guide for this connector definition",
+          "minLength": 1,
+          "maxLength": 1024,
+          "readOnly": true,
+          "ui_order": 0,
+          "ui_hidden": true,
+          "ui_disabled": true,
+          "ui_component": "text"
+        },
+        "connection_specification": {
+          "type": "object",
+          "title": "Connection specification",
+          "description": "This is a JSON Schema used to validate JSON configuration of a connector. Must be a valid JSON the includes all the fields needs to be configured for this connector.",
+          "ui_order": 1
+        },
+        "supports_incremental": {
+          "type": "boolean",
+          "title": "Support incremental",
+          "description": "If the connector supports incremental mode or not.",
+          "default": false,
+          "readOnly": true,
+          "ui_order": 2,
+          "ui_hidden": true,
+          "ui_disabled": true,
+          "ui_component": "toggle"
+        },
+        "supports_normalization": {
+          "type": "boolean",
+          "title": "Support normalization",
+          "description": "If the connector supports normalization or not.",
+          "default": false,
+          "readOnly": true,
+          "ui_order": 3,
+          "ui_hidden": true,
+          "ui_disabled": true,
+          "ui_component": "toggle"
+        },
+        "supports_dbt": {
+          "type": "boolean",
+          "title": "Support DBT",
+          "description": "If the connector supports DBT or not.",
+          "default": false,
+          "readOnly": true,
+          "ui_order": 4,
+          "ui_hidden": true,
+          "ui_disabled": true,
+          "ui_component": "toggle"
+        },
+        "supported_destination_sync_modes": {
+          "type": "array",
+          "title": "Support destination sync modes",
+          "description": "List of destination sync modes supported by the connector",
+          "items": {
+            "$ref": "#/definitions/DestinationSyncMode"
+          },
+          "readOnly": true,
+          "ui_order": 5
+        },
+        "advanced_auth": {
+          "type": "object",
+          "title": "Advanced auth flow",
+          "description": "Additional and optional specification object to describe what an 'advanced' Auth flow would need to function.",
+          "$ref": "#/definitions/AdvancedAuth",
+          "ui_order": 6,
+          "ui_disabled": true
+        }
+      }
+    },
+    "DestinationSyncMode": {
+      "type": "string",
+      "title": "Destination sync mode",
+      "description": "Destination sync mode",
+      "enum": [
+        "SUPPORTED_DESTINATION_SYNC_MODES_UNSPECIFIED",
+        "SUPPORTED_DESTINATION_SYNC_MODES_APPEND",
+        "SUPPORTED_DESTINATION_SYNC_MODES_OVERWRITE",
+        "SUPPORTED_DESTINATION_SYNC_MODES_APPEND_DEDUP"
+      ],
+      "readOnly": true,
+      "ui_hidden": true,
+      "ui_disabled": true,
+      "ui_component": "select",
+      "ui_enum": ["", "Append", "Overwrite", "Append dedup"]
+    },
+    "AdvancedAuth": {
+      "properties": {
+        "auth_flow_type": {
+          "type": "string",
+          "title": "Auth flow type",
+          "description": "The supported auth flow types",
+          "enum": [
+            "AUTH_FLOW_TYPE_UNSPECIFIED",
+            "AUTH_FLOW_TYPE_OAUTH2_0",
+            "AUTH_FLOW_TYPE_OAUTH1_0"
+          ],
+          "readOnly": true,
+          "ui_order": 0,
+          "ui_hidden": true,
+          "ui_disabled": true,
+          "ui_component": "select",
+          "ui_enum": ["", "OAuth2.0", "0Auth1.0"]
+        },
+        "predicate_key": {
+          "type": "array",
+          "title": "Predicate key",
+          "description": "JSON Path to a field in the connectorSpecification that should exist for the advanced auth to be applicable.",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true,
+          "ui_order": 1,
+          "ui_hidden": true,
+          "ui_disabled": true
+        },
+        "predicate_value": {
+          "type": "string",
+          "title": "Predicate value",
+          "description": "Value of the predicate_key fields for the advanced auth to be applicable.",
+          "readOnly": true,
+          "ui_order": 2,
+          "ui_hidden": true,
+          "ui_disabled": true
+        },
+        "oauth_config_specification": {
+          "type": "object",
+          "title": "OAuth configuration specification",
+          "description": "The supported oauth configuration specification",
+          "$ref": "#/definitions/OAuthConfigSpecification",
+          "ui_order": 3,
+          "ui_hidden": true,
+          "ui_disabled": true
+        }
+      }
+    },
+    "OAuthConfigSpecification": {
+      "properties": {
+        "oauth_user_input_from_connector_config_specification": {
+          "type": "object",
+          "description": "OAuth specific blob. This is a JSON Schema used to validate JSON configurations used as input to OAuth Must be a valid non-nested JSON that refers to properties from Spec.connection_specification using special annotation 'path_in_connector_config'. These are input values the user is entering through the UI to authenticate to the connector, that might also shared as inputs for syncing data via the connector.",
+          "ui_order": 0,
+          "ui_hidden": true,
+          "ui_disabled": true
+        },
+        "complete_oauth_output_specification": {
+          "type": "object",
+          "description": "OAuth specific blob. This is a JSON Schema used to validate JSON configurations produced by the OAuth flows as they are returned by the distant OAuth APIs. Must be a valid JSON describing the fields to merge back to `Spec.connection_specification`. For each field, a special annotation `path_in_connector_config` can be specified to determine where to merge it,",
+          "ui_order": 1,
+          "ui_hidden": true,
+          "ui_disabled": true
+        },
+        "complete_oauth_server_input_specification": {
+          "type": "object",
+          "description": "OAuth specific blob. This is a JSON Schema used to validate JSON configurations persisted as Server configurations. Must be a valid non-nested JSON describing additional fields configured to be used by the server when completing an OAuth flow (typically exchanging an auth code for refresh token).",
+          "ui_order": 2,
+          "ui_hidden": true,
+          "ui_disabled": true
+        },
+        "complete_oauth_server_output_specification": {
+          "type": "object",
+          "description": "OAuth specific blob. This is a JSON Schema used to validate JSON configurations persisted as Server configurations that also need to be merged back into the connector configuration at runtime. This is a subset configuration of `complete_oauth_server_input_specification` that filters fields out to retain only the ones that are necessary for the connector to function with OAuth. (some fields could be used during oauth flows but not needed afterwards, therefore they would be listed in the `complete_oauth_server_input_specification` but not `complete_oauth_server_output_specification`). Must be a valid non-nested JSON describing additional fields configured to be used by the connector when using OAuth flow APIs. These fields are to be merged back to `Spec.connection_specification`.",
+          "ui_order": 3,
+          "ui_hidden": true,
+          "ui_disabled": true
+        }
+      }
+    }
+  }
+}
