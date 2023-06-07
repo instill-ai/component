@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/instill-ai/connector-backend/blob/main/config/model/destination_connector.json",
-  "title": "DestinationConnector",
-  "description": "Standard data destination",
+  "$id": "https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/source_connector.json",
+  "title": "SourceConnector",
+  "description": "Standard data source",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "destination_connector_definition", "connector"],
+  "required": ["id", "source_connector_definition", "connector"],
   "properties": {
     "name": {
       "type": "string",
@@ -31,7 +31,7 @@
     "id": {
       "type": "string",
       "title": "Name",
-      "description": "The destination connector name",
+      "description": "The source connector name",
       "pattern": "^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$",
       "minLength": 1,
       "maxLength": 63,
@@ -40,10 +40,10 @@
       "ui_disabled": true,
       "ui_component": "text"
     },
-    "destination_connector_definition": {
+    "source_connector_definition": {
       "type": "string",
-      "title": "Destination definition resource name",
-      "description": "The resource name of the destination definition",
+      "title": "Source definition resource name",
+      "description": "The resource name of the source definition",
       "ui_order": 3,
       "ui_hidden": true,
       "ui_disabled": true,
@@ -52,7 +52,7 @@
     "connector": {
       "type": "object",
       "title": "Connector",
-      "description": "Destination connector",
+      "description": "Source connector",
       "$ref": "connector.json",
       "additionalProperties": false,
       "ui_order": 4

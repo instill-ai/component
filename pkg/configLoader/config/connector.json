@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/instill-ai/connector-backend/blob/main/config/model/connector.json",
+  "$id": "https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/connector.json",
   "title": "Connector",
   "description": "Standard data connector",
   "type": "object",

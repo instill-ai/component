@@ -13,13 +13,12 @@ import (
 
 // TODO: refactor configLoader
 
-func (c *ConfigLoader) Load(destinationDefinitionsYaml []byte, destinationSpecsYaml []byte, connDefs interface{}) {
-	// TODO: use struct for reuse logger
+func (c *ConfigLoader) Load(definitionsYaml []byte, specsYaml []byte, connDefs interface{}) {
 
 	defs := []*connectorPB.ConnectorDefinition{}
 	dockerImageSpecs := []*connectorPB.DockerImageSpec{}
 
-	if jsonSliceMap, err := ProcessJSONSliceMap(destinationDefinitionsYaml); err == nil {
+	if jsonSliceMap, err := ProcessJSONSliceMap(definitionsYaml); err == nil {
 		if err := UnmarshalConnectorPB(jsonSliceMap, connDefs); err != nil {
 			c.Logger.Error(err.Error())
 		}
@@ -30,7 +29,7 @@ func (c *ConfigLoader) Load(destinationDefinitionsYaml []byte, destinationSpecsY
 		c.Logger.Error(err.Error())
 	}
 
-	if jsonSliceMap, err := ProcessJSONSliceMap(destinationSpecsYaml); err == nil {
+	if jsonSliceMap, err := ProcessJSONSliceMap(specsYaml); err == nil {
 		if err := UnmarshalConnectorPB(jsonSliceMap, &dockerImageSpecs); err != nil {
 			c.Logger.Error(err.Error())
 		}
@@ -109,6 +108,9 @@ func (c *ConfigLoader) CreateSourceConnectorDefinition(srcConnDef *connectorPB.S
 	srcConnDef.GetConnectorDefinition().Spec = &connectorPB.Spec{}
 	if err := protojson.Unmarshal(spec, srcConnDef.GetConnectorDefinition().Spec); err != nil {
 		c.Logger.Error(err.Error())
+	}
+	if srcConnDef.GetConnectorDefinition().GetResourceRequirements() == nil {
+		srcConnDef.GetConnectorDefinition().ResourceRequirements = &structpb.Struct{}
 	}
 
 	// Validate JSON Schema
