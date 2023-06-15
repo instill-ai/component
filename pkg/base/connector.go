@@ -55,7 +55,7 @@ type IConnection interface {
 
 	// Functions that need to be implenmented in connector implenmentation
 	// Execute
-	Execute(input interface{}) (interface{}, error)
+	Execute(input []*connectorPB.DataPayload) ([]*connectorPB.DataPayload, error)
 	// Test connection
 	Test() (connectorPB.Connector_State, error)
 }
