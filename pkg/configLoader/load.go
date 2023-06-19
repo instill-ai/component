@@ -1,122 +1,88 @@
 package configLoader
 
 import (
-	"strings"
+	"encoding/json"
+	"fmt"
 
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
-	"google.golang.org/protobuf/types/known/timestamppb"
-	"gorm.io/datatypes"
 
 	connectorPB "github.com/instill-ai/protogen-go/vdp/connector/v1alpha"
 )
 
 // TODO: refactor configLoader
 
-func (c *ConfigLoader) Load(definitionsYaml []byte, specsYaml []byte, connDefs interface{}) {
-
-	defs := []*connectorPB.ConnectorDefinition{}
-	dockerImageSpecs := []*connectorPB.DockerImageSpec{}
-
-	if jsonSliceMap, err := ProcessJSONSliceMap(definitionsYaml); err == nil {
-		if err := UnmarshalConnectorPB(jsonSliceMap, connDefs); err != nil {
-			c.Logger.Error(err.Error())
-		}
-		if err := UnmarshalConnectorPB(jsonSliceMap, &defs); err != nil {
-			c.Logger.Error(err.Error())
-		}
-	} else {
-		c.Logger.Error(err.Error())
-	}
-
-	if jsonSliceMap, err := ProcessJSONSliceMap(specsYaml); err == nil {
-		if err := UnmarshalConnectorPB(jsonSliceMap, &dockerImageSpecs); err != nil {
-			c.Logger.Error(err.Error())
-		}
-	} else {
-		c.Logger.Error(err.Error())
-	}
-
-	for idx, def := range defs {
-		var imgTag string
-		if def.GetDockerImageTag() != "" {
-			imgTag = ":" + def.GetDockerImageTag()
-		} else {
-			imgTag = def.GetDockerImageTag()
-		}
-		if spec, err := DindDockerImageSpec(def.GetDockerRepository()+imgTag, &dockerImageSpecs); err != nil {
-			c.Logger.Error(err.Error())
-		} else {
-			switch connDefs := connDefs.(type) {
-			case *[]*connectorPB.DestinationConnectorDefinition:
-				if err := c.CreateDestinationConnectorDefinition((*connDefs)[idx], def, spec); err != nil {
-					c.Logger.Error(err.Error())
-				}
-			case *[]*connectorPB.SourceConnectorDefinition:
-				if err := c.CreateSourceConnectorDefinition((*connDefs)[idx], def, spec); err != nil {
-					c.Logger.Error(err.Error())
-				}
-			}
-
-		}
-	}
+type definition struct {
+	Custom           bool        `json:"custom"`
+	DocumentationUrl string      `json:"documentationUrl"`
+	Icon             string      `json:"icon"`
+	IconUrl          string      `json:"iconUrl"`
+	Id               string      `json:"id"`
+	Public           bool        `json:"public"`
+	Title            string      `json:"title"`
+	Tombstone        bool        `json:"tombstone"`
+	Uid              string      `json:"uid"`
+	Spec             interface{} `json:"spec"`
+	VendorAttributes interface{} `json:"vendorAttributes"`
 }
 
-func (c *ConfigLoader) CreateDestinationConnectorDefinition(dstConnDef *connectorPB.DestinationConnectorDefinition, connDef *connectorPB.ConnectorDefinition, spec datatypes.JSON) error {
-
-	if dstConnDef.GetId() == "" {
-		dstConnDef.Id = connDef.GetDockerRepository()[strings.LastIndex(connDef.GetDockerRepository(), "/")+1:]
+func (c *ConfigLoader) Load(vendorName string, definitionsJson []byte, connDefs interface{}) {
+	var defJsonArr []definition
+	err := json.Unmarshal(definitionsJson, &defJsonArr)
+	if err != nil {
+		panic(err)
 	}
 
-	dstConnDef.ConnectorDefinition = connDef
-	dstConnDef.GetConnectorDefinition().CreateTime = &timestamppb.Timestamp{}
-	dstConnDef.GetConnectorDefinition().UpdateTime = &timestamppb.Timestamp{}
-	dstConnDef.GetConnectorDefinition().Tombstone = false
-	dstConnDef.GetConnectorDefinition().Public = true
-	dstConnDef.GetConnectorDefinition().Custom = false
+	for _, defJson := range defJsonArr {
 
-	dstConnDef.GetConnectorDefinition().Spec = &connectorPB.Spec{}
-	if err := protojson.Unmarshal(spec, dstConnDef.GetConnectorDefinition().Spec); err != nil {
-		c.Logger.Error(err.Error())
+		specBytes, err := json.Marshal(defJson.Spec)
+		if err != nil {
+			panic(err)
+		}
+		specStruct := &connectorPB.Spec{}
+		err = protojson.Unmarshal(specBytes, specStruct)
+		if err != nil {
+			panic(err)
+		}
+		vendorAttributesBytes, err := json.Marshal(defJson.VendorAttributes)
+		if err != nil {
+			panic(err)
+		}
+		vendorAttributesStruct := &structpb.Struct{}
+		err = protojson.Unmarshal(vendorAttributesBytes, vendorAttributesStruct)
+		if err != nil {
+			panic(err)
+		}
+
+		def := connectorPB.ConnectorDefinition{
+			Custom:           defJson.Custom,
+			DocumentationUrl: defJson.DocumentationUrl,
+			Icon:             defJson.Icon,
+			IconUrl:          defJson.IconUrl,
+			Public:           defJson.Public,
+			Title:            defJson.Title,
+			Tombstone:        defJson.Tombstone,
+			Vendor:           vendorName,
+			VendorAttributes: vendorAttributesStruct,
+			Spec:             specStruct,
+		}
+		switch connDefs := connDefs.(type) {
+		case *[]*connectorPB.DestinationConnectorDefinition:
+			*connDefs = append((*connDefs), &connectorPB.DestinationConnectorDefinition{
+				Id:                  defJson.Id,
+				Uid:                 defJson.Uid,
+				Name:                fmt.Sprintf("destination-connectors/%s", defJson.Id),
+				ConnectorDefinition: &def,
+			})
+
+		case *[]*connectorPB.SourceConnectorDefinition:
+			*connDefs = append((*connDefs), &connectorPB.SourceConnectorDefinition{
+				Id:                  defJson.Id,
+				Uid:                 defJson.Uid,
+				Name:                fmt.Sprintf("source-connectors/%s", defJson.Id),
+				ConnectorDefinition: &def,
+			})
+		}
 	}
-
-	if dstConnDef.GetConnectorDefinition().GetResourceRequirements() == nil {
-		dstConnDef.GetConnectorDefinition().ResourceRequirements = &structpb.Struct{}
-	}
-
-	// Validate JSON Schema
-	if err := ValidateJSONSchema(c.DstConnDefJSONSchema, dstConnDef, true); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (c *ConfigLoader) CreateSourceConnectorDefinition(srcConnDef *connectorPB.SourceConnectorDefinition, connDef *connectorPB.ConnectorDefinition, spec datatypes.JSON) error {
-
-	if srcConnDef.GetId() == "" {
-		srcConnDef.Id = connDef.GetDockerRepository()[strings.LastIndex(connDef.GetDockerRepository(), "/")+1:]
-	}
-
-	srcConnDef.ConnectorDefinition = connDef
-	srcConnDef.GetConnectorDefinition().CreateTime = &timestamppb.Timestamp{}
-	srcConnDef.GetConnectorDefinition().UpdateTime = &timestamppb.Timestamp{}
-	srcConnDef.GetConnectorDefinition().Tombstone = false
-	srcConnDef.GetConnectorDefinition().Public = true
-	srcConnDef.GetConnectorDefinition().Custom = false
-
-	srcConnDef.GetConnectorDefinition().Spec = &connectorPB.Spec{}
-	if err := protojson.Unmarshal(spec, srcConnDef.GetConnectorDefinition().Spec); err != nil {
-		c.Logger.Error(err.Error())
-	}
-	if srcConnDef.GetConnectorDefinition().GetResourceRequirements() == nil {
-		srcConnDef.GetConnectorDefinition().ResourceRequirements = &structpb.Struct{}
-	}
-
-	// Validate JSON Schema
-	if err := ValidateJSONSchema(c.SrcConnDefJSONSchema, srcConnDef, true); err != nil {
-		return err
-	}
-
-	return nil
+	// TODO: validate jsonschema for Spec
 }
