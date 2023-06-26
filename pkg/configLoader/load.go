@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/types/known/structpb"
 
 	connectorPB "github.com/instill-ai/protogen-go/vdp/connector/v1alpha"
 )
@@ -26,7 +25,9 @@ type definition struct {
 	VendorAttributes interface{} `json:"vendorAttributes"`
 }
 
-func (c *ConfigLoader) Load(vendorName string, definitionsJson []byte, connDefs interface{}) {
+func (c *ConfigLoader) Load(vendorName string, connectorType connectorPB.ConnectorType, definitionsJson []byte) ([]*connectorPB.ConnectorDefinition, error) {
+
+	defs := []*connectorPB.ConnectorDefinition{}
 	var defJsonArr []definition
 	err := json.Unmarshal(definitionsJson, &defJsonArr)
 	if err != nil {
@@ -35,54 +36,23 @@ func (c *ConfigLoader) Load(vendorName string, definitionsJson []byte, connDefs 
 
 	for _, defJson := range defJsonArr {
 
-		specBytes, err := json.Marshal(defJson.Spec)
+		defJsonBytes, err := json.Marshal(defJson)
 		if err != nil {
-			panic(err)
-		}
-		specStruct := &connectorPB.Spec{}
-		err = protojson.Unmarshal(specBytes, specStruct)
-		if err != nil {
-			panic(err)
-		}
-		vendorAttributesBytes, err := json.Marshal(defJson.VendorAttributes)
-		if err != nil {
-			panic(err)
-		}
-		vendorAttributesStruct := &structpb.Struct{}
-		err = protojson.Unmarshal(vendorAttributesBytes, vendorAttributesStruct)
-		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
-		def := connectorPB.ConnectorDefinition{
-			Custom:           defJson.Custom,
-			DocumentationUrl: defJson.DocumentationUrl,
-			Icon:             defJson.Icon,
-			IconUrl:          defJson.IconUrl,
-			Public:           defJson.Public,
-			Title:            defJson.Title,
-			Tombstone:        defJson.Tombstone,
-			Vendor:           vendorName,
-			VendorAttributes: vendorAttributesStruct,
-			Spec:             specStruct,
-		}
-		switch connDefs := connDefs.(type) {
-		case *[]*connectorPB.DestinationConnectorDefinition:
-			*connDefs = append((*connDefs), &connectorPB.DestinationConnectorDefinition{
-				Id:                  defJson.Id,
-				Uid:                 defJson.Uid,
-				Name:                fmt.Sprintf("destination-connectors/%s", defJson.Id),
-				ConnectorDefinition: &def,
-			})
+		def := &connectorPB.ConnectorDefinition{}
 
-		case *[]*connectorPB.SourceConnectorDefinition:
-			*connDefs = append((*connDefs), &connectorPB.SourceConnectorDefinition{
-				Id:                  defJson.Id,
-				Uid:                 defJson.Uid,
-				Name:                fmt.Sprintf("source-connectors/%s", defJson.Id),
-				ConnectorDefinition: &def,
-			})
+		err = protojson.Unmarshal(defJsonBytes, def)
+		if err != nil {
+			return nil, err
 		}
+		def.Name = fmt.Sprintf("connectors/%s", def.Id)
+		def.Vendor = vendorName
+		def.ConnectorType = connectorType
+
+		defs = append(defs, def)
+
 	}
-	// TODO: validate jsonschema for Spec
+	return defs, nil
 }

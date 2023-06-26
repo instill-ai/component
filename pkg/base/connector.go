@@ -15,16 +15,16 @@ type IConnector interface {
 
 	// Functions that shared for all connectors
 	// Add connector definition
-	AddConnectorDefinition(uid uuid.UUID, id string, def IDefinition) error
+	AddConnectorDefinition(uid uuid.UUID, id string, def *connectorPB.ConnectorDefinition) error
 
 	// Get the map of connector definitions under this connector
-	GetConnectorDefinitionMap() map[uuid.UUID]IDefinition
+	GetConnectorDefinitionMap() map[uuid.UUID]*connectorPB.ConnectorDefinition
 	// Get the connector definition by definition uid
-	GetConnectorDefinitionByUid(defUid uuid.UUID) (IDefinition, error)
+	GetConnectorDefinitionByUid(defUid uuid.UUID) (*connectorPB.ConnectorDefinition, error)
 	// Get the connector definition by definition uid
-	GetConnectorDefinitionById(defId string) (IDefinition, error)
+	GetConnectorDefinitionById(defId string) (*connectorPB.ConnectorDefinition, error)
 	// Get the list of connector definitions under this connector
-	ListConnectorDefinitions() []IDefinition
+	ListConnectorDefinitions() []*connectorPB.ConnectorDefinition
 	// Get the list of connector definitions uuids
 	ListConnectorDefinitionUids() []uuid.UUID
 
@@ -38,8 +38,8 @@ type IConnector interface {
 
 type BaseConnector struct {
 	// Store all the connector defintions in the connector
-	definitionMapByUid map[uuid.UUID]IDefinition
-	definitionMapById  map[string]IDefinition
+	definitionMapByUid map[uuid.UUID]*connectorPB.ConnectorDefinition
+	definitionMapById  map[string]*connectorPB.ConnectorDefinition
 
 	// Used for ordered
 	definitionUids []uuid.UUID
@@ -51,19 +51,13 @@ type BaseConnector struct {
 type IConnection interface {
 	// Functions that shared for all connectors
 	// Validate the input format
-	Validate(input interface{}) error
+	Validate(inputs interface{}) error
 
 	// Functions that need to be implenmented in connector implenmentation
 	// Execute
-	Execute(input []*connectorPB.DataPayload) ([]*connectorPB.DataPayload, error)
+	Execute(inputs []*connectorPB.DataPayload) ([]*connectorPB.DataPayload, error)
 	// Test connection
 	Test() (connectorPB.Connector_State, error)
-}
-
-type IDefinition interface {
-	GetId() string
-	GetUid() string
-	GetConnectorDefinition() *connectorPB.ConnectorDefinition
 }
 
 type BaseConnection struct {
@@ -71,12 +65,12 @@ type BaseConnection struct {
 	Logger *zap.Logger
 }
 
-func (c *BaseConnector) AddConnectorDefinition(uid uuid.UUID, id string, def IDefinition) error {
+func (c *BaseConnector) AddConnectorDefinition(uid uuid.UUID, id string, def *connectorPB.ConnectorDefinition) error {
 	if c.definitionMapByUid == nil {
-		c.definitionMapByUid = map[uuid.UUID]IDefinition{}
+		c.definitionMapByUid = map[uuid.UUID]*connectorPB.ConnectorDefinition{}
 	}
 	if c.definitionMapById == nil {
-		c.definitionMapById = map[string]IDefinition{}
+		c.definitionMapById = map[string]*connectorPB.ConnectorDefinition{}
 	}
 	c.definitionUids = append(c.definitionUids, uid)
 	c.definitionMapByUid[uid] = def
@@ -84,12 +78,12 @@ func (c *BaseConnector) AddConnectorDefinition(uid uuid.UUID, id string, def IDe
 	return nil
 }
 
-func (c *BaseConnector) GetConnectorDefinitionMap() map[uuid.UUID]IDefinition {
+func (c *BaseConnector) GetConnectorDefinitionMap() map[uuid.UUID]*connectorPB.ConnectorDefinition {
 	return c.definitionMapByUid
 }
 
-func (c *BaseConnector) ListConnectorDefinitions() []IDefinition {
-	definitions := []IDefinition{}
+func (c *BaseConnector) ListConnectorDefinitions() []*connectorPB.ConnectorDefinition {
+	definitions := []*connectorPB.ConnectorDefinition{}
 	for _, uid := range c.definitionUids {
 		val, ok := c.definitionMapByUid[uid]
 		if !ok {
@@ -102,7 +96,7 @@ func (c *BaseConnector) ListConnectorDefinitions() []IDefinition {
 	return definitions
 }
 
-func (c *BaseConnector) GetConnectorDefinitionByUid(defUid uuid.UUID) (IDefinition, error) {
+func (c *BaseConnector) GetConnectorDefinitionByUid(defUid uuid.UUID) (*connectorPB.ConnectorDefinition, error) {
 	val, ok := c.definitionMapByUid[defUid]
 	if !ok {
 		return nil, fmt.Errorf("get connector defintion error")
@@ -110,7 +104,7 @@ func (c *BaseConnector) GetConnectorDefinitionByUid(defUid uuid.UUID) (IDefiniti
 	return val, nil
 }
 
-func (c *BaseConnector) GetConnectorDefinitionById(defId string) (IDefinition, error) {
+func (c *BaseConnector) GetConnectorDefinitionById(defId string) (*connectorPB.ConnectorDefinition, error) {
 
 	val, ok := c.definitionMapById[defId]
 	if !ok {
@@ -128,7 +122,7 @@ func (c *BaseConnector) HasUid(defUid uuid.UUID) bool {
 	return err == nil
 }
 
-func (conn *BaseConnection) Validate(input interface{}) error {
+func (conn *BaseConnection) Validate(inputs interface{}) error {
 	// validate by vdp-protocol
 	return nil
 }

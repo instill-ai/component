@@ -22,17 +22,11 @@ type ConfigLoader struct {
 	// logger
 	Logger *zap.Logger
 
-	// SrcConnDefJSONSchema represents the SourceConnectorDefinition JSON Schema
-	SrcConnDefJSONSchema *jsonschema.Schema
+	// ConnDefJSONSchema represents the ConnectorDefinition JSON Schema
+	ConnDefJSONSchema *jsonschema.Schema
 
-	// DstConnDefJSONSchema represents the DestinationConnectorDefinition JSON Schema
-	DstConnDefJSONSchema *jsonschema.Schema
-
-	// SrcConnJSONSchema represents the SourceConnector JSON Schema
-	SrcConnJSONSchema *jsonschema.Schema
-
-	// DstConnJSONSchema represents the DestinationConnector JSON Schema
-	DstConnJSONSchema *jsonschema.Schema
+	// ConnJSONSchema represents the Connector JSON Schema
+	ConnJSONSchema *jsonschema.Schema
 }
 
 // InitJSONSchema initialise JSON Schema instances with the given files
@@ -51,49 +45,20 @@ func InitJSONSchema(logger *zap.Logger) ConfigLoader {
 		logger.Fatal(fmt.Sprintf("%#v\n", err.Error()))
 	}
 
-	srcConnectorDefBytes, _ := f.ReadFile("config/source_connector_definition.json")
-	if err := compiler.AddResource("https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/source_connector_definition.json", bytes.NewReader(srcConnectorDefBytes)); err != nil {
-		logger.Fatal(fmt.Sprintf("%#v\n", err.Error()))
-	}
-	srcConnDefJSONSchema, err := compiler.Compile("https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/source_connector_definition.json")
+	connDefJSONSchema, err := compiler.Compile("https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/connector_definition.json")
 	if err != nil {
 		logger.Fatal(fmt.Sprintf("%#v\n", err.Error()))
 	}
 
-	destConnectorDefBytes, _ := f.ReadFile("config/destination_connector_definition.json")
-	if err := compiler.AddResource("https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/destination_connector_definition.json", bytes.NewReader(destConnectorDefBytes)); err != nil {
-		logger.Fatal(fmt.Sprintf("%#v\n", err.Error()))
-	}
-	dstConnDefJSONSchema, err := compiler.Compile("https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/destination_connector_definition.json")
-	if err != nil {
-		logger.Fatal(fmt.Sprintf("%#v\n", err.Error()))
-	}
-
-	srcConnectorBytes, _ := f.ReadFile("config/source_connector.json")
-	if err := compiler.AddResource("https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/source_connector.json", bytes.NewReader(srcConnectorBytes)); err != nil {
-		logger.Fatal(fmt.Sprintf("%#v\n", err.Error()))
-	}
-
-	srcConnJSONSchema, err := compiler.Compile("https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/source_connector.json")
-	if err != nil {
-		logger.Fatal(fmt.Sprintf("%#v\n", err.Error()))
-	}
-
-	destConnectorBytes, _ := f.ReadFile("config/destination_connector.json")
-	if err := compiler.AddResource("https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/destination_connector.json", bytes.NewReader(destConnectorBytes)); err != nil {
-		logger.Fatal(fmt.Sprintf("%#v\n", err.Error()))
-	}
-	dstConnJSONSchema, err := compiler.Compile("https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/destination_connector.json")
+	connJSONSchema, err := compiler.Compile("https://github.com/instill-ai/connector/blob/main/pkg/configLoader/config/connector.json")
 	if err != nil {
 		logger.Fatal(fmt.Sprintf("%#v\n", err.Error()))
 	}
 
 	return ConfigLoader{
-		Logger:               logger,
-		SrcConnDefJSONSchema: srcConnDefJSONSchema,
-		DstConnDefJSONSchema: dstConnDefJSONSchema,
-		SrcConnJSONSchema:    srcConnJSONSchema,
-		DstConnJSONSchema:    dstConnJSONSchema,
+		Logger:            logger,
+		ConnDefJSONSchema: connDefJSONSchema,
+		ConnJSONSchema:    connJSONSchema,
 	}
 
 }
