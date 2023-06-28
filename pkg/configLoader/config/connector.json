@@ -5,7 +5,7 @@
   "description": "Standard data connector",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "configuration", "connector_definition"],
+  "required": ["id", "configuration", "connector_definition_name"],
   "anyOf": [
     {"required": ["user"], "not": {"required": ["org"]}},
     {"required": ["org"], "not": {"required": ["user"]}},
@@ -114,7 +114,7 @@
       "ui_disabled": true,
       "ui_component": "text"
     },
-    "connector_definition": {
+    "connector_definition_name": {
       "type": "string",
       "title": "Destination definition resource name",
       "description": "The resource name of the destination definition",
