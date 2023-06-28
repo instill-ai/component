@@ -46,6 +46,7 @@ type Dest2 struct {
 	I string                 `json:"i" customTag:"n.f[-1].e"`
 	J float32                `json:"j" customTag:"n.f[0].d[1]"`
 	K []bool                 `json:"k" customTag:";true"`
+	L StructSrc              `json:"l" customTag:"."`
 }
 
 func TestTemp(t *testing.T) {
@@ -104,6 +105,7 @@ func TestTemp(t *testing.T) {
 					I: "xyz",
 					J: 3,
 					K: []bool{true},
+					L: s,
 				}
 				assert.Nil(t, om.Map(s, &d))
 				assert.Equal(t, expectedRes, d)

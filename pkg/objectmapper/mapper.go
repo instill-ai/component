@@ -81,6 +81,9 @@ func getSrcValueByTag(sourceMap map[string]interface{}, destTag string) (interfa
 			fmt.Println("panic recovered in getSrcValueByTag()", r)
 		}
 	}()
+	if destTag == "." {
+		return sourceMap, nil
+	}
 	tags := strings.Split(destTag, ".")
 	var srcValue interface{}
 	srcValue = sourceMap
