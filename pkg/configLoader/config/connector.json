@@ -4,7 +4,7 @@
   "title": "Connector",
   "description": "Standard data connector",
   "type": "object",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "required": ["id", "configuration", "connector_definition_name"],
   "anyOf": [
     {"required": ["user"], "not": {"required": ["org"]}},

@@ -215,7 +215,10 @@ func convertValue(value interface{}, targetType reflect.Type) (reflect.Value, er
 			}
 		}
 		obj := reflect.New(targetType).Interface()
-		json.Unmarshal(jsonStr, &obj)
+		err := json.Unmarshal(jsonStr, &obj)
+		if err != nil {
+			return reflect.Value{}, fmt.Errorf("unmarshal fail: %v", err)
+		}
 		return reflect.ValueOf(obj).Elem(), nil
 	}
 	return reflect.Value{}, fmt.Errorf("unsupported type conversion from %v to %v", reflect.TypeOf(value), targetType)

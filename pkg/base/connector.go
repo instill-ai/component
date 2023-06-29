@@ -21,15 +21,19 @@ type IConnector interface {
 	GetConnectorDefinitionMap() map[uuid.UUID]*connectorPB.ConnectorDefinition
 	// Get the connector definition by definition uid
 	GetConnectorDefinitionByUid(defUid uuid.UUID) (*connectorPB.ConnectorDefinition, error)
-	// Get the connector definition by definition uid
+	// Get the connector definition by definition id
 	GetConnectorDefinitionById(defId string) (*connectorPB.ConnectorDefinition, error)
 	// Get the list of connector definitions under this connector
 	ListConnectorDefinitions() []*connectorPB.ConnectorDefinition
 	// Get the list of connector definitions uuids
 	ListConnectorDefinitionUids() []uuid.UUID
+	// List the CredentialFields by definition id
+	ListCredentialField(defId string) []string
 
 	// A helper function to check the connector has this definition by uid.
 	HasUid(defUid uuid.UUID) bool
+	// A helper function to check the target field a.b.c is credential
+	IsCredentialField(defId string, target string) bool
 
 	// Functions that need to be implenmented in connector implenmentation
 	// Create a connection by defition uid and connector configuration
@@ -125,4 +129,43 @@ func (c *BaseConnector) HasUid(defUid uuid.UUID) bool {
 func (conn *BaseConnection) Validate(inputs interface{}) error {
 	// validate by vdp-protocol
 	return nil
+}
+
+func (c *BaseConnector) IsCredentialField(defId string, target string) bool {
+	for _, field := range c.ListCredentialField(defId) {
+		if target == field {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *BaseConnector) ListCredentialField(defId string) []string {
+	credentialFields := []string{}
+	credentialFields = c.listCredentialField(c.definitionMapById[defId].Spec.GetConnectionSpecification().GetFields()["properties"], "", credentialFields)
+	return credentialFields
+}
+
+func (c *BaseConnector) listCredentialField(input *structpb.Value, prefix string, credentialFields []string) []string {
+	for key, v := range input.GetStructValue().GetFields() {
+		if isCredential, ok := v.GetStructValue().GetFields()["credential_field"]; ok {
+			if isCredential.GetBoolValue() || isCredential.GetStringValue() == "true" {
+				credentialFields = append(credentialFields, fmt.Sprintf("%s%s", prefix, key))
+			}
+
+		}
+		if type_, ok := v.GetStructValue().GetFields()["type"]; ok {
+			if type_.GetStringValue() == "object" {
+				if l, ok := v.GetStructValue().GetFields()["oneOf"]; ok {
+					for _, v := range l.GetListValue().Values {
+						credentialFields = c.listCredentialField(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), credentialFields)
+					}
+				}
+				credentialFields = c.listCredentialField(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), credentialFields)
+			}
+
+		}
+	}
+
+	return credentialFields
 }
