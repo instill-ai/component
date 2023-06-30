@@ -62,6 +62,8 @@ type IConnection interface {
 	Execute(inputs []*connectorPB.DataPayload) ([]*connectorPB.DataPayload, error)
 	// Test connection
 	Test() (connectorPB.Connector_State, error)
+	// Get task name
+	GetTaskName() (string, error)
 }
 
 type BaseConnection struct {
