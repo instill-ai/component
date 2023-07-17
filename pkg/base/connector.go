@@ -63,7 +63,7 @@ type IConnection interface {
 	// Test connection
 	Test() (connectorPB.Connector_State, error)
 	// Get task name
-	GetTaskName() (string, error)
+	GetTask() (connectorPB.Task, error)
 }
 
 type BaseConnection struct {
