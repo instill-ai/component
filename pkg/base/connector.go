@@ -7,6 +7,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
+	commonPB "github.com/instill-ai/protogen-go/common/task/v1alpha"
 	connectorPB "github.com/instill-ai/protogen-go/vdp/connector/v1alpha"
 )
 
@@ -63,7 +64,7 @@ type IConnection interface {
 	// Test connection
 	Test() (connectorPB.Connector_State, error)
 	// Get task name
-	GetTask() (connectorPB.Task, error)
+	GetTask() (commonPB.Task, error)
 }
 
 type BaseConnection struct {
