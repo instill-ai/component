@@ -57,7 +57,7 @@
     "configuration": {
       "type": "object",
       "title": "Configuration",
-      "description": "Connector configuration JSON that has been validated using the JSON schema of the corresponding `Spec.connection_specification`.",
+      "description": "Connector configuration JSON that has been validated using the JSON schema of the corresponding `Spec.resource_specification`.",
       "ui_order": 4,
       "ui_disabled": true
     },

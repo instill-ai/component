@@ -55,7 +55,7 @@
       "ui_hidden": true,
       "ui_disabled": true,
       "ui_component": "text"
-    }, 
+    },
     "documentation_url": {
       "type": "string",
       "format": "uri",
@@ -151,23 +151,22 @@
       "type": "object",
       "title": "ConnectorDefinition specification",
       "description": "Specification of a connector definition (source/destination)",
-      "required": ["documentation_url", "connection_specification"],
+      "required": ["resource_specification", "component_specification", "openapi_specifications"],
       "additionalProperties": false,
       "properties": {
-        "documentation_url": {
-          "type": "string",
-          "format": "uri",
-          "title": "Setup guide",
-          "description": "Please check the setup guide for this connector definition",
-          "minLength": 1,
-          "maxLength": 1024,
-          "readOnly": true,
-          "ui_order": 0,
-          "ui_hidden": true,
-          "ui_disabled": true,
-          "ui_component": "text"
+        "resource_specification": {
+          "type": "object",
+          "title": "Connection specification",
+          "description": "This is a JSON Schema used to validate JSON configuration of a connector. Must be a valid JSON the includes all the fields needs to be configured for this connector.",
+          "ui_order": 1
         },
-        "connection_specification": {
+        "component_specification": {
+          "type": "object",
+          "title": "Connection specification",
+          "description": "This is a JSON Schema used to validate JSON configuration of a connector. Must be a valid JSON the includes all the fields needs to be configured for this connector.",
+          "ui_order": 1
+        },
+        "openapi_specifications": {
           "type": "object",
           "title": "Connection specification",
           "description": "This is a JSON Schema used to validate JSON configuration of a connector. Must be a valid JSON the includes all the fields needs to be configured for this connector.",

@@ -13,16 +13,16 @@ import (
 
 type definition struct {
 	Custom           bool        `json:"custom"`
-	DocumentationUrl string      `json:"documentationUrl"`
+	DocumentationUrl string      `json:"documentation_url"`
 	Icon             string      `json:"icon"`
-	IconUrl          string      `json:"iconUrl"`
+	IconUrl          string      `json:"icon_url"`
 	Id               string      `json:"id"`
 	Public           bool        `json:"public"`
 	Title            string      `json:"title"`
 	Tombstone        bool        `json:"tombstone"`
 	Uid              string      `json:"uid"`
 	Spec             interface{} `json:"spec"`
-	VendorAttributes interface{} `json:"vendorAttributes"`
+	VendorAttributes interface{} `json:"vendor_attributes"`
 }
 
 func (c *ConfigLoader) Load(vendorName string, connectorType connectorPB.ConnectorType, definitionsJson []byte) ([]*connectorPB.ConnectorDefinition, error) {
