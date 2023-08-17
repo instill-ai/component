@@ -65,7 +65,7 @@ type IConnection interface {
 	// Execute
 	Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error)
 	// Test connection
-	Test() (connectorPB.Connector_State, error)
+	Test() (connectorPB.ConnectorResource_State, error)
 }
 
 type BaseConnection struct {
