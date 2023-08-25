@@ -49,7 +49,7 @@ func (c *ConfigLoader) Load(vendorName string, connectorType connectorPB.Connect
 		}
 		def.Name = fmt.Sprintf("connector-definitions/%s", def.Id)
 		def.Vendor = vendorName
-		def.ConnectorType = connectorType
+		def.Type = connectorType
 
 		defs = append(defs, def)
 
