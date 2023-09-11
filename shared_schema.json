@@ -9,75 +9,83 @@
     "instill_types": {
       "text": {
         "type": "string",
-        "format": "text"
+        "instillFormat": "text"
       },
       "image": {
         "type": "string",
-        "format": "image",
+        "instillFormat": "image",
         "contentEncoding": "base64"
       },
       "audio": {
         "type": "string",
-        "format": "audio",
+        "instillFormat": "audio",
         "contentEncoding": "base64"
       },
       "video": {
         "type": "string",
-        "format": "video",
+        "instillFormat": "video",
         "contentEncoding": "base64"
       },
       "bounding_box": {
         "type": "object",
-        "format": "bounding_box",
-        "description": "The detected bounding box in (left, top, width, height) format",
+        "instillFormat": "object",
+        "description": "The detected bounding box in (left, top, width, height) format.",
         "additionalProperties": false,
         "required": ["left", "top", "width", "height"],
         "properties": {
           "left": {
             "description": "Bounding box left x-axis value",
-            "type": "number"
+            "type": "number",
+            "instillFormat": "number"
           },
           "top": {
             "description": "Bounding box top y-axis value",
-            "type": "number"
+            "type": "number",
+            "instillFormat": "number"
           },
           "width": {
             "description": "Bounding box width value",
-            "type": "number"
+            "type": "number",
+            "instillFormat": "number"
           },
           "height": {
             "description": "Bounding box height value",
-            "type": "number"
+            "type": "number",
+            "instillFormat": "number"
           }
         }
       },
       "classification": {
         "type": "object",
-        "format": "classification",
+        "instillFormat": "object",
         "additionalProperties": false,
         "required": ["category", "score"],
         "properties": {
           "category": {
-            "description": "The predicted category of the input",
-            "type": "string"
+            "description": "The predicted category of the input.",
+            "type": "string",
+            "instillFormat": "text"
           },
           "score": {
-            "description": "The confidence score of the predicted category of the input",
-            "type": "number"
+            "description": "The confidence score of the predicted category of the input.",
+            "type": "number",
+            "instillFormat": "number"
           }
         }
       },
       "detection": {
         "type": "object",
-        "format": "detection",
+        "instillFormat": "object",
         "additionalProperties": false,
         "required": ["objects"],
         "properties": {
           "objects": {
-            "description": "A list of detected objects",
+            "description": "A list of detected objects.",
             "type": "array",
+            "instillFormat": "object_array",
             "items": {
               "type": "object",
+              "instillFormat": "object",
               "additionalProperties": false,
               "required": ["bounding_box", "category", "score"],
               "properties": {
@@ -85,12 +93,14 @@
                   "$ref": "#/$defs/instill_types/bounding_box"
                 },
                 "category": {
-                  "description": "The predicted category of the bounding box",
-                  "type": "string"
+                  "description": "The predicted category of the bounding box.",
+                  "type": "string",
+                  "instillFormat": "text"
                 },
                 "score": {
-                  "description": "The confidence score of the predicted category of the bounding box",
-                  "type": "number"
+                  "description": "The confidence score of the predicted category of the bounding box.",
+                  "type": "number",
+                  "instillFormat": "number"
                 }
               }
             }
@@ -99,42 +109,49 @@
       },
       "keypoint": {
         "type": "object",
-        "format": "keypoint",
+        "instillFormat": "object",
         "additionalProperties": false,
         "required": ["objects"],
         "properties": {
           "objects": {
-            "description": "A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object",
+            "description": "A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object.",
             "type": "array",
+            "instillFormat": "object_array",
             "items": {
               "type": "object",
+              "instillFormat": "object",
               "required": ["keypoints", "score", "bounding_box"],
               "properties": {
                 "keypoints": {
-                  "description": "A keypoint group is composed of a list of pre-defined keypoints of a detected object",
-                  "type": "array",
+                  "description": "A keypoint group is composed of a list of pre-defined keypoints of a detected object.",
+                  "type": "object_array",
                   "items": {
                     "type": "object",
+                    "instillFormat": "object",
                     "required": ["x", "y", "v"],
                     "properties": {
                       "x": {
-                        "description": "x coordinate of the keypoint",
-                        "type": "number"
+                        "description": "x coordinate of the keypoint.",
+                        "type": "number",
+                        "instillFormat": "number"
                       },
                       "y": {
-                        "description": "y coordinate of the keypoint",
-                        "type": "number"
+                        "description": "y coordinate of the keypoint.",
+                        "type": "number",
+                        "instillFormat": "number"
                       },
                       "v": {
-                        "description": "visibility score of the keypoint",
-                        "type": "number"
+                        "description": "visibility score of the keypoint.",
+                        "type": "number",
+                        "instillFormat": "number"
                       }
                     }
                   }
                 },
                 "score": {
-                  "description": "The confidence score of the predicted object",
-                  "type": "number"
+                  "description": "The confidence score of the predicted object.",
+                  "type": "number",
+                  "instillFormat": "number"
                 },
                 "bounding_box": {
                   "$ref": "#/$defs/instill_types/bounding_box"
@@ -146,27 +163,31 @@
       },
       "ocr": {
         "type": "object",
-        "format": "ocr",
+        "instillFormat": "object",
         "additionalProperties": false,
         "required": ["objects"],
         "properties": {
           "objects": {
-            "description": "A list of detected bounding boxes",
+            "description": "A list of detected bounding boxes.",
             "type": "array",
+            "instillFormat": "object_array",
             "items": {
               "type": "object",
+              "instillFormat": "object",
               "required": ["boundingBox", "text", "score"],
               "properties": {
                 "boundingBox": {
                   "$ref": "#/$defs/instill_types/bounding_box"
                 },
                 "text": {
-                  "description": "Text string recognised per bounding box",
-                  "type": "string"
+                  "description": "Text string recognised per bounding box.",
+                  "type": "string",
+                  "instillFormat": "text"
                 },
                 "score": {
-                  "description": "The confidence score of the predicted object",
-                  "type": "number"
+                  "description": "The confidence score of the predicted object.",
+                  "type": "number",
+                  "instillFormat": "number"
                 }
               }
             }
@@ -175,31 +196,36 @@
       },
       "instance_segmentation": {
         "type": "object",
-        "format": "instance_segmentation",
+        "instillFormat": "object",
         "additionalProperties": false,
         "required": ["objects"],
         "properties": {
           "objects": {
-            "description": "A list of detected instance bounding boxes",
+            "description": "A list of detected instance bounding boxes.",
             "type": "array",
+            "instillFormat": "object_array",
             "items": {
               "type": "object",
+              "instillFormat": "object",
               "required": ["rle", "boundingBox", "category", "score"],
               "properties": {
                 "rle": {
-                  "description": "Run Length Encoding (RLE) of instance mask within the bounding box",
-                  "type": "string"
+                  "description": "Run Length Encoding (RLE) of instance mask within the bounding box.",
+                  "type": "string",
+                  "instillFormat": "text"
                 },
                 "boundingBox": {
                   "$ref": "#/$defs/instill_types/bounding_box"
                 },
                 "category": {
-                  "description": "The predicted category of the bounding box",
-                  "type": "string"
+                  "description": "The predicted category of the bounding box.",
+                  "type": "string",
+                  "instillFormat": "text"
                 },
                 "score": {
-                  "description": "The confidence score of the predicted instance object",
-                  "type": "number"
+                  "description": "The confidence score of the predicted instance object.",
+                  "type": "number",
+                  "instillFormat": "number"
                 }
               }
             }
@@ -208,24 +234,28 @@
       },
       "semantic_segmentation": {
         "type": "object",
-        "format": "semantic_segmentation",
+        "instillFormat": "object",
         "additionalProperties": false,
         "required": ["stuffs"],
         "properties": {
           "stuffs": {
-            "description": "A list of RLE binary masks",
+            "description": "A list of RLE binary masks.",
             "type": "array",
+            "instillFormat": "object_array",
             "items": {
               "type": "object",
+              "instillFormat": "object",
               "required": ["rle", "category"],
               "properties": {
                 "rle": {
-                  "description": "Run Length Encoding (RLE) of each stuff mask within the image",
-                  "type": "string"
+                  "description": "Run Length Encoding (RLE) of each stuff mask within the image.",
+                  "type": "string",
+                  "instillFormat": "text"
                 },
                 "category": {
-                  "description": "Category text string corresponding to each stuff mask",
-                  "type": "string"
+                  "description": "Category text string corresponding to each stuff mask.",
+                  "type": "string",
+                  "instillFormat": "text"
                 }
               }
             }
@@ -234,18 +264,19 @@
       },
       "embedding": {
         "type": "array",
-        "format": "embedding",
+        "instillFormat": "number_array",
         "items": {
-          "type": "number"
+          "type": "number",
+          "instillFormat": "number"
         }
       },
       "semi_structured": {
         "type": "object",
-        "format": "semi_structured"
+        "instillFormat": "object"
       },
       "metadata": {
         "type": "object",
-        "format": "metadata"
+        "instillFormat": "object"
       }
     }
   }
