@@ -1,4 +1,4 @@
-module github.com/instill-ai/connector
+module github.com/instill-ai/component
 
 go 1.19
 
