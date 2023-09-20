@@ -4,14 +4,6 @@ A **component** is the basic building block of the [**Instill VDP**](https://git
 We have two types of components: connectors and operators.
 This Golang package defines the common interface and functions for all components.
 
-## Highlights
-
-## Prerequisites
-
-## Quick start
-
-## Documentation
-
 ## Contributing
 
 Please refer to the [Contributing Guidelines](./.github/CONTRIBUTING.md) for more details.
