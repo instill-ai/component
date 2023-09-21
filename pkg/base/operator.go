@@ -13,38 +13,38 @@ import (
 	connectorPB "github.com/instill-ai/protogen-go/vdp/connector/v1alpha"
 )
 
-// `IConnector` define the function interface for all connectors.
-type IConnector interface {
+// `IOperator` define the function interface for all operators.
+type IOperator interface {
 
-	// Functions that shared for all connectors
-	// Add connector definition
-	AddConnectorDefinition(uid uuid.UUID, id string, def *connectorPB.ConnectorDefinition) error
+	// Functions that shared for all operators
+	// Add operator definition
+	AddOperatorDefinition(uid uuid.UUID, id string, def *connectorPB.ConnectorDefinition) error
 
-	// Get the map of connector definitions under this connector
-	GetConnectorDefinitionMap() map[uuid.UUID]*connectorPB.ConnectorDefinition
-	// Get the connector definition by definition uid
-	GetConnectorDefinitionByUid(defUid uuid.UUID) (*connectorPB.ConnectorDefinition, error)
-	// Get the connector definition by definition id
-	GetConnectorDefinitionById(defId string) (*connectorPB.ConnectorDefinition, error)
-	// Get the list of connector definitions under this connector
-	ListConnectorDefinitions() []*connectorPB.ConnectorDefinition
-	// Get the list of connector definitions uuids
-	ListConnectorDefinitionUids() []uuid.UUID
+	// Get the map of operator definitions under this operator
+	GetOperatorDefinitionMap() map[uuid.UUID]*connectorPB.ConnectorDefinition
+	// Get the operator definition by definition uid
+	GetOperatorDefinitionByUid(defUid uuid.UUID) (*connectorPB.ConnectorDefinition, error)
+	// Get the operator definition by definition id
+	GetOperatorDefinitionById(defId string) (*connectorPB.ConnectorDefinition, error)
+	// Get the list of operator definitions under this operator
+	ListOperatorDefinitions() []*connectorPB.ConnectorDefinition
+	// Get the list of operator definitions uuids
+	ListOperatorDefinitionUids() []uuid.UUID
 	// List the CredentialFields by definition id
 	ListCredentialField(defId string) []string
 
-	// A helper function to check the connector has this definition by uid.
+	// A helper function to check the operator has this definition by uid.
 	HasUid(defUid uuid.UUID) bool
 	// A helper function to check the target field a.b.c is credential
 	IsCredentialField(defId string, target string) bool
 
-	// Functions that need to be implenmented in connector implenmentation
-	// Create a connection by defition uid and connector configuration
-	CreateConnection(defUid uuid.UUID, connConfig *structpb.Struct, logger *zap.Logger) (IConnection, error)
+	// Functions that need to be implemented in operator implenmentation
+	// Create a operation by defition uid and operator configuration
+	CreateOperation(defUid uuid.UUID, connConfig *structpb.Struct, logger *zap.Logger) (IOperation, error)
 }
 
-type BaseConnector struct {
-	// Store all the connector defintions in the connector
+type BaseOperator struct {
+	// Store all the operator defintions in the operator
 	definitionMapByUid map[uuid.UUID]*connectorPB.ConnectorDefinition
 	definitionMapById  map[string]*connectorPB.ConnectorDefinition
 
@@ -55,20 +55,20 @@ type BaseConnector struct {
 	Logger *zap.Logger
 }
 
-type IConnection interface {
-	// Functions that shared for all connectors
+type IOperation interface {
+	// Functions that shared for all operators
 	// Validate the input and output format
 	ValidateInput(data []*structpb.Struct, task string) error
 	ValidateOutput(data []*structpb.Struct, task string) error
 
-	// Functions that need to be implenmented in connector implenmentation
+	// Functions that need to be implenmented in operator implenmentation
 	// Execute
 	Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error)
-	// Test connection
+	// Test operation
 	Test() (connectorPB.ConnectorResource_State, error)
 }
 
-type BaseConnection struct {
+type BaseOperation struct {
 	// Logger for connection
 	Logger     *zap.Logger
 	DefUid     uuid.UUID
@@ -76,7 +76,7 @@ type BaseConnection struct {
 	Config     *structpb.Struct
 }
 
-func (c *BaseConnector) AddConnectorDefinition(uid uuid.UUID, id string, def *connectorPB.ConnectorDefinition) error {
+func (c *BaseOperator) AddOperatorDefinition(uid uuid.UUID, id string, def *connectorPB.ConnectorDefinition) error {
 	if c.definitionMapByUid == nil {
 		c.definitionMapByUid = map[uuid.UUID]*connectorPB.ConnectorDefinition{}
 	}
@@ -89,17 +89,17 @@ func (c *BaseConnector) AddConnectorDefinition(uid uuid.UUID, id string, def *co
 	return nil
 }
 
-func (c *BaseConnector) GetConnectorDefinitionMap() map[uuid.UUID]*connectorPB.ConnectorDefinition {
+func (c *BaseOperator) GetOperatorDefinitionMap() map[uuid.UUID]*connectorPB.ConnectorDefinition {
 	return c.definitionMapByUid
 }
 
-func (c *BaseConnector) ListConnectorDefinitions() []*connectorPB.ConnectorDefinition {
+func (c *BaseOperator) ListOperatorDefinitions() []*connectorPB.ConnectorDefinition {
 	definitions := []*connectorPB.ConnectorDefinition{}
 	for _, uid := range c.definitionUids {
 		val, ok := c.definitionMapByUid[uid]
 		if !ok {
 			// logger
-			c.Logger.Error("get connector defintion error")
+			c.Logger.Error("get operator defintion error")
 		}
 		definitions = append(definitions, val)
 	}
@@ -107,33 +107,32 @@ func (c *BaseConnector) ListConnectorDefinitions() []*connectorPB.ConnectorDefin
 	return definitions
 }
 
-func (c *BaseConnector) GetConnectorDefinitionByUid(defUid uuid.UUID) (*connectorPB.ConnectorDefinition, error) {
+func (c *BaseOperator) GetOperatorDefinitionByUid(defUid uuid.UUID) (*connectorPB.ConnectorDefinition, error) {
 	val, ok := c.definitionMapByUid[defUid]
 	if !ok {
-		return nil, fmt.Errorf("get connector defintion error")
+		return nil, fmt.Errorf("get operator defintion error")
 	}
 	return val, nil
 }
 
-func (c *BaseConnector) GetConnectorDefinitionById(defId string) (*connectorPB.ConnectorDefinition, error) {
-
+func (c *BaseOperator) GetOperatorDefinitionById(defId string) (*connectorPB.ConnectorDefinition, error) {
 	val, ok := c.definitionMapById[defId]
 	if !ok {
-		return nil, fmt.Errorf("get connector defintion error")
+		return nil, fmt.Errorf("get operator defintion error")
 	}
 	return val, nil
 }
 
-func (c *BaseConnector) ListConnectorDefinitionUids() []uuid.UUID {
+func (c *BaseOperator) ListOperatorDefinitionUids() []uuid.UUID {
 	return c.definitionUids
 }
 
-func (c *BaseConnector) HasUid(defUid uuid.UUID) bool {
-	_, err := c.GetConnectorDefinitionByUid(defUid)
+func (c *BaseOperator) HasUid(defUid uuid.UUID) bool {
+	_, err := c.GetOperatorDefinitionByUid(defUid)
 	return err == nil
 }
 
-func (conn *BaseConnection) ValidateInput(data []*structpb.Struct, task string) error {
+func (conn *BaseOperation) ValidateInput(data []*structpb.Struct, task string) error {
 	schema, err := conn.getInputSchema(task)
 	if err != nil {
 		return err
@@ -141,7 +140,7 @@ func (conn *BaseConnection) ValidateInput(data []*structpb.Struct, task string) 
 	return conn.validate(data, string(schema))
 }
 
-func (conn *BaseConnection) ValidateOutput(data []*structpb.Struct, task string) error {
+func (conn *BaseOperation) ValidateOutput(data []*structpb.Struct, task string) error {
 	schema, err := conn.getOutputSchema(task)
 	if err != nil {
 		return err
@@ -149,7 +148,7 @@ func (conn *BaseConnection) ValidateOutput(data []*structpb.Struct, task string)
 	return conn.validate(data, string(schema))
 
 }
-func (conn *BaseConnection) validate(data []*structpb.Struct, jsonSchema string) error {
+func (conn *BaseOperation) validate(data []*structpb.Struct, jsonSchema string) error {
 	sch, err := jsonschema.CompileString("schema.json", jsonSchema)
 	if err != nil {
 		return err
@@ -172,7 +171,7 @@ func (conn *BaseConnection) validate(data []*structpb.Struct, jsonSchema string)
 	return nil
 }
 
-func (conn *BaseConnection) getInputSchema(task string) ([]byte, error) {
+func (conn *BaseOperation) getInputSchema(task string) ([]byte, error) {
 
 	if _, ok := conn.Definition.Spec.OpenapiSpecifications.GetFields()[task]; !ok {
 		return nil, fmt.Errorf("task %s not exist", task)
@@ -185,7 +184,7 @@ func (conn *BaseConnection) getInputSchema(task string) ([]byte, error) {
 	return walkBytes, err
 }
 
-func (conn *BaseConnection) getOutputSchema(task string) ([]byte, error) {
+func (conn *BaseOperation) getOutputSchema(task string) ([]byte, error) {
 	if _, ok := conn.Definition.Spec.OpenapiSpecifications.GetFields()[task]; !ok {
 		return nil, fmt.Errorf("task %s not exist", task)
 	}
@@ -197,7 +196,7 @@ func (conn *BaseConnection) getOutputSchema(task string) ([]byte, error) {
 	return walkBytes, err
 }
 
-func (c *BaseConnector) IsCredentialField(defId string, target string) bool {
+func (c *BaseOperator) IsCredentialField(defId string, target string) bool {
 	for _, field := range c.ListCredentialField(defId) {
 		if target == field {
 			return true
@@ -206,13 +205,13 @@ func (c *BaseConnector) IsCredentialField(defId string, target string) bool {
 	return false
 }
 
-func (c *BaseConnector) ListCredentialField(defId string) []string {
+func (c *BaseOperator) ListCredentialField(defId string) []string {
 	credentialFields := []string{}
 	credentialFields = c.listCredentialField(c.definitionMapById[defId].Spec.GetResourceSpecification().GetFields()["properties"], "", credentialFields)
 	return credentialFields
 }
 
-func (c *BaseConnector) listCredentialField(input *structpb.Value, prefix string, credentialFields []string) []string {
+func (c *BaseOperator) listCredentialField(input *structpb.Value, prefix string, credentialFields []string) []string {
 	for key, v := range input.GetStructValue().GetFields() {
 		if isCredential, ok := v.GetStructValue().GetFields()["credential_field"]; ok {
 			if isCredential.GetBoolValue() || isCredential.GetStringValue() == "true" {
@@ -232,6 +231,5 @@ func (c *BaseConnector) listCredentialField(input *structpb.Value, prefix string
 
 		}
 	}
-
 	return credentialFields
 }
