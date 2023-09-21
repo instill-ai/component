@@ -89,7 +89,7 @@ func (c *BaseOperator) AddOperatorDefinition(uid uuid.UUID, id string, def *conn
 	return nil
 }
 
-func (c *BaseOperator) GetConnectorDefinitionMap() map[uuid.UUID]*connectorPB.ConnectorDefinition {
+func (c *BaseOperator) GetOperatorDefinitionMap() map[uuid.UUID]*connectorPB.ConnectorDefinition {
 	return c.definitionMapByUid
 }
 
