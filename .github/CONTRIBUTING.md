@@ -13,11 +13,28 @@ Please refer to the [community contributing section](https://github.com/instill-
 
 Before delving into the details to come up with your first PR, please familiarise yourself with the project structure of [Instill Core](https://github.com/instill-ai/community#instill-core).
 
-### Prerequisites
-
-Please refer to [here](../README.md#prerequisites) to make sure your environment has been all set.
-
 ### Development
+
+We have two types of components
+- `connector`:
+  - A `connector` is used for connecting to a Vendor service.
+  - We need to setup a connector `resource` first for the connection configuration
+- `operator`
+  - A `operator` is used for in-pipeline data operations
+
+When you want to contribute a new connector or operator, you need to prepare two things: 
+
+#### Prepare a `definition.json`
+We use a `definition.json` to define all the configuration and input/output format for a component. (e.g. [OpenAI definition.json](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/config/definitions.json))
+In side the `definition.json`, we have
+1. `resource_specification`: Only `connector` need this. It is in `json-schema` format. We use it to define how the `connector_resource` connect to the vendor
+2. `component_specification`: It is in `json-schema` format. We use it to define how we setup the `component` works in the pipeline.
+3. `openapi_specifications`: It is in `OpenAPI-schema` format. We use it to define the input and output format of components.
+
+#### Implement all interfaces defined in this repo.
+
+You can refer to the [OpenAI connector implementation](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/main.go). You need to implement the `base.IConnector` and `base.IConnection`, then the component can be executed in pipeline.
+
 
 ### Sending PRs
 
