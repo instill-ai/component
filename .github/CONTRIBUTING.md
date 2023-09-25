@@ -22,7 +22,7 @@ We have two types of components
 - `operator`
   - A `operator` is used for in-pipeline data operations
 
-When you want to contribute a new connector or operator, you need to prepare two things: 
+When you want to contribute a new connector or operator, you need to prepare two things:
 
 #### Prepare a `definition.json`
 We use a `definition.json` to define all the configuration and input/output format for a component. (e.g. [OpenAI definition.json](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/config/definitions.json))
@@ -33,7 +33,7 @@ In side the `definition.json`, we have
 
 #### Implement all interfaces defined in this repo.
 
-You can refer to the [OpenAI connector implementation](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/main.go). You need to implement the `base.IConnector` and `base.IConnection`, then the component can be executed in pipeline.
+You can refer to the [OpenAI connector implementation](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/main.go). You need to implement the `base.IConnector` or `base.IOperator` and `base.IExecution`, then the component can be executed in pipeline.
 
 
 ### Sending PRs
