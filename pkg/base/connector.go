@@ -1,13 +1,10 @@
 package base
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/santhosh-tekuri/jsonschema/v5"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	connectorPB "github.com/instill-ai/protogen-go/vdp/connector/v1alpha"
@@ -15,6 +12,7 @@ import (
 
 // `IConnector` define the function interface for all connectors.
 type IConnector interface {
+	IComponent
 
 	// Functions that shared for all connectors
 	// Add connector definition
@@ -30,17 +28,16 @@ type IConnector interface {
 	ListConnectorDefinitions() []*connectorPB.ConnectorDefinition
 	// Get the list of connector definitions uuids
 	ListConnectorDefinitionUids() []uuid.UUID
-	// List the CredentialFields by definition id
-	ListCredentialField(defId string) []string
-
 	// A helper function to check the connector has this definition by uid.
 	HasUid(defUid uuid.UUID) bool
+
+	// List the CredentialFields by definition id
+	ListCredentialField(defId string) []string
 	// A helper function to check the target field a.b.c is credential
 	IsCredentialField(defId string, target string) bool
 
-	// Functions that need to be implenmented in connector implenmentation
-	// Create a connection by defition uid and connector configuration
-	CreateConnection(defUid uuid.UUID, connConfig *structpb.Struct, logger *zap.Logger) (IConnection, error)
+	// Test connection
+	Test(defUid uuid.UUID, config *structpb.Struct, logger *zap.Logger) (connectorPB.ConnectorResource_State, error)
 }
 
 type BaseConnector struct {
@@ -53,27 +50,6 @@ type BaseConnector struct {
 
 	// Logger
 	Logger *zap.Logger
-}
-
-type IConnection interface {
-	// Functions that shared for all connectors
-	// Validate the input and output format
-	ValidateInput(data []*structpb.Struct, task string) error
-	ValidateOutput(data []*structpb.Struct, task string) error
-
-	// Functions that need to be implenmented in connector implenmentation
-	// Execute
-	Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error)
-	// Test connection
-	Test() (connectorPB.ConnectorResource_State, error)
-}
-
-type BaseConnection struct {
-	// Logger for connection
-	Logger     *zap.Logger
-	DefUid     uuid.UUID
-	Definition *connectorPB.ConnectorDefinition
-	Config     *structpb.Struct
 }
 
 func (c *BaseConnector) AddConnectorDefinition(uid uuid.UUID, id string, def *connectorPB.ConnectorDefinition) error {
@@ -131,70 +107,6 @@ func (c *BaseConnector) ListConnectorDefinitionUids() []uuid.UUID {
 func (c *BaseConnector) HasUid(defUid uuid.UUID) bool {
 	_, err := c.GetConnectorDefinitionByUid(defUid)
 	return err == nil
-}
-
-func (conn *BaseConnection) ValidateInput(data []*structpb.Struct, task string) error {
-	schema, err := conn.getInputSchema(task)
-	if err != nil {
-		return err
-	}
-	return conn.validate(data, string(schema))
-}
-
-func (conn *BaseConnection) ValidateOutput(data []*structpb.Struct, task string) error {
-	schema, err := conn.getOutputSchema(task)
-	if err != nil {
-		return err
-	}
-	return conn.validate(data, string(schema))
-
-}
-func (conn *BaseConnection) validate(data []*structpb.Struct, jsonSchema string) error {
-	sch, err := jsonschema.CompileString("schema.json", jsonSchema)
-	if err != nil {
-		return err
-	}
-	for idx := range data {
-		var v interface{}
-		jsonData, err := protojson.Marshal(data[idx])
-		if err != nil {
-			return err
-		}
-
-		if err := json.Unmarshal(jsonData, &v); err != nil {
-			return err
-		}
-
-		if err = sch.Validate(v); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (conn *BaseConnection) getInputSchema(task string) ([]byte, error) {
-
-	if _, ok := conn.Definition.Spec.OpenapiSpecifications.GetFields()[task]; !ok {
-		return nil, fmt.Errorf("task %s not exist", task)
-	}
-	walk := conn.Definition.Spec.OpenapiSpecifications.GetFields()[task]
-	for _, key := range []string{"paths", "/execute", "post", "requestBody", "content", "application/json", "schema", "properties", "inputs", "items"} {
-		walk = walk.GetStructValue().Fields[key]
-	}
-	walkBytes, err := protojson.Marshal(walk)
-	return walkBytes, err
-}
-
-func (conn *BaseConnection) getOutputSchema(task string) ([]byte, error) {
-	if _, ok := conn.Definition.Spec.OpenapiSpecifications.GetFields()[task]; !ok {
-		return nil, fmt.Errorf("task %s not exist", task)
-	}
-	walk := conn.Definition.Spec.OpenapiSpecifications.GetFields()[task]
-	for _, key := range []string{"paths", "/execute", "post", "responses", "200", "content", "application/json", "schema", "properties", "outputs", "items"} {
-		walk = walk.GetStructValue().Fields[key]
-	}
-	walkBytes, err := protojson.Marshal(walk)
-	return walkBytes, err
 }
 
 func (c *BaseConnector) IsCredentialField(defId string, target string) bool {
