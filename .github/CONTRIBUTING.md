@@ -13,28 +13,82 @@ Please refer to the [community contributing section](https://github.com/instill-
 
 Before delving into the details to come up with your first PR, please familiarise yourself with the project structure of [Instill Core](https://github.com/instill-ai/community#instill-core).
 
-### Development
+### Concept
 
-We have two types of components
-- `connector`:
-  - A `connector` is used for connecting to a Vendor service.
-  - We need to setup a connector `resource` first for the connection configuration
-- `operator`
-  - A `operator` is used for in-pipeline data operations
+In VDP, a pipeline is a DAG (Directed Acyclic Graph) consisting of multiple components.
+
+We have two types of components:
+
+- connector:
+  - A connector is used to connect the pipeline to a Vendor service.
+  - We need to set up a connector resource first to configure the connection.
+- operator:
+  - An operator is used for in-pipeline data operations.
+
+```mermaid
+flowchart LR
+    s[Start Operator] --> c1[OpenAI Connector]
+    c1 --> c2[Stability AI Connector]
+    c1 --> c3[MySQL Connector]
+    c1 --> e[End Operator]
+    c2 --> e[End Operator]
+```
+
+The key difference between `connector` and `operator` is that `connector` will connect to a vendor. The `connector` only transfer the data, not to process the data. In other hand, The `operator` will process data inside the pipeline.
+
+### Development
 
 When you want to contribute a new connector or operator, you need to prepare two things:
 
 #### Prepare a `definition.json`
-We use a `definition.json` to define all the configuration and input/output format for a component. (e.g. [OpenAI definition.json](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/config/definitions.json))
-In side the `definition.json`, we have
-1. `resource_specification`: Only `connector` need this. It is in `json-schema` format. We use it to define how the `connector_resource` connect to the vendor
-2. `component_specification`: It is in `json-schema` format. We use it to define how we setup the `component` works in the pipeline.
-3. `openapi_specifications`: It is in `OpenAPI-schema` format. We use it to define the input and output format of components.
+We use a `definition.json` to define all the configuration and input/output format for a component.
+Inside the `definition.json`, we have three fields `resource_specification`, `component_specification` and `openapi_specifications`.
 
-#### Implement all interfaces defined in this repo.
+| Spec                    | Connector | Operator | Purpose  |
+| ----------------------- | --------- | -------- | ------------ |
+| resource_specification  | v         |          | setup connection to vendors | 
+| component_specification | v         | v        | setup the parameters and data flow of this component | 
+| openapi_specifications  | v         | v        | describe the input and output structure of this component | 
 
-You can refer to the [OpenAI connector implementation](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/main.go). You need to implement the `base.IConnector` or `base.IOperator` and `base.IExecution`, then the component can be executed in pipeline.
+ Please refer to [OpenAI definition.json](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/config/definitions.json) as example.
 
+#### Implement all interfaces defined in this [Component Package](ttps://github.com/instill-ai/component)
+
+In [component.go](https://github.com/instill-ai/component/blob/main/pkg/base/component.go), we define `IComponent` and `IExecution` as base interfaces. All components (including connector and operator) must implement these interface
+
+```go
+// All component need to implement this interface
+type IComponent interface {
+
+	// Functions that need to be implemented in component implementation
+	// Create a execution by definition uid and component configuration
+	CreateExecution(defUid uuid.UUID, config *structpb.Struct, logger *zap.Logger) (IExecution, error)
+}
+
+type IExecution interface {
+	// Functions that shared for all connectors
+	// Validate the input and output format
+	ValidateInput(data []*structpb.Struct, task string) error
+	ValidateOutput(data []*structpb.Struct, task string) error
+
+	// Functions that need to be implemented in connector implementation
+	// Execute
+	Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error)
+}
+```
+
+The most important one is `Execute()`, the pipeline DAG will use this function to execute each component.
+
+
+In [connector.go](https://github.com/instill-ai/component/blob/main/pkg/base/connector.go), we define `IConnector` as base interface. All connectors must implement these interface. We use this interface to construct a connector. In [operator.go](https://github.com/instill-ai/component/blob/main/pkg/base/operator.go), we define `IOperator` as base interface. All connectors must implement these interface. We use this interface to construct a operator.
+
+#### Repositories
+
+Currently, we maintain four repositories for component implementations
+- [Connector AI](https://github.com/instill-ai/connector-ai): collect all connector implementations related to AI Vendors
+- [Connector Data](https://github.com/instill-ai/connector-data): collect all connector implementations related to Data Vendors
+- [Connector Blockchain](https://github.com/instill-ai/connector-blockchain): collect all connector implementations related to Blockchain Vendors
+- [Operator](https://github.com/instill-ai/operator): collect all operator implementations
 
 ### Sending PRs
 
