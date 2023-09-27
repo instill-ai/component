@@ -53,7 +53,7 @@ func (om *ObjectMapper) Map(source, destination interface{}) error {
 		if len(tagParts) > 1 {
 			defaultValue = tagParts[1]
 		}
-		srcValue, err := getSrcValueByTag(sourceMap, tagParts[0])
+		srcValue, err := GetSrcValueByTag(sourceMap, tagParts[0])
 		if err != nil {
 			fmt.Println("Error getting source value for field", destField.Name, ":", err)
 		}
@@ -75,10 +75,10 @@ func (om *ObjectMapper) Map(source, destination interface{}) error {
 	return nil
 }
 
-func getSrcValueByTag(sourceMap map[string]interface{}, destTag string) (interface{}, error) {
+func GetSrcValueByTag(sourceMap map[string]interface{}, destTag string) (interface{}, error) {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println("panic recovered in getSrcValueByTag()", r)
+			fmt.Println("panic recovered in GetSrcValueByTag()", r)
 		}
 	}()
 	if destTag == "." {
