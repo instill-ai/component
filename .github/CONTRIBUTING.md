@@ -46,9 +46,9 @@ Inside the `definition.json`, we have three fields `resource_specification`, `co
 
 | Spec                    | Connector | Operator | Purpose  |
 | ----------------------- | --------- | -------- | ------------ |
-| resource_specification  | v         |          | setup connection to vendors | 
-| component_specification | v         | v        | setup the parameters and data flow of this component | 
-| openapi_specifications  | v         | v        | describe the input and output structure of this component | 
+| resource_specification  | v         |          | setup connection to vendors |
+| component_specification | v         | v        | setup the parameters and data flow of this component |
+| openapi_specifications  | v         | v        | describe the input and output structure of this component |
 
  Please refer to [OpenAI definition.json](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/config/definitions.json) as example.
 
@@ -105,10 +105,10 @@ Please take these general guidelines into consideration when you are sending a P
 
 When you are ready to send a PR, we recommend you to first open a `draft` one. This will trigger a bunch of `tests` [workflows](https://github.com/instill-ai/component/tree/main/.github/workflows) running a thorough test suite on multiple platforms. After the tests are done and passed, you can now mark the PR `open` to notify the codebase owners to review. We appreciate your endeavour to pass the integration test for your PR to make sure the sanity with respect to the entire scope of **Instill Core**.
 
-Refer some of these PRs for a quick sample -  
-https://github.com/instill-ai/operator/pull/7  
-https://github.com/instill-ai/operator/pull/8  
-https://github.com/instill-ai/connector-data/pull/12  
+Refer some of these PRs for a quick sample -
+https://github.com/instill-ai/operator/pull/7
+https://github.com/instill-ai/operator/pull/8
+https://github.com/instill-ai/connector-data/pull/12
 https://github.com/instill-ai/connector-ai/pull/22 (this one is a bit old, the interface is changed now)
 
 
