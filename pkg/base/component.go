@@ -155,58 +155,42 @@ func (comp *Component) generateComponentSpec(title string, availableTasks []stri
 		return nil, err
 	}
 
-	if len(availableTasks) > 1 {
-		oneOfList := &structpb.ListValue{
-			Values: []*structpb.Value{},
-		}
-		for _, availableTask := range availableTasks {
+	oneOfList := &structpb.ListValue{
+		Values: []*structpb.Value{},
+	}
+	for _, availableTask := range availableTasks {
 
-			oneOf := &structpb.Struct{Fields: map[string]*structpb.Value{}}
-			oneOf.Fields["type"] = structpb.NewStringValue("object")
-			oneOf.Fields["properties"] = structpb.NewStructValue(&structpb.Struct{Fields: make(map[string]*structpb.Value)})
+		oneOf := &structpb.Struct{Fields: map[string]*structpb.Value{}}
+		oneOf.Fields["type"] = structpb.NewStringValue("object")
+		oneOf.Fields["properties"] = structpb.NewStructValue(&structpb.Struct{Fields: make(map[string]*structpb.Value)})
 
-			oneOf.Fields["properties"].GetStructValue().Fields["task"], err = structpb.NewValue(map[string]interface{}{
-				"const": availableTask,
-			})
-			if err != nil {
-				return nil, err
-			}
-
-			taskJsonStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct).Fields["input"].GetStructValue()
-
-			compInputStruct, err := convertDataSpecToCompSpec(taskJsonStruct)
-			if err != nil {
-				return nil, err
-			}
-			oneOf.Fields["properties"].GetStructValue().Fields["input"] = structpb.NewStructValue(compInputStruct)
-			if comp.tasks[availableTask].Fields["metadata"] != nil {
-				metadataStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct).Fields["metadata"].GetStructValue()
-				oneOf.Fields["properties"].GetStructValue().Fields["metadata"] = structpb.NewStructValue(metadataStruct)
-			}
-
-			// oneOf
-			oneOfList.Values = append(oneOfList.Values, structpb.NewStructValue(oneOf))
-		}
-
-		componentSpec.Fields["oneOf"] = structpb.NewListValue(oneOfList)
-
+		oneOf.Fields["properties"].GetStructValue().Fields["task"], err = structpb.NewValue(map[string]interface{}{
+			"const": availableTask,
+		})
 		if err != nil {
 			return nil, err
 		}
-	} else {
 
-		taskJsonStruct := proto.Clone(comp.tasks[availableTasks[0]]).(*structpb.Struct).Fields["input"].GetStructValue()
+		taskJsonStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct).Fields["input"].GetStructValue()
+
 		compInputStruct, err := convertDataSpecToCompSpec(taskJsonStruct)
 		if err != nil {
 			return nil, err
 		}
-		c := &structpb.Struct{Fields: map[string]*structpb.Value{}}
-		c.Fields["input"] = structpb.NewStructValue(compInputStruct)
-		componentSpec.Fields["properties"] = structpb.NewStructValue(c)
-		if comp.tasks[availableTasks[0]].Fields["metadata"] != nil {
-			metadataStruct := proto.Clone(comp.tasks[availableTasks[0]]).(*structpb.Struct).Fields["metadata"].GetStructValue()
-			componentSpec.Fields["properties"].GetStructValue().Fields["metadata"] = structpb.NewStructValue(metadataStruct)
+		oneOf.Fields["properties"].GetStructValue().Fields["input"] = structpb.NewStructValue(compInputStruct)
+		if comp.tasks[availableTask].Fields["metadata"] != nil {
+			metadataStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct).Fields["metadata"].GetStructValue()
+			oneOf.Fields["properties"].GetStructValue().Fields["metadata"] = structpb.NewStructValue(metadataStruct)
 		}
+
+		// oneOf
+		oneOfList.Values = append(oneOfList.Values, structpb.NewStructValue(oneOf))
+	}
+
+	componentSpec.Fields["oneOf"] = structpb.NewListValue(oneOfList)
+
+	if err != nil {
+		return nil, err
 	}
 
 	return componentSpec, nil
