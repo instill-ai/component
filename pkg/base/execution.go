@@ -72,11 +72,23 @@ func (e *Execution) Validate(data []*structpb.Struct, jsonSchema string) error {
 }
 
 func (e *Execution) ExecuteWithValidation(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-	if _, ok := e.Component.GetTaskInputSchemas()[e.GetTask()]; !ok {
+	task := e.GetTask()
+	if task == "" {
+		keys := make([]string, 0, len(e.Component.GetTaskInputSchemas()))
+		for k := range e.Component.GetTaskInputSchemas() {
+			keys = append(keys, k)
+		}
+		if len(keys) != 1 {
+			return nil, fmt.Errorf("must specify a task")
+		}
+		task = keys[0]
+	}
+
+	if _, ok := e.Component.GetTaskInputSchemas()[task]; !ok {
 		return nil, fmt.Errorf("no task %s", e.GetTask())
 	}
 
-	if err := e.Validate(inputs, e.Component.GetTaskInputSchemas()[e.GetTask()]); err != nil {
+	if err := e.Validate(inputs, e.Component.GetTaskInputSchemas()[task]); err != nil {
 		return nil, err
 	}
 
@@ -85,7 +97,7 @@ func (e *Execution) ExecuteWithValidation(inputs []*structpb.Struct) ([]*structp
 		return nil, err
 	}
 
-	if err := e.Validate(outputs, e.Component.GetTaskOutputSchemas()[e.GetTask()]); err != nil {
+	if err := e.Validate(outputs, e.Component.GetTaskOutputSchemas()[task]); err != nil {
 		return nil, err
 	}
 	return outputs, err
