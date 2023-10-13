@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0-alpha](https://github.com/instill-ai/component/compare/v0.5.0-alpha...v0.6.0-alpha) (2023-10-13)
+
+
+### Bug Fixes
+
+* **execution:** fix empty task bug ([6e15dc3](https://github.com/instill-ai/component/commit/6e15dc306543495f1bc75b8b8c11d5099a843471))
+
+
+### Miscellaneous Chores
+
+* **release:** release v0.6.0-alpha ([120a147](https://github.com/instill-ai/component/commit/120a147ecaeb06d52613e738b81d6158bd74211c))
+
 ## [0.5.0-alpha](https://github.com/instill-ai/component/compare/v0.4.0-alpha...v0.5.0-alpha) (2023-09-30)
 
 
