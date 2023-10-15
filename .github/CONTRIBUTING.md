@@ -17,13 +17,6 @@ Before delving into the details to come up with your first PR, please familiaris
 
 In VDP, a pipeline is a DAG (Directed Acyclic Graph) consisting of multiple components.
 
-We have two types of components:
-
-- connector:
-  - A connector is used to connect the pipeline to a Vendor service.
-  - We need to set up a connector resource first to configure the connection.
-- operator:
-  - An operator is used for in-pipeline data operations.
 
 ```mermaid
 flowchart LR
@@ -34,53 +27,156 @@ flowchart LR
     c2 --> e[End Operator]
 ```
 
+#### Component
+We have two types of components: **connector** and **operator**:
+
+
+- connector:
+  - A connector is used to connect the pipeline to a vendor service.
+  - We need to set up a connector resource first to configure the connection.
+- operator:
+  - An operator is used for data operations inside the pipeline.
+
+
+**Connector**
+
+- **Connectors** is used for connecting the pipeline to a vendor service, and **connectors** are served by **connector-backend**
+- We need to set up a connector **resource** first to configure the connection.
+- Setup a Connector Resource
+```mermaid
+sequenceDiagram
+    User ->> API-Gateway: POST /users/<user>/connector-resources
+    API-Gateway ->> Connector-Backend: forward
+    Connector-Backend ->> Connector DB: Store configuration for connection
+```
+
+
+**Operator**
+- An operator is used for data operations inside the pipeline.
+
+
 The key difference between `connector` and `operator` is that `connector` will connect to a vendor. The `connector` only transfer the data, not to process the data. In other hand, The `operator` will process data inside the pipeline.
+
+#### Pipeline
+
+A pipeline is consists of multiple components. We use a pipeline `recipe` to configure the pipeline components.
+
+The `recipe` is in the format
+```json
+{
+    "version": "v1alpha",
+    "components": [
+        {
+            "id": "<component_id>",
+            "definition_name": "<definition_name>",
+            "resource_name": "<resource_name>",
+            "configuration": {
+                // component configuration
+            }
+        }
+    ]
+}
+```
+- `id`: the identifier of the component, can not be duplicated inside a pipeline.
+- `definition_name`: can be a connector(`connector-definitions/<def_id>`) or operator(`operator-definitions/<def_id>`)
+- `resource_name`: we need to create a resource for connector `users/<user>/connector-resources/<resource_id>`, we don't need to setup this for operator.
+- `configuration`: component configuration for connector or operator
+
+```mermaid
+sequenceDiagram
+    User ->> API-Gateway: POST /users/<user>/pipelines
+    API-Gateway ->> Pipeline-Backend: forward
+    Pipeline-Backend ->> Pipeline DB: Store pipeline and its recipe
+```
+
+#### How pipeline triggered
+
+When we trigger a pipeline, the pipeline-backend will calculate the DA and execute the components in topological order.
+
+The workflow is:
+```mermaid
+sequenceDiagram
+    User ->> API-Gateway: POST /users/<user>/pipelines/<pipeline_id>/trigger
+    API-Gateway ->> Pipeline-Backend: forward
+    Pipeline-Backend ->> Pipeline DB: Get recipe
+    Pipeline DB ->> Pipeline-Backend: Recipe
+    loop over topological order of components
+        alt is Connector
+            Pipeline-Backend->>Connector-Backend: POST /users/<user>/connector-resources/<resource_id>/execute
+            Connector-Backend ->> Connector: Execute()
+        else is Operator
+            Pipeline-Backend->>Operator: ExecuteWithValidation()
+        end
+    end
+
+```
 
 ### Development
 
 When you want to contribute a new connector or operator, you need to prepare two things:
 
-#### Prepare a `definition.json`
-We use a `definition.json` to define all the configuration and input/output format for a component.
-Inside the `definition.json`, we have three fields `resource_specification`, `component_specification` and `openapi_specifications`.
+#### Prepare `config` files
+
+In every connector or operator implementation, we need to use two config files to define the behaviour of the component.
+
+- `definition.json`
+    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/config/definitions.json) as an example.
+    - We define the id, uid, vendor info and other metadata in this file.
+    - We define the `resource_configuration` in this file, which is used for setting up the connector resource.
+- `tasks.json`
+    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/config/tasks.json) as an example.
+    - A component can have multiple tasks.
+    - We define the input and output schema of each task in this file.
+    - The component will auto-generate the `component_specification` and `openapi_specification` based on the input and output schema of the task
+
 
 | Spec                    | Connector | Operator | Purpose  |
 | ----------------------- | --------- | -------- | ------------ |
 | resource_specification  | v         |          | setup connection to vendors |
 | component_specification | v         | v        | setup the parameters and data flow of this component |
-| openapi_specifications  | v         | v        | describe the input and output structure of this component |
+| openapi_specification  | v         | v        | describe the input and output structure of this component |
 
- Please refer to [OpenAI definition.json](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/config/definitions.json) as example.
+<!-- TODO:
+1. prepare more introduction for how we convert the tasks.json into component_specification and openapi_specification
+2. describe more details about the api payload  -->
 
 #### Implement all interfaces defined in this [Component Package](ttps://github.com/instill-ai/component)
 
-In [component.go](https://github.com/instill-ai/component/blob/main/pkg/base/component.go), we define `IComponent` and `IExecution` as base interfaces. All components (including connector and operator) must implement these interface
+In [component.go](https://github.com/instill-ai/component/blob/main/pkg/base/component.go), we define `IComponent` (`IConnector` and `IOperator`) and `IExecution` as base interfaces. All components (including connector and operator) must implement these interfaces.
 
 ```go
-// All component need to implement this interface
-type IComponent interface {
-
-	// Functions that need to be implemented in component implementation
-	// Create a execution by definition uid and component configuration
-	CreateExecution(defUid uuid.UUID, config *structpb.Struct, logger *zap.Logger) (IExecution, error)
+// All connectors need to implement this interface
+type IConnector interface {
+    CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error)
+    Test(defUid uuid.UUID, config *structpb.Struct, logger *zap.Logger) (connectorPB.ConnectorResource_State, error)
 }
 
-type IExecution interface {
-	// Functions that shared for all connectors
-	// Validate the input and output format
-	ValidateInput(data []*structpb.Struct, task string) error
-	ValidateOutput(data []*structpb.Struct, task string) error
+// All operators need to implement this interface
+type IOperator interface {
+    CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error)
+}
 
-	// Functions that need to be implemented in connector implementation
-	// Execute
-	Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error)
+// All connectors and operators need to implement this interface
+type IExecution interface {
+    Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error)
 }
 ```
 
-The most important one is `Execute()`, the pipeline DAG will use this function to execute each component.
+- `CreateExecution()`:
+    - We need to implement this for all components.
+    - We can store some additional data in the component struct via this function.
+- `Test()`
+    - We use this to test the connection between vdp and vendor.
+- `Execute()`
+    - This is the most important function for the component.
+    - All the data manipulation logic will be here.
+    - This function will be wrapped by `ExecuteWithValidation()` inside componet [here](https://github.com/instill-ai/component/blob/e74bd510319ccf3c1dc2b3a5a97f762a0bce9414/pkg/base/execution.go#L74). `ExecuteWithValidation()` will do schema validation for both the input and output of `Execute()`. The schema is defined by the `openapi_specification` which is generated by `tasks.json`
 
-
-In [connector.go](https://github.com/instill-ai/component/blob/main/pkg/base/connector.go), we define `IConnector` as base interface. All connectors must implement these interface. We use this interface to construct a connector. In [operator.go](https://github.com/instill-ai/component/blob/main/pkg/base/operator.go), we define `IOperator` as base interface. All connectors must implement these interface. We use this interface to construct a operator.
+<!--
+TODO:
+ 1. explain how we import the connectors or operators like [here](https://github.com/instill-ai/connector-ai/blob/main/pkg/main.go)
+ 2. Add a step by step example to implement a new connector or operator.
+-->
 
 #### Repositories
 
@@ -104,12 +200,6 @@ Please take these general guidelines into consideration when you are sending a P
 5. **Open a Pull Request:** Initiate a pull request to our repository. Our team will review your changes and collaborate with you on any necessary refinements.
 
 When you are ready to send a PR, we recommend you to first open a `draft` one. This will trigger a bunch of `tests` [workflows](https://github.com/instill-ai/component/tree/main/.github/workflows) running a thorough test suite on multiple platforms. After the tests are done and passed, you can now mark the PR `open` to notify the codebase owners to review. We appreciate your endeavour to pass the integration test for your PR to make sure the sanity with respect to the entire scope of **Instill Core**.
-
-Refer some of these PRs for a quick sample -
-https://github.com/instill-ai/operator/pull/7
-https://github.com/instill-ai/operator/pull/8
-https://github.com/instill-ai/connector-data/pull/12
-https://github.com/instill-ai/connector-ai/pull/22 (this one is a bit old, the interface is changed now)
 
 
 ## Last words
