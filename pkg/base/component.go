@@ -11,7 +11,8 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-// All component need to implement this interface
+// IComponent is the interface that wraps the basic component methods.
+// All component need to implement this interface.
 type IComponent interface {
 
 	// Functions that need to be implemented in each component implementation
@@ -36,13 +37,14 @@ type IComponent interface {
 	generateOpenAPISpecs(title string, availableTasks []string) (*structpb.Struct, error)
 
 	// Load tasks
-	loadTasks(tasksJson []byte) error
+	loadTasks(tasksJSON []byte) error
 	// Get task input schemas
 	GetTaskInputSchemas() map[string]string
 	// Get task output schemas
 	GetTaskOutputSchemas() map[string]string
 }
 
+// Component is the basic component struct
 type Component struct {
 	Name string
 
@@ -171,9 +173,9 @@ func (comp *Component) generateComponentSpec(title string, availableTasks []stri
 			return nil, err
 		}
 
-		taskJsonStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct).Fields["input"].GetStructValue()
+		taskJSONStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct).Fields["input"].GetStructValue()
 
-		compInputStruct, err := convertDataSpecToCompSpec(taskJsonStruct)
+		compInputStruct, err := convertDataSpecToCompSpec(taskJSONStruct)
 		if err != nil {
 			return nil, err
 		}
@@ -214,15 +216,15 @@ func (comp *Component) generateOpenAPISpecs(title string, availableTasks []strin
 			walk = walk.Fields[key].GetStructValue()
 		}
 
-		taskJsonStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct)
-		walk.Fields["items"] = taskJsonStruct.Fields["input"]
+		taskJSONStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct)
+		walk.Fields["items"] = taskJSONStruct.Fields["input"]
 
 		walk = openAPITemplate
 		for _, key := range []string{"paths", "/execute", "post", "responses", "200", "content", "application/json", "schema", "properties", "outputs"} {
 			walk = walk.Fields[key].GetStructValue()
 		}
 
-		walk.Fields["items"] = taskJsonStruct.Fields["output"]
+		walk.Fields["items"] = taskJSONStruct.Fields["output"]
 
 		openAPITemplates.Fields[availableTask] = structpb.NewStructValue(openAPITemplate)
 	}
@@ -230,12 +232,12 @@ func (comp *Component) generateOpenAPISpecs(title string, availableTasks []strin
 	return openAPITemplates, nil
 }
 
-func (comp *Component) loadTasks(tasksJsonBytes []byte) error {
+func (comp *Component) loadTasks(tasksJSONBytes []byte) error {
 
 	var err error
 
-	tasksJsonMap := map[string]map[string]interface{}{}
-	err = json.Unmarshal(tasksJsonBytes, &tasksJsonMap)
+	tasksJSONMap := map[string]map[string]interface{}{}
+	err = json.Unmarshal(tasksJSONBytes, &tasksJSONMap)
 	if err != nil {
 		return err
 	}
@@ -250,7 +252,7 @@ func (comp *Component) loadTasks(tasksJsonBytes []byte) error {
 		comp.taskOutputSchemas = map[string]string{}
 	}
 
-	for k, v := range tasksJsonMap {
+	for k, v := range tasksJSONMap {
 		if k != "$defs" {
 			comp.tasks[k], err = structpb.NewStruct(v)
 			if err != nil {
@@ -273,9 +275,12 @@ func (comp *Component) loadTasks(tasksJsonBytes []byte) error {
 	return nil
 }
 
+// GetTaskInputSchemas returns the task input schemas
 func (comp *Component) GetTaskInputSchemas() map[string]string {
 	return comp.taskInputSchemas
 }
+
+// GetTaskOutputSchemas returns the task output schemas
 func (comp *Component) GetTaskOutputSchemas() map[string]string {
 	return comp.taskOutputSchemas
 }
@@ -332,27 +337,29 @@ func (comp *Component) getDefinitionByID(defID string) (interface{}, error) {
 	return val, nil
 }
 
+// ConvertFromStructpb converts from structpb.Struct to a struct
 func ConvertFromStructpb(from *structpb.Struct, to interface{}) error {
-	inputJson, err := protojson.Marshal(from)
+	inputJSON, err := protojson.Marshal(from)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(inputJson, to)
+	err = json.Unmarshal(inputJSON, to)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
+// ConvertToStructpb converts from a struct to structpb.Struct
 func ConvertToStructpb(from interface{}) (*structpb.Struct, error) {
 	to := &structpb.Struct{}
-	outputJson, err := json.Marshal(from)
+	outputJSON, err := json.Marshal(from)
 	if err != nil {
 		return nil, err
 	}
 
-	err = protojson.Unmarshal(outputJson, to)
+	err = protojson.Unmarshal(outputJSON, to)
 	if err != nil {
 		return nil, err
 	}

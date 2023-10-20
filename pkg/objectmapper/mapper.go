@@ -13,11 +13,13 @@ const (
 	comma      = ","
 )
 
+// ObjectMapper is a struct that can map values from one struct to another
 type ObjectMapper struct {
 	Tag                   string
 	DefaultValueSeparator string
 }
 
+// Map maps values from source to destination struct
 func (om *ObjectMapper) Map(source, destination interface{}) error {
 	defer func() {
 		if r := recover(); r != nil {
@@ -75,6 +77,7 @@ func (om *ObjectMapper) Map(source, destination interface{}) error {
 	return nil
 }
 
+// GetSrcValueByTag gets the source value by tag
 func GetSrcValueByTag(sourceMap map[string]interface{}, destTag string) (interface{}, error) {
 	defer func() {
 		if r := recover(); r != nil {

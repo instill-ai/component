@@ -11,6 +11,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+// IExecution is the interface that all executions need to implement
 type IExecution interface {
 	// Functions that shared for all connectors
 	// Validate the input and output format
@@ -27,6 +28,7 @@ type IExecution interface {
 	Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error)
 }
 
+// Execution is the base struct for all executions
 type Execution struct {
 	Logger             *zap.Logger
 	Component          IComponent
@@ -36,18 +38,22 @@ type Execution struct {
 	Task               string
 }
 
+// GetUID returns the uid of the execution
 func (e *Execution) GetUID() uuid.UUID {
 	return e.UID
 }
 
+// GetTask returns the task of the execution
 func (e *Execution) GetTask() string {
 	return e.Task
 }
 
+// GetConfig returns the config of the execution
 func (e *Execution) GetConfig() *structpb.Struct {
 	return e.Config
 }
 
+// Validate the input and output format
 func (e *Execution) Validate(data []*structpb.Struct, jsonSchema string) error {
 	sch, err := jsonschema.CompileString("schema.json", jsonSchema)
 	if err != nil {
@@ -71,6 +77,7 @@ func (e *Execution) Validate(data []*structpb.Struct, jsonSchema string) error {
 	return nil
 }
 
+// ExecuteWithValidation executes the execution with validation
 func (e *Execution) ExecuteWithValidation(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	task := e.GetTask()
 	if task == "" {
@@ -103,6 +110,7 @@ func (e *Execution) ExecuteWithValidation(inputs []*structpb.Struct) ([]*structp
 	return outputs, err
 }
 
+// CreateExecutionHelper creates a new execution
 func CreateExecutionHelper(e IExecution, comp IComponent, defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) Execution {
 
 	baseExecution := Execution{

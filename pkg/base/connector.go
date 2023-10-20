@@ -12,7 +12,7 @@ import (
 	connectorPB "github.com/instill-ai/protogen-go/vdp/connector/v1alpha"
 )
 
-// `IConnector` define the function interface for all connectors.
+// IConnector is the interface that all connectors need to implement
 type IConnector interface {
 	IComponent
 
@@ -22,7 +22,7 @@ type IConnector interface {
 
 	// Functions that shared for all connectors
 	// Load connector definitions from json files
-	LoadConnectorDefinitions(definitionsJson []byte, tasksJson []byte) error
+	LoadConnectorDefinitions(definitionsJSON []byte, tasksJSON []byte) error
 	// Add definition
 	AddConnectorDefinition(def *connectorPB.ConnectorDefinition) error
 	// Get the connector definition by definition uid
@@ -38,6 +38,7 @@ type IConnector interface {
 	IsCredentialField(defID string, target string) bool
 }
 
+// Connector is the base struct for all connectors
 type Connector struct {
 	Component
 
@@ -45,31 +46,32 @@ type Connector struct {
 	credentialFields map[string][]string
 }
 
-func (c *Connector) LoadConnectorDefinitions(definitionsJsonBytes []byte, tasksJsonBytes []byte) error {
+// LoadConnectorDefinitions loads the connector definitions from json files
+func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJSONBytes []byte) error {
 	var err error
-	definitionsJsonList := &[]interface{}{}
+	definitionsJSONList := &[]interface{}{}
 	c.credentialFields = map[string][]string{}
 
-	err = json.Unmarshal(definitionsJsonBytes, definitionsJsonList)
+	err = json.Unmarshal(definitionsJSONBytes, definitionsJSONList)
 	if err != nil {
 		return err
 	}
-	err = c.Component.loadTasks(tasksJsonBytes)
+	err = c.Component.loadTasks(tasksJSONBytes)
 	if err != nil {
 		return err
 	}
 
-	for _, definitionJson := range *definitionsJsonList {
+	for _, definitionJSON := range *definitionsJSONList {
 		availableTasks := []string{}
-		for _, availableTask := range definitionJson.(map[string]interface{})["available_tasks"].([]interface{}) {
+		for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
 			availableTasks = append(availableTasks, availableTask.(string))
 		}
-		definitionJsonBytes, err := json.Marshal(definitionJson)
+		definitionJSONBytes, err := json.Marshal(definitionJSON)
 		if err != nil {
 			return err
 		}
 		def := &connectorPB.ConnectorDefinition{}
-		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJsonBytes, def)
+		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, def)
 		if err != nil {
 			return err
 		}
@@ -94,6 +96,7 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJsonBytes []byte, tasksJ
 	return nil
 }
 
+// AddConnectorDefinition adds a connector definition to the connector
 func (c *Connector) AddConnectorDefinition(def *connectorPB.ConnectorDefinition) error {
 	def.Name = fmt.Sprintf("connector-definitions/%s", def.Id)
 	err := c.addDefinition(def)
@@ -104,6 +107,7 @@ func (c *Connector) AddConnectorDefinition(def *connectorPB.ConnectorDefinition)
 	return nil
 }
 
+// ListConnectorDefinitions lists all the connector definitions
 func (c *Connector) ListConnectorDefinitions() []*connectorPB.ConnectorDefinition {
 	compDefs := c.Component.listDefinitions()
 	defs := []*connectorPB.ConnectorDefinition{}
@@ -113,6 +117,7 @@ func (c *Connector) ListConnectorDefinitions() []*connectorPB.ConnectorDefinitio
 	return defs
 }
 
+// GetConnectorDefinitionByUID gets the connector definition by definition uid
 func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID) (*connectorPB.ConnectorDefinition, error) {
 	def, err := c.Component.getDefinitionByUID(defUID)
 	if err != nil {
@@ -121,6 +126,7 @@ func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID) (*connectorPB.
 	return def.(*connectorPB.ConnectorDefinition), nil
 }
 
+// GetConnectorDefinitionByID gets the connector definition by definition id
 func (c *Connector) GetConnectorDefinitionByID(defID string) (*connectorPB.ConnectorDefinition, error) {
 	def, err := c.Component.getDefinitionByID(defID)
 	if err != nil {
@@ -129,6 +135,7 @@ func (c *Connector) GetConnectorDefinitionByID(defID string) (*connectorPB.Conne
 	return def.(*connectorPB.ConnectorDefinition), nil
 }
 
+// IsCredentialField checks if the target field is credential field
 func (c *Connector) IsCredentialField(defID string, target string) bool {
 	for _, field := range c.credentialFields[defID] {
 		if target == field {
@@ -138,6 +145,7 @@ func (c *Connector) IsCredentialField(defID string, target string) bool {
 	return false
 }
 
+// ListCredentialField lists the credential fields by definition id
 func (c *Connector) ListCredentialField(defID string) ([]string, error) {
 	return c.credentialFields[defID], nil
 }
@@ -158,8 +166,8 @@ func (c *Connector) traverseCredentialField(input *structpb.Value, prefix string
 				credentialFields = append(credentialFields, fmt.Sprintf("%s%s", prefix, key))
 			}
 		}
-		if type_, ok := v.GetStructValue().GetFields()["type"]; ok {
-			if type_.GetStringValue() == "object" {
+		if tp, ok := v.GetStructValue().GetFields()["type"]; ok {
+			if tp.GetStringValue() == "object" {
 				if l, ok := v.GetStructValue().GetFields()["oneOf"]; ok {
 					for _, v := range l.GetListValue().Values {
 						credentialFields = c.traverseCredentialField(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), credentialFields)

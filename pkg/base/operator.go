@@ -10,13 +10,13 @@ import (
 	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1alpha"
 )
 
-// `IOperator` define the function interface for all operators.
+// IOperator is the interface that all operators need to implement
 type IOperator interface {
 	IComponent
 
 	// Functions that shared for all operators
 	// Load operator definitions from json files
-	LoadOperatorDefinitions(definitionsJson []byte, tasksJson []byte) error
+	LoadOperatorDefinitions(definitionsJSON []byte, tasksJSON []byte) error
 	// Add definition
 	AddOperatorDefinition(def *pipelinePB.OperatorDefinition) error
 	// Get the operator definition by definition uid
@@ -27,34 +27,36 @@ type IOperator interface {
 	ListOperatorDefinitions() []*pipelinePB.OperatorDefinition
 }
 
+// Operator is the base struct for all operators
 type Operator struct {
 	Component
 }
 
-func (o *Operator) LoadOperatorDefinitions(definitionsJsonBytes []byte, tasksJsonBytes []byte) error {
+// LoadOperatorDefinitions loads the operator definitions from json files
+func (o *Operator) LoadOperatorDefinitions(definitionsJSONBytes []byte, tasksJSONBytes []byte) error {
 	var err error
-	definitionsJsonList := &[]interface{}{}
+	definitionsJSONList := &[]interface{}{}
 
-	err = json.Unmarshal(definitionsJsonBytes, definitionsJsonList)
+	err = json.Unmarshal(definitionsJSONBytes, definitionsJSONList)
 	if err != nil {
 		return err
 	}
-	err = o.Component.loadTasks(tasksJsonBytes)
+	err = o.Component.loadTasks(tasksJSONBytes)
 	if err != nil {
 		return err
 	}
 
-	for _, definitionJson := range *definitionsJsonList {
+	for _, definitionJSON := range *definitionsJSONList {
 		availableTasks := []string{}
-		for _, availableTask := range definitionJson.(map[string]interface{})["available_tasks"].([]interface{}) {
+		for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
 			availableTasks = append(availableTasks, availableTask.(string))
 		}
-		definitionJsonBytes, err := json.Marshal(definitionJson)
+		definitionJSONBytes, err := json.Marshal(definitionJSON)
 		if err != nil {
 			return err
 		}
 		def := &pipelinePB.OperatorDefinition{}
-		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJsonBytes, def)
+		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, def)
 		if err != nil {
 			return err
 		}
@@ -78,6 +80,7 @@ func (o *Operator) LoadOperatorDefinitions(definitionsJsonBytes []byte, tasksJso
 	return nil
 }
 
+// AddOperatorDefinition adds a operator definition to the operator
 func (o *Operator) AddOperatorDefinition(def *pipelinePB.OperatorDefinition) error {
 	def.Name = fmt.Sprintf("operator-definitions/%s", def.Id)
 	err := o.addDefinition(def)
@@ -87,6 +90,7 @@ func (o *Operator) AddOperatorDefinition(def *pipelinePB.OperatorDefinition) err
 	return nil
 }
 
+// ListOperatorDefinitions returns the list of operator definitions under this operator
 func (o *Operator) ListOperatorDefinitions() []*pipelinePB.OperatorDefinition {
 	compDefs := o.Component.listDefinitions()
 	defs := []*pipelinePB.OperatorDefinition{}
@@ -96,6 +100,7 @@ func (o *Operator) ListOperatorDefinitions() []*pipelinePB.OperatorDefinition {
 	return defs
 }
 
+// GetOperatorDefinitionByUID returns the operator definition by definition uid
 func (o *Operator) GetOperatorDefinitionByUID(defUID uuid.UUID) (*pipelinePB.OperatorDefinition, error) {
 	def, err := o.Component.getDefinitionByUID(defUID)
 	if err != nil {
@@ -104,6 +109,7 @@ func (o *Operator) GetOperatorDefinitionByUID(defUID uuid.UUID) (*pipelinePB.Ope
 	return def.(*pipelinePB.OperatorDefinition), nil
 }
 
+// GetOperatorDefinitionByID returns the operator definition by definition id
 func (o *Operator) GetOperatorDefinitionByID(defID string) (*pipelinePB.OperatorDefinition, error) {
 	def, err := o.Component.getDefinitionByID(defID)
 	if err != nil {
