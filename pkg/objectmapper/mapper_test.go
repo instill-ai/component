@@ -114,7 +114,7 @@ func TestTemp(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
+		t.Run(test.name, func(_ *testing.T) {
 			test.exec()
 		})
 	}
