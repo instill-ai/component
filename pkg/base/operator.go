@@ -95,7 +95,9 @@ func (o *Operator) ListOperatorDefinitions() []*pipelinePB.OperatorDefinition {
 	compDefs := o.Component.listDefinitions()
 	defs := []*pipelinePB.OperatorDefinition{}
 	for _, compDef := range compDefs {
-		defs = append(defs, compDef.(*pipelinePB.OperatorDefinition))
+		if !compDef.(*pipelinePB.OperatorDefinition).Tombstone {
+			defs = append(defs, compDef.(*pipelinePB.OperatorDefinition))
+		}
 	}
 	return defs
 }

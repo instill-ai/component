@@ -112,7 +112,9 @@ func (c *Connector) ListConnectorDefinitions() []*connectorPB.ConnectorDefinitio
 	compDefs := c.Component.listDefinitions()
 	defs := []*connectorPB.ConnectorDefinition{}
 	for _, compDef := range compDefs {
-		defs = append(defs, compDef.(*connectorPB.ConnectorDefinition))
+		if !compDef.(*connectorPB.ConnectorDefinition).Tombstone {
+			defs = append(defs, compDef.(*connectorPB.ConnectorDefinition))
+		}
 	}
 	return defs
 }
