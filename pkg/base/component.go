@@ -84,6 +84,20 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 
 			}
 		}
+		if _, ok := compSpec.Fields["patternProperties"]; ok {
+			for k, v := range compSpec.Fields["patternProperties"].GetStructValue().AsMap() {
+				s, err := structpb.NewStruct(v.(map[string]interface{}))
+				if err != nil {
+					return nil, err
+				}
+				converted, err := convertDataSpecToCompSpec(s)
+				if err != nil {
+					return nil, err
+				}
+				compSpec.Fields["patternProperties"].GetStructValue().Fields[k] = structpb.NewStructValue(converted)
+
+			}
+		}
 		for _, target := range []string{"allOf", "anyOf", "oneOf"} {
 			if _, ok := compSpec.Fields[target]; ok {
 				for idx, item := range compSpec.Fields[target].GetListValue().AsSlice() {
@@ -130,6 +144,18 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 						"type":                "string",
 						"pattern":             "^\\{.*\\}$",
 						"instillUpstreamType": "reference",
+					},
+				)
+				if err != nil {
+					return nil, err
+				}
+				newCompSpec.Fields["anyOf"].GetListValue().Values = append(newCompSpec.Fields["anyOf"].GetListValue().Values, item)
+			}
+			if v.GetStringValue() == "template" {
+				item, err := structpb.NewValue(
+					map[string]interface{}{
+						"type":                "string",
+						"instillUpstreamType": "template",
 					},
 				)
 				if err != nil {
