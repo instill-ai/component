@@ -120,11 +120,11 @@ When you want to contribute a new connector or operator, you need to prepare two
 In every connector or operator implementation, we need to use two config files to define the behaviour of the component.
 
 - `definition.json`
-    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/config/definitions.json) as an example.
+    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/config/definitions.json) as an example.
     - We define the id, uid, vendor info and other metadata in this file.
     - We define the `resource_configuration` in this file, which is used for setting up the connector resource.
 - `tasks.json`
-    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector-ai/blob/main/pkg/openai/config/tasks.json) as an example.
+    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/config/tasks.json) as an example.
     - A component can have multiple tasks.
     - We define the input and output schema of each task in this file.
     - The component will auto-generate the `component_specification` and `openapi_specification` based on the input and output schema of the task
@@ -174,16 +174,14 @@ type IExecution interface {
 
 <!--
 TODO:
- 1. explain how we import the connectors or operators like [here](https://github.com/instill-ai/connector-ai/blob/main/pkg/main.go)
+ 1. explain how we import the connectors or operators like [here](https://github.com/instill-ai/connector/blob/main/pkg/main.go)
  2. Add a step by step example to implement a new connector or operator.
 -->
 
 #### Repositories
 
 Currently, we maintain four repositories for component implementations
-- [Connector AI](https://github.com/instill-ai/connector-ai): collect all connector implementations related to AI Vendors
-- [Connector Data](https://github.com/instill-ai/connector-data): collect all connector implementations related to Data Vendors
-- [Connector Blockchain](https://github.com/instill-ai/connector-blockchain): collect all connector implementations related to Blockchain Vendors
+- [Connector](https://github.com/instill-ai/connector): collect all connector implementations
 - [Operator](https://github.com/instill-ai/operator): collect all operator implementations
 
 ### Sending PRs
