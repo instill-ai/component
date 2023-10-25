@@ -3,6 +3,7 @@ package base
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
@@ -69,7 +70,27 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 	if _, ok := compSpec.Fields["const"]; ok {
 		return compSpec, nil
 	}
-	if compSpec.Fields["type"].GetStringValue() == "object" {
+
+	if _, ok := compSpec.Fields["type"]; !ok && compSpec.Fields["instillFormat"].GetStringValue() != "*" {
+		return nil, fmt.Errorf("type missing: %+v", compSpec)
+	} else if _, ok := compSpec.Fields["instillUpstreamTypes"]; !ok && compSpec.Fields["type"].GetStringValue() == "object" {
+
+		if _, ok := compSpec.Fields["title"]; !ok {
+			return nil, fmt.Errorf("title missing: %+v", compSpec)
+		}
+		if _, ok := compSpec.Fields["description"]; !ok {
+			compSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue()[:1] + strings.ToLower(compSpec.Fields["title"].GetStringValue()[1:]))
+		}
+		if _, ok := compSpec.Fields["instillUIOrder"]; !ok {
+			return nil, fmt.Errorf("instillUIOrder missing: %+v", compSpec)
+		}
+		if _, ok := compSpec.Fields["required"]; !ok {
+			return nil, fmt.Errorf("required missing: %+v", compSpec)
+		}
+		if _, ok := compSpec.Fields["instillEditOnNodeFields"]; !ok {
+			compSpec.Fields["instillEditOnNodeFields"] = compSpec.Fields["required"]
+		}
+
 		if _, ok := compSpec.Fields["properties"]; ok {
 			for k, v := range compSpec.Fields["properties"].GetStructValue().AsMap() {
 				s, err := structpb.NewStruct(v.(map[string]interface{}))
@@ -115,20 +136,33 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 		}
 
 	} else {
-		// var err error
-		if _, ok := compSpec.Fields["instillFormat"]; !ok {
-			return compSpec, nil
+		if _, ok := compSpec.Fields["title"]; !ok {
+			return nil, fmt.Errorf("title missing: %+v", compSpec)
+		}
+		if _, ok := compSpec.Fields["description"]; !ok {
+			compSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue()[:1] + strings.ToLower(compSpec.Fields["title"].GetStringValue()[1:]))
+		}
+		if _, ok := compSpec.Fields["instillUIOrder"]; !ok {
+			return nil, fmt.Errorf("instillUIOrder missing: %+v", compSpec)
 		}
 		original := proto.Clone(compSpec).(*structpb.Struct)
 		delete(original.Fields, "title")
 		delete(original.Fields, "description")
+		delete(original.Fields, "instillShortDescription")
 		delete(original.Fields, "instillFormat")
+		delete(original.Fields, "instillUIOrder")
 		delete(original.Fields, "instillUpstreamTypes")
 
 		newCompSpec := &structpb.Struct{Fields: make(map[string]*structpb.Value)}
 
 		newCompSpec.Fields["title"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue())
 		newCompSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["description"].GetStringValue())
+		if _, ok := newCompSpec.Fields["instillShortDescription"]; ok {
+			newCompSpec.Fields["instillShortDescription"] = compSpec.Fields["instillShortDescription"]
+		} else {
+			newCompSpec.Fields["instillShortDescription"] = newCompSpec.Fields["description"]
+		}
+		newCompSpec.Fields["instillUIOrder"] = structpb.NewNumberValue(compSpec.Fields["instillUIOrder"].GetNumberValue())
 		newCompSpec.Fields["instillFormat"] = structpb.NewStringValue(compSpec.Fields["instillFormat"].GetStringValue())
 		newCompSpec.Fields["instillUpstreamTypes"] = structpb.NewListValue(compSpec.Fields["instillUpstreamTypes"].GetListValue())
 		newCompSpec.Fields["anyOf"] = structpb.NewListValue(&structpb.ListValue{Values: []*structpb.Value{}})
@@ -203,7 +237,7 @@ func (comp *Component) generateComponentSpec(title string, availableTasks []stri
 
 		compInputStruct, err := convertDataSpecToCompSpec(taskJSONStruct)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("task %s: %s error: %+v", title, availableTask, err)
 		}
 		oneOf.Fields["properties"].GetStructValue().Fields["input"] = structpb.NewStructValue(compInputStruct)
 		if comp.tasks[availableTask].Fields["metadata"] != nil {
@@ -225,6 +259,107 @@ func (comp *Component) generateComponentSpec(title string, availableTasks []stri
 
 }
 
+func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
+	// var err error
+	compSpec := proto.Clone(dataSpec).(*structpb.Struct)
+	if _, ok := compSpec.Fields["const"]; ok {
+		return compSpec, nil
+	}
+
+	if _, ok := compSpec.Fields["type"]; !ok && compSpec.Fields["instillFormat"].GetStringValue() != "*" {
+		return nil, fmt.Errorf("type missing: %+v", compSpec)
+	} else if compSpec.Fields["type"].GetStringValue() == "object" {
+
+		if _, ok := compSpec.Fields["title"]; !ok {
+			return nil, fmt.Errorf("title missing: %+v", compSpec)
+		}
+		if _, ok := compSpec.Fields["description"]; !ok {
+			compSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue()[:1] + strings.ToLower(compSpec.Fields["title"].GetStringValue()[1:]))
+		}
+		if _, ok := compSpec.Fields["instillUIOrder"]; !ok {
+			return nil, fmt.Errorf("instillUIOrder missing: %+v", compSpec)
+		}
+		if _, ok := compSpec.Fields["required"]; !ok {
+			return nil, fmt.Errorf("required missing: %+v", compSpec)
+		}
+		if _, ok := compSpec.Fields["instillEditOnNodeFields"]; !ok {
+			compSpec.Fields["instillEditOnNodeFields"] = compSpec.Fields["required"]
+		}
+
+		if _, ok := compSpec.Fields["properties"]; ok {
+			for k, v := range compSpec.Fields["properties"].GetStructValue().AsMap() {
+				s, err := structpb.NewStruct(v.(map[string]interface{}))
+				if err != nil {
+					return nil, err
+				}
+				converted, err := convertDataSpecToOpenAPISpec(s)
+				if err != nil {
+					return nil, err
+				}
+				compSpec.Fields["properties"].GetStructValue().Fields[k] = structpb.NewStructValue(converted)
+
+			}
+		}
+		if _, ok := compSpec.Fields["patternProperties"]; ok {
+			for k, v := range compSpec.Fields["patternProperties"].GetStructValue().AsMap() {
+				s, err := structpb.NewStruct(v.(map[string]interface{}))
+				if err != nil {
+					return nil, err
+				}
+				converted, err := convertDataSpecToOpenAPISpec(s)
+				if err != nil {
+					return nil, err
+				}
+				compSpec.Fields["patternProperties"].GetStructValue().Fields[k] = structpb.NewStructValue(converted)
+
+			}
+		}
+		for _, target := range []string{"allOf", "anyOf", "oneOf"} {
+			if _, ok := compSpec.Fields[target]; ok {
+				for idx, item := range compSpec.Fields[target].GetListValue().AsSlice() {
+					s, err := structpb.NewStruct(item.(map[string]interface{}))
+					if err != nil {
+						return nil, err
+					}
+					converted, err := convertDataSpecToOpenAPISpec(s)
+					if err != nil {
+						return nil, err
+					}
+					compSpec.Fields[target].GetListValue().AsSlice()[idx] = structpb.NewStructValue(converted)
+				}
+			}
+		}
+
+	} else {
+		if _, ok := compSpec.Fields["title"]; !ok {
+			return nil, fmt.Errorf("title missing: %+v", compSpec)
+		}
+		if _, ok := compSpec.Fields["description"]; !ok {
+			compSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue()[:1] + strings.ToLower(compSpec.Fields["title"].GetStringValue()[1:]))
+		}
+		if _, ok := compSpec.Fields["instillUIOrder"]; !ok {
+			return nil, fmt.Errorf("instillUIOrder missing: %+v", compSpec)
+		}
+
+		newCompSpec := &structpb.Struct{Fields: make(map[string]*structpb.Value)}
+
+		newCompSpec.Fields["title"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue())
+		newCompSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["description"].GetStringValue())
+		if _, ok := newCompSpec.Fields["instillShortDescription"]; ok {
+			newCompSpec.Fields["instillShortDescription"] = compSpec.Fields["instillShortDescription"]
+		} else {
+			newCompSpec.Fields["instillShortDescription"] = newCompSpec.Fields["description"]
+		}
+		newCompSpec.Fields["instillUIOrder"] = structpb.NewNumberValue(compSpec.Fields["instillUIOrder"].GetNumberValue())
+		newCompSpec.Fields["instillFormat"] = structpb.NewStringValue(compSpec.Fields["instillFormat"].GetStringValue())
+		newCompSpec.Fields["instillUpstreamTypes"] = structpb.NewListValue(compSpec.Fields["instillUpstreamTypes"].GetListValue())
+
+		compSpec = newCompSpec
+
+	}
+	return compSpec, nil
+}
+
 func (comp *Component) generateOpenAPISpecs(title string, availableTasks []string) (*structpb.Struct, error) {
 
 	openAPITemplates := &structpb.Struct{Fields: map[string]*structpb.Value{}}
@@ -243,14 +378,23 @@ func (comp *Component) generateOpenAPISpecs(title string, availableTasks []strin
 		}
 
 		taskJSONStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct)
-		walk.Fields["items"] = taskJSONStruct.Fields["input"]
+
+		inputStruct, err := convertDataSpecToOpenAPISpec(taskJSONStruct.Fields["input"].GetStructValue())
+		if err != nil {
+			return nil, fmt.Errorf("task %s: %s error: %+v", title, availableTask, err)
+		}
+		walk.Fields["items"] = structpb.NewStructValue(inputStruct)
 
 		walk = openAPITemplate
 		for _, key := range []string{"paths", "/execute", "post", "responses", "200", "content", "application/json", "schema", "properties", "outputs"} {
 			walk = walk.Fields[key].GetStructValue()
 		}
 
-		walk.Fields["items"] = taskJSONStruct.Fields["output"]
+		outputStruct, err := convertDataSpecToOpenAPISpec(taskJSONStruct.Fields["output"].GetStructValue())
+		if err != nil {
+			return nil, fmt.Errorf("task %s: %s error: %+v", title, availableTask, err)
+		}
+		walk.Fields["items"] = structpb.NewStructValue(outputStruct)
 
 		openAPITemplates.Fields[availableTask] = structpb.NewStructValue(openAPITemplate)
 	}
