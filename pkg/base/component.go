@@ -3,7 +3,6 @@ package base
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
@@ -75,14 +74,8 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 		return nil, fmt.Errorf("type missing: %+v", compSpec)
 	} else if _, ok := compSpec.Fields["instillUpstreamTypes"]; !ok && compSpec.Fields["type"].GetStringValue() == "object" {
 
-		if _, ok := compSpec.Fields["title"]; !ok {
-			return nil, fmt.Errorf("title missing: %+v", compSpec)
-		}
-		if _, ok := compSpec.Fields["description"]; !ok {
-			compSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue()[:1] + strings.ToLower(compSpec.Fields["title"].GetStringValue()[1:]))
-		}
 		if _, ok := compSpec.Fields["instillUIOrder"]; !ok {
-			return nil, fmt.Errorf("instillUIOrder missing: %+v", compSpec)
+			compSpec.Fields["instillUIOrder"] = structpb.NewNumberValue(0)
 		}
 		if _, ok := compSpec.Fields["required"]; !ok {
 			return nil, fmt.Errorf("required missing: %+v", compSpec)
@@ -136,14 +129,8 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 		}
 
 	} else {
-		if _, ok := compSpec.Fields["title"]; !ok {
-			return nil, fmt.Errorf("title missing: %+v", compSpec)
-		}
-		if _, ok := compSpec.Fields["description"]; !ok {
-			compSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue()[:1] + strings.ToLower(compSpec.Fields["title"].GetStringValue()[1:]))
-		}
 		if _, ok := compSpec.Fields["instillUIOrder"]; !ok {
-			return nil, fmt.Errorf("instillUIOrder missing: %+v", compSpec)
+			compSpec.Fields["instillUIOrder"] = structpb.NewNumberValue(0)
 		}
 		original := proto.Clone(compSpec).(*structpb.Struct)
 		delete(original.Fields, "title")
@@ -268,16 +255,21 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 
 	if _, ok := compSpec.Fields["type"]; !ok && compSpec.Fields["instillFormat"].GetStringValue() != "*" {
 		return nil, fmt.Errorf("type missing: %+v", compSpec)
+	} else if compSpec.Fields["type"].GetStringValue() == "array" {
+
+		if _, ok := compSpec.Fields["instillUIOrder"]; !ok {
+			compSpec.Fields["instillUIOrder"] = structpb.NewNumberValue(0)
+		}
+
+		converted, err := convertDataSpecToOpenAPISpec(compSpec.Fields["items"].GetStructValue())
+		if err != nil {
+			return nil, err
+		}
+		compSpec.Fields["items"] = structpb.NewStructValue(converted)
 	} else if compSpec.Fields["type"].GetStringValue() == "object" {
 
-		if _, ok := compSpec.Fields["title"]; !ok {
-			return nil, fmt.Errorf("title missing: %+v", compSpec)
-		}
-		if _, ok := compSpec.Fields["description"]; !ok {
-			compSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue()[:1] + strings.ToLower(compSpec.Fields["title"].GetStringValue()[1:]))
-		}
 		if _, ok := compSpec.Fields["instillUIOrder"]; !ok {
-			return nil, fmt.Errorf("instillUIOrder missing: %+v", compSpec)
+			compSpec.Fields["instillUIOrder"] = structpb.NewNumberValue(0)
 		}
 		if _, ok := compSpec.Fields["required"]; !ok {
 			return nil, fmt.Errorf("required missing: %+v", compSpec)
@@ -331,14 +323,8 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 		}
 
 	} else {
-		if _, ok := compSpec.Fields["title"]; !ok {
-			return nil, fmt.Errorf("title missing: %+v", compSpec)
-		}
-		if _, ok := compSpec.Fields["description"]; !ok {
-			compSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue()[:1] + strings.ToLower(compSpec.Fields["title"].GetStringValue()[1:]))
-		}
 		if _, ok := compSpec.Fields["instillUIOrder"]; !ok {
-			return nil, fmt.Errorf("instillUIOrder missing: %+v", compSpec)
+			compSpec.Fields["instillUIOrder"] = structpb.NewNumberValue(0)
 		}
 
 		newCompSpec := &structpb.Struct{Fields: make(map[string]*structpb.Value)}
