@@ -42,7 +42,7 @@ type IConnector interface {
 type Connector struct {
 	Component
 
-	// TODO: we can store the credential_fields here when LoadConnectorDefinitions
+	// TODO: we can store the instillCredentialFields here when LoadConnectorDefinitions
 	credentialFields map[string][]string
 }
 
@@ -163,7 +163,7 @@ func (c *Connector) initCredentialField(defID string) {
 
 func (c *Connector) traverseCredentialField(input *structpb.Value, prefix string, credentialFields []string) []string {
 	for key, v := range input.GetStructValue().GetFields() {
-		if isCredential, ok := v.GetStructValue().GetFields()["credential_field"]; ok {
+		if isCredential, ok := v.GetStructValue().GetFields()["instillCredentialField"]; ok {
 			if isCredential.GetBoolValue() || isCredential.GetStringValue() == "true" {
 				credentialFields = append(credentialFields, fmt.Sprintf("%s%s", prefix, key))
 			}
