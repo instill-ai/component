@@ -22,7 +22,7 @@ type IConnector interface {
 
 	// Functions that shared for all connectors
 	// Load connector definitions from json files
-	LoadConnectorDefinitions(definitionsJSON []byte, tasksJSON []byte) error
+	LoadConnectorDefinitions(definitionsJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
 	// Add definition
 	AddConnectorDefinition(def *connectorPB.ConnectorDefinition) error
 	// Get the connector definition by definition uid
@@ -47,7 +47,7 @@ type Connector struct {
 }
 
 // LoadConnectorDefinitions loads the connector definitions from json files
-func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJSONBytes []byte) error {
+func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
 	var err error
 	definitionsJSONList := &[]interface{}{}
 	c.credentialFields = map[string][]string{}
@@ -56,7 +56,12 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJ
 	if err != nil {
 		return err
 	}
-	err = c.Component.loadTasks(tasksJSONBytes)
+	renderedTasksJSON, nil := renderTaskJson(tasksJSONBytes, additionalJSONBytes)
+	if err != nil {
+		return nil
+	}
+
+	err = c.Component.loadTasks(renderedTasksJSON)
 	if err != nil {
 		return err
 	}

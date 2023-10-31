@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
+	"github.com/lestrrat-go/jsref"
+	"github.com/lestrrat-go/jsref/provider"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
@@ -520,4 +522,46 @@ func ConvertToStructpb(from interface{}) (*structpb.Struct, error) {
 		return nil, err
 	}
 	return to, nil
+}
+
+func renderTaskJson(tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) ([]byte, error) {
+	var err error
+	mp := provider.NewMap()
+	for k, v := range additionalJSONBytes {
+		var i interface{}
+		err = json.Unmarshal(v, &i)
+		if err != nil {
+			return nil, err
+		}
+		err = mp.Set(k, i)
+		if err != nil {
+			return nil, err
+		}
+	}
+	res := jsref.New()
+	err = res.AddProvider(mp)
+	if err != nil {
+		return nil, err
+	}
+	err = res.AddProvider(provider.NewHTTP())
+	if err != nil {
+		return nil, err
+	}
+
+	var tasksJSON interface{}
+	err = json.Unmarshal(tasksJSONBytes, &tasksJSON)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := res.Resolve(tasksJSON, "", jsref.WithRecursiveResolution(true))
+	if err != nil {
+		return nil, err
+	}
+	renderedTasksJSON, err := json.Marshal(result)
+	if err != nil {
+		return nil, err
+	}
+	return renderedTasksJSON, nil
+
 }
