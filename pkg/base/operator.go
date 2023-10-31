@@ -15,8 +15,8 @@ type IOperator interface {
 	IComponent
 
 	// Functions that shared for all operators
-	// Load operator definitions from json files
-	LoadOperatorDefinitions(definitionsJSON []byte, tasksJSON []byte) error
+	// Load operator definitions from json files, the additionalJSONBytes is only needed when you reference in-memory json file
+	LoadOperatorDefinitions(definitionsJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
 	// Add definition
 	AddOperatorDefinition(def *pipelinePB.OperatorDefinition) error
 	// Get the operator definition by definition uid
@@ -33,7 +33,7 @@ type Operator struct {
 }
 
 // LoadOperatorDefinitions loads the operator definitions from json files
-func (o *Operator) LoadOperatorDefinitions(definitionsJSONBytes []byte, tasksJSONBytes []byte) error {
+func (o *Operator) LoadOperatorDefinitions(definitionsJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
 	var err error
 	definitionsJSONList := &[]interface{}{}
 
@@ -41,7 +41,12 @@ func (o *Operator) LoadOperatorDefinitions(definitionsJSONBytes []byte, tasksJSO
 	if err != nil {
 		return err
 	}
-	err = o.Component.loadTasks(tasksJSONBytes)
+	renderedTasksJSON, nil := renderTaskJson(tasksJSONBytes, additionalJSONBytes)
+	if err != nil {
+		return nil
+	}
+
+	err = o.Component.loadTasks(renderedTasksJSON)
 	if err != nil {
 		return err
 	}
