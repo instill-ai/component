@@ -32,7 +32,12 @@
         "instillFormat": "object",
         "description": "The detected bounding box in (left, top, width, height) format.",
         "additionalProperties": false,
-        "required": ["left", "top", "width", "height"],
+        "required": [
+          "left",
+          "top",
+          "width",
+          "height"
+        ],
         "properties": {
           "left": {
             "title": "Left",
@@ -68,7 +73,10 @@
         "type": "object",
         "instillFormat": "object",
         "additionalProperties": false,
-        "required": ["category", "score"],
+        "required": [
+          "category",
+          "score"
+        ],
         "properties": {
           "category": {
             "title": "Category",
@@ -90,7 +98,9 @@
         "type": "object",
         "instillFormat": "object",
         "additionalProperties": false,
-        "required": ["objects"],
+        "required": [
+          "objects"
+        ],
         "properties": {
           "objects": {
             "title": "Objects",
@@ -103,7 +113,11 @@
               "title": "Object",
               "instillFormat": "object",
               "additionalProperties": false,
-              "required": ["bounding_box", "category", "score"],
+              "required": [
+                "bounding_box",
+                "category",
+                "score"
+              ],
               "properties": {
                 "bounding_box": {
                   "title": "Bounding box",
@@ -133,7 +147,9 @@
         "type": "object",
         "instillFormat": "object",
         "additionalProperties": false,
-        "required": ["objects"],
+        "required": [
+          "objects"
+        ],
         "properties": {
           "objects": {
             "title": "Objects",
@@ -145,7 +161,11 @@
               "type": "object",
               "title": "Object",
               "instillFormat": "object",
-              "required": ["keypoints", "score", "bounding_box"],
+              "required": [
+                "keypoints",
+                "score",
+                "bounding_box"
+              ],
               "properties": {
                 "keypoints": {
                   "title": "Keypoints",
@@ -156,7 +176,11 @@
                     "type": "object",
                     "title": "Object",
                     "instillFormat": "object",
-                    "required": ["x", "y", "v"],
+                    "required": [
+                      "x",
+                      "y",
+                      "v"
+                    ],
                     "instillUIOrder": 0,
                     "properties": {
                       "x": {
@@ -201,7 +225,9 @@
         "type": "object",
         "instillFormat": "object",
         "additionalProperties": false,
-        "required": ["objects"],
+        "required": [
+          "objects"
+        ],
         "properties": {
           "objects": {
             "title": "Objects",
@@ -213,9 +239,13 @@
               "type": "object",
               "title": "Object",
               "instillFormat": "object",
-              "required": ["boundingBox", "text", "score"],
+              "required": [
+                "bounding_box",
+                "text",
+                "score"
+              ],
               "properties": {
-                "boundingBox": {
+                "bounding_box": {
                   "title": "Bounding Box",
                   "instillUIOrder": 0,
                   "$ref": "#/$defs/instill_types/bounding_box"
@@ -243,7 +273,9 @@
         "type": "object",
         "instillFormat": "object",
         "additionalProperties": false,
-        "required": ["objects"],
+        "required": [
+          "objects"
+        ],
         "properties": {
           "objects": {
             "title": "Objects",
@@ -255,7 +287,12 @@
               "type": "object",
               "title": "Object",
               "instillFormat": "object",
-              "required": ["rle", "boundingBox", "category", "score"],
+              "required": [
+                "rle",
+                "bounding_box",
+                "category",
+                "score"
+              ],
               "properties": {
                 "rle": {
                   "title": "RLE",
@@ -264,7 +301,7 @@
                   "instillUIOrder": 0,
                   "instillFormat": "text"
                 },
-                "boundingBox": {
+                "bounding_box": {
                   "title": "Bounding Box",
                   "instillUIOrder": 1,
                   "$ref": "#/$defs/instill_types/bounding_box"
@@ -292,7 +329,9 @@
         "type": "object",
         "instillFormat": "object",
         "additionalProperties": false,
-        "required": ["stuffs"],
+        "required": [
+          "stuffs"
+        ],
         "properties": {
           "stuffs": {
             "title": "Stuffs",
@@ -304,7 +343,10 @@
               "type": "object",
               "title": "Object",
               "instillFormat": "object",
-              "required": ["rle", "category"],
+              "required": [
+                "rle",
+                "category"
+              ],
               "properties": {
                 "rle": {
                   "title": "RLE",
