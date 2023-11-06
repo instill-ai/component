@@ -1,15 +1,10 @@
 {
   "$defs": {
     "instill_types": {
-      "audio": {
-        "contentEncoding": "base64",
-        "instillFormat": "audio",
-        "type": "string"
-      },
       "bounding_box": {
         "additionalProperties": false,
         "description": "The detected bounding box in (left, top, width, height) format.",
-        "instillFormat": "object",
+        "instillFormat": "structured/bounding_box",
         "properties": {
           "height": {
             "description": "Bounding box height value",
@@ -51,11 +46,10 @@
       },
       "classification": {
         "additionalProperties": false,
-        "instillFormat": "object",
         "properties": {
           "category": {
             "description": "The predicted category of the input.",
-            "instillFormat": "text",
+            "instillFormat": "string",
             "instillUIOrder": 0,
             "title": "Category",
             "type": "string"
@@ -76,15 +70,13 @@
       },
       "detection": {
         "additionalProperties": false,
-        "instillFormat": "object",
         "properties": {
           "objects": {
             "description": "A list of detected objects.",
-            "instillFormat": "array",
+            "instillFormat": "structured/detection_objects",
             "instillUIOrder": 0,
             "items": {
               "additionalProperties": false,
-              "instillFormat": "object",
               "properties": {
                 "bounding_box": {
                   "$ref": "#/$defs/instill_types/bounding_box",
@@ -93,7 +85,7 @@
                 },
                 "category": {
                   "description": "The predicted category of the bounding box.",
-                  "instillFormat": "text",
+                  "instillFormat": "string",
                   "instillUIOrder": 2,
                   "title": "Category",
                   "type": "string"
@@ -124,7 +116,6 @@
         "type": "object"
       },
       "embedding": {
-        "instillFormat": "array",
         "items": {
           "instillFormat": "number",
           "title": "Embedding",
@@ -133,21 +124,14 @@
         "title": "Embedding",
         "type": "array"
       },
-      "image": {
-        "contentEncoding": "base64",
-        "instillFormat": "image",
-        "type": "string"
-      },
       "instance_segmentation": {
         "additionalProperties": false,
-        "instillFormat": "object",
         "properties": {
           "objects": {
             "description": "A list of detected instance bounding boxes.",
-            "instillFormat": "array",
+            "instillFormat": "structured/instance_segmentation_objects",
             "instillUIOrder": 0,
             "items": {
-              "instillFormat": "object",
               "properties": {
                 "bounding_box": {
                   "$ref": "#/$defs/instill_types/bounding_box",
@@ -156,14 +140,14 @@
                 },
                 "category": {
                   "description": "The predicted category of the bounding box.",
-                  "instillFormat": "text",
+                  "instillFormat": "string",
                   "instillUIOrder": 2,
                   "title": "Category",
                   "type": "string"
                 },
                 "rle": {
                   "description": "Run Length Encoding (RLE) of instance mask within the bounding box.",
-                  "instillFormat": "text",
+                  "instillFormat": "string",
                   "instillUIOrder": 0,
                   "title": "RLE",
                   "type": "string"
@@ -196,14 +180,12 @@
       },
       "keypoint": {
         "additionalProperties": false,
-        "instillFormat": "object",
         "properties": {
           "objects": {
             "description": "A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object.",
-            "instillFormat": "array",
+            "instillFormat": "structured/keypoint_objects",
             "instillUIOrder": 0,
             "items": {
-              "instillFormat": "object",
               "properties": {
                 "bounding_box": {
                   "$ref": "#/$defs/instill_types/bounding_box",
@@ -214,7 +196,6 @@
                   "description": "A keypoint group is composed of a list of pre-defined keypoints of a detected object.",
                   "instillUIOrder": 0,
                   "items": {
-                    "instillFormat": "object",
                     "instillUIOrder": 0,
                     "properties": {
                       "v": {
@@ -272,20 +253,14 @@
         ],
         "type": "object"
       },
-      "metadata": {
-        "instillFormat": "object",
-        "type": "object"
-      },
       "ocr": {
         "additionalProperties": false,
-        "instillFormat": "object",
         "properties": {
           "objects": {
             "description": "A list of detected bounding boxes.",
-            "instillFormat": "array",
+            "instillFormat": "structured/ocr_objects",
             "instillUIOrder": 0,
             "items": {
-              "instillFormat": "object",
               "properties": {
                 "bounding_box": {
                   "$ref": "#/$defs/instill_types/bounding_box",
@@ -301,7 +276,7 @@
                 },
                 "text": {
                   "description": "Text string recognised per bounding box.",
-                  "instillFormat": "text",
+                  "instillFormat": "string",
                   "instillUIOrder": 1,
                   "title": "Text",
                   "type": "string"
@@ -326,25 +301,23 @@
       },
       "semantic_segmentation": {
         "additionalProperties": false,
-        "instillFormat": "object",
         "properties": {
           "stuffs": {
             "description": "A list of RLE binary masks.",
-            "instillFormat": "array",
+            "instillFormat": "structured/semantic_segmentation_stuffs",
             "instillUIOrder": 0,
             "items": {
-              "instillFormat": "object",
               "properties": {
                 "category": {
                   "description": "Category text string corresponding to each stuff mask.",
-                  "instillFormat": "text",
+                  "instillFormat": "string",
                   "instillUIOrder": 1,
                   "title": "Category",
                   "type": "string"
                 },
                 "rle": {
                   "description": "Run Length Encoding (RLE) of each stuff mask within the image.",
-                  "instillFormat": "text",
+                  "instillFormat": "string",
                   "instillUIOrder": 0,
                   "title": "RLE",
                   "type": "string"
@@ -365,26 +338,7 @@
           "stuffs"
         ],
         "type": "object"
-      },
-      "semi_structured": {
-        "instillFormat": "object",
-        "type": "object"
-      },
-      "text": {
-        "instillFormat": "text",
-        "type": "string"
-      },
-      "video": {
-        "contentEncoding": "base64",
-        "instillFormat": "video",
-        "type": "string"
       }
-    },
-    "upstream": {
-      "description": "Propagated from upstream component.",
-      "pattern": "^\\{\\{ [a-z]([a-z0-9-]{0,61}[a-z0-9])?(.[a-zA-Z_][a-zA-Z_0-9]*(\\[(0|[1-9][0-9]*)\\])?)+ \\}\\}$",
-      "title": "Upstream Value",
-      "type": "string"
     }
   }
 }

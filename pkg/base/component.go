@@ -72,7 +72,12 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 		return compSpec, nil
 	}
 
-	if _, ok := compSpec.Fields["type"]; !ok && compSpec.Fields["instillFormat"].GetStringValue() != "*" {
+	isFreeform := false
+	if len(compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice()) > 0 {
+		isFreeform = compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice()[0].(string) == "*"
+	}
+
+	if _, ok := compSpec.Fields["type"]; !ok && !isFreeform {
 		return nil, fmt.Errorf("type missing: %+v", compSpec)
 	} else if _, ok := compSpec.Fields["instillUpstreamTypes"]; !ok && compSpec.Fields["type"].GetStringValue() == "object" {
 
@@ -152,7 +157,9 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 			newCompSpec.Fields["instillShortDescription"] = newCompSpec.Fields["description"]
 		}
 		newCompSpec.Fields["instillUIOrder"] = structpb.NewNumberValue(compSpec.Fields["instillUIOrder"].GetNumberValue())
-		newCompSpec.Fields["instillFormat"] = structpb.NewStringValue(compSpec.Fields["instillFormat"].GetStringValue())
+		if compSpec.Fields["instillFormat"] != nil {
+			newCompSpec.Fields["instillFormat"] = structpb.NewStringValue(compSpec.Fields["instillFormat"].GetStringValue())
+		}
 		newCompSpec.Fields["instillUpstreamTypes"] = structpb.NewListValue(compSpec.Fields["instillUpstreamTypes"].GetListValue())
 		newCompSpec.Fields["anyOf"] = structpb.NewListValue(&structpb.ListValue{Values: []*structpb.Value{}})
 
@@ -255,7 +262,12 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 		return compSpec, nil
 	}
 
-	if _, ok := compSpec.Fields["type"]; !ok && compSpec.Fields["instillFormat"].GetStringValue() != "*" {
+	isFreeform := false
+	if len(compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice()) > 0 {
+		isFreeform = compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice()[0].(string) == "*"
+	}
+
+	if _, ok := compSpec.Fields["type"]; !ok && !isFreeform {
 		return nil, fmt.Errorf("type missing: %+v", compSpec)
 	} else if compSpec.Fields["type"].GetStringValue() == "array" {
 
@@ -339,7 +351,9 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 			newCompSpec.Fields["instillShortDescription"] = newCompSpec.Fields["description"]
 		}
 		newCompSpec.Fields["instillUIOrder"] = structpb.NewNumberValue(compSpec.Fields["instillUIOrder"].GetNumberValue())
-		newCompSpec.Fields["instillFormat"] = structpb.NewStringValue(compSpec.Fields["instillFormat"].GetStringValue())
+		if compSpec.Fields["instillFormat"] != nil {
+			newCompSpec.Fields["instillFormat"] = structpb.NewStringValue(compSpec.Fields["instillFormat"].GetStringValue())
+		}
 		newCompSpec.Fields["instillUpstreamTypes"] = structpb.NewListValue(compSpec.Fields["instillUpstreamTypes"].GetListValue())
 
 		compSpec = newCompSpec
