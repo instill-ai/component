@@ -3,6 +3,10 @@ repos:
     rev: v4.4.0
     hooks:
       - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: pretty-format-json
+        args: [--autofix]
       - id: end-of-file-fixer
       - id: trailing-whitespace
   - repo: https://github.com/dnephin/pre-commit-golang

@@ -1,390 +1,390 @@
 {
   "$defs": {
-    "upstream": {
-      "title": "Upstream Value",
-      "description": "Propagated from upstream component.",
-      "type": "string",
-      "pattern": "^\\{\\{ [a-z]([a-z0-9-]{0,61}[a-z0-9])?(.[a-zA-Z_][a-zA-Z_0-9]*(\\[(0|[1-9][0-9]*)\\])?)+ \\}\\}$"
-    },
     "instill_types": {
-      "text": {
-        "type": "string",
-        "instillFormat": "text"
-      },
-      "image": {
-        "type": "string",
-        "instillFormat": "image",
-        "contentEncoding": "base64"
-      },
       "audio": {
-        "type": "string",
+        "contentEncoding": "base64",
         "instillFormat": "audio",
-        "contentEncoding": "base64"
-      },
-      "video": {
-        "type": "string",
-        "instillFormat": "video",
-        "contentEncoding": "base64"
+        "type": "string"
       },
       "bounding_box": {
-        "title": "Bounding Box",
-        "type": "object",
-        "instillFormat": "object",
-        "description": "The detected bounding box in (left, top, width, height) format.",
         "additionalProperties": false,
+        "description": "The detected bounding box in (left, top, width, height) format.",
+        "instillFormat": "object",
+        "properties": {
+          "height": {
+            "description": "Bounding box height value",
+            "instillFormat": "number",
+            "instillUIOrder": 3,
+            "title": "Height",
+            "type": "number"
+          },
+          "left": {
+            "description": "Bounding box left x-axis value",
+            "instillFormat": "number",
+            "instillUIOrder": 0,
+            "title": "Left",
+            "type": "number"
+          },
+          "top": {
+            "description": "Bounding box top y-axis value",
+            "instillFormat": "number",
+            "instillUIOrder": 1,
+            "title": "Top",
+            "type": "number"
+          },
+          "width": {
+            "description": "Bounding box width value",
+            "instillFormat": "number",
+            "instillUIOrder": 2,
+            "title": "Width",
+            "type": "number"
+          }
+        },
         "required": [
           "left",
           "top",
           "width",
           "height"
         ],
-        "properties": {
-          "left": {
-            "title": "Left",
-            "description": "Bounding box left x-axis value",
-            "instillUIOrder": 0,
-            "type": "number",
-            "instillFormat": "number"
-          },
-          "top": {
-            "title": "Top",
-            "description": "Bounding box top y-axis value",
-            "instillUIOrder": 1,
-            "type": "number",
-            "instillFormat": "number"
-          },
-          "width": {
-            "title": "Width",
-            "description": "Bounding box width value",
-            "instillUIOrder": 2,
-            "type": "number",
-            "instillFormat": "number"
-          },
-          "height": {
-            "title": "Height",
-            "description": "Bounding box height value",
-            "instillUIOrder": 3,
-            "type": "number",
-            "instillFormat": "number"
-          }
-        }
+        "title": "Bounding Box",
+        "type": "object"
       },
       "classification": {
-        "type": "object",
-        "instillFormat": "object",
         "additionalProperties": false,
+        "instillFormat": "object",
+        "properties": {
+          "category": {
+            "description": "The predicted category of the input.",
+            "instillFormat": "text",
+            "instillUIOrder": 0,
+            "title": "Category",
+            "type": "string"
+          },
+          "score": {
+            "description": "The confidence score of the predicted category of the input.",
+            "instillFormat": "number",
+            "instillUIOrder": 1,
+            "title": "Score",
+            "type": "number"
+          }
+        },
         "required": [
           "category",
           "score"
         ],
-        "properties": {
-          "category": {
-            "title": "Category",
-            "description": "The predicted category of the input.",
-            "type": "string",
-            "instillUIOrder": 0,
-            "instillFormat": "text"
-          },
-          "score": {
-            "title": "Score",
-            "description": "The confidence score of the predicted category of the input.",
-            "type": "number",
-            "instillUIOrder": 1,
-            "instillFormat": "number"
-          }
-        }
+        "type": "object"
       },
       "detection": {
-        "type": "object",
-        "instillFormat": "object",
         "additionalProperties": false,
-        "required": [
-          "objects"
-        ],
+        "instillFormat": "object",
         "properties": {
           "objects": {
-            "title": "Objects",
             "description": "A list of detected objects.",
-            "type": "array",
             "instillFormat": "array",
             "instillUIOrder": 0,
             "items": {
-              "type": "object",
-              "title": "Object",
-              "instillFormat": "object",
               "additionalProperties": false,
+              "instillFormat": "object",
+              "properties": {
+                "bounding_box": {
+                  "$ref": "#/$defs/instill_types/bounding_box",
+                  "instillUIOrder": 1,
+                  "title": "Bounding box"
+                },
+                "category": {
+                  "description": "The predicted category of the bounding box.",
+                  "instillFormat": "text",
+                  "instillUIOrder": 2,
+                  "title": "Category",
+                  "type": "string"
+                },
+                "score": {
+                  "description": "The confidence score of the predicted category of the bounding box.",
+                  "instillFormat": "number",
+                  "instillUIOrder": 3,
+                  "title": "Score",
+                  "type": "number"
+                }
+              },
               "required": [
                 "bounding_box",
                 "category",
                 "score"
               ],
-              "properties": {
-                "bounding_box": {
-                  "title": "Bounding box",
-                  "instillUIOrder": 1,
-                  "$ref": "#/$defs/instill_types/bounding_box"
-                },
-                "category": {
-                  "title": "Category",
-                  "instillUIOrder": 2,
-                  "description": "The predicted category of the bounding box.",
-                  "type": "string",
-                  "instillFormat": "text"
-                },
-                "score": {
-                  "title": "Score",
-                  "instillUIOrder": 3,
-                  "description": "The confidence score of the predicted category of the bounding box.",
-                  "type": "number",
-                  "instillFormat": "number"
-                }
-              }
-            }
+              "title": "Object",
+              "type": "object"
+            },
+            "title": "Objects",
+            "type": "array"
           }
-        }
-      },
-      "keypoint": {
-        "type": "object",
-        "instillFormat": "object",
-        "additionalProperties": false,
+        },
         "required": [
           "objects"
         ],
+        "type": "object"
+      },
+      "embedding": {
+        "instillFormat": "array",
+        "items": {
+          "instillFormat": "number",
+          "title": "Embedding",
+          "type": "number"
+        },
+        "title": "Embedding",
+        "type": "array"
+      },
+      "image": {
+        "contentEncoding": "base64",
+        "instillFormat": "image",
+        "type": "string"
+      },
+      "instance_segmentation": {
+        "additionalProperties": false,
+        "instillFormat": "object",
         "properties": {
           "objects": {
-            "title": "Objects",
-            "description": "A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object.",
-            "type": "array",
+            "description": "A list of detected instance bounding boxes.",
             "instillFormat": "array",
             "instillUIOrder": 0,
             "items": {
-              "type": "object",
-              "title": "Object",
               "instillFormat": "object",
-              "required": [
-                "keypoints",
-                "score",
-                "bounding_box"
-              ],
               "properties": {
+                "bounding_box": {
+                  "$ref": "#/$defs/instill_types/bounding_box",
+                  "instillUIOrder": 1,
+                  "title": "Bounding Box"
+                },
+                "category": {
+                  "description": "The predicted category of the bounding box.",
+                  "instillFormat": "text",
+                  "instillUIOrder": 2,
+                  "title": "Category",
+                  "type": "string"
+                },
+                "rle": {
+                  "description": "Run Length Encoding (RLE) of instance mask within the bounding box.",
+                  "instillFormat": "text",
+                  "instillUIOrder": 0,
+                  "title": "RLE",
+                  "type": "string"
+                },
+                "score": {
+                  "description": "The confidence score of the predicted instance object.",
+                  "instillFormat": "number",
+                  "instillUIOrder": 3,
+                  "title": "Score",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "rle",
+                "bounding_box",
+                "category",
+                "score"
+              ],
+              "title": "Object",
+              "type": "object"
+            },
+            "title": "Objects",
+            "type": "array"
+          }
+        },
+        "required": [
+          "objects"
+        ],
+        "type": "object"
+      },
+      "keypoint": {
+        "additionalProperties": false,
+        "instillFormat": "object",
+        "properties": {
+          "objects": {
+            "description": "A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object.",
+            "instillFormat": "array",
+            "instillUIOrder": 0,
+            "items": {
+              "instillFormat": "object",
+              "properties": {
+                "bounding_box": {
+                  "$ref": "#/$defs/instill_types/bounding_box",
+                  "instillUIOrder": 2,
+                  "title": "Bounding Box"
+                },
                 "keypoints": {
-                  "title": "Keypoints",
                   "description": "A keypoint group is composed of a list of pre-defined keypoints of a detected object.",
-                  "type": "array",
                   "instillUIOrder": 0,
                   "items": {
-                    "type": "object",
-                    "title": "Object",
                     "instillFormat": "object",
+                    "instillUIOrder": 0,
+                    "properties": {
+                      "v": {
+                        "description": "visibility score of the keypoint.",
+                        "instillFormat": "number",
+                        "instillUIOrder": 2,
+                        "type": "number"
+                      },
+                      "x": {
+                        "description": "x coordinate of the keypoint.",
+                        "instillFormat": "number",
+                        "instillUIOrder": 0,
+                        "type": "number"
+                      },
+                      "y": {
+                        "description": "y coordinate of the keypoint.",
+                        "instillFormat": "number",
+                        "instillUIOrder": 1,
+                        "type": "number"
+                      }
+                    },
                     "required": [
                       "x",
                       "y",
                       "v"
                     ],
-                    "instillUIOrder": 0,
-                    "properties": {
-                      "x": {
-                        "instillUIOrder": 0,
-                        "description": "x coordinate of the keypoint.",
-                        "type": "number",
-                        "instillFormat": "number"
-                      },
-                      "y": {
-                        "instillUIOrder": 1,
-                        "description": "y coordinate of the keypoint.",
-                        "type": "number",
-                        "instillFormat": "number"
-                      },
-                      "v": {
-                        "instillUIOrder": 2,
-                        "description": "visibility score of the keypoint.",
-                        "type": "number",
-                        "instillFormat": "number"
-                      }
-                    }
-                  }
+                    "title": "Object",
+                    "type": "object"
+                  },
+                  "title": "Keypoints",
+                  "type": "array"
                 },
                 "score": {
-                  "title": "Score",
-                  "instillUIOrder": 1,
                   "description": "The confidence score of the predicted object.",
-                  "type": "number",
-                  "instillFormat": "number"
-                },
-                "bounding_box": {
-                  "title": "Bounding Box",
-                  "instillUIOrder": 2,
-                  "$ref": "#/$defs/instill_types/bounding_box"
+                  "instillFormat": "number",
+                  "instillUIOrder": 1,
+                  "title": "Score",
+                  "type": "number"
                 }
-              }
-            }
+              },
+              "required": [
+                "keypoints",
+                "score",
+                "bounding_box"
+              ],
+              "title": "Object",
+              "type": "object"
+            },
+            "title": "Objects",
+            "type": "array"
           }
-        }
-      },
-      "ocr": {
-        "type": "object",
-        "instillFormat": "object",
-        "additionalProperties": false,
+        },
         "required": [
           "objects"
         ],
+        "type": "object"
+      },
+      "metadata": {
+        "instillFormat": "object",
+        "type": "object"
+      },
+      "ocr": {
+        "additionalProperties": false,
+        "instillFormat": "object",
         "properties": {
           "objects": {
-            "title": "Objects",
             "description": "A list of detected bounding boxes.",
-            "type": "array",
             "instillFormat": "array",
             "instillUIOrder": 0,
             "items": {
-              "type": "object",
-              "title": "Object",
               "instillFormat": "object",
+              "properties": {
+                "bounding_box": {
+                  "$ref": "#/$defs/instill_types/bounding_box",
+                  "instillUIOrder": 0,
+                  "title": "Bounding Box"
+                },
+                "score": {
+                  "description": "The confidence score of the predicted object.",
+                  "instillFormat": "number",
+                  "instillUIOrder": 2,
+                  "title": "Score",
+                  "type": "number"
+                },
+                "text": {
+                  "description": "Text string recognised per bounding box.",
+                  "instillFormat": "text",
+                  "instillUIOrder": 1,
+                  "title": "Text",
+                  "type": "string"
+                }
+              },
               "required": [
                 "bounding_box",
                 "text",
                 "score"
               ],
-              "properties": {
-                "bounding_box": {
-                  "title": "Bounding Box",
-                  "instillUIOrder": 0,
-                  "$ref": "#/$defs/instill_types/bounding_box"
-                },
-                "text": {
-                  "title": "Text",
-                  "instillUIOrder": 1,
-                  "description": "Text string recognised per bounding box.",
-                  "type": "string",
-                  "instillFormat": "text"
-                },
-                "score": {
-                  "title": "Score",
-                  "instillUIOrder": 2,
-                  "description": "The confidence score of the predicted object.",
-                  "type": "number",
-                  "instillFormat": "number"
-                }
-              }
-            }
+              "title": "Object",
+              "type": "object"
+            },
+            "title": "Objects",
+            "type": "array"
           }
-        }
-      },
-      "instance_segmentation": {
-        "type": "object",
-        "instillFormat": "object",
-        "additionalProperties": false,
+        },
         "required": [
           "objects"
         ],
-        "properties": {
-          "objects": {
-            "title": "Objects",
-            "description": "A list of detected instance bounding boxes.",
-            "type": "array",
-            "instillFormat": "array",
-            "instillUIOrder": 0,
-            "items": {
-              "type": "object",
-              "title": "Object",
-              "instillFormat": "object",
-              "required": [
-                "rle",
-                "bounding_box",
-                "category",
-                "score"
-              ],
-              "properties": {
-                "rle": {
-                  "title": "RLE",
-                  "description": "Run Length Encoding (RLE) of instance mask within the bounding box.",
-                  "type": "string",
-                  "instillUIOrder": 0,
-                  "instillFormat": "text"
-                },
-                "bounding_box": {
-                  "title": "Bounding Box",
-                  "instillUIOrder": 1,
-                  "$ref": "#/$defs/instill_types/bounding_box"
-                },
-                "category": {
-                  "title": "Category",
-                  "instillUIOrder": 2,
-                  "description": "The predicted category of the bounding box.",
-                  "type": "string",
-                  "instillFormat": "text"
-                },
-                "score": {
-                  "title": "Score",
-                  "instillUIOrder": 3,
-                  "description": "The confidence score of the predicted instance object.",
-                  "type": "number",
-                  "instillFormat": "number"
-                }
-              }
-            }
-          }
-        }
+        "type": "object"
       },
       "semantic_segmentation": {
-        "type": "object",
-        "instillFormat": "object",
         "additionalProperties": false,
-        "required": [
-          "stuffs"
-        ],
+        "instillFormat": "object",
         "properties": {
           "stuffs": {
-            "title": "Stuffs",
             "description": "A list of RLE binary masks.",
-            "type": "array",
             "instillFormat": "array",
             "instillUIOrder": 0,
             "items": {
-              "type": "object",
-              "title": "Object",
               "instillFormat": "object",
+              "properties": {
+                "category": {
+                  "description": "Category text string corresponding to each stuff mask.",
+                  "instillFormat": "text",
+                  "instillUIOrder": 1,
+                  "title": "Category",
+                  "type": "string"
+                },
+                "rle": {
+                  "description": "Run Length Encoding (RLE) of each stuff mask within the image.",
+                  "instillFormat": "text",
+                  "instillUIOrder": 0,
+                  "title": "RLE",
+                  "type": "string"
+                }
+              },
               "required": [
                 "rle",
                 "category"
               ],
-              "properties": {
-                "rle": {
-                  "title": "RLE",
-                  "description": "Run Length Encoding (RLE) of each stuff mask within the image.",
-                  "instillUIOrder": 0,
-                  "type": "string",
-                  "instillFormat": "text"
-                },
-                "category": {
-                  "title": "Category",
-                  "description": "Category text string corresponding to each stuff mask.",
-                  "instillUIOrder": 1,
-                  "type": "string",
-                  "instillFormat": "text"
-                }
-              }
-            }
+              "title": "Object",
+              "type": "object"
+            },
+            "title": "Stuffs",
+            "type": "array"
           }
-        }
-      },
-      "embedding": {
-        "title": "Embedding",
-        "type": "array",
-        "instillFormat": "array",
-        "items": {
-          "title": "Embedding",
-          "type": "number",
-          "instillFormat": "number"
-        }
+        },
+        "required": [
+          "stuffs"
+        ],
+        "type": "object"
       },
       "semi_structured": {
-        "type": "object",
-        "instillFormat": "object"
+        "instillFormat": "object",
+        "type": "object"
       },
-      "metadata": {
-        "type": "object",
-        "instillFormat": "object"
+      "text": {
+        "instillFormat": "text",
+        "type": "string"
+      },
+      "video": {
+        "contentEncoding": "base64",
+        "instillFormat": "video",
+        "type": "string"
       }
+    },
+    "upstream": {
+      "description": "Propagated from upstream component.",
+      "pattern": "^\\{\\{ [a-z]([a-z0-9-]{0,61}[a-z0-9])?(.[a-zA-Z_][a-zA-Z_0-9]*(\\[(0|[1-9][0-9]*)\\])?)+ \\}\\}$",
+      "title": "Upstream Value",
+      "type": "string"
     }
   }
 }
