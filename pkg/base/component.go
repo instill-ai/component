@@ -143,7 +143,7 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 		delete(original.Fields, "title")
 		delete(original.Fields, "description")
 		delete(original.Fields, "instillShortDescription")
-		delete(original.Fields, "instillFormat")
+		delete(original.Fields, "instillAcceptFormats")
 		delete(original.Fields, "instillUIOrder")
 		delete(original.Fields, "instillUpstreamTypes")
 
@@ -157,8 +157,8 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 			newCompSpec.Fields["instillShortDescription"] = newCompSpec.Fields["description"]
 		}
 		newCompSpec.Fields["instillUIOrder"] = structpb.NewNumberValue(compSpec.Fields["instillUIOrder"].GetNumberValue())
-		if compSpec.Fields["instillFormat"] != nil {
-			newCompSpec.Fields["instillFormat"] = structpb.NewStringValue(compSpec.Fields["instillFormat"].GetStringValue())
+		if compSpec.Fields["instillAcceptFormats"] != nil {
+			newCompSpec.Fields["instillAcceptFormats"] = structpb.NewListValue(compSpec.Fields["instillAcceptFormats"].GetListValue())
 		}
 		newCompSpec.Fields["instillUpstreamTypes"] = structpb.NewListValue(compSpec.Fields["instillUpstreamTypes"].GetListValue())
 		newCompSpec.Fields["anyOf"] = structpb.NewListValue(&structpb.ListValue{Values: []*structpb.Value{}})
