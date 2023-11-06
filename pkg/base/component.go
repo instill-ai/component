@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/lestrrat-go/jsref"
+	"github.com/instill-ai/component/pkg/jsonref"
 	"github.com/lestrrat-go/jsref/provider"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -354,7 +354,6 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 		if compSpec.Fields["instillFormat"] != nil {
 			newCompSpec.Fields["instillFormat"] = structpb.NewStringValue(compSpec.Fields["instillFormat"].GetStringValue())
 		}
-		newCompSpec.Fields["instillUpstreamTypes"] = structpb.NewListValue(compSpec.Fields["instillUpstreamTypes"].GetListValue())
 
 		compSpec = newCompSpec
 
@@ -552,7 +551,7 @@ func renderTaskJson(tasksJSONBytes []byte, additionalJSONBytes map[string][]byte
 			return nil, err
 		}
 	}
-	res := jsref.New()
+	res := jsonref.New()
 	err = res.AddProvider(mp)
 	if err != nil {
 		return nil, err
@@ -568,7 +567,7 @@ func renderTaskJson(tasksJSONBytes []byte, additionalJSONBytes map[string][]byte
 		return nil, err
 	}
 
-	result, err := res.Resolve(tasksJSON, "", jsref.WithRecursiveResolution(true))
+	result, err := res.Resolve(tasksJSON, "", jsonref.WithRecursiveResolution(true))
 	if err != nil {
 		return nil, err
 	}
