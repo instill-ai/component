@@ -3,6 +3,7 @@
 package jsonref
 
 import (
+	"encoding/json"
 	"net/url"
 	"reflect"
 
@@ -227,13 +228,22 @@ func expandRefRecursive(ctx *resolveCtx, r *Resolver, v interface{}) (ret interf
 			}
 			return nil, errors.Wrap(err, "failed to expand ref")
 		}
+		b, err := json.Marshal(newv)
+		if err != nil {
+			return nil, err
+		}
+		var i interface{}
+		err = json.Unmarshal(b, &i)
+		if err != nil {
+			return nil, err
+		}
 
 		for key, value := range v.(map[string]interface{}) {
 			if key != refrv.String() {
-				newv.(map[string]interface{})[key] = value
+				i.(map[string]interface{})[key] = value
 			}
 		}
-		v = newv
+		v = i
 	}
 
 	return v, nil
