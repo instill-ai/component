@@ -151,7 +151,7 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 
 		newCompSpec.Fields["title"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue())
 		newCompSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["description"].GetStringValue())
-		if _, ok := newCompSpec.Fields["instillShortDescription"]; ok {
+		if _, ok := compSpec.Fields["instillShortDescription"]; ok {
 			newCompSpec.Fields["instillShortDescription"] = compSpec.Fields["instillShortDescription"]
 		} else {
 			newCompSpec.Fields["instillShortDescription"] = newCompSpec.Fields["description"]
