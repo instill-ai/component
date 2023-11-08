@@ -3,6 +3,7 @@ module github.com/instill-ai/component
 go 1.21
 
 require (
+	github.com/gabriel-vasile/mimetype v1.4.3
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20231019202606-71607ddcd93f
 	github.com/lestrrat-go/jspointer v0.0.0-20181205001929-82fadba7561c
