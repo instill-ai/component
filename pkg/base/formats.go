@@ -38,7 +38,7 @@ func (s InstillAcceptFormatsSchema) Validate(ctx jsonschema.ValidationContext, v
 				return nil
 			default:
 
-				b, err := base64.StdEncoding.DecodeString(v)
+				b, err := base64.StdEncoding.DecodeString(TrimBase64Mime(v))
 				if err != nil {
 					return ctx.Error("instillAcceptFormats", "can not decode file")
 				}
@@ -96,7 +96,7 @@ func (s InstillFormatSchema) Validate(ctx jsonschema.ValidationContext, v interf
 		case "string", "*", "*/*":
 			return nil
 		default:
-			b, err := base64.StdEncoding.DecodeString(v)
+			b, err := base64.StdEncoding.DecodeString(TrimBase64Mime(v))
 			if err != nil {
 				return ctx.Error("instillFormat", "can not decode file")
 			}
@@ -151,4 +151,9 @@ func CompileInstillAcceptFormats(sch *structpb.Struct) error {
 
 	}
 	return nil
+}
+
+func TrimBase64Mime(b64 string) string {
+	splitB64 := strings.Split(b64, ",")
+	return splitB64[len(splitB64)-1]
 }
