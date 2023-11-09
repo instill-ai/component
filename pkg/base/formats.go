@@ -153,6 +153,29 @@ func CompileInstillAcceptFormats(sch *structpb.Struct) error {
 	return nil
 }
 
+func CompileInstillFormat(sch *structpb.Struct) error {
+	var err error
+	for k, v := range sch.Fields {
+		if v.GetStructValue() != nil {
+			err = CompileInstillFormat(v.GetStructValue())
+			if err != nil {
+				return err
+			}
+		}
+		if k == "instillFormat" {
+			if strings.HasPrefix(v.GetStringValue(), "array:") {
+				itemInstillFormat := strings.Split(v.GetStringValue(), ":")[1]
+				sch.Fields["items"].GetStructValue().Fields["instillFormat"], err = structpb.NewValue(itemInstillFormat)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
+	}
+	return nil
+}
+
 func TrimBase64Mime(b64 string) string {
 	splitB64 := strings.Split(b64, ",")
 	return splitB64[len(splitB64)-1]
