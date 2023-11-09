@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.7.0-alpha](https://github.com/instill-ai/component/compare/v0.6.1-alpha...v0.7.0-alpha) (2023-11-09)
+
+
+### Features
+
+* **component:** support json reference ([#20](https://github.com/instill-ai/component/issues/20)) ([bafafe9](https://github.com/instill-ai/component/commit/bafafe960082eb4b6b85137cc85cf71ff6dec987))
+
+
+### Bug Fixes
+
+* **component:** fix `instillShortDescription` parser bug ([#28](https://github.com/instill-ai/component/issues/28)) ([7f528ae](https://github.com/instill-ai/component/commit/7f528aef1869ce1db2f541a26d6791cabcecd59a))
+* **component:** fix jsonreference pointer bug ([#29](https://github.com/instill-ai/component/issues/29)) ([dc5371e](https://github.com/instill-ai/component/commit/dc5371eae05c071a7d4ee72193a4a49a81614e7d))
+* **schema:** fix schema inconsistent naming ([#23](https://github.com/instill-ai/component/issues/23)) ([dd7aa52](https://github.com/instill-ai/component/commit/dd7aa52dc2cd5185733543ec0d9171b161cee149))
+
 ## [0.6.1-alpha](https://github.com/instill-ai/component/compare/v0.6.0-alpha...v0.6.1-alpha) (2023-10-27)
 
 
