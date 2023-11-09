@@ -343,6 +343,7 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 
 		newCompSpec := &structpb.Struct{Fields: make(map[string]*structpb.Value)}
 
+		newCompSpec.Fields["type"] = structpb.NewStringValue(compSpec.Fields["type"].GetStringValue())
 		newCompSpec.Fields["title"] = structpb.NewStringValue(compSpec.Fields["title"].GetStringValue())
 		newCompSpec.Fields["description"] = structpb.NewStringValue(compSpec.Fields["description"].GetStringValue())
 		if _, ok := newCompSpec.Fields["instillShortDescription"]; ok {
