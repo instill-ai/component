@@ -33,7 +33,7 @@ We have two types of components: **connector** and **operator**:
 
 - connector:
   - A connector is used to connect the pipeline to a vendor service.
-  - We need to set up a connector resource first to configure the connection.
+  - We need to set up a connector first to configure the connection.
 - operator:
   - An operator is used for data operations inside the pipeline.
 
@@ -42,10 +42,10 @@ We have two types of components: **connector** and **operator**:
 
 - **Connectors** is used for connecting the pipeline to a vendor service, and **connectors** are served by **connector-backend**
 - We need to set up a connector **resource** first to configure the connection.
-- Setup a Connector Resource
+- Setup a Connector
 ```mermaid
 sequenceDiagram
-    User ->> API-Gateway: POST /users/<user>/connector-resources
+    User ->> API-Gateway: POST /users/<user>/connectors
     API-Gateway ->> Connector-Backend: forward
     Connector-Backend ->> Connector DB: Store configuration for connection
 ```
@@ -79,7 +79,7 @@ The `recipe` is in the format
 ```
 - `id`: the identifier of the component, can not be duplicated inside a pipeline.
 - `definition_name`: can be a connector(`connector-definitions/<def_id>`) or operator(`operator-definitions/<def_id>`)
-- `resource_name`: we need to create a resource for connector `users/<user>/connector-resources/<resource_id>`, we don't need to setup this for operator.
+- `resource_name`: we need to create a resource for connector `users/<user>/connectors/<resource_id>`, we don't need to setup this for operator.
 - `configuration`: component configuration for connector or operator
 
 ```mermaid
@@ -102,7 +102,7 @@ sequenceDiagram
     Pipeline DB ->> Pipeline-Backend: Recipe
     loop over topological order of components
         alt is Connector
-            Pipeline-Backend->>Connector-Backend: POST /users/<user>/connector-resources/<resource_id>/execute
+            Pipeline-Backend->>Connector-Backend: POST /users/<user>/connectors/<resource_id>/execute
             Connector-Backend ->> Connector: Execute()
         else is Operator
             Pipeline-Backend->>Operator: ExecuteWithValidation()
@@ -122,7 +122,7 @@ In every connector or operator implementation, we need to use two config files t
 - `definition.json`
     - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/config/definitions.json) as an example.
     - We define the id, uid, vendor info and other metadata in this file.
-    - We define the `resource_configuration` in this file, which is used for setting up the connector resource.
+    - We define the `resource_configuration` in this file, which is used for setting up the connector.
 - `tasks.json`
     - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/config/tasks.json) as an example.
     - A component can have multiple tasks.
@@ -148,7 +148,7 @@ In [component.go](https://github.com/instill-ai/component/blob/main/pkg/base/com
 // All connectors need to implement this interface
 type IConnector interface {
     CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error)
-    Test(defUid uuid.UUID, config *structpb.Struct, logger *zap.Logger) (connectorPB.ConnectorResource_State, error)
+    Test(defUid uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error)
 }
 
 // All operators need to implement this interface
