@@ -9,7 +9,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
-	connectorPB "github.com/instill-ai/protogen-go/vdp/connector/v1alpha"
+	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1alpha"
 )
 
 // IConnector is the interface that all connectors need to implement
@@ -18,19 +18,19 @@ type IConnector interface {
 
 	// Functions that need to be implemented for all connectors
 	// Test connection
-	Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) (connectorPB.ConnectorResource_State, error)
+	Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error)
 
 	// Functions that shared for all connectors
 	// Load connector definitions from json files
 	LoadConnectorDefinitions(definitionsJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
 	// Add definition
-	AddConnectorDefinition(def *connectorPB.ConnectorDefinition) error
+	AddConnectorDefinition(def *pipelinePB.ConnectorDefinition) error
 	// Get the connector definition by definition uid
-	GetConnectorDefinitionByUID(defUID uuid.UUID) (*connectorPB.ConnectorDefinition, error)
+	GetConnectorDefinitionByUID(defUID uuid.UUID) (*pipelinePB.ConnectorDefinition, error)
 	// Get the connector definition by definition id
-	GetConnectorDefinitionByID(defID string) (*connectorPB.ConnectorDefinition, error)
+	GetConnectorDefinitionByID(defID string) (*pipelinePB.ConnectorDefinition, error)
 	// Get the list of connector definitions under this connector
-	ListConnectorDefinitions() []*connectorPB.ConnectorDefinition
+	ListConnectorDefinitions() []*pipelinePB.ConnectorDefinition
 
 	// List the CredentialFields by definition id
 	ListCredentialField(defID string) ([]string, error)
@@ -75,7 +75,7 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJ
 		if err != nil {
 			return err
 		}
-		def := &connectorPB.ConnectorDefinition{}
+		def := &pipelinePB.ConnectorDefinition{}
 		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, def)
 		if err != nil {
 			return err
@@ -102,7 +102,7 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJ
 }
 
 // AddConnectorDefinition adds a connector definition to the connector
-func (c *Connector) AddConnectorDefinition(def *connectorPB.ConnectorDefinition) error {
+func (c *Connector) AddConnectorDefinition(def *pipelinePB.ConnectorDefinition) error {
 	def.Name = fmt.Sprintf("connector-definitions/%s", def.Id)
 	err := c.addDefinition(def)
 	if err != nil {
@@ -113,33 +113,33 @@ func (c *Connector) AddConnectorDefinition(def *connectorPB.ConnectorDefinition)
 }
 
 // ListConnectorDefinitions lists all the connector definitions
-func (c *Connector) ListConnectorDefinitions() []*connectorPB.ConnectorDefinition {
+func (c *Connector) ListConnectorDefinitions() []*pipelinePB.ConnectorDefinition {
 	compDefs := c.Component.listDefinitions()
-	defs := []*connectorPB.ConnectorDefinition{}
+	defs := []*pipelinePB.ConnectorDefinition{}
 	for _, compDef := range compDefs {
-		if !compDef.(*connectorPB.ConnectorDefinition).Tombstone {
-			defs = append(defs, compDef.(*connectorPB.ConnectorDefinition))
+		if !compDef.(*pipelinePB.ConnectorDefinition).Tombstone {
+			defs = append(defs, compDef.(*pipelinePB.ConnectorDefinition))
 		}
 	}
 	return defs
 }
 
 // GetConnectorDefinitionByUID gets the connector definition by definition uid
-func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID) (*connectorPB.ConnectorDefinition, error) {
+func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID) (*pipelinePB.ConnectorDefinition, error) {
 	def, err := c.Component.getDefinitionByUID(defUID)
 	if err != nil {
 		return nil, err
 	}
-	return def.(*connectorPB.ConnectorDefinition), nil
+	return def.(*pipelinePB.ConnectorDefinition), nil
 }
 
 // GetConnectorDefinitionByID gets the connector definition by definition id
-func (c *Connector) GetConnectorDefinitionByID(defID string) (*connectorPB.ConnectorDefinition, error) {
+func (c *Connector) GetConnectorDefinitionByID(defID string) (*pipelinePB.ConnectorDefinition, error) {
 	def, err := c.Component.getDefinitionByID(defID)
 	if err != nil {
 		return nil, err
 	}
-	return def.(*connectorPB.ConnectorDefinition), nil
+	return def.(*pipelinePB.ConnectorDefinition), nil
 }
 
 // IsCredentialField checks if the target field is credential field
@@ -162,7 +162,7 @@ func (c *Connector) initCredentialField(defID string) {
 		c.credentialFields = map[string][]string{}
 	}
 	credentialFields := []string{}
-	credentialFields = c.traverseCredentialField(c.definitionMapByID[defID].(*connectorPB.ConnectorDefinition).Spec.GetResourceSpecification().GetFields()["properties"], "", credentialFields)
+	credentialFields = c.traverseCredentialField(c.definitionMapByID[defID].(*pipelinePB.ConnectorDefinition).Spec.GetResourceSpecification().GetFields()["properties"], "", credentialFields)
 	c.credentialFields[defID] = credentialFields
 }
 
