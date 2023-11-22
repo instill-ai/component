@@ -80,6 +80,10 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJ
 		if err != nil {
 			return err
 		}
+		def.Spec.ResourceSpecification, err = c.refineResourceSpec(def.Spec.ResourceSpecification)
+		if err != nil {
+			return err
+		}
 
 		def.Spec.ComponentSpecification, err = c.generateComponentSpec(def.Title, availableTasks)
 		if err != nil {
@@ -99,6 +103,29 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJ
 	}
 
 	return nil
+}
+
+func (c *Connector) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb.Struct, error) {
+
+	if resourceSpec != nil {
+		for key := range resourceSpec.Fields {
+			if resourceSpec.Fields[key].GetStructValue() != nil {
+				if _, ok := resourceSpec.Fields[key].GetStructValue().Fields["instillShortDescription"]; !ok {
+					resourceSpec.Fields[key].GetStructValue().Fields["instillShortDescription"] = structpb.NewStringValue(resourceSpec.Fields[key].GetStructValue().Fields["description"].GetStringValue())
+				}
+				s, err := c.refineResourceSpec(resourceSpec.Fields[key].GetStructValue())
+				if err != nil {
+					return nil, err
+				}
+				resourceSpec.Fields[key] = structpb.NewStructValue(s)
+				if err != nil {
+					return nil, err
+				}
+			}
+		}
+	}
+
+	return resourceSpec, nil
 }
 
 // AddConnectorDefinition adds a connector definition to the connector
