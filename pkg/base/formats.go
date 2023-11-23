@@ -96,12 +96,17 @@ func (s InstillFormatSchema) Validate(ctx jsonschema.ValidationContext, v interf
 		case "string", "*", "*/*":
 			return nil
 		default:
-			b, err := base64.StdEncoding.DecodeString(TrimBase64Mime(v))
-			if err != nil {
-				return ctx.Error("instillFormat", "can not decode file")
+			mimeType := ""
+			if !strings.HasPrefix(v, "data:") {
+				b, err := base64.StdEncoding.DecodeString(TrimBase64Mime(v))
+				if err != nil {
+					return ctx.Error("instillFormat", "can not decode file")
+				}
+				mimeType = strings.Split(mimetype.Detect(b).String(), ";")[0]
+			} else {
+				mimeType = strings.Split(strings.Split(v, ";")[0], ":")[1]
 			}
 
-			mimeType := strings.Split(mimetype.Detect(b).String(), ";")[0]
 			if strings.Split(mimeType, "/")[0] == strings.Split(string(s), "/")[0] && strings.Split(string(s), "/")[1] == "*" {
 				return nil
 			} else if mimeType == string(s) {
