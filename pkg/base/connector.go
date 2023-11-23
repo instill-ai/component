@@ -108,7 +108,6 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJ
 
 func (c *Connector) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb.Struct, error) {
 
-	// if resourceSpec != nil {
 	spec := proto.Clone(resourceSpec).(*structpb.Struct)
 	if _, ok := spec.Fields["instillShortDescription"]; !ok {
 		spec.Fields["instillShortDescription"] = structpb.NewStringValue(spec.Fields["description"].GetStringValue())
@@ -157,8 +156,6 @@ func (c *Connector) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb
 			}
 		}
 	}
-
-	// }
 
 	return spec, nil
 }
