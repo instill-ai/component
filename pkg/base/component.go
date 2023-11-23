@@ -484,7 +484,7 @@ func (comp *Component) listDefinitions() []interface{} {
 		val, ok := comp.definitionMapByUID[uid]
 		if !ok {
 			// logger
-			comp.Logger.Error("get connector definition error")
+			comp.Logger.Error("get connector/operator definition error")
 		}
 		definitions = append(definitions, val)
 	}
@@ -495,7 +495,7 @@ func (comp *Component) listDefinitions() []interface{} {
 func (comp *Component) getDefinitionByUID(defUID uuid.UUID) (interface{}, error) {
 	val, ok := comp.definitionMapByUID[defUID]
 	if !ok {
-		return nil, fmt.Errorf("get connector definition error")
+		return nil, fmt.Errorf("get connector/operator definition error")
 	}
 	return val, nil
 }
@@ -504,7 +504,7 @@ func (comp *Component) getDefinitionByID(defID string) (interface{}, error) {
 
 	val, ok := comp.definitionMapByID[defID]
 	if !ok {
-		return nil, fmt.Errorf("get connector definition error")
+		return nil, fmt.Errorf("get connector/operator definition error")
 	}
 	return val, nil
 }

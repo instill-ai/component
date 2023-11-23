@@ -7,6 +7,7 @@ import (
 	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1alpha"
@@ -107,25 +108,59 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJ
 
 func (c *Connector) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb.Struct, error) {
 
-	if resourceSpec != nil {
-		for key := range resourceSpec.Fields {
-			if resourceSpec.Fields[key].GetStructValue() != nil {
-				if _, ok := resourceSpec.Fields[key].GetStructValue().Fields["instillShortDescription"]; !ok {
-					resourceSpec.Fields[key].GetStructValue().Fields["instillShortDescription"] = structpb.NewStringValue(resourceSpec.Fields[key].GetStructValue().Fields["description"].GetStringValue())
-				}
-				s, err := c.refineResourceSpec(resourceSpec.Fields[key].GetStructValue())
+	// if resourceSpec != nil {
+	spec := proto.Clone(resourceSpec).(*structpb.Struct)
+	if _, ok := spec.Fields["instillShortDescription"]; !ok {
+		spec.Fields["instillShortDescription"] = structpb.NewStringValue(spec.Fields["description"].GetStringValue())
+	}
+
+	if _, ok := spec.Fields["properties"]; ok {
+		for k, v := range spec.Fields["properties"].GetStructValue().AsMap() {
+			s, err := structpb.NewStruct(v.(map[string]interface{}))
+			if err != nil {
+				return nil, err
+			}
+			converted, err := c.refineResourceSpec(s)
+			if err != nil {
+				return nil, err
+			}
+			spec.Fields["properties"].GetStructValue().Fields[k] = structpb.NewStructValue(converted)
+
+		}
+	}
+	if _, ok := spec.Fields["patternProperties"]; ok {
+		for k, v := range spec.Fields["patternProperties"].GetStructValue().AsMap() {
+			s, err := structpb.NewStruct(v.(map[string]interface{}))
+			if err != nil {
+				return nil, err
+			}
+			converted, err := c.refineResourceSpec(s)
+			if err != nil {
+				return nil, err
+			}
+			spec.Fields["patternProperties"].GetStructValue().Fields[k] = structpb.NewStructValue(converted)
+
+		}
+	}
+	for _, target := range []string{"allOf", "anyOf", "oneOf"} {
+		if _, ok := spec.Fields[target]; ok {
+			for idx, item := range spec.Fields[target].GetListValue().AsSlice() {
+				s, err := structpb.NewStruct(item.(map[string]interface{}))
 				if err != nil {
 					return nil, err
 				}
-				resourceSpec.Fields[key] = structpb.NewStructValue(s)
+				converted, err := c.refineResourceSpec(s)
 				if err != nil {
 					return nil, err
 				}
+				spec.Fields[target].GetListValue().AsSlice()[idx] = structpb.NewStructValue(converted)
 			}
 		}
 	}
 
-	return resourceSpec, nil
+	// }
+
+	return spec, nil
 }
 
 // AddConnectorDefinition adds a connector definition to the connector
