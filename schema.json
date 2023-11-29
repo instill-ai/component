@@ -73,10 +73,11 @@
         "properties": {
           "objects": {
             "description": "A list of detected objects.",
-            "instillFormat": "structured/detection_objects",
+            "instillFormat": "array:structured/detection_object",
             "instillUIOrder": 0,
             "items": {
               "additionalProperties": false,
+              "instillFormat": "structured/detection_object",
               "properties": {
                 "bounding_box": {
                   "$ref": "#/$defs/instill_types/bounding_box",
@@ -129,9 +130,10 @@
         "properties": {
           "objects": {
             "description": "A list of detected instance bounding boxes.",
-            "instillFormat": "structured/instance_segmentation_objects",
+            "instillFormat": "array:structured/instance_segmentation_object",
             "instillUIOrder": 0,
             "items": {
+              "instillFormat": "structured/instance_segmentation_object",
               "properties": {
                 "bounding_box": {
                   "$ref": "#/$defs/instill_types/bounding_box",
@@ -183,9 +185,10 @@
         "properties": {
           "objects": {
             "description": "A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object.",
-            "instillFormat": "structured/keypoint_objects",
+            "instillFormat": "array:structured/keypoint_object",
             "instillUIOrder": 0,
             "items": {
+              "instillFormat": "structured/keypoint_object",
               "properties": {
                 "bounding_box": {
                   "$ref": "#/$defs/instill_types/bounding_box",
@@ -258,9 +261,10 @@
         "properties": {
           "objects": {
             "description": "A list of detected bounding boxes.",
-            "instillFormat": "structured/ocr_objects",
+            "instillFormat": "array:structured/ocr_object",
             "instillUIOrder": 0,
             "items": {
+              "instillFormat": "structured/ocr_object",
               "properties": {
                 "bounding_box": {
                   "$ref": "#/$defs/instill_types/bounding_box",
@@ -304,9 +308,10 @@
         "properties": {
           "stuffs": {
             "description": "A list of RLE binary masks.",
-            "instillFormat": "structured/semantic_segmentation_stuffs",
+            "instillFormat": "array:structured/semantic_segmentation_stuff",
             "instillUIOrder": 0,
             "items": {
+              "instillFormat": "structured/semantic_segmentation_stuff",
               "properties": {
                 "category": {
                   "description": "Category text string corresponding to each stuff mask.",
