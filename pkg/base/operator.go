@@ -7,7 +7,7 @@ import (
 	"github.com/gofrs/uuid"
 	"google.golang.org/protobuf/encoding/protojson"
 
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1alpha"
+	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 // IOperator is the interface that all operators need to implement
