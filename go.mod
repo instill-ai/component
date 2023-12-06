@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/gabriel-vasile/mimetype v1.4.3
 	github.com/gofrs/uuid v4.4.0+incompatible
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20231121163720-206d6eff20a7
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20231205045546-99b6fc00f67e
 	github.com/lestrrat-go/jspointer v0.0.0-20181205001929-82fadba7561c
 	github.com/lestrrat-go/jsref v0.0.0-20211028120858-c0bcbb5abf20
 	github.com/lestrrat-go/option v1.0.0
