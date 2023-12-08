@@ -13,6 +13,16 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+const conditionJson = `
+{
+	"type": "string",
+	"instillUIOrder": 1,
+	"instillShortDescription": "config whether the component will be executed or skipped",
+	"instillAcceptFormats": ["string"],
+    "instillUpstreamTypes": ["value"]
+}
+`
+
 // IComponent is the interface that wraps the basic component methods.
 // All component need to implement this interface.
 type IComponent interface {
@@ -235,6 +245,13 @@ func (comp *Component) generateComponentSpec(title string, availableTasks []stri
 		if err != nil {
 			return nil, fmt.Errorf("task %s: %s error: %+v", title, availableTask, err)
 		}
+
+		condition := &structpb.Struct{}
+		err = protojson.Unmarshal([]byte(conditionJson), condition)
+		if err != nil {
+			panic(err)
+		}
+		oneOf.Fields["properties"].GetStructValue().Fields["condition"] = structpb.NewStructValue(condition)
 		oneOf.Fields["properties"].GetStructValue().Fields["input"] = structpb.NewStructValue(compInputStruct)
 		if comp.tasks[availableTask].Fields["metadata"] != nil {
 			metadataStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct).Fields["metadata"].GetStructValue()
