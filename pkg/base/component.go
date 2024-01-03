@@ -54,6 +54,8 @@ type IComponent interface {
 	GetTaskInputSchemas() map[string]string
 	// Get task output schemas
 	GetTaskOutputSchemas() map[string]string
+
+	GetOpenapiSpecificationsByUID(defUID uuid.UUID, config *structpb.Struct) *structpb.Struct
 }
 
 // Component is the basic component struct

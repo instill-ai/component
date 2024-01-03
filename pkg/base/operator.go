@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/structpb"
 
 	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -123,4 +124,8 @@ func (o *Operator) GetOperatorDefinitionByID(defID string) (*pipelinePB.Operator
 		return nil, err
 	}
 	return def.(*pipelinePB.OperatorDefinition), nil
+}
+
+func (o *Operator) GetOpenapiSpecificationsByUID(defUID uuid.UUID, config *structpb.Struct) *structpb.Struct {
+	return o.Component.definitionMapByUID[defUID].(*pipelinePB.OperatorDefinition).Spec.OpenapiSpecifications
 }

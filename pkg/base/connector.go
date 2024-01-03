@@ -247,3 +247,7 @@ func (c *Connector) traverseCredentialField(input *structpb.Value, prefix string
 
 	return credentialFields
 }
+
+func (c *Connector) GetOpenapiSpecificationsByUID(defUID uuid.UUID, config *structpb.Struct) *structpb.Struct {
+	return c.Component.definitionMapByUID[defUID].(*pipelinePB.ConnectorDefinition).Spec.OpenapiSpecifications
+}
