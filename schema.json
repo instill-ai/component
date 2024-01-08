@@ -44,6 +44,43 @@
         "title": "Bounding Box",
         "type": "object"
       },
+      "chat_messages": {
+        "instillFormat": "structured/chat_messages",
+        "items": {
+          "instillFormat": "structured/chat_message",
+          "properties": {
+            "content": {
+              "$ref": "#/$defs/instill_types/multi_modal_content",
+              "description": "The message content",
+              "instillUIOrder": 1,
+              "title": "Content"
+            },
+            "metadata": {
+              "additionalProperties": true,
+              "description": "The message metadata",
+              "instillFormat": "semi-structured/object",
+              "instillUIOrder": 2,
+              "required": [],
+              "title": "Metadata",
+              "type": "object"
+            },
+            "role": {
+              "description": "The message role, i.e. 'system', 'user' or 'assistant'",
+              "instillFormat": "string",
+              "instillUIOrder": 0,
+              "title": "Role",
+              "type": "string"
+            }
+          },
+          "required": [
+            "role",
+            "content"
+          ],
+          "type": "object"
+        },
+        "title": "Chat Message",
+        "type": "array"
+      },
       "classification": {
         "additionalProperties": false,
         "properties": {
@@ -274,6 +311,7 @@
             },
             "text": {
               "description": "The text content.",
+              "instillFormat": "string",
               "type": "string"
             },
             "type": {
@@ -282,6 +320,7 @@
                 "text",
                 "image_url"
               ],
+              "instillFormat": "string",
               "type": "string"
             }
           },
