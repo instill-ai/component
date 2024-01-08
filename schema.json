@@ -256,6 +256,42 @@
         ],
         "type": "object"
       },
+      "multi_modal_content": {
+        "instillFormat": "structured/multi_modal_content",
+        "items": {
+          "properties": {
+            "image_url": {
+              "properties": {
+                "url": {
+                  "description": "Either a URL of the image or the base64 encoded image data.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "url"
+              ],
+              "type": "object"
+            },
+            "text": {
+              "description": "The text content.",
+              "type": "string"
+            },
+            "type": {
+              "description": "The type of the content part.",
+              "enum": [
+                "text",
+                "image_url"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
       "ocr": {
         "additionalProperties": false,
         "properties": {
