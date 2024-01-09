@@ -222,6 +222,11 @@ func (c *Connector) initCredentialField(defID string) {
 	}
 	credentialFields := []string{}
 	credentialFields = c.traverseCredentialField(c.definitionMapByID[defID].(*pipelinePB.ConnectorDefinition).Spec.GetResourceSpecification().GetFields()["properties"], "", credentialFields)
+	if l, ok := c.definitionMapByID[defID].(*pipelinePB.ConnectorDefinition).Spec.GetResourceSpecification().GetFields()["oneOf"]; ok {
+		for _, v := range l.GetListValue().Values {
+			credentialFields = c.traverseCredentialField(v.GetStructValue().GetFields()["properties"], "", credentialFields)
+		}
+	}
 	c.credentialFields[defID] = credentialFields
 }
 
