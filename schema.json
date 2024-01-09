@@ -44,6 +44,43 @@
         "title": "Bounding Box",
         "type": "object"
       },
+      "chat_messages": {
+        "instillFormat": "structured/chat_messages",
+        "items": {
+          "instillFormat": "structured/chat_message",
+          "properties": {
+            "content": {
+              "$ref": "#/$defs/instill_types/multi_modal_content",
+              "description": "The message content",
+              "instillUIOrder": 1,
+              "title": "Content"
+            },
+            "metadata": {
+              "additionalProperties": true,
+              "description": "The message metadata",
+              "instillFormat": "semi-structured/object",
+              "instillUIOrder": 2,
+              "required": [],
+              "title": "Metadata",
+              "type": "object"
+            },
+            "role": {
+              "description": "The message role, i.e. 'system', 'user' or 'assistant'",
+              "instillFormat": "string",
+              "instillUIOrder": 0,
+              "title": "Role",
+              "type": "string"
+            }
+          },
+          "required": [
+            "role",
+            "content"
+          ],
+          "type": "object"
+        },
+        "title": "Chat Message",
+        "type": "array"
+      },
       "classification": {
         "additionalProperties": false,
         "properties": {
@@ -255,6 +292,44 @@
           "objects"
         ],
         "type": "object"
+      },
+      "multi_modal_content": {
+        "instillFormat": "structured/multi_modal_content",
+        "items": {
+          "properties": {
+            "image_url": {
+              "properties": {
+                "url": {
+                  "description": "Either a URL of the image or the base64 encoded image data.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "url"
+              ],
+              "type": "object"
+            },
+            "text": {
+              "description": "The text content.",
+              "instillFormat": "string",
+              "type": "string"
+            },
+            "type": {
+              "description": "The type of the content part.",
+              "enum": [
+                "text",
+                "image_url"
+              ],
+              "instillFormat": "string",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        "type": "array"
       },
       "ocr": {
         "additionalProperties": false,
