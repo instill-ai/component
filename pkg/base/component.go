@@ -19,7 +19,7 @@ const conditionJson = `
 	"instillUIOrder": 1,
 	"instillShortDescription": "config whether the component will be executed or skipped",
 	"instillAcceptFormats": ["string"],
-    "instillUpstreamTypes": ["value"]
+    "instillUpstreamTypes": ["value", "template"]
 }
 `
 
