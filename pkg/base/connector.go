@@ -27,9 +27,9 @@ type IConnector interface {
 	// Add definition
 	AddConnectorDefinition(def *pipelinePB.ConnectorDefinition) error
 	// Get the connector definition by definition uid
-	GetConnectorDefinitionByUID(defUID uuid.UUID) (*pipelinePB.ConnectorDefinition, error)
+	GetConnectorDefinitionByUID(defUID uuid.UUID, resourceConfig *structpb.Struct, componentConfig *structpb.Struct) (*pipelinePB.ConnectorDefinition, error)
 	// Get the connector definition by definition id
-	GetConnectorDefinitionByID(defID string) (*pipelinePB.ConnectorDefinition, error)
+	GetConnectorDefinitionByID(defID string, resourceConfig *structpb.Struct, componentConfig *structpb.Struct) (*pipelinePB.ConnectorDefinition, error)
 	// Get the list of connector definitions under this connector
 	ListConnectorDefinitions() []*pipelinePB.ConnectorDefinition
 
@@ -184,7 +184,7 @@ func (c *Connector) ListConnectorDefinitions() []*pipelinePB.ConnectorDefinition
 }
 
 // GetConnectorDefinitionByUID gets the connector definition by definition uid
-func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID) (*pipelinePB.ConnectorDefinition, error) {
+func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, resourceConfig *structpb.Struct, componentConfig *structpb.Struct) (*pipelinePB.ConnectorDefinition, error) {
 	def, err := c.Component.getDefinitionByUID(defUID)
 	if err != nil {
 		return nil, err
@@ -193,7 +193,7 @@ func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID) (*pipelinePB.C
 }
 
 // GetConnectorDefinitionByID gets the connector definition by definition id
-func (c *Connector) GetConnectorDefinitionByID(defID string) (*pipelinePB.ConnectorDefinition, error) {
+func (c *Connector) GetConnectorDefinitionByID(defID string, resourceConfig *structpb.Struct, componentConfig *structpb.Struct) (*pipelinePB.ConnectorDefinition, error) {
 	def, err := c.Component.getDefinitionByID(defID)
 	if err != nil {
 		return nil, err
