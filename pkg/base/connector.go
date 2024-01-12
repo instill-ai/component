@@ -57,7 +57,7 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJ
 	if err != nil {
 		return err
 	}
-	renderedTasksJSON, nil := renderTaskJson(tasksJSONBytes, additionalJSONBytes)
+	renderedTasksJSON, nil := renderTaskJSON(tasksJSONBytes, additionalJSONBytes)
 	if err != nil {
 		return nil
 	}
