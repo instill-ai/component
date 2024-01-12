@@ -13,7 +13,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-const conditionJson = `
+const conditionJSON = `
 {
 	"type": "string",
 	"instillUIOrder": 1,
@@ -247,7 +247,7 @@ func (comp *Component) generateComponentSpec(title string, availableTasks []stri
 		}
 
 		condition := &structpb.Struct{}
-		err = protojson.Unmarshal([]byte(conditionJson), condition)
+		err = protojson.Unmarshal([]byte(conditionJSON), condition)
 		if err != nil {
 			panic(err)
 		}
@@ -555,7 +555,7 @@ func ConvertToStructpb(from interface{}) (*structpb.Struct, error) {
 	return to, nil
 }
 
-func renderTaskJson(tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) ([]byte, error) {
+func renderTaskJSON(tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) ([]byte, error) {
 	var err error
 	mp := provider.NewMap()
 	for k, v := range additionalJSONBytes {
