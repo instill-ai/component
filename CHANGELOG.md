@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.9.0-beta](https://github.com/instill-ai/component/compare/v0.8.0-beta...v0.9.0-beta) (2024-01-12)
+
+
+### Features
+
+* add `instillUpstreamTypes: template` in component condition field ([#46](https://github.com/instill-ai/component/issues/46)) ([60b2117](https://github.com/instill-ai/component/commit/60b21171a6abaffb9381b38a4c73fd63fa8e2489))
+* **schema:** add new instillFormat for chat history ([#43](https://github.com/instill-ai/component/issues/43)) ([abed794](https://github.com/instill-ai/component/commit/abed794dc3a122025ab4978fd7b4646aa8c6ae74))
+* update GetOperatorDefinition functions to support dynamic definition ([#47](https://github.com/instill-ai/component/issues/47)) ([792559e](https://github.com/instill-ai/component/commit/792559e0b538742c5e53b9f5269ff22e98345d44))
+
+
+### Bug Fixes
+
+* **connector:** fix credentialFields bug inside `oneOf` schema ([#45](https://github.com/instill-ai/component/issues/45)) ([eb76043](https://github.com/instill-ai/component/commit/eb76043417a30d2dfb3cfc03087bc3417183c88d))
+
 ## [0.8.0-beta](https://github.com/instill-ai/component/compare/v0.7.1-alpha...v0.8.0-beta) (2023-12-15)
 
 
