@@ -3,11 +3,14 @@ package base
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/instill-ai/component/pkg/jsonref"
 	"github.com/lestrrat-go/jsref/provider"
 	"go.uber.org/zap"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -232,11 +235,27 @@ func (comp *Component) generateComponentSpec(title string, availableTasks []stri
 		oneOf.Fields["type"] = structpb.NewStringValue("object")
 		oneOf.Fields["properties"] = structpb.NewStructValue(&structpb.Struct{Fields: make(map[string]*structpb.Value)})
 
+		// generate default title
+		taskTitle := availableTask
+		taskTitle = strings.ReplaceAll(taskTitle, "TASK_", "")
+		taskTitle = strings.ReplaceAll(taskTitle, "_", " ")
+		taskTitle = cases.Title(language.English).String(taskTitle)
+		if comp.tasks[availableTask].Fields["title"].GetStringValue() != "" {
+			taskTitle = comp.tasks[availableTask].Fields["title"].GetStringValue()
+		}
 		oneOf.Fields["properties"].GetStructValue().Fields["task"], err = structpb.NewValue(map[string]interface{}{
 			"const": availableTask,
+			"title": taskTitle,
 		})
 		if err != nil {
 			return nil, err
+		}
+
+		if comp.tasks[availableTask].Fields["description"].GetStringValue() != "" {
+			oneOf.Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["description"] = structpb.NewStringValue(comp.tasks[availableTask].Fields["description"].GetStringValue())
+		}
+		if comp.tasks[availableTask].Fields["instillShortDescription"].GetStringValue() != "" {
+			oneOf.Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["instillShortDescription"] = structpb.NewStringValue(comp.tasks[availableTask].Fields["instillShortDescription"].GetStringValue())
 		}
 
 		taskJSONStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct).Fields["input"].GetStructValue()
