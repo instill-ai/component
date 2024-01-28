@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0-beta](https://github.com/instill-ai/component/compare/v0.9.0-beta...v0.10.0-beta) (2024-01-28)
+
+
+### Features
+
+* add task title and description in component json schema ([#49](https://github.com/instill-ai/component/issues/49)) ([0878f99](https://github.com/instill-ai/component/commit/0878f99479f26d1a082d9477dc823e18be3fbae7))
+
 ## [0.9.0-beta](https://github.com/instill-ai/component/compare/v0.8.0-beta...v0.9.0-beta) (2024-01-12)
 
 
