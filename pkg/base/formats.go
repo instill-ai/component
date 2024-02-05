@@ -31,6 +31,7 @@ func (s InstillAcceptFormatsSchema) Validate(ctx jsonschema.ValidationContext, v
 	switch v := v.(type) {
 
 	case string:
+		mimeType := ""
 		for _, instillAcceptFormat := range s {
 
 			switch instillAcceptFormat {
@@ -43,19 +44,15 @@ func (s InstillAcceptFormatsSchema) Validate(ctx jsonschema.ValidationContext, v
 					return ctx.Error("instillAcceptFormats", "can not decode file")
 				}
 
-				mimeType := strings.Split(mimetype.Detect(b).String(), ";")[0]
+				mimeType = strings.Split(mimetype.Detect(b).String(), ";")[0]
 				if strings.Split(mimeType, "/")[0] == strings.Split(instillAcceptFormat, "/")[0] && strings.Split(instillAcceptFormat, "/")[1] == "*" {
 					return nil
 				} else if mimeType == instillAcceptFormat {
 					return nil
-				} else {
-					return ctx.Error("instillAcceptFormats", "expected one of %v, but got %s", s, mimeType)
 				}
-
 			}
-
 		}
-		return nil
+		return ctx.Error("instillAcceptFormats", "expected one of %v, but got %s", s, mimeType)
 
 	default:
 		return nil
