@@ -67,7 +67,9 @@ func (o *Operator) LoadOperatorDefinitions(definitionsJSONBytes []byte, tasksJSO
 			return err
 		}
 
-		def.Spec.ComponentSpecification, err = o.generateComponentSpec(def.Title, availableTasks)
+		def.Tasks = o.generateComponentTasks(availableTasks)
+
+		def.Spec.ComponentSpecification, err = o.generateComponentSpec(def.Title, def.Tasks)
 		if err != nil {
 			return err
 		}

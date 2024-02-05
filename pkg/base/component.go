@@ -14,6 +14,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 const conditionJSON = `
@@ -47,7 +49,7 @@ type IComponent interface {
 	getDefinitionByID(defID string) (interface{}, error)
 
 	// Generate Component Specification
-	generateComponentSpec(title string, availableTasks []string) (*structpb.Struct, error)
+	generateComponentSpec(title string, availableTasks []*pipelinePB.ComponentTask) (*structpb.Struct, error)
 	// Generate OpenAPI Specifications
 	generateOpenAPISpecs(title string, availableTasks []string) (*structpb.Struct, error)
 
@@ -215,7 +217,29 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 	return compSpec, nil
 }
 
-func (comp *Component) generateComponentSpec(title string, availableTasks []string) (*structpb.Struct, error) {
+func (comp *Component) generateComponentTasks(availableTasks []string) []*pipelinePB.ComponentTask {
+	tasks := make([]*pipelinePB.ComponentTask, 0, len(availableTasks))
+	for _, t := range availableTasks {
+		title := comp.tasks[t].Fields["title"].GetStringValue()
+		if title == "" {
+			title = strings.ReplaceAll(t, "TASK_", "")
+			title = strings.ReplaceAll(title, "_", " ")
+			title = cases.Title(language.English).String(title)
+		}
+
+		description := comp.tasks[t].Fields["instillShortDescription"].GetStringValue()
+
+		tasks = append(tasks, &pipelinePB.ComponentTask{
+			Name:        t,
+			Title:       title,
+			Description: description,
+		})
+	}
+
+	return tasks
+}
+
+func (comp *Component) generateComponentSpec(title string, availableTasks []*pipelinePB.ComponentTask) (*structpb.Struct, error) {
 	var err error
 	componentSpec := &structpb.Struct{Fields: map[string]*structpb.Value{}}
 	componentSpec.Fields["$schema"] = structpb.NewStringValue("http://json-schema.org/draft-07/schema#")
@@ -230,35 +254,28 @@ func (comp *Component) generateComponentSpec(title string, availableTasks []stri
 		Values: []*structpb.Value{},
 	}
 	for _, availableTask := range availableTasks {
+		taskName := availableTask.Name
 
 		oneOf := &structpb.Struct{Fields: map[string]*structpb.Value{}}
 		oneOf.Fields["type"] = structpb.NewStringValue("object")
 		oneOf.Fields["properties"] = structpb.NewStructValue(&structpb.Struct{Fields: make(map[string]*structpb.Value)})
 
-		// generate default title
-		taskTitle := availableTask
-		taskTitle = strings.ReplaceAll(taskTitle, "TASK_", "")
-		taskTitle = strings.ReplaceAll(taskTitle, "_", " ")
-		taskTitle = cases.Title(language.English).String(taskTitle)
-		if comp.tasks[availableTask].Fields["title"].GetStringValue() != "" {
-			taskTitle = comp.tasks[availableTask].Fields["title"].GetStringValue()
-		}
 		oneOf.Fields["properties"].GetStructValue().Fields["task"], err = structpb.NewValue(map[string]interface{}{
-			"const": availableTask,
-			"title": taskTitle,
+			"const": availableTask.Name,
+			"title": availableTask.Title,
 		})
 		if err != nil {
 			return nil, err
 		}
 
-		if comp.tasks[availableTask].Fields["description"].GetStringValue() != "" {
-			oneOf.Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["description"] = structpb.NewStringValue(comp.tasks[availableTask].Fields["description"].GetStringValue())
-		}
-		if comp.tasks[availableTask].Fields["instillShortDescription"].GetStringValue() != "" {
-			oneOf.Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["instillShortDescription"] = structpb.NewStringValue(comp.tasks[availableTask].Fields["instillShortDescription"].GetStringValue())
+		if comp.tasks[taskName].Fields["description"].GetStringValue() != "" {
+			oneOf.Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["description"] = structpb.NewStringValue(comp.tasks[taskName].Fields["description"].GetStringValue())
 		}
 
-		taskJSONStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct).Fields["input"].GetStructValue()
+		if availableTask.Description != "" {
+			oneOf.Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["instillShortDescription"] = structpb.NewStringValue(availableTask.Description)
+		}
+		taskJSONStruct := proto.Clone(comp.tasks[taskName]).(*structpb.Struct).Fields["input"].GetStructValue()
 
 		compInputStruct, err := convertDataSpecToCompSpec(taskJSONStruct)
 		if err != nil {
@@ -272,8 +289,8 @@ func (comp *Component) generateComponentSpec(title string, availableTasks []stri
 		}
 		oneOf.Fields["properties"].GetStructValue().Fields["condition"] = structpb.NewStructValue(condition)
 		oneOf.Fields["properties"].GetStructValue().Fields["input"] = structpb.NewStructValue(compInputStruct)
-		if comp.tasks[availableTask].Fields["metadata"] != nil {
-			metadataStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct).Fields["metadata"].GetStructValue()
+		if comp.tasks[taskName].Fields["metadata"] != nil {
+			metadataStruct := proto.Clone(comp.tasks[taskName]).(*structpb.Struct).Fields["metadata"].GetStructValue()
 			oneOf.Fields["properties"].GetStructValue().Fields["metadata"] = structpb.NewStructValue(metadataStruct)
 		}
 
