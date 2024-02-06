@@ -86,7 +86,9 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJ
 			return err
 		}
 
-		def.Spec.ComponentSpecification, err = c.generateComponentSpec(def.Title, availableTasks)
+		def.Tasks = c.generateComponentTasks(availableTasks)
+
+		def.Spec.ComponentSpecification, err = c.generateComponentSpec(def.Title, def.Tasks)
 		if err != nil {
 			return err
 		}

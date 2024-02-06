@@ -3,9 +3,10 @@ module github.com/instill-ai/component
 go 1.21
 
 require (
+	github.com/frankban/quicktest v1.14.6
 	github.com/gabriel-vasile/mimetype v1.4.3
 	github.com/gofrs/uuid v4.4.0+incompatible
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20231205045546-99b6fc00f67e
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240206062817-a862071d8ece
 	github.com/lestrrat-go/jspointer v0.0.0-20181205001929-82fadba7561c
 	github.com/lestrrat-go/jsref v0.0.0-20211028120858-c0bcbb5abf20
 	github.com/lestrrat-go/option v1.0.0
@@ -23,8 +24,12 @@ require (
 	cloud.google.com/go/longrunning v0.5.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.2 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
