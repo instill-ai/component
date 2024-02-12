@@ -627,21 +627,24 @@ func renderTaskJSON(tasksJSONBytes []byte, additionalJSONBytes map[string][]byte
 
 }
 
+// For formats such as `*`, `semi-structured/*`, and `semi-structured/json` we
+// treat them as freeform data. Thus, there is no need to set the `type` in the
+// JSON schema.
 func checkFreeForm(compSpec *structpb.Struct) bool {
-	// For formats such as `*`, `semi-structured/*`, and `semi-structured/*`, we treat them as freeform data.
-	// Thus, there is no need to set the `type` in the JSON schema.
-	isFreeform := false
-	if len(compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice()) > 0 {
-		for _, v := range compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice() {
-			if v.(string) == "*" || v.(string) == "semi-structured/*" || v.(string) == "semi-structured/json" {
-				isFreeform = true
-			}
+	acceptFormats := compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice()
+
+	formats := make([]any, 0, len(acceptFormats)+1) // This avoids reallocations when appending values to the slice.
+	formats = append(formats, acceptFormats...)
+
+	if instillFormat := compSpec.Fields["instillFormat"].GetStringValue(); instillFormat != "" {
+		formats = append(formats, instillFormat)
+	}
+
+	for _, v := range formats {
+		if v.(string) == "*" || v.(string) == "semi-structured/*" || v.(string) == "semi-structured/json" {
+			return true
 		}
 	}
-	if v := compSpec.Fields["instillFormat"].GetStringValue(); v != "" {
-		if v == "*" || v == "semi-structured/*" || v == "semi-structured/json" {
-			isFreeform = true
-		}
-	}
-	return isFreeform
+
+	return false
 }
