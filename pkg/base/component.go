@@ -87,10 +87,7 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 		return compSpec, nil
 	}
 
-	isFreeform := false
-	if len(compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice()) > 0 {
-		isFreeform = compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice()[0].(string) == "*"
-	}
+	isFreeform := checkFreeForm(compSpec)
 
 	if _, ok := compSpec.Fields["type"]; !ok && !isFreeform {
 		return nil, fmt.Errorf("type missing: %+v", compSpec)
@@ -315,10 +312,7 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 		return compSpec, nil
 	}
 
-	isFreeform := false
-	if len(compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice()) > 0 {
-		isFreeform = compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice()[0].(string) == "*"
-	}
+	isFreeform := checkFreeForm(compSpec)
 
 	if _, ok := compSpec.Fields["type"]; !ok && !isFreeform {
 		return nil, fmt.Errorf("type missing: %+v", compSpec)
@@ -631,4 +625,23 @@ func renderTaskJSON(tasksJSONBytes []byte, additionalJSONBytes map[string][]byte
 	}
 	return renderedTasksJSON, nil
 
+}
+
+func checkFreeForm(compSpec *structpb.Struct) bool {
+	// For formats such as `*`, `semi-structured/*`, and `semi-structured/*`, we treat them as freeform data.
+	// Thus, there is no need to set the `type` in the JSON schema.
+	isFreeform := false
+	if len(compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice()) > 0 {
+		for _, v := range compSpec.Fields["instillAcceptFormats"].GetListValue().AsSlice() {
+			if v.(string) == "*" || v.(string) == "semi-structured/*" || v.(string) == "semi-structured/json" {
+				isFreeform = true
+			}
+		}
+	}
+	if v := compSpec.Fields["instillFormat"].GetStringValue(); v != "" {
+		if v == "*" || v == "semi-structured/*" || v == "semi-structured/json" {
+			isFreeform = true
+		}
+	}
+	return isFreeform
 }
