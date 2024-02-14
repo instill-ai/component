@@ -28,15 +28,23 @@ type InstillAcceptFormatsSchema []string
 
 func (s InstillAcceptFormatsSchema) Validate(ctx jsonschema.ValidationContext, v interface{}) error {
 
+	// TODO: We should design a better approach to validate the Base64 data.
+
 	switch v := v.(type) {
 
 	case string:
 		mimeType := ""
 		for _, instillAcceptFormat := range s {
 
-			switch instillAcceptFormat {
-			case "string", "*", "*/*":
+			switch {
+			case instillAcceptFormat == "string",
+				instillAcceptFormat == "*",
+				instillAcceptFormat == "*/*",
+				strings.HasPrefix(instillAcceptFormat, "semi-structured"),
+				strings.HasPrefix(instillAcceptFormat, "structured"):
 				return nil
+
+			// For other types, we assume they are Base64 strings and need to validate the Base64 encoding.
 			default:
 
 				b, err := base64.StdEncoding.DecodeString(TrimBase64Mime(v))
@@ -85,13 +93,19 @@ type InstillFormatSchema string
 
 func (s InstillFormatSchema) Validate(ctx jsonschema.ValidationContext, v interface{}) error {
 
+	// TODO: We should design a better approach to validate the Base64 data.
 	switch v := v.(type) {
 
 	case string:
-
-		switch string(s) {
-		case "string", "*", "*/*":
+		switch {
+		case s == "string",
+			s == "*",
+			s == "*/*",
+			strings.HasPrefix(string(s), "semi-structured"),
+			strings.HasPrefix(string(s), "structured"):
 			return nil
+
+		// For other types, we assume they are Base64 strings and need to validate the Base64 encoding.
 		default:
 			mimeType := ""
 			if !strings.HasPrefix(v, "data:") {
