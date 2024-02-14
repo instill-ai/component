@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.11.0-beta](https://github.com/instill-ai/component/compare/v0.10.0-beta...v0.11.0-beta) (2024-02-14)
+
+
+### Features
+
+* add tasks to component definition ([#54](https://github.com/instill-ai/component/issues/54)) ([b067f9c](https://github.com/instill-ai/component/commit/b067f9cbaa984349f482e9cc6b6011a0b14b240b))
+* introduce `instillFormat: semi-structured/json` ([#55](https://github.com/instill-ai/component/issues/55)) ([3dbaa03](https://github.com/instill-ai/component/commit/3dbaa03ff7085a851b6eb424c67733173667b447))
+
+
+### Bug Fixes
+
+* fix `instillFormat` validation when using `semi-structured` and `structured data` ([#56](https://github.com/instill-ai/component/issues/56)) ([66fea88](https://github.com/instill-ai/component/commit/66fea88f30d8f95f178235170ca1df1b1c9ab083))
+* fix bug when `instillAcceptFormats` has multiple values ([#52](https://github.com/instill-ai/component/issues/52)) ([5cbfb44](https://github.com/instill-ai/component/commit/5cbfb4402c3ccc8aa379d6281161059a45183c9f))
+
 ## [0.10.0-beta](https://github.com/instill-ai/component/compare/v0.9.0-beta...v0.10.0-beta) (2024-01-28)
 
 
