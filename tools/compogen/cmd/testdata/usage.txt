@@ -1,0 +1,19 @@
+# OK - CLI help.
+
+compogen --help
+cmp stdout want-help
+
+compogen help
+cmp stdout want-help
+
+# NOK - Passing unknown flags should produce a usage message.
+
+! compogen --unknown
+cmp stderr want-usage
+
+-- want-usage --
+Error: unknown flag: --unknown
+Run 'compogen --help' for usage.
+-- want-help --
+compogen is the Instill AI component schema generation tool
+
