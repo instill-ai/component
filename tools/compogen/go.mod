@@ -5,6 +5,7 @@ go 1.21.5
 require (
 	github.com/frankban/quicktest v1.14.6
 	github.com/go-playground/validator/v10 v10.18.0
+	github.com/launchdarkly/go-semver v1.0.2
 	github.com/rogpeppe/go-internal v1.12.0
 	github.com/spf13/cobra v1.8.0
 )
@@ -23,5 +24,5 @@ require (
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	golang.org/x/tools v0.6.0 // indirect
+	golang.org/x/tools v0.13.0 // indirect
 )

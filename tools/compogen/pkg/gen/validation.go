@@ -8,14 +8,19 @@ import (
 )
 
 func fieldErrorMessage(fe validator.FieldError) string {
+	var msg string
 	switch fe.Tag() {
 	case "required":
-		return fe.Field() + " field is required"
+		msg = "is required"
 	case "len":
-		return fe.Field() + " field has an invalid length"
+		msg = "has an invalid length"
+	case "semver":
+		msg = "must be valid SemVer 2.0.0"
+	default:
+		return fe.Error() // default error
 	}
 
-	return fe.Error() // default error
+	return fmt.Sprintf("%s field %s", fe.Field(), msg)
 }
 
 func asValidationError(err error) error {

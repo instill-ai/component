@@ -7,6 +7,8 @@ import (
 )
 
 func init() {
+	var isConnector, isOperator bool
+
 	genReadmeCmd := &cobra.Command{
 		Use:  "readme [config dir] [target file]",
 		Args: cobra.ExactArgs(2),
@@ -18,9 +20,23 @@ The first argument specifies the path to the component config directory, i.e., t
 The second argument allows users to specify the path to the generated README file.`,
 
 		RunE: wrapRun(func(cmd *cobra.Command, args []string) error {
-			return gen.NewREADMEGenerator(args[0], args[1]).Generate()
+			var ct gen.ComponentType
+			switch {
+			case isConnector:
+				ct = gen.ComponentTypeConnector
+			case isOperator:
+				ct = gen.ComponentTypeOperator
+			}
+
+			return gen.NewREADMEGenerator(args[0], args[1], ct).
+				Generate()
 		}),
 	}
+
+	genReadmeCmd.Flags().BoolVar(&isConnector, "connector", false, "Document connector component")
+	genReadmeCmd.Flags().BoolVar(&isOperator, "operator", false, "Document operator component")
+	genReadmeCmd.MarkFlagsOneRequired("connector", "operator")
+	genReadmeCmd.MarkFlagsMutuallyExclusive("connector", "operator")
 
 	rootCmd.AddCommand(genReadmeCmd)
 }

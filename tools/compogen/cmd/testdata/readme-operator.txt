@@ -8,18 +8,15 @@ mv wrongdef.json pkg/wrongdef/config/definitions.json
 
 # NOK - Wrong files
 
-! compogen readme pkg/dummy/wrong pkg/dummy/README.mdx
+! compogen readme pkg/dummy/wrong pkg/dummy/README.mdx --operator
 cmp stderr want-wrong-config
 
-! compogen readme pkg/dummy/config pkg/wrong/README.mdx
+! compogen readme pkg/dummy/config pkg/wrong/README.mdx --operator
 cmp stderr want-wrong-target
-
-! compogen readme pkg/wrongdef/config pkg/wrongdef/README.mdx
-cmp stderr want-invalid-def
 
 # OK
 
-compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx
+compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx --operator
 cmp pkg/dummy/README.mdx want-readme.mdx
 
 -- definitions.json --

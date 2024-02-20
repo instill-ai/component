@@ -7,8 +7,12 @@ import (
 	"html/template"
 	"os"
 	"path/filepath"
+	"strings"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/launchdarkly/go-semver"
 )
 
 const (
@@ -20,17 +24,21 @@ var readmeTmpl string
 
 // READMEGenerator is used to generate the README file of a component.
 type READMEGenerator struct {
-	validate   *validator.Validate
-	configDir  string
-	outputFile string
+	validate *validator.Validate
+
+	componentType ComponentType
+	configDir     string
+	outputFile    string
 }
 
 // NewREADMEGenerator returns an initialized generator.
-func NewREADMEGenerator(configDir, outputFile string) *READMEGenerator {
+func NewREADMEGenerator(configDir, outputFile string, componentType ComponentType) *READMEGenerator {
 	return &READMEGenerator{
-		validate:   validator.New(validator.WithRequiredStructEnabled()),
-		configDir:  configDir,
-		outputFile: outputFile,
+		validate: validator.New(validator.WithRequiredStructEnabled()),
+
+		componentType: componentType,
+		configDir:     configDir,
+		outputFile:    outputFile,
 	}
 }
 
@@ -47,6 +55,11 @@ func (g *READMEGenerator) parseDefinition(configDir string) (d definition, err e
 
 	if err := g.validate.Struct(defs); err != nil {
 		return d, fmt.Errorf("invalid definitions file:\n%w", asValidationError(err))
+	}
+
+	_, ok := toComponentSubtype[defs.Definitions[0].Type]
+	if g.componentType == ComponentTypeConnector && !ok {
+		return d, fmt.Errorf("invalid definitions file:\nType field is invalid")
 	}
 
 	return defs.Definitions[0], nil
@@ -72,7 +85,12 @@ func (g *READMEGenerator) Generate() error {
 
 	defer out.Close()
 
-	return readme.Execute(out, def.toREADMEParams())
+	p, err := def.toREADMEParams(g.componentType)
+	if err != nil {
+		return err
+	}
+
+	return readme.Execute(out, p)
 }
 
 // This struct is used to validate the definitions schema.
@@ -86,23 +104,73 @@ type definitions struct {
 type definition struct {
 	Title       string `json:"title" validate:"required"`
 	Description string `json:"description" validate:"required"`
-	Public      bool   `json:"public"`
+	Version     string `json:"version" validate:"required,semver"`
+
+	Public bool   `json:"public"`
+	Type   string `json:"type"`
 }
 
-func (d definition) toREADMEParams() readmeParams {
-	return readmeParams{
-		Title:         d.Title,
-		Description:   "performs an action",
-		IsDraft:       !d.Public,
-		ComponentType: "operator",
-		ReleaseStage:  "Alpha",
+func (d definition) toREADMEParams(ct ComponentType) (readmeParams, error) {
+	p := readmeParams{}
+
+	prerelease, err := versionToReleaseStage(d.Version)
+	if err != nil {
+		return p, err
 	}
+
+	p.Title = d.Title
+	p.Description = firstTo(d.Description, unicode.ToLower)
+	p.ComponentType = ct
+	p.IsDraft = !d.Public
+	p.ReleaseStage = prerelease
+
+	switch ct {
+	case ComponentTypeConnector:
+		p.ComponentSubtype = toComponentSubtype[d.Type]
+	case ComponentTypeOperator:
+		p.ComponentSubtype = cstOperator
+	}
+
+	return p, nil
 }
 
 type readmeParams struct {
-	Title         string
-	Description   string
-	IsDraft       bool
-	ComponentType string
-	ReleaseStage  string
+	Title            string
+	Description      string
+	IsDraft          bool
+	ComponentType    ComponentType
+	ComponentSubtype ComponentSubtype
+	ReleaseStage     string
+}
+
+func firstTo(s string, modifier func(rune) rune) string {
+	r, size := utf8.DecodeRuneInString(s)
+	if r == utf8.RuneError && size <= 1 {
+		return s
+	}
+
+	mod := modifier(r)
+	if r == mod {
+		return s
+	}
+
+	return string(mod) + s[size:]
+}
+
+const generallyAvailable = "GA"
+
+func versionToReleaseStage(s string) (string, error) {
+	v, err := semver.Parse(s)
+	if err != nil {
+		return "", err
+	}
+
+	if prerelease := v.GetPrerelease(); prerelease != "" {
+		// If prerelease has several bits, use spaces. E.g.:
+		// "pre-release" -> "Pre release"
+		rs := strings.ReplaceAll(firstTo(prerelease, unicode.ToUpper), "-", " ")
+		return rs, nil
+	}
+
+	return generallyAvailable, nil
 }
