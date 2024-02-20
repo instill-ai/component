@@ -18,8 +18,7 @@ The first argument specifies the path to the component config directory, i.e., t
 The second argument allows users to specify the path to the generated README file.`,
 
 		RunE: wrapRun(func(cmd *cobra.Command, args []string) error {
-
-			return gen.GenerateREADME(args[0], args[1])
+			return gen.NewREADMEGenerator(args[0], args[1]).Generate()
 		}),
 	}
 
