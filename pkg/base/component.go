@@ -214,6 +214,16 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 	return compSpec, nil
 }
 
+const taskPrefix = "TASK_"
+
+// TaskIDToTitle builds a Task title from its ID. This is used when the `title`
+// key in the task definition isn't present.
+func TaskIDToTitle(id string) string {
+	title := strings.ReplaceAll(id, taskPrefix, "")
+	title = strings.ReplaceAll(title, "_", " ")
+	return cases.Title(language.English).String(title)
+}
+
 func (comp *Component) generateComponentTasks(availableTasks []string) []*pipelinePB.ComponentTask {
 	tasks := make([]*pipelinePB.ComponentTask, 0, len(availableTasks))
 	for _, t := range availableTasks {
