@@ -18,10 +18,11 @@ func TestDefinition_Validate(t *testing.T) {
 		return &definitions{
 			Definitions: []definition{
 				{
-					Title:       "foo",
-					Description: "bar",
-					Public:      false,
-					Version:     "0.1.0-alpha",
+					Title:          "foo",
+					Description:    "bar",
+					Public:         false,
+					Version:        "0.1.0-alpha",
+					AvailableTasks: []string{"TASK_1", "TASK_2"},
 				},
 			}}
 	}
@@ -78,6 +79,13 @@ func TestDefinition_Validate(t *testing.T) {
 				defs.Definitions[0].Version = "v0.1.0-alpha"
 			},
 			wantErr: "Version field must be valid SemVer 2.0.0",
+		},
+		{
+			name: "nok - zero tasks",
+			modifier: func(defs *definitions) {
+				defs.Definitions[0].AvailableTasks = []string{}
+			},
+			wantErr: "AvailableTasks field doesn't reach the minimum value / number of elements",
 		},
 		{
 			name: "nok - multiple errors",

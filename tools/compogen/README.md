@@ -24,13 +24,18 @@ compogen readme path/to/component/config path/to/component/README.mdx
 
 ### Validation & guidelines
 
-In order to successfully build the README of a component, the following fields
-must be present and comply with the following guidelines:
+In order to successfully build the README of a component, the `definitions.json`
+and `tasks.json` files must be present in the component configuration directory.
 
-- `title`
+The `definitions.json` file must contain one object in whuich the following
+fields must be present and comply with the following guidelines:
+
+- `title`.
 - `description` - It should contain a single sentence describing the component.
   The template will use it next to the component title (`{{ .Title }}{{
   .Description }}.`) so it must be written in third person, present tense.
-- `version` - Must be valid SemVer 2.0.0
+- `version` - Must be valid SemVer 2.0.0.
 - `type` - Connector definitions must contain this field and its value must
-  match one of the (string) values defined in [protobufs](https://github.com/instill-ai/protobufs/blob/main/vdp/pipeline/v1beta/connector_definition.proto)
+  match one of the (string) values defined in [protobufs](https://github.com/instill-ai/protobufs/blob/main/vdp/pipeline/v1beta/connector_definition.proto).
+- `available_tasks` - This array must have at least one value, which should be
+  one of the root-level keys in the `tasks.json` file.

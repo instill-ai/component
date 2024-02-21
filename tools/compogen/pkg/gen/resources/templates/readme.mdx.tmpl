@@ -7,12 +7,18 @@ description: "Learn about how to set up a VDP {{ .Title }} {{ .ComponentType }} 
 
 The {{ .Title }} component is {{ .ComponentSubtype.IndefiniteArticle }} {{ .ComponentSubtype }} that {{ .Description }}.
 It can carry out the following tasks:
-
-- [Text Generation](#text-generation)
-- [Text Embeddings](#text-embeddings)
-- [Speech Recognition](#speech-recognition)
-- [Text to Image](#text-to-image)
+{{ range .Tasks }}
+- [{{ .Title }}](#{{ asAnchor .Title}}){{ end }}
 
 ## Release Stage
 
 `{{ .ReleaseStage }}`
+
+## Supported Tasks
+{{ range .Tasks}}
+### {{ .Title }}
+
+| Input | Type | Description |
+| :--- | --- | --- |
+| task | string | `{{.ID}}` |
+{{ end }}

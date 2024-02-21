@@ -13,6 +13,9 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/launchdarkly/go-semver"
+	"github.com/russross/blackfriday/v2"
+
+	component "github.com/instill-ai/component/pkg/base"
 )
 
 const (
@@ -73,7 +76,9 @@ func (g *READMEGenerator) Generate() error {
 		return err
 	}
 
-	readme, err := template.New("readme").Parse(readmeTmpl)
+	readme, err := template.New("readme").Funcs(template.FuncMap{
+		"asAnchor": blackfriday.SanitizedAnchorName,
+	}).Parse(readmeTmpl)
 	if err != nil {
 		return err
 	}
@@ -102,9 +107,10 @@ type definitions struct {
 }
 
 type definition struct {
-	Title       string `json:"title" validate:"required"`
-	Description string `json:"description" validate:"required"`
-	Version     string `json:"version" validate:"required,semver"`
+	Title          string   `json:"title" validate:"required"`
+	Description    string   `json:"description" validate:"required"`
+	Version        string   `json:"version" validate:"required,semver"`
+	AvailableTasks []string `json:"available_tasks" validate:"gt=0"`
 
 	Public bool   `json:"public"`
 	Type   string `json:"type"`
@@ -124,6 +130,14 @@ func (d definition) toREADMEParams(ct ComponentType) (readmeParams, error) {
 	p.IsDraft = !d.Public
 	p.ReleaseStage = prerelease
 
+	p.Tasks = make([]Task, len(d.AvailableTasks))
+	for i, at := range d.AvailableTasks {
+		p.Tasks[i] = Task{
+			ID:    at,
+			Title: component.TaskIDToTitle(at),
+		}
+	}
+
 	switch ct {
 	case ComponentTypeConnector:
 		p.ComponentSubtype = toComponentSubtype[d.Type]
@@ -134,6 +148,12 @@ func (d definition) toREADMEParams(ct ComponentType) (readmeParams, error) {
 	return p, nil
 }
 
+// Task contains the information of a component task.
+type Task struct {
+	ID    string
+	Title string
+}
+
 type readmeParams struct {
 	Title            string
 	Description      string
@@ -141,6 +161,8 @@ type readmeParams struct {
 	ComponentType    ComponentType
 	ComponentSubtype ComponentSubtype
 	ReleaseStage     string
+
+	Tasks []Task
 }
 
 func firstTo(s string, modifier func(rune) rune) string {

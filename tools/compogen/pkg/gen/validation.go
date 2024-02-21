@@ -14,6 +14,8 @@ func fieldErrorMessage(fe validator.FieldError) string {
 		msg = "is required"
 	case "len":
 		msg = "has an invalid length"
+	case "gt":
+		msg = "doesn't reach the minimum value / number of elements"
 	case "semver":
 		msg = "must be valid SemVer 2.0.0"
 	default:

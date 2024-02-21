@@ -12,6 +12,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
 [
 {
   "available_tasks": [
+    "TASK_DUMMY"
   ],
   "public": true,
   "title": "Dummy",
@@ -32,11 +33,16 @@ description: "Learn about how to set up a VDP Dummy connector https://github.com
 The Dummy component is a data connector that performs an action.
 It can carry out the following tasks:
 
-- [Text Generation](#text-generation)
-- [Text Embeddings](#text-embeddings)
-- [Speech Recognition](#speech-recognition)
-- [Text to Image](#text-to-image)
+- [Dummy](#dummy)
 
 ## Release Stage
 
 `Alpha`
+
+## Supported Tasks
+
+### Dummy
+
+| Input | Type | Description |
+| :--- | --- | --- |
+| task | string | `TASK_DUMMY` |

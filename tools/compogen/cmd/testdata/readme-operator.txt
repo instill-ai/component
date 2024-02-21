@@ -23,6 +23,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
 [
   {
     "available_tasks": [
+      "TASK_DUMMY",
+      "TASK_DUMMIER_THAN_DUMMY"
     ],
     "public": true,
     "title": "Dummy",
@@ -52,11 +54,23 @@ description: "Learn about how to set up a VDP Dummy operator https://github.com/
 The Dummy component is an operator that performs an action.
 It can carry out the following tasks:
 
-- [Text Generation](#text-generation)
-- [Text Embeddings](#text-embeddings)
-- [Speech Recognition](#speech-recognition)
-- [Text to Image](#text-to-image)
+- [Dummy](#dummy)
+- [Dummier Than Dummy](#dummier-than-dummy)
 
 ## Release Stage
 
 `Alpha`
+
+## Supported Tasks
+
+### Dummy
+
+| Input | Type | Description |
+| :--- | --- | --- |
+| task | string | `TASK_DUMMY` |
+
+### Dummier Than Dummy
+
+| Input | Type | Description |
+| :--- | --- | --- |
+| task | string | `TASK_DUMMIER_THAN_DUMMY` |
