@@ -27,10 +27,12 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       "TASK_DUMMIER_THAN_DUMMY"
     ],
     "public": true,
+    "spec": {},
+    "id": "dummy",
     "title": "Dummy",
     "description": "Performs an action",
     "version": "0.1.0-alpha",
-    "source_url": "github.com/instill-ai/operator/blob/main/pkg/base64/v0"
+    "source_url": "https://github.com/instill-ai/operator/blob/main/pkg/dummy/v0"
   }
 ]
 -- wrongdef.json --
@@ -61,6 +63,10 @@ It can carry out the following tasks:
 
 `Alpha`
 
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/operator/blob/main/pkg/dummy/v0/config/definitions.json).
+
 ## Supported Tasks
 
 ### Dummy
@@ -74,3 +80,4 @@ It can carry out the following tasks:
 | Input | Type | Description |
 | :--- | --- | --- |
 | task | string | `TASK_DUMMIER_THAN_DUMMY` |
+

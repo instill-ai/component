@@ -4,16 +4,18 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 	"unicode"
 	"unicode/utf8"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/launchdarkly/go-semver"
 	"github.com/russross/blackfriday/v2"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	component "github.com/instill-ai/component/pkg/base"
 )
@@ -68,6 +70,12 @@ func (g *READMEGenerator) parseDefinition(configDir string) (d definition, err e
 	return defs.Definitions[0], nil
 }
 
+// This is used to build the cURL examples for Instill Core and Cloud.
+type host struct {
+	Name string
+	URL  string
+}
+
 // Generate creates a MDX file with the component documentation from the
 // component schema.
 func (g *READMEGenerator) Generate() error {
@@ -77,7 +85,14 @@ func (g *READMEGenerator) Generate() error {
 	}
 
 	readme, err := template.New("readme").Funcs(template.FuncMap{
-		"asAnchor": blackfriday.SanitizedAnchorName,
+		"firstToLower": firstToLower,
+		"asAnchor":     blackfriday.SanitizedAnchorName,
+		"hosts": func() []host {
+			return []host{
+				{Name: "Instill-Cloud", URL: "https://api.instill.tech"},
+				{Name: "Instill-Core", URL: "http://localhost:8080"},
+			}
+		},
 	}).Parse(readmeTmpl)
 	if err != nil {
 		return err
@@ -90,7 +105,7 @@ func (g *READMEGenerator) Generate() error {
 
 	defer out.Close()
 
-	p, err := def.toREADMEParams(g.componentType)
+	p, err := readmeParams{ComponentType: g.componentType}.parseDefinition(def)
 	if err != nil {
 		return err
 	}
@@ -98,37 +113,59 @@ func (g *READMEGenerator) Generate() error {
 	return readme.Execute(out, p)
 }
 
-// This struct is used to validate the definitions schema.
-type definitions struct {
-	// Definitions is an array for legacy reasons: Airbyte used to have several
-	// definitions. These were merged into one but the structure remained. It
-	// should be refactored to remove the array nesting in the future.
-	Definitions []definition `validate:"len=1,dive"`
+// Task contains the information of a component task.
+type Task struct {
+	ID    string
+	Title string
 }
 
-type definition struct {
-	Title          string   `json:"title" validate:"required"`
-	Description    string   `json:"description" validate:"required"`
-	Version        string   `json:"version" validate:"required,semver"`
-	AvailableTasks []string `json:"available_tasks" validate:"gt=0"`
-
-	Public bool   `json:"public"`
-	Type   string `json:"type"`
+type resourceProperty struct {
+	property
+	ID       string
+	Required bool
 }
 
-func (d definition) toREADMEParams(ct ComponentType) (readmeParams, error) {
-	p := readmeParams{}
+type resourceConfig struct {
+	Prerequisites string
+	Properties    []resourceProperty
+}
+
+type readmeParams struct {
+	ID               string
+	Title            string
+	Description      string
+	IsDraft          bool
+	ComponentType    ComponentType
+	ComponentSubtype ComponentSubtype
+	ReleaseStage     string
+	SourceURL        string
+	ResourceConfig   resourceConfig
+
+	Tasks []Task
+}
+
+func (p readmeParams) parseDefinition(d definition) (readmeParams, error) {
+	switch p.ComponentType {
+	case ComponentTypeConnector:
+		p.ComponentSubtype = toComponentSubtype[d.Type]
+	case ComponentTypeOperator:
+		p.ComponentSubtype = cstOperator
+	default:
+		return p, fmt.Errorf("invalid component type")
+	}
 
 	prerelease, err := versionToReleaseStage(d.Version)
 	if err != nil {
 		return p, err
 	}
 
+	p.ID = d.ID
 	p.Title = d.Title
-	p.Description = firstTo(d.Description, unicode.ToLower)
-	p.ComponentType = ct
+	p.Description = d.Description
 	p.IsDraft = !d.Public
 	p.ReleaseStage = prerelease
+	p.SourceURL = d.SourceURL
+	p.ResourceConfig = parseResourceConfig(d)
 
 	p.Tasks = make([]Task, len(d.AvailableTasks))
 	for i, at := range d.AvailableTasks {
@@ -138,40 +175,51 @@ func (d definition) toREADMEParams(ct ComponentType) (readmeParams, error) {
 		}
 	}
 
-	switch ct {
-	case ComponentTypeConnector:
-		p.ComponentSubtype = toComponentSubtype[d.Type]
-	case ComponentTypeOperator:
-		p.ComponentSubtype = cstOperator
-	}
-
 	return p, nil
 }
 
-// Task contains the information of a component task.
-type Task struct {
-	ID    string
-	Title string
+func parseResourceConfig(d definition) resourceConfig {
+	rc := resourceConfig{Prerequisites: d.Prerequisites}
+	if d.Spec.ResourceSpecification == nil {
+		return rc
+	}
+
+	specProps := d.Spec.ResourceSpecification.Properties
+	rc.Properties = make([]resourceProperty, len(specProps))
+
+	// We need a map first to set the Required property, then we'll
+	// transform it to a slice.
+	propMap := make(map[string]resourceProperty)
+	for k, sp := range specProps {
+		propMap[k] = resourceProperty{
+			ID:       k,
+			property: sp,
+		}
+	}
+
+	for _, k := range d.Spec.ResourceSpecification.Required {
+		if prop, ok := propMap[k]; ok {
+			prop.Required = true
+			propMap[k] = prop
+		}
+	}
+
+	for _, rp := range propMap {
+		// We can safely access the order pointer because it has been
+		// previously validated by the caller.
+		rc.Properties[*rp.Order] = rp
+	}
+
+	return rc
 }
 
-type readmeParams struct {
-	Title            string
-	Description      string
-	IsDraft          bool
-	ComponentType    ComponentType
-	ComponentSubtype ComponentSubtype
-	ReleaseStage     string
-
-	Tasks []Task
-}
-
-func firstTo(s string, modifier func(rune) rune) string {
+func firstToLower(s string) string {
 	r, size := utf8.DecodeRuneInString(s)
 	if r == utf8.RuneError && size <= 1 {
 		return s
 	}
 
-	mod := modifier(r)
+	mod := unicode.ToLower(r)
 	if r == mod {
 		return s
 	}
@@ -189,8 +237,8 @@ func versionToReleaseStage(s string) (string, error) {
 
 	if prerelease := v.GetPrerelease(); prerelease != "" {
 		// If prerelease has several bits, use spaces. E.g.:
-		// "pre-release" -> "Pre release"
-		rs := strings.ReplaceAll(firstTo(prerelease, unicode.ToUpper), "-", " ")
+		// "pre-release" -> "Pre Release"
+		rs := cases.Title(language.English).String(strings.ReplaceAll(prerelease, "-", " "))
 		return rs, nil
 	}
 

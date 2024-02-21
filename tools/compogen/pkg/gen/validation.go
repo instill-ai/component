@@ -18,6 +18,8 @@ func fieldErrorMessage(fe validator.FieldError) string {
 		msg = "doesn't reach the minimum value / number of elements"
 	case "semver":
 		msg = "must be valid SemVer 2.0.0"
+	case "url":
+		msg = "must be a valid URL"
 	default:
 		return fe.Error() // default error
 	}
