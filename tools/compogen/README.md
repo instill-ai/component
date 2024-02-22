@@ -52,3 +52,23 @@ Certain optional fields modify the document behaviour:
     i.e. when the `--connector` flag is passed.`
 - A table will be built for the `spec.resource_specification` properties. They
   must contain an `instillUIOrder` field so the row order is deterministic.
+
+# TODO
+
+- Support `oneOf` schemas for resource properties, present in, e.g., the [Airbyte](https://github.com/instill-ai/connector/blob/main/pkg/airbyte/v0/config/definitions.json#L15)
+  or the [REST API](https://github.com/instill-ai/connector/blob/main/pkg/restapi/v0/config/definitions.json#L26) connectors.
+  - We might leverage some Go implementation of JSON schema. Some candidates:
+    - [santhosh-tekuri/jsonschema](https://pkg.go.dev/github.com/santhosh-tekuri/jsonschema/v5#Schema)
+    - [omissis/go-jsonschema](https://github.com/omissis/go-jsonschema/blob/934012d/pkg/schemas/model.go#L107)
+    - [invopop/jsonschema](https://github.com/invopop/jsonschema/blob/a446707/schema.go#L14)
+    - [swaggest/jsonschema-go](https://pkg.go.dev/github.com/swaggest/jsonschema-go#Schema)
+  - The schema loading carried out by the `component/base` package in
+    `LoadConnectorDefinitions` or `LoadOperatorDefinitions` might also be
+    useful, although it is oriented to transforming the data to a `structpb.Struct`
+    rather than to define the object structure.
+- Transform `tasks.json` into "Supported Tasks" tables (e.g. https://github.com/instill-ai/instill.tech/blob/dedaaa3/docs/v0.12.0-beta/vdp/ai-connectors/openai.en.mdx#L84)
+- If task definitions contain examples for the (required) input and output
+  fields, generate param samples as in https://github.com/instill-ai/instill.tech/blob/dedaaa3/docs/v0.12.0-beta/vdp/ai-connectors/openai.en.mdx#L148
+- Implement a way to inject extra sections if a component needs further
+  documentation (e.g. by adding a `doc.json` file with a structured array that
+  describes the position and content of the new section.
