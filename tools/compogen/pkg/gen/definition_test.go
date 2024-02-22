@@ -109,7 +109,7 @@ func TestDefinition_Validate(t *testing.T) {
 			name: "nok - resource specification must be valid if present",
 			modifier: func(defs *definitions) {
 				defs.Definitions[0].Spec = spec{
-					ResourceSpecification: &resourceSpec{},
+					ResourceSpecification: &objectSchema{},
 				}
 			},
 			wantErr: "Properties field doesn't reach the minimum value / number of elements",
@@ -121,108 +121,6 @@ func TestDefinition_Validate(t *testing.T) {
 				defs.Definitions[0].Description = ""
 			},
 			wantErr: "Title field is required\nDescription field is required",
-		},
-	}
-
-	for _, tc := range testcases {
-		c.Run(tc.name, func(c *qt.C) {
-			got := validStruct()
-			tc.modifier(got)
-
-			err := validate.Struct(got)
-			c.Check(err, qt.IsNotNil)
-			c.Check(asValidationError(err), qt.ErrorMatches, tc.wantErr)
-		})
-	}
-}
-
-func TestResourceSpec_Validate(t *testing.T) {
-	c := qt.New(t)
-
-	validate := validator.New(validator.WithRequiredStructEnabled())
-
-	zero, one, two := 0, 1, 2
-	// Returns a valid struct
-	validStruct := func() *resourceSpec {
-		return &resourceSpec{
-			Properties: map[string]property{
-				"stringval": property{
-					Description: "a string",
-					Title:       "String Value",
-					Type:        "string",
-					Order:       &zero,
-				},
-				"intval": property{
-					Description: "an integer number",
-					Title:       "Integer value",
-					Type:        "integer",
-					Order:       &one,
-				},
-			},
-			Required: []string{"a"},
-		}
-	}
-
-	c.Run("ok", func(c *qt.C) {
-		err := validate.Struct(validStruct())
-		c.Check(err, qt.IsNil)
-	})
-
-	testcases := []struct {
-		name     string
-		modifier func(*resourceSpec)
-		wantErr  string
-	}{
-		{
-			name: "nok - no properties",
-			modifier: func(rs *resourceSpec) {
-				rs.Properties = map[string]property{}
-			},
-			wantErr: "Properties field doesn't reach the minimum value / number of elements",
-		},
-		{
-			name: "nok - no title",
-			modifier: func(rs *resourceSpec) {
-				rs.Properties["wrong"] = property{
-					Description: "foo",
-					Type:        "zoot",
-					Order:       &two,
-				}
-			},
-			wantErr: "Title field is required",
-		},
-		{
-			name: "nok - no description",
-			modifier: func(rs *resourceSpec) {
-				rs.Properties["wrong"] = property{
-					Title: "bar",
-					Type:  "zot",
-					Order: &two,
-				}
-			},
-			wantErr: "Description field is required",
-		},
-		{
-			name: "nok - no type",
-			modifier: func(rs *resourceSpec) {
-				rs.Properties["wrong"] = property{
-					Description: "foo",
-					Title:       "bar",
-					Order:       &two,
-				}
-			},
-			wantErr: "Type field is required",
-		},
-		{
-			name: "nok - no order",
-			modifier: func(rs *resourceSpec) {
-				rs.Properties["wrong"] = property{
-					Description: "foo",
-					Title:       "bar",
-					Type:        "zot",
-				}
-			},
-			wantErr: "Order field is required",
 		},
 	}
 

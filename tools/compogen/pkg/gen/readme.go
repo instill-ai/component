@@ -22,6 +22,7 @@ import (
 
 const (
 	definitionsFile = "definitions.json"
+	tasksFile       = "tasks.json"
 )
 
 //go:embed resources/templates/readme.mdx.tmpl
@@ -70,6 +71,24 @@ func (g *READMEGenerator) parseDefinition(configDir string) (d definition, err e
 	return defs.Definitions[0], nil
 }
 
+func (g *READMEGenerator) parseTasks(configDir string) (map[string]task, error) {
+	tasksJSON, err := os.ReadFile(filepath.Join(configDir, tasksFile))
+	if err != nil {
+		return nil, err
+	}
+
+	tasks := map[string]task{}
+	if err := json.Unmarshal(tasksJSON, &tasks); err != nil {
+		return nil, err
+	}
+
+	if err := g.validate.Var(tasks, "gt=0,dive"); err != nil {
+		return nil, fmt.Errorf("invalid tasks file:\n%w", asValidationError(err))
+	}
+
+	return tasks, nil
+}
+
 // This is used to build the cURL examples for Instill Core and Cloud.
 type host struct {
 	Name string
@@ -80,6 +99,11 @@ type host struct {
 // component schema.
 func (g *READMEGenerator) Generate() error {
 	def, err := g.parseDefinition(g.configDir)
+	if err != nil {
+		return err
+	}
+
+	tasks, err := g.parseTasks(g.configDir)
 	if err != nil {
 		return err
 	}
@@ -105,7 +129,7 @@ func (g *READMEGenerator) Generate() error {
 
 	defer out.Close()
 
-	p, err := readmeParams{ComponentType: g.componentType}.parseDefinition(def)
+	p, err := readmeParams{ComponentType: g.componentType}.parseDefinition(def, tasks)
 	if err != nil {
 		return err
 	}
@@ -113,10 +137,12 @@ func (g *READMEGenerator) Generate() error {
 	return readme.Execute(out, p)
 }
 
-// Task contains the information of a component task.
-type Task struct {
-	ID    string
-	Title string
+type readmeTask struct {
+	ID          string
+	Title       string
+	Description string
+	Input       []resourceProperty
+	Output      []resourceProperty
 }
 
 type resourceProperty struct {
@@ -141,10 +167,10 @@ type readmeParams struct {
 	SourceURL        string
 	ResourceConfig   resourceConfig
 
-	Tasks []Task
+	Tasks []readmeTask
 }
 
-func (p readmeParams) parseDefinition(d definition) (readmeParams, error) {
+func (p readmeParams) parseDefinition(d definition, tasks map[string]task) (readmeParams, error) {
 	switch p.ComponentType {
 	case ComponentTypeConnector:
 		p.ComponentSubtype = toComponentSubtype[d.Type]
@@ -159,58 +185,80 @@ func (p readmeParams) parseDefinition(d definition) (readmeParams, error) {
 		return p, err
 	}
 
+	if p.Tasks, err = parseREADMETasks(d.AvailableTasks, tasks); err != nil {
+		return p, err
+	}
+
 	p.ID = d.ID
 	p.Title = d.Title
 	p.Description = d.Description
 	p.IsDraft = !d.Public
 	p.ReleaseStage = prerelease
 	p.SourceURL = d.SourceURL
-	p.ResourceConfig = parseResourceConfig(d)
 
-	p.Tasks = make([]Task, len(d.AvailableTasks))
-	for i, at := range d.AvailableTasks {
-		p.Tasks[i] = Task{
-			ID:    at,
-			Title: component.TaskIDToTitle(at),
-		}
+	p.ResourceConfig = resourceConfig{Prerequisites: d.Prerequisites}
+	if d.Spec.ResourceSpecification != nil {
+		p.ResourceConfig.Properties = parseResourceProperties(d.Spec.ResourceSpecification)
 	}
 
 	return p, nil
 }
 
-func parseResourceConfig(d definition) resourceConfig {
-	rc := resourceConfig{Prerequisites: d.Prerequisites}
-	if d.Spec.ResourceSpecification == nil {
-		return rc
+func parseREADMETasks(availableTasks []string, tasks map[string]task) ([]readmeTask, error) {
+	readmeTasks := make([]readmeTask, len(availableTasks))
+	for i, at := range availableTasks {
+		t, ok := tasks[at]
+		if !ok {
+			return nil, fmt.Errorf("invalid tasks file:\nmissing %s", at)
+		}
+
+		rt := readmeTask{
+			ID:          at,
+			Description: t.Description,
+			Input:       parseResourceProperties(t.Input),
+			Output:      parseResourceProperties(t.Output),
+		}
+
+		if rt.Title = t.Title; rt.Title == "" {
+			rt.Title = component.TaskIDToTitle(at)
+		}
+
+		readmeTasks[i] = rt
 	}
 
-	specProps := d.Spec.ResourceSpecification.Properties
-	rc.Properties = make([]resourceProperty, len(specProps))
+	return readmeTasks, nil
+}
+
+func parseResourceProperties(o *objectSchema) []resourceProperty {
+	if o == nil {
+		return []resourceProperty{}
+	}
 
 	// We need a map first to set the Required property, then we'll
 	// transform it to a slice.
 	propMap := make(map[string]resourceProperty)
-	for k, sp := range specProps {
+	for k, op := range o.Properties {
 		propMap[k] = resourceProperty{
 			ID:       k,
-			property: sp,
+			property: op,
 		}
 	}
 
-	for _, k := range d.Spec.ResourceSpecification.Required {
+	for _, k := range o.Required {
 		if prop, ok := propMap[k]; ok {
 			prop.Required = true
 			propMap[k] = prop
 		}
 	}
 
-	for _, rp := range propMap {
+	props := make([]resourceProperty, len(o.Properties))
+	for _, prop := range propMap {
 		// We can safely access the order pointer because it has been
 		// previously validated by the caller.
-		rc.Properties[*rp.Order] = rp
+		props[*prop.Order] = prop
 	}
 
-	return rc
+	return props
 }
 
 func firstToLower(s string) string {

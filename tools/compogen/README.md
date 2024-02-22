@@ -27,8 +27,8 @@ compogen readme path/to/component/config path/to/component/README.mdx
 In order to successfully build the README of a component, the `definitions.json`
 and `tasks.json` files must be present in the component configuration directory.
 
-The `definitions.json` file must contain one object in which the following
-fields must be present and comply with the following guidelines:
+The `definitions.json` file must contain an array with one object in which the
+following fields must be present and comply with the following guidelines:
 
 - `id`.
 - `title`.
@@ -66,7 +66,8 @@ Certain optional fields modify the document behaviour:
     `LoadConnectorDefinitions` or `LoadOperatorDefinitions` might also be
     useful, although it is oriented to transforming the data to a `structpb.Struct`
     rather than to define the object structure.
-- Transform `tasks.json` into "Supported Tasks" tables (e.g. https://github.com/instill-ai/instill.tech/blob/dedaaa3/docs/v0.12.0-beta/vdp/ai-connectors/openai.en.mdx#L84)
+- In the "supported tasks" tables, provide better documentation for nested
+  arrays and objects (currently the type doesn't support nesting).
 - If task definitions contain examples for the (required) input and output
   fields, generate param samples as in https://github.com/instill-ai/instill.tech/blob/dedaaa3/docs/v0.12.0-beta/vdp/ai-connectors/openai.en.mdx#L148
 - Implement a way to inject extra sections if a component needs further

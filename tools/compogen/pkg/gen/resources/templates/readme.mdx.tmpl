@@ -54,15 +54,17 @@ curl -X POST {{ .URL }}/vdp/v1beta/users/<user-id>/{{ $.ComponentType }}s \
 
 For other component operations, please refer to the [API reference](https://openapi.instill.tech/reference/pipelinepublicservice).
 {{ end }}
-## Supported Tasks
-{{ range .Tasks}}
-### {{ .Title }}
+## Supported Tasks{{ range $i, $task := .Tasks}}
 
-| Input | Type | Description |
-| :--- | --- | --- |
-| task | string | `{{.ID}}` |
-{{/*
-
-| Output | Type | Description |
-| :--- | --- | --- |
-| texts | array[string] | Generated text array |*/}}{{ end }}
+### {{ $task.Title }}
+{{ if $task.Description }}
+{{ $task.Description }}
+{{ end }}{{ if $task.Input }}
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `{{ $task.ID }}` |{{ range $task.Input }}
+| {{ .Title }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
+{{ end }}{{ if $task.Output }}
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |{{ range $task.Output }}
+| {{ .Title }}{{ if not .Required }} (optional){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}{{ end }}{{ end }}
