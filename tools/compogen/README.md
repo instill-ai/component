@@ -1,4 +1,4 @@
-# compogen
+# `compogen`
 
 `compogen` is a generation tool for Instill AI component schemas. It uses the
 information in a component schema to automatically generate the component
@@ -53,7 +53,7 @@ Certain optional fields modify the document behaviour:
 - A table will be built for the `spec.resource_specification` properties. They
   must contain an `instillUIOrder` field so the row order is deterministic.
 
-# TODO
+## TODO
 
 - Support `oneOf` schemas for resource properties, present in, e.g., the [Airbyte](https://github.com/instill-ai/connector/blob/main/pkg/airbyte/v0/config/definitions.json#L15)
   or the [REST API](https://github.com/instill-ai/connector/blob/main/pkg/restapi/v0/config/definitions.json#L26) connectors.
@@ -73,3 +73,10 @@ Certain optional fields modify the document behaviour:
 - Implement a way to inject extra sections if a component needs further
   documentation (e.g. by adding a `doc.json` file with a structured array that
   describes the position and content of the new section.
+
+## Next steps
+
+- `compogen validate` might be used validate any component configuration.
+- `compogen new [--operator]` might be used to generate the skeleton of a component.
+- In the future we might want to generate documentation in different languages.
+This will require some thought.
