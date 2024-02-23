@@ -24,7 +24,7 @@ The component configuration is defined and maintained [here]({{ .SourceURL }}/co
 | :--- | :--- | :--- | :--- |{{ range .ResourceConfig.Properties }}
 | {{ .Title }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
 {{ end }}
-{{ .Title }} {{ .ComponentSubtype }} resources can be created in two ways:
+{{ .Title }} {{ .ComponentType }} resources can be created in two ways:
 
 ### No-code Setup
 

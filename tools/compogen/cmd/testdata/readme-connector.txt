@@ -107,7 +107,7 @@ The component configuration is defined and maintained [here](https://github.com/
 | API Key (required) | `api_key` | string | Fill your Dummy API key |
 | Organization ID | `organization` | string | Specify which organization is used for the requests |
 
-Dummy data connector resources can be created in two ways:
+Dummy connector resources can be created in two ways:
 
 ### No-code Setup
 
