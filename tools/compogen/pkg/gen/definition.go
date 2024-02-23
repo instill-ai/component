@@ -18,11 +18,3 @@ type definition struct {
 
 	Spec spec `json:"spec" validate:"omitempty"`
 }
-
-// This struct is used to validate the definitions schema.
-type definitions struct {
-	// Definitions is an array for legacy reasons: Airbyte used to have several
-	// definitions. These were merged into one but the structure remained. It
-	// should be refactored to remove the array nesting in the future.
-	Definitions []definition `validate:"len=1,dive"`
-}

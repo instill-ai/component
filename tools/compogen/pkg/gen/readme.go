@@ -54,21 +54,24 @@ func (g *READMEGenerator) parseDefinition(configDir string) (d definition, err e
 		return d, err
 	}
 
-	defs := definitions{}
-	if err := json.Unmarshal(definitionsJSON, &defs.Definitions); err != nil {
+	// Definitions is an array for legacy reasons: Airbyte used to have several
+	// definitions. These were merged into one but the structure remained. It
+	// should be refactored to remove the array nesting in the future.
+	defs := []definition{}
+	if err := json.Unmarshal(definitionsJSON, &defs); err != nil {
 		return d, err
 	}
 
-	if err := g.validate.Struct(defs); err != nil {
+	if err := g.validate.Var(defs, "len=1,dive"); err != nil {
 		return d, fmt.Errorf("invalid definitions file:\n%w", asValidationError(err))
 	}
 
-	_, ok := toComponentSubtype[defs.Definitions[0].Type]
+	_, ok := toComponentSubtype[defs[0].Type]
 	if g.componentType == ComponentTypeConnector && !ok {
 		return d, fmt.Errorf("invalid definitions file:\nType field is invalid")
 	}
 
-	return defs.Definitions[0], nil
+	return defs[0], nil
 }
 
 func (g *READMEGenerator) parseTasks(configDir string) (map[string]task, error) {

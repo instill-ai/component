@@ -13,19 +13,16 @@ func TestDefinition_Validate(t *testing.T) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	// Returns a valid struct
-	validStruct := func() *definitions {
-		return &definitions{
-			Definitions: []definition{
-				{
-					ID:             "foo",
-					Title:          "Foo",
-					Description:    "Foo bar",
-					Public:         false,
-					Version:        "0.1.0-alpha",
-					AvailableTasks: []string{"TASK_1", "TASK_2"},
-					SourceURL:      "https://github.com/instill-ai",
-				},
-			}}
+	validStruct := func() *definition {
+		return &definition{
+			ID:             "foo",
+			Title:          "Foo",
+			Description:    "Foo bar",
+			Public:         false,
+			Version:        "0.1.0-alpha",
+			AvailableTasks: []string{"TASK_1", "TASK_2"},
+			SourceURL:      "https://github.com/instill-ai",
+		}
 	}
 
 	c.Run("ok", func(c *qt.C) {
@@ -35,70 +32,55 @@ func TestDefinition_Validate(t *testing.T) {
 
 	testcases := []struct {
 		name     string
-		modifier func(*definitions)
+		modifier func(*definition)
 		wantErr  string
 	}{
 		{
-			name: "nok - no definitions",
-			modifier: func(defs *definitions) {
-				defs.Definitions = []definition{}
-			},
-			wantErr: "Definitions field has an invalid length",
-		},
-		{
-			name: "nok - > 1 definitions",
-			modifier: func(defs *definitions) {
-				v := validStruct()
-				defs.Definitions = append(defs.Definitions, v.Definitions[0])
-			},
-			wantErr: "Definitions field has an invalid length",
-		},
-		{
 			name: "nok - no ID",
-			modifier: func(defs *definitions) {
-				defs.Definitions[0].ID = ""
+			modifier: func(d *definition) {
+				d.ID = ""
 			},
 			wantErr: "ID field is required",
 		},
 		{
 			name: "nok - no title",
-			modifier: func(defs *definitions) {
-				defs.Definitions[0].Title = ""
+			modifier: func(d *definition) {
+				d.Title = ""
 			},
 			wantErr: "Title field is required",
 		},
 		{
 			name: "nok - no description",
-			modifier: func(defs *definitions) {
-				defs.Definitions[0].Description = ""
+			modifier: func(d *definition) {
+				d.Description = ""
 			},
 			wantErr: "Description field is required",
 		},
 		{
 			name: "nok - no version",
-			modifier: func(defs *definitions) {
-				defs.Definitions[0].Version = ""
+			modifier: func(d *definition) {
+				d.Version = ""
 			},
 			wantErr: "Version field is required",
 		},
 		{
 			name: "nok - invalid version",
-			modifier: func(defs *definitions) {
-				defs.Definitions[0].Version = "v0.1.0-alpha"
+			modifier: func(d *definition) {
+				d.Version = "v0.1.0-alpha"
 			},
 			wantErr: "Version field must be valid SemVer 2.0.0",
 		},
 		{
 			name: "nok - zero tasks",
-			modifier: func(defs *definitions) {
-				defs.Definitions[0].AvailableTasks = []string{}
+			modifier: func(d *definition) {
+				d.AvailableTasks = []string{}
 			},
 			wantErr: "AvailableTasks field doesn't reach the minimum value / number of elements",
 		},
 		{
 			name: "nok - invalid source URL",
-			modifier: func(defs *definitions) {
-				defs.Definitions[0].SourceURL = "github.com/instill-ai"
+			modifier: func(d *definition) {
+				d.SourceURL = "github.com/instill-ai"
 			},
 			wantErr: "SourceURL field must be a valid URL",
 		},
@@ -107,8 +89,8 @@ func TestDefinition_Validate(t *testing.T) {
 			// Resource specification validation details are covered in a
 			// separate test.
 			name: "nok - resource specification must be valid if present",
-			modifier: func(defs *definitions) {
-				defs.Definitions[0].Spec = spec{
+			modifier: func(d *definition) {
+				d.Spec = spec{
 					ResourceSpecification: &objectSchema{},
 				}
 			},
@@ -116,9 +98,9 @@ func TestDefinition_Validate(t *testing.T) {
 		},
 		{
 			name: "nok - multiple errors",
-			modifier: func(defs *definitions) {
-				defs.Definitions[0].Title = ""
-				defs.Definitions[0].Description = ""
+			modifier: func(d *definition) {
+				d.Title = ""
+				d.Description = ""
 			},
 			wantErr: "Title field is required\nDescription field is required",
 		},
