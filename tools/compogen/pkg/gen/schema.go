@@ -3,8 +3,9 @@ package gen
 type property struct {
 	Description string `json:"description" validate:"required"`
 	Title       string `json:"title" validate:"required"`
-	Type        string `json:"type" validate:"required"`
 	Order       *int   `json:"instillUIOrder" validate:"required"`
+
+	Type string `json:"type"`
 
 	// If Type is array, Items defines the element type.
 	Items struct {

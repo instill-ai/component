@@ -246,8 +246,13 @@ func parseResourceProperties(o *objectSchema) []resourceProperty {
 			property: op,
 		}
 		// If type is map, extend the type with the element type.
-		if prop.Type == "array" && prop.Items.Type != "" {
-			prop.Type += fmt.Sprintf("[%s]", prop.Items.Type)
+		switch prop.Type {
+		case "array":
+			if prop.Items.Type != "" {
+				prop.Type += fmt.Sprintf("[%s]", prop.Items.Type)
+			}
+		case "":
+			prop.Type = "any"
 		}
 
 		propMap[k] = prop

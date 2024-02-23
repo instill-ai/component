@@ -99,10 +99,16 @@ cmp pkg/dummy/README.mdx want-readme.mdx
           },
           "type": "array"
         },
-        "meta": {
-          "description": "Donec ac meta tempor orci dapibus ultrices in",
+        "context": {
+          "description": "Free-form metadata",
+          "instillUIOrder": 4,
+          "required": [],
+          "title": "Meta"
+        },
+        "atem": {
+          "description": "Donec ac atem tempor orci dapibus ultrices in",
           "instillUIOrder": 1,
-          "title": "Meta",
+          "title": "Atem",
           "type": "object",
           "properties": {
             "tortor": {
@@ -129,7 +135,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       },
       "required": [
         "elementum",
-        "meta",
+        "atem",
         "nullam_non",
         "error"
       ]
@@ -192,6 +198,7 @@ This task is dummier than `TASK_DUMMY`.
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Elementum | `elementum` | string | Tellus elementum sagittis vitae et |
-| Meta | `meta` | object | Donec ac meta tempor orci dapibus ultrices in |
+| Atem | `atem` | object | Donec ac atem tempor orci dapibus ultrices in |
 | Nullam non | `nullam_non` | number | Id faucibus nisl tincidunt eget nullam non |
 | Errors (optional) | `errors` | array[string] | Error messages, if any, during the dummy process |
+| Meta (optional) | `context` | any | Free-form metadata |

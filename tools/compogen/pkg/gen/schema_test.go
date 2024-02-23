@@ -74,17 +74,6 @@ func TestObjectSchema_Validate(t *testing.T) {
 			wantErr: "Description field is required",
 		},
 		{
-			name: "nok - no type",
-			modifier: func(rs *objectSchema) {
-				rs.Properties["wrong"] = property{
-					Description: "foo",
-					Title:       "bar",
-					Order:       &two,
-				}
-			},
-			wantErr: "Type field is required",
-		},
-		{
 			name: "nok - no order",
 			modifier: func(rs *objectSchema) {
 				rs.Properties["wrong"] = property{
