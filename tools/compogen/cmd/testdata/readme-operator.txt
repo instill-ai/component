@@ -90,17 +90,35 @@ cmp pkg/dummy/README.mdx want-readme.mdx
           "title": "Elementum",
           "type": "string"
         },
-        "error": {
-          "description": "Error message if any during the dummy process",
+        "errors": {
+          "description": "Error messages, if any, during the dummy process",
           "instillUIOrder": 3,
-          "title": "Error",
-          "type": "string"
+          "title": "Errors",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         },
         "meta": {
           "description": "Donec ac meta tempor orci dapibus ultrices in",
           "instillUIOrder": 1,
           "title": "Meta",
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "tortor": {
+              "description": "Tincidunt tortor aliquam nulla",
+              "instillUIOrder": 0,
+              "title": "Tincidunt tortor",
+              "type": "string"
+            },
+            "arcu": {
+              "description": "Bibendum arcu vitae elementum curabitur vitae nunc sed velit",
+              "instillUIOrder": 1,
+              "title": "Arcu",
+              "type": "string"
+            }
+          },
+          "required": []
         },
         "nullam_non": {
           "description": "Id faucibus nisl tincidunt eget nullam non",
@@ -176,4 +194,4 @@ This task is dummier than `TASK_DUMMY`.
 | Elementum | `elementum` | string | Tellus elementum sagittis vitae et |
 | Meta | `meta` | object | Donec ac meta tempor orci dapibus ultrices in |
 | Nullam non | `nullam_non` | number | Id faucibus nisl tincidunt eget nullam non |
-| Error | `error` | string | Error message if any during the dummy process |
+| Errors (optional) | `errors` | array[string] | Error messages, if any, during the dummy process |

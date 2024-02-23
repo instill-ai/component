@@ -5,6 +5,11 @@ type property struct {
 	Title       string `json:"title" validate:"required"`
 	Type        string `json:"type" validate:"required"`
 	Order       *int   `json:"instillUIOrder" validate:"required"`
+
+	// If Type is array, Items defines the element type.
+	Items struct {
+		Type string `json:"type"`
+	} `json:"items"`
 }
 
 type objectSchema struct {

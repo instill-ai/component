@@ -10,7 +10,7 @@ import (
 func fieldErrorMessage(fe validator.FieldError) string {
 	var msg string
 	switch fe.Tag() {
-	case "required":
+	case "required", "required_if":
 		msg = "is required"
 	case "len":
 		msg = "has an invalid length"

@@ -241,10 +241,16 @@ func parseResourceProperties(o *objectSchema) []resourceProperty {
 	// transform it to a slice.
 	propMap := make(map[string]resourceProperty)
 	for k, op := range o.Properties {
-		propMap[k] = resourceProperty{
+		prop := resourceProperty{
 			ID:       k,
 			property: op,
 		}
+		// If type is map, extend the type with the element type.
+		if prop.Type == "array" && prop.Items.Type != "" {
+			prop.Type += fmt.Sprintf("[%s]", prop.Items.Type)
+		}
+
+		propMap[k] = prop
 	}
 
 	for _, k := range o.Required {
