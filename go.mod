@@ -6,7 +6,7 @@ require (
 	github.com/frankban/quicktest v1.14.6
 	github.com/gabriel-vasile/mimetype v1.4.3
 	github.com/gofrs/uuid v4.4.0+incompatible
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240206062817-a862071d8ece
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240226101151-03ed57d8f5f7
 	github.com/lestrrat-go/jspointer v0.0.0-20181205001929-82fadba7561c
 	github.com/lestrrat-go/jsref v0.0.0-20211028120858-c0bcbb5abf20
 	github.com/lestrrat-go/option v1.0.0

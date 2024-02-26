@@ -1,5 +1,9 @@
 package gen
 
+import (
+	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
+)
+
 // ComponentType defines the type of a component (e.g. operator, connector).
 // This will condition how the component definition is parsed and how the
 // documentation is generated.
@@ -24,16 +28,16 @@ func (ct ComponentType) HasResourceConfig() bool {
 type ComponentSubtype string
 
 const (
-	cstOperator            ComponentSubtype = "operator"
-	cstAIConnector         ComponentSubtype = "AI connector"
-	cstBlockchainConnector ComponentSubtype = "blockchain connector"
-	cstDataConnector       ComponentSubtype = "data connector"
+	cstOperator             ComponentSubtype = "operator"
+	cstAIConnector          ComponentSubtype = "AI connector"
+	cstApplicationConnector ComponentSubtype = "application connector"
+	cstDataConnector        ComponentSubtype = "data connector"
 )
 
 var toComponentSubtype = map[string]ComponentSubtype{
-	"CONNECTOR_TYPE_AI":         cstAIConnector,
-	"CONNECTOR_TYPE_BLOCKCHAIN": cstBlockchainConnector,
-	"CONNECTOR_TYPE_DATA":       cstDataConnector,
+	pb.ConnectorType_CONNECTOR_TYPE_AI.String():          cstAIConnector,
+	pb.ConnectorType_CONNECTOR_TYPE_APPLICATION.String(): cstApplicationConnector,
+	pb.ConnectorType_CONNECTOR_TYPE_DATA.String():        cstDataConnector,
 }
 
 var modifiesArticle = map[ComponentSubtype]bool{

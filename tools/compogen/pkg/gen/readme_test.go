@@ -59,7 +59,7 @@ func TestComponentType_IndefiniteArticle(t *testing.T) {
 	}{
 		{in: cstOperator, want: "an"},
 		{in: cstAIConnector, want: "an"},
-		{in: cstBlockchainConnector, want: "a"},
+		{in: cstApplicationConnector, want: "a"},
 		{in: cstDataConnector, want: "a"},
 	}
 
