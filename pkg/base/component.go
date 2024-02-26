@@ -229,9 +229,7 @@ func (comp *Component) generateComponentTasks(availableTasks []string) []*pipeli
 	for _, t := range availableTasks {
 		title := comp.tasks[t].Fields["title"].GetStringValue()
 		if title == "" {
-			title = strings.ReplaceAll(t, "TASK_", "")
-			title = strings.ReplaceAll(title, "_", " ")
-			title = cases.Title(language.English).String(title)
+			title = TaskIDToTitle(t)
 		}
 
 		description := comp.tasks[t].Fields["instillShortDescription"].GetStringValue()
