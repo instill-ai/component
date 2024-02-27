@@ -6,6 +6,7 @@ require (
 	github.com/frankban/quicktest v1.14.6
 	github.com/go-playground/validator/v10 v10.18.0
 	github.com/instill-ai/component v0.11.0-beta.0.20240222072616-52804d408e44
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240226101151-03ed57d8f5f7
 	github.com/launchdarkly/go-semver v1.0.2
 	github.com/rogpeppe/go-internal v1.12.0
 	github.com/russross/blackfriday/v2 v2.1.0
@@ -24,7 +25,6 @@ require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.2 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240206062817-a862071d8ece // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
