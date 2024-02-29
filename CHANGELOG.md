@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.12.0-beta](https://github.com/instill-ai/component/compare/v0.11.0-beta...v0.12.0-beta) (2024-02-27)
+
+
+### Features
+
+* create README.mdx generation command ([#59](https://github.com/instill-ai/component/issues/59)) ([c814c05](https://github.com/instill-ai/component/commit/c814c05eaa68b9a62b7f9a9ab8fc1253586fb197))
+* extract task title generation ([#58](https://github.com/instill-ai/component/issues/58)) ([52804d4](https://github.com/instill-ai/component/commit/52804d408e44f4e92cc6d7b734fc577962a900f0))
+
 ## [0.11.0-beta](https://github.com/instill-ai/component/compare/v0.10.0-beta...v0.11.0-beta) (2024-02-14)
 
 
