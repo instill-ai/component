@@ -101,13 +101,15 @@ func (o *Operator) AddOperatorDefinition(def *pipelinePB.OperatorDefinition) err
 // ListOperatorDefinitions returns the list of operator definitions under this operator
 func (o *Operator) ListOperatorDefinitions() []*pipelinePB.OperatorDefinition {
 	compDefs := o.Component.listDefinitions()
-	defs := []*pipelinePB.OperatorDefinition{}
-	for _, compDef := range compDefs {
-		if !compDef.(*pipelinePB.OperatorDefinition).Tombstone {
-			defs = append(defs, compDef.(*pipelinePB.OperatorDefinition))
+	opDefs := make([]*pipelinePB.OperatorDefinition, 0, len(compDefs))
+	for _, d := range compDefs {
+		od := d.(*pipelinePB.OperatorDefinition)
+		if !od.Tombstone {
+			opDefs = append(opDefs, od)
 		}
 	}
-	return defs
+
+	return opDefs
 }
 
 // GetOperatorDefinitionByUID returns the operator definition by definition uid

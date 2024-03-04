@@ -5,7 +5,7 @@ draft: {{ .IsDraft }}
 description: "Learn about how to set up a VDP {{ .Title }} {{ .ComponentType }} https://github.com/instill-ai/vdp"
 ---
 
-The {{ .Title }} component is {{ .ComponentSubtype.IndefiniteArticle }} {{ .ComponentSubtype }} that {{ firstToLower .Description }}.
+The {{ .Title }} component is {{ .ComponentSubtype.IndefiniteArticle }} {{ .ComponentSubtype }} that allows users to {{ firstToLower .Description }}.
 It can carry out the following tasks:
 {{ range .Tasks }}
 - [{{ .Title }}](#{{ asAnchor .Title}}){{ end }}

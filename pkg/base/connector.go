@@ -176,13 +176,15 @@ func (c *Connector) AddConnectorDefinition(def *pipelinePB.ConnectorDefinition) 
 // ListConnectorDefinitions lists all the connector definitions
 func (c *Connector) ListConnectorDefinitions() []*pipelinePB.ConnectorDefinition {
 	compDefs := c.Component.listDefinitions()
-	defs := []*pipelinePB.ConnectorDefinition{}
-	for _, compDef := range compDefs {
-		if !compDef.(*pipelinePB.ConnectorDefinition).Tombstone {
-			defs = append(defs, compDef.(*pipelinePB.ConnectorDefinition))
+	connDefs := make([]*pipelinePB.ConnectorDefinition, 0, len(compDefs))
+	for _, d := range compDefs {
+		cd := d.(*pipelinePB.ConnectorDefinition)
+		if !cd.Tombstone {
+			connDefs = append(connDefs, cd)
 		}
 	}
-	return defs
+
+	return connDefs
 }
 
 // GetConnectorDefinitionByUID gets the connector definition by definition uid
