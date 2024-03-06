@@ -132,105 +132,62 @@
       "title": "OpenAI Component",
       "type": "object"
     },
-    "openapi_specifications": {
+    "data_specifications": {
       "TASK_TEXT_EMBEDDINGS": {
-        "info": {
-          "title": "OpenAI Component - TASK_TEXT_EMBEDDINGS",
-          "version": "1.0.0"
-        },
-        "openapi": "3.0.0",
-        "paths": {
-          "/execute": {
-            "post": {
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "properties": {
-                        "inputs": {
-                          "items": {
-                            "instillEditOnNodeFields": [
-                              "text",
-                              "model"
-                            ],
-                            "instillUIOrder": 0,
-                            "properties": {
-                              "model": {
-                                "description": "ID of the model to use",
-                                "instillShortDescription": "ID of the model to use",
-                                "instillUIOrder": 0,
-                                "title": "Model",
-                                "type": "string"
-                              },
-                              "text": {
-                                "description": "The text",
-                                "instillShortDescription": "The text",
-                                "instillUIOrder": 1,
-                                "title": "Text",
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "text",
-                              "model"
-                            ],
-                            "title": "Input",
-                            "type": "object"
-                          },
-                          "type": "array"
-                        }
-                      },
-                      "type": "object"
-                    }
-                  }
-                },
-                "required": true
-              },
-              "responses": {
-                "200": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "properties": {
-                          "outputs": {
-                            "items": {
-                              "instillEditOnNodeFields": [
-                                "embedding"
-                              ],
-                              "instillUIOrder": 0,
-                              "properties": {
-                                "embedding": {
-                                  "instillUIOrder": 0,
-                                  "items": {
-                                    "description": "",
-                                    "instillFormat": "number",
-                                    "instillShortDescription": "",
-                                    "instillUIOrder": 0,
-                                    "title": "Embedding",
-                                    "type": "number"
-                                  },
-                                  "title": "Embedding",
-                                  "type": "array"
-                                }
-                              },
-                              "required": [
-                                "embedding"
-                              ],
-                              "title": "Output",
-                              "type": "object"
-                            },
-                            "type": "array"
-                          }
-                        },
-                        "type": "object"
-                      }
-                    }
-                  },
-                  "description": ""
-                }
-              }
+        "input": {
+          "instillEditOnNodeFields": [
+            "text",
+            "model"
+          ],
+          "instillUIOrder": 0,
+          "properties": {
+            "model": {
+              "description": "ID of the model to use",
+              "instillShortDescription": "ID of the model to use",
+              "instillUIOrder": 0,
+              "title": "Model",
+              "type": "string"
+            },
+            "text": {
+              "description": "The text",
+              "instillShortDescription": "The text",
+              "instillUIOrder": 1,
+              "title": "Text",
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "text",
+            "model"
+          ],
+          "title": "Input",
+          "type": "object"
+        },
+        "output": {
+          "instillEditOnNodeFields": [
+            "embedding"
+          ],
+          "instillUIOrder": 0,
+          "properties": {
+            "embedding": {
+              "instillUIOrder": 0,
+              "items": {
+                "description": "",
+                "instillFormat": "number",
+                "instillShortDescription": "",
+                "instillUIOrder": 0,
+                "title": "Embedding",
+                "type": "number"
+              },
+              "title": "Embedding",
+              "type": "array"
+            }
+          },
+          "required": [
+            "embedding"
+          ],
+          "title": "Output",
+          "type": "object"
         }
       }
     }
