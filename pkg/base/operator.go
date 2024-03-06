@@ -6,7 +6,6 @@ import (
 
 	"github.com/gofrs/uuid"
 	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/types/known/structpb"
 
 	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -21,9 +20,9 @@ type IOperator interface {
 	// Add definition
 	AddOperatorDefinition(def *pipelinePB.OperatorDefinition) error
 	// Get the operator definition by definition uid
-	GetOperatorDefinitionByUID(defUID uuid.UUID, componentConfig *structpb.Struct) (*pipelinePB.OperatorDefinition, error)
+	GetOperatorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error)
 	// Get the operator definition by definition id
-	GetOperatorDefinitionByID(defID string, componentConfig *structpb.Struct) (*pipelinePB.OperatorDefinition, error)
+	GetOperatorDefinitionByID(defID string, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error)
 	// Get the list of operator definitions under this operator
 	ListOperatorDefinitions() []*pipelinePB.OperatorDefinition
 }
@@ -74,7 +73,7 @@ func (o *Operator) LoadOperatorDefinitions(definitionsJSONBytes []byte, tasksJSO
 			return err
 		}
 
-		def.Spec.OpenapiSpecifications, err = o.generateOpenAPISpecs(def.Title, availableTasks)
+		def.Spec.DataSpecifications, err = o.generateDataSpecs(def.Title, availableTasks)
 		if err != nil {
 			return err
 		}
@@ -113,7 +112,7 @@ func (o *Operator) ListOperatorDefinitions() []*pipelinePB.OperatorDefinition {
 }
 
 // GetOperatorDefinitionByUID returns the operator definition by definition uid
-func (o *Operator) GetOperatorDefinitionByUID(defUID uuid.UUID, _ /*componentConfig*/ *structpb.Struct) (*pipelinePB.OperatorDefinition, error) {
+func (o *Operator) GetOperatorDefinitionByUID(defUID uuid.UUID, _ /*component*/ *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
 	def, err := o.Component.getDefinitionByUID(defUID)
 	if err != nil {
 		return nil, err
@@ -128,7 +127,7 @@ func (o *Operator) GetOperatorDefinitionByUID(defUID uuid.UUID, _ /*componentCon
 }
 
 // GetOperatorDefinitionByID returns the operator definition by definition id
-func (o *Operator) GetOperatorDefinitionByID(defID string, componentConfig *structpb.Struct) (*pipelinePB.OperatorDefinition, error) {
+func (o *Operator) GetOperatorDefinitionByID(defID string, _ /*component*/ *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
 	def, err := o.Component.getDefinitionByID(defID)
 	if err != nil {
 		return nil, err
