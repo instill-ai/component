@@ -113,12 +113,18 @@ func (o *Operator) ListOperatorDefinitions() []*pipelinePB.OperatorDefinition {
 }
 
 // GetOperatorDefinitionByUID returns the operator definition by definition uid
-func (o *Operator) GetOperatorDefinitionByUID(defUID uuid.UUID, componentConfig *structpb.Struct) (*pipelinePB.OperatorDefinition, error) {
+func (o *Operator) GetOperatorDefinitionByUID(defUID uuid.UUID, _ /*componentConfig*/ *structpb.Struct) (*pipelinePB.OperatorDefinition, error) {
 	def, err := o.Component.getDefinitionByUID(defUID)
 	if err != nil {
 		return nil, err
 	}
-	return def.(*pipelinePB.OperatorDefinition), nil
+
+	od, ok := def.(*pipelinePB.OperatorDefinition)
+	if !ok {
+		return nil, fmt.Errorf("invalid type for operator definition UID")
+	}
+
+	return od, nil
 }
 
 // GetOperatorDefinitionByID returns the operator definition by definition id
@@ -127,5 +133,11 @@ func (o *Operator) GetOperatorDefinitionByID(defID string, componentConfig *stru
 	if err != nil {
 		return nil, err
 	}
-	return def.(*pipelinePB.OperatorDefinition), nil
+
+	od, ok := def.(*pipelinePB.OperatorDefinition)
+	if !ok {
+		return nil, fmt.Errorf("invalid type for operator definition ID")
+	}
+
+	return od, nil
 }
