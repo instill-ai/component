@@ -68,102 +68,59 @@
       "title": "JSON Component",
       "type": "object"
     },
-    "openapi_specifications": {
+    "data_specifications": {
       "TASK_MARSHAL": {
-        "info": {
-          "title": "JSON Component - TASK_MARSHAL",
-          "version": "1.0.0"
-        },
-        "openapi": "3.0.0",
-        "paths": {
-          "/execute": {
-            "post": {
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "properties": {
-                        "inputs": {
-                          "items": {
-                            "description": "Input",
-                            "instillEditOnNodeFields": [
-                              "object"
-                            ],
-                            "instillUIOrder": 0,
-                            "properties": {
-                              "object": {
-                                "description": "Json object to be marshaled",
-                                "instillAcceptFormats": [
-                                  "object",
-                                  "semi-structured/*",
-                                  "structured/*"
-                                ],
-                                "instillEditOnNodeFields": [],
-                                "instillUIOrder": 0,
-                                "instillUpstreamTypes": [
-                                  "reference"
-                                ],
-                                "required": [],
-                                "title": "Object",
-                                "type": "object"
-                              }
-                            },
-                            "required": [
-                              "object"
-                            ],
-                            "title": "Input",
-                            "type": "object"
-                          },
-                          "type": "array"
-                        }
-                      },
-                      "type": "object"
-                    }
-                  }
-                },
-                "required": true
-              },
-              "responses": {
-                "200": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "properties": {
-                          "outputs": {
-                            "items": {
-                              "description": "Output",
-                              "instillEditOnNodeFields": [
-                                "string"
-                              ],
-                              "instillUIOrder": 0,
-                              "properties": {
-                                "string": {
-                                  "description": "Data",
-                                  "instillFormat": "string",
-                                  "instillShortDescription": "Data",
-                                  "instillUIOrder": 0,
-                                  "title": "Data",
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "string"
-                              ],
-                              "title": "Output",
-                              "type": "object"
-                            },
-                            "type": "array"
-                          }
-                        },
-                        "type": "object"
-                      }
-                    }
-                  },
-                  "description": ""
-                }
-              }
+        "input": {
+          "description": "Input",
+          "instillEditOnNodeFields": [
+            "object"
+          ],
+          "instillUIOrder": 0,
+          "properties": {
+            "object": {
+              "description": "Json object to be marshaled",
+              "instillAcceptFormats": [
+                "object",
+                "semi-structured/*",
+                "structured/*"
+              ],
+              "instillEditOnNodeFields": [],
+              "instillUIOrder": 0,
+              "instillUpstreamTypes": [
+                "reference"
+              ],
+              "required": [],
+              "title": "Object",
+              "type": "object"
             }
-          }
+          },
+          "required": [
+            "object"
+          ],
+          "title": "Input",
+          "type": "object"
+        },
+        "output": {
+          "description": "Output",
+          "instillEditOnNodeFields": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "properties": {
+            "string": {
+              "description": "Data",
+              "instillFormat": "string",
+              "instillShortDescription": "Data",
+              "instillUIOrder": 0,
+              "title": "Data",
+              "type": "string"
+            }
+          },
+          "required": [
+            "string"
+          ],
+          "title": "Output",
+          "type": "object"
         }
       }
     }

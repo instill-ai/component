@@ -51,7 +51,7 @@ type IComponent interface {
 	// Generate Component Specification
 	generateComponentSpec(title string, availableTasks []*pipelinePB.ComponentTask) (*structpb.Struct, error)
 	// Generate OpenAPI Specifications
-	generateOpenAPISpecs(title string, availableTasks []string) (*structpb.Struct, error)
+	generateDataSpecs(title string, availableTasks []string) (map[string]*pipelinePB.DataSpecification, error)
 
 	// Load tasks
 	loadTasks(tasksJSON []byte) error
@@ -313,7 +313,7 @@ func (comp *Component) generateComponentSpec(title string, availableTasks []*pip
 
 }
 
-func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
+func formatDataSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
 	// var err error
 	compSpec := proto.Clone(dataSpec).(*structpb.Struct)
 	if _, ok := compSpec.Fields["const"]; ok {
@@ -330,7 +330,7 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 			compSpec.Fields["instillUIOrder"] = structpb.NewNumberValue(0)
 		}
 
-		converted, err := convertDataSpecToOpenAPISpec(compSpec.Fields["items"].GetStructValue())
+		converted, err := formatDataSpec(compSpec.Fields["items"].GetStructValue())
 		if err != nil {
 			return nil, err
 		}
@@ -353,7 +353,7 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 				if err != nil {
 					return nil, err
 				}
-				converted, err := convertDataSpecToOpenAPISpec(s)
+				converted, err := formatDataSpec(s)
 				if err != nil {
 					return nil, err
 				}
@@ -367,7 +367,7 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 				if err != nil {
 					return nil, err
 				}
-				converted, err := convertDataSpecToOpenAPISpec(s)
+				converted, err := formatDataSpec(s)
 				if err != nil {
 					return nil, err
 				}
@@ -382,7 +382,7 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 					if err != nil {
 						return nil, err
 					}
-					converted, err := convertDataSpecToOpenAPISpec(s)
+					converted, err := formatDataSpec(s)
 					if err != nil {
 						return nil, err
 					}
@@ -417,46 +417,25 @@ func convertDataSpecToOpenAPISpec(dataSpec *structpb.Struct) (*structpb.Struct, 
 	return compSpec, nil
 }
 
-func (comp *Component) generateOpenAPISpecs(title string, availableTasks []string) (*structpb.Struct, error) {
+func (comp *Component) generateDataSpecs(title string, availableTasks []string) (map[string]*pipelinePB.DataSpecification, error) {
 
-	openAPITemplates := &structpb.Struct{Fields: map[string]*structpb.Value{}}
-	for _, availableTask := range availableTasks {
-		openAPITemplate := &structpb.Struct{}
-
-		err := protojson.Unmarshal([]byte(OpenAPITemplate), openAPITemplate)
+	specs := map[string]*pipelinePB.DataSpecification{}
+	for _, task := range availableTasks {
+		spec := &pipelinePB.DataSpecification{}
+		var err error
+		taskJSONStruct := proto.Clone(comp.tasks[task]).(*structpb.Struct)
+		spec.Input, err = formatDataSpec(taskJSONStruct.Fields["input"].GetStructValue())
 		if err != nil {
 			return nil, err
 		}
-		openAPITemplate.Fields["info"].GetStructValue().Fields["title"] = structpb.NewStringValue(fmt.Sprintf("%s Component - %s", title, availableTask))
-
-		walk := openAPITemplate
-		for _, key := range []string{"paths", "/execute", "post", "requestBody", "content", "application/json", "schema", "properties", "inputs"} {
-			walk = walk.Fields[key].GetStructValue()
-		}
-
-		taskJSONStruct := proto.Clone(comp.tasks[availableTask]).(*structpb.Struct)
-
-		inputStruct, err := convertDataSpecToOpenAPISpec(taskJSONStruct.Fields["input"].GetStructValue())
+		spec.Output, err = formatDataSpec(taskJSONStruct.Fields["output"].GetStructValue())
 		if err != nil {
-			return nil, fmt.Errorf("task %s: %s error: %+v", title, availableTask, err)
+			return nil, err
 		}
-		walk.Fields["items"] = structpb.NewStructValue(inputStruct)
-
-		walk = openAPITemplate
-		for _, key := range []string{"paths", "/execute", "post", "responses", "200", "content", "application/json", "schema", "properties", "outputs"} {
-			walk = walk.Fields[key].GetStructValue()
-		}
-
-		outputStruct, err := convertDataSpecToOpenAPISpec(taskJSONStruct.Fields["output"].GetStructValue())
-		if err != nil {
-			return nil, fmt.Errorf("task %s: %s error: %+v", title, availableTask, err)
-		}
-		walk.Fields["items"] = structpb.NewStructValue(outputStruct)
-
-		openAPITemplates.Fields[availableTask] = structpb.NewStructValue(openAPITemplate)
+		specs[task] = spec
 	}
 
-	return openAPITemplates, nil
+	return specs, nil
 }
 
 func (comp *Component) loadTasks(tasksJSONBytes []byte) error {
