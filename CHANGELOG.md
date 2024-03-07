@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.13.0-beta](https://github.com/instill-ai/component/compare/v0.12.0-beta...v0.13.0-beta) (2024-03-07)
+
+
+### Features
+
+* expose description field in component entities ([#62](https://github.com/instill-ai/component/issues/62)) ([85bbc22](https://github.com/instill-ai/component/commit/85bbc223c1df208d0c619af20a6ad693761dc36f))
+* simplify `openapi_specifications` to `data_specifications` ([#64](https://github.com/instill-ai/component/issues/64)) ([7c27d15](https://github.com/instill-ai/component/commit/7c27d15e4e01290b728458a2f711029bb600a0a8))
+
+
+### Bug Fixes
+
+* **vdp:** better casting errors ([#65](https://github.com/instill-ai/component/issues/65)) ([81e34c4](https://github.com/instill-ai/component/commit/81e34c476e97f388d46b9cdb496291748b897c63))
+
 ## [0.12.0-beta](https://github.com/instill-ai/component/compare/v0.11.0-beta...v0.12.0-beta) (2024-02-27)
 
 
