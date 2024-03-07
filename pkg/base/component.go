@@ -550,7 +550,7 @@ func (comp *Component) listDefinitions() []interface{} {
 func (comp *Component) getDefinitionByUID(defUID uuid.UUID) (interface{}, error) {
 	val, ok := comp.definitionMapByUID[defUID]
 	if !ok {
-		return nil, fmt.Errorf("get connector/operator definition error")
+		return nil, fmt.Errorf("component definition UID doesn't exist")
 	}
 	return val, nil
 }
@@ -559,7 +559,7 @@ func (comp *Component) getDefinitionByID(defID string) (interface{}, error) {
 
 	val, ok := comp.definitionMapByID[defID]
 	if !ok {
-		return nil, fmt.Errorf("get connector/operator definition error")
+		return nil, fmt.Errorf("component definition ID doesn't exist")
 	}
 	return val, nil
 }

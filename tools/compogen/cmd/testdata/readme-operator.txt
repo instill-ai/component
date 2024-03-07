@@ -33,7 +33,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
     "spec": {},
     "id": "dummy",
     "title": "Dummy",
-    "description": "Performs an action",
+    "description": "Perform an action",
     "version": "0.1.0-alpha",
     "source_url": "https://github.com/instill-ai/operator/blob/main/pkg/dummy/v0"
   }
@@ -159,7 +159,7 @@ draft: false
 description: "Learn about how to set up a VDP Dummy operator https://github.com/instill-ai/vdp"
 ---
 
-The Dummy component is an operator that performs an action.
+The Dummy component is an operator that allows users to perform an action.
 It can carry out the following tasks:
 
 - [Dummy](#dummy)

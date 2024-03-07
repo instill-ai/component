@@ -188,12 +188,18 @@ func (c *Connector) ListConnectorDefinitions() []*pipelinePB.ConnectorDefinition
 }
 
 // GetConnectorDefinitionByUID gets the connector definition by definition uid
-func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, resourceConfig *structpb.Struct, componentConfig *structpb.Struct) (*pipelinePB.ConnectorDefinition, error) {
+func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, _ /*resourceConfig*/ *structpb.Struct, _ /* componentConfig */ *structpb.Struct) (*pipelinePB.ConnectorDefinition, error) {
 	def, err := c.Component.getDefinitionByUID(defUID)
 	if err != nil {
 		return nil, err
 	}
-	return def.(*pipelinePB.ConnectorDefinition), nil
+
+	cd, ok := def.(*pipelinePB.ConnectorDefinition)
+	if !ok {
+		return nil, fmt.Errorf("invalid type for connector definition ID")
+	}
+
+	return cd, nil
 }
 
 // GetConnectorDefinitionByID gets the connector definition by definition id
@@ -202,7 +208,13 @@ func (c *Connector) GetConnectorDefinitionByID(defID string, resourceConfig *str
 	if err != nil {
 		return nil, err
 	}
-	return def.(*pipelinePB.ConnectorDefinition), nil
+
+	cd, ok := def.(*pipelinePB.ConnectorDefinition)
+	if !ok {
+		return nil, fmt.Errorf("invalid type for connector definition UID")
+	}
+
+	return cd, nil
 }
 
 // IsCredentialField checks if the target field is credential field

@@ -18,7 +18,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
     "public": true,
     "id": "dummy",
     "title": "Dummy",
-    "description": "Performs an action",
+    "description": "Perform an action",
     "prerequisites": "An account at [dummy.io](https://dummy.io) is required.",
     "type": "CONNECTOR_TYPE_DATA",
     "spec": {
@@ -87,7 +87,7 @@ draft: false
 description: "Learn about how to set up a VDP Dummy connector https://github.com/instill-ai/vdp"
 ---
 
-The Dummy component is a data connector that performs an action.
+The Dummy component is a data connector that allows users to perform an action.
 It can carry out the following tasks:
 
 - [Dummy](#dummy)
