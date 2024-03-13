@@ -45,7 +45,7 @@
         "type": "object"
       },
       "chat_messages": {
-        "instillFormat": "structured/chat_messages",
+        "instillFormat": "array:structured/chat_messages",
         "items": {
           "instillFormat": "structured/chat_message",
           "properties": {
@@ -154,6 +154,7 @@
         "type": "object"
       },
       "embedding": {
+        "instillFormat": "array:number",
         "items": {
           "instillFormat": "number",
           "title": "Embedding",
