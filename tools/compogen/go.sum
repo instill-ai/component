@@ -33,10 +33,10 @@ github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.2 h1:I/pwhnUln5wbMnTyRbzswA0/JxpK
 github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.2/go.mod h1:lsuH8kb4GlMdSlI4alNIBBSAt5CHJtg3i+0WuN9J5YM=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
-github.com/instill-ai/component v0.11.0-beta.0.20240222072616-52804d408e44 h1:tcRZVBTROfWRH+E33KhoK8mn6pS5oHtXEQqpXzI5cnI=
-github.com/instill-ai/component v0.11.0-beta.0.20240222072616-52804d408e44/go.mod h1:THyROt2dqqge2lDc+PVzm/+LueG4dBtxpLzSjl+T83A=
-github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240304063945-0080cc53de5e h1:fHbGDWVbaFFSrqRmy5cKDlBT/8nlsfS5m5LIo3P7Q70=
-github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240304063945-0080cc53de5e/go.mod h1:jhEL0SauySMoPLVvx105DWyThju9sYTbsXIySVCArmM=
+github.com/instill-ai/component v0.13.0-beta h1:IY0Fky3WJCaHhiHwkwLU4G9KACUyar30OaOdeFvHq/Y=
+github.com/instill-ai/component v0.13.0-beta/go.mod h1:Zr3ej9EbkCe+lgSyzKhaqq8+mq84LGGP2F3OWOr/l3c=
+github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240306151355-4398dad0ba73 h1:3YT3WV9F1eltn5x3AhtOuRDO2zY3Aud6nk/som9YQvs=
+github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240306151355-4398dad0ba73/go.mod h1:jhEL0SauySMoPLVvx105DWyThju9sYTbsXIySVCArmM=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
