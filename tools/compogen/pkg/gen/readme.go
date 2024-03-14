@@ -6,16 +6,12 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"text/template"
 	"unicode"
 	"unicode/utf8"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/launchdarkly/go-semver"
 	"github.com/russross/blackfriday/v2"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 
 	component "github.com/instill-ai/component/pkg/base"
 )
@@ -166,7 +162,7 @@ type readmeParams struct {
 	IsDraft          bool
 	ComponentType    ComponentType
 	ComponentSubtype ComponentSubtype
-	ReleaseStage     string
+	ReleaseStage     releaseStage
 	SourceURL        string
 	ResourceConfig   resourceConfig
 
@@ -183,11 +179,7 @@ func (p readmeParams) parseDefinition(d definition, tasks map[string]task) (read
 		return p, fmt.Errorf("invalid component type")
 	}
 
-	prerelease, err := versionToReleaseStage(d.Version)
-	if err != nil {
-		return p, err
-	}
-
+	var err error
 	if p.Tasks, err = parseREADMETasks(d.AvailableTasks, tasks); err != nil {
 		return p, err
 	}
@@ -196,7 +188,7 @@ func (p readmeParams) parseDefinition(d definition, tasks map[string]task) (read
 	p.Title = d.Title
 	p.Description = d.Description
 	p.IsDraft = !d.Public
-	p.ReleaseStage = prerelease
+	p.ReleaseStage = d.ReleaseStage
 	p.SourceURL = d.SourceURL
 
 	p.ResourceConfig = resourceConfig{Prerequisites: d.Prerequisites}
@@ -287,22 +279,4 @@ func firstToLower(s string) string {
 	}
 
 	return string(mod) + s[size:]
-}
-
-const generallyAvailable = "GA"
-
-func versionToReleaseStage(s string) (string, error) {
-	v, err := semver.Parse(s)
-	if err != nil {
-		return "", err
-	}
-
-	if prerelease := v.GetPrerelease(); prerelease != "" {
-		// If prerelease has several bits, use spaces. E.g.:
-		// "pre-release" -> "Pre Release"
-		rs := cases.Title(language.English).String(strings.ReplaceAll(prerelease, "-", " "))
-		return rs, nil
-	}
-
-	return generallyAvailable, nil
 }

@@ -35,7 +35,9 @@ following fields must be present and comply with the following guidelines:
 - `description` - It should contain a single sentence describing the component.
   The template will use it next to the component title (`{{ .Title }}{{
   .Description }}.`) so it must be written in imperative tense.
-- `version` - Must be valid SemVer 2.0.0.
+- `release_stage` - Must be the string representation of one of the nonzero
+  values of `ComponentDefinition.ReleaseStage`,defined in
+  [protobufs](https://github.com/instill-ai/protobufs/blob/main/vdp/pipeline/v1beta/connector_definition.proto).
 - `type` - Connector definitions must contain this field and its value must
   match one of the (string) values defined in [protobufs](https://github.com/instill-ai/protobufs/blob/main/vdp/pipeline/v1beta/connector_definition.proto).
 - `available_tasks` - This array must have at least one value, which should be

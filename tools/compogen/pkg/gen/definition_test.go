@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"encoding/json"
 	"testing"
 
 	qt "github.com/frankban/quicktest"
@@ -19,7 +20,7 @@ func TestDefinition_Validate(t *testing.T) {
 			Title:          "Foo",
 			Description:    "Foo bar",
 			Public:         false,
-			Version:        "0.1.0-alpha",
+			ReleaseStage:   3,
 			AvailableTasks: []string{"TASK_1", "TASK_2"},
 			SourceURL:      "https://github.com/instill-ai",
 		}
@@ -57,18 +58,11 @@ func TestDefinition_Validate(t *testing.T) {
 			wantErr: "Description field is required",
 		},
 		{
-			name: "nok - no version",
+			name: "nok - no release stage",
 			modifier: func(d *definition) {
-				d.Version = ""
+				d.ReleaseStage = 0
 			},
-			wantErr: "Version field is required",
-		},
-		{
-			name: "nok - invalid version",
-			modifier: func(d *definition) {
-				d.Version = "v0.1.0-alpha"
-			},
-			wantErr: "Version field must be valid SemVer 2.0.0",
+			wantErr: "ReleaseStage field is required",
 		},
 		{
 			name: "nok - zero tasks",
@@ -114,6 +108,33 @@ func TestDefinition_Validate(t *testing.T) {
 			err := validate.Struct(got)
 			c.Check(err, qt.IsNotNil)
 			c.Check(asValidationError(err), qt.ErrorMatches, tc.wantErr)
+		})
+	}
+}
+
+func TestReleaseStage_UnmarshalAndStringify(t *testing.T) {
+	c := qt.New(t)
+
+	testcases := []struct {
+		in   string
+		want string
+	}{
+		{in: "OTHER", want: "Unspecified"},
+		{in: "RELEASE_STAGE_OPEN_FOR_CONTRIBUTION", want: "Open For Contribution"},
+		{in: "RELEASE_STAGE_COMING_SOON", want: "Coming Soon"},
+		{in: "RELEASE_STAGE_ALPHA", want: "Alpha"},
+		{in: "RELEASE_STAGE_BETA", want: "Beta"},
+		{in: "RELEASE_STAGE_GA", want: "GA"},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.in, func(c *qt.C) {
+			def := definition{}
+			j := json.RawMessage(`{"release_stage": "` + tc.in + `"}`)
+
+			err := json.Unmarshal(j, &def)
+			c.Check(err, qt.IsNil)
+			c.Check(def.ReleaseStage.String(), qt.Equals, tc.want)
 		})
 	}
 }
