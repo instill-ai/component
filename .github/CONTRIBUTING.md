@@ -28,20 +28,22 @@ flowchart LR
 ```
 
 #### Component
-We have two types of components: **connector** and **operator**:
 
-
-- connector:
-  - A connector is used to connect the pipeline to a vendor service.
-  - We need to set up a connector first to configure the connection.
-- operator:
-  - An operator is used for data operations inside the pipeline.
-
+There are different types of component:
+- **connector**
+  - Queries, processes or transmits the ingested data to a service or app.
+  - Users need to configure their connectors (e.g. by providing an API token to a remote service).
+- **operator**
+  - Performs data injection and manipulation.
+- **iterator**
+  - Takes an array and executes an operation (defined by a set of nested components) on each of its elements.
+- **start** / **end**
+  - These special components provide an input / output interface to pipeline triggers.
 
 **Connector**
 
-- **Connectors** is used for connecting the pipeline to a vendor service, and **connectors** are served by **connector-backend**
-- We need to set up a connector **resource** first to configure the connection.
+- **Connectors** are used for connecting the pipeline to a vendor service. They are defined and initialized in the [connector](https://github.com/instill-ai/connector/) repository.
+- A connector **resource** needs to be set up first to configure the connection.
 - Setup a Connector
 ```mermaid
 sequenceDiagram
@@ -52,10 +54,10 @@ sequenceDiagram
 
 
 **Operator**
-- An operator is used for data operations inside the pipeline.
 
+- An operator is used for data operations inside the pipeline. They are defined and initialized in the [operator](https://github.com/instill-ai/operator/) repository.
 
-The key difference between `connector` and `operator` is that `connector` will connect to a vendor. The `connector` only transfer the data, not to process the data. In other hand, The `operator` will process data inside the pipeline.
+The key difference between `connector` and `operator` is the former will connect to an external service, so it's **I/O bound** while the latter is **CPU bound**. Connectors don't process but transfer data.
 
 #### Pipeline
 
@@ -89,7 +91,7 @@ sequenceDiagram
     Pipeline-Backend ->> Pipeline DB: Store pipeline and its recipe
 ```
 
-#### How pipeline triggered
+#### How pipelines are triggered
 
 When we trigger a pipeline, the pipeline-backend will calculate the DA and execute the components in topological order.
 
@@ -113,32 +115,24 @@ sequenceDiagram
 
 ### Development
 
-When you want to contribute a new connector or operator, you need to prepare two things:
+When you want to contribute with a new connector or operator, you need to create the configuration files and implement the `Component` interface.
 
-#### Prepare `config` files
+#### `config` files
 
-In every connector or operator implementation, we need to use two config files to define the behaviour of the component.
+2 configuration files define the behaviour of the component:
 
-- `definition.json`
-    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/config/definitions.json) as an example.
+- `definitions.json`
+    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/v0/config/definitions.json) as an example.
     - We define the id, uid, vendor info and other metadata in this file.
-    - We define the `resource_configuration` in this file, which is used for setting up the connector.
+    - We define the `resource_configuration` in this file, which defines the connector resource setup.
 - `tasks.json`
-    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/config/tasks.json) as an example.
+    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/v0/config/tasks.json) as an example.
     - A component can have multiple tasks.
-    - We define the input and output schema of each task in this file.
-    - The component will auto-generate the `component_specification` and `openapi_specification` based on the input and output schema of the task
+    - The input and output schema of each task is defined in this file.
 
-
-| Spec                    | Connector | Operator | Purpose  |
-| ----------------------- | --------- | -------- | ------------ |
-| resource_specification  | v         |          | setup connection to vendors |
-| component_specification | v         | v        | setup the parameters and data flow of this component |
-| openapi_specification  | v         | v        | describe the input and output structure of this component |
 
 <!-- TODO:
-1. prepare more introduction for how we convert the tasks.json into component_specification and openapi_specification
-2. describe more details about the api payload  -->
+1. describe more details about the api payload  -->
 
 #### Implement all interfaces defined in this [Component Package](ttps://github.com/instill-ai/component)
 
