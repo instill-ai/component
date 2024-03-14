@@ -35,14 +35,12 @@ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/instill-ai/component v0.13.0-beta h1:IY0Fky3WJCaHhiHwkwLU4G9KACUyar30OaOdeFvHq/Y=
 github.com/instill-ai/component v0.13.0-beta/go.mod h1:Zr3ej9EbkCe+lgSyzKhaqq8+mq84LGGP2F3OWOr/l3c=
-github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240306151355-4398dad0ba73 h1:3YT3WV9F1eltn5x3AhtOuRDO2zY3Aud6nk/som9YQvs=
-github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240306151355-4398dad0ba73/go.mod h1:jhEL0SauySMoPLVvx105DWyThju9sYTbsXIySVCArmM=
+github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240308151517-4b0523c184d1 h1:8bhIcJZcUMKvZas2L0uyaVt/V+Tzw0OSR8GtdcFflMo=
+github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240308151517-4b0523c184d1/go.mod h1:jhEL0SauySMoPLVvx105DWyThju9sYTbsXIySVCArmM=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
-github.com/launchdarkly/go-semver v1.0.2 h1:sYVRnuKyvxlmQCnCUyDkAhtmzSFRoX6rG2Xa21Mhg+w=
-github.com/launchdarkly/go-semver v1.0.2/go.mod h1:xFmMwXba5Mb+3h72Z+VeSs9ahCvKo2QFUTHRNHVqR28=
 github.com/leodido/go-urn v1.4.0 h1:WT9HwE9SGECu3lg4d/dIA+jxlljEa1/ffXKmRjqdmIQ=
 github.com/leodido/go-urn v1.4.0/go.mod h1:bvxc+MVxLKB4z00jd1z+Dvzr47oO32F/QSNjSBOlFxI=
 github.com/lestrrat-go/jspointer v0.0.0-20181205001929-82fadba7561c h1:pGh5EFIfczeDHwgMHgfwjhZzL+8/E3uZF6T7vER/W8c=

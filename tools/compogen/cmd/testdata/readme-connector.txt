@@ -46,7 +46,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
         "type": "object"
       }
     },
-    "version": "0.1.0-alpha",
+    "release_stage": "RELEASE_STAGE_COMING_SOON",
     "source_url": "https://github.com/instill-ai/connector/blob/main/pkg/dummy/v0"
   }
 ]
@@ -94,7 +94,7 @@ It can carry out the following tasks:
 
 ## Release Stage
 
-`Alpha`
+`Coming Soon`
 
 ## Configuration
 
