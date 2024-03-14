@@ -115,7 +115,7 @@ sequenceDiagram
 
 ### Development
 
-When you want to contribute with a new connector or operator, you need to create the configuration files and implement the `Component` interface.
+When you want to contribute with a new connector or operator, you need to create the configuration files and implement the required component interfaces.
 
 #### `config` files
 
@@ -124,6 +124,12 @@ When you want to contribute with a new connector or operator, you need to create
 - `definitions.json`
     - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/v0/config/definitions.json) as an example.
     - We define the id, uid, vendor info and other metadata in this file.
+      - `uid` MUST be a unique UUID. Once it is set, it MUST NOT change.
+      - `version` MUST be a [SemVer](https://semver.org/) string. It is encouraged to keep a [tidy version history](#sane-version-control).
+      - `tombstone` will exclude a component from the component initialization. This is helpful when the component hasn't been fully implemented yet and when it has been retired.
+      - Release stages are set with the `release_stage` property.
+        Unimplemented stages (`RELEASE_STAGE_COMING_SOON` or `RELEASE_STAGE_OPEN_FOR_CONTRIBUTION`) will hide the component from the console (i.e. they can't be used in pipelines) but they will appear in the `ListComponentDefinitions` endpoint.
+        This will showcase the upcoming component at [instill.tech](https://instill.tech).
     - We define the `resource_configuration` in this file, which defines the connector resource setup.
 - `tasks.json`
     - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/v0/config/tasks.json) as an example.
@@ -134,7 +140,7 @@ When you want to contribute with a new connector or operator, you need to create
 <!-- TODO:
 1. describe more details about the api payload  -->
 
-#### Implement all interfaces defined in this [Component Package](ttps://github.com/instill-ai/component)
+#### Component interfaces
 
 In [component.go](https://github.com/instill-ai/component/blob/main/pkg/base/component.go), we define `IComponent` (`IConnector` and `IOperator`) and `IExecution` as base interfaces. All components (including connector and operator) must implement these interfaces.
 
@@ -171,6 +177,26 @@ TODO:
  1. explain how we import the connectors or operators like [here](https://github.com/instill-ai/connector/blob/main/pkg/main.go)
  2. Add a step by step example to implement a new connector or operator.
 -->
+
+#### Sane version control
+
+The version of a component is useful to track its evolution and to set expectations about its stability.
+When the interface or the behaviour of a component changes, its version should change following the Semantic Versioning guidelines.
+- Patch versions are intended for bug fixes.
+- Minor versions are intended for backwards-compatible changes, e.g., a new task or a new input field with a default value.
+- Major versions are intended for backwards-incompatible changes.
+  At this point, since there might be pipelines using the previous version, a new package MUST be created.
+  E.g., `operator/pkg/json/v0` -> `operator/pkg/json/v1`.
+
+It is recommended to start at `v0.1.0-alpha`. A major version 0 and an alpha pre-release stage are intended for rapid development.
+The `release_stage` property in `definitions.json` should be aligned with the version:
+  - A component skeleton (with only the minimal configuration files and a dummy implementation of the interfaces) may use the Coming Soon or Open For Contribution stages in order to communicate publicly about upcoming components.
+    The major and minor versions in this case MUST be 0.
+  - Alpha pre-releases are used in initial implementations, intended to gather feedback and issues from early adopters.
+    Breaking changes are acceptable at this stage.
+  - Beta pre-releases are intended for stable components that don't expect breaking changes.
+  - General availability indicates production readiness.
+    A broad adoption of the beta version in production indicates the transition to GA is ready.
 
 #### Repositories
 
