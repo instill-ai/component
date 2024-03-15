@@ -28,20 +28,22 @@ flowchart LR
 ```
 
 #### Component
-We have two types of components: **connector** and **operator**:
 
-
-- connector:
-  - A connector is used to connect the pipeline to a vendor service.
-  - We need to set up a connector first to configure the connection.
-- operator:
-  - An operator is used for data operations inside the pipeline.
-
+There are different types of component:
+- **connector**
+  - Queries, processes or transmits the ingested data to a service or app.
+  - Users need to configure their connectors (e.g. by providing an API token to a remote service).
+- **operator**
+  - Performs data injection and manipulation.
+- **iterator**
+  - Takes an array and executes an operation (defined by a set of nested components) on each of its elements.
+- **start** / **end**
+  - These special components provide an input / output interface to pipeline triggers.
 
 **Connector**
 
-- **Connectors** is used for connecting the pipeline to a vendor service, and **connectors** are served by **connector-backend**
-- We need to set up a connector **resource** first to configure the connection.
+- **Connectors** are used for connecting the pipeline to a vendor service. They are defined and initialized in the [connector](https://github.com/instill-ai/connector/) repository.
+- A connector **resource** needs to be set up first to configure the connection.
 - Setup a Connector
 ```mermaid
 sequenceDiagram
@@ -52,10 +54,10 @@ sequenceDiagram
 
 
 **Operator**
-- An operator is used for data operations inside the pipeline.
 
+- An operator is used for data operations inside the pipeline. They are defined and initialized in the [operator](https://github.com/instill-ai/operator/) repository.
 
-The key difference between `connector` and `operator` is that `connector` will connect to a vendor. The `connector` only transfer the data, not to process the data. In other hand, The `operator` will process data inside the pipeline.
+The key difference between `connector` and `operator` is the former will connect to an external service, so it's **I/O bound** while the latter is **CPU bound**. Connectors don't process but transfer data.
 
 #### Pipeline
 
@@ -89,7 +91,7 @@ sequenceDiagram
     Pipeline-Backend ->> Pipeline DB: Store pipeline and its recipe
 ```
 
-#### How pipeline triggered
+#### How pipelines are triggered
 
 When we trigger a pipeline, the pipeline-backend will calculate the DA and execute the components in topological order.
 
@@ -113,34 +115,32 @@ sequenceDiagram
 
 ### Development
 
-When you want to contribute a new connector or operator, you need to prepare two things:
+When you want to contribute with a new connector or operator, you need to create the configuration files and implement the required component interfaces.
 
-#### Prepare `config` files
+#### `config` files
 
-In every connector or operator implementation, we need to use two config files to define the behaviour of the component.
+2 configuration files define the behaviour of the component:
 
-- `definition.json`
-    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/config/definitions.json) as an example.
+- `definitions.json`
+    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/v0/config/definitions.json) as an example.
     - We define the id, uid, vendor info and other metadata in this file.
-    - We define the `resource_configuration` in this file, which is used for setting up the connector.
+      - `uid` MUST be a unique UUID. Once it is set, it MUST NOT change.
+      - `version` MUST be a [SemVer](https://semver.org/) string. It is encouraged to keep a [tidy version history](#sane-version-control).
+      - `tombstone` will exclude a component from the component initialization. This is helpful when the component hasn't been fully implemented yet and when it has been retired.
+      - Release stages are set with the `release_stage` property.
+        Unimplemented stages (`RELEASE_STAGE_COMING_SOON` or `RELEASE_STAGE_OPEN_FOR_CONTRIBUTION`) will hide the component from the console (i.e. they can't be used in pipelines) but they will appear in the `ListComponentDefinitions` endpoint.
+        This will showcase the upcoming component at [instill.tech](https://instill.tech).
+    - We define the `resource_configuration` in this file, which defines the connector resource setup.
 - `tasks.json`
-    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/config/tasks.json) as an example.
+    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/v0/config/tasks.json) as an example.
     - A component can have multiple tasks.
-    - We define the input and output schema of each task in this file.
-    - The component will auto-generate the `component_specification` and `openapi_specification` based on the input and output schema of the task
+    - The input and output schema of each task is defined in this file.
 
-
-| Spec                    | Connector | Operator | Purpose  |
-| ----------------------- | --------- | -------- | ------------ |
-| resource_specification  | v         |          | setup connection to vendors |
-| component_specification | v         | v        | setup the parameters and data flow of this component |
-| openapi_specification  | v         | v        | describe the input and output structure of this component |
 
 <!-- TODO:
-1. prepare more introduction for how we convert the tasks.json into component_specification and openapi_specification
-2. describe more details about the api payload  -->
+1. describe more details about the api payload  -->
 
-#### Implement all interfaces defined in this [Component Package](ttps://github.com/instill-ai/component)
+#### Component interfaces
 
 In [component.go](https://github.com/instill-ai/component/blob/main/pkg/base/component.go), we define `IComponent` (`IConnector` and `IOperator`) and `IExecution` as base interfaces. All components (including connector and operator) must implement these interfaces.
 
@@ -177,6 +177,26 @@ TODO:
  1. explain how we import the connectors or operators like [here](https://github.com/instill-ai/connector/blob/main/pkg/main.go)
  2. Add a step by step example to implement a new connector or operator.
 -->
+
+#### Sane version control
+
+The version of a component is useful to track its evolution and to set expectations about its stability.
+When the interface or the behaviour of a component changes, its version should change following the Semantic Versioning guidelines.
+- Patch versions are intended for bug fixes.
+- Minor versions are intended for backwards-compatible changes, e.g., a new task or a new input field with a default value.
+- Major versions are intended for backwards-incompatible changes.
+  At this point, since there might be pipelines using the previous version, a new package MUST be created.
+  E.g., `operator/pkg/json/v0` -> `operator/pkg/json/v1`.
+
+It is recommended to start at `v0.1.0-alpha`. A major version 0 and an alpha pre-release stage are intended for rapid development.
+The `release_stage` property in `definitions.json` should be aligned with the version:
+  - A component skeleton (with only the minimal configuration files and a dummy implementation of the interfaces) may use the Coming Soon or Open For Contribution stages in order to communicate publicly about upcoming components.
+    The major and minor versions in this case MUST be 0.
+  - Alpha pre-releases are used in initial implementations, intended to gather feedback and issues from early adopters.
+    Breaking changes are acceptable at this stage.
+  - Beta pre-releases are intended for stable components that don't expect breaking changes.
+  - General availability indicates production readiness.
+    A broad adoption of the beta version in production indicates the transition to GA is ready.
 
 #### Repositories
 
