@@ -57,7 +57,7 @@ sequenceDiagram
 
 - An operator is used for data operations inside the pipeline. They are defined and initialized in the [operator](https://github.com/instill-ai/operator/) repository.
 
-The key difference between `connector` and `operator` is the former will connect to an external service, so it's **I/O bound** while the latter is **CPU bound**. Connectors don't process but transfer data.
+The key difference between `connector` and `operator` is that the former will connect to an external service, so it's **I/O bound** while the latter is **CPU bound**. Connectors don't process but transfer data.
 
 #### Pipeline
 
@@ -125,9 +125,11 @@ When you want to contribute with a new connector or operator, you need to create
     - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/v0/config/definitions.json) as an example.
     - We define the id, uid, vendor info and other metadata in this file.
       - `uid` MUST be a unique UUID. Once it is set, it MUST NOT change.
-      - `version` MUST be a [SemVer](https://semver.org/) string. It is encouraged to keep a [tidy version history](#sane-version-control).
-      - `tombstone` will exclude a component from the component initialization. This is helpful when the component hasn't been fully implemented yet and when it has been retired.
-      - Release stages are set with the `release_stage` property.
+      - `version` MUST be a [SemVer](https://semver.org/) string.
+        It is encouraged to keep a [tidy version history](#sane-version-control).
+      - `tombstone` will exclude a component from the component initialization.
+        This is helpful when the component hasn't been fully implemented yet and when it has been retired.
+      - The `release_stage` property refers to the release stage of the component (not to be mixed with the pre-release label of the version).
         Unimplemented stages (`RELEASE_STAGE_COMING_SOON` or `RELEASE_STAGE_OPEN_FOR_CONTRIBUTION`) will hide the component from the console (i.e. they can't be used in pipelines) but they will appear in the `ListComponentDefinitions` endpoint.
         This will showcase the upcoming component at [instill.tech](https://instill.tech).
     - We define the `resource_configuration` in this file, which defines the connector resource setup.
@@ -135,7 +137,6 @@ When you want to contribute with a new connector or operator, you need to create
     - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/v0/config/tasks.json) as an example.
     - A component can have multiple tasks.
     - The input and output schema of each task is defined in this file.
-
 
 <!-- TODO:
 1. describe more details about the api payload  -->
@@ -181,22 +182,39 @@ TODO:
 #### Sane version control
 
 The version of a component is useful to track its evolution and to set expectations about its stability.
-When the interface or the behaviour of a component changes, its version should change following the Semantic Versioning guidelines.
+When the interface of a component (defined by its configuration files) changes, its version should change following the Semantic Versioning guidelines.
 - Patch versions are intended for bug fixes.
 - Minor versions are intended for backwards-compatible changes, e.g., a new task or a new input field with a default value.
 - Major versions are intended for backwards-incompatible changes.
   At this point, since there might be pipelines using the previous version, a new package MUST be created.
   E.g., `operator/pkg/json/v0` -> `operator/pkg/json/v1`.
+- Build and pre-release labels are discouraged, as components are shipped as part of Instill VDP and they aren't likely to need such fine-grained version control.
 
-It is recommended to start at `v0.1.0-alpha`. A major version 0 and an alpha pre-release stage are intended for rapid development.
-The `release_stage` property in `definitions.json` should be aligned with the version:
-  - A component skeleton (with only the minimal configuration files and a dummy implementation of the interfaces) may use the Coming Soon or Open For Contribution stages in order to communicate publicly about upcoming components.
+It is recommended to start a component at `v0.1.0`.
+A major version 0 is intended for rapid development.
+
+The `release_stage` property in `definitions.json` indicates the stability of a component.
+  - A component skeleton (with only the minimal configuration files and a dummy implementation of the interfaces) may use the _Coming Soon_ or _Open For Contribution_ stages in order to communicate publicly about upcoming components.
     The major and minor versions in this case MUST be 0.
   - Alpha pre-releases are used in initial implementations, intended to gather feedback and issues from early adopters.
     Breaking changes are acceptable at this stage.
   - Beta pre-releases are intended for stable components that don't expect breaking changes.
   - General availability indicates production readiness.
     A broad adoption of the beta version in production indicates the transition to GA is ready.
+
+The typical version and release stage evolution of a component might look like this:
+
+| Version | Release Stage |
+| :--- | :--- |
+| 0.1.0 | `RELEASE_STAGE_ALPHA` |
+| 0.1.1 | `RELEASE_STAGE_ALPHA` |
+| 0.1.2 | `RELEASE_STAGE_ALPHA` |
+| 0.2.0 | `RELEASE_STAGE_ALPHA` |
+| 0.2.1 | `RELEASE_STAGE_ALPHA` |
+| 0.3.0 | `RELEASE_STAGE_BETA` |
+| 0.3.1 | `RELEASE_STAGE_BETA` |
+| 0.4.0 | `RELEASE_STAGE_BETA` |
+| 1.0.0 | `RELEASE_STAGE_GA` |
 
 #### Repositories
 
