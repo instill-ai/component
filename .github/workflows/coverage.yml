@@ -32,7 +32,7 @@ jobs:
       - name: Generate coverage report
         run: |
           go mod tidy
-          go test -race ./... -coverprofile=coverage.txt -covermode=atomic
+          go test -tags ocr -race ./... -coverprofile=coverage.txt -covermode=atomic
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v2
