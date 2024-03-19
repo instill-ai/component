@@ -57,8 +57,8 @@ Certain optional fields modify the document behaviour:
 
 ## TODO
 
-- Support `oneOf` schemas for resource properties, present in, e.g., the [Airbyte](https://github.com/instill-ai/connector/blob/main/pkg/airbyte/v0/config/definitions.json#L15)
-  or the [REST API](https://github.com/instill-ai/connector/blob/main/pkg/restapi/v0/config/definitions.json#L26) connectors.
+- Support `oneOf` schemas for resource properties, present in, e.g., the [Airbyte](https://github.com/instill-ai/component/blob/main/pkg/connector/airbyte/v0/config/definitions.json#L15)
+  or the [REST API](https://github.com/instill-ai/component/blob/main/pkg/connector/restapi/v0/config/definitions.json#L26) connectors.
   - We might leverage some Go implementation of JSON schema. Some candidates:
     - [santhosh-tekuri/jsonschema](https://pkg.go.dev/github.com/santhosh-tekuri/jsonschema/v5#Schema)
     - [omissis/go-jsonschema](https://github.com/omissis/go-jsonschema/blob/934012d/pkg/schemas/model.go#L107)

@@ -1,0 +1,44 @@
+[
+  {
+    "available_tasks": [
+      "TASK_TEXT_TO_IMAGE",
+      "TASK_IMAGE_TO_IMAGE"
+    ],
+    "custom": false,
+    "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/stability-ai",
+    "icon": "assets/stability-ai.svg",
+    "icon_url": "",
+    "id": "stability-ai",
+    "public": true,
+    "spec": {
+      "resource_specification": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "properties": {
+          "api_key": {
+            "description": "Fill your Stability AI API key. To find your keys, visit - https://platform.stability.ai/account/keys",
+            "instillCredentialField": true,
+            "instillUIOrder": 0,
+            "title": "API Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "api_key"
+        ],
+        "title": "Stability AI Connector Resource",
+        "type": "object"
+      }
+    },
+    "title": "Stability AI",
+    "description": "Connect the AI models served on the Stability AI Platform",
+    "tombstone": false,
+    "type": "CONNECTOR_TYPE_AI",
+    "uid": "c86a95cc-7d32-4e22-a290-8c699f6705a4",
+    "vendor": "Stability AI",
+    "vendor_attributes": {},
+    "version": "0.1.0-alpha",
+    "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/stabilityai/v0",
+    "release_stage": "RELEASE_STAGE_ALPHA"
+  }
+]

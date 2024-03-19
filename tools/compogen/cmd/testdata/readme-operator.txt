@@ -35,7 +35,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
     "title": "Dummy",
     "description": "Perform an action",
     "release_stage": "RELEASE_STAGE_BETA",
-    "source_url": "https://github.com/instill-ai/operator/blob/main/pkg/dummy/v0"
+    "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/dummy/v0"
   }
 ]
 -- tasks.json --
@@ -171,7 +171,7 @@ It can carry out the following tasks:
 
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/operator/blob/main/pkg/dummy/v0/config/definitions.json).
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/pkg/operator/dummy/v0/config/definitions.json).
 
 ## Supported Tasks
 

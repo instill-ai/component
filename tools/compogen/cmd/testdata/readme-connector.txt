@@ -47,7 +47,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       }
     },
     "release_stage": "RELEASE_STAGE_COMING_SOON",
-    "source_url": "https://github.com/instill-ai/connector/blob/main/pkg/dummy/v0"
+    "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/dummy/v0"
   }
 ]
 -- tasks.json --
@@ -98,7 +98,7 @@ It can carry out the following tasks:
 
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/connector/blob/main/pkg/dummy/v0/config/definitions.json).
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/pkg/connector/dummy/v0/config/definitions.json).
 
 <InfoBlock type="info" title="Prerequisites">An account at [dummy.io](https://dummy.io) is required.</InfoBlock>
 
