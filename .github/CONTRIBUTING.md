@@ -122,7 +122,7 @@ When you want to contribute with a new connector or operator, you need to create
 2 configuration files define the behaviour of the component:
 
 - `definitions.json`
-    - You can refer to [OpenAI connector](https://github.com/instill-ai/component/blob/main/pkg/connector/openai/v0/config/definitions.json) as an example.
+    - You can refer to [OpenAI connector](../pkg/connector/openai/v0/config/definitions.json) as an example.
     - We define the id, uid, vendor info and other metadata in this file.
       - `uid` MUST be a unique UUID. Once it is set, it MUST NOT change.
       - `version` MUST be a [SemVer](https://semver.org/) string.
