@@ -134,7 +134,7 @@ When you want to contribute with a new connector or operator, you need to create
         This will showcase the upcoming component at [instill.tech](https://instill.tech).
     - We define the `resource_configuration` in this file, which defines the connector resource setup.
 - `tasks.json`
-    - You can refer to [OpenAI connector](https://github.com/instill-ai/component/blob/main/pkg/connector/openai/v0/config/tasks.json) as an example.
+    - You can refer to [OpenAI connector](../pkg/connector/openai/v0/config/tasks.json) as an example.
     - A component can have multiple tasks.
     - The input and output schema of each task is defined in this file.
 
