@@ -55,7 +55,7 @@ sequenceDiagram
 
 **Operator**
 
-- An operator is used for data operations inside the pipeline. They are defined and initialized in the [operator](https://github.com/instill-ai/component/blob/main/pkg/operator).
+- An operator is used for data operations inside the pipeline. They are defined and initialized in the [operator](../pkg/operator) package.
 
 The key difference between `connector` and `operator` is that the former will connect to an external service, so it's **I/O bound** while the latter is **CPU bound**. Connectors don't process but transfer data.
 
