@@ -42,7 +42,7 @@ There are different types of component:
 
 **Connector**
 
-- **Connectors** are used for connecting the pipeline to a vendor service. They are defined and initialized in the [connector](https://github.com/instill-ai/component/blob/main/pkg/connector).
+- **Connectors** are used for connecting the pipeline to a vendor service. They are defined and initialized in the [connector](../pkg/connector) package.
 - A connector **resource** needs to be set up first to configure the connection.
 - Setup a Connector
 ```mermaid
