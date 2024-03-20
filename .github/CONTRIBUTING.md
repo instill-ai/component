@@ -42,7 +42,7 @@ There are different types of component:
 
 **Connector**
 
-- **Connectors** are used for connecting the pipeline to a vendor service. They are defined and initialized in the [connector](https://github.com/instill-ai/connector/) repository.
+- **Connectors** are used for connecting the pipeline to a vendor service. They are defined and initialized in the [connector](../pkg/connector) package.
 - A connector **resource** needs to be set up first to configure the connection.
 - Setup a Connector
 ```mermaid
@@ -55,7 +55,7 @@ sequenceDiagram
 
 **Operator**
 
-- An operator is used for data operations inside the pipeline. They are defined and initialized in the [operator](https://github.com/instill-ai/operator/) repository.
+- An operator is used for data operations inside the pipeline. They are defined and initialized in the [operator](../pkg/operator) package.
 
 The key difference between `connector` and `operator` is that the former will connect to an external service, so it's **I/O bound** while the latter is **CPU bound**. Connectors don't process but transfer data.
 
@@ -122,7 +122,7 @@ When you want to contribute with a new connector or operator, you need to create
 2 configuration files define the behaviour of the component:
 
 - `definitions.json`
-    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/v0/config/definitions.json) as an example.
+    - You can refer to [OpenAI connector](../pkg/connector/openai/v0/config/definitions.json) as an example.
     - We define the id, uid, vendor info and other metadata in this file.
       - `uid` MUST be a unique UUID. Once it is set, it MUST NOT change.
       - `version` MUST be a [SemVer](https://semver.org/) string.
@@ -134,7 +134,7 @@ When you want to contribute with a new connector or operator, you need to create
         This will showcase the upcoming component at [instill.tech](https://instill.tech).
     - We define the `resource_configuration` in this file, which defines the connector resource setup.
 - `tasks.json`
-    - You can refer to [OpenAI connector](https://github.com/instill-ai/connector/blob/main/pkg/openai/v0/config/tasks.json) as an example.
+    - You can refer to [OpenAI connector](../pkg/connector/openai/v0/config/tasks.json) as an example.
     - A component can have multiple tasks.
     - The input and output schema of each task is defined in this file.
 
@@ -175,7 +175,7 @@ type IExecution interface {
 
 <!--
 TODO:
- 1. explain how we import the connectors or operators like [here](https://github.com/instill-ai/connector/blob/main/pkg/main.go)
+ 1. explain how we import the connectors or operators like [here](../pkg/connector/main.go)
  2. Add a step by step example to implement a new connector or operator.
 -->
 
@@ -215,12 +215,6 @@ The typical version and release stage evolution of a component might look like t
 | 0.3.1 | `RELEASE_STAGE_BETA` |
 | 0.4.0 | `RELEASE_STAGE_BETA` |
 | 1.0.0 | `RELEASE_STAGE_GA` |
-
-#### Repositories
-
-Currently, we maintain four repositories for component implementations
-- [Connector](https://github.com/instill-ai/connector): collect all connector implementations
-- [Operator](https://github.com/instill-ai/operator): collect all operator implementations
 
 ### Sending PRs
 

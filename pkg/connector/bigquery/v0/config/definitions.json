@@ -1,0 +1,65 @@
+[
+  {
+    "available_tasks": [
+      "TASK_INSERT"
+    ],
+    "custom": false,
+    "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/bigquery",
+    "icon": "assets/bigquery.svg",
+    "icon_url": "",
+    "id": "bigquery",
+    "public": true,
+    "spec": {
+      "resource_specification": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": false,
+        "properties": {
+          "dataset_id": {
+            "description": "Fill in your BigQuery Dataset ID.",
+            "instillUIOrder": 2,
+            "title": "BigQuery Dataset ID",
+            "type": "string"
+          },
+          "json_key": {
+            "description": "Contents of the JSON key file with access to the bucket.",
+            "instillCredentialField": true,
+            "instillUIOrder": 0,
+            "instillUIMultiline": true,
+            "title": "JSON Key File contents",
+            "type": "string"
+          },
+          "project_id": {
+            "description": "Fill in your BigQuery Project ID.",
+            "instillUIOrder": 1,
+            "title": "BigQuery Project ID",
+            "type": "string"
+          },
+          "table_name": {
+            "description": "Fill in your BigQuery Table Name.",
+            "instillUIOrder": 3,
+            "title": "BigQuery Table Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "json_key",
+          "project_id",
+          "dataset_id",
+          "table_name"
+        ],
+        "title": "BigQuery Connector Spec",
+        "type": "object"
+      }
+    },
+    "title": "BigQuery",
+    "description": "Insert data to BigQuery tables",
+    "tombstone": false,
+    "type": "CONNECTOR_TYPE_DATA",
+    "uid": "e2ffe076-ab2c-4e5e-9587-a613a6b1c146",
+    "vendor": "Google",
+    "vendor_attributes": {},
+    "version": "0.1.0-alpha",
+    "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/bigquery/v0",
+    "release_stage": "RELEASE_STAGE_ALPHA"
+  }
+]
