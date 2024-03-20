@@ -175,7 +175,7 @@ type IExecution interface {
 
 <!--
 TODO:
- 1. explain how we import the connectors or operators like [here](https://github.com/instill-ai/component/blob/main/pkg/connector/main.go)
+ 1. explain how we import the connectors or operators like [here](../pkg/connector/main.go)
  2. Add a step by step example to implement a new connector or operator.
 -->
 
