@@ -11928,7 +11928,7 @@
       "airbyte-destination-yugabytedb": "airbyte/destination-yugabytedb:0.1.1",
       "airbyte-devmate-cloud": "ghcr.io/devmate-cloud/streamr-airbyte-connectors:0.0.1"
     },
-    "version": "0.1.0-alpha",
+    "version": "0.1.0",
     "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/airbyte/v0",
     "release_stage": "RELEASE_STAGE_ALPHA"
   }

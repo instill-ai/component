@@ -38,7 +38,7 @@
     "uid": "e414a1f8-5fdf-4292-b050-9f9176254a4b",
     "vendor": "Archetype AI",
     "vendor_attributes": {},
-    "version": "0.1.0-alpha",
+    "version": "0.1.0",
     "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/archetypeai/v0",
     "release_stage": "RELEASE_STAGE_ALPHA"
   }

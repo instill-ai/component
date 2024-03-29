@@ -44,7 +44,7 @@
     "uid": "2b1da686-878a-462c-b2c6-a9690199939c",
     "vendor": "Google",
     "vendor_attributes": {},
-    "version": "0.1.0-alpha",
+    "version": "0.1.0",
     "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/googlesearch/v0",
     "release_stage": "RELEASE_STAGE_ALPHA"
   }

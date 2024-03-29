@@ -58,7 +58,7 @@
     "uid": "e2ffe076-ab2c-4e5e-9587-a613a6b1c146",
     "vendor": "Google",
     "vendor_attributes": {},
-    "version": "0.1.0-alpha",
+    "version": "0.1.0",
     "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/bigquery/v0",
     "release_stage": "RELEASE_STAGE_ALPHA"
   }

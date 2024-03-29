@@ -203,6 +203,6 @@
       "description": "Turn text into numbers, unlocking use cases like search."
     }
   ],
-  "version": "1.0.0-alpha",
+  "version": "1.0.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/base"
 }

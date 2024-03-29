@@ -36,7 +36,7 @@
     "uid": "70d8664a-d512-4517-a5e8-5d4da81756a7",
     "vendor": "Numbers Protocol",
     "vendor_attributes": {},
-    "version": "0.1.0-alpha",
+    "version": "0.1.0",
     "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/numbers/v0",
     "release_stage": "RELEASE_STAGE_ALPHA"
   }

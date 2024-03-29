@@ -37,7 +37,7 @@
     "uid": "c86a95cc-7d32-4e22-a290-8c699f6705a4",
     "vendor": "Stability AI",
     "vendor_attributes": {},
-    "version": "0.1.0-alpha",
+    "version": "0.1.0",
     "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/stabilityai/v0",
     "release_stage": "RELEASE_STAGE_ALPHA"
   }
