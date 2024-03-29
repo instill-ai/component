@@ -84,7 +84,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
 title: "Dummy"
 lang: "en-US"
 draft: false
-description: "Learn about how to set up a VDP Dummy connector https://github.com/instill-ai/vdp"
+description: "Learn about how to set up a VDP Dummy connector https://github.com/instill-ai/instill-core"
 ---
 
 The Dummy component is a data connector that allows users to perform an action.

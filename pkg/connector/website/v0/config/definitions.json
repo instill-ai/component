@@ -25,7 +25,7 @@
     "uid": "98909958-db7d-4dfe-9858-7761904be17e",
     "vendor": "",
     "vendor_attributes": {},
-    "version": "0.1.0-alpha",
+    "version": "0.1.0",
     "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/website/v0",
     "release_stage": "RELEASE_STAGE_ALPHA"
   }

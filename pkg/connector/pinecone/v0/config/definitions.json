@@ -45,7 +45,7 @@
     "uid": "4b1dcf82-e134-4ba7-992f-f9a02536ec2b",
     "vendor": "Pinecone",
     "vendor_attributes": {},
-    "version": "0.1.0-alpha",
+    "version": "0.1.0",
     "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/pinecone/v0",
     "release_stage": "RELEASE_STAGE_ALPHA"
   }

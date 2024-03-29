@@ -161,7 +161,7 @@
     "uid": "5ee55a5c-6e30-4c7a-80e8-90165a729e0a",
     "vendor": "",
     "vendor_attributes": {},
-    "version": "0.1.0-alpha",
+    "version": "0.1.0",
     "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/restapi/v0",
     "release_stage": "RELEASE_STAGE_ALPHA"
   }

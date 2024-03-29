@@ -70,7 +70,7 @@
     "uid": "0255ef87-33ce-4f88-b9db-8897f8c17233",
     "vendor": "Hugging Face",
     "vendor_attributes": {},
-    "version": "0.1.1-alpha",
+    "version": "0.1.1",
     "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/huggingface/v0",
     "release_stage": "RELEASE_STAGE_ALPHA"
   }

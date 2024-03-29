@@ -45,7 +45,7 @@
     "uid": "9fb6a2cb-bff5-4c69-bc6d-4538dd8e3362",
     "vendor": "OpenAI",
     "vendor_attributes": {},
-    "version": "0.1.1-alpha",
+    "version": "0.1.1",
     "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/openai/v0",
     "release_stage": "RELEASE_STAGE_ALPHA"
   }
