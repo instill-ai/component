@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.14.0-beta](https://github.com/instill-ai/component/compare/v0.13.0-beta...v0.14.0-beta) (2024-03-29)
+
+
+### Features
+
+* document release stages and versions ([#70](https://github.com/instill-ai/component/issues/70)) ([91457dc](https://github.com/instill-ai/component/commit/91457dc5b4cf9bd397d42a70d37f3e75c3398095))
+* merge connector and operator repos into this repo ([#72](https://github.com/instill-ai/component/issues/72)) ([2fd6b1d](https://github.com/instill-ai/component/commit/2fd6b1dd65b2b50eeb2f89209b939b397164d272))
+* read release stage in auto generated docs from field in definitions ([#68](https://github.com/instill-ai/component/issues/68)) ([90ea333](https://github.com/instill-ai/component/commit/90ea333c3f443e9c3f0a9306ce72317254a61210))
+* remove pre-release label in version ([#75](https://github.com/instill-ai/component/issues/75)) ([f0320d3](https://github.com/instill-ai/component/commit/f0320d3a2107daa5f1d9463c0b417a838f957434))
+
+
+### Bug Fixes
+
+* document pre-release version removal ([#71](https://github.com/instill-ai/component/issues/71)) ([e527a11](https://github.com/instill-ai/component/commit/e527a11e19530b225602bb49ad87fd18ae076ff1))
+
 ## [0.13.0-beta](https://github.com/instill-ai/component/compare/v0.12.0-beta...v0.13.0-beta) (2024-03-07)
 
 
