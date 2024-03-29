@@ -1,6 +1,6 @@
 # Component
 
-A **component** is the basic building block of the [**Instill VDP**](https://github.com/instill-ai/vdp) pipeline. The pipeline consists of multiple components.
+A **component** is the basic building block of the [**Instill Core**](https://github.com/instill-ai/instill-core) pipeline. The pipeline consists of multiple components.
 We have two types of components: connectors and operators.
 This Golang package defines the common interface and functions for all components.
 
