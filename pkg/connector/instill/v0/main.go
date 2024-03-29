@@ -68,7 +68,10 @@ func getMode(config *structpb.Struct) string {
 }
 
 func getAPIKey(config *structpb.Struct) string {
-	return config.GetFields()["api_token"].GetStringValue()
+	if getMode(config) == internalMode {
+		return config.GetFields()["header_authorization"].GetStringValue()
+	}
+	return fmt.Sprintf("Bearer %s", config.GetFields()["api_token"].GetStringValue())
 }
 func getInstillUserUID(config *structpb.Struct) string {
 	return config.GetFields()["instill_user_uid"].GetStringValue()
@@ -109,7 +112,7 @@ func getMgmtServerURL(config *structpb.Struct) string {
 }
 func getRequestMetadata(cfg *structpb.Struct) metadata.MD {
 	return metadata.Pairs(
-		"Authorization", fmt.Sprintf("Bearer %s", getAPIKey(cfg)),
+		"Authorization", getAPIKey(cfg),
 		"Instill-User-Uid", getInstillUserUID(cfg),
 		"Instill-Auth-Type", "user",
 	)
@@ -221,6 +224,10 @@ func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, resourceConfig
 	def := proto.Clone(oriDef).(*pipelinePB.ConnectorDefinition)
 
 	if resourceConfig != nil {
+		if getModelServerURL(resourceConfig) == "" {
+			return def, nil
+		}
+
 		gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(resourceConfig))
 		if gRPCCLientConn != nil {
 			defer gRPCCLientConn.Close()
