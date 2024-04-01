@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.14.1-beta](https://github.com/instill-ai/component/compare/v0.14.0-beta...v0.14.1-beta) (2024-04-01)
+
+
+### Bug Fixes
+
+* **compogen:** better installation command ([#78](https://github.com/instill-ai/component/issues/78)) ([f1b453b](https://github.com/instill-ai/component/commit/f1b453b322ae43df1b18773affc5c65a9fcd3059))
+* **instill:** fix multi-region connection problem ([#76](https://github.com/instill-ai/component/issues/76)) ([591a6a2](https://github.com/instill-ai/component/commit/591a6a20233f5d1509cb678e27b133d4dc329e20))
+
 ## [0.14.0-beta](https://github.com/instill-ai/component/compare/v0.13.0-beta...v0.14.0-beta) (2024-03-29)
 
 
