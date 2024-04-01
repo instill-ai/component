@@ -7,9 +7,7 @@ documentation.
 ## Installation
 
 ```shell
-git clone https://github.com/instill-ai/component
-cd component/tools/compogen
-go install .
+go install github.com/instill-ai/component/tools/compogen@latest
 ```
 
 ## Generate the documentation of a component
