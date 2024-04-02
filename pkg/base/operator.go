@@ -16,7 +16,7 @@ type IOperator interface {
 
 	// Functions that shared for all operators
 	// Load operator definitions from json files, the additionalJSONBytes is only needed when you reference in-memory json file
-	LoadOperatorDefinitions(definitionJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
+	LoadOperatorDefinition(definitionJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
 	// Add definition
 	AddOperatorDefinition(def *pipelinePB.OperatorDefinition) error
 	// Get the operator definition by definition uid
@@ -32,12 +32,12 @@ type Operator struct {
 	Component
 }
 
-// LoadOperatorDefinitions loads the operator definitions from json files
-func (o *Operator) LoadOperatorDefinitions(definitionsJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
+// LoadOperatorDefinition loads the operator definitions from json files
+func (o *Operator) LoadOperatorDefinition(definitionJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
 	var err error
 	var definitionJSON any
 
-	err = json.Unmarshal(definitionsJSONBytes, &definitionJSON)
+	err = json.Unmarshal(definitionJSONBytes, &definitionJSON)
 	if err != nil {
 		return err
 	}
@@ -55,10 +55,7 @@ func (o *Operator) LoadOperatorDefinitions(definitionsJSONBytes []byte, tasksJSO
 	for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
 		availableTasks = append(availableTasks, availableTask.(string))
 	}
-	definitionJSONBytes, err := json.Marshal(definitionJSON)
-	if err != nil {
-		return err
-	}
+
 	def := &pipelinePB.OperatorDefinition{}
 	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, def)
 	if err != nil {

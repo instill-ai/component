@@ -27,7 +27,7 @@ func TestConnector_ListConnectorDefinitions(t *testing.T) {
 		Component: Component{Logger: logger},
 	}
 
-	err := conn.LoadConnectorDefinitions(
+	err := conn.LoadConnectorDefinition(
 		connectorDefJSON,
 		connectorTasksJSON,
 		map[string][]byte{"additional.json": connectorAdditionalJSON})

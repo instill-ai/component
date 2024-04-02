@@ -54,7 +54,7 @@ func Init(logger *zap.Logger) base.IConnector {
 				Component: base.Component{Logger: logger},
 			},
 		}
-		err := connector.LoadConnectorDefinitions(definitionJSON, tasksJSON, map[string][]byte{"openai.json": openAIJSON})
+		err := connector.LoadConnectorDefinition(definitionJSON, tasksJSON, map[string][]byte{"openai.json": openAIJSON})
 		if err != nil {
 			logger.Fatal(err.Error())
 		}

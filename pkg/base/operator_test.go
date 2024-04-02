@@ -25,7 +25,7 @@ func TestOperator_ListOperatorDefinitions(t *testing.T) {
 		Component: Component{Logger: logger},
 	}
 
-	err := conn.LoadOperatorDefinitions(operatorDefJSON, operatorTasksJSON, nil)
+	err := conn.LoadOperatorDefinition(operatorDefJSON, operatorTasksJSON, nil)
 	c.Assert(err, qt.IsNil)
 
 	defs := conn.ListOperatorDefinitions()

@@ -49,7 +49,7 @@ func Init(logger *zap.Logger) base.IOperator {
 				Component: base.Component{Logger: logger},
 			},
 		}
-		err := operator.LoadOperatorDefinitions(definitionJSON, tasksJSON, nil)
+		err := operator.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			logger.Fatal(err.Error())
 		}

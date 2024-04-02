@@ -47,7 +47,7 @@ func Init(logger *zap.Logger) base.IConnector {
 				Component: base.Component{Logger: logger},
 			},
 		}
-		err := connector.LoadConnectorDefinitions(definitionJSON, tasksJSON, map[string][]byte{"stabilityai.json": stabilityaiJSON})
+		err := connector.LoadConnectorDefinition(definitionJSON, tasksJSON, map[string][]byte{"stabilityai.json": stabilityaiJSON})
 		if err != nil {
 			logger.Fatal(err.Error())
 		}

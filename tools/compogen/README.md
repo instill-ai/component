@@ -63,7 +63,7 @@ Certain optional fields modify the document behaviour:
     - [invopop/jsonschema](https://github.com/invopop/jsonschema/blob/a446707/schema.go#L14)
     - [swaggest/jsonschema-go](https://pkg.go.dev/github.com/swaggest/jsonschema-go#Schema)
   - The schema loading carried out by the `component/base` package in
-    `LoadConnectorDefinitions` or `LoadOperatorDefinitions` might also be
+    `LoadConnectorDefinition` or `LoadOperatorDefinition` might also be
     useful, although it is oriented to transforming the data to a `structpb.Struct`
     rather than to define the object structure.
 - In the "supported tasks" tables, provide better documentation for nested

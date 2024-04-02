@@ -23,7 +23,7 @@ type IConnector interface {
 
 	// Functions that shared for all connectors
 	// Load connector definitions from json files
-	LoadConnectorDefinitions(definitionJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
+	LoadConnectorDefinition(definitionJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
 	// Add definition
 	AddConnectorDefinition(def *pipelinePB.ConnectorDefinition) error
 	// Get the connector definition by definition uid
@@ -43,17 +43,17 @@ type IConnector interface {
 type Connector struct {
 	Component
 
-	// TODO: we can store the instillCredentialFields here when LoadConnectorDefinitions
+	// TODO: we can store the instillCredentialFields here when LoadConnectorDefinition
 	credentialFields map[string][]string
 }
 
-// LoadConnectorDefinitions loads the connector definitions from json files
-func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
+// LoadConnectorDefinition loads the connector definitions from json files
+func (c *Connector) LoadConnectorDefinition(definitionJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
 	var err error
 	var definitionJSON any
 	c.credentialFields = map[string][]string{}
 
-	err = json.Unmarshal(definitionsJSONBytes, &definitionJSON)
+	err = json.Unmarshal(definitionJSONBytes, &definitionJSON)
 	if err != nil {
 		return err
 	}
@@ -71,10 +71,7 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJ
 	for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
 		availableTasks = append(availableTasks, availableTask.(string))
 	}
-	definitionJSONBytes, err := json.Marshal(definitionJSON)
-	if err != nil {
-		return err
-	}
+
 	def := &pipelinePB.ConnectorDefinition{}
 	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, def)
 	if err != nil {
