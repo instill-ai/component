@@ -23,21 +23,19 @@ compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx --operator
 cmp pkg/dummy/README.mdx want-readme.mdx
 
 -- definitions.json --
-[
-  {
-    "available_tasks": [
-      "TASK_DUMMY",
-      "TASK_DUMMIER_THAN_DUMMY"
-    ],
-    "public": true,
-    "spec": {},
-    "id": "dummy",
-    "title": "Dummy",
-    "description": "Perform an action",
-    "release_stage": "RELEASE_STAGE_BETA",
-    "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/dummy/v0"
-  }
-]
+{
+  "available_tasks": [
+    "TASK_DUMMY",
+    "TASK_DUMMIER_THAN_DUMMY"
+  ],
+  "public": true,
+  "spec": {},
+  "id": "dummy",
+  "title": "Dummy",
+  "description": "Perform an action",
+  "release_stage": "RELEASE_STAGE_BETA",
+  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/dummy/v0"
+}
 -- tasks.json --
 {
   "TASK_DUMMY": {

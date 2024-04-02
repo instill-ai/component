@@ -36,7 +36,7 @@ for idx, _ in enumerate(definitions):
     )
     definitions[idx]['spec']['resource_specification'] = definitions[idx]['spec']['connectionSpecification']
 
-new_def = [{
+new_def = {
     "available_tasks": [
         "TASK_WRITE_DESTINATION"
     ],
@@ -60,7 +60,7 @@ new_def = [{
     "uid": "975678a2-5117-48a4-a135-019619dee18e",
     "vendor": "Airbyte",
     "vendor_attributes": vendor_attribute
-}]
+}
 
 new_def = json.dumps(new_def, indent=2, sort_keys=True)
 new_def = new_def.replace("airbyte_secret", "instillCredentialField")

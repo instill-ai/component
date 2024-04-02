@@ -35,9 +35,9 @@ type Operator struct {
 // LoadOperatorDefinitions loads the operator definitions from json files
 func (o *Operator) LoadOperatorDefinitions(definitionsJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
 	var err error
-	definitionsJSONList := &[]interface{}{}
+	var definitionJSON any
 
-	err = json.Unmarshal(definitionsJSONBytes, definitionsJSONList)
+	err = json.Unmarshal(definitionsJSONBytes, &definitionJSON)
 	if err != nil {
 		return err
 	}
@@ -51,37 +51,35 @@ func (o *Operator) LoadOperatorDefinitions(definitionsJSONBytes []byte, tasksJSO
 		return err
 	}
 
-	for _, definitionJSON := range *definitionsJSONList {
-		availableTasks := []string{}
-		for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
-			availableTasks = append(availableTasks, availableTask.(string))
-		}
-		definitionJSONBytes, err := json.Marshal(definitionJSON)
-		if err != nil {
-			return err
-		}
-		def := &pipelinePB.OperatorDefinition{}
-		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, def)
-		if err != nil {
-			return err
-		}
+	availableTasks := []string{}
+	for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
+		availableTasks = append(availableTasks, availableTask.(string))
+	}
+	definitionJSONBytes, err := json.Marshal(definitionJSON)
+	if err != nil {
+		return err
+	}
+	def := &pipelinePB.OperatorDefinition{}
+	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, def)
+	if err != nil {
+		return err
+	}
 
-		def.Tasks = o.generateComponentTasks(availableTasks)
+	def.Tasks = o.generateComponentTasks(availableTasks)
 
-		def.Spec.ComponentSpecification, err = o.generateComponentSpec(def.Title, def.Tasks)
-		if err != nil {
-			return err
-		}
+	def.Spec.ComponentSpecification, err = o.generateComponentSpec(def.Title, def.Tasks)
+	if err != nil {
+		return err
+	}
 
-		def.Spec.DataSpecifications, err = o.generateDataSpecs(def.Title, availableTasks)
-		if err != nil {
-			return err
-		}
+	def.Spec.DataSpecifications, err = o.generateDataSpecs(def.Title, availableTasks)
+	if err != nil {
+		return err
+	}
 
-		err = o.addDefinition(def)
-		if err != nil {
-			return err
-		}
+	err = o.addDefinition(def)
+	if err != nil {
+		return err
 	}
 
 	return nil

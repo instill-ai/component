@@ -50,10 +50,10 @@ type Connector struct {
 // LoadConnectorDefinitions loads the connector definitions from json files
 func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
 	var err error
-	definitionsJSONList := &[]interface{}{}
+	var definitionJSON any
 	c.credentialFields = map[string][]string{}
 
-	err = json.Unmarshal(definitionsJSONBytes, definitionsJSONList)
+	err = json.Unmarshal(definitionsJSONBytes, &definitionJSON)
 	if err != nil {
 		return err
 	}
@@ -67,42 +67,39 @@ func (c *Connector) LoadConnectorDefinitions(definitionsJSONBytes []byte, tasksJ
 		return err
 	}
 
-	for _, definitionJSON := range *definitionsJSONList {
-		availableTasks := []string{}
-		for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
-			availableTasks = append(availableTasks, availableTask.(string))
-		}
-		definitionJSONBytes, err := json.Marshal(definitionJSON)
-		if err != nil {
-			return err
-		}
-		def := &pipelinePB.ConnectorDefinition{}
-		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, def)
-		if err != nil {
-			return err
-		}
-		def.Spec.ResourceSpecification, err = c.refineResourceSpec(def.Spec.ResourceSpecification)
-		if err != nil {
-			return err
-		}
+	availableTasks := []string{}
+	for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
+		availableTasks = append(availableTasks, availableTask.(string))
+	}
+	definitionJSONBytes, err := json.Marshal(definitionJSON)
+	if err != nil {
+		return err
+	}
+	def := &pipelinePB.ConnectorDefinition{}
+	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, def)
+	if err != nil {
+		return err
+	}
+	def.Spec.ResourceSpecification, err = c.refineResourceSpec(def.Spec.ResourceSpecification)
+	if err != nil {
+		return err
+	}
 
-		def.Tasks = c.generateComponentTasks(availableTasks)
+	def.Tasks = c.generateComponentTasks(availableTasks)
 
-		def.Spec.ComponentSpecification, err = c.generateComponentSpec(def.Title, def.Tasks)
-		if err != nil {
-			return err
-		}
+	def.Spec.ComponentSpecification, err = c.generateComponentSpec(def.Title, def.Tasks)
+	if err != nil {
+		return err
+	}
 
-		def.Spec.DataSpecifications, err = c.generateDataSpecs(def.Title, availableTasks)
-		if err != nil {
-			return err
-		}
+	def.Spec.DataSpecifications, err = c.generateDataSpecs(def.Title, availableTasks)
+	if err != nil {
+		return err
+	}
 
-		err = c.AddConnectorDefinition(def)
-		if err != nil {
-			return err
-		}
-
+	err = c.AddConnectorDefinition(def)
+	if err != nil {
+		return err
 	}
 
 	return nil

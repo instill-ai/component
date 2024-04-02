@@ -10,46 +10,44 @@ compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx --connector
 cmp pkg/dummy/README.mdx want-readme.mdx
 
 -- definitions.json --
-[
-  {
-    "available_tasks": [
-      "TASK_DUMMY"
-    ],
-    "public": true,
-    "id": "dummy",
-    "title": "Dummy",
-    "description": "Perform an action",
-    "prerequisites": "An account at [dummy.io](https://dummy.io) is required.",
-    "type": "CONNECTOR_TYPE_DATA",
-    "spec": {
-      "resource_specification": {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "additionalProperties": true,
-        "properties": {
-          "organization": {
-            "description": "Specify which organization is used for the requests",
-            "instillUIOrder": 1,
-            "title": "Organization ID",
-            "type": "string"
-          },
-          "api_key": {
-            "description": "Fill your Dummy API key",
-            "instillUIOrder": 0,
-            "title": "API Key",
-            "type": "string"
-          }
+{
+  "available_tasks": [
+    "TASK_DUMMY"
+  ],
+  "public": true,
+  "id": "dummy",
+  "title": "Dummy",
+  "description": "Perform an action",
+  "prerequisites": "An account at [dummy.io](https://dummy.io) is required.",
+  "type": "CONNECTOR_TYPE_DATA",
+  "spec": {
+    "resource_specification": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "additionalProperties": true,
+      "properties": {
+        "organization": {
+          "description": "Specify which organization is used for the requests",
+          "instillUIOrder": 1,
+          "title": "Organization ID",
+          "type": "string"
         },
-        "required": [
-          "api_key"
-        ],
-        "title": "OpenAI Connector Resource",
-        "type": "object"
-      }
-    },
-    "release_stage": "RELEASE_STAGE_COMING_SOON",
-    "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/dummy/v0"
-  }
-]
+        "api_key": {
+          "description": "Fill your Dummy API key",
+          "instillUIOrder": 0,
+          "title": "API Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "OpenAI Connector Resource",
+      "type": "object"
+    }
+  },
+  "release_stage": "RELEASE_STAGE_COMING_SOON",
+  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/dummy/v0"
+}
 -- tasks.json --
 {
   "TASK_DUMMY": {

@@ -1,168 +1,166 @@
-[
-  {
-    "available_tasks": [
-      "TASK_GET",
-      "TASK_POST",
-      "TASK_PATCH",
-      "TASK_PUT",
-      "TASK_DELETE",
-      "TASK_HEAD",
-      "TASK_OPTIONS"
-    ],
-    "custom": false,
-    "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/restapi",
-    "icon": "assets/restapi.svg",
-    "icon_url": "",
-    "id": "restapi",
-    "public": true,
-    "spec": {
-      "resource_specification": {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "additionalProperties": false,
-        "properties": {
-          "authentication": {
-            "description": "Authentication method to use for the REST API",
-            "instillUIOrder": 0,
-            "oneOf": [
-              {
-                "properties": {
-                  "auth_type": {
-                    "const": "NO_AUTH",
-                    "description": "No Authentication",
-                    "instillUIOrder": 0,
-                    "order": 0,
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "auth_type"
-                ],
-                "title": "No Auth"
+{
+  "available_tasks": [
+    "TASK_GET",
+    "TASK_POST",
+    "TASK_PATCH",
+    "TASK_PUT",
+    "TASK_DELETE",
+    "TASK_HEAD",
+    "TASK_OPTIONS"
+  ],
+  "custom": false,
+  "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/restapi",
+  "icon": "assets/restapi.svg",
+  "icon_url": "",
+  "id": "restapi",
+  "public": true,
+  "spec": {
+    "resource_specification": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "additionalProperties": false,
+      "properties": {
+        "authentication": {
+          "description": "Authentication method to use for the REST API",
+          "instillUIOrder": 0,
+          "oneOf": [
+            {
+              "properties": {
+                "auth_type": {
+                  "const": "NO_AUTH",
+                  "description": "No Authentication",
+                  "instillUIOrder": 0,
+                  "order": 0,
+                  "type": "string"
+                }
               },
-              {
-                "properties": {
-                  "auth_type": {
-                    "const": "BASIC_AUTH",
-                    "description": "Basic auth",
-                    "instillUIOrder": 0,
-                    "order": 0,
-                    "type": "string"
-                  },
-                  "password": {
-                    "description": "Password for Basic auth",
-                    "instillCredentialField": true,
-                    "instillUIOrder": 2,
-                    "order": 2,
-                    "title": "Password",
-                    "type": "string"
-                  },
-                  "username": {
-                    "description": "Username for Basic Auth",
-                    "instillUIOrder": 1,
-                    "order": 1,
-                    "title": "Username",
-                    "type": "string"
-                  }
+              "required": [
+                "auth_type"
+              ],
+              "title": "No Auth"
+            },
+            {
+              "properties": {
+                "auth_type": {
+                  "const": "BASIC_AUTH",
+                  "description": "Basic auth",
+                  "instillUIOrder": 0,
+                  "order": 0,
+                  "type": "string"
                 },
-                "required": [
-                  "auth_type",
-                  "username",
-                  "password"
-                ],
-                "title": "Basic Auth"
+                "password": {
+                  "description": "Password for Basic auth",
+                  "instillCredentialField": true,
+                  "instillUIOrder": 2,
+                  "order": 2,
+                  "title": "Password",
+                  "type": "string"
+                },
+                "username": {
+                  "description": "Username for Basic Auth",
+                  "instillUIOrder": 1,
+                  "order": 1,
+                  "title": "Username",
+                  "type": "string"
+                }
               },
-              {
-                "properties": {
-                  "auth_location": {
-                    "default": "header",
-                    "description": "Add the API key to the header or query params",
-                    "enum": [
-                      "header",
-                      "query"
-                    ],
-                    "instillUIOrder": 3,
-                    "order": 3,
-                    "title": "Where to Add API Key to",
-                    "type": "string"
-                  },
-                  "auth_type": {
-                    "const": "API_KEY",
-                    "description": "API key authentication",
-                    "instillUIOrder": 0,
-                    "order": 0,
-                    "type": "string"
-                  },
-                  "key": {
-                    "default": "X-API-Key",
-                    "description": "Key name for API key authentication",
-                    "instillUIOrder": 1,
-                    "order": 1,
-                    "title": "Key Name",
-                    "type": "string"
-                  },
-                  "value": {
-                    "description": "Key value for API key authentication",
-                    "instillCredentialField": true,
-                    "instillUIOrder": 2,
-                    "order": 2,
-                    "title": "Key Value",
-                    "type": "string"
-                  }
+              "required": [
+                "auth_type",
+                "username",
+                "password"
+              ],
+              "title": "Basic Auth"
+            },
+            {
+              "properties": {
+                "auth_location": {
+                  "default": "header",
+                  "description": "Add the API key to the header or query params",
+                  "enum": [
+                    "header",
+                    "query"
+                  ],
+                  "instillUIOrder": 3,
+                  "order": 3,
+                  "title": "Where to Add API Key to",
+                  "type": "string"
                 },
-                "required": [
-                  "auth_type",
-                  "key",
-                  "value",
-                  "auth_location"
-                ],
-                "title": "API Key"
+                "auth_type": {
+                  "const": "API_KEY",
+                  "description": "API key authentication",
+                  "instillUIOrder": 0,
+                  "order": 0,
+                  "type": "string"
+                },
+                "key": {
+                  "default": "X-API-Key",
+                  "description": "Key name for API key authentication",
+                  "instillUIOrder": 1,
+                  "order": 1,
+                  "title": "Key Name",
+                  "type": "string"
+                },
+                "value": {
+                  "description": "Key value for API key authentication",
+                  "instillCredentialField": true,
+                  "instillUIOrder": 2,
+                  "order": 2,
+                  "title": "Key Value",
+                  "type": "string"
+                }
               },
-              {
-                "properties": {
-                  "auth_type": {
-                    "const": "BEARER_TOKEN",
-                    "description": "Bearer token authentication",
-                    "instillUIOrder": 0,
-                    "order": 0,
-                    "type": "string"
-                  },
-                  "token": {
-                    "description": "Bearer token",
-                    "instillCredentialField": true,
-                    "instillUIOrder": 1,
-                    "order": 1,
-                    "title": "Token",
-                    "type": "string"
-                  }
+              "required": [
+                "auth_type",
+                "key",
+                "value",
+                "auth_location"
+              ],
+              "title": "API Key"
+            },
+            {
+              "properties": {
+                "auth_type": {
+                  "const": "BEARER_TOKEN",
+                  "description": "Bearer token authentication",
+                  "instillUIOrder": 0,
+                  "order": 0,
+                  "type": "string"
                 },
-                "required": [
-                  "auth_type",
-                  "token"
-                ],
-                "title": "Bearer Token"
-              }
-            ],
-            "order": 1,
-            "title": "Authentication",
-            "type": "object"
-          }
-        },
-        "required": [
-          "authentication"
-        ],
-        "title": "REST API Connector Spec",
-        "type": "object"
-      }
-    },
-    "title": "REST API",
-    "description": "Make requests to external REST APIs",
-    "tombstone": false,
-    "type": "CONNECTOR_TYPE_DATA",
-    "uid": "5ee55a5c-6e30-4c7a-80e8-90165a729e0a",
-    "vendor": "",
-    "vendor_attributes": {},
-    "version": "0.1.0",
-    "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/restapi/v0",
-    "release_stage": "RELEASE_STAGE_ALPHA"
-  }
-]
+                "token": {
+                  "description": "Bearer token",
+                  "instillCredentialField": true,
+                  "instillUIOrder": 1,
+                  "order": 1,
+                  "title": "Token",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "auth_type",
+                "token"
+              ],
+              "title": "Bearer Token"
+            }
+          ],
+          "order": 1,
+          "title": "Authentication",
+          "type": "object"
+        }
+      },
+      "required": [
+        "authentication"
+      ],
+      "title": "REST API Connector Spec",
+      "type": "object"
+    }
+  },
+  "title": "REST API",
+  "description": "Make requests to external REST APIs",
+  "tombstone": false,
+  "type": "CONNECTOR_TYPE_DATA",
+  "uid": "5ee55a5c-6e30-4c7a-80e8-90165a729e0a",
+  "vendor": "",
+  "vendor_attributes": {},
+  "version": "0.1.0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/restapi/v0",
+  "release_stage": "RELEASE_STAGE_ALPHA"
+}

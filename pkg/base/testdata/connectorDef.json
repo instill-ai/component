@@ -1,39 +1,37 @@
-[
-  {
-    "version": "1.0.0",
-    "source_url": "https://github.com/instill-ai/component/blob/main/pkg/base",
-    "available_tasks": [
-      "TASK_TEXT_EMBEDDINGS"
-    ],
-    "custom": false,
-    "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/openai",
-    "icon": "OpenAI/openai.svg",
-    "id": "openai",
-    "public": true,
-    "spec": {
-      "resource_specification": {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "additionalProperties": true,
-        "properties": {
-          "api_key": {
-            "description": "Fill your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
-            "instillCredentialField": true,
-            "instillUIOrder": 0,
-            "title": "API Key",
-            "type": "string"
-          }
-        },
-        "required": [
-          "api_key"
-        ],
-        "title": "OpenAI Connector Resource",
-        "type": "object"
-      }
-    },
-    "title": "OpenAI",
-    "type": "CONNECTOR_TYPE_AI",
-    "uid": "9fb6a2cb-bff5-4c69-bc6d-4538dd8e3362",
-    "vendor": "OpenAI",
-    "vendor_attributes": {}
-  }
-]
+{
+  "version": "1.0.0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/base",
+  "available_tasks": [
+    "TASK_TEXT_EMBEDDINGS"
+  ],
+  "custom": false,
+  "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/openai",
+  "icon": "OpenAI/openai.svg",
+  "id": "openai",
+  "public": true,
+  "spec": {
+    "resource_specification": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "additionalProperties": true,
+      "properties": {
+        "api_key": {
+          "description": "Fill your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
+          "instillCredentialField": true,
+          "instillUIOrder": 0,
+          "title": "API Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "OpenAI Connector Resource",
+      "type": "object"
+    }
+  },
+  "title": "OpenAI",
+  "type": "CONNECTOR_TYPE_AI",
+  "uid": "9fb6a2cb-bff5-4c69-bc6d-4538dd8e3362",
+  "vendor": "OpenAI",
+  "vendor_attributes": {}
+}
