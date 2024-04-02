@@ -1,18 +1,16 @@
-[
-  {
-    "version": "1.0.0",
-    "source_url": "https://github.com/instill-ai/component/blob/main/pkg/base",
-    "available_tasks": [
-      "TASK_MARSHAL"
-    ],
-    "custom": false,
-    "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/json",
-    "icon": "Instill AI/json.svg",
-    "icon_url": "",
-    "id": "json",
-    "public": true,
-    "spec": {},
-    "title": "JSON",
-    "uid": "28f53d15-6150-46e6-99aa-f76b70a926c0"
-  }
-]
+{
+  "version": "1.0.0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/base",
+  "available_tasks": [
+    "TASK_MARSHAL"
+  ],
+  "custom": false,
+  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/json",
+  "icon": "Instill AI/json.svg",
+  "icon_url": "",
+  "id": "json",
+  "public": true,
+  "spec": {},
+  "title": "JSON",
+  "uid": "28f53d15-6150-46e6-99aa-f76b70a926c0"
+}

@@ -1,12 +1,15 @@
 {
-  "version": "1.0.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/base",
   "available_tasks": [
-    "TASK_TEXT_EMBEDDINGS"
+    "TASK_TEXT_GENERATION",
+    "TASK_TEXT_EMBEDDINGS",
+    "TASK_SPEECH_RECOGNITION",
+    "TASK_TEXT_TO_SPEECH",
+    "TASK_TEXT_TO_IMAGE"
   ],
   "custom": false,
   "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/openai",
-  "icon": "OpenAI/openai.svg",
+  "icon": "assets/openai.svg",
+  "icon_url": "",
   "id": "openai",
   "public": true,
   "spec": {
@@ -20,6 +23,12 @@
           "instillUIOrder": 0,
           "title": "API Key",
           "type": "string"
+        },
+        "organization": {
+          "description": "Specify which organization is used for the requests. Usage will count against the specified organization's subscription quota.",
+          "instillUIOrder": 1,
+          "title": "Organization ID",
+          "type": "string"
         }
       },
       "required": [
@@ -30,8 +39,12 @@
     }
   },
   "title": "OpenAI",
+  "description": "Connect the AI models served on the OpenAI Platform",
   "type": "CONNECTOR_TYPE_AI",
   "uid": "9fb6a2cb-bff5-4c69-bc6d-4538dd8e3362",
   "vendor": "OpenAI",
-  "vendor_attributes": {}
+  "vendor_attributes": {},
+  "version": "0.1.1",
+  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/openai/v0",
+  "release_stage": "RELEASE_STAGE_ALPHA"
 }

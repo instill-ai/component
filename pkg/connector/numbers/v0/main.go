@@ -28,8 +28,8 @@ const urlUserMe = "https://api.numbersprotocol.io/api/v3/auth/users/me"
 var once sync.Once
 var connector base.IConnector
 
-//go:embed config/definitions.json
-var definitionsJSON []byte
+//go:embed config/definition.json
+var definitionJSON []byte
 
 //go:embed config/tasks.json
 var tasksJSON []byte
@@ -115,7 +115,7 @@ func Init(logger *zap.Logger) base.IConnector {
 				Component: base.Component{Logger: logger},
 			},
 		}
-		err := connector.LoadConnectorDefinitions(definitionsJSON, tasksJSON, nil)
+		err := connector.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			logger.Fatal(err.Error())
 		}

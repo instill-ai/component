@@ -1,0 +1,50 @@
+{
+  "available_tasks": [
+    "TASK_QUERY",
+    "TASK_UPSERT"
+  ],
+  "custom": false,
+  "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/pinecone",
+  "icon": "assets/pinecone.svg",
+  "icon_url": "https://www.pinecone.io/favicon.ico",
+  "id": "pinecone",
+  "public": true,
+  "spec": {
+    "resource_specification": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "additionalProperties": false,
+      "properties": {
+        "api_key": {
+          "description": "Fill your Pinecone AI API key. You can create a api key in [Pinecone Console](https://app.pinecone.io/)",
+          "instillCredentialField": true,
+          "instillUIOrder": 0,
+          "title": "API Key",
+          "type": "string"
+        },
+        "url": {
+          "description": "Fill in your Pinecone base URL. It is in the form [https://index_name-project_id.svc.environment.pinecone.io]",
+          "instillCredentialField": false,
+          "instillUIOrder": 1,
+          "title": "Pinecone Base URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "url"
+      ],
+      "title": "Pinecone Connector Spec",
+      "type": "object"
+    }
+  },
+  "title": "Pinecone",
+  "description": "Build and search vector datasets",
+  "tombstone": false,
+  "type": "CONNECTOR_TYPE_DATA",
+  "uid": "4b1dcf82-e134-4ba7-992f-f9a02536ec2b",
+  "vendor": "Pinecone",
+  "vendor_attributes": {},
+  "version": "0.1.0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/pinecone/v0",
+  "release_stage": "RELEASE_STAGE_ALPHA"
+}

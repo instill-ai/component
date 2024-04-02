@@ -31,8 +31,8 @@ import (
 	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
-//go:embed config/definitions.json
-var definitionsJSON []byte
+//go:embed config/definition.json
+var definitionJSON []byte
 
 //go:embed config/tasks.json
 var tasksJSON []byte
@@ -82,7 +82,7 @@ func Init(logger *zap.Logger, options ConnectorOptions) base.IConnector {
 			options:      options,
 		}
 
-		err = connector.LoadConnectorDefinitions(definitionsJSON, tasksJSON, nil)
+		err = connector.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			logger.Fatal(err.Error())
 

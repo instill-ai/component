@@ -121,8 +121,8 @@ When you want to contribute with a new connector or operator, you need to create
 
 2 configuration files define the behaviour of the component:
 
-- `definitions.json`
-    - You can refer to [OpenAI connector](../pkg/connector/openai/v0/config/definitions.json) as an example.
+- `definition.json`
+    - You can refer to [OpenAI connector](../pkg/connector/openai/v0/config/definition.json) as an example.
     - We define the id, uid, vendor info and other metadata in this file.
       - `uid` MUST be a unique UUID. Once it is set, it MUST NOT change.
       - `version` MUST be a [SemVer](https://semver.org/) string.
@@ -193,7 +193,7 @@ When the interface of a component (defined by its configuration files) changes, 
 It is recommended to start a component at `v0.1.0`.
 A major version 0 is intended for rapid development.
 
-The `release_stage` property in `definitions.json` indicates the stability of a component.
+The `release_stage` property in `definition.json` indicates the stability of a component.
   - A component skeleton (with only the minimal configuration files and a dummy implementation of the interfaces) may use the _Coming Soon_ or _Open For Contribution_ stages in order to communicate publicly about upcoming components.
     The major and minor versions in this case MUST be 0.
   - Alpha pre-releases are used in initial implementations, intended to gather feedback and issues from early adopters.
