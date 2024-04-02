@@ -16,7 +16,7 @@ type IOperator interface {
 
 	// Functions that shared for all operators
 	// Load operator definitions from json files, the additionalJSONBytes is only needed when you reference in-memory json file
-	LoadOperatorDefinitions(definitionsJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
+	LoadOperatorDefinitions(definitionJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
 	// Add definition
 	AddOperatorDefinition(def *pipelinePB.OperatorDefinition) error
 	// Get the operator definition by definition uid

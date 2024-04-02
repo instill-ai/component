@@ -28,8 +28,8 @@ const (
 )
 
 var (
-	//go:embed config/definitions.json
-	definitionsJSON []byte
+	//go:embed config/definition.json
+	definitionJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
 	//go:embed config/openai.json
@@ -54,7 +54,7 @@ func Init(logger *zap.Logger) base.IConnector {
 				Component: base.Component{Logger: logger},
 			},
 		}
-		err := connector.LoadConnectorDefinitions(definitionsJSON, tasksJSON, map[string][]byte{"openai.json": openAIJSON})
+		err := connector.LoadConnectorDefinitions(definitionJSON, tasksJSON, map[string][]byte{"openai.json": openAIJSON})
 		if err != nil {
 			logger.Fatal(err.Error())
 		}

@@ -26,8 +26,8 @@ const (
 )
 
 var (
-	//go:embed config/definitions.json
-	definitionsJSON []byte
+	//go:embed config/definition.json
+	definitionJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
 	once      sync.Once
@@ -49,7 +49,7 @@ func Init(logger *zap.Logger) base.IConnector {
 				Component: base.Component{Logger: logger},
 			},
 		}
-		err := connector.LoadConnectorDefinitions(definitionsJSON, tasksJSON, nil)
+		err := connector.LoadConnectorDefinitions(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			logger.Fatal(err.Error())
 		}

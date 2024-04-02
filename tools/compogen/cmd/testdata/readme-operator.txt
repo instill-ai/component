@@ -1,7 +1,7 @@
 # Setup
 
 mkdir -p pkg/dummy/config
-cp definitions.json pkg/dummy/config/definitions.json
+cp definition.json pkg/dummy/config/definition.json
 cp tasks.json pkg/dummy/config/tasks.json
 
 # NOK - Wrong files
@@ -10,7 +10,7 @@ cp tasks.json pkg/dummy/config/tasks.json
 cmp stderr want-no-defs
 
 mkdir -p pkg/dummy/wrong
-cp definitions.json pkg/dummy/wrong/definitions.json
+cp definition.json pkg/dummy/wrong/definition.json
 ! compogen readme pkg/dummy/wrong pkg/dummy/README.mdx --operator
 cmp stderr want-no-tasks
 
@@ -22,7 +22,7 @@ cmp stderr want-wrong-target
 compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx --operator
 cmp pkg/dummy/README.mdx want-readme.mdx
 
--- definitions.json --
+-- definition.json --
 {
   "available_tasks": [
     "TASK_DUMMY",
@@ -141,7 +141,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
   }
 }
 -- want-no-defs --
-Error: open pkg/dummy/wrong/definitions.json: no such file or directory
+Error: open pkg/dummy/wrong/definition.json: no such file or directory
 -- want-no-tasks --
 Error: open pkg/dummy/wrong/tasks.json: no such file or directory
 -- want-wrong-target --
@@ -169,7 +169,7 @@ It can carry out the following tasks:
 
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/pkg/operator/dummy/v0/config/definitions.json).
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/pkg/operator/dummy/v0/config/definition.json).
 
 ## Supported Tasks
 

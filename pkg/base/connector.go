@@ -23,7 +23,7 @@ type IConnector interface {
 
 	// Functions that shared for all connectors
 	// Load connector definitions from json files
-	LoadConnectorDefinitions(definitionsJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
+	LoadConnectorDefinitions(definitionJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
 	// Add definition
 	AddConnectorDefinition(def *pipelinePB.ConnectorDefinition) error
 	// Get the connector definition by definition uid

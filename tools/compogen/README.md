@@ -22,10 +22,10 @@ compogen readme path/to/component/config path/to/component/README.mdx
 
 ### Validation & guidelines
 
-In order to successfully build the README of a component, the `definitions.json`
+In order to successfully build the README of a component, the `definition.json`
 and `tasks.json` files must be present in the component configuration directory.
 
-The `definitions.json` file must contain an array with one object in which the
+The `definition.json` file must contain an array with one object in which the
 following fields must be present and comply with the following guidelines:
 
 - `id`.
@@ -55,8 +55,8 @@ Certain optional fields modify the document behaviour:
 
 ## TODO
 
-- Support `oneOf` schemas for resource properties, present in, e.g., the [Airbyte](https://github.com/instill-ai/component/blob/main/pkg/connector/airbyte/v0/config/definitions.json#L15)
-  or the [REST API](https://github.com/instill-ai/component/blob/main/pkg/connector/restapi/v0/config/definitions.json#L26) connectors.
+- Support `oneOf` schemas for resource properties, present in, e.g., the [Airbyte](https://github.com/instill-ai/component/blob/main/pkg/connector/airbyte/v0/config/definition.json#L15)
+  or the [REST API](https://github.com/instill-ai/component/blob/main/pkg/connector/restapi/v0/config/definition.json#L26) connectors.
   - We might leverage some Go implementation of JSON schema. Some candidates:
     - [santhosh-tekuri/jsonschema](https://pkg.go.dev/github.com/santhosh-tekuri/jsonschema/v5#Schema)
     - [omissis/go-jsonschema](https://github.com/omissis/go-jsonschema/blob/934012d/pkg/schemas/model.go#L107)

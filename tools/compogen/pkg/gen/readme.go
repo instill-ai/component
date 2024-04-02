@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	definitionsFile = "definitions.json"
+	definitionsFile = "definition.json"
 	tasksFile       = "tasks.json"
 )
 
@@ -45,7 +45,7 @@ func NewREADMEGenerator(configDir, outputFile string, componentType ComponentTyp
 }
 
 func (g *READMEGenerator) parseDefinition(configDir string) (d definition, err error) {
-	definitionsJSON, err := os.ReadFile(filepath.Join(configDir, definitionsFile))
+	definitionJSON, err := os.ReadFile(filepath.Join(configDir, definitionsFile))
 	if err != nil {
 		return d, err
 	}
@@ -54,7 +54,7 @@ func (g *READMEGenerator) parseDefinition(configDir string) (d definition, err e
 	// definitions. These were merged into one but the structure remained. It
 	// should be refactored to remove the array nesting in the future.
 	def := definition{}
-	if err := json.Unmarshal(definitionsJSON, &def); err != nil {
+	if err := json.Unmarshal(definitionJSON, &def); err != nil {
 		return d, err
 	}
 

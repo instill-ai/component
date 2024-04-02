@@ -24,8 +24,8 @@ const (
 )
 
 var (
-	//go:embed config/definitions.json
-	definitionsJSON []byte
+	//go:embed config/definition.json
+	definitionJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
 
@@ -50,7 +50,7 @@ func Init(logger *zap.Logger) base.IOperator {
 				Component: base.Component{Logger: logger},
 			},
 		}
-		err := op.LoadOperatorDefinitions(definitionsJSON, tasksJSON, nil)
+		err := op.LoadOperatorDefinitions(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			logger.Fatal(err.Error())
 		}

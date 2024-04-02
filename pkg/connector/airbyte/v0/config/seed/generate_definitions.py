@@ -65,5 +65,5 @@ new_def = {
 new_def = json.dumps(new_def, indent=2, sort_keys=True)
 new_def = new_def.replace("airbyte_secret", "instillCredentialField")
 
-with open('../definitions.json', 'w') as o:
+with open('../definition.json', 'w') as o:
     o.write(new_def)
