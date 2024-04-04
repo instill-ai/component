@@ -1,4 +1,3 @@
-//go:generate compogen readme --connector ./config ./README.mdx
 package redis
 
 import (
