@@ -1,3 +1,4 @@
+//go:generate compogen readme --operator ./config ./README.mdx
 package end
 
 import (
