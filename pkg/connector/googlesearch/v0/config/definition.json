@@ -3,7 +3,7 @@
     "TASK_SEARCH"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/google-search",
+  "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/googlesearch",
   "icon": "assets/google-search.svg",
   "icon_url": "",
   "id": "google-search",
