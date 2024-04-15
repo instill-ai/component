@@ -15,8 +15,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
-
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 const (
@@ -120,14 +118,14 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	return outputs, nil
 }
 
-func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error) {
+func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
 
 	service, err := NewService(getAPIKey(config))
 	if err != nil || service == nil {
-		return pipelinePB.Connector_STATE_ERROR, fmt.Errorf("error creating Google custom search service: %v", err)
+		return fmt.Errorf("error creating Google custom search service: %v", err)
 	}
 	if service == nil {
-		return pipelinePB.Connector_STATE_ERROR, fmt.Errorf("error creating Google custom search service: %v", err)
+		return fmt.Errorf("error creating Google custom search service: %v", err)
 	}
-	return pipelinePB.Connector_STATE_CONNECTED, nil
+	return nil
 }

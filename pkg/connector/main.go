@@ -81,7 +81,7 @@ func (c *Connector) CreateExecution(defUID uuid.UUID, task string, config *struc
 	return c.connectorUIDMap[defUID].CreateExecution(defUID, task, config, logger)
 }
 
-func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error) {
+func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
 	return c.connectorUIDMap[defUID].Test(defUID, config, logger)
 }
 

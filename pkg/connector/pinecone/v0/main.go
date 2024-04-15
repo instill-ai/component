@@ -11,8 +11,6 @@ import (
 
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/instill-ai/component/pkg/connector/util/httpclient"
-
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 const (
@@ -141,7 +139,7 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	return outputs, nil
 }
 
-func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error) {
+func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
 	//TODO: change this
-	return pipelinePB.Connector_STATE_CONNECTED, nil
+	return nil
 }

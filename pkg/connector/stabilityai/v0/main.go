@@ -11,8 +11,6 @@ import (
 
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/instill-ai/x/errmsg"
-
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 const (
@@ -140,17 +138,17 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 }
 
 // Test checks the connector state.
-func (c *Connector) Test(_ uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error) {
+func (c *Connector) Test(_ uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
 	var engines []Engine
 	req := newClient(config, logger).R().SetResult(&engines)
 
 	if _, err := req.Get(listEnginesPath); err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 
 	if len(engines) == 0 {
-		return pipelinePB.Connector_STATE_DISCONNECTED, nil
+		return fmt.Errorf("no engines")
 	}
 
-	return pipelinePB.Connector_STATE_CONNECTED, nil
+	return nil
 }

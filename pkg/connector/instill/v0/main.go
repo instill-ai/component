@@ -185,7 +185,7 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	return result, err
 }
 
-func (c *Connector) Test(_ uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error) {
+func (c *Connector) Test(_ uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
 	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(config))
 	if gRPCCLientConn != nil {
 		defer gRPCCLientConn.Close()
@@ -193,10 +193,10 @@ func (c *Connector) Test(_ uuid.UUID, config *structpb.Struct, logger *zap.Logge
 	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(config))
 	_, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{})
 	if err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 
-	return pipelinePB.Connector_STATE_CONNECTED, nil
+	return nil
 }
 
 func (c *Connector) GetConnectorDefinitionByID(defID string, resourceConfig *structpb.Struct, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {

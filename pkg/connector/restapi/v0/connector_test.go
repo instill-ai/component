@@ -15,7 +15,6 @@ import (
 
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/instill-ai/component/pkg/connector/util/httpclient"
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 	"github.com/instill-ai/x/errmsg"
 )
 
@@ -174,9 +173,8 @@ func TestConnector_Test(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		got, err := connector.Test(defID, cfg(noAuthType), logger)
+		err := connector.Test(defID, cfg(noAuthType), logger)
 		c.Check(err, qt.IsNil)
-		c.Check(got, qt.Equals, pipelinePB.Connector_STATE_CONNECTED)
 	})
 }
 
