@@ -27,8 +27,6 @@ import (
 	dockerclient "github.com/docker/docker/client"
 
 	"github.com/instill-ai/component/pkg/base"
-
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 //go:embed config/definition.json
@@ -328,11 +326,11 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	return outputs, nil
 }
 
-func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error) {
+func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
 
 	def, err := c.GetConnectorDefinitionByUID(defUID, nil, nil)
 	if err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 	imageName := def.VendorAttributes.GetFields()[config.GetFields()["destination"].GetStringValue()].GetStringValue()
 	containerName := fmt.Sprintf("%s.%d.check", defUID, time.Now().UnixNano())
@@ -340,7 +338,7 @@ func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.
 
 	// Write config into a container local file
 	if err := os.MkdirAll(filepath.Dir(configFilePath), os.ModePerm); err != nil {
-		return pipelinePB.Connector_STATE_ERROR, fmt.Errorf(fmt.Sprintf("unable to create folders for filepath %s", configFilePath), "WriteContainerLocalFileError", err)
+		return fmt.Errorf(fmt.Sprintf("unable to create folders for filepath %s", configFilePath), "WriteContainerLocalFileError", err)
 	}
 
 	configuration := func() []byte {
@@ -355,7 +353,7 @@ func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.
 	}()
 
 	if err := os.WriteFile(configFilePath, configuration, 0644); err != nil {
-		return pipelinePB.Connector_STATE_ERROR, fmt.Errorf(fmt.Sprintf("unable to write connector config file %s", configFilePath), "WriteContainerLocalFileError", err)
+		return fmt.Errorf(fmt.Sprintf("unable to write connector config file %s", configFilePath), "WriteContainerLocalFileError", err)
 	}
 
 	defer func() {
@@ -369,12 +367,12 @@ func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.
 
 	out, err := c.dockerClient.ImagePull(context.Background(), imageName, types.ImagePullOptions{})
 	if err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 	defer out.Close()
 
 	if _, err := io.Copy(os.Stdout, out); err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 
 	resp, err := c.dockerClient.ContainerCreate(context.Background(),
@@ -403,18 +401,18 @@ func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.
 		},
 		nil, nil, containerName)
 	if err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 
 	if err := c.dockerClient.ContainerStart(context.Background(), resp.ID, container.StartOptions{}); err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 
 	statusCh, errCh := c.dockerClient.ContainerWait(context.Background(), resp.ID, container.WaitConditionNotRunning)
 	select {
 	case err := <-errCh:
 		if err != nil {
-			return pipelinePB.Connector_STATE_ERROR, err
+			return err
 		}
 	case <-statusCh:
 	}
@@ -425,7 +423,7 @@ func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.
 			ShowStdout: true,
 		},
 	); err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 
 	if err := c.dockerClient.ContainerRemove(context.Background(), containerName,
@@ -433,12 +431,12 @@ func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.
 			RemoveVolumes: true,
 			Force:         true,
 		}); err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 
 	var bufStdOut, bufStdErr bytes.Buffer
 	if _, err := stdcopy.StdCopy(&bufStdOut, &bufStdErr, out); err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 
 	var teeStdOut io.Reader = strings.NewReader(bufStdOut.String())
@@ -448,10 +446,10 @@ func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.
 
 	var byteStdOut, byteStdErr []byte
 	if byteStdOut, err = io.ReadAll(teeStdOut); err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 	if byteStdErr, err = io.ReadAll(teeStdErr); err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 
 	c.Logger.Info(fmt.Sprintf("ImageName, %s, ContainerName, %s, STDOUT, %v, STDERR, %v", imageName, containerName, byteStdOut, byteStdErr))
@@ -460,7 +458,7 @@ func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.
 	for scanner.Scan() {
 
 		if err := scanner.Err(); err != nil {
-			return pipelinePB.Connector_STATE_ERROR, err
+			return err
 		}
 
 		var jsonMsg map[string]interface{}
@@ -469,14 +467,14 @@ func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.
 			case "CONNECTION_STATUS":
 				switch jsonMsg["connectionStatus"].(map[string]interface{})["status"] {
 				case "SUCCEEDED":
-					return pipelinePB.Connector_STATE_CONNECTED, nil
+					return nil
 				case "FAILED":
-					return pipelinePB.Connector_STATE_ERROR, nil
+					return fmt.Errorf("FAILED")
 				default:
-					return pipelinePB.Connector_STATE_ERROR, fmt.Errorf("UNKNOWN STATUS")
+					return fmt.Errorf("UNKNOWN STATUS")
 				}
 			}
 		}
 	}
-	return pipelinePB.Connector_STATE_ERROR, nil
+	return nil
 }

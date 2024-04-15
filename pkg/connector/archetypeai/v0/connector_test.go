@@ -11,7 +11,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/instill-ai/component/pkg/connector/util/httpclient"
-	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 	"github.com/instill-ai/x/errmsg"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -309,8 +308,7 @@ func TestConnector_Test(t *testing.T) {
 	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("ok - connected", func(c *qt.C) {
-		got, err := connector.Test(defID, nil, logger)
+		err := connector.Test(defID, nil, logger)
 		c.Check(err, qt.IsNil)
-		c.Check(got, qt.Equals, pb.Connector_STATE_CONNECTED)
 	})
 }

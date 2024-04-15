@@ -18,8 +18,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
-
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 const urlRegisterAsset = "https://api.numbersprotocol.io/api/v3/assets/"
@@ -276,11 +274,11 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 
 }
 
-func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error) {
+func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
 
 	req, err := http.NewRequest("GET", urlUserMe, nil)
 	if err != nil {
-		return pipelinePB.Connector_STATE_ERROR, nil
+		return err
 	}
 	req.Header.Set("Authorization", getToken(config))
 
@@ -293,10 +291,10 @@ func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.
 		defer res.Body.Close()
 	}
 	if err != nil {
-		return pipelinePB.Connector_STATE_ERROR, nil
+		return err
 	}
 	if res.StatusCode == http.StatusOK {
-		return pipelinePB.Connector_STATE_CONNECTED, nil
+		return fmt.Errorf("connection error")
 	}
-	return pipelinePB.Connector_STATE_ERROR, nil
+	return nil
 }

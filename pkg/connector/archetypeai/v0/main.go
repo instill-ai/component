@@ -16,8 +16,6 @@ import (
 	"github.com/instill-ai/component/pkg/connector/util"
 	"github.com/instill-ai/component/pkg/connector/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
-
-	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 const (
@@ -219,12 +217,12 @@ func (e *execution) uploadFile(in *structpb.Struct) (*structpb.Struct, error) {
 }
 
 // Test checks the connectivity of the connector.
-func (c *connector) Test(_ uuid.UUID, _ *structpb.Struct, _ *zap.Logger) (pb.Connector_State, error) {
+func (c *connector) Test(_ uuid.UUID, _ *structpb.Struct, _ *zap.Logger) error {
 	// TODO Archetype AI API is not public yet. We could test the connection
 	// by calling one of the endpoints used in the available tasks. However,
 	// these are not designed for specifically for this purpose. When we know
 	// of an endpoint that's more suited for this, it should be used instead.
-	return pb.Connector_STATE_CONNECTED, nil
+	return nil
 }
 
 func getAPIKey(config *structpb.Struct) string {

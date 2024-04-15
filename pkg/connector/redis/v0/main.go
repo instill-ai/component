@@ -11,8 +11,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
-
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 const (
@@ -113,17 +111,17 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	return outputs, nil
 }
 
-func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error) {
+func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
 	client, err := NewClient(config)
 	if err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 	defer client.Close()
 
 	// Ping the Redis server to check the connection
 	_, err = client.Ping(context.Background()).Result()
 	if err != nil {
-		return pipelinePB.Connector_STATE_DISCONNECTED, err
+		return err
 	}
-	return pipelinePB.Connector_STATE_CONNECTED, nil
+	return nil
 }

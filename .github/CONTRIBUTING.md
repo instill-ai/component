@@ -149,7 +149,7 @@ In [component.go](https://github.com/instill-ai/component/blob/main/pkg/base/com
 // All connectors need to implement this interface
 type IConnector interface {
     CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error)
-    Test(defUid uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error)
+    Test(defUid uuid.UUID, config *structpb.Struct, logger *zap.Logger) (bool, error)
 }
 
 // All operators need to implement this interface

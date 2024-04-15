@@ -14,7 +14,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 	"github.com/instill-ai/x/errmsg"
 )
 
@@ -328,17 +327,17 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 }
 
 // Test checks the connector state.
-func (c *Connector) Test(_ uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error) {
+func (c *Connector) Test(_ uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
 	models := ListModelsResponse{}
 	req := newClient(config, logger).R().SetResult(&models)
 
 	if _, err := req.Get(listModelsPath); err != nil {
-		return pipelinePB.Connector_STATE_ERROR, err
+		return err
 	}
 
 	if len(models.Data) == 0 {
-		return pipelinePB.Connector_STATE_DISCONNECTED, nil
+		return fmt.Errorf("no models")
 	}
 
-	return pipelinePB.Connector_STATE_CONNECTED, nil
+	return nil
 }

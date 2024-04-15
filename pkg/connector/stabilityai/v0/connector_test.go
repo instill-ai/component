@@ -14,7 +14,6 @@ import (
 
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/instill-ai/component/pkg/connector/util/httpclient"
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 	"github.com/instill-ai/x/errmsg"
 )
 
@@ -255,9 +254,8 @@ func TestConnector_Test(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		got, err := connector.Test(defID, config, logger)
+		err = connector.Test(defID, config, logger)
 		c.Check(err, qt.IsNotNil)
-		c.Check(got, qt.Equals, pipelinePB.Connector_STATE_ERROR)
 
 		wantMsg := "Stability AI responded with a 401 status code. Incorrect API key provided"
 		c.Check(errmsg.Message(err), qt.Equals, wantMsg)
@@ -280,9 +278,8 @@ func TestConnector_Test(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		got, err := connector.Test(defID, config, logger)
+		err = connector.Test(defID, config, logger)
 		c.Check(err, qt.IsNil)
-		c.Check(got, qt.Equals, pipelinePB.Connector_STATE_DISCONNECTED)
 	})
 
 	c.Run("ok - connected", func(c *qt.C) {
@@ -302,8 +299,7 @@ func TestConnector_Test(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		got, err := connector.Test(defID, config, logger)
+		err = connector.Test(defID, config, logger)
 		c.Check(err, qt.IsNil)
-		c.Check(got, qt.Equals, pipelinePB.Connector_STATE_CONNECTED)
 	})
 }

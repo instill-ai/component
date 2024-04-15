@@ -19,7 +19,7 @@ type IConnector interface {
 
 	// Functions that need to be implemented for all connectors
 	// Test connection
-	Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) (pipelinePB.Connector_State, error)
+	Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error
 
 	// Functions that shared for all connectors
 	// Load connector definitions from json files
