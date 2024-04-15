@@ -85,10 +85,10 @@ func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.
 	return c.connectorUIDMap[defUID].Test(defUID, config, logger)
 }
 
-func (c *Connector) GetConnectorDefinitionByID(defID string, resourceConfig *structpb.Struct, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	return c.connectorIDMap[defID].GetConnectorDefinitionByID(defID, resourceConfig, component)
+func (c *Connector) GetConnectorDefinitionByID(defID string, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+	return c.connectorIDMap[defID].GetConnectorDefinitionByID(defID, component)
 }
 
-func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, resourceConfig *structpb.Struct, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	return c.connectorUIDMap[defUID].GetConnectorDefinitionByUID(defUID, resourceConfig, component)
+func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+	return c.connectorUIDMap[defUID].GetConnectorDefinitionByUID(defUID, component)
 }

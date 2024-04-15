@@ -27,9 +27,9 @@ type IConnector interface {
 	// Add definition
 	AddConnectorDefinition(def *pipelinePB.ConnectorDefinition) error
 	// Get the connector definition by definition uid
-	GetConnectorDefinitionByUID(defUID uuid.UUID, resourceConfig *structpb.Struct, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
+	GetConnectorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
 	// Get the connector definition by definition id
-	GetConnectorDefinitionByID(defID string, resourceConfig *structpb.Struct, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
+	GetConnectorDefinitionByID(defID string, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
 	// Get the list of connector definitions under this connector
 	ListConnectorDefinitions() []*pipelinePB.ConnectorDefinition
 
@@ -182,7 +182,7 @@ func (c *Connector) ListConnectorDefinitions() []*pipelinePB.ConnectorDefinition
 }
 
 // GetConnectorDefinitionByUID gets the connector definition by definition uid
-func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, _ /*resourceConfig */ *structpb.Struct, _ /*component*/ *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, _ /*component*/ *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	def, err := c.Component.getDefinitionByUID(defUID)
 	if err != nil {
 		return nil, err
@@ -197,7 +197,7 @@ func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, _ /*resourceCo
 }
 
 // GetConnectorDefinitionByID gets the connector definition by definition id
-func (c *Connector) GetConnectorDefinitionByID(defID string, _ /*resourceConfig*/ *structpb.Struct, _ /*component*/ *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (c *Connector) GetConnectorDefinitionByID(defID string, _ /*component*/ *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	def, err := c.Component.getDefinitionByID(defID)
 	if err != nil {
 		return nil, err

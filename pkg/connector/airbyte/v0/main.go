@@ -87,13 +87,13 @@ func Init(logger *zap.Logger, options ConnectorOptions) base.IConnector {
 		}
 
 		if options.ExcludeLocalConnector {
-			def, _ := connector.GetConnectorDefinitionByID("airbyte-destination-local-json", nil, nil)
+			def, _ := connector.GetConnectorDefinitionByID("airbyte-destination-local-json", nil)
 			(*def).Tombstone = true
-			def, _ = connector.GetConnectorDefinitionByID("airbyte-destination-csv", nil, nil)
+			def, _ = connector.GetConnectorDefinitionByID("airbyte-destination-csv", nil)
 			(*def).Tombstone = true
-			def, _ = connector.GetConnectorDefinitionByID("airbyte-destination-sqlite", nil, nil)
+			def, _ = connector.GetConnectorDefinitionByID("airbyte-destination-sqlite", nil)
 			(*def).Tombstone = true
-			def, _ = connector.GetConnectorDefinitionByID("airbyte-destination-duckdb", nil, nil)
+			def, _ = connector.GetConnectorDefinitionByID("airbyte-destination-duckdb", nil)
 			(*def).Tombstone = true
 		}
 
@@ -157,7 +157,7 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	// Remove the last "\n"
 	byteAbMsgs = byteAbMsgs[:len(byteAbMsgs)-1]
 
-	connDef, err := e.connector.GetConnectorDefinitionByUID(e.UID, nil, nil)
+	connDef, err := e.connector.GetConnectorDefinitionByUID(e.UID, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -328,7 +328,7 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 
 func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
 
-	def, err := c.GetConnectorDefinitionByUID(defUID, nil, nil)
+	def, err := c.GetConnectorDefinitionByUID(defUID, nil)
 	if err != nil {
 		return err
 	}
