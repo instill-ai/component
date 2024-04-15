@@ -279,7 +279,7 @@ func TestConnector_Test(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		err = connector.Test(defID, config, logger)
-		c.Check(err, qt.IsNil)
+		c.Check(err, qt.IsNotNil)
 	})
 
 	c.Run("ok - connected", func(c *qt.C) {
