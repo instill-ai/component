@@ -18,7 +18,7 @@ require (
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/h2non/filetype v1.1.3
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240415024335-3b7581a069fd
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240415145600-50085798159d
 	github.com/instill-ai/x v0.4.0-alpha
 	github.com/itchyny/gojq v0.12.14
 	github.com/lestrrat-go/jspointer v0.0.0-20181205001929-82fadba7561c

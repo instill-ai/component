@@ -199,13 +199,13 @@ func (c *Connector) Test(_ uuid.UUID, config *structpb.Struct, logger *zap.Logge
 	return nil
 }
 
-func (c *Connector) GetConnectorDefinitionByID(defID string, resourceConfig *structpb.Struct, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	def, err := c.Connector.GetConnectorDefinitionByID(defID, resourceConfig, component)
+func (c *Connector) GetConnectorDefinitionByID(defID string, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+	def, err := c.Connector.GetConnectorDefinitionByID(defID, component)
 	if err != nil {
 		return nil, err
 	}
 
-	return c.GetConnectorDefinitionByUID(uuid.FromStringOrNil(def.Uid), resourceConfig, component)
+	return c.GetConnectorDefinitionByUID(uuid.FromStringOrNil(def.Uid), component)
 }
 
 type ModelsResp struct {
@@ -216,23 +216,23 @@ type ModelsResp struct {
 }
 
 // Generate the model_name enum based on the task
-func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, resourceConfig *structpb.Struct, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	oriDef, err := c.Connector.GetConnectorDefinitionByUID(defUID, resourceConfig, component)
+func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+	oriDef, err := c.Connector.GetConnectorDefinitionByUID(defUID, component)
 	if err != nil {
 		return nil, err
 	}
 	def := proto.Clone(oriDef).(*pipelinePB.ConnectorDefinition)
 
-	if resourceConfig != nil {
-		if getModelServerURL(resourceConfig) == "" {
+	if component.Connection != nil {
+		if getModelServerURL(component.Connection) == "" {
 			return def, nil
 		}
 
-		gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(resourceConfig))
+		gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(component.Connection))
 		if gRPCCLientConn != nil {
 			defer gRPCCLientConn.Close()
 		}
-		ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(resourceConfig))
+		ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(component.Connection))
 		// We should query by pages and accumulate them in the future
 
 		pageToken := ""
