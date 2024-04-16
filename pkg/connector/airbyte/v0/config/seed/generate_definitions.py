@@ -59,7 +59,8 @@ new_def = {
     "type": "CONNECTOR_TYPE_DATA",
     "uid": "975678a2-5117-48a4-a135-019619dee18e",
     "vendor": "Airbyte",
-    "vendor_attributes": vendor_attribute
+    "vendor_attributes": vendor_attribute,
+    "release_stage": "RELEASE_STAGE_ALPHA"
 }
 
 new_def = json.dumps(new_def, indent=2, sort_keys=True)
