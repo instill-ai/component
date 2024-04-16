@@ -8,6 +8,7 @@
   "icon_url": "",
   "id": "airbyte-destination",
   "public": true,
+  "release_stage": "RELEASE_STAGE_ALPHA",
   "spec": {
     "resource_specification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -3654,7 +3655,6 @@
                         "me-central-1",
                         "me-south-1",
                         "sa-east-1",
-                        "sa-east-1",
                         "us-east-1",
                         "us-east-2",
                         "us-gov-east-1",
@@ -5729,6 +5729,12 @@
               "title": "Port",
               "type": "integer"
             },
+            "raw_data_schema": {
+              "description": "The schema to write raw tables into (default: airbyte_internal)",
+              "order": 7,
+              "title": "Raw Table Schema Name",
+              "type": "string"
+            },
             "schema": {
               "default": "airbyte",
               "description": "The default schema is used as the target schema for all statements issued from the connection that do not explicitly specify a schema name. The usual value for this field is \"airbyte\".  In Oracle, schemas and users are the same thing, so the \"user\" parameter is used as the login credentials and this is used for the default Airbyte message schema.",
@@ -6345,6 +6351,13 @@
               "description": "Disable Writing Final Tables. WARNING! The data format in _airbyte_data is likely stable but there are no guarantees that other metadata columns will remain the same in future versions",
               "order": 10,
               "title": "Disable Final Tables. (WARNING! Unstable option; Columns in raw table schema might change between versions)",
+              "type": "boolean"
+            },
+            "drop_cascade": {
+              "default": false,
+              "description": "Drop tables with CASCADE. WARNING! This will delete all data in all dependent objects (views, etc.). Use with caution. This option is intended for usecases which can easily rebuild the dependent objects.",
+              "order": 11,
+              "title": "Drop tables with CASCADE. (WARNING! Risk of unrecoverable data loss)",
               "type": "boolean"
             },
             "host": {
@@ -7290,6 +7303,58 @@
           "$schema": "http://json-schema.org/draft-07/schema#",
           "additionalProperties": false,
           "properties": {
+            "destination": {
+              "const": "airbyte-destination-rabbitmq",
+              "type": "string"
+            },
+            "exchange": {
+              "description": "The exchange name.",
+              "type": "string"
+            },
+            "host": {
+              "description": "The RabbitMQ host name.",
+              "type": "string"
+            },
+            "password": {
+              "instillCredentialField": true,
+              "description": "The password to connect.",
+              "title": "Password",
+              "type": "string"
+            },
+            "port": {
+              "description": "The RabbitMQ port.",
+              "type": "integer"
+            },
+            "routing_key": {
+              "description": "The routing key.",
+              "type": "string"
+            },
+            "ssl": {
+              "default": true,
+              "description": "SSL enabled.",
+              "type": "boolean"
+            },
+            "username": {
+              "description": "The username to connect.",
+              "type": "string"
+            },
+            "virtual_host": {
+              "description": "The RabbitMQ virtual host name.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "host",
+            "routing_key",
+            "destination"
+          ],
+          "title": "Rabbitmq",
+          "type": "object"
+        },
+        {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "additionalProperties": false,
+          "properties": {
             "cache_type": {
               "default": "hash",
               "description": "Redis cache type to store data in.",
@@ -7831,17 +7896,6 @@
                       "title": "Encryption",
                       "type": "object"
                     },
-                    "file_buffer_count": {
-                      "default": 10,
-                      "description": "Number of file buffers allocated for writing data. Increasing this number is beneficial for connections using Change Data Capture (CDC) and up to the number of streams within a connection. Increasing the number of file buffers past the maximum number of streams has deteriorating effects",
-                      "examples": [
-                        "10"
-                      ],
-                      "maximum": 50,
-                      "minimum": 10,
-                      "title": "File Buffer Count",
-                      "type": "integer"
-                    },
                     "file_name_pattern": {
                       "description": "The pattern allows you to set the file-name format for the S3 staging file(s)",
                       "examples": [
@@ -7915,7 +7969,6 @@
                         "il-central-1",
                         "me-central-1",
                         "me-south-1",
-                        "sa-east-1",
                         "sa-east-1",
                         "us-east-1",
                         "us-east-2",
@@ -8913,6 +8966,13 @@
               "order": 10,
               "title": "Raw Table Schema Name",
               "type": "string"
+            },
+            "retention_period_days": {
+              "default": 1,
+              "description": "The number of days of Snowflake Time Travel to enable on the tables. See <a href=\"https://docs.snowflake.com/en/user-guide/data-time-travel#data-retention-period\">Snowflake's documentation</a> for more information. Setting a nonzero value will incur increased storage costs in your Snowflake instance.",
+              "order": 13,
+              "title": "Data Retention Period (days)",
+              "type": "integer"
             },
             "role": {
               "description": "Enter the <a href=\"https://docs.snowflake.com/en/user-guide/security-access-control-overview.html#roles\">role</a> that you want to use to access Snowflake",
@@ -10220,14 +10280,14 @@
     "airbyte-destination-convex": "airbyte/destination-convex:0.2.0",
     "airbyte-destination-csv": "airbyte/destination-csv:1.0.0",
     "airbyte-destination-databricks": "airbyte/destination-databricks:1.1.0",
-    "airbyte-destination-duckdb": "airbyte/destination-duckdb:0.3.2",
+    "airbyte-destination-duckdb": "airbyte/destination-duckdb:0.3.3",
     "airbyte-destination-dynamodb": "airbyte/destination-dynamodb:0.1.8",
-    "airbyte-destination-e2e-test": "airbyte/destination-e2e-test:0.3.1",
+    "airbyte-destination-e2e-test": "airbyte/destination-e2e-test:0.3.2",
     "airbyte-destination-elasticsearch": "airbyte/destination-elasticsearch:0.1.6",
     "airbyte-destination-firestore": "airbyte/destination-firestore:0.1.1",
     "airbyte-destination-gcs": "airbyte/destination-gcs:0.4.6",
     "airbyte-destination-google-sheets": "airbyte/destination-google-sheets:0.2.3",
-    "airbyte-destination-iceberg": "airbyte/destination-iceberg:0.1.5",
+    "airbyte-destination-iceberg": "airbyte/destination-iceberg:0.1.6",
     "airbyte-destination-kafka": "airbyte/destination-kafka:0.1.10",
     "airbyte-destination-langchain": "airbyte/destination-langchain:0.1.2",
     "airbyte-destination-local-json": "airbyte/destination-local-json:0.2.11",
@@ -10235,17 +10295,18 @@
     "airbyte-destination-mongodb": "airbyte/destination-mongodb:0.2.0",
     "airbyte-destination-mssql": "airbyte/destination-mssql:0.2.0",
     "airbyte-destination-mysql": "airbyte/destination-mysql:0.2.0",
-    "airbyte-destination-oracle": "airbyte/destination-oracle:0.2.0",
+    "airbyte-destination-oracle": "airbyte/destination-oracle:1.0.0",
     "airbyte-destination-pinecone": "airbyte/destination-pinecone:0.0.23",
-    "airbyte-destination-postgres": "airbyte/destination-postgres:2.0.5",
+    "airbyte-destination-postgres": "airbyte/destination-postgres:2.0.9",
     "airbyte-destination-pubsub": "airbyte/destination-pubsub:0.2.0",
     "airbyte-destination-qdrant": "airbyte/destination-qdrant:0.0.10",
+    "airbyte-destination-rabbitmq": "airbyte/destination-rabbitmq:0.1.3",
     "airbyte-destination-redis": "airbyte/destination-redis:0.1.4",
-    "airbyte-destination-redshift": "airbyte/destination-redshift:2.4.0",
-    "airbyte-destination-s3": "airbyte/destination-s3:0.5.9",
+    "airbyte-destination-redshift": "airbyte/destination-redshift:2.4.3",
+    "airbyte-destination-s3": "airbyte/destination-s3:0.6.0",
     "airbyte-destination-s3-glue": "airbyte/destination-s3-glue:0.1.8",
     "airbyte-destination-sftp-json": "airbyte/destination-sftp-json:0.1.0",
-    "airbyte-destination-snowflake": "airbyte/destination-snowflake:3.6.6",
+    "airbyte-destination-snowflake": "airbyte/destination-snowflake:3.7.0",
     "airbyte-destination-sqlite": "airbyte/destination-sqlite:0.1.0",
     "airbyte-destination-starburst-galaxy": "airbyte/destination-starburst-galaxy:0.0.1",
     "airbyte-destination-teradata": "airbyte/destination-teradata:0.1.5",
