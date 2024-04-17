@@ -77,6 +77,8 @@ func (c *Connector) LoadConnectorDefinition(definitionJSONBytes []byte, tasksJSO
 	if err != nil {
 		return err
 	}
+
+	// deprecated, will be removed soon
 	def.Spec.ResourceSpecification, err = c.refineResourceSpec(def.Spec.ResourceSpecification)
 	if err != nil {
 		return err
@@ -88,6 +90,9 @@ func (c *Connector) LoadConnectorDefinition(definitionJSONBytes []byte, tasksJSO
 	if err != nil {
 		return err
 	}
+	connectionPropStruct := &structpb.Struct{Fields: map[string]*structpb.Value{}}
+	connectionPropStruct.Fields["connection"] = structpb.NewStructValue(def.Spec.ResourceSpecification)
+	def.Spec.ComponentSpecification.Fields["properties"] = structpb.NewStructValue(connectionPropStruct)
 
 	def.Spec.DataSpecifications, err = c.generateDataSpecs(def.Title, availableTasks)
 	if err != nil {
