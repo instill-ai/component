@@ -678,10 +678,9 @@
               "type": "string"
             },
             "region": {
-              "default": "",
+              "default": "af-south-1",
               "description": "The region of the S3 bucket. See <a href=\"https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions\">here</a> for all region codes.",
               "enum": [
-                "",
                 "af-south-1",
                 "ap-east-1",
                 "ap-northeast-1",
@@ -1898,96 +1897,6 @@
         },
         {
           "$schema": "http://json-schema.org/draft-07/schema#",
-          "additionalProperties": true,
-          "properties": {
-            "delimiter_type": {
-              "description": "The character delimiting individual cells in the CSV data.",
-              "oneOf": [
-                {
-                  "properties": {
-                    "delimiter": {
-                      "const": "\\u002c",
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "delimiter"
-                  ],
-                  "title": "Comma"
-                },
-                {
-                  "properties": {
-                    "delimiter": {
-                      "const": "\\u003b",
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "delimiter"
-                  ],
-                  "title": "Semicolon"
-                },
-                {
-                  "properties": {
-                    "delimiter": {
-                      "const": "\\u007c",
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "delimiter"
-                  ],
-                  "title": "Pipe"
-                },
-                {
-                  "properties": {
-                    "delimiter": {
-                      "const": "\\u0009",
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "delimiter"
-                  ],
-                  "title": "Tab"
-                },
-                {
-                  "properties": {
-                    "delimiter": {
-                      "const": "\\u0020",
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "delimiter"
-                  ],
-                  "title": "Space"
-                }
-              ],
-              "title": "Delimiter",
-              "type": "object"
-            },
-            "destination": {
-              "const": "airbyte-destination-csv",
-              "type": "string"
-            },
-            "destination_path": {
-              "description": "Path to the directory where csv files will be written. The destination uses the local mount \"/local\" and any data files will be placed inside that local mount. For more information check out our <a href=\"https://docs.airbyte.com/integrations/destinations/local-csv\">docs</a>",
-              "examples": [
-                "/local"
-              ],
-              "type": "string"
-            }
-          },
-          "required": [
-            "destination_path",
-            "destination"
-          ],
-          "title": "Csv",
-          "type": "object"
-        },
-        {
-          "$schema": "http://json-schema.org/draft-07/schema#",
           "properties": {
             "accept_terms": {
               "default": false,
@@ -2262,44 +2171,6 @@
         },
         {
           "$schema": "http://json-schema.org/draft-07/schema#",
-          "additionalProperties": true,
-          "properties": {
-            "destination": {
-              "const": "airbyte-destination-duckdb",
-              "type": "string"
-            },
-            "destination_path": {
-              "description": "Path to the .duckdb file, or the text 'md:' to connect to MotherDuck. The file will be placed inside that local mount. For more information check out our <a href=\"https://docs.airbyte.io/integrations/destinations/duckdb\">docs</a>",
-              "examples": [
-                "/local/destination.duckdb",
-                "md:",
-                "motherduck:"
-              ],
-              "title": "Destination DB",
-              "type": "string"
-            },
-            "motherduck_api_key": {
-              "instillCredentialField": true,
-              "description": "API key to use for authentication to a MotherDuck database.",
-              "title": "MotherDuck API Key",
-              "type": "string"
-            },
-            "schema": {
-              "description": "Database schema name, default for duckdb is 'main'.",
-              "example": "main",
-              "title": "Destination Schema",
-              "type": "string"
-            }
-          },
-          "required": [
-            "destination_path",
-            "destination"
-          ],
-          "title": "Duckdb",
-          "type": "object"
-        },
-        {
-          "$schema": "http://json-schema.org/draft-07/schema#",
           "additionalProperties": false,
           "properties": {
             "access_key_id": {
@@ -2325,10 +2196,9 @@
               "type": "string"
             },
             "dynamodb_region": {
-              "default": "",
+              "default": "af-south-1",
               "description": "The region of the DynamoDB.",
               "enum": [
-                "",
                 "af-south-1",
                 "ap-east-1",
                 "ap-northeast-1",
@@ -4294,30 +4164,6 @@
             "destination"
           ],
           "title": "Langchain",
-          "type": "object"
-        },
-        {
-          "$schema": "http://json-schema.org/draft-07/schema#",
-          "additionalProperties": false,
-          "properties": {
-            "destination": {
-              "const": "airbyte-destination-local-json",
-              "type": "string"
-            },
-            "destination_path": {
-              "description": "Path to the directory where json files will be written. The files will be placed inside that local mount. For more information check out our <a href=\"https://docs.airbyte.io/integrations/destinations/local-json\">docs</a>",
-              "examples": [
-                "/json_data"
-              ],
-              "title": "Destination Path",
-              "type": "string"
-            }
-          },
-          "required": [
-            "destination_path",
-            "destination"
-          ],
-          "title": "Localjson",
           "type": "object"
         },
         {
@@ -8172,10 +8018,9 @@
               "type": "string"
             },
             "s3_bucket_region": {
-              "default": "",
+              "default": "af-south-1",
               "description": "The region of the S3 bucket. See <a href=\"https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions\">here</a> for all region codes.",
               "enum": [
-                "",
                 "af-south-1",
                 "ap-east-1",
                 "ap-northeast-1",
@@ -8659,10 +8504,9 @@
               "type": "string"
             },
             "s3_bucket_region": {
-              "default": "",
+              "default": "af-south-1",
               "description": "The region of the S3 bucket. See <a href=\"https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions\">here</a> for all region codes.",
               "enum": [
-                "",
                 "af-south-1",
                 "ap-east-1",
                 "ap-northeast-1",
@@ -9021,27 +8865,6 @@
             "destination"
           ],
           "title": "Snowflake",
-          "type": "object"
-        },
-        {
-          "$schema": "http://json-schema.org/draft-07/schema#",
-          "additionalProperties": false,
-          "properties": {
-            "destination": {
-              "const": "airbyte-destination-sqlite",
-              "type": "string"
-            },
-            "destination_path": {
-              "description": "Path to the sqlite.db file. The file will be placed inside that local mount. For more information check out our <a href=\"https://docs.airbyte.io/integrations/destinations/sqlite\">docs</a>",
-              "example": "/local/sqlite.db",
-              "type": "string"
-            }
-          },
-          "required": [
-            "destination_path",
-            "destination"
-          ],
-          "title": "Sqlite",
           "type": "object"
         },
         {
@@ -10271,18 +10094,16 @@
   "uid": "975678a2-5117-48a4-a135-019619dee18e",
   "vendor": "Airbyte",
   "vendor_attributes": {
-    "airbyte-destination-astra": "airbyte/destination-astra:0.1.1",
+    "airbyte-destination-astra": "airbyte/destination-astra:0.1.2",
     "airbyte-destination-aws-datalake": "airbyte/destination-aws-datalake:0.1.6",
     "airbyte-destination-azure-blob-storage": "airbyte/destination-azure-blob-storage:0.2.1",
     "airbyte-destination-bigquery": "airbyte/destination-bigquery:2.4.12",
-    "airbyte-destination-chroma": "airbyte/destination-chroma:0.0.9",
+    "airbyte-destination-chroma": "airbyte/destination-chroma:0.0.10",
     "airbyte-destination-clickhouse": "airbyte/destination-clickhouse:1.0.0",
     "airbyte-destination-convex": "airbyte/destination-convex:0.2.0",
-    "airbyte-destination-csv": "airbyte/destination-csv:1.0.0",
     "airbyte-destination-databricks": "airbyte/destination-databricks:1.1.0",
-    "airbyte-destination-duckdb": "airbyte/destination-duckdb:0.3.3",
     "airbyte-destination-dynamodb": "airbyte/destination-dynamodb:0.1.8",
-    "airbyte-destination-e2e-test": "airbyte/destination-e2e-test:0.3.2",
+    "airbyte-destination-e2e-test": "airbyte/destination-e2e-test:0.3.3",
     "airbyte-destination-elasticsearch": "airbyte/destination-elasticsearch:0.1.6",
     "airbyte-destination-firestore": "airbyte/destination-firestore:0.1.1",
     "airbyte-destination-gcs": "airbyte/destination-gcs:0.4.6",
@@ -10290,16 +10111,15 @@
     "airbyte-destination-iceberg": "airbyte/destination-iceberg:0.1.6",
     "airbyte-destination-kafka": "airbyte/destination-kafka:0.1.10",
     "airbyte-destination-langchain": "airbyte/destination-langchain:0.1.2",
-    "airbyte-destination-local-json": "airbyte/destination-local-json:0.2.11",
-    "airbyte-destination-milvus": "airbyte/destination-milvus:0.0.13",
+    "airbyte-destination-milvus": "airbyte/destination-milvus:0.0.14",
     "airbyte-destination-mongodb": "airbyte/destination-mongodb:0.2.0",
     "airbyte-destination-mssql": "airbyte/destination-mssql:0.2.0",
     "airbyte-destination-mysql": "airbyte/destination-mysql:0.2.0",
     "airbyte-destination-oracle": "airbyte/destination-oracle:1.0.0",
-    "airbyte-destination-pinecone": "airbyte/destination-pinecone:0.0.23",
+    "airbyte-destination-pinecone": "airbyte/destination-pinecone:0.0.24",
     "airbyte-destination-postgres": "airbyte/destination-postgres:2.0.9",
     "airbyte-destination-pubsub": "airbyte/destination-pubsub:0.2.0",
-    "airbyte-destination-qdrant": "airbyte/destination-qdrant:0.0.10",
+    "airbyte-destination-qdrant": "airbyte/destination-qdrant:0.0.11",
     "airbyte-destination-rabbitmq": "airbyte/destination-rabbitmq:0.1.3",
     "airbyte-destination-redis": "airbyte/destination-redis:0.1.4",
     "airbyte-destination-redshift": "airbyte/destination-redshift:2.4.3",
@@ -10307,12 +10127,11 @@
     "airbyte-destination-s3-glue": "airbyte/destination-s3-glue:0.1.8",
     "airbyte-destination-sftp-json": "airbyte/destination-sftp-json:0.1.0",
     "airbyte-destination-snowflake": "airbyte/destination-snowflake:3.7.0",
-    "airbyte-destination-sqlite": "airbyte/destination-sqlite:0.1.0",
     "airbyte-destination-starburst-galaxy": "airbyte/destination-starburst-galaxy:0.0.1",
     "airbyte-destination-teradata": "airbyte/destination-teradata:0.1.5",
     "airbyte-destination-typesense": "airbyte/destination-typesense:0.1.4",
-    "airbyte-destination-vectara": "airbyte/destination-vectara:0.2.2",
-    "airbyte-destination-weaviate": "airbyte/destination-weaviate:0.2.16",
+    "airbyte-destination-vectara": "airbyte/destination-vectara:0.2.3",
+    "airbyte-destination-weaviate": "airbyte/destination-weaviate:0.2.17",
     "airbyte-devmate-cloud": "ghcr.io/devmate-cloud/streamr-airbyte-connectors:0.0.1"
   }
 }

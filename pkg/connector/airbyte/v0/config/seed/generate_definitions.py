@@ -5,6 +5,20 @@ from urllib.request import urlopen
 from os.path import dirname
 
 
+def refine(definition):
+    newDef = {}
+    for k, v in definition.items():
+        if k == "enum" and "" in v:
+            v = v[1:]
+            definition["default"] = v[0]
+            definition[k] = v
+        if isinstance(v, dict):
+            newDef[k] = refine(v)
+        else:
+            newDef[k] = v
+    return newDef
+
+
 url = 'https://connectors.airbyte.com/files/registries/v0/oss_registry.json'
 response = urlopen(url)
 data_json = json.loads(response.read())
@@ -12,6 +26,8 @@ definitions = data_json['destinations']
 oneOfs = []
 vendor_attribute = {}
 for idx, _ in enumerate(definitions):
+    if (f"{definitions[idx]['dockerRepository'].split('/')[1]}") in ["destination-local-json", "destination-csv", "destination-sqlite", "destination-duckdb"]:
+        continue
     definitions[idx]['uid'] = definitions[idx]['destinationDefinitionId']
     definitions[idx][
         'id'] = f"airbyte-{definitions[idx]['dockerRepository'].split('/')[1]}"
@@ -34,7 +50,7 @@ for idx, _ in enumerate(definitions):
         definitions[idx]['spec']['connectionSpecification']
 
     )
-    definitions[idx]['spec']['resource_specification'] = definitions[idx]['spec']['connectionSpecification']
+    definitions[idx]['spec']['resource_specification'] = refine(definitions[idx]['spec']['connectionSpecification'])
 
 new_def = {
     "available_tasks": [
