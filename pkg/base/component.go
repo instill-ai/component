@@ -59,6 +59,9 @@ type IComponent interface {
 	GetTaskInputSchemas() map[string]string
 	// Get task output schemas
 	GetTaskOutputSchemas() map[string]string
+
+	// Get usage handler
+	GetUsageHandler() UsageHandler
 }
 
 // Component is the basic component struct
@@ -75,6 +78,8 @@ type Component struct {
 	tasks             map[string]*structpb.Struct
 	taskInputSchemas  map[string]string
 	taskOutputSchemas map[string]string
+
+	UsageHandler UsageHandler
 
 	// Logger
 	Logger *zap.Logger
@@ -541,6 +546,10 @@ func (comp *Component) getDefinitionByID(defID string) (interface{}, error) {
 		return nil, fmt.Errorf("component definition ID doesn't exist")
 	}
 	return val, nil
+}
+
+func (comp *Component) GetUsageHandler() UsageHandler {
+	return comp.UsageHandler
 }
 
 // ConvertFromStructpb converts from structpb.Struct to a struct

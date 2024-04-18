@@ -46,11 +46,11 @@ type execution struct {
 
 // Init returns an implementation of IConnector that interacts with Archetype
 // AI.
-func Init(logger *zap.Logger) base.IConnector {
+func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IConnector {
 	once.Do(func() {
 		baseConn = &connector{
 			Connector: base.Connector{
-				Component: base.Component{Logger: logger},
+				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
 			},
 		}
 		if err := baseConn.LoadConnectorDefinition(definitionJSON, tasksJSON, nil); err != nil {
@@ -62,9 +62,9 @@ func Init(logger *zap.Logger) base.IConnector {
 }
 
 // CreateExecution returns an IExecution that executes tasks in Archetype AI.
-func (c *connector) CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
+func (c *connector) CreateExecution(defUID uuid.UUID, task string, connection *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
 	e := &execution{
-		client: newClient(config, logger),
+		client: newClient(connection, logger),
 	}
 
 	switch task {
@@ -81,7 +81,7 @@ func (c *connector) CreateExecution(defUID uuid.UUID, task string, config *struc
 		)
 	}
 
-	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, config, logger)
+	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, connection, logger)
 
 	return e, nil
 }

@@ -192,7 +192,7 @@ func TestConnector_Execute(t *testing.T) {
 	}
 
 	logger := zap.NewNop()
-	connector := Init(logger)
+	connector := Init(logger, nil)
 	defID := uuid.Must(uuid.NewV4())
 
 	for _, tc := range testcases {

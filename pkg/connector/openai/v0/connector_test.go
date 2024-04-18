@@ -30,7 +30,7 @@ func TestConnector_Execute(t *testing.T) {
 	c := qt.New(t)
 
 	logger := zap.NewNop()
-	connector := Init(logger)
+	connector := Init(logger, nil)
 	defID := uuid.Must(uuid.NewV4())
 
 	testcases := []struct {
@@ -130,7 +130,7 @@ func TestConnector_Test(t *testing.T) {
 	c := qt.New(t)
 
 	logger := zap.NewNop()
-	connector := Init(logger)
+	connector := Init(logger, nil)
 	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("nok - error", func(c *qt.C) {

@@ -159,6 +159,12 @@ func (e *Execution) ExecuteWithValidation(inputs []*structpb.Struct) ([]*structp
 		return nil, err
 	}
 
+	if e.Component.GetUsageHandler() != nil {
+		if err := e.Component.GetUsageHandler().Check(); err != nil {
+			return nil, err
+		}
+	}
+
 	outputs, err := e.ComponentExecution.Execute(inputs)
 	if err != nil {
 		return nil, err
@@ -167,6 +173,13 @@ func (e *Execution) ExecuteWithValidation(inputs []*structpb.Struct) ([]*structp
 	if err := e.Validate(outputs, e.Component.GetTaskOutputSchemas()[task], "outputs"); err != nil {
 		return nil, err
 	}
+
+	if e.Component.GetUsageHandler() != nil {
+		if err := e.Component.GetUsageHandler().Collect(); err != nil {
+			return nil, err
+		}
+	}
+
 	return outputs, err
 }
 

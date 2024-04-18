@@ -222,7 +222,7 @@ func TestConnector_ExecuteSpeechRecognition(t *testing.T) {
 
 func testTask(c *qt.C, p taskParams) {
 	logger := zap.NewNop()
-	connector := Init(logger)
+	connector := Init(logger, nil)
 	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("nok - HTTP client error - "+p.task, func(c *qt.C) {

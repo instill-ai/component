@@ -39,29 +39,29 @@ type ConnectorOptions struct {
 	Airbyte airbyte.ConnectorOptions
 }
 
-func Init(logger *zap.Logger, options ConnectorOptions) base.IConnector {
+func Init(logger *zap.Logger, usageHandler base.UsageHandler, options ConnectorOptions) base.IConnector {
 	once.Do(func() {
 
 		connector = &Connector{
-			Connector:       base.Connector{Component: base.Component{Logger: logger}},
+			Connector:       base.Connector{Component: base.Component{Logger: logger, UsageHandler: usageHandler}},
 			connectorUIDMap: map[uuid.UUID]base.IConnector{},
 			connectorIDMap:  map[string]base.IConnector{},
 		}
 
-		connector.(*Connector).ImportDefinitions(stabilityai.Init(logger))
-		connector.(*Connector).ImportDefinitions(instill.Init(logger))
-		connector.(*Connector).ImportDefinitions(huggingface.Init(logger))
-		connector.(*Connector).ImportDefinitions(openai.Init(logger))
-		connector.(*Connector).ImportDefinitions(archetypeai.Init(logger))
-		connector.(*Connector).ImportDefinitions(numbers.Init(logger))
-		connector.(*Connector).ImportDefinitions(airbyte.Init(logger, options.Airbyte))
-		connector.(*Connector).ImportDefinitions(bigquery.Init(logger))
-		connector.(*Connector).ImportDefinitions(googlecloudstorage.Init(logger))
-		connector.(*Connector).ImportDefinitions(googlesearch.Init(logger))
-		connector.(*Connector).ImportDefinitions(pinecone.Init(logger))
-		connector.(*Connector).ImportDefinitions(redis.Init(logger))
-		connector.(*Connector).ImportDefinitions(restapi.Init(logger))
-		connector.(*Connector).ImportDefinitions(website.Init(logger))
+		connector.(*Connector).ImportDefinitions(stabilityai.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(instill.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(huggingface.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(openai.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(archetypeai.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(numbers.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(airbyte.Init(logger, usageHandler, options.Airbyte))
+		connector.(*Connector).ImportDefinitions(bigquery.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(googlecloudstorage.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(googlesearch.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(pinecone.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(redis.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(restapi.Init(logger, usageHandler))
+		connector.(*Connector).ImportDefinitions(website.Init(logger, usageHandler))
 
 	})
 	return connector
@@ -77,8 +77,8 @@ func (c *Connector) ImportDefinitions(con base.IConnector) {
 	}
 }
 
-func (c *Connector) CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
-	return c.connectorUIDMap[defUID].CreateExecution(defUID, task, config, logger)
+func (c *Connector) CreateExecution(defUID uuid.UUID, task string, connection *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
+	return c.connectorUIDMap[defUID].CreateExecution(defUID, task, connection, logger)
 }
 
 func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
