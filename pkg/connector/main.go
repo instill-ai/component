@@ -8,7 +8,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
-	"github.com/instill-ai/component/pkg/connector/airbyte/v0"
 	"github.com/instill-ai/component/pkg/connector/archetypeai/v0"
 	"github.com/instill-ai/component/pkg/connector/bigquery/v0"
 	"github.com/instill-ai/component/pkg/connector/googlecloudstorage/v0"
@@ -35,9 +34,7 @@ type Connector struct {
 	connectorIDMap  map[string]base.IConnector
 }
 
-type ConnectorOptions struct {
-	Airbyte airbyte.ConnectorOptions
-}
+type ConnectorOptions struct{}
 
 func Init(logger *zap.Logger, usageHandler base.UsageHandler, options ConnectorOptions) base.IConnector {
 	once.Do(func() {
@@ -54,7 +51,6 @@ func Init(logger *zap.Logger, usageHandler base.UsageHandler, options ConnectorO
 		connector.(*Connector).ImportDefinitions(openai.Init(logger, usageHandler))
 		connector.(*Connector).ImportDefinitions(archetypeai.Init(logger, usageHandler))
 		connector.(*Connector).ImportDefinitions(numbers.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(airbyte.Init(logger, usageHandler, options.Airbyte))
 		connector.(*Connector).ImportDefinitions(bigquery.Init(logger, usageHandler))
 		connector.(*Connector).ImportDefinitions(googlecloudstorage.Init(logger, usageHandler))
 		connector.(*Connector).ImportDefinitions(googlesearch.Init(logger, usageHandler))
