@@ -24,7 +24,7 @@ type IOperator interface {
 	// Get the operator definition by definition id
 	GetOperatorDefinitionByID(defID string, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error)
 	// Get the list of operator definitions under this operator
-	ListOperatorDefinitions() []*pipelinePB.OperatorDefinition
+	ListOperatorDefinitions(returnTombstone bool) []*pipelinePB.OperatorDefinition
 }
 
 // Operator is the base struct for all operators
@@ -93,12 +93,12 @@ func (o *Operator) AddOperatorDefinition(def *pipelinePB.OperatorDefinition) err
 }
 
 // ListOperatorDefinitions returns the list of operator definitions under this operator
-func (o *Operator) ListOperatorDefinitions() []*pipelinePB.OperatorDefinition {
+func (o *Operator) ListOperatorDefinitions(returnTombstone bool) []*pipelinePB.OperatorDefinition {
 	compDefs := o.Component.listDefinitions()
 	opDefs := make([]*pipelinePB.OperatorDefinition, 0, len(compDefs))
 	for _, d := range compDefs {
 		od := d.(*pipelinePB.OperatorDefinition)
-		if !od.Tombstone {
+		if !od.Tombstone || returnTombstone {
 			opDefs = append(opDefs, od)
 		}
 	}

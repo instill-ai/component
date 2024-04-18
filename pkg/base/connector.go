@@ -31,7 +31,7 @@ type IConnector interface {
 	// Get the connector definition by definition id
 	GetConnectorDefinitionByID(defID string, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
 	// Get the list of connector definitions under this connector
-	ListConnectorDefinitions() []*pipelinePB.ConnectorDefinition
+	ListConnectorDefinitions(returnTombstone bool) []*pipelinePB.ConnectorDefinition
 
 	// List the CredentialFields by definition id
 	ListCredentialField(defID string) ([]string, error)
@@ -173,12 +173,12 @@ func (c *Connector) AddConnectorDefinition(def *pipelinePB.ConnectorDefinition) 
 }
 
 // ListConnectorDefinitions lists all the connector definitions
-func (c *Connector) ListConnectorDefinitions() []*pipelinePB.ConnectorDefinition {
+func (c *Connector) ListConnectorDefinitions(returnTombstone bool) []*pipelinePB.ConnectorDefinition {
 	compDefs := c.Component.listDefinitions()
 	connDefs := make([]*pipelinePB.ConnectorDefinition, 0, len(compDefs))
 	for _, d := range compDefs {
 		cd := d.(*pipelinePB.ConnectorDefinition)
-		if !cd.Tombstone {
+		if !cd.Tombstone || returnTombstone {
 			connDefs = append(connDefs, cd)
 		}
 	}

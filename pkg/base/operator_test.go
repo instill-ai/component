@@ -28,7 +28,7 @@ func TestOperator_ListOperatorDefinitions(t *testing.T) {
 	err := conn.LoadOperatorDefinition(operatorDefJSON, operatorTasksJSON, nil)
 	c.Assert(err, qt.IsNil)
 
-	defs := conn.ListOperatorDefinitions()
+	defs := conn.ListOperatorDefinitions(false)
 	c.Assert(defs, qt.HasLen, 1)
 
 	got := defs[0]

@@ -33,7 +33,7 @@ func TestConnector_ListConnectorDefinitions(t *testing.T) {
 		map[string][]byte{"additional.json": connectorAdditionalJSON})
 	c.Assert(err, qt.IsNil)
 
-	defs := conn.ListConnectorDefinitions()
+	defs := conn.ListConnectorDefinitions(false)
 	c.Assert(defs, qt.HasLen, 1)
 
 	got := defs[0]

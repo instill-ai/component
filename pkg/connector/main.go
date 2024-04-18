@@ -35,9 +35,7 @@ type Connector struct {
 	connectorIDMap  map[string]base.IConnector
 }
 
-type ConnectorOptions struct {
-	Airbyte airbyte.ConnectorOptions
-}
+type ConnectorOptions struct{}
 
 func Init(logger *zap.Logger, usageHandler base.UsageHandler, options ConnectorOptions) base.IConnector {
 	once.Do(func() {
@@ -54,7 +52,7 @@ func Init(logger *zap.Logger, usageHandler base.UsageHandler, options ConnectorO
 		connector.(*Connector).ImportDefinitions(openai.Init(logger, usageHandler))
 		connector.(*Connector).ImportDefinitions(archetypeai.Init(logger, usageHandler))
 		connector.(*Connector).ImportDefinitions(numbers.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(airbyte.Init(logger, usageHandler, options.Airbyte))
+		connector.(*Connector).ImportDefinitions(airbyte.Init(logger, usageHandler))
 		connector.(*Connector).ImportDefinitions(bigquery.Init(logger, usageHandler))
 		connector.(*Connector).ImportDefinitions(googlecloudstorage.Init(logger, usageHandler))
 		connector.(*Connector).ImportDefinitions(googlesearch.Init(logger, usageHandler))
@@ -67,7 +65,7 @@ func Init(logger *zap.Logger, usageHandler base.UsageHandler, options ConnectorO
 	return connector
 }
 func (c *Connector) ImportDefinitions(con base.IConnector) {
-	for _, v := range con.ListConnectorDefinitions() {
+	for _, v := range con.ListConnectorDefinitions(true) {
 		err := c.AddConnectorDefinition(v)
 		if err != nil {
 			panic(err)

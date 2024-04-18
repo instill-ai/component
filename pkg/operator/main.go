@@ -47,7 +47,7 @@ func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IOperator {
 
 // ImportDefinitions imports the operator definitions
 func (o *Operator) ImportDefinitions(op base.IOperator) {
-	for _, v := range op.ListOperatorDefinitions() {
+	for _, v := range op.ListOperatorDefinitions(true) {
 		err := o.AddOperatorDefinition(v)
 		if err != nil {
 			panic(err)

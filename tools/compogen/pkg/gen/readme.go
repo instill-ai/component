@@ -50,9 +50,6 @@ func (g *READMEGenerator) parseDefinition(configDir string) (d definition, err e
 		return d, err
 	}
 
-	// Definitions is an array for legacy reasons: Airbyte used to have several
-	// definitions. These were merged into one but the structure remained. It
-	// should be refactored to remove the array nesting in the future.
 	def := definition{}
 	if err := json.Unmarshal(definitionJSON, &def); err != nil {
 		return d, err
