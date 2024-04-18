@@ -223,7 +223,7 @@ func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, component *pip
 	}
 	def := proto.Clone(oriDef).(*pipelinePB.ConnectorDefinition)
 
-	if component.Connection != nil {
+	if component != nil && component.Connection != nil {
 		if getModelServerURL(component.Connection) == "" {
 			return def, nil
 		}
