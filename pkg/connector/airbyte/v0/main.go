@@ -58,7 +58,7 @@ type Execution struct {
 	connector *Connector
 }
 
-func Init(logger *zap.Logger, options ConnectorOptions) base.IConnector {
+func Init(logger *zap.Logger, usageHandler base.UsageHandler, options ConnectorOptions) base.IConnector {
 	once.Do(func() {
 
 		dockerClient, err := dockerclient.NewClientWithOpts(dockerclient.FromEnv, dockerclient.WithAPIVersionNegotiation())
@@ -73,7 +73,7 @@ func Init(logger *zap.Logger, options ConnectorOptions) base.IConnector {
 
 		connector = &Connector{
 			Connector: base.Connector{
-				Component: base.Component{Logger: logger},
+				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
 			},
 			dockerClient: dockerClient,
 			cache:        cache,
@@ -103,9 +103,9 @@ func Init(logger *zap.Logger, options ConnectorOptions) base.IConnector {
 	return connector
 }
 
-func (c *Connector) CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
+func (c *Connector) CreateExecution(defUID uuid.UUID, task string, connection *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
 	e := &Execution{}
-	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, config, logger)
+	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, connection, logger)
 	e.connector = c
 	return e, nil
 }

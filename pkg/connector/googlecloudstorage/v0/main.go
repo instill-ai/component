@@ -36,11 +36,11 @@ type Execution struct {
 	base.Execution
 }
 
-func Init(logger *zap.Logger) base.IConnector {
+func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IConnector {
 	once.Do(func() {
 		connector = &Connector{
 			Connector: base.Connector{
-				Component: base.Component{Logger: logger},
+				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
 			},
 		}
 		err := connector.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
@@ -51,9 +51,9 @@ func Init(logger *zap.Logger) base.IConnector {
 	return connector
 }
 
-func (c *Connector) CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
+func (c *Connector) CreateExecution(defUID uuid.UUID, task string, connection *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
 	e := &Execution{}
-	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, config, logger)
+	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, connection, logger)
 	return e, nil
 }
 

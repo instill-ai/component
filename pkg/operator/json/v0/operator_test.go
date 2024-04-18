@@ -115,7 +115,7 @@ func TestOperator_Execute(t *testing.T) {
 	}
 
 	logger := zap.NewNop()
-	operator := Init(logger)
+	operator := Init(logger, nil)
 	defID := uuid.Must(uuid.NewV4())
 	config := &structpb.Struct{}
 
@@ -154,7 +154,7 @@ func TestOperator_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
 	logger := zap.NewNop()
-	operator := Init(logger)
+	operator := Init(logger, nil)
 	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("nok - unsupported task", func(c *qt.C) {

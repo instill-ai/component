@@ -42,11 +42,11 @@ type Base64 struct {
 	Data string `json:"data"`
 }
 
-func Init(logger *zap.Logger) base.IOperator {
+func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IOperator {
 	once.Do(func() {
 		operator = &Operator{
 			Operator: base.Operator{
-				Component: base.Component{Logger: logger},
+				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
 			},
 		}
 		err := operator.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)

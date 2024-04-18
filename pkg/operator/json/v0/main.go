@@ -43,11 +43,11 @@ type execution struct {
 }
 
 // Init returns an implementation of IOperator that processes JSON objects.
-func Init(logger *zap.Logger) base.IOperator {
+func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IOperator {
 	once.Do(func() {
 		op = &operator{
 			Operator: base.Operator{
-				Component: base.Component{Logger: logger},
+				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
 			},
 		}
 		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)

@@ -31,7 +31,7 @@ func TestConnector_Execute(t *testing.T) {
 	c := qt.New(t)
 
 	logger := zap.NewNop()
-	connector := Init(logger)
+	connector := Init(logger, nil)
 	defID := uuid.Must(uuid.NewV4())
 	reqBody := map[string]any{
 		"title": "Be the wheel",
@@ -158,7 +158,7 @@ func TestConnector_Test(t *testing.T) {
 	c := qt.New(t)
 
 	logger := zap.NewNop()
-	connector := Init(logger)
+	connector := Init(logger, nil)
 	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("ok - connected (even with non-2xx status", func(c *qt.C) {

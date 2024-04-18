@@ -28,18 +28,18 @@ type Operator struct {
 }
 
 // Init initializes the operator
-func Init(logger *zap.Logger) base.IOperator {
+func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IOperator {
 	once.Do(func() {
 		operator = &Operator{
-			Operator:       base.Operator{Component: base.Component{Logger: logger}},
+			Operator:       base.Operator{Component: base.Component{Logger: logger, UsageHandler: usageHandler}},
 			operatorUIDMap: map[uuid.UUID]base.IOperator{},
 		}
-		operator.(*Operator).ImportDefinitions(base64.Init(logger))
-		operator.(*Operator).ImportDefinitions(start.Init(logger))
-		operator.(*Operator).ImportDefinitions(end.Init(logger))
-		operator.(*Operator).ImportDefinitions(json.Init(logger))
-		operator.(*Operator).ImportDefinitions(image.Init(logger))
-		operator.(*Operator).ImportDefinitions(text.Init(logger))
+		operator.(*Operator).ImportDefinitions(base64.Init(logger, usageHandler))
+		operator.(*Operator).ImportDefinitions(start.Init(logger, usageHandler))
+		operator.(*Operator).ImportDefinitions(end.Init(logger, usageHandler))
+		operator.(*Operator).ImportDefinitions(json.Init(logger, usageHandler))
+		operator.(*Operator).ImportDefinitions(image.Init(logger, usageHandler))
+		operator.(*Operator).ImportDefinitions(text.Init(logger, usageHandler))
 
 	})
 	return operator

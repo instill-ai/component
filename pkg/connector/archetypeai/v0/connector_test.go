@@ -226,7 +226,7 @@ func TestConnector_Execute(t *testing.T) {
 	}
 
 	logger := zap.NewNop()
-	connector := Init(logger)
+	connector := Init(logger, nil)
 	defID := uuid.Must(uuid.NewV4())
 
 	for _, tc := range testcases {
@@ -287,7 +287,7 @@ func TestConnector_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
 	logger := zap.NewNop()
-	connector := Init(logger)
+	connector := Init(logger, nil)
 	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
@@ -304,7 +304,7 @@ func TestConnector_Test(t *testing.T) {
 	c := qt.New(t)
 
 	logger := zap.NewNop()
-	connector := Init(logger)
+	connector := Init(logger, nil)
 	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("ok - connected", func(c *qt.C) {
