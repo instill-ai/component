@@ -65,7 +65,7 @@ func (e *execution) executeImageToImage(grpcClient modelPB.ModelPublicServiceCli
 			Name:       modelName,
 			TaskInputs: []*modelPB.TaskInput{{Input: taskInput}},
 		}
-		ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.Connection))
+		ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.SystemVariables, e.Connection))
 		res, err := grpcClient.TriggerUserModel(ctx, &req)
 		if err != nil || res == nil {
 			return nil, err

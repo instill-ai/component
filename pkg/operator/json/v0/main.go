@@ -61,7 +61,7 @@ func Init(l *zap.Logger, u base.UsageHandler) *operator {
 
 func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
-		BaseOperatorExecution: base.BaseOperatorExecution{Operator: o, Task: task},
+		BaseOperatorExecution: base.BaseOperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
 	}
 
 	switch task {

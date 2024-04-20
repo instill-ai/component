@@ -28,7 +28,7 @@ func TestOperator_ListOperatorDefinitions(t *testing.T) {
 	err := op.LoadOperatorDefinition(operatorDefJSON, operatorTasksJSON, nil)
 	c.Assert(err, qt.IsNil)
 
-	got, err := op.GetOperatorDefinition(nil)
+	got, err := op.GetOperatorDefinition(nil, nil)
 	c.Assert(err, qt.IsNil)
 	c.Check(wantOperatorDefinitionJSON, qt.JSONEquals, got)
 }

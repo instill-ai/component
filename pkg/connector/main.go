@@ -82,17 +82,17 @@ func (cs *ConnectorStore) CreateExecution(defUID uuid.UUID, sysVars map[string]a
 	return nil, fmt.Errorf("connector definition not found")
 }
 
-func (cs *ConnectorStore) GetConnectorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (cs *ConnectorStore) GetConnectorDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	if con, ok := cs.connectorUIDMap[defUID]; ok {
-		return con.con.GetConnectorDefinition(component)
+		return con.con.GetConnectorDefinition(sysVars, component)
 	}
 	return nil, fmt.Errorf("connector definition not found")
 }
 
 // Get the operator definition by definition id
-func (cs *ConnectorStore) GetConnectorDefinitionByID(defID string, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (cs *ConnectorStore) GetConnectorDefinitionByID(defID string, sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	if con, ok := cs.connectorIDMap[defID]; ok {
-		return con.con.GetConnectorDefinition(component)
+		return con.con.GetConnectorDefinition(sysVars, component)
 	}
 	return nil, fmt.Errorf("connector definition not found")
 }
@@ -101,7 +101,7 @@ func (cs *ConnectorStore) GetConnectorDefinitionByID(defID string, component *pi
 func (cs *ConnectorStore) ListConnectorDefinitions(returnTombstone bool) []*pipelinePB.ConnectorDefinition {
 	defs := []*pipelinePB.ConnectorDefinition{}
 	for _, con := range cs.connectorUIDMap {
-		def, err := con.con.GetConnectorDefinition(nil)
+		def, err := con.con.GetConnectorDefinition(nil, nil)
 		if err == nil {
 			if !def.Tombstone || returnTombstone {
 				defs = append(defs, def)

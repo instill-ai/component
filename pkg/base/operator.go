@@ -15,7 +15,7 @@ type IOperator interface {
 	IComponent
 
 	LoadOperatorDefinition(definitionJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
-	GetOperatorDefinition(component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error)
+	GetOperatorDefinition(sysVars map[string]any, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error)
 	CreateExecution(sysVars map[string]any, task string) (*ExecutionWrapper, error)
 }
 
@@ -36,8 +36,9 @@ type IOperatorExecution interface {
 }
 
 type BaseOperatorExecution struct {
-	Operator IOperator
-	Task     string
+	Operator        IOperator
+	SystemVariables map[string]any
+	Task            string
 }
 
 func (o *BaseOperator) GetID() string {
@@ -59,7 +60,7 @@ func (o *BaseOperator) GetTaskOutputSchemas() map[string]string {
 	return o.taskOutputSchemas
 }
 
-func (o *BaseOperator) GetOperatorDefinition(component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
+func (o *BaseOperator) GetOperatorDefinition(sysVars map[string]any, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
 	return o.definition, nil
 }
 
@@ -129,6 +130,9 @@ func (e *BaseOperatorExecution) GetTask() string {
 }
 func (e *BaseOperatorExecution) GetOperator() IOperator {
 	return e.Operator
+}
+func (e *BaseOperatorExecution) GetSystemVariables() map[string]any {
+	return e.SystemVariables
 }
 func (e *BaseOperatorExecution) GetLogger() *zap.Logger {
 	return e.Operator.GetLogger()
