@@ -65,18 +65,17 @@ func (os *OperatorStore) CreateExecution(defUID uuid.UUID, sysVars map[string]an
 	return nil, fmt.Errorf("operator definition not found")
 }
 
-func (os *OperatorStore) GetOperatorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
-	fmt.Println("defUID", defUID)
+func (os *OperatorStore) GetOperatorDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
 	if op, ok := os.operatorUIDMap[defUID]; ok {
-		return op.op.GetOperatorDefinition(component)
+		return op.op.GetOperatorDefinition(sysVars, component)
 	}
 	return nil, fmt.Errorf("operator definition not found")
 }
 
 // Get the operator definition by definition id
-func (os *OperatorStore) GetOperatorDefinitionByID(defID string, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
+func (os *OperatorStore) GetOperatorDefinitionByID(defID string, sysVars map[string]any, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
 	if op, ok := os.operatorIDMap[defID]; ok {
-		return op.op.GetOperatorDefinition(component)
+		return op.op.GetOperatorDefinition(sysVars, component)
 	}
 	return nil, fmt.Errorf("operator definition not found")
 }
@@ -85,7 +84,7 @@ func (os *OperatorStore) GetOperatorDefinitionByID(defID string, component *pipe
 func (os *OperatorStore) ListOperatorDefinitions(returnTombstone bool) []*pipelinePB.OperatorDefinition {
 	defs := []*pipelinePB.OperatorDefinition{}
 	for _, op := range os.operatorUIDMap {
-		def, err := op.op.GetOperatorDefinition(nil)
+		def, err := op.op.GetOperatorDefinition(nil, nil)
 		if err == nil {
 			if !def.Tombstone || returnTombstone {
 				defs = append(defs, def)

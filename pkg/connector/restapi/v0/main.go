@@ -74,7 +74,7 @@ func Init(l *zap.Logger, u base.UsageHandler) *connector {
 
 func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, Connection: connection, Task: task},
+		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
 	}}, nil
 }
 
@@ -171,8 +171,8 @@ func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) er
 }
 
 // Generate the model_name enum based on the task
-func (c *connector) GetConnectorDefinition(component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	oriDef, err := c.BaseConnector.GetConnectorDefinition(nil)
+func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+	oriDef, err := c.BaseConnector.GetConnectorDefinition(nil, nil)
 	if err != nil {
 		return nil, err
 	}

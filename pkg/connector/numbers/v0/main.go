@@ -45,22 +45,21 @@ type CommitCustomLicense struct {
 	Document *string `json:"document,omitempty"`
 }
 type CommitCustom struct {
-	AssetCreator      *string              `json:"assetCreator,omitempty"`
-	DigitalSourceType *string              `json:"digitalSourceType,omitempty"`
-	MiningPreference  *string              `json:"miningPreference,omitempty"`
-	GeneratedThrough  string               `json:"generatedThrough"`
-	GeneratedBy       *string              `json:"generatedBy,omitempty"`
-	CreatorWallet     *string              `json:"creatorWallet,omitempty"`
-	License           *CommitCustomLicense `json:"license,omitempty"`
-	Metadata          *struct {
-		Pipeline *struct {
-			UID    *string     `json:"uid,omitempty"`
-			Recipe interface{} `json:"recipe,omitempty"`
-		} `json:"pipeline,omitempty"`
-		Owner *struct {
-			UID *string `json:"uid,omitempty"`
-		} `json:"owner,omitempty"`
-	} `json:"instillMetadata,omitempty"`
+	AssetCreator      *string               `json:"assetCreator,omitempty"`
+	DigitalSourceType *string               `json:"digitalSourceType,omitempty"`
+	MiningPreference  *string               `json:"miningPreference,omitempty"`
+	GeneratedThrough  string                `json:"generatedThrough"`
+	GeneratedBy       *string               `json:"generatedBy,omitempty"`
+	CreatorWallet     *string               `json:"creatorWallet,omitempty"`
+	License           *CommitCustomLicense  `json:"license,omitempty"`
+	Metadata          *CommitCustomMetadata `json:"instillMetadata,omitempty"`
+}
+
+type CommitCustomMetadata struct {
+	Pipeline struct {
+		UID    string
+		Recipe interface{}
+	}
 }
 
 type Meta struct {
@@ -90,15 +89,6 @@ type Input struct {
 		Name     *string `json:"name,omitempty"`
 		Document *string `json:"document,omitempty"`
 	} `json:"license,omitempty"`
-	Metadata *struct {
-		Pipeline *struct {
-			UID    *string     `json:"uid,omitempty"`
-			Recipe interface{} `json:"recipe,omitempty"`
-		} `json:"pipeline,omitempty"`
-		Owner *struct {
-			UID *string `json:"uid,omitempty"`
-		} `json:"owner,omitempty"`
-	} `json:"metadata,omitempty"`
 }
 
 type Output struct {
@@ -123,7 +113,7 @@ func Init(l *zap.Logger, u base.UsageHandler) *connector {
 
 func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, Connection: connection, Task: task},
+		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
 	}}, nil
 }
 
@@ -234,6 +224,17 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 				}
 			}
 
+			var r any
+			_ = json.Unmarshal([]byte(e.GetSystemVariables()["__PIPELINE_RECIPE"].(string)), &r)
+			meta := CommitCustomMetadata{
+				Pipeline: struct {
+					UID    string
+					Recipe interface{}
+				}{
+					UID:    e.GetSystemVariables()["__PIPELINE_UID"].(string),
+					Recipe: r,
+				},
+			}
 			commitCustom := CommitCustom{
 				AssetCreator:      inputStruct.AssetCreator,
 				DigitalSourceType: inputStruct.DigitalSourceType,
@@ -241,7 +242,7 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 				GeneratedThrough:  "https://instill.tech", //TODO: support Core Host
 				GeneratedBy:       inputStruct.GeneratedBy,
 				License:           commitLicense,
-				Metadata:          inputStruct.Metadata,
+				Metadata:          &meta,
 			}
 
 			reg := Register{

@@ -6,26 +6,7 @@
   "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/openai",
   "icon": "OpenAI/openai.svg",
   "spec": {
-    "resource_specification": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "additionalProperties": true,
-      "instillShortDescription": "",
-      "properties": {
-        "api_key": {
-          "description": "Fill your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
-          "instillCredentialField": true,
-          "instillShortDescription": "Fill your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
-          "instillUIOrder": 0,
-          "title": "API Key",
-          "type": "string"
-        }
-      },
-      "required": [
-        "api_key"
-      ],
-      "title": "OpenAI Connector Resource",
-      "type": "object"
-    },
+    "resource_specification": {},
     "component_specification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "oneOf": [

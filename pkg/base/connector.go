@@ -18,7 +18,7 @@ type IConnector interface {
 	IComponent
 
 	LoadConnectorDefinition(definitionJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
-	GetConnectorDefinition(component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
+	GetConnectorDefinition(sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
 
 	CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*ExecutionWrapper, error)
 	Test(sysVars map[string]any, connection *structpb.Struct) error
@@ -44,9 +44,10 @@ type IConnectorExecution interface {
 }
 
 type BaseConnectorExecution struct {
-	Connector  IConnector
-	Connection *structpb.Struct
-	Task       string
+	Connector       IConnector
+	SystemVariables map[string]any
+	Connection      *structpb.Struct
+	Task            string
 }
 
 func (c *BaseConnector) GetID() string {
@@ -63,7 +64,7 @@ func (c *BaseConnector) GetLogger() *zap.Logger {
 func (c *BaseConnector) GetUsageHandler() UsageHandler {
 	return c.UsageHandler
 }
-func (c *BaseConnector) GetConnectorDefinition(component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (c *BaseConnector) GetConnectorDefinition(sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	return c.definition, nil
 }
 
@@ -130,13 +131,15 @@ func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, task
 		return err
 	}
 
-	// deprecated, will be removed soon
-	c.definition.Spec.ResourceSpecification, err = c.refineResourceSpec(c.definition.Spec.ResourceSpecification)
+	connection, err := c.refineResourceSpec(c.definition.Spec.ResourceSpecification)
 	if err != nil {
 		return err
 	}
+	// deprecated, will be removed soon
+	c.definition.Spec.ResourceSpecification = &structpb.Struct{}
+
 	connectionPropStruct := &structpb.Struct{Fields: map[string]*structpb.Value{}}
-	connectionPropStruct.Fields["connection"] = structpb.NewStructValue(c.definition.Spec.ResourceSpecification)
+	connectionPropStruct.Fields["connection"] = structpb.NewStructValue(connection)
 	c.definition.Spec.ComponentSpecification.Fields["properties"] = structpb.NewStructValue(connectionPropStruct)
 
 	c.definition.Spec.DataSpecifications, err = generateDataSpecs(taskStructs)
@@ -264,6 +267,9 @@ func (e *BaseConnectorExecution) GetConnector() IConnector {
 }
 func (e *BaseConnectorExecution) GetConnection() *structpb.Struct {
 	return e.Connection
+}
+func (e *BaseConnectorExecution) GetSystemVariables() map[string]any {
+	return e.SystemVariables
 }
 func (e *BaseConnectorExecution) GetLogger() *zap.Logger {
 	return e.Connector.GetLogger()
