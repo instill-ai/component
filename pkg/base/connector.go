@@ -17,41 +17,69 @@ import (
 type IConnector interface {
 	IComponent
 
-	// Functions that need to be implemented for all connectors
-	// Test connection
-	Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error
-
-	// Functions that shared for all connectors
-	// Load connector definitions from json files
 	LoadConnectorDefinition(definitionJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
-	// Add definition
-	AddConnectorDefinition(def *pipelinePB.ConnectorDefinition) error
-	// Get the connector definition by definition uid
-	GetConnectorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
-	// Get the connector definition by definition id
-	GetConnectorDefinitionByID(defID string, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
-	// Get the list of connector definitions under this connector
-	ListConnectorDefinitions(returnTombstone bool) []*pipelinePB.ConnectorDefinition
+	GetConnectorDefinition(component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
 
-	// List the CredentialFields by definition id
-	ListCredentialField(defID string) ([]string, error)
-	// A helper function to check the target field a.b.c is credential
-	IsCredentialField(defID string, target string) bool
+	CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*ExecutionWrapper, error)
+	Test(sysVars map[string]any, connection *structpb.Struct) error
 }
 
 // Connector is the base struct for all connectors
-type Connector struct {
-	Component
+type BaseConnector struct {
+	Logger       *zap.Logger
+	UsageHandler UsageHandler
 
-	// TODO: we can store the instillCredentialFields here when LoadConnectorDefinition
-	credentialFields map[string][]string
+	taskInputSchemas  map[string]string
+	taskOutputSchemas map[string]string
+
+	definition       *pipelinePB.ConnectorDefinition
+	credentialFields []string
+}
+
+type IConnectorExecution interface {
+	IExecution
+
+	GetConnector() IConnector
+	GetConnection() *structpb.Struct
+}
+
+type BaseConnectorExecution struct {
+	Connector  IConnector
+	Connection *structpb.Struct
+	Task       string
+}
+
+func (c *BaseConnector) GetID() string {
+	return c.definition.Id
+}
+
+func (c *BaseConnector) GetUID() uuid.UUID {
+	return uuid.FromStringOrNil(c.definition.Uid)
+}
+
+func (c *BaseConnector) GetLogger() *zap.Logger {
+	return c.Logger
+}
+func (c *BaseConnector) GetUsageHandler() UsageHandler {
+	return c.UsageHandler
+}
+func (c *BaseConnector) GetConnectorDefinition(component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+	return c.definition, nil
+}
+
+func (c *BaseConnector) GetTaskInputSchemas() map[string]string {
+	return c.taskInputSchemas
+}
+func (c *BaseConnector) GetTaskOutputSchemas() map[string]string {
+	return c.taskOutputSchemas
 }
 
 // LoadConnectorDefinition loads the connector definitions from json files
-func (c *Connector) LoadConnectorDefinition(definitionJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
+func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
 	var err error
 	var definitionJSON any
-	c.credentialFields = map[string][]string{}
+
+	c.credentialFields = []string{}
 
 	err = json.Unmarshal(definitionJSONBytes, &definitionJSON)
 	if err != nil {
@@ -62,52 +90,67 @@ func (c *Connector) LoadConnectorDefinition(definitionJSONBytes []byte, tasksJSO
 		return nil
 	}
 
-	err = c.Component.loadTasks(renderedTasksJSON)
-	if err != nil {
-		return err
-	}
-
 	availableTasks := []string{}
 	for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
 		availableTasks = append(availableTasks, availableTask.(string))
 	}
 
-	def := &pipelinePB.ConnectorDefinition{}
-	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, def)
+	tasks, taskStructs, err := loadTasks(availableTasks, renderedTasksJSON)
+	if err != nil {
+		return err
+	}
+
+	c.taskInputSchemas = map[string]string{}
+	c.taskOutputSchemas = map[string]string{}
+	for k := range taskStructs {
+		var s []byte
+		s, err = protojson.Marshal(taskStructs[k].Fields["input"].GetStructValue())
+		if err != nil {
+			return err
+		}
+		c.taskInputSchemas[k] = string(s)
+
+		s, err = protojson.Marshal(taskStructs[k].Fields["output"].GetStructValue())
+		if err != nil {
+			return err
+		}
+		c.taskOutputSchemas[k] = string(s)
+	}
+
+	c.definition = &pipelinePB.ConnectorDefinition{}
+	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, c.definition)
+	if err != nil {
+		return err
+	}
+
+	c.definition.Name = fmt.Sprintf("connector-definitions/%s", c.definition.Id)
+	c.definition.Tasks = tasks
+	c.definition.Spec.ComponentSpecification, err = generateComponentSpec(c.definition.Title, tasks, taskStructs)
 	if err != nil {
 		return err
 	}
 
 	// deprecated, will be removed soon
-	def.Spec.ResourceSpecification, err = c.refineResourceSpec(def.Spec.ResourceSpecification)
-	if err != nil {
-		return err
-	}
-
-	def.Tasks = c.generateComponentTasks(availableTasks)
-
-	def.Spec.ComponentSpecification, err = c.generateComponentSpec(def.Title, def.Tasks)
+	c.definition.Spec.ResourceSpecification, err = c.refineResourceSpec(c.definition.Spec.ResourceSpecification)
 	if err != nil {
 		return err
 	}
 	connectionPropStruct := &structpb.Struct{Fields: map[string]*structpb.Value{}}
-	connectionPropStruct.Fields["connection"] = structpb.NewStructValue(def.Spec.ResourceSpecification)
-	def.Spec.ComponentSpecification.Fields["properties"] = structpb.NewStructValue(connectionPropStruct)
+	connectionPropStruct.Fields["connection"] = structpb.NewStructValue(c.definition.Spec.ResourceSpecification)
+	c.definition.Spec.ComponentSpecification.Fields["properties"] = structpb.NewStructValue(connectionPropStruct)
 
-	def.Spec.DataSpecifications, err = c.generateDataSpecs(def.Title, availableTasks)
+	c.definition.Spec.DataSpecifications, err = generateDataSpecs(taskStructs)
 	if err != nil {
 		return err
 	}
 
-	err = c.AddConnectorDefinition(def)
-	if err != nil {
-		return err
-	}
+	c.initCredentialField(c.definition)
 
 	return nil
+
 }
 
-func (c *Connector) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb.Struct, error) {
+func (c *BaseConnector) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb.Struct, error) {
 
 	spec := proto.Clone(resourceSpec).(*structpb.Struct)
 	if _, ok := spec.Fields["instillShortDescription"]; !ok {
@@ -161,64 +204,9 @@ func (c *Connector) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb
 	return spec, nil
 }
 
-// AddConnectorDefinition adds a connector definition to the connector
-func (c *Connector) AddConnectorDefinition(def *pipelinePB.ConnectorDefinition) error {
-	def.Name = fmt.Sprintf("connector-definitions/%s", def.Id)
-	err := c.addDefinition(def)
-	if err != nil {
-		return err
-	}
-	c.initCredentialField(def.Id)
-	return nil
-}
-
-// ListConnectorDefinitions lists all the connector definitions
-func (c *Connector) ListConnectorDefinitions(returnTombstone bool) []*pipelinePB.ConnectorDefinition {
-	compDefs := c.Component.listDefinitions()
-	connDefs := make([]*pipelinePB.ConnectorDefinition, 0, len(compDefs))
-	for _, d := range compDefs {
-		cd := d.(*pipelinePB.ConnectorDefinition)
-		if !cd.Tombstone || returnTombstone {
-			connDefs = append(connDefs, cd)
-		}
-	}
-
-	return connDefs
-}
-
-// GetConnectorDefinitionByUID gets the connector definition by definition uid
-func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, _ /*component*/ *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	def, err := c.Component.getDefinitionByUID(defUID)
-	if err != nil {
-		return nil, err
-	}
-
-	cd, ok := def.(*pipelinePB.ConnectorDefinition)
-	if !ok {
-		return nil, fmt.Errorf("invalid type for connector definition ID")
-	}
-
-	return cd, nil
-}
-
-// GetConnectorDefinitionByID gets the connector definition by definition id
-func (c *Connector) GetConnectorDefinitionByID(defID string, _ /*component*/ *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	def, err := c.Component.getDefinitionByID(defID)
-	if err != nil {
-		return nil, err
-	}
-
-	cd, ok := def.(*pipelinePB.ConnectorDefinition)
-	if !ok {
-		return nil, fmt.Errorf("invalid type for connector definition UID")
-	}
-
-	return cd, nil
-}
-
 // IsCredentialField checks if the target field is credential field
-func (c *Connector) IsCredentialField(defID string, target string) bool {
-	for _, field := range c.credentialFields[defID] {
+func (c *BaseConnector) IsCredentialField(defID string, target string) bool {
+	for _, field := range c.credentialFields {
 		if target == field {
 			return true
 		}
@@ -227,25 +215,25 @@ func (c *Connector) IsCredentialField(defID string, target string) bool {
 }
 
 // ListCredentialField lists the credential fields by definition id
-func (c *Connector) ListCredentialField(defID string) ([]string, error) {
-	return c.credentialFields[defID], nil
+func (c *BaseConnector) ListCredentialField(defID string) ([]string, error) {
+	return c.credentialFields, nil
 }
 
-func (c *Connector) initCredentialField(defID string) {
+func (c *BaseConnector) initCredentialField(def *pipelinePB.ConnectorDefinition) {
 	if c.credentialFields == nil {
-		c.credentialFields = map[string][]string{}
+		c.credentialFields = []string{}
 	}
 	credentialFields := []string{}
-	credentialFields = c.traverseCredentialField(c.definitionMapByID[defID].(*pipelinePB.ConnectorDefinition).Spec.GetResourceSpecification().GetFields()["properties"], "", credentialFields)
-	if l, ok := c.definitionMapByID[defID].(*pipelinePB.ConnectorDefinition).Spec.GetResourceSpecification().GetFields()["oneOf"]; ok {
+	credentialFields = c.traverseCredentialField(def.Spec.GetResourceSpecification().GetFields()["properties"], "", credentialFields)
+	if l, ok := def.Spec.GetResourceSpecification().GetFields()["oneOf"]; ok {
 		for _, v := range l.GetListValue().Values {
 			credentialFields = c.traverseCredentialField(v.GetStructValue().GetFields()["properties"], "", credentialFields)
 		}
 	}
-	c.credentialFields[defID] = credentialFields
+	c.credentialFields = credentialFields
 }
 
-func (c *Connector) traverseCredentialField(input *structpb.Value, prefix string, credentialFields []string) []string {
+func (c *BaseConnector) traverseCredentialField(input *structpb.Value, prefix string, credentialFields []string) []string {
 	for key, v := range input.GetStructValue().GetFields() {
 		if isCredential, ok := v.GetStructValue().GetFields()["instillCredentialField"]; ok {
 			if isCredential.GetBoolValue() || isCredential.GetStringValue() == "true" {
@@ -266,4 +254,26 @@ func (c *Connector) traverseCredentialField(input *structpb.Value, prefix string
 	}
 
 	return credentialFields
+}
+
+func (e *BaseConnectorExecution) GetTask() string {
+	return e.Task
+}
+func (e *BaseConnectorExecution) GetConnector() IConnector {
+	return e.Connector
+}
+func (e *BaseConnectorExecution) GetConnection() *structpb.Struct {
+	return e.Connection
+}
+func (e *BaseConnectorExecution) GetLogger() *zap.Logger {
+	return e.Connector.GetLogger()
+}
+func (e *BaseConnectorExecution) GetUsageHandler() UsageHandler {
+	return e.Connector.GetUsageHandler()
+}
+func (e *BaseConnectorExecution) GetTaskInputSchema() string {
+	return e.Connector.GetTaskInputSchemas()[e.Task]
+}
+func (e *BaseConnectorExecution) GetTaskOutputSchema() string {
+	return e.Connector.GetTaskOutputSchemas()[e.Task]
 }

@@ -37,14 +37,16 @@ func TestDrawClassification(t *testing.T) {
 
 	inputDog := &structpb.Struct{}
 	if err := json.Unmarshal(clsDogJSON, inputDog); err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	inputs := []*structpb.Struct{
 		inputDog,
 	}
 
-	e := &Execution{}
+	e := &execution{}
 	e.Task = "TASK_DRAW_CLASSIFICATION"
 
 	if _, err := e.Execute(inputs); err != nil {
@@ -57,12 +59,16 @@ func TestDrawDetection(t *testing.T) {
 
 	inputCOCO1 := &structpb.Struct{}
 	if err := json.Unmarshal(detCOCO1JSON, inputCOCO1); err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	inputCOCO2 := &structpb.Struct{}
 	if err := json.Unmarshal(detCOCO2JSON, inputCOCO2); err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	inputs := []*structpb.Struct{
@@ -70,7 +76,7 @@ func TestDrawDetection(t *testing.T) {
 		// inputCOCO2,
 	}
 
-	e := &Execution{}
+	e := &execution{}
 	e.Task = "TASK_DRAW_DETECTION"
 
 	if _, err := e.Execute(inputs); err != nil {
@@ -83,12 +89,16 @@ func TestDrawKeypoint(t *testing.T) {
 
 	inputCOCO1 := &structpb.Struct{}
 	if err := json.Unmarshal(kpCOCO1JSON, inputCOCO1); err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	inputCOCO2 := &structpb.Struct{}
 	if err := json.Unmarshal(kpCOCO2JSON, inputCOCO2); err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	inputs := []*structpb.Struct{
@@ -96,7 +106,7 @@ func TestDrawKeypoint(t *testing.T) {
 		// inputCOCO2,
 	}
 
-	e := &Execution{}
+	e := &execution{}
 	e.Task = "TASK_DRAW_KEYPOINT"
 
 	if _, err := e.Execute(inputs); err != nil {
@@ -109,19 +119,23 @@ func TestDrawOCR(t *testing.T) {
 
 	inputMM := &structpb.Struct{}
 	if err := json.Unmarshal(ocrMMJSON, inputMM); err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	inputCOCO2 := &structpb.Struct{}
 	if err := json.Unmarshal(kpCOCO2JSON, inputCOCO2); err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	inputs := []*structpb.Struct{
 		inputMM,
 	}
 
-	e := &Execution{}
+	e := &execution{}
 	e.Task = "TASK_DRAW_OCR"
 
 	if _, err := e.Execute(inputs); err != nil {
@@ -134,17 +148,23 @@ func TestDrawInstanceSegmentation(t *testing.T) {
 
 	inputCOCO1 := &structpb.Struct{}
 	if err := json.Unmarshal(instSegCOCO1JSON, inputCOCO1); err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	inputCOCO2 := &structpb.Struct{}
 	if err := json.Unmarshal(instSegCOCO2JSON, inputCOCO2); err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	inputStomata := &structpb.Struct{}
 	if err := json.Unmarshal(instSegStomataJSON, inputStomata); err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	inputs := []*structpb.Struct{
@@ -153,7 +173,7 @@ func TestDrawInstanceSegmentation(t *testing.T) {
 		inputStomata,
 	}
 
-	e := &Execution{}
+	e := &execution{}
 	e.Task = "TASK_DRAW_INSTANCE_SEGMENTATION"
 
 	if _, err := e.Execute(inputs); err != nil {
@@ -166,14 +186,16 @@ func TestDrawSemanticSegmentation(t *testing.T) {
 
 	inputCityscape := &structpb.Struct{}
 	if err := json.Unmarshal(semSegCityscapeJSON, inputCityscape); err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	inputs := []*structpb.Struct{
 		inputCityscape,
 	}
 
-	e := &Execution{}
+	e := &execution{}
 	e.Task = "TASK_DRAW_SEMANTIC_SEGMENTATION"
 
 	if _, err := e.Execute(inputs); err != nil {

@@ -24,7 +24,7 @@ const urlRegisterAsset = "https://api.numbersprotocol.io/api/v3/assets/"
 const urlUserMe = "https://api.numbersprotocol.io/api/v3/auth/users/me"
 
 var once sync.Once
-var connector base.IConnector
+var con *connector
 
 //go:embed config/definition.json
 var definitionJSON []byte
@@ -32,12 +32,12 @@ var definitionJSON []byte
 //go:embed config/tasks.json
 var tasksJSON []byte
 
-type Connector struct {
-	base.Connector
+type connector struct {
+	base.BaseConnector
 }
 
-type Execution struct {
-	base.Execution
+type execution struct {
+	base.BaseConnectorExecution
 }
 
 type CommitCustomLicense struct {
@@ -105,28 +105,33 @@ type Output struct {
 	AssetUrls []string `json:"asset_urls"`
 }
 
-func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IConnector {
+func Init(l *zap.Logger, u base.UsageHandler) *connector {
 	once.Do(func() {
-
-		connector = &Connector{
-			Connector: base.Connector{
-				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
+		con = &connector{
+			BaseConnector: base.BaseConnector{
+				Logger:       l,
+				UsageHandler: u,
 			},
 		}
-		err := connector.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
-			logger.Fatal(err.Error())
+			panic(err)
 		}
-
 	})
-	return connector
+	return con
+}
+
+func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+	return &base.ExecutionWrapper{Execution: &execution{
+		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, Connection: connection, Task: task},
+	}}, nil
 }
 
 func getToken(config *structpb.Struct) string {
 	return fmt.Sprintf("token %s", config.GetFields()["capture_token"].GetStringValue())
 }
 
-func (e *Execution) registerAsset(data []byte, reg Register) (string, error) {
+func (e *execution) registerAsset(data []byte, reg Register) (string, error) {
 
 	var b bytes.Buffer
 
@@ -165,7 +170,7 @@ func (e *Execution) registerAsset(data []byte, reg Register) (string, error) {
 		return "", err
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	req.Header.Set("Authorization", getToken(e.Config))
+	req.Header.Set("Authorization", getToken(e.Connection))
 
 	tr := &http.Transport{
 		DisableKeepAlives: true,
@@ -201,13 +206,7 @@ func (e *Execution) registerAsset(data []byte, reg Register) (string, error) {
 	}
 }
 
-func (c *Connector) CreateExecution(defUID uuid.UUID, task string, connection *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
-	e := &Execution{}
-	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, connection, logger)
-	return e, nil
-}
-
-func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 
 	var outputs []*structpb.Struct
 
@@ -274,13 +273,13 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 
 }
 
-func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
+func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
 
 	req, err := http.NewRequest("GET", urlUserMe, nil)
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Authorization", getToken(config))
+	req.Header.Set("Authorization", getToken(connection))
 
 	tr := &http.Transport{
 		DisableKeepAlives: true,

@@ -1,11 +1,11 @@
-package pkg
+package operator
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/instill-ai/component/pkg/operator/base64/v0"
@@ -14,49 +14,83 @@ import (
 	"github.com/instill-ai/component/pkg/operator/json/v0"
 	"github.com/instill-ai/component/pkg/operator/start/v0"
 	"github.com/instill-ai/component/pkg/operator/text/v0"
+
+	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 var (
-	once     sync.Once
-	operator base.IOperator
+	once    sync.Once
+	opStore *OperatorStore
 )
 
 // Operator is the derived operator
-type Operator struct {
-	base.Operator
-	operatorUIDMap map[uuid.UUID]base.IOperator
+type OperatorStore struct {
+	operatorUIDMap map[uuid.UUID]*operator
+	operatorIDMap  map[string]*operator
+}
+
+type operator struct {
+	op base.IOperator
 }
 
 // Init initializes the operator
-func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IOperator {
+func Init(logger *zap.Logger, usageHandler base.UsageHandler) *OperatorStore {
 	once.Do(func() {
-		operator = &Operator{
-			Operator:       base.Operator{Component: base.Component{Logger: logger, UsageHandler: usageHandler}},
-			operatorUIDMap: map[uuid.UUID]base.IOperator{},
+		opStore = &OperatorStore{
+			operatorUIDMap: map[uuid.UUID]*operator{},
+			operatorIDMap:  map[string]*operator{},
 		}
-		operator.(*Operator).ImportDefinitions(base64.Init(logger, usageHandler))
-		operator.(*Operator).ImportDefinitions(start.Init(logger, usageHandler))
-		operator.(*Operator).ImportDefinitions(end.Init(logger, usageHandler))
-		operator.(*Operator).ImportDefinitions(json.Init(logger, usageHandler))
-		operator.(*Operator).ImportDefinitions(image.Init(logger, usageHandler))
-		operator.(*Operator).ImportDefinitions(text.Init(logger, usageHandler))
+		opStore.Import(start.Init(logger, usageHandler)) // deprecated
+		opStore.Import(end.Init(logger, usageHandler))   // deprecated
+		opStore.Import(base64.Init(logger, usageHandler))
+		opStore.Import(json.Init(logger, usageHandler))
+		opStore.Import(image.Init(logger, usageHandler))
+		opStore.Import(text.Init(logger, usageHandler))
 
 	})
-	return operator
+	return opStore
 }
 
-// ImportDefinitions imports the operator definitions
-func (o *Operator) ImportDefinitions(op base.IOperator) {
-	for _, v := range op.ListOperatorDefinitions(true) {
-		err := o.AddOperatorDefinition(v)
-		if err != nil {
-			panic(err)
-		}
-		o.operatorUIDMap[uuid.FromStringOrNil(v.Uid)] = op
+// Imports imports the operator definitions
+func (os *OperatorStore) Import(op base.IOperator) {
+	o := &operator{op: op}
+	os.operatorUIDMap[op.GetUID()] = o
+	os.operatorIDMap[op.GetID()] = o
+}
+
+func (os *OperatorStore) CreateExecution(defUID uuid.UUID, sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
+	if op, ok := os.operatorUIDMap[defUID]; ok {
+		return op.op.CreateExecution(sysVars, task)
 	}
+	return nil, fmt.Errorf("operator definition not found")
 }
 
-// CreateExecution creates the derived execution
-func (o *Operator) CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
-	return o.operatorUIDMap[defUID].CreateExecution(defUID, task, config, logger)
+func (os *OperatorStore) GetOperatorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
+	fmt.Println("defUID", defUID)
+	if op, ok := os.operatorUIDMap[defUID]; ok {
+		return op.op.GetOperatorDefinition(component)
+	}
+	return nil, fmt.Errorf("operator definition not found")
+}
+
+// Get the operator definition by definition id
+func (os *OperatorStore) GetOperatorDefinitionByID(defID string, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
+	if op, ok := os.operatorIDMap[defID]; ok {
+		return op.op.GetOperatorDefinition(component)
+	}
+	return nil, fmt.Errorf("operator definition not found")
+}
+
+// Get the list of operator definitions under this operator
+func (os *OperatorStore) ListOperatorDefinitions(returnTombstone bool) []*pipelinePB.OperatorDefinition {
+	defs := []*pipelinePB.OperatorDefinition{}
+	for _, op := range os.operatorUIDMap {
+		def, err := op.op.GetOperatorDefinition(nil)
+		if err == nil {
+			if !def.Tombstone || returnTombstone {
+				defs = append(defs, def)
+			}
+		}
+	}
+	return defs
 }

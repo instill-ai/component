@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -31,7 +30,6 @@ func TestConnector_Execute(t *testing.T) {
 
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 
 	testcases := []struct {
 		name        string
@@ -93,18 +91,18 @@ func TestConnector_Execute(t *testing.T) {
 			openAIServer := httptest.NewServer(h)
 			c.Cleanup(openAIServer.Close)
 
-			config, err := structpb.NewStruct(map[string]any{
+			connection, err := structpb.NewStruct(map[string]any{
 				"base_path":    openAIServer.URL,
 				"api_key":      apiKey,
 				"organization": org,
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(defID, tc.task, config, logger)
+			exec, err := connector.CreateExecution(nil, connection, tc.task)
 			c.Assert(err, qt.IsNil)
 
 			pbIn := new(structpb.Struct)
-			_, err = exec.Execute([]*structpb.Struct{pbIn})
+			_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
 			c.Check(err, qt.IsNotNil)
 
 			want := "OpenAI responded with a 401 status code. Incorrect API key provided."
@@ -114,11 +112,11 @@ func TestConnector_Execute(t *testing.T) {
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
-		exec, err := connector.CreateExecution(defID, task, new(structpb.Struct), logger)
+		exec, err := connector.CreateExecution(nil, new(structpb.Struct), task)
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execute([]*structpb.Struct{pbIn})
+		_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -131,7 +129,6 @@ func TestConnector_Test(t *testing.T) {
 
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("nok - error", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -146,12 +143,12 @@ func TestConnector_Test(t *testing.T) {
 		openAIServer := httptest.NewServer(h)
 		c.Cleanup(openAIServer.Close)
 
-		config, err := structpb.NewStruct(map[string]any{
+		connection, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(defID, config, logger)
+		err = connector.Test(nil, connection)
 		c.Check(err, qt.IsNotNil)
 
 		wantMsg := "OpenAI responded with a 401 status code. Incorrect API key provided."
@@ -170,12 +167,12 @@ func TestConnector_Test(t *testing.T) {
 		openAIServer := httptest.NewServer(h)
 		c.Cleanup(openAIServer.Close)
 
-		config, err := structpb.NewStruct(map[string]any{
+		connection, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(defID, config, logger)
+		err = connector.Test(nil, connection)
 		c.Check(err, qt.IsNotNil)
 	})
 
@@ -191,12 +188,12 @@ func TestConnector_Test(t *testing.T) {
 		openAIServer := httptest.NewServer(h)
 		c.Cleanup(openAIServer.Close)
 
-		config, err := structpb.NewStruct(map[string]any{
+		connection, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(defID, config, logger)
+		err = connector.Test(nil, connection)
 		c.Check(err, qt.IsNil)
 	})
 }

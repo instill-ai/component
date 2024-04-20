@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -223,24 +222,23 @@ func TestConnector_ExecuteSpeechRecognition(t *testing.T) {
 func testTask(c *qt.C, p taskParams) {
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("nok - HTTP client error - "+p.task, func(c *qt.C) {
 		c.Parallel()
 
-		config, err := structpb.NewStruct(map[string]any{
+		connection, err := structpb.NewStruct(map[string]any{
 			"base_url": "http://no-such.host",
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := connector.CreateExecution(defID, p.task, config, logger)
+		exec, err := connector.CreateExecution(nil, connection, p.task)
 		c.Assert(err, qt.IsNil)
 
 		pbIn, err := base.ConvertToStructpb(p.input)
 		c.Assert(err, qt.IsNil)
 		pbIn.Fields["model"] = structpb.NewStringValue(model)
 
-		_, err = exec.Execute([]*structpb.Struct{pbIn})
+		_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 		c.Check(err, qt.ErrorMatches, ".*no such host")
 		c.Check(errmsg.Message(err), qt.Matches, "Failed to call .*check that the connector configuration is correct.")
@@ -315,20 +313,20 @@ func testTask(c *qt.C, p taskParams) {
 			srv := httptest.NewServer(h)
 			c.Cleanup(srv.Close)
 
-			config, _ := structpb.NewStruct(map[string]any{
+			connection, _ := structpb.NewStruct(map[string]any{
 				"api_key":            apiKey,
 				"base_url":           srv.URL,
 				"is_custom_endpoint": tc.customEndpoint,
 			})
 
-			exec, err := connector.CreateExecution(defID, p.task, config, logger)
+			exec, err := connector.CreateExecution(nil, connection, p.task)
 			c.Assert(err, qt.IsNil)
 
 			pbIn, err := base.ConvertToStructpb(p.input)
 			c.Assert(err, qt.IsNil)
 			pbIn.Fields["model"] = structpb.NewStringValue(model)
 
-			got, err := exec.Execute([]*structpb.Struct{pbIn})
+			got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Check(err, qt.IsNotNil)
 				c.Check(errmsg.Message(err), qt.Equals, tc.wantErr)

@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"github.com/gofrs/uuid"
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/instill-ai/component/pkg/connector/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
@@ -227,7 +226,6 @@ func TestConnector_Execute(t *testing.T) {
 
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
@@ -256,18 +254,18 @@ func TestConnector_Execute(t *testing.T) {
 			srv := httptest.NewServer(h)
 			c.Cleanup(srv.Close)
 
-			config, _ := structpb.NewStruct(map[string]any{
+			connection, _ := structpb.NewStruct(map[string]any{
 				"base_path": srv.URL,
 				"api_key":   apiKey,
 			})
 
-			exec, err := connector.CreateExecution(defID, tc.task, config, logger)
+			exec, err := connector.CreateExecution(nil, connection, tc.task)
 			c.Assert(err, qt.IsNil)
 
 			pbIn, err := base.ConvertToStructpb(tc.in)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute([]*structpb.Struct{pbIn})
+			got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Check(errmsg.Message(err), qt.Matches, tc.wantErr)
 				return
@@ -288,13 +286,12 @@ func TestConnector_CreateExecution(t *testing.T) {
 
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 		want := fmt.Sprintf("%s task is not supported.", task)
 
-		_, err := connector.CreateExecution(defID, task, new(structpb.Struct), logger)
+		_, err := connector.CreateExecution(nil, new(structpb.Struct), task)
 		c.Check(err, qt.IsNotNil)
 		c.Check(errmsg.Message(err), qt.Equals, want)
 	})
@@ -305,10 +302,9 @@ func TestConnector_Test(t *testing.T) {
 
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("ok - connected", func(c *qt.C) {
-		err := connector.Test(defID, nil, logger)
+		err := connector.Test(nil, nil)
 		c.Check(err, qt.IsNil)
 	})
 }

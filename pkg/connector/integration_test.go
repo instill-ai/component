@@ -51,7 +51,7 @@ func TestOpenAITextGeneration(t *testing.T) {
 	exec, err := conn.CreateExecution(uid, "TASK_TEXT_GENERATION", config, logger)
 	c.Assert(err, qt.IsNil)
 
-	op, err := exec.Execute([]*structpb.Struct{in})
+	op, err := exec.Execution.Execute([]*structpb.Struct{in})
 
 	// This assumes invalid API credentials that trigger a 401 API error. We
 	// should check for valid behaviour in integration tests, although

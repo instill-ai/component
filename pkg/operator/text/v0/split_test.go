@@ -18,7 +18,7 @@ func TestSplitByToken(t *testing.T) {
 		input,
 	}
 
-	e := &Execution{}
+	e := &execution{}
 	e.Task = "TASK_SPLIT_BY_TOKEN"
 
 	if _, err := e.Execute(inputs); err != nil {

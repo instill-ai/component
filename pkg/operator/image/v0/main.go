@@ -13,7 +13,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 
-	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -26,44 +25,44 @@ var (
 	//go:embed config/tasks.json
 	tasksJSON []byte
 	once      sync.Once
-	operator  base.IOperator
+	op        *operator
 )
 
 // Operator is the derived operator
-type Operator struct {
-	base.Operator
+type operator struct {
+	base.BaseOperator
 }
 
 // Execution is the derived execution
-type Execution struct {
-	base.Execution
+type execution struct {
+	base.BaseOperatorExecution
 }
 
 // Init initializes the operator
-func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IOperator {
+func Init(l *zap.Logger, u base.UsageHandler) *operator {
 	once.Do(func() {
-		operator = &Operator{
-			Operator: base.Operator{
-				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
+		op = &operator{
+			BaseOperator: base.BaseOperator{
+				Logger:       l,
+				UsageHandler: u,
 			},
 		}
-		err := operator.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
+		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
-			logger.Fatal(err.Error())
+			panic(err)
 		}
 	})
-	return operator
+	return op
 }
 
-// CreateExecution creates the derived execution
-func (o *Operator) CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
-	e := &Execution{}
-	e.Execution = base.CreateExecutionHelper(e, o, defUID, task, config, logger)
-	return e, nil
+func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
+	return &base.ExecutionWrapper{Execution: &execution{
+		BaseOperatorExecution: base.BaseOperatorExecution{Operator: o, Task: task},
+	}}, nil
 }
 
 // Execute executes the derived execution
-func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 	var base64ByteImg []byte
 	for _, input := range inputs {

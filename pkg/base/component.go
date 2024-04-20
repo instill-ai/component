@@ -31,58 +31,12 @@ const conditionJSON = `
 // IComponent is the interface that wraps the basic component methods.
 // All component need to implement this interface.
 type IComponent interface {
-
-	// Functions that need to be implemented in each component implementation
-
-	// Create a execution by definition uid and component configuration
-	CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (IExecution, error)
-
-	// Internal functions
-
-	// Get the list of definitions under this connector
-	listDefinitions() []interface{}
-	// Add definition
-	addDefinition(def interface{}) error
-	// Get the definition by definition uid
-	getDefinitionByUID(defUID uuid.UUID) (interface{}, error)
-	// Get the definition by definition id
-	getDefinitionByID(defID string) (interface{}, error)
-
-	// Generate Component Specification
-	generateComponentSpec(title string, availableTasks []*pipelinePB.ComponentTask) (*structpb.Struct, error)
-	// Generate OpenAPI Specifications
-	generateDataSpecs(title string, availableTasks []string) (map[string]*pipelinePB.DataSpecification, error)
-
-	// Load tasks
-	loadTasks(tasksJSON []byte) error
-	// Get task input schemas
-	GetTaskInputSchemas() map[string]string
-	// Get task output schemas
-	GetTaskOutputSchemas() map[string]string
-
-	// Get usage handler
+	GetID() string
+	GetUID() uuid.UUID
+	GetLogger() *zap.Logger
 	GetUsageHandler() UsageHandler
-}
-
-// Component is the basic component struct
-type Component struct {
-	Name string
-
-	// Store all the component definitions in the component
-	definitionMapByUID map[uuid.UUID]interface{}
-	definitionMapByID  map[string]interface{}
-
-	// Used for ordered
-	definitionUIDs []uuid.UUID
-
-	tasks             map[string]*structpb.Struct
-	taskInputSchemas  map[string]string
-	taskOutputSchemas map[string]string
-
-	UsageHandler UsageHandler
-
-	// Logger
-	Logger *zap.Logger
+	GetTaskInputSchemas() map[string]string
+	GetTaskOutputSchemas() map[string]string
 }
 
 func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
@@ -229,27 +183,27 @@ func TaskIDToTitle(id string) string {
 	return cases.Title(language.English).String(title)
 }
 
-func (comp *Component) generateComponentTasks(availableTasks []string) []*pipelinePB.ComponentTask {
-	tasks := make([]*pipelinePB.ComponentTask, 0, len(availableTasks))
-	for _, t := range availableTasks {
-		title := comp.tasks[t].Fields["title"].GetStringValue()
+func generateComponentTaskCards(tasks map[string]*structpb.Struct) []*pipelinePB.ComponentTask {
+	taskCards := make([]*pipelinePB.ComponentTask, 0, len(tasks))
+	for k := range tasks {
+		title := tasks[k].Fields["title"].GetStringValue()
 		if title == "" {
-			title = TaskIDToTitle(t)
+			title = TaskIDToTitle(k)
 		}
 
-		description := comp.tasks[t].Fields["instillShortDescription"].GetStringValue()
+		description := tasks[k].Fields["instillShortDescription"].GetStringValue()
 
-		tasks = append(tasks, &pipelinePB.ComponentTask{
-			Name:        t,
+		taskCards = append(taskCards, &pipelinePB.ComponentTask{
+			Name:        k,
 			Title:       title,
 			Description: description,
 		})
 	}
 
-	return tasks
+	return taskCards
 }
 
-func (comp *Component) generateComponentSpec(title string, availableTasks []*pipelinePB.ComponentTask) (*structpb.Struct, error) {
+func generateComponentSpec(title string, tasks []*pipelinePB.ComponentTask, taskStructs map[string]*structpb.Struct) (*structpb.Struct, error) {
 	var err error
 	componentSpec := &structpb.Struct{Fields: map[string]*structpb.Value{}}
 	componentSpec.Fields["$schema"] = structpb.NewStringValue("http://json-schema.org/draft-07/schema#")
@@ -263,44 +217,46 @@ func (comp *Component) generateComponentSpec(title string, availableTasks []*pip
 	oneOfList := &structpb.ListValue{
 		Values: []*structpb.Value{},
 	}
-	for _, availableTask := range availableTasks {
-		taskName := availableTask.Name
+	for _, task := range tasks {
+		taskName := task.Name
 
 		oneOf := &structpb.Struct{Fields: map[string]*structpb.Value{}}
 		oneOf.Fields["type"] = structpb.NewStringValue("object")
 		oneOf.Fields["properties"] = structpb.NewStructValue(&structpb.Struct{Fields: make(map[string]*structpb.Value)})
 
 		oneOf.Fields["properties"].GetStructValue().Fields["task"], err = structpb.NewValue(map[string]interface{}{
-			"const": availableTask.Name,
-			"title": availableTask.Title,
+			"const": task.Name,
+			"title": task.Title,
 		})
 		if err != nil {
 			return nil, err
 		}
 
-		if comp.tasks[taskName].Fields["description"].GetStringValue() != "" {
-			oneOf.Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["description"] = structpb.NewStringValue(comp.tasks[taskName].Fields["description"].GetStringValue())
+		if taskStructs[taskName].Fields["description"].GetStringValue() != "" {
+			oneOf.Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["description"] = structpb.NewStringValue(taskStructs[taskName].Fields["description"].GetStringValue())
 		}
 
-		if availableTask.Description != "" {
-			oneOf.Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["instillShortDescription"] = structpb.NewStringValue(availableTask.Description)
+		if task.Description != "" {
+			oneOf.Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["instillShortDescription"] = structpb.NewStringValue(task.Description)
 		}
-		taskJSONStruct := proto.Clone(comp.tasks[taskName]).(*structpb.Struct).Fields["input"].GetStructValue()
+		taskJSONStruct := proto.Clone(taskStructs[taskName]).(*structpb.Struct).Fields["input"].GetStructValue()
 
 		compInputStruct, err := convertDataSpecToCompSpec(taskJSONStruct)
 		if err != nil {
-			return nil, fmt.Errorf("task %s: %s error: %+v", title, availableTask, err)
+			return nil, fmt.Errorf("task %s: %s error: %+v", title, task, err)
 		}
 
 		condition := &structpb.Struct{}
 		err = protojson.Unmarshal([]byte(conditionJSON), condition)
 		if err != nil {
-			panic(err)
+			if err != nil {
+				panic(err)
+			}
 		}
 		oneOf.Fields["properties"].GetStructValue().Fields["condition"] = structpb.NewStructValue(condition)
 		oneOf.Fields["properties"].GetStructValue().Fields["input"] = structpb.NewStructValue(compInputStruct)
-		if comp.tasks[taskName].Fields["metadata"] != nil {
-			metadataStruct := proto.Clone(comp.tasks[taskName]).(*structpb.Struct).Fields["metadata"].GetStructValue()
+		if taskStructs[taskName].Fields["metadata"] != nil {
+			metadataStruct := proto.Clone(taskStructs[taskName]).(*structpb.Struct).Fields["metadata"].GetStructValue()
 			oneOf.Fields["properties"].GetStructValue().Fields["metadata"] = structpb.NewStructValue(metadataStruct)
 		}
 
@@ -422,13 +378,13 @@ func formatDataSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
 	return compSpec, nil
 }
 
-func (comp *Component) generateDataSpecs(title string, availableTasks []string) (map[string]*pipelinePB.DataSpecification, error) {
+func generateDataSpecs(tasks map[string]*structpb.Struct) (map[string]*pipelinePB.DataSpecification, error) {
 
 	specs := map[string]*pipelinePB.DataSpecification{}
-	for _, task := range availableTasks {
+	for k := range tasks {
 		spec := &pipelinePB.DataSpecification{}
 		var err error
-		taskJSONStruct := proto.Clone(comp.tasks[task]).(*structpb.Struct)
+		taskJSONStruct := proto.Clone(tasks[k]).(*structpb.Struct)
 		spec.Input, err = formatDataSpec(taskJSONStruct.Fields["input"].GetStructValue())
 		if err != nil {
 			return nil, err
@@ -437,119 +393,34 @@ func (comp *Component) generateDataSpecs(title string, availableTasks []string) 
 		if err != nil {
 			return nil, err
 		}
-		specs[task] = spec
+		specs[k] = spec
 	}
 
 	return specs, nil
 }
 
-func (comp *Component) loadTasks(tasksJSONBytes []byte) error {
+func loadTasks(availableTasks []string, tasksJSONBytes []byte) ([]*pipelinePB.ComponentTask, map[string]*structpb.Struct, error) {
 
+	taskStructs := map[string]*structpb.Struct{}
 	var err error
 
 	tasksJSONMap := map[string]map[string]interface{}{}
 	err = json.Unmarshal(tasksJSONBytes, &tasksJSONMap)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
-	if comp.tasks == nil {
-		comp.tasks = map[string]*structpb.Struct{}
-	}
-	if comp.taskInputSchemas == nil {
-		comp.taskInputSchemas = map[string]string{}
-	}
-	if comp.taskOutputSchemas == nil {
-		comp.taskOutputSchemas = map[string]string{}
-	}
+	for _, t := range availableTasks {
+		if v, ok := tasksJSONMap[t]; ok {
+			taskStructs[t], err = structpb.NewStruct(v)
+			if err != nil {
+				return nil, nil, err
+			}
 
-	for k, v := range tasksJSONMap {
-		if k != "$defs" {
-			comp.tasks[k], err = structpb.NewStruct(v)
-			if err != nil {
-				return err
-			}
-			var s []byte
-			s, err = protojson.Marshal(comp.tasks[k].Fields["input"].GetStructValue())
-			if err != nil {
-				return err
-			}
-			comp.taskInputSchemas[k] = string(s)
-
-			s, err = protojson.Marshal(comp.tasks[k].Fields["output"].GetStructValue())
-			if err != nil {
-				return err
-			}
-			comp.taskOutputSchemas[k] = string(s)
 		}
 	}
-	return nil
-}
-
-// GetTaskInputSchemas returns the task input schemas
-func (comp *Component) GetTaskInputSchemas() map[string]string {
-	return comp.taskInputSchemas
-}
-
-// GetTaskOutputSchemas returns the task output schemas
-func (comp *Component) GetTaskOutputSchemas() map[string]string {
-	return comp.taskOutputSchemas
-}
-
-func (comp *Component) addDefinition(def interface{}) error {
-
-	type definition interface {
-		GetId() string
-		GetUid() string
-	}
-
-	if comp.definitionMapByUID == nil {
-		comp.definitionMapByUID = map[uuid.UUID]interface{}{}
-	}
-	if comp.definitionMapByID == nil {
-		comp.definitionMapByID = map[string]interface{}{}
-	}
-	uid := uuid.FromStringOrNil(def.(definition).GetUid())
-	id := def.(definition).GetId()
-	comp.definitionUIDs = append(comp.definitionUIDs, uid)
-	comp.definitionMapByUID[uid] = def
-	comp.definitionMapByID[id] = def
-	return nil
-}
-
-func (comp *Component) listDefinitions() []interface{} {
-	definitions := []interface{}{}
-	for _, uid := range comp.definitionUIDs {
-		val, ok := comp.definitionMapByUID[uid]
-		if !ok {
-			// logger
-			comp.Logger.Error("get connector/operator definition error")
-		}
-		definitions = append(definitions, val)
-	}
-
-	return definitions
-}
-
-func (comp *Component) getDefinitionByUID(defUID uuid.UUID) (interface{}, error) {
-	val, ok := comp.definitionMapByUID[defUID]
-	if !ok {
-		return nil, fmt.Errorf("component definition UID doesn't exist")
-	}
-	return val, nil
-}
-
-func (comp *Component) getDefinitionByID(defID string) (interface{}, error) {
-
-	val, ok := comp.definitionMapByID[defID]
-	if !ok {
-		return nil, fmt.Errorf("component definition ID doesn't exist")
-	}
-	return val, nil
-}
-
-func (comp *Component) GetUsageHandler() UsageHandler {
-	return comp.UsageHandler
+	tasks := generateComponentTaskCards(taskStructs)
+	return tasks, taskStructs, nil
 }
 
 // ConvertFromStructpb converts from structpb.Struct to a struct

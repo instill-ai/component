@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"github.com/itchyny/gojq"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -30,36 +29,40 @@ var (
 	tasksJSON []byte
 
 	once sync.Once
-	op   base.IOperator
+	op   *operator
 )
 
 type operator struct {
-	base.Operator
+	base.BaseOperator
 }
 
 type execution struct {
-	base.Execution
+	base.BaseOperatorExecution
+
 	execute func(*structpb.Struct) (*structpb.Struct, error)
 }
 
 // Init returns an implementation of IOperator that processes JSON objects.
-func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IOperator {
+func Init(l *zap.Logger, u base.UsageHandler) *operator {
 	once.Do(func() {
 		op = &operator{
-			Operator: base.Operator{
-				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
+			BaseOperator: base.BaseOperator{
+				Logger:       l,
+				UsageHandler: u,
 			},
 		}
 		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
-			logger.Fatal(err.Error())
+			panic(err)
 		}
 	})
 	return op
 }
 
-func (o *operator) CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
-	e := &execution{}
+func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
+	e := &execution{
+		BaseOperatorExecution: base.BaseOperatorExecution{Operator: o, Task: task},
+	}
 
 	switch task {
 	case taskMarshal:
@@ -74,10 +77,7 @@ func (o *operator) CreateExecution(defUID uuid.UUID, task string, config *struct
 			fmt.Sprintf("%s task is not supported.", task),
 		)
 	}
-
-	e.Execution = base.CreateExecutionHelper(e, o, defUID, task, config, logger)
-
-	return e, nil
+	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
 func (e *execution) marshal(in *structpb.Struct) (*structpb.Struct, error) {

@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	"cloud.google.com/go/bigquery"
-	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/api/option"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -27,35 +26,36 @@ var definitionJSON []byte
 var tasksJSON []byte
 
 var once sync.Once
-var connector base.IConnector
+var con *connector
 
-type Connector struct {
-	base.Connector
+type connector struct {
+	base.BaseConnector
 }
 
-type Execution struct {
-	base.Execution
+type execution struct {
+	base.BaseConnectorExecution
 }
 
-func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IConnector {
+func Init(l *zap.Logger, u base.UsageHandler) *connector {
 	once.Do(func() {
-		connector = &Connector{
-			Connector: base.Connector{
-				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
+		con = &connector{
+			BaseConnector: base.BaseConnector{
+				Logger:       l,
+				UsageHandler: u,
 			},
 		}
-		err := connector.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
-			logger.Fatal(err.Error())
+			panic(err)
 		}
 	})
-	return connector
+	return con
 }
 
-func (c *Connector) CreateExecution(defUID uuid.UUID, task string, connection *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
-	e := &Execution{}
-	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, connection, logger)
-	return e, nil
+func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+	return &base.ExecutionWrapper{Execution: &execution{
+		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, Connection: connection, Task: task},
+	}}, nil
 }
 
 func NewClient(jsonKey, projectID string) (*bigquery.Client, error) {
@@ -75,10 +75,10 @@ func getTableName(config *structpb.Struct) string {
 	return config.GetFields()["table_name"].GetStringValue()
 }
 
-func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 
-	client, err := NewClient(getJSONKey(e.Config), getProjectID(e.Config))
+	client, err := NewClient(getJSONKey(e.Connection), getProjectID(e.Connection))
 	if err != nil || client == nil {
 		return nil, fmt.Errorf("error creating BigQuery client: %v", err)
 	}
@@ -88,8 +88,8 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 		var output *structpb.Struct
 		switch e.Task {
 		case taskInsert, "":
-			datasetID := getDatasetID(e.Config)
-			tableName := getTableName(e.Config)
+			datasetID := getDatasetID(e.Connection)
+			tableName := getTableName(e.Connection)
 			tableRef := client.Dataset(datasetID).Table(tableName)
 			metaData, err := tableRef.Metadata(context.Background())
 			if err != nil {
@@ -99,7 +99,7 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 			if err != nil {
 				return nil, err
 			}
-			err = insertDataToBigQuery(getProjectID(e.Config), datasetID, tableName, valueSaver, client)
+			err = insertDataToBigQuery(getProjectID(e.Connection), datasetID, tableName, valueSaver, client)
 			if err != nil {
 				return nil, err
 			}
@@ -112,14 +112,14 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	return outputs, nil
 }
 
-func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
+func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
 
-	client, err := NewClient(getJSONKey(config), getProjectID(config))
+	client, err := NewClient(getJSONKey(connection), getProjectID(connection))
 	if err != nil || client == nil {
 		return fmt.Errorf("error creating BigQuery client: %v", err)
 	}
 	defer client.Close()
-	if client.Project() == getProjectID(config) {
+	if client.Project() == getProjectID(connection) {
 		return nil
 	}
 	return errors.New("project ID does not match")

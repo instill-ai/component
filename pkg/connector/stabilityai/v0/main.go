@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -27,36 +26,37 @@ var (
 	//go:embed config/stabilityai.json
 	stabilityaiJSON []byte
 	once            sync.Once
-	connector       base.IConnector
+	con             *connector
 )
 
-type Connector struct {
-	base.Connector
+type connector struct {
+	base.BaseConnector
 }
 
-type Execution struct {
-	base.Execution
+type execution struct {
+	base.BaseConnectorExecution
 }
 
-func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IConnector {
+func Init(l *zap.Logger, u base.UsageHandler) *connector {
 	once.Do(func() {
-		connector = &Connector{
-			Connector: base.Connector{
-				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
+		con = &connector{
+			BaseConnector: base.BaseConnector{
+				Logger:       l,
+				UsageHandler: u,
 			},
 		}
-		err := connector.LoadConnectorDefinition(definitionJSON, tasksJSON, map[string][]byte{"stabilityai.json": stabilityaiJSON})
+		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, map[string][]byte{"stabilityai.json": stabilityaiJSON})
 		if err != nil {
-			logger.Fatal(err.Error())
+			panic(err)
 		}
 	})
-	return connector
+	return con
 }
 
-func (c *Connector) CreateExecution(defUID uuid.UUID, task string, connection *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
-	e := &Execution{}
-	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, connection, logger)
-	return e, nil
+func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+	return &base.ExecutionWrapper{Execution: &execution{
+		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, Connection: connection, Task: task},
+	}}, nil
 }
 
 func getAPIKey(config *structpb.Struct) string {
@@ -77,8 +77,8 @@ func getBasePath(config *structpb.Struct) string {
 	return v.GetStringValue()
 }
 
-func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-	client := newClient(e.Config, e.Logger)
+func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+	client := newClient(e.Connection, e.GetLogger())
 	outputs := []*structpb.Struct{}
 
 	for _, input := range inputs {
@@ -138,9 +138,9 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 }
 
 // Test checks the connector state.
-func (c *Connector) Test(_ uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
+func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
 	var engines []Engine
-	req := newClient(config, logger).R().SetResult(&engines)
+	req := newClient(connection, c.Logger).R().SetResult(&engines)
 
 	if _, err := req.Get(listEnginesPath); err != nil {
 		return err

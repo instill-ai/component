@@ -12,7 +12,7 @@ import (
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
 )
 
-func (e *Execution) executeImageClassification(grpcClient modelPB.ModelPublicServiceClient, modelName string, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) executeImageClassification(grpcClient modelPB.ModelPublicServiceClient, modelName string, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	if len(inputs) <= 0 {
 		return nil, fmt.Errorf("invalid input: %v for model: %s", inputs, modelName)
 	}
@@ -47,7 +47,7 @@ func (e *Execution) executeImageClassification(grpcClient modelPB.ModelPublicSer
 		Name:       modelName,
 		TaskInputs: taskInputs,
 	}
-	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.Config))
+	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.Connection))
 	res, err := grpcClient.TriggerUserModel(ctx, &req)
 	if err != nil || res == nil {
 		return nil, err

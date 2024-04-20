@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -193,7 +192,6 @@ func TestConnector_Execute(t *testing.T) {
 
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
@@ -221,18 +219,18 @@ func TestConnector_Execute(t *testing.T) {
 			pineconeServer := httptest.NewServer(h)
 			c.Cleanup(pineconeServer.Close)
 
-			config, _ := structpb.NewStruct(map[string]any{
+			connection, _ := structpb.NewStruct(map[string]any{
 				"api_key": pineconeKey,
 				"url":     pineconeServer.URL,
 			})
 
-			exec, err := connector.CreateExecution(defID, tc.task, config, logger)
+			exec, err := connector.CreateExecution(nil, connection, tc.task)
 			c.Assert(err, qt.IsNil)
 
 			pbIn, err := base.ConvertToStructpb(tc.execIn)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute([]*structpb.Struct{pbIn})
+			got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
 			c.Check(err, qt.IsNil)
 
 			c.Assert(got, qt.HasLen, 1)
@@ -252,15 +250,15 @@ func TestConnector_Execute(t *testing.T) {
 		pineconeServer := httptest.NewServer(h)
 		c.Cleanup(pineconeServer.Close)
 
-		config, _ := structpb.NewStruct(map[string]any{
+		connection, _ := structpb.NewStruct(map[string]any{
 			"url": pineconeServer.URL,
 		})
 
-		exec, err := connector.CreateExecution(defID, taskUpsert, config, logger)
+		exec, err := connector.CreateExecution(nil, connection, taskUpsert)
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execute([]*structpb.Struct{pbIn})
+		_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "Pinecone responded with a 400 status code. Cannot provide both ID and vector at the same time."
@@ -268,15 +266,15 @@ func TestConnector_Execute(t *testing.T) {
 	})
 
 	c.Run("nok - URL misconfiguration", func(c *qt.C) {
-		config, _ := structpb.NewStruct(map[string]any{
+		connection, _ := structpb.NewStruct(map[string]any{
 			"url": "http://no-such.host",
 		})
 
-		exec, err := connector.CreateExecution(defID, taskUpsert, config, logger)
+		exec, err := connector.CreateExecution(nil, connection, taskUpsert)
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execute([]*structpb.Struct{pbIn})
+		_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "Failed to call http://no-such.host/.*. Please check that the connector configuration is correct."

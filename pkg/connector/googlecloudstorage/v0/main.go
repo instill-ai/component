@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	"cloud.google.com/go/storage"
-	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/api/option"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -26,35 +25,36 @@ var definitionJSON []byte
 //go:embed config/tasks.json
 var tasksJSON []byte
 var once sync.Once
-var connector base.IConnector
+var con *connector
 
-type Connector struct {
-	base.Connector
+type connector struct {
+	base.BaseConnector
 }
 
-type Execution struct {
-	base.Execution
+type execution struct {
+	base.BaseConnectorExecution
 }
 
-func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IConnector {
+func Init(l *zap.Logger, u base.UsageHandler) *connector {
 	once.Do(func() {
-		connector = &Connector{
-			Connector: base.Connector{
-				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
+		con = &connector{
+			BaseConnector: base.BaseConnector{
+				Logger:       l,
+				UsageHandler: u,
 			},
 		}
-		err := connector.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
-			logger.Fatal(err.Error())
+			panic(err)
 		}
 	})
-	return connector
+	return con
 }
 
-func (c *Connector) CreateExecution(defUID uuid.UUID, task string, connection *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
-	e := &Execution{}
-	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, connection, logger)
-	return e, nil
+func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+	return &base.ExecutionWrapper{Execution: &execution{
+		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, Connection: connection, Task: task},
+	}}, nil
 }
 
 func NewClient(jsonKey string) (*storage.Client, error) {
@@ -69,10 +69,10 @@ func getJSONKey(config *structpb.Struct) string {
 	return config.GetFields()["json_key"].GetStringValue()
 }
 
-func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 
-	client, err := NewClient(getJSONKey(e.Config))
+	client, err := NewClient(getJSONKey(e.Connection))
 	if err != nil || client == nil {
 		return nil, fmt.Errorf("error creating GCS client: %v", err)
 	}
@@ -83,7 +83,7 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 		case taskUpload, "":
 			objectName := input.GetFields()["object_name"].GetStringValue()
 			data := input.GetFields()["data"].GetStringValue()
-			bucketName := getBucketName(e.Config)
+			bucketName := getBucketName(e.Connection)
 			err = uploadToGCS(client, bucketName, objectName, data)
 			if err != nil {
 				return nil, err
@@ -114,9 +114,9 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	return outputs, nil
 }
 
-func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
+func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
 
-	client, err := NewClient(getJSONKey(config))
+	client, err := NewClient(getJSONKey(connection))
 	if err != nil {
 		return fmt.Errorf("error creating GCS client: %v", err)
 	}

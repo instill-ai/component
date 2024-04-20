@@ -21,16 +21,14 @@ func TestOperator_ListOperatorDefinitions(t *testing.T) {
 	c := qt.New(t)
 	logger := zap.NewNop()
 
-	conn := Operator{
-		Component: Component{Logger: logger},
+	op := BaseOperator{
+		Logger: logger,
 	}
 
-	err := conn.LoadOperatorDefinition(operatorDefJSON, operatorTasksJSON, nil)
+	err := op.LoadOperatorDefinition(operatorDefJSON, operatorTasksJSON, nil)
 	c.Assert(err, qt.IsNil)
 
-	defs := conn.ListOperatorDefinitions(false)
-	c.Assert(defs, qt.HasLen, 1)
-
-	got := defs[0]
+	got, err := op.GetOperatorDefinition(nil)
+	c.Assert(err, qt.IsNil)
 	c.Check(wantOperatorDefinitionJSON, qt.JSONEquals, got)
 }
