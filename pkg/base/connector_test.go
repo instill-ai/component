@@ -23,8 +23,8 @@ func TestConnector_ListConnectorDefinitions(t *testing.T) {
 	c := qt.New(t)
 	logger := zap.NewNop()
 
-	conn := Connector{
-		Component: Component{Logger: logger},
+	conn := BaseConnector{
+		Logger: logger,
 	}
 
 	err := conn.LoadConnectorDefinition(
@@ -33,9 +33,7 @@ func TestConnector_ListConnectorDefinitions(t *testing.T) {
 		map[string][]byte{"additional.json": connectorAdditionalJSON})
 	c.Assert(err, qt.IsNil)
 
-	defs := conn.ListConnectorDefinitions(false)
-	c.Assert(defs, qt.HasLen, 1)
-
-	got := defs[0]
+	got, err := conn.GetConnectorDefinition(nil)
+	c.Assert(err, qt.IsNil)
 	c.Check(wantConnectorDefinitionJSON, qt.JSONEquals, got)
 }

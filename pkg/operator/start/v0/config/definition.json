@@ -10,7 +10,7 @@
   "public": true,
   "spec": {},
   "title": "Start",
-  "tombstone": false,
+  "tombstone": true,
   "uid": "2ac8be70-0f7a-4b61-a33d-098b8acfa6f3",
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/start/v0",

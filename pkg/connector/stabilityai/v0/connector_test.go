@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -48,7 +47,6 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 
 	testcases := []struct {
 		name      string
@@ -91,13 +89,13 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 			srv := httptest.NewServer(h)
 			c.Cleanup(srv.Close)
 
-			config, err := structpb.NewStruct(map[string]any{
+			connection, err := structpb.NewStruct(map[string]any{
 				"base_path": srv.URL,
 				"api_key":   apiKey,
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(defID, textToImageTask, config, logger)
+			exec, err := connector.CreateExecution(nil, connection, textToImageTask)
 			c.Assert(err, qt.IsNil)
 
 			weights := []float64{weight}
@@ -108,7 +106,7 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute([]*structpb.Struct{pbIn})
+			got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Check(errmsg.Message(err), qt.Equals, tc.wantErr)
 				return
@@ -122,11 +120,11 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
-		exec, err := connector.CreateExecution(defID, task, new(structpb.Struct), logger)
+		exec, err := connector.CreateExecution(nil, new(structpb.Struct), task)
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execute([]*structpb.Struct{pbIn})
+		_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -143,7 +141,6 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 
 	testcases := []struct {
 		name      string
@@ -186,13 +183,13 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 			srv := httptest.NewServer(h)
 			c.Cleanup(srv.Close)
 
-			config, err := structpb.NewStruct(map[string]any{
+			connection, err := structpb.NewStruct(map[string]any{
 				"base_path": srv.URL,
 				"api_key":   apiKey,
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(defID, imageToImageTask, config, logger)
+			exec, err := connector.CreateExecution(nil, connection, imageToImageTask)
 			c.Assert(err, qt.IsNil)
 
 			weights := []float64{weight}
@@ -203,7 +200,7 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute([]*structpb.Struct{pbIn})
+			got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Check(errmsg.Message(err), qt.Equals, tc.wantErr)
 				return
@@ -217,11 +214,11 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
-		exec, err := connector.CreateExecution(defID, task, new(structpb.Struct), logger)
+		exec, err := connector.CreateExecution(nil, new(structpb.Struct), task)
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execute([]*structpb.Struct{pbIn})
+		_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -234,7 +231,6 @@ func TestConnector_Test(t *testing.T) {
 
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("nok - error", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -249,12 +245,12 @@ func TestConnector_Test(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		config, err := structpb.NewStruct(map[string]any{
+		connection, err := structpb.NewStruct(map[string]any{
 			"base_path": srv.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(defID, config, logger)
+		err = connector.Test(nil, connection)
 		c.Check(err, qt.IsNotNil)
 
 		wantMsg := "Stability AI responded with a 401 status code. Incorrect API key provided"
@@ -273,12 +269,12 @@ func TestConnector_Test(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		config, err := structpb.NewStruct(map[string]any{
+		connection, err := structpb.NewStruct(map[string]any{
 			"base_path": srv.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(defID, config, logger)
+		err = connector.Test(nil, connection)
 		c.Check(err, qt.IsNotNil)
 	})
 
@@ -294,12 +290,12 @@ func TestConnector_Test(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		config, err := structpb.NewStruct(map[string]any{
+		connection, err := structpb.NewStruct(map[string]any{
 			"base_path": srv.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(defID, config, logger)
+		err = connector.Test(nil, connection)
 		c.Check(err, qt.IsNil)
 	})
 }

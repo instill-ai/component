@@ -7,7 +7,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/proto"
@@ -31,36 +30,37 @@ var (
 	//go:embed config/tasks.json
 	tasksJSON []byte
 	once      sync.Once
-	connector base.IConnector
+	con       *connector
 )
 
-type Connector struct {
-	base.Connector
+type connector struct {
+	base.BaseConnector
 }
 
-type Execution struct {
-	base.Execution
+type execution struct {
+	base.BaseConnectorExecution
 }
 
-func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IConnector {
+func Init(l *zap.Logger, u base.UsageHandler) *connector {
 	once.Do(func() {
-		connector = &Connector{
-			Connector: base.Connector{
-				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
+		con = &connector{
+			BaseConnector: base.BaseConnector{
+				Logger:       l,
+				UsageHandler: u,
 			},
 		}
-		err := connector.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
-			logger.Fatal(err.Error())
+			panic(err)
 		}
 	})
-	return connector
+	return con
 }
 
-func (c *Connector) CreateExecution(defUID uuid.UUID, task string, connection *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
-	e := &Execution{}
-	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, connection, logger)
-	return e, nil
+func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+	return &base.ExecutionWrapper{Execution: &execution{
+		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, Connection: connection, Task: task},
+	}}, nil
 }
 
 func getMode(config *structpb.Struct) string {
@@ -118,25 +118,25 @@ func getRequestMetadata(cfg *structpb.Struct) metadata.MD {
 	)
 }
 
-func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	var err error
 
 	if len(inputs) <= 0 || inputs[0] == nil {
 		return inputs, fmt.Errorf("invalid input")
 	}
 
-	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(e.Config))
+	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(e.Connection))
 	if gRPCCLientConn != nil {
 		defer gRPCCLientConn.Close()
 	}
 
-	mgmtGRPCCLient, mgmtGRPCCLientConn := initMgmtPublicServiceClient(getMgmtServerURL(e.Config))
+	mgmtGRPCCLient, mgmtGRPCCLientConn := initMgmtPublicServiceClient(getMgmtServerURL(e.Connection))
 	if mgmtGRPCCLientConn != nil {
 		defer mgmtGRPCCLientConn.Close()
 	}
 
 	modelNameSplits := strings.Split(inputs[0].GetFields()["model_name"].GetStringValue(), "/")
-	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.Config))
+	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.Connection))
 	nsResp, err := mgmtGRPCCLient.CheckNamespace(ctx, &mgmtPB.CheckNamespaceRequest{
 		Id: modelNameSplits[0],
 	})
@@ -185,12 +185,12 @@ func (e *Execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	return result, err
 }
 
-func (c *Connector) Test(_ uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
-	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(config))
+func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(connection))
 	if gRPCCLientConn != nil {
 		defer gRPCCLientConn.Close()
 	}
-	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(config))
+	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(connection))
 	_, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{})
 	if err != nil {
 		return err
@@ -199,14 +199,14 @@ func (c *Connector) Test(_ uuid.UUID, config *structpb.Struct, logger *zap.Logge
 	return nil
 }
 
-func (c *Connector) GetConnectorDefinitionByID(defID string, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	def, err := c.Connector.GetConnectorDefinitionByID(defID, component)
-	if err != nil {
-		return nil, err
-	}
+// func (c *connector) GetConnectorDefinitionByID(defID string, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+// 	def, err := c.Connector.GetConnectorDefinitionByID(defID, component)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return c.GetConnectorDefinitionByUID(uuid.FromStringOrNil(def.Uid), component)
-}
+// 	return c.GetConnectorDefinitionByUID(uuid.FromStringOrNil(def.Uid), component)
+// }
 
 type ModelsResp struct {
 	Models []struct {
@@ -216,8 +216,8 @@ type ModelsResp struct {
 }
 
 // Generate the model_name enum based on the task
-func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	oriDef, err := c.Connector.GetConnectorDefinitionByUID(defUID, component)
+func (c *connector) GetConnectorDefinition(component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+	oriDef, err := c.BaseConnector.GetConnectorDefinition(nil)
 	if err != nil {
 		return nil, err
 	}

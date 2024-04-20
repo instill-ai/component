@@ -29,7 +29,7 @@ type LLMInput struct {
 	ExtraParams *structpb.Struct
 }
 
-func (e *Execution) convertLLMInput(input *structpb.Struct) *LLMInput {
+func (e *execution) convertLLMInput(input *structpb.Struct) *LLMInput {
 	llmInput := &LLMInput{
 		Prompt: input.GetFields()["prompt"].GetStringValue(),
 	}

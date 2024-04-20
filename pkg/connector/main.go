@@ -1,6 +1,7 @@
-package pkg
+package connector
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/gofrs/uuid"
@@ -26,67 +27,86 @@ import (
 	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
-var once sync.Once
-var connector base.IConnector
+var (
+	once     sync.Once
+	conStore *ConnectorStore
+)
 
-type Connector struct {
-	base.Connector
-	connectorUIDMap map[uuid.UUID]base.IConnector
-	connectorIDMap  map[string]base.IConnector
+type ConnectorStore struct {
+	connectorUIDMap map[uuid.UUID]*connector
+	connectorIDMap  map[string]*connector
 }
 
-type ConnectorOptions struct{}
+type connector struct {
+	con base.IConnector
+}
 
-func Init(logger *zap.Logger, usageHandler base.UsageHandler, options ConnectorOptions) base.IConnector {
+func Init(logger *zap.Logger, usageHandler base.UsageHandler) *ConnectorStore {
 	once.Do(func() {
 
-		connector = &Connector{
-			Connector:       base.Connector{Component: base.Component{Logger: logger, UsageHandler: usageHandler}},
-			connectorUIDMap: map[uuid.UUID]base.IConnector{},
-			connectorIDMap:  map[string]base.IConnector{},
+		conStore = &ConnectorStore{
+			connectorUIDMap: map[uuid.UUID]*connector{},
+			connectorIDMap:  map[string]*connector{},
 		}
 
-		connector.(*Connector).ImportDefinitions(stabilityai.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(instill.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(huggingface.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(openai.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(archetypeai.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(numbers.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(airbyte.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(bigquery.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(googlecloudstorage.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(googlesearch.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(pinecone.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(redis.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(restapi.Init(logger, usageHandler))
-		connector.(*Connector).ImportDefinitions(website.Init(logger, usageHandler))
+		conStore.Import(stabilityai.Init(logger, usageHandler))
+		conStore.Import(instill.Init(logger, usageHandler))
+		conStore.Import(huggingface.Init(logger, usageHandler))
+		conStore.Import(openai.Init(logger, usageHandler))
+		conStore.Import(archetypeai.Init(logger, usageHandler))
+		conStore.Import(numbers.Init(logger, usageHandler))
+		conStore.Import(airbyte.Init(logger, usageHandler))
+		conStore.Import(bigquery.Init(logger, usageHandler))
+		conStore.Import(googlecloudstorage.Init(logger, usageHandler))
+		conStore.Import(googlesearch.Init(logger, usageHandler))
+		conStore.Import(pinecone.Init(logger, usageHandler))
+		conStore.Import(redis.Init(logger, usageHandler))
+		conStore.Import(restapi.Init(logger, usageHandler))
+		conStore.Import(website.Init(logger, usageHandler))
 
 	})
-	return connector
+	return conStore
 }
-func (c *Connector) ImportDefinitions(con base.IConnector) {
-	for _, v := range con.ListConnectorDefinitions(true) {
-		err := c.AddConnectorDefinition(v)
-		if err != nil {
-			panic(err)
-		}
-		c.connectorUIDMap[uuid.FromStringOrNil(v.Uid)] = con
-		c.connectorIDMap[v.Id] = con
+
+// Imports imports the operator definitions
+func (cs *ConnectorStore) Import(con base.IConnector) {
+	c := &connector{con: con}
+	cs.connectorUIDMap[con.GetUID()] = c
+	cs.connectorIDMap[con.GetID()] = c
+}
+
+func (cs *ConnectorStore) CreateExecution(defUID uuid.UUID, sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+	if con, ok := cs.connectorUIDMap[defUID]; ok {
+		return con.con.CreateExecution(sysVars, connection, task)
 	}
+	return nil, fmt.Errorf("connector definition not found")
 }
 
-func (c *Connector) CreateExecution(defUID uuid.UUID, task string, connection *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
-	return c.connectorUIDMap[defUID].CreateExecution(defUID, task, connection, logger)
+func (cs *ConnectorStore) GetConnectorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+	if con, ok := cs.connectorUIDMap[defUID]; ok {
+		return con.con.GetConnectorDefinition(component)
+	}
+	return nil, fmt.Errorf("connector definition not found")
 }
 
-func (c *Connector) Test(defUID uuid.UUID, config *structpb.Struct, logger *zap.Logger) error {
-	return c.connectorUIDMap[defUID].Test(defUID, config, logger)
+// Get the operator definition by definition id
+func (cs *ConnectorStore) GetConnectorDefinitionByID(defID string, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+	if con, ok := cs.connectorIDMap[defID]; ok {
+		return con.con.GetConnectorDefinition(component)
+	}
+	return nil, fmt.Errorf("connector definition not found")
 }
 
-func (c *Connector) GetConnectorDefinitionByID(defID string, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	return c.connectorIDMap[defID].GetConnectorDefinitionByID(defID, component)
-}
-
-func (c *Connector) GetConnectorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	return c.connectorUIDMap[defUID].GetConnectorDefinitionByUID(defUID, component)
+// Get the list of operator definitions under this operator
+func (cs *ConnectorStore) ListConnectorDefinitions(returnTombstone bool) []*pipelinePB.ConnectorDefinition {
+	defs := []*pipelinePB.ConnectorDefinition{}
+	for _, con := range cs.connectorUIDMap {
+		def, err := con.con.GetConnectorDefinition(nil)
+		if err == nil {
+			if !def.Tombstone || returnTombstone {
+				defs = append(defs, def)
+			}
+		}
+	}
+	return defs
 }

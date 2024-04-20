@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -32,7 +31,6 @@ func TestConnector_Execute(t *testing.T) {
 
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 	reqBody := map[string]any{
 		"title": "Be the wheel",
 	}
@@ -40,11 +38,11 @@ func TestConnector_Execute(t *testing.T) {
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 
-		exec, err := connector.CreateExecution(defID, task, cfg(noAuthType), logger)
+		exec, err := connector.CreateExecution(nil, cfg(noAuthType), task)
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execute([]*structpb.Struct{pbIn})
+		_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -74,7 +72,7 @@ func TestConnector_Execute(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		exec, err := connector.CreateExecution(defID, taskPost, cfg(basicAuthType), logger)
+		exec, err := connector.CreateExecution(nil, cfg(basicAuthType), taskPost)
 		c.Assert(err, qt.IsNil)
 
 		pbIn, err := base.ConvertToStructpb(TaskInput{
@@ -83,7 +81,7 @@ func TestConnector_Execute(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execute([]*structpb.Struct{pbIn})
+		got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()
@@ -104,7 +102,7 @@ func TestConnector_Execute(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		exec, err := connector.CreateExecution(defID, taskPut, cfg(apiKeyType), logger)
+		exec, err := connector.CreateExecution(nil, cfg(apiKeyType), taskPut)
 		c.Assert(err, qt.IsNil)
 
 		pbIn, err := base.ConvertToStructpb(TaskInput{
@@ -114,7 +112,7 @@ func TestConnector_Execute(t *testing.T) {
 
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execute([]*structpb.Struct{pbIn})
+		got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()
@@ -136,7 +134,7 @@ func TestConnector_Execute(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		exec, err := connector.CreateExecution(defID, taskGet, cfg(bearerTokenType), logger)
+		exec, err := connector.CreateExecution(nil, cfg(bearerTokenType), taskGet)
 		c.Assert(err, qt.IsNil)
 
 		pbIn, err := base.ConvertToStructpb(TaskInput{
@@ -145,7 +143,7 @@ func TestConnector_Execute(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execute([]*structpb.Struct{pbIn})
+		got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()
@@ -159,7 +157,6 @@ func TestConnector_Test(t *testing.T) {
 
 	logger := zap.NewNop()
 	connector := Init(logger, nil)
-	defID := uuid.Must(uuid.NewV4())
 
 	c.Run("ok - connected (even with non-2xx status", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -173,7 +170,7 @@ func TestConnector_Test(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		err := connector.Test(defID, cfg(noAuthType), logger)
+		err := connector.Test(nil, cfg(noAuthType))
 		c.Check(err, qt.IsNil)
 	})
 }

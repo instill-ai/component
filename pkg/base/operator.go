@@ -4,36 +4,67 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/gofrs/uuid"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 
+	"github.com/gofrs/uuid"
 	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
-// IOperator is the interface that all operators need to implement
 type IOperator interface {
 	IComponent
 
-	// Functions that shared for all operators
-	// Load operator definitions from json files, the additionalJSONBytes is only needed when you reference in-memory json file
 	LoadOperatorDefinition(definitionJSON []byte, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
-	// Add definition
-	AddOperatorDefinition(def *pipelinePB.OperatorDefinition) error
-	// Get the operator definition by definition uid
-	GetOperatorDefinitionByUID(defUID uuid.UUID, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error)
-	// Get the operator definition by definition id
-	GetOperatorDefinitionByID(defID string, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error)
-	// Get the list of operator definitions under this operator
-	ListOperatorDefinitions(returnTombstone bool) []*pipelinePB.OperatorDefinition
+	GetOperatorDefinition(component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error)
+	CreateExecution(sysVars map[string]any, task string) (*ExecutionWrapper, error)
 }
 
-// Operator is the base struct for all operators
-type Operator struct {
-	Component
+type BaseOperator struct {
+	Logger       *zap.Logger
+	UsageHandler UsageHandler
+
+	taskInputSchemas  map[string]string
+	taskOutputSchemas map[string]string
+
+	definition *pipelinePB.OperatorDefinition
+}
+
+type IOperatorExecution interface {
+	IExecution
+
+	GetOperator() IOperator
+}
+
+type BaseOperatorExecution struct {
+	Operator IOperator
+	Task     string
+}
+
+func (o *BaseOperator) GetID() string {
+	return o.definition.Id
+}
+func (o *BaseOperator) GetUID() uuid.UUID {
+	return uuid.FromStringOrNil(o.definition.Uid)
+}
+func (o *BaseOperator) GetLogger() *zap.Logger {
+	return o.Logger
+}
+func (o *BaseOperator) GetUsageHandler() UsageHandler {
+	return o.UsageHandler
+}
+func (o *BaseOperator) GetTaskInputSchemas() map[string]string {
+	return o.taskInputSchemas
+}
+func (o *BaseOperator) GetTaskOutputSchemas() map[string]string {
+	return o.taskOutputSchemas
+}
+
+func (o *BaseOperator) GetOperatorDefinition(component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
+	return o.definition, nil
 }
 
 // LoadOperatorDefinition loads the operator definitions from json files
-func (o *Operator) LoadOperatorDefinition(definitionJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
+func (o *BaseOperator) LoadOperatorDefinition(definitionJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
 	var err error
 	var definitionJSON any
 
@@ -46,92 +77,68 @@ func (o *Operator) LoadOperatorDefinition(definitionJSONBytes []byte, tasksJSONB
 		return nil
 	}
 
-	err = o.Component.loadTasks(renderedTasksJSON)
-	if err != nil {
-		return err
-	}
-
 	availableTasks := []string{}
 	for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
 		availableTasks = append(availableTasks, availableTask.(string))
 	}
 
-	def := &pipelinePB.OperatorDefinition{}
-	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, def)
+	tasks, taskStructs, err := loadTasks(availableTasks, renderedTasksJSON)
 	if err != nil {
 		return err
 	}
 
-	def.Tasks = o.generateComponentTasks(availableTasks)
-
-	def.Spec.ComponentSpecification, err = o.generateComponentSpec(def.Title, def.Tasks)
-	if err != nil {
-		return err
-	}
-
-	def.Spec.DataSpecifications, err = o.generateDataSpecs(def.Title, availableTasks)
-	if err != nil {
-		return err
-	}
-
-	err = o.addDefinition(def)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// AddOperatorDefinition adds a operator definition to the operator
-func (o *Operator) AddOperatorDefinition(def *pipelinePB.OperatorDefinition) error {
-	def.Name = fmt.Sprintf("operator-definitions/%s", def.Id)
-	err := o.addDefinition(def)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// ListOperatorDefinitions returns the list of operator definitions under this operator
-func (o *Operator) ListOperatorDefinitions(returnTombstone bool) []*pipelinePB.OperatorDefinition {
-	compDefs := o.Component.listDefinitions()
-	opDefs := make([]*pipelinePB.OperatorDefinition, 0, len(compDefs))
-	for _, d := range compDefs {
-		od := d.(*pipelinePB.OperatorDefinition)
-		if !od.Tombstone || returnTombstone {
-			opDefs = append(opDefs, od)
+	o.taskInputSchemas = map[string]string{}
+	o.taskOutputSchemas = map[string]string{}
+	for k := range taskStructs {
+		var s []byte
+		s, err = protojson.Marshal(taskStructs[k].Fields["input"].GetStructValue())
+		if err != nil {
+			return err
 		}
+		o.taskInputSchemas[k] = string(s)
+
+		s, err = protojson.Marshal(taskStructs[k].Fields["output"].GetStructValue())
+		if err != nil {
+			return err
+		}
+		o.taskOutputSchemas[k] = string(s)
 	}
 
-	return opDefs
+	o.definition = &pipelinePB.OperatorDefinition{}
+	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, o.definition)
+	if err != nil {
+		return err
+	}
+
+	o.definition.Name = fmt.Sprintf("operator-definitions/%s", o.definition.Id)
+	o.definition.Tasks = tasks
+	o.definition.Spec.ComponentSpecification, err = generateComponentSpec(o.definition.Title, tasks, taskStructs)
+	if err != nil {
+		return err
+	}
+	o.definition.Spec.DataSpecifications, err = generateDataSpecs(taskStructs)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// GetOperatorDefinitionByUID returns the operator definition by definition uid
-func (o *Operator) GetOperatorDefinitionByUID(defUID uuid.UUID, _ /*component*/ *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
-	def, err := o.Component.getDefinitionByUID(defUID)
-	if err != nil {
-		return nil, err
-	}
-
-	od, ok := def.(*pipelinePB.OperatorDefinition)
-	if !ok {
-		return nil, fmt.Errorf("invalid type for operator definition UID")
-	}
-
-	return od, nil
+func (e *BaseOperatorExecution) GetTask() string {
+	return e.Task
 }
-
-// GetOperatorDefinitionByID returns the operator definition by definition id
-func (o *Operator) GetOperatorDefinitionByID(defID string, _ /*component*/ *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
-	def, err := o.Component.getDefinitionByID(defID)
-	if err != nil {
-		return nil, err
-	}
-
-	od, ok := def.(*pipelinePB.OperatorDefinition)
-	if !ok {
-		return nil, fmt.Errorf("invalid type for operator definition ID")
-	}
-
-	return od, nil
+func (e *BaseOperatorExecution) GetOperator() IOperator {
+	return e.Operator
+}
+func (e *BaseOperatorExecution) GetLogger() *zap.Logger {
+	return e.Operator.GetLogger()
+}
+func (e *BaseOperatorExecution) GetUsageHandler() UsageHandler {
+	return e.Operator.GetUsageHandler()
+}
+func (e *BaseOperatorExecution) GetTaskInputSchema() string {
+	return e.Operator.GetTaskInputSchemas()[e.Task]
+}
+func (e *BaseOperatorExecution) GetTaskOutputSchema() string {
+	return e.Operator.GetTaskOutputSchemas()[e.Task]
 }

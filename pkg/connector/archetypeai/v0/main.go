@@ -30,41 +30,43 @@ var (
 	//go:embed config/tasks.json
 	tasksJSON []byte
 
-	once     sync.Once
-	baseConn base.IConnector
+	once sync.Once
+	con  *connector
 )
 
 type connector struct {
-	base.Connector
+	base.BaseConnector
 }
 
 type execution struct {
-	base.Execution
+	base.BaseConnectorExecution
+
 	execute func(*structpb.Struct) (*structpb.Struct, error)
 	client  *httpclient.Client
 }
 
 // Init returns an implementation of IConnector that interacts with Archetype
 // AI.
-func Init(logger *zap.Logger, usageHandler base.UsageHandler) base.IConnector {
+func Init(l *zap.Logger, u base.UsageHandler) *connector {
 	once.Do(func() {
-		baseConn = &connector{
-			Connector: base.Connector{
-				Component: base.Component{Logger: logger, UsageHandler: usageHandler},
+		con = &connector{
+			BaseConnector: base.BaseConnector{
+				Logger:       l,
+				UsageHandler: u,
 			},
 		}
-		if err := baseConn.LoadConnectorDefinition(definitionJSON, tasksJSON, nil); err != nil {
-			logger.Fatal(err.Error())
+		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		if err != nil {
+			panic(err)
 		}
 	})
-
-	return baseConn
+	return con
 }
 
-// CreateExecution returns an IExecution that executes tasks in Archetype AI.
-func (c *connector) CreateExecution(defUID uuid.UUID, task string, connection *structpb.Struct, logger *zap.Logger) (base.IExecution, error) {
+func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
-		client: newClient(connection, logger),
+		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, Connection: connection, Task: task},
+		client:                 newClient(connection, c.Logger),
 	}
 
 	switch task {
@@ -81,9 +83,7 @@ func (c *connector) CreateExecution(defUID uuid.UUID, task string, connection *s
 		)
 	}
 
-	e.Execution = base.CreateExecutionHelper(e, c, defUID, task, connection, logger)
-
-	return e, nil
+	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
 // Execute performs calls the Archetype AI API to execute a task.
@@ -217,7 +217,8 @@ func (e *execution) uploadFile(in *structpb.Struct) (*structpb.Struct, error) {
 }
 
 // Test checks the connectivity of the connector.
-func (c *connector) Test(_ uuid.UUID, _ *structpb.Struct, _ *zap.Logger) error {
+
+func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
 	// TODO Archetype AI API is not public yet. We could test the connection
 	// by calling one of the endpoints used in the available tasks. However,
 	// these are not designed for specifically for this purpose. When we know

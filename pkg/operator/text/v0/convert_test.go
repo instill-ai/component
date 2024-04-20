@@ -76,7 +76,7 @@ func TestConvertToText(t *testing.T) {
 				input,
 			}
 
-			e := &Execution{}
+			e := &execution{}
 			e.Task = "TASK_CONVERT_TO_TEXT"
 
 			if outputs, err := e.Execute(inputs); err != nil {
