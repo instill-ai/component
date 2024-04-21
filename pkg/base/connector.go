@@ -22,6 +22,8 @@ type IConnector interface {
 
 	CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*ExecutionWrapper, error)
 	Test(sysVars map[string]any, connection *structpb.Struct) error
+
+	IsCredentialField(target string) bool
 }
 
 // Connector is the base struct for all connectors
@@ -208,7 +210,7 @@ func (c *BaseConnector) refineResourceSpec(resourceSpec *structpb.Struct) (*stru
 }
 
 // IsCredentialField checks if the target field is credential field
-func (c *BaseConnector) IsCredentialField(defID string, target string) bool {
+func (c *BaseConnector) IsCredentialField(target string) bool {
 	for _, field := range c.credentialFields {
 		if target == field {
 			return true
@@ -218,7 +220,7 @@ func (c *BaseConnector) IsCredentialField(defID string, target string) bool {
 }
 
 // ListCredentialField lists the credential fields by definition id
-func (c *BaseConnector) ListCredentialField(defID string) ([]string, error) {
+func (c *BaseConnector) ListCredentialField() ([]string, error) {
 	return c.credentialFields, nil
 }
 
@@ -227,8 +229,9 @@ func (c *BaseConnector) initCredentialField(def *pipelinePB.ConnectorDefinition)
 		c.credentialFields = []string{}
 	}
 	credentialFields := []string{}
-	credentialFields = c.traverseCredentialField(def.Spec.GetResourceSpecification().GetFields()["properties"], "", credentialFields)
-	if l, ok := def.Spec.GetResourceSpecification().GetFields()["oneOf"]; ok {
+	connection := def.Spec.GetComponentSpecification().GetFields()["properties"].GetStructValue().GetFields()["connection"].GetStructValue()
+	credentialFields = c.traverseCredentialField(connection.GetFields()["properties"], "", credentialFields)
+	if l, ok := connection.GetFields()["oneOf"]; ok {
 		for _, v := range l.GetListValue().Values {
 			credentialFields = c.traverseCredentialField(v.GetStructValue().GetFields()["properties"], "", credentialFields)
 		}
