@@ -68,7 +68,7 @@ func Init(logger *zap.Logger, usageHandler base.UsageHandler) *ConnectorStore {
 	return conStore
 }
 
-// Imports imports the operator definitions
+// Imports imports the connector definitions
 func (cs *ConnectorStore) Import(con base.IConnector) {
 	c := &connector{con: con}
 	cs.connectorUIDMap[con.GetUID()] = c
@@ -89,7 +89,7 @@ func (cs *ConnectorStore) GetConnectorDefinitionByUID(defUID uuid.UUID, sysVars 
 	return nil, fmt.Errorf("connector definition not found")
 }
 
-// Get the operator definition by definition id
+// Get the connector definition by definition id
 func (cs *ConnectorStore) GetConnectorDefinitionByID(defID string, sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	if con, ok := cs.connectorIDMap[defID]; ok {
 		return con.con.GetConnectorDefinition(sysVars, component)
@@ -97,7 +97,7 @@ func (cs *ConnectorStore) GetConnectorDefinitionByID(defID string, sysVars map[s
 	return nil, fmt.Errorf("connector definition not found")
 }
 
-// Get the list of operator definitions under this operator
+// Get the list of connector definitions under this connector
 func (cs *ConnectorStore) ListConnectorDefinitions(returnTombstone bool) []*pipelinePB.ConnectorDefinition {
 	defs := []*pipelinePB.ConnectorDefinition{}
 	for _, con := range cs.connectorUIDMap {
@@ -109,4 +109,11 @@ func (cs *ConnectorStore) ListConnectorDefinitions(returnTombstone bool) []*pipe
 		}
 	}
 	return defs
+}
+
+func (cs *ConnectorStore) IsCredentialField(defUID uuid.UUID, target string) (bool, error) {
+	if con, ok := cs.connectorUIDMap[defUID]; ok {
+		return con.con.IsCredentialField(target), nil
+	}
+	return false, fmt.Errorf("connector definition not found")
 }
