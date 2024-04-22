@@ -15,6 +15,9 @@
       "properties": {
         "dataset_id": {
           "description": "Fill in your BigQuery Dataset ID.",
+          "instillUpstreamTypes": [
+            "value"
+          ],
           "instillAcceptFormats": [
             "string"
           ],
@@ -24,6 +27,9 @@
         },
         "json_key": {
           "description": "Contents of the JSON key file with access to the bucket.",
+          "instillUpstreamTypes": [
+            "reference"
+          ],
           "instillAcceptFormats": [
             "string"
           ],
@@ -35,6 +41,9 @@
         },
         "project_id": {
           "description": "Fill in your BigQuery Project ID.",
+          "instillUpstreamTypes": [
+            "value"
+          ],
           "instillAcceptFormats": [
             "string"
           ],
@@ -44,6 +53,9 @@
         },
         "table_name": {
           "description": "Fill in your BigQuery Table Name.",
+          "instillUpstreamTypes": [
+            "value"
+          ],
           "instillAcceptFormats": [
             "string"
           ],

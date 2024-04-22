@@ -31,6 +31,9 @@
       "properties": {
         "api_key": {
           "description": "Fill your Hugging face API token. To find your token, visit https://huggingface.co/settings/tokens.",
+          "instillUpstreamTypes": [
+            "reference"
+          ],
           "instillAcceptFormats": [
             "string"
           ],
@@ -42,6 +45,9 @@
         "base_url": {
           "default": "https://api-inference.huggingface.co",
           "description": "Hostname for the endpoint. To use Inference API set to https://api-inference.huggingface.co, for Inference Endpoint set to your custom endpoint.",
+          "instillUpstreamTypes": [
+            "value"
+          ],
           "instillAcceptFormats": [
             "string"
           ],
@@ -53,6 +59,9 @@
         "is_custom_endpoint": {
           "default": false,
           "description": "Fill true if you are using a custom Inference Endpoint and not the Inference API.",
+          "instillUpstreamTypes": [
+            "value"
+          ],
           "instillAcceptFormats": [
             "boolean"
           ],

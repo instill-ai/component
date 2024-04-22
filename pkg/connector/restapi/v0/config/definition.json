@@ -49,6 +49,9 @@
                 },
                 "password": {
                   "description": "Password for Basic auth",
+                  "instillUpstreamTypes": [
+                    "reference"
+                  ],
                   "instillAcceptFormats": [
                     "string"
                   ],
@@ -60,6 +63,9 @@
                 },
                 "username": {
                   "description": "Username for Basic Auth",
+                  "instillUpstreamTypes": [
+                    "value"
+                  ],
                   "instillAcceptFormats": [
                     "string"
                   ],
@@ -85,6 +91,9 @@
                     "header",
                     "query"
                   ],
+                  "instillUpstreamTypes": [
+                    "value"
+                  ],
                   "instillAcceptFormats": [
                     "string"
                   ],
@@ -103,6 +112,9 @@
                 "key": {
                   "default": "X-API-Key",
                   "description": "Key name for API key authentication",
+                  "instillUpstreamTypes": [
+                    "value"
+                  ],
                   "instillAcceptFormats": [
                     "string"
                   ],
@@ -113,6 +125,9 @@
                 },
                 "value": {
                   "description": "Key value for API key authentication",
+                  "instillUpstreamTypes": [
+                    "reference"
+                  ],
                   "instillAcceptFormats": [
                     "string"
                   ],
@@ -142,6 +157,9 @@
                 },
                 "token": {
                   "description": "Bearer token",
+                  "instillUpstreamTypes": [
+                    "reference"
+                  ],
                   "instillAcceptFormats": [
                     "string"
                   ],

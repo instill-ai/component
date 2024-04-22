@@ -21,6 +21,9 @@
           "examples": [
             "localhost,127.0.0.1"
           ],
+          "instillUpstreamTypes": [
+            "value"
+          ],
           "instillAcceptFormats": [
             "string"
           ],
@@ -31,6 +34,9 @@
         },
         "password": {
           "description": "Password associated with Redis",
+          "instillUpstreamTypes": [
+            "reference"
+          ],
           "instillAcceptFormats": [
             "string"
           ],
@@ -42,6 +48,9 @@
         "port": {
           "default": 6379,
           "description": "Port of Redis",
+          "instillUpstreamTypes": [
+            "value"
+          ],
           "instillAcceptFormats": [
             "integer"
           ],
@@ -54,6 +63,9 @@
         "ssl": {
           "default": false,
           "description": "Indicates whether SSL encryption protocol will be used to connect to Redis. It is recommended to use SSL connection if possible.",
+          "instillUpstreamTypes": [
+            "value"
+          ],
           "instillAcceptFormats": [
             "boolean"
           ],
@@ -93,6 +105,9 @@
               "properties": {
                 "ca_cert": {
                   "description": "CA certificate to use for SSL connection",
+                  "instillUpstreamTypes": [
+                    "reference"
+                  ],
                   "instillAcceptFormats": [
                     "string"
                   ],
@@ -105,6 +120,9 @@
                 },
                 "client_cert": {
                   "description": "Client certificate to use for SSL connection",
+                  "instillUpstreamTypes": [
+                    "reference"
+                  ],
                   "instillAcceptFormats": [
                     "string"
                   ],
@@ -117,6 +135,9 @@
                 },
                 "client_key": {
                   "description": "Client key to use for SSL connection",
+                  "instillUpstreamTypes": [
+                    "reference"
+                  ],
                   "instillAcceptFormats": [
                     "string"
                   ],
@@ -157,6 +178,9 @@
         },
         "username": {
           "description": "Username associated with Redis",
+          "instillUpstreamTypes": [
+            "value"
+          ],
           "instillAcceptFormats": [
             "string"
           ],

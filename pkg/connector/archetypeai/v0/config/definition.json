@@ -17,6 +17,9 @@
       "properties": {
         "api_key": {
           "description": "Fill your Archetype AI API key",
+          "instillUpstreamTypes": [
+            "reference"
+          ],
           "instillAcceptFormats": [
             "string"
           ],
