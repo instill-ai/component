@@ -19,6 +19,9 @@
       "properties": {
         "api_key": {
           "description": "Fill your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillCredentialField": true,
           "instillUIOrder": 0,
           "title": "API Key",
@@ -26,6 +29,9 @@
         },
         "organization": {
           "description": "Specify which organization is used for the requests. Usage will count against the specified organization's subscription quota.",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIOrder": 1,
           "title": "Organization ID",
           "type": "string"

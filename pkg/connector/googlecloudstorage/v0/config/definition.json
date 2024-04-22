@@ -15,6 +15,9 @@
       "properties": {
         "bucket_name": {
           "description": "Name of the bucket to be used for object storage.",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillCredentialField": false,
           "instillUIOrder": 0,
           "title": "Bucket Name",
@@ -22,6 +25,9 @@
         },
         "json_key": {
           "description": "Contents of the JSON key file with access to the bucket.",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillCredentialField": true,
           "instillUIOrder": 1,
           "instillUIMultiline": true,
