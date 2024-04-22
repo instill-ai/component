@@ -21,6 +21,9 @@
           "examples": [
             "localhost,127.0.0.1"
           ],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillCredentialField": false,
           "instillUIOrder": 0,
           "title": "Host",
@@ -28,6 +31,9 @@
         },
         "password": {
           "description": "Password associated with Redis",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillCredentialField": true,
           "instillUIOrder": 3,
           "title": "Password",
@@ -36,6 +42,9 @@
         "port": {
           "default": 6379,
           "description": "Port of Redis",
+          "instillAcceptFormats": [
+            "integer"
+          ],
           "instillUIOrder": 1,
           "maximum": 65536,
           "minimum": 0,
@@ -45,6 +54,9 @@
         "ssl": {
           "default": false,
           "description": "Indicates whether SSL encryption protocol will be used to connect to Redis. It is recommended to use SSL connection if possible.",
+          "instillAcceptFormats": [
+            "boolean"
+          ],
           "instillUIOrder": 4,
           "title": "SSL Connection",
           "type": "boolean"
@@ -81,6 +93,9 @@
               "properties": {
                 "ca_cert": {
                   "description": "CA certificate to use for SSL connection",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
                   "instillCredentialField": true,
                   "instillUIOrder": 1,
                   "multiline": true,
@@ -90,6 +105,9 @@
                 },
                 "client_cert": {
                   "description": "Client certificate to use for SSL connection",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
                   "instillCredentialField": true,
                   "instillUIOrder": 2,
                   "multiline": true,
@@ -99,6 +117,9 @@
                 },
                 "client_key": {
                   "description": "Client key to use for SSL connection",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
                   "instillCredentialField": true,
                   "instillUIOrder": 3,
                   "multiline": true,
@@ -136,6 +157,9 @@
         },
         "username": {
           "description": "Username associated with Redis",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIOrder": 2,
           "title": "Username",
           "type": "string"

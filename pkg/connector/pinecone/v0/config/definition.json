@@ -16,6 +16,9 @@
       "properties": {
         "api_key": {
           "description": "Fill your Pinecone AI API key. You can create a api key in [Pinecone Console](https://app.pinecone.io/)",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillCredentialField": true,
           "instillUIOrder": 0,
           "title": "API Key",
@@ -23,6 +26,9 @@
         },
         "url": {
           "description": "Fill in your Pinecone base URL. It is in the form [https://index_name-project_id.svc.environment.pinecone.io]",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillCredentialField": false,
           "instillUIOrder": 1,
           "title": "Pinecone Base URL",

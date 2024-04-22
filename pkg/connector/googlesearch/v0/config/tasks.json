@@ -4,6 +4,9 @@
       "properties": {
         "link": {
           "description": "The full URL to which the search result is pointing, e.g., http://www.example.com/foo/bar.",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillFormat": "string",
           "instillUIOrder": 1,
           "title": "Link",
@@ -11,6 +14,9 @@
         },
         "link_html": {
           "description": "The scraped raw html of the link associated with this search result",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillFormat": "string",
           "instillUIMultiline": true,
           "instillUIOrder": 4,
@@ -19,6 +25,9 @@
         },
         "link_text": {
           "description": "The scraped text of the link associated with this search result, in plain text",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillFormat": "string",
           "instillUIMultiline": true,
           "instillUIOrder": 3,
@@ -27,6 +36,9 @@
         },
         "snippet": {
           "description": "The snippet from the page associated with this search result, in plain text",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillFormat": "string",
           "instillUIMultiline": true,
           "instillUIOrder": 2,
@@ -35,6 +47,9 @@
         },
         "title": {
           "description": "The title of a search result, in plain text",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillFormat": "string",
           "instillUIMultiline": true,
           "instillUIOrder": 0,

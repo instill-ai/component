@@ -16,6 +16,9 @@
       "properties": {
         "api_key": {
           "description": "Fill your Stability AI API key. To find your keys, visit - https://platform.stability.ai/account/keys",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillCredentialField": true,
           "instillUIOrder": 0,
           "title": "API Key",

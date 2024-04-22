@@ -17,6 +17,9 @@
       "properties": {
         "api_key": {
           "description": "Fill your Archetype AI API key",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillCredentialField": true,
           "instillUIOrder": 0,
           "title": "API Key",

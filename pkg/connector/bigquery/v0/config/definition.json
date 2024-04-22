@@ -15,12 +15,18 @@
       "properties": {
         "dataset_id": {
           "description": "Fill in your BigQuery Dataset ID.",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIOrder": 2,
           "title": "BigQuery Dataset ID",
           "type": "string"
         },
         "json_key": {
           "description": "Contents of the JSON key file with access to the bucket.",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillCredentialField": true,
           "instillUIOrder": 0,
           "instillUIMultiline": true,
@@ -29,12 +35,18 @@
         },
         "project_id": {
           "description": "Fill in your BigQuery Project ID.",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIOrder": 1,
           "title": "BigQuery Project ID",
           "type": "string"
         },
         "table_name": {
           "description": "Fill in your BigQuery Table Name.",
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIOrder": 3,
           "title": "BigQuery Table Name",
           "type": "string"
