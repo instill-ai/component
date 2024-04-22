@@ -19,6 +19,9 @@
       "properties": {
         "api_key": {
           "description": "Fill your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
+          "instillUpstreamTypes": [
+            "reference"
+          ],
           "instillAcceptFormats": [
             "string"
           ],
@@ -29,6 +32,9 @@
         },
         "organization": {
           "description": "Specify which organization is used for the requests. Usage will count against the specified organization's subscription quota.",
+          "instillUpstreamTypes": [
+            "value"
+          ],
           "instillAcceptFormats": [
             "string"
           ],
