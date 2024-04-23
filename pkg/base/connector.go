@@ -88,7 +88,7 @@ func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, task
 	if err != nil {
 		return err
 	}
-	renderedTasksJSON, nil := renderTaskJSON(tasksJSONBytes, additionalJSONBytes)
+	renderedTasksJSON, nil := RenderJSON(tasksJSONBytes, additionalJSONBytes)
 	if err != nil {
 		return nil
 	}
@@ -133,12 +133,20 @@ func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, task
 		return err
 	}
 
-	connection, err := c.refineResourceSpec(c.definition.Spec.ResourceSpecification)
+	b, err := protojson.Marshal(c.definition.Spec)
 	if err != nil {
 		return err
 	}
-	// deprecated, will be removed soon
-	c.definition.Spec.ResourceSpecification = &structpb.Struct{}
+	connectionSpecification := &structpb.Struct{}
+	err = protojson.Unmarshal(b, connectionSpecification)
+	if err != nil {
+		return err
+	}
+
+	connection, err := c.refineResourceSpec(connectionSpecification)
+	if err != nil {
+		return err
+	}
 
 	connectionPropStruct := &structpb.Struct{Fields: map[string]*structpb.Value{}}
 	connectionPropStruct.Fields["connection"] = structpb.NewStructValue(connection)

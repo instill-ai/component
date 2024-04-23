@@ -452,7 +452,7 @@ func ConvertToStructpb(from interface{}) (*structpb.Struct, error) {
 	return to, nil
 }
 
-func renderTaskJSON(tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) ([]byte, error) {
+func RenderJSON(tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) ([]byte, error) {
 	var err error
 	mp := provider.NewMap()
 	for k, v := range additionalJSONBytes {
