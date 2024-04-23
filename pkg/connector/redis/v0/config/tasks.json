@@ -58,7 +58,9 @@
       "instillUIOrder": 0,
       "properties": {
         "messages": {
-          "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/chat_messages"
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/chat_messages",
+          "description": "Messages",
+          "instillUIOrder": 0
         }
       },
       "required": [

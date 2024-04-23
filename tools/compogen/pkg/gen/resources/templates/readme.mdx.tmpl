@@ -17,42 +17,15 @@ It can carry out the following tasks:
 ## Configuration
 
 The component configuration is defined and maintained [here]({{ .SourceURL }}/config/definition.json).
-{{ if .ComponentType.HasResourceConfig}}{{ if .ResourceConfig.Prerequisites}}
-<InfoBlock type="info" title="Prerequisites">{{ .ResourceConfig.Prerequisites }}</InfoBlock>
-{{ end }}{{ if .ResourceConfig.Properties }}
+{{ if .ComponentType.HasConnectionConfig}}
+## Connection
+{{ if .ConnectionConfig.Prerequisites}}
+<InfoBlock type="info" title="Prerequisites">{{ .ConnectionConfig.Prerequisites }}</InfoBlock>
+{{ end }}{{ if .ConnectionConfig.Properties }}
 | Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |{{ range .ResourceConfig.Properties }}
+| :--- | :--- | :--- | :--- |{{ range .ConnectionConfig.Properties }}
 | {{ .Title }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
 {{ end }}
-{{ .Title }} {{ .ComponentType }} resources can be created in two ways:
-
-### No-code Setup
-
-1. Go to the **Connectors** page and click **+ Create Connector**.
-1. Select **{{ .Title }}**.
-1. Fill in a unique ID for the resource. Optionally, give a short description in the **Description** field.
-{{ if .ResourceConfig.Properties }}1. Fill in the required fields described in [Resource Configuration](#resource-configuration).
-{{ end }}
-### Low-code Setup
-
-<CH.Code>
-{{ range hosts }}
-```shellscript cURL({{ .Name }})
-curl -X POST {{ .URL }}/vdp/v1beta/users/<user-id>/{{ $.ComponentType }}s \
---header 'Authorization: Bearer <{{ .Name }}-API-Token>' \
---data '{
-  "id": "my-{{ $.ID }}",
-  "{{ $.ComponentType }}_definition_name": "{{ $.ComponentType }}-definitions/{{ $.ID }}",
-  "description": "Optional description",
-  "configuration": {{"{"}}{{ range $i, $p := $.ResourceConfig.Properties }}{{ if ne $i 0 }},{{ end }}
-    "{{ $p.ID }}": <{{ asAnchor $p.ID }}>{{ end }}
-  }
-}'
-```
-{{ end }}
-</CH.Code>
-
-For other component operations, please refer to the [API reference](https://openapi.instill.tech/reference/pipelinepublicservice).
 {{ end }}
 ## Supported Tasks{{ range $i, $task := .Tasks}}
 

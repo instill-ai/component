@@ -110,6 +110,7 @@
       "properties": {
         "text": {
           "$ref": "openai.json#/components/schemas/CreateTranscriptionResponse/properties/text",
+          "description": "Generated text",
           "instillFormat": "string",
           "instillUIOrder": 0,
           "title": "Text"
@@ -169,6 +170,7 @@
       "properties": {
         "embedding": {
           "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/embedding",
+          "description": "Embedding of the input text",
           "instillUIOrder": 0,
           "title": "Embedding"
         }
@@ -392,6 +394,7 @@
             "title": "Text",
             "type": "string"
           },
+          "description": "Texts",
           "title": "Texts",
           "type": "array"
         }

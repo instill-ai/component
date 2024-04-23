@@ -21,7 +21,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
   "prerequisites": "An account at [dummy.io](https://dummy.io) is required.",
   "type": "CONNECTOR_TYPE_DATA",
   "spec": {
-    "resource_specification": {
+    "connection_specification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": true,
       "properties": {

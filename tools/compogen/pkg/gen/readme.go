@@ -1,11 +1,13 @@
 package gen
 
 import (
+	"cmp"
 	_ "embed"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"text/template"
 	"unicode"
 	"unicode/utf8"
@@ -50,8 +52,13 @@ func (g *READMEGenerator) parseDefinition(configDir string) (d definition, err e
 		return d, err
 	}
 
+	renderedDefinitionJSON, err := component.RenderJSON(definitionJSON, nil)
+	if err != nil {
+		return d, err
+	}
+
 	def := definition{}
-	if err := json.Unmarshal(definitionJSON, &def); err != nil {
+	if err := json.Unmarshal(renderedDefinitionJSON, &def); err != nil {
 		return d, err
 	}
 
@@ -72,9 +79,26 @@ func (g *READMEGenerator) parseTasks(configDir string) (map[string]task, error) 
 	if err != nil {
 		return nil, err
 	}
+	files, err := os.ReadDir(configDir)
+	if err != nil {
+		return nil, err
+	}
+	additionalJSONs := map[string][]byte{}
+	for _, file := range files {
+		additionalJSON, err := os.ReadFile(filepath.Join(configDir, file.Name()))
+		if err != nil {
+			return nil, err
+		}
+		additionalJSONs[file.Name()] = additionalJSON
 
+	}
+
+	renderedTasksJSON, err := component.RenderJSON(tasksJSON, additionalJSONs)
+	if err != nil {
+		return nil, err
+	}
 	tasks := map[string]task{}
-	if err := json.Unmarshal(tasksJSON, &tasks); err != nil {
+	if err := json.Unmarshal(renderedTasksJSON, &tasks); err != nil {
 		return nil, err
 	}
 
@@ -147,7 +171,7 @@ type resourceProperty struct {
 	Required bool
 }
 
-type resourceConfig struct {
+type connectionConfig struct {
 	Prerequisites string
 	Properties    []resourceProperty
 }
@@ -161,7 +185,7 @@ type readmeParams struct {
 	ComponentSubtype ComponentSubtype
 	ReleaseStage     releaseStage
 	SourceURL        string
-	ResourceConfig   resourceConfig
+	ConnectionConfig connectionConfig
 
 	Tasks []readmeTask
 }
@@ -188,9 +212,9 @@ func (p readmeParams) parseDefinition(d definition, tasks map[string]task) (read
 	p.ReleaseStage = d.ReleaseStage
 	p.SourceURL = d.SourceURL
 
-	p.ResourceConfig = resourceConfig{Prerequisites: d.Prerequisites}
-	if d.Spec.ResourceSpecification != nil {
-		p.ResourceConfig.Properties = parseResourceProperties(d.Spec.ResourceSpecification)
+	p.ConnectionConfig = connectionConfig{Prerequisites: d.Prerequisites}
+	if d.Spec.ConnectionSpecification != nil {
+		p.ConnectionConfig.Properties = parseResourceProperties(d.Spec.ConnectionSpecification)
 	}
 
 	return p, nil
@@ -255,11 +279,16 @@ func parseResourceProperties(o *objectSchema) []resourceProperty {
 	}
 
 	props := make([]resourceProperty, len(o.Properties))
-	for _, prop := range propMap {
-		// We can safely access the order pointer because it has been
-		// previously validated by the caller.
-		props[*prop.Order] = prop
+	idx := 0
+	for k := range propMap {
+		props[idx] = propMap[k]
+		idx += 1
 	}
+
+	// Note: The order might not be consecutive numbers.
+	slices.SortFunc(props, func(i, j resourceProperty) int {
+		return cmp.Compare(*i.Order, *j.Order)
+	})
 
 	return props
 }

@@ -85,7 +85,7 @@ func TestDefinition_Validate(t *testing.T) {
 			name: "nok - resource specification must be valid if present",
 			modifier: func(d *definition) {
 				d.Spec = spec{
-					ResourceSpecification: &objectSchema{},
+					ConnectionSpecification: &objectSchema{},
 				}
 			},
 			wantErr: "Properties field doesn't reach the minimum value / number of elements",

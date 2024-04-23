@@ -14,6 +14,6 @@ type property struct {
 }
 
 type objectSchema struct {
-	Properties map[string]property `json:"properties" validate:"gt=0,dive"`
+	Properties map[string]property `json:"properties" validate:"dive"`
 	Required   []string            `json:"required"`
 }
