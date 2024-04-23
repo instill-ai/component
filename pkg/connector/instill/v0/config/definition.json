@@ -19,7 +19,7 @@
   "id": "instill-model",
   "public": true,
   "spec": {
-    "resource_specification": {
+    "connection_specification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": true,
       "oneOf": [

@@ -73,7 +73,7 @@ func (o *BaseOperator) LoadOperatorDefinition(definitionJSONBytes []byte, tasksJ
 	if err != nil {
 		return err
 	}
-	renderedTasksJSON, nil := renderTaskJSON(tasksJSONBytes, additionalJSONBytes)
+	renderedTasksJSON, nil := RenderJSON(tasksJSONBytes, additionalJSONBytes)
 	if err != nil {
 		return nil
 	}
