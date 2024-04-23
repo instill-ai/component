@@ -311,6 +311,7 @@
               "instillAcceptFormats": [
                 "string"
               ],
+              "title": "Type",
               "example": "text",
               "instillShortDescription": "Setting to `json_object` enables JSON mode. ",
               "instillUIOrder": 0,
