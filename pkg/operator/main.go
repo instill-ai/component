@@ -25,6 +25,7 @@ var (
 
 // Operator is the derived operator
 type OperatorStore struct {
+	operatorUIDs   []uuid.UUID
 	operatorUIDMap map[uuid.UUID]*operator
 	operatorIDMap  map[string]*operator
 }
@@ -56,6 +57,7 @@ func (os *OperatorStore) Import(op base.IOperator) {
 	o := &operator{op: op}
 	os.operatorUIDMap[op.GetUID()] = o
 	os.operatorIDMap[op.GetID()] = o
+	os.operatorUIDs = append(os.operatorUIDs, op.GetUID())
 }
 
 func (os *OperatorStore) CreateExecution(defUID uuid.UUID, sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
@@ -83,7 +85,8 @@ func (os *OperatorStore) GetOperatorDefinitionByID(defID string, sysVars map[str
 // Get the list of operator definitions under this operator
 func (os *OperatorStore) ListOperatorDefinitions(returnTombstone bool) []*pipelinePB.OperatorDefinition {
 	defs := []*pipelinePB.OperatorDefinition{}
-	for _, op := range os.operatorUIDMap {
+	for _, uid := range os.operatorUIDs {
+		op := os.operatorUIDMap[uid]
 		def, err := op.op.GetOperatorDefinition(nil, nil)
 		if err == nil {
 			if !def.Tombstone || returnTombstone {
