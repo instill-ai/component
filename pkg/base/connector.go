@@ -133,17 +133,12 @@ func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, task
 		return err
 	}
 
-	b, err := protojson.Marshal(c.definition.Spec)
+	raw := &structpb.Struct{}
+	err = protojson.Unmarshal(definitionJSONBytes, raw)
 	if err != nil {
 		return err
 	}
-	connectionSpecification := &structpb.Struct{}
-	err = protojson.Unmarshal(b, connectionSpecification)
-	if err != nil {
-		return err
-	}
-
-	connection, err := c.refineResourceSpec(connectionSpecification)
+	connection, err := c.refineResourceSpec(raw.Fields["spec"].GetStructValue().Fields["connection_specification"].GetStructValue())
 	if err != nil {
 		return err
 	}
