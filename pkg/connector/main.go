@@ -33,6 +33,7 @@ var (
 )
 
 type ConnectorStore struct {
+	connectorUIDs   []uuid.UUID
 	connectorUIDMap map[uuid.UUID]*connector
 	connectorIDMap  map[string]*connector
 }
@@ -73,6 +74,7 @@ func (cs *ConnectorStore) Import(con base.IConnector) {
 	c := &connector{con: con}
 	cs.connectorUIDMap[con.GetUID()] = c
 	cs.connectorIDMap[con.GetID()] = c
+	cs.connectorUIDs = append(cs.connectorUIDs, con.GetUID())
 }
 
 func (cs *ConnectorStore) CreateExecution(defUID uuid.UUID, sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
@@ -100,7 +102,8 @@ func (cs *ConnectorStore) GetConnectorDefinitionByID(defID string, sysVars map[s
 // Get the list of connector definitions under this connector
 func (cs *ConnectorStore) ListConnectorDefinitions(returnTombstone bool) []*pipelinePB.ConnectorDefinition {
 	defs := []*pipelinePB.ConnectorDefinition{}
-	for _, con := range cs.connectorUIDMap {
+	for _, uid := range cs.connectorUIDs {
+		con := cs.connectorUIDMap[uid]
 		def, err := con.con.GetConnectorDefinition(nil, nil)
 		if err == nil {
 			if !def.Tombstone || returnTombstone {
