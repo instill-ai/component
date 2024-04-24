@@ -33,6 +33,9 @@ var (
 
 type connector struct {
 	base.BaseConnector
+
+	// Workaround solution
+	cacheDefinition *pipelinePB.ConnectorDefinition
 }
 
 type execution struct {
@@ -84,6 +87,15 @@ func getMgmtServerURL(vars map[string]any) string {
 	}
 	return ""
 }
+
+// This is a workaround solution for caching the definition in memory if the model list is static.
+func useStaticModelList(vars map[string]any) bool {
+	if v, ok := vars["__STATIC_MODEL_LIST"]; ok {
+		return v.(bool)
+	}
+	return false
+}
+
 func getRequestMetadata(vars map[string]any) metadata.MD {
 	return metadata.Pairs(
 		"Authorization", getHeaderAuthorization(vars),
@@ -190,6 +202,10 @@ type ModelsResp struct {
 // This implementation is a temporary solution due to the incomplete feature set of Instill Model.
 // We'll re-implement this after Instill Model is stable.
 func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+	if useStaticModelList(sysVars) && c.cacheDefinition != nil {
+		return c.cacheDefinition, nil
+	}
+
 	oriDef, err := c.BaseConnector.GetConnectorDefinition(nil, nil)
 	if err != nil {
 		return nil, err
@@ -242,6 +258,9 @@ func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *pi
 			addModelEnum(sch.GetStructValue().Fields, modelNameMap[task])
 		}
 
+	}
+	if useStaticModelList(sysVars) {
+		c.cacheDefinition = def
 	}
 	return def, nil
 }
