@@ -25,8 +25,7 @@ The component configuration is defined and maintained [here]({{ .SourceURL }}/co
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range .ConnectionConfig.Properties }}
 | {{ .Title }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
-{{ end }}
-{{ end }}
+{{ end }}{{ end }}
 ## Supported Tasks{{ range $i, $task := .Tasks}}
 
 ### {{ $task.Title }}
