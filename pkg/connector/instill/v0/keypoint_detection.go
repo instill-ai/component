@@ -41,7 +41,7 @@ func (e *execution) executeKeyPointDetection(grpcClient modelPB.ModelPublicServi
 		Name:       modelName,
 		TaskInputs: taskInputs,
 	}
-	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.SystemVariables, e.Connection))
+	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.SystemVariables))
 	res, err := grpcClient.TriggerUserModel(ctx, &req)
 	if err != nil || res == nil {
 		return nil, err

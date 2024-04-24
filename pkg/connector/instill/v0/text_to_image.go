@@ -56,7 +56,7 @@ func (e *execution) executeTextToImage(grpcClient modelPB.ModelPublicServiceClie
 			Name:       modelName,
 			TaskInputs: []*modelPB.TaskInput{{Input: taskInput}},
 		}
-		ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.SystemVariables, e.Connection))
+		ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.SystemVariables))
 		res, err := grpcClient.TriggerUserModel(ctx, &req)
 		if err != nil || res == nil {
 			return nil, err

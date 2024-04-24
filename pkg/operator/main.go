@@ -83,11 +83,11 @@ func (os *OperatorStore) GetOperatorDefinitionByID(defID string, sysVars map[str
 }
 
 // Get the list of operator definitions under this operator
-func (os *OperatorStore) ListOperatorDefinitions(returnTombstone bool) []*pipelinePB.OperatorDefinition {
+func (os *OperatorStore) ListOperatorDefinitions(sysVars map[string]any, returnTombstone bool) []*pipelinePB.OperatorDefinition {
 	defs := []*pipelinePB.OperatorDefinition{}
 	for _, uid := range os.operatorUIDs {
 		op := os.operatorUIDMap[uid]
-		def, err := op.op.GetOperatorDefinition(nil, nil)
+		def, err := op.op.GetOperatorDefinition(sysVars, nil)
 		if err == nil {
 			if !def.Tombstone || returnTombstone {
 				defs = append(defs, def)

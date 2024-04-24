@@ -100,11 +100,11 @@ func (cs *ConnectorStore) GetConnectorDefinitionByID(defID string, sysVars map[s
 }
 
 // Get the list of connector definitions under this connector
-func (cs *ConnectorStore) ListConnectorDefinitions(returnTombstone bool) []*pipelinePB.ConnectorDefinition {
+func (cs *ConnectorStore) ListConnectorDefinitions(sysVars map[string]any, returnTombstone bool) []*pipelinePB.ConnectorDefinition {
 	defs := []*pipelinePB.ConnectorDefinition{}
 	for _, uid := range cs.connectorUIDs {
 		con := cs.connectorUIDMap[uid]
-		def, err := con.con.GetConnectorDefinition(nil, nil)
+		def, err := con.con.GetConnectorDefinition(sysVars, nil)
 		if err == nil {
 			if !def.Tombstone || returnTombstone {
 				defs = append(defs, def)

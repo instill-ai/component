@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc/metadata"
@@ -19,10 +20,6 @@ import (
 	mgmtPB "github.com/instill-ai/protogen-go/core/mgmt/v1beta"
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
 	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
-)
-
-const (
-	internalMode = "Internal Mode"
 )
 
 var (
@@ -64,57 +61,33 @@ func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb
 	}}, nil
 }
 
-func getMode(config *structpb.Struct) string {
-	return config.GetFields()["mode"].GetStringValue()
-}
-
-func getAPIKey(vars map[string]any, config *structpb.Struct) string {
-	if getMode(config) == internalMode {
-		return vars["__PIPELINE_HEADER_AUTHORIZATION"].(string)
+func getHeaderAuthorization(vars map[string]any) string {
+	if v, ok := vars["__PIPELINE_HEADER_AUTHORIZATION"]; ok {
+		return v.(string)
 	}
-	return fmt.Sprintf("Bearer %s", config.GetFields()["api_token"].GetStringValue())
+	return ""
 }
-func getInstillUserUID(vars map[string]any, config *structpb.Struct) string {
+func getInstillUserUID(vars map[string]any) string {
 	return vars["__PIPELINE_USER_UID"].(string)
 }
 
-func getModelServerURL(vars map[string]any, config *structpb.Struct) string {
-	if getMode(config) == internalMode {
-		return vars["__MODEL_BACKEND"].(string)
+func getModelServerURL(vars map[string]any) string {
+	if v, ok := vars["__MODEL_BACKEND"]; ok {
+		return v.(string)
 	}
-	serverURL := config.GetFields()["server_url"].GetStringValue()
-	if strings.HasPrefix(serverURL, "https://") {
-		if len(strings.Split(serverURL, ":")) == 2 {
-			serverURL = serverURL + ":443"
-		}
-	} else if strings.HasPrefix(serverURL, "http://") {
-		if len(strings.Split(serverURL, ":")) == 2 {
-			serverURL = serverURL + ":80"
-		}
-	}
-	return serverURL
+	return ""
 }
 
-func getMgmtServerURL(vars map[string]any, config *structpb.Struct) string {
-	if getMode(config) == internalMode {
-		return vars["__MGMT_BACKEND"].(string)
+func getMgmtServerURL(vars map[string]any) string {
+	if v, ok := vars["__MGMT_BACKEND"]; ok {
+		return v.(string)
 	}
-	serverURL := config.GetFields()["server_url"].GetStringValue()
-	if strings.HasPrefix(serverURL, "https://") {
-		if len(strings.Split(serverURL, ":")) == 2 {
-			serverURL = serverURL + ":443"
-		}
-	} else if strings.HasPrefix(serverURL, "http://") {
-		if len(strings.Split(serverURL, ":")) == 2 {
-			serverURL = serverURL + ":80"
-		}
-	}
-	return serverURL
+	return ""
 }
-func getRequestMetadata(vars map[string]any, cfg *structpb.Struct) metadata.MD {
+func getRequestMetadata(vars map[string]any) metadata.MD {
 	return metadata.Pairs(
-		"Authorization", getAPIKey(vars, cfg),
-		"Instill-User-Uid", getInstillUserUID(vars, cfg),
+		"Authorization", getHeaderAuthorization(vars),
+		"Instill-User-Uid", getInstillUserUID(vars),
 		"Instill-Auth-Type", "user",
 	)
 }
@@ -126,18 +99,21 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 		return inputs, fmt.Errorf("invalid input")
 	}
 
-	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(e.SystemVariables, e.Connection))
+	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(e.SystemVariables))
 	if gRPCCLientConn != nil {
 		defer gRPCCLientConn.Close()
 	}
 
-	mgmtGRPCCLient, mgmtGRPCCLientConn := initMgmtPublicServiceClient(getMgmtServerURL(e.SystemVariables, e.Connection))
+	mgmtGRPCCLient, mgmtGRPCCLientConn := initMgmtPublicServiceClient(getMgmtServerURL(e.SystemVariables))
 	if mgmtGRPCCLientConn != nil {
 		defer mgmtGRPCCLientConn.Close()
 	}
 
 	modelNameSplits := strings.Split(inputs[0].GetFields()["model_name"].GetStringValue(), "/")
-	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.SystemVariables, e.Connection))
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
+	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
 	nsResp, err := mgmtGRPCCLient.CheckNamespace(ctx, &mgmtPB.CheckNamespaceRequest{
 		Id: modelNameSplits[0],
 	})
@@ -187,11 +163,14 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 }
 
 func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
-	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(sysVars, connection))
+	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(sysVars))
 	if gRPCCLientConn != nil {
 		defer gRPCCLientConn.Close()
 	}
-	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(sysVars, connection))
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(sysVars))
 	_, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{})
 	if err != nil {
 		return err
@@ -200,15 +179,6 @@ func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) er
 	return nil
 }
 
-// func (c *connector) GetConnectorDefinitionByID(defID string, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-// 	def, err := c.Connector.GetConnectorDefinitionByID(defID, component)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return c.GetConnectorDefinitionByUID(uuid.FromStringOrNil(def.Uid), component)
-// }
-
 type ModelsResp struct {
 	Models []struct {
 		Name string `json:"name"`
@@ -216,7 +186,9 @@ type ModelsResp struct {
 	} `json:"models"`
 }
 
-// Generate the model_name enum based on the task
+// Generate the `model_name` enum based on the task.
+// This implementation is a temporary solution due to the incomplete feature set of Instill Model.
+// We'll re-implement this after Instill Model is stable.
 func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	oriDef, err := c.BaseConnector.GetConnectorDefinition(nil, nil)
 	if err != nil {
@@ -224,50 +196,52 @@ func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *pi
 	}
 	def := proto.Clone(oriDef).(*pipelinePB.ConnectorDefinition)
 
-	if component != nil && component.Connection != nil {
-		if getModelServerURL(sysVars, component.Connection) == "" {
+	if getModelServerURL(sysVars) == "" {
+		return def, nil
+	}
+
+	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(sysVars))
+	if gRPCCLientConn != nil {
+		defer gRPCCLientConn.Close()
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(sysVars))
+
+	pageToken := ""
+	models := []*modelPB.Model{}
+	for {
+		resp, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{PageToken: &pageToken})
+		if err != nil {
+
 			return def, nil
 		}
-
-		gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(sysVars, component.Connection))
-		if gRPCCLientConn != nil {
-			defer gRPCCLientConn.Close()
+		models = append(models, resp.Models...)
+		pageToken = resp.NextPageToken
+		if pageToken == "" {
+			break
 		}
-		ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(sysVars, component.Connection))
-		// We should query by pages and accumulate them in the future
+	}
 
-		pageToken := ""
-		models := []*modelPB.Model{}
-		for {
-			resp, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{PageToken: &pageToken})
-			if err != nil {
-				return def, nil
-			}
-			models = append(models, resp.Models...)
-			pageToken = resp.NextPageToken
-			if pageToken == "" {
-				break
-			}
+	modelNameMap := map[string]*structpb.ListValue{}
+
+	modelName := &structpb.ListValue{}
+	for _, model := range models {
+		if _, ok := modelNameMap[model.Task.String()]; !ok {
+			modelNameMap[model.Task.String()] = &structpb.ListValue{}
+		}
+		namePaths := strings.Split(model.Name, "/")
+		modelName.Values = append(modelName.Values, structpb.NewStringValue(fmt.Sprintf("%s/%s", namePaths[1], namePaths[3])))
+		modelNameMap[model.Task.String()].Values = append(modelNameMap[model.Task.String()].Values, structpb.NewStringValue(fmt.Sprintf("%s/%s", namePaths[1], namePaths[3])))
+	}
+	for _, sch := range def.Spec.ComponentSpecification.Fields["oneOf"].GetListValue().Values {
+		task := sch.GetStructValue().Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["const"].GetStringValue()
+		if _, ok := modelNameMap[task]; ok {
+			addModelEnum(sch.GetStructValue().Fields, modelNameMap[task])
 		}
 
-		modelNameMap := map[string]*structpb.ListValue{}
-
-		modelName := &structpb.ListValue{}
-		for _, model := range models {
-			if _, ok := modelNameMap[model.Task.String()]; !ok {
-				modelNameMap[model.Task.String()] = &structpb.ListValue{}
-			}
-			namePaths := strings.Split(model.Name, "/")
-			modelName.Values = append(modelName.Values, structpb.NewStringValue(fmt.Sprintf("%s/%s", namePaths[1], namePaths[3])))
-			modelNameMap[model.Task.String()].Values = append(modelNameMap[model.Task.String()].Values, structpb.NewStringValue(fmt.Sprintf("%s/%s", namePaths[1], namePaths[3])))
-		}
-		for _, sch := range def.Spec.ComponentSpecification.Fields["oneOf"].GetListValue().Values {
-			task := sch.GetStructValue().Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["const"].GetStringValue()
-			if _, ok := modelNameMap[task]; ok {
-				addModelEnum(sch.GetStructValue().Fields, modelNameMap[task])
-			}
-
-		}
 	}
 	return def, nil
 }
