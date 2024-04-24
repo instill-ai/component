@@ -50,7 +50,7 @@ Certain optional fields modify the document behaviour:
   an info block next to the resource configuration details.
   - Note that this section only applies when a connector is being documented,
     i.e. when the `--connector` flag is passed.`
-- A table will be built for the `spec.resource_specification` properties. They
+- A table will be built for the `spec.connection_specification` properties. They
   must contain an `instillUIOrder` field so the row order is deterministic.
 
 ## TODO

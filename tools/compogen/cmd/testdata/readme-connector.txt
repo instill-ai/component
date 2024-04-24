@@ -21,7 +21,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
   "prerequisites": "An account at [dummy.io](https://dummy.io) is required.",
   "type": "CONNECTOR_TYPE_DATA",
   "spec": {
-    "resource_specification": {
+    "connection_specification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": true,
       "properties": {
@@ -98,57 +98,14 @@ It can carry out the following tasks:
 
 The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/pkg/connector/dummy/v0/config/definition.json).
 
+## Connection
+
 <InfoBlock type="info" title="Prerequisites">An account at [dummy.io](https://dummy.io) is required.</InfoBlock>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | API Key (required) | `api_key` | string | Fill your Dummy API key |
 | Organization ID | `organization` | string | Specify which organization is used for the requests |
-
-Dummy connector resources can be created in two ways:
-
-### No-code Setup
-
-1. Go to the **Connectors** page and click **+ Create Connector**.
-1. Select **Dummy**.
-1. Fill in a unique ID for the resource. Optionally, give a short description in the **Description** field.
-1. Fill in the required fields described in [Resource Configuration](#resource-configuration).
-
-### Low-code Setup
-
-<CH.Code>
-
-```shellscript cURL(Instill-Cloud)
-curl -X POST https://api.instill.tech/vdp/v1beta/users/<user-id>/connectors \
---header 'Authorization: Bearer <Instill-Cloud-API-Token>' \
---data '{
-  "id": "my-dummy",
-  "connector_definition_name": "connector-definitions/dummy",
-  "description": "Optional description",
-  "configuration": {
-    "api_key": <api-key>,
-    "organization": <organization>
-  }
-}'
-```
-
-```shellscript cURL(Instill-Core)
-curl -X POST http://localhost:8080/vdp/v1beta/users/<user-id>/connectors \
---header 'Authorization: Bearer <Instill-Core-API-Token>' \
---data '{
-  "id": "my-dummy",
-  "connector_definition_name": "connector-definitions/dummy",
-  "description": "Optional description",
-  "configuration": {
-    "api_key": <api-key>,
-    "organization": <organization>
-  }
-}'
-```
-
-</CH.Code>
-
-For other component operations, please refer to the [API reference](https://openapi.instill.tech/reference/pipelinepublicservice).
 
 ## Supported Tasks
 

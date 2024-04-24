@@ -45,6 +45,7 @@
         }
       },
       "required": [],
+      "description": "Options for the model",
       "title": "Options",
       "type": "object"
     },
@@ -119,9 +120,11 @@
               "label",
               "score"
             ],
+            "description": "Class",
             "title": "Class",
             "type": "object"
           },
+          "description": "Classes",
           "title": "Classes",
           "type": "array"
         }
@@ -154,6 +157,7 @@
               ],
               "items": {
                 "instillUIMultiline": true,
+                "description": "Items",
                 "type": "string"
               },
               "title": "Generated Responses",
@@ -172,6 +176,7 @@
               ],
               "items": {
                 "instillUIMultiline": true,
+                "description": "Items",
                 "type": "string"
               },
               "title": "Past User Inputs",
@@ -196,6 +201,7 @@
           "required": [
             "text"
           ],
+          "description": "Inputs",
           "title": "Inputs",
           "type": "object"
         },
@@ -317,6 +323,7 @@
             }
           },
           "required": [],
+          "description": "Parameters",
           "title": "Parameters",
           "type": "object"
         }
@@ -343,6 +350,7 @@
                 "title": "Generated Response",
                 "instillFormat": "string",
                 "instillUIMultiline": true,
+                "description": "Generated Response",
                 "type": "string"
               },
               "title": "Generated Responses",
@@ -356,6 +364,7 @@
                 "instillFormat": "string",
                 "instillUIMultiline": true,
                 "title": "Past User Input",
+                "description": "Past User Input",
                 "type": "string"
               },
               "title": "Past User Inputs",
@@ -449,10 +458,12 @@
                 "type": "string"
               }
             },
+            "description": "Result",
             "title": "Result",
             "required": [],
             "type": "object"
           },
+          "description": "Results",
           "title": "Results",
           "type": "array"
         }
@@ -520,9 +531,11 @@
               "label",
               "score"
             ],
+            "description": "Class",
             "title": "Class",
             "type": "object"
           },
+          "description": "Classes",
           "title": "Classes",
           "type": "array"
         }
@@ -598,9 +611,11 @@
               "mask",
               "score"
             ],
+            "description": "Segment",
             "title": "Segment",
             "type": "object"
           },
+          "description": "Segments",
           "title": "Segments",
           "type": "array"
         }
@@ -646,6 +661,7 @@
       "instillUIOrder": 0,
       "properties": {
         "text": {
+          "description": "Generated text",
           "instillFormat": "string",
           "instillUIMultiline": true,
           "instillUIOrder": 0,
@@ -702,24 +718,28 @@
                 "instillUIOrder": 0,
                 "properties": {
                   "xmax": {
+                    "description": "X max",
                     "instillFormat": "number",
                     "instillUIOrder": 0,
                     "title": "X Max",
                     "type": "number"
                   },
                   "xmin": {
+                    "description": "X min",
                     "instillFormat": "number",
                     "instillUIOrder": 1,
                     "title": "X Min",
                     "type": "number"
                   },
                   "ymax": {
+                    "description": "Y Max",
                     "instillFormat": "number",
                     "instillUIOrder": 2,
                     "title": "Y Max",
                     "type": "number"
                   },
                   "ymin": {
+                    "description": "Y min",
                     "instillFormat": "number",
                     "instillUIOrder": 3,
                     "title": "Y min",
@@ -755,9 +775,11 @@
               "label",
               "score"
             ],
+            "description": "Object",
             "title": "Object",
             "type": "object"
           },
+          "description": "Objects",
           "title": "Objects",
           "type": "array"
         }
@@ -813,6 +835,7 @@
             "question",
             "context"
           ],
+          "description": "Inputs",
           "title": "Inputs",
           "type": "object"
         },
@@ -892,6 +915,7 @@
                 "reference"
               ],
               "items": {
+                "description": "Items",
                 "instillUIMultiline": true,
                 "type": "string"
               },
@@ -918,6 +942,7 @@
             "source_sentence",
             "sentences"
           ],
+          "description": "Inputs",
           "title": "Inputs",
           "type": "object"
         },
@@ -1136,6 +1161,7 @@
             }
           },
           "required": [],
+          "description": "Parameters",
           "title": "Parameters",
           "type": "object"
         }
@@ -1207,6 +1233,7 @@
             "query",
             "table"
           ],
+          "description": "Inputs",
           "title": "Inputs",
           "type": "object"
         },
@@ -1334,9 +1361,11 @@
               "label",
               "score"
             ],
+            "description": "Result",
             "title": "Result",
             "type": "object"
           },
+          "description": "Results",
           "title": "Results",
           "type": "array"
         }
@@ -1496,6 +1525,7 @@
             }
           },
           "required": [],
+          "description": "Parameters",
           "title": "Parameters",
           "type": "object"
         }
@@ -1617,6 +1647,7 @@
             }
           },
           "required": [],
+          "description": "Parameters",
           "title": "Parameters",
           "type": "object"
         }
@@ -1634,6 +1665,7 @@
         "image": {
           "instillFormat": "image/jpeg",
           "instillUIOrder": 0,
+          "description": "Image",
           "title": "Image",
           "type": "string"
         }
@@ -1683,6 +1715,7 @@
             }
           },
           "required": [],
+          "description": "Parameters",
           "title": "Parameters",
           "type": "object"
         }
@@ -1742,6 +1775,7 @@
             "title": "Result",
             "type": "object"
           },
+          "description": "Results",
           "title": "Results",
           "type": "array"
         }
@@ -1850,6 +1884,7 @@
           "required": [
             "candidate_labels"
           ],
+          "description": "Parameters",
           "title": "Parameters",
           "type": "object"
         }

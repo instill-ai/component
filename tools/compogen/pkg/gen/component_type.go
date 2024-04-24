@@ -16,9 +16,9 @@ const (
 	ComponentTypeOperator ComponentType = "operator"
 )
 
-// HasResourceConfig determines whether a component type requires the creation
+// HasConnectionConfig determines whether a component type requires the creation
 // of a component resource before making it available in pipelines.
-func (ct ComponentType) HasResourceConfig() bool {
+func (ct ComponentType) HasConnectionConfig() bool {
 	return ct == ComponentTypeConnector
 }
 

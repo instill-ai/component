@@ -74,7 +74,7 @@
           "type": "boolean"
         },
         "ssl_mode": {
-          "description": "SSL connection modes. \n  <li><b>verify-full</b> - This is the most secure mode. Always require encryption and verifies the identity of the source database server",
+          "description": "SSL connection modes. \n  <b>verify-full</b> - This is the most secure mode. Always require encryption and verifies the identity of the source database server",
           "instillUIOrder": 5,
           "oneOf": [
             {

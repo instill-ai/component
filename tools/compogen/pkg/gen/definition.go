@@ -10,7 +10,7 @@ import (
 )
 
 type spec struct {
-	ResourceSpecification *objectSchema `json:"resource_specification" validate:"omitnil"`
+	ConnectionSpecification *objectSchema `json:"connection_specification" validate:"omitnil"`
 }
 
 type releaseStage pb.ComponentDefinition_ReleaseStage
