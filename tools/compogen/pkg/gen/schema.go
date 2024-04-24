@@ -14,6 +14,10 @@ type property struct {
 }
 
 type objectSchema struct {
+	Required []string `json:"required"`
+
+	// TODO we could validate gt=0 here to avoid empty objects. At this moment
+	// there's a connector (Instill Model) that requires this, but if we
+	// overcome that limitation nonempty objects should be enforced.
 	Properties map[string]property `json:"properties" validate:"dive"`
-	Required   []string            `json:"required"`
 }
