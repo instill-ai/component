@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 	"text/template"
 	"unicode"
 	"unicode/utf8"
@@ -267,6 +268,9 @@ func parseResourceProperties(o *objectSchema) []resourceProperty {
 		case "":
 			prop.Type = "any"
 		}
+		prop.Description = strings.ReplaceAll(prop.Description, "\n", " ")
+		prop.Description = strings.ReplaceAll(prop.Description, "{", "\\{")
+		prop.Description = strings.ReplaceAll(prop.Description, "}", "\\{")
 
 		propMap[k] = prop
 	}
@@ -287,7 +291,10 @@ func parseResourceProperties(o *objectSchema) []resourceProperty {
 
 	// Note: The order might not be consecutive numbers.
 	slices.SortFunc(props, func(i, j resourceProperty) int {
-		return cmp.Compare(*i.Order, *j.Order)
+		if cmp := cmp.Compare(*i.Order, *j.Order); cmp != 0 {
+			return cmp
+		}
+		return cmp.Compare(i.ID, j.ID)
 	})
 
 	return props
