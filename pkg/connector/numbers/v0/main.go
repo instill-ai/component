@@ -225,15 +225,13 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 				}
 			}
 
-			var r any
-			_ = json.Unmarshal([]byte(e.GetSystemVariables()["__PIPELINE_RECIPE"].(string)), &r)
 			meta := CommitCustomMetadata{
 				Pipeline: struct {
 					UID    string
 					Recipe interface{}
 				}{
 					UID:    e.GetSystemVariables()["__PIPELINE_UID"].(string),
-					Recipe: r,
+					Recipe: e.GetSystemVariables()["__PIPELINE_RECIPE"],
 				},
 			}
 			commitCustom := CommitCustom{
