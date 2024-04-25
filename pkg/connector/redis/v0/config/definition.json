@@ -193,7 +193,7 @@
         "host",
         "port"
       ],
-      "title": "Redis Connector Resource",
+      "title": "Redis Connection",
       "type": "object"
     }
   },

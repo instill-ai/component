@@ -132,7 +132,7 @@ When you want to contribute with a new connector or operator, you need to create
       - The `release_stage` property refers to the release stage of the component (not to be mixed with the pre-release label of the version).
         Unimplemented stages (`RELEASE_STAGE_COMING_SOON` or `RELEASE_STAGE_OPEN_FOR_CONTRIBUTION`) will hide the component from the console (i.e. they can't be used in pipelines) but they will appear in the `ListComponentDefinitions` endpoint.
         This will showcase the upcoming component at [instill.tech](https://instill.tech).
-    - We define the `resource_configuration` in this file, which defines the connector resource setup.
+    - We define the `connection_configuration` in this file, which defines the connector connection setup.
 - `tasks.json`
     - You can refer to [OpenAI connector](../pkg/connector/openai/v0/config/tasks.json) as an example.
     - A component can have multiple tasks.

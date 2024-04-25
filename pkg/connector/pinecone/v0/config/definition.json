@@ -45,7 +45,7 @@
         "api_key",
         "url"
       ],
-      "title": "Pinecone Connector Spec",
+      "title": "Pinecone Connection",
       "type": "object"
     }
   },
