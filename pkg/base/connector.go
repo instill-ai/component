@@ -143,6 +143,7 @@ func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, task
 	if err != nil {
 		return err
 	}
+	// TODO: Avoid using structpb traversal here.
 	if _, ok := raw.Fields["spec"]; ok {
 		if v, ok := raw.Fields["spec"].GetStructValue().Fields["connection_specification"]; ok {
 			connection, err := c.refineResourceSpec(v.GetStructValue())
