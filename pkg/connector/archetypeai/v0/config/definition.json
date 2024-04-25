@@ -32,7 +32,7 @@
       "required": [
         "api_key"
       ],
-      "title": "Archetype AI Connector Specification",
+      "title": "Archetype AI Connection",
       "type": "object"
     }
   },

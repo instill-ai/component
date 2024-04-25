@@ -31,7 +31,7 @@
       "required": [
         "api_key"
       ],
-      "title": "Stability AI Connector Resource",
+      "title": "Stability AI Connection",
       "type": "object"
     }
   },

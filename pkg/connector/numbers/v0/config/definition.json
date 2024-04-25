@@ -30,7 +30,7 @@
       "required": [
         "capture_token"
       ],
-      "title": "Numbers Protocol Blockchain Connector Spec",
+      "title": "Numbers Protocol Connection",
       "type": "object"
     }
   },

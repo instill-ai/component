@@ -185,7 +185,7 @@
       "required": [
         "authentication"
       ],
-      "title": "REST API Connector Spec",
+      "title": "REST API Connection",
       "type": "object"
     }
   },

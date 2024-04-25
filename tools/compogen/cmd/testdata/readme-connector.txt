@@ -41,7 +41,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       "required": [
         "api_key"
       ],
-      "title": "OpenAI Connector Resource",
+      "title": "OpenAI Connection",
       "type": "object"
     }
   },

@@ -38,7 +38,7 @@
         "api_key",
         "cse_id"
       ],
-      "title": "Google Search Connector Spec",
+      "title": "Google Search Connection",
       "type": "object"
     }
   },

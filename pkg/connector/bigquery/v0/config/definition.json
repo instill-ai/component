@@ -70,7 +70,7 @@
         "dataset_id",
         "table_name"
       ],
-      "title": "BigQuery Connector Spec",
+      "title": "BigQuery Connection",
       "type": "object"
     }
   },

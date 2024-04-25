@@ -76,7 +76,7 @@
         "base_url",
         "is_custom_endpoint"
       ],
-      "title": "Hugging Face Connector Spec",
+      "title": "Hugging Face Connection",
       "type": "object"
     }
   },
