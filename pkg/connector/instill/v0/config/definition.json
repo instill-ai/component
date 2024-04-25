@@ -18,15 +18,6 @@
   "icon_url": "",
   "id": "instill-model",
   "public": true,
-  "spec": {
-    "connection_specification": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "additionalProperties": true,
-      "properties": {},
-      "title": "Instill Model Connector",
-      "type": "object"
-    }
-  },
   "title": "Instill Model",
   "description": "Connect the AI models served on the Instill Model Platform",
   "tombstone": false,
