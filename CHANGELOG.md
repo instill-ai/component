@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.15.0-beta](https://github.com/instill-ai/component/compare/v0.14.1-beta...v0.15.0-beta) (2024-04-25)
+
+
+### Features
+
+* add `UsageHandler` interface ([#87](https://github.com/instill-ai/component/issues/87)) ([b9d9645](https://github.com/instill-ai/component/commit/b9d9645f8bdbf5d63eb56b0b0a4510b016870970))
+* adjust `IConnector` interface ([#83](https://github.com/instill-ai/component/issues/83)) ([46ea796](https://github.com/instill-ai/component/commit/46ea7960392deb2804c9a097af7871e5960e0523))
+* adjust `Test()` interface ([#81](https://github.com/instill-ai/component/issues/81)) ([763cc6d](https://github.com/instill-ai/component/commit/763cc6d000e317bb54af9fccf115ed54994987f4))
+* adopt system variables ([#92](https://github.com/instill-ai/component/issues/92)) ([e8ae4e1](https://github.com/instill-ai/component/commit/e8ae4e145fc022f3a86a1f4b93b3fe5967bc44a2))
+* **airbyte:** remove Airbyte connectors ([#88](https://github.com/instill-ai/component/issues/88)) ([ec770d6](https://github.com/instill-ai/component/commit/ec770d62cf52fa099a9be6825432d76f0d211f4a))
+* **airbyte:** remove local connector and refine definition ([#85](https://github.com/instill-ai/component/issues/85)) ([8203316](https://github.com/instill-ai/component/commit/8203316e021022ae801a10cd6275f8e34d3dd1ab))
+* **compogen:** use jsonref when generating the README ([#99](https://github.com/instill-ai/component/issues/99)) ([ff49157](https://github.com/instill-ai/component/commit/ff491574a96b9316a4012fec5b312b6526aa13dc))
+* expose `IsCredentialField` interface ([#93](https://github.com/instill-ai/component/issues/93)) ([6cd2801](https://github.com/instill-ai/component/commit/6cd2801569a34b734cf58f59e6e02cb3cd4acd08))
+* **instill:** drop support for "external mode" ([#101](https://github.com/instill-ai/component/issues/101)) ([b0c091b](https://github.com/instill-ai/component/commit/b0c091b5e51090046659c82f261f57d76dd41b99))
+* merge resource spec into component spec ([#86](https://github.com/instill-ai/component/issues/86)) ([a6de70e](https://github.com/instill-ai/component/commit/a6de70e1e3ab4e46548a8847fc723628a1a09260))
+
+
+### Bug Fixes
+
+* **airbyte:** add missing release_stage ([#84](https://github.com/instill-ai/component/issues/84)) ([9c0a57d](https://github.com/instill-ai/component/commit/9c0a57d6e66e185bbc58ec968a8d874bad713aca))
+* **instill:** add nil check for GetConnectorDefinitionByUID ([0ca6fc3](https://github.com/instill-ai/component/commit/0ca6fc3cf9ecefdcd74e132fbafd2cdcbbfb180e))
+* **numbers:** fix recipe data bug ([#103](https://github.com/instill-ai/component/issues/103)) ([36480f8](https://github.com/instill-ai/component/commit/36480f8402d7ed09842c21093781a07d725a4c46))
+
 ## [0.14.1-beta](https://github.com/instill-ai/component/compare/v0.14.0-beta...v0.14.1-beta) (2024-04-01)
 
 
