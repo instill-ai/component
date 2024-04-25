@@ -90,7 +90,7 @@ func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, task
 	if err != nil {
 		return err
 	}
-	renderedTasksJSON, nil := RenderJSON(tasksJSONBytes, additionalJSONBytes)
+	renderedTasksJSON, err := RenderJSON(tasksJSONBytes, additionalJSONBytes)
 	if err != nil {
 		return nil
 	}
@@ -130,6 +130,9 @@ func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, task
 
 	c.definition.Name = fmt.Sprintf("connector-definitions/%s", c.definition.Id)
 	c.definition.Tasks = tasks
+	if c.definition.Spec == nil {
+		c.definition.Spec = &pipelinePB.ConnectorSpec{}
+	}
 	c.definition.Spec.ComponentSpecification, err = generateComponentSpec(c.definition.Title, tasks, taskStructs)
 	if err != nil {
 		return err
@@ -140,14 +143,18 @@ func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, task
 	if err != nil {
 		return err
 	}
-	connection, err := c.refineResourceSpec(raw.Fields["spec"].GetStructValue().Fields["connection_specification"].GetStructValue())
-	if err != nil {
-		return err
+	// TODO: Avoid using structpb traversal here.
+	if _, ok := raw.Fields["spec"]; ok {
+		if v, ok := raw.Fields["spec"].GetStructValue().Fields["connection_specification"]; ok {
+			connection, err := c.refineResourceSpec(v.GetStructValue())
+			if err != nil {
+				return err
+			}
+			connectionPropStruct := &structpb.Struct{Fields: map[string]*structpb.Value{}}
+			connectionPropStruct.Fields["connection"] = structpb.NewStructValue(connection)
+			c.definition.Spec.ComponentSpecification.Fields["properties"] = structpb.NewStructValue(connectionPropStruct)
+		}
 	}
-
-	connectionPropStruct := &structpb.Struct{Fields: map[string]*structpb.Value{}}
-	connectionPropStruct.Fields["connection"] = structpb.NewStructValue(connection)
-	c.definition.Spec.ComponentSpecification.Fields["properties"] = structpb.NewStructValue(connectionPropStruct)
 
 	c.definition.Spec.DataSpecifications, err = generateDataSpecs(taskStructs)
 	if err != nil {

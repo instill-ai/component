@@ -79,6 +79,18 @@ func TestDefinition_Validate(t *testing.T) {
 			wantErr: "SourceURL field must be a valid URL",
 		},
 		{
+			// This validates the omitnil tag and the nested validation.
+			// Resource specification validation details are covered in a
+			// separate test.
+			name: "nok - resource specification must be valid if present",
+			modifier: func(d *definition) {
+				d.Spec = spec{
+					ConnectionSpecification: &objectSchema{},
+				}
+			},
+			wantErr: "Properties field doesn't reach the minimum value / number of elements",
+		},
+		{
 			name: "nok - multiple errors",
 			modifier: func(d *definition) {
 				d.Title = ""

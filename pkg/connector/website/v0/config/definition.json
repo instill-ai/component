@@ -8,16 +8,6 @@
   "icon_url": "",
   "id": "website",
   "public": true,
-  "spec": {
-    "connection_specification": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "additionalProperties": true,
-      "properties": {},
-      "required": [],
-      "title": "Website Connector Resource",
-      "type": "object"
-    }
-  },
   "title": "Website",
   "description": "Scrape websites",
   "type": "CONNECTOR_TYPE_DATA",
