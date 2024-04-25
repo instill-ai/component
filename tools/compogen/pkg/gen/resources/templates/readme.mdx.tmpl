@@ -17,20 +17,20 @@ It can carry out the following tasks:
 ## Configuration
 
 The component configuration is defined and maintained [here]({{ .SourceURL }}/config/definition.json).
-{{ if .ComponentType.HasConnectionConfig}}
+{{ if and .ComponentType.HasConnectionConfig ( or .ConnectionConfig.Prerequisites .ConnectionConfig.Properties ) }}
 ## Connection
-{{ if .ConnectionConfig.Prerequisites}}
-<InfoBlock type="info" title="Prerequisites">{{ .ConnectionConfig.Prerequisites }}</InfoBlock>
-{{ end }}{{ if .ConnectionConfig.Properties }}
+{{ with .ConnectionConfig.Prerequisites}}
+<InfoBlock type="info" title="Prerequisites">{{ . }}</InfoBlock>
+{{ end }}{{ with .ConnectionConfig.Properties }}
 | Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |{{ range .ConnectionConfig.Properties }}
+| :--- | :--- | :--- | :--- |{{ range . }}
 | {{ .Title }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
 {{ end }}{{ end }}
 ## Supported Tasks{{ range $i, $task := .Tasks}}
 
 ### {{ $task.Title }}
-{{ if $task.Description }}
-{{ $task.Description }}
+{{ with $task.Description }}
+{{ . }}
 {{ end }}{{ if $task.Input }}
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
