@@ -1,123 +1,154 @@
 # Contributing Guidelines
 
-We appreciate your contribution to this amazing project! Any form of engagement is welcome, including but not limiting to
+We appreciate your contribution to this amazing project! Any form of engagement
+is welcome, including but not limiting to
 - feature request
 - documentation wording
 - bug report
 - roadmap suggestion
 - ...and so on!
 
-Please refer to the [community contributing section](https://github.com/instill-ai/community#contributing) for more details.
+Please refer to the [community contributing
+section](https://github.com/instill-ai/community#contributing) for more details.
 
-## Development and codebase contribution
+## Concepts
 
-Before delving into the details to come up with your first PR, please familiarise yourself with the project structure of [Instill Core](https://github.com/instill-ai/community#instill-core).
+Before delving into the details to come up with your first PR, please
+familiarise yourself with the project structure of [Instill
+Core](https://github.com/instill-ai/community#instill-core).
 
-### Concept
+### Pipeline
 
-In VDP, a pipeline is a DAG (Directed Acyclic Graph) consisting of multiple components.
+In VDP, a **pipeline** is a DAG (Directed Acyclic Graph) consisting of multiple
+**components**.
 
 
 ```mermaid
 flowchart LR
-    s[Start Operator] --> c1[OpenAI Connector]
+    s[Trigger] --> c1[OpenAI Connector]
     c1 --> c2[Stability AI Connector]
     c1 --> c3[MySQL Connector]
-    c1 --> e[End Operator]
-    c2 --> e[End Operator]
+    c1 --> e[Response]
+    c2 --> e
 ```
 
-#### Component
+### Component
 
 There are different types of component:
 - **connector**
   - Queries, processes or transmits the ingested data to a service or app.
-  - Users need to configure their connectors (e.g. by providing an API token to a remote service).
+  - Users need to configure their connectors (e.g. by providing an API token to
+    a remote service).
 - **operator**
   - Performs data injection and manipulation.
 - **iterator**
-  - Takes an array and executes an operation (defined by a set of nested components) on each of its elements.
-- **start** / **end**
-  - These special components provide an input / output interface to pipeline triggers.
+  - Takes an array and executes an operation (defined by a set of nested
+    components) on each of its elements.
+- **trigger / response**
+  - These special components provide an input / output interface to pipeline
+    triggers.
 
-**Connector**
+#### Connector
 
-- **Connectors** are used for connecting the pipeline to a vendor service. They are defined and initialized in the [connector](../pkg/connector) package.
-- A connector **resource** needs to be set up first to configure the connection.
-- Setup a Connector
-```mermaid
-sequenceDiagram
-    User ->> API-Gateway: POST /users/<user>/connectors
-    API-Gateway ->> Connector-Backend: forward
-    Connector-Backend ->> Connector DB: Store configuration for connection
-```
+- **Connectors** are used by the pipeline to interact with an external service.
+  They are defined and initialized in the [connector](../pkg/connector) package.
+- In order to set up a connector, you may need to introduce its **connection**
+  details in the connector properties.
+  - In order to prevent private keys from being unintentionally leaked when
+    sharing a pipeline, the connection properties only take reference to a
+    **secret** (e.g. `${secrets.my-secret}`).
+  - You can create secrets from the console settings or through an [API
+    call](https://openapi.instill.tech/reference/pipelinepublicservice_createusersecret).
 
+#### Operator
 
-**Operator**
+- **Operators** perform data transformations inside the pipeline. They are defined
+  and initialized in the [operator](../pkg/operator) package.
 
-- An operator is used for data operations inside the pipeline. They are defined and initialized in the [operator](../pkg/operator) package.
+The key difference between `connector` and `operator` is that the former will
+connect to an external service, so it's **I/O bound** while the latter is **CPU
+bound**. Connectors don't process but transfer data.
 
-The key difference between `connector` and `operator` is that the former will connect to an external service, so it's **I/O bound** while the latter is **CPU bound**. Connectors don't process but transfer data.
+### Recipe
 
-#### Pipeline
+A **pipeline recipe** specifies how components are configured and how they are
+interconnected.
 
-A pipeline is consists of multiple components. We use a pipeline `recipe` to configure the pipeline components.
+Recipes are represented by a JSON object:
 
-The `recipe` is in the format
 ```json
 {
-    "version": "v1alpha",
-    "components": [
-        {
-            "id": "<component_id>",
-            "definition_name": "<definition_name>",
-            "resource_name": "<resource_name>",
-            "configuration": {
-                // component configuration
-            }
+  "version": "v1beta",
+  "components": [
+    {
+      "id": "<component_id>", // must be unique within the pipeline.
+      "<component_type>": { // operator_component, connector_component
+        "definition_name": "<definition_name>",
+        "task": "<task>",
+        "input": {
+          // values for the input fields
+        },
+        "condition": "<condition>", // conditional statement to execute or bypass the component
+        "connection": {
+          // connection specification values, optional
         }
-    ]
+      }
+    },
+  ],
+  "trigger": {
+    "trigger_by_request": {
+      "request_fields": {
+        // pipeline input fields
+      },
+      "response_fields": {
+        // pipeline output fields
+      }
+    }
+  }
 }
 ```
-- `id`: the identifier of the component, can not be duplicated inside a pipeline.
-- `definition_name`: can be a connector(`connector-definitions/<def_id>`) or operator(`operator-definitions/<def_id>`)
-- `resource_name`: we need to create a resource for connector `users/<user>/connectors/<resource_id>`, we don't need to setup this for operator.
-- `configuration`: component configuration for connector or operator
 
 ```mermaid
 sequenceDiagram
-    User ->> API-Gateway: POST /users/<user>/pipelines
-    API-Gateway ->> Pipeline-Backend: forward
-    Pipeline-Backend ->> Pipeline DB: Store pipeline and its recipe
+participant u as User
+participant gw as api-gateway
+participant p as pipeline-backend
+participant db as pipeline-db
+
+u ->> gw: POST /users/<user>/pipelines
+gw ->> p: forward
+p ->> db: Store pipeline and its recipe
 ```
 
-#### How pipelines are triggered
+### Trigger
 
-When we trigger a pipeline, the pipeline-backend will calculate the DA and execute the components in topological order.
+When a pipeline is triggered, the DAG will be computed in order to execute
+components in topological order.
 
-The workflow is:
 ```mermaid
 sequenceDiagram
-    User ->> API-Gateway: POST /users/<user>/pipelines/<pipeline_id>/trigger
-    API-Gateway ->> Pipeline-Backend: forward
-    Pipeline-Backend ->> Pipeline DB: Get recipe
-    Pipeline DB ->> Pipeline-Backend: Recipe
-    loop over topological order of components
-        alt is Connector
-            Pipeline-Backend->>Connector-Backend: POST /users/<user>/connectors/<resource_id>/execute
-            Connector-Backend ->> Connector: Execute()
-        else is Operator
-            Pipeline-Backend->>Operator: ExecuteWithValidation()
-        end
-    end
 
+participant u as User
+participant gw as api-gateway
+participant p as pipeline-backend
+participant db as pipeline-db
+participant c as component
+
+u ->> gw: POST /users/<user>/pipelines/<pipeline_id>/trigger
+gw ->> p: forward
+p ->> db: Get recipe
+db ->> p: Recipe
+loop over topological order of components
+    p->>c: ExecuteWithValidation
+end
 ```
 
-### Development
+## Development
 
-When you want to contribute with a new connector or operator, you need to create the configuration files and implement the required component interfaces.
+When you want to contribute with a new connector or operator, you need to create
+the configuration files and implement the required component interfaces.
 
-#### `config` files
+### `config` files
 
 2 configuration files define the behaviour of the component:
 
@@ -141,7 +172,7 @@ When you want to contribute with a new connector or operator, you need to create
 <!-- TODO:
 1. describe more details about the api payload  -->
 
-#### Component interfaces
+### Component interfaces
 
 In [component.go](https://github.com/instill-ai/component/blob/main/pkg/base/component.go), we define `IComponent` (`IConnector` and `IOperator`) and `IExecution` as base interfaces. All components (including connector and operator) must implement these interfaces.
 
@@ -179,7 +210,7 @@ TODO:
  2. Add a step by step example to implement a new connector or operator.
 -->
 
-#### Sane version control
+### Sane version control
 
 The version of a component is useful to track its evolution and to set expectations about its stability.
 When the interface of a component (defined by its configuration files) changes, its version should change following the Semantic Versioning guidelines.
@@ -216,7 +247,7 @@ The typical version and release stage evolution of a component might look like t
 | 0.4.0 | `RELEASE_STAGE_BETA` |
 | 1.0.0 | `RELEASE_STAGE_GA` |
 
-### Sending PRs
+## Sending PRs
 
 Please take these general guidelines into consideration when you are sending a PR:
 
