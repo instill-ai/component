@@ -14,7 +14,7 @@ section](https://github.com/instill-ai/community#contributing) for more details.
 ## Concepts
 
 Before delving into the details to come up with your first PR, please
-familiarise yourself with the project structure of [Instill
+familiarize yourself with the project structure of [Instill
 Core](https://github.com/instill-ai/community#instill-core).
 
 ### Pipeline
@@ -108,6 +108,9 @@ Recipes are represented by a JSON object:
 }
 ```
 
+You can see an example recipe in the [component development
+guide](#example-recipe)
+
 ```mermaid
 sequenceDiagram
 participant u as User
@@ -145,95 +148,601 @@ end
 
 ## Development
 
-When you want to contribute with a new connector or operator, you need to create
-the configuration files and implement the required component interfaces.
+This section will guide you through the steps to contribute with a new
+component. You'll add and test an operator that takes a string `target` as input
+and returns a `"Hello, ${target}!"` string as the component output
 
-### `config` files
+In order to add a new component, you need to:
+- Define the component configuration. This will determine the tasks that can be
+  performed by the component and their input and output parameters. The
+  `console` frontend will use this configuration files to render the component
+  in the pipeline builder.
+- Implement the component interfaces so `pippeline-backend` can execute the
+  component without knowing its implementation details.
+- Initialize the component, i.e., include the implementation of the component
+  interfaces as a dependency in the `pipeline-backend` execution.
 
-2 configuration files define the behaviour of the component:
+### Environment setup
 
-- `definition.json`
-    - You can refer to [OpenAI connector](../pkg/connector/openai/v0/config/definition.json) as an example.
-    - We define the id, uid, vendor info and other metadata in this file.
-      - `uid` MUST be a unique UUID. Once it is set, it MUST NOT change.
-      - `version` MUST be a [SemVer](https://semver.org/) string.
-        It is encouraged to keep a [tidy version history](#sane-version-control).
-      - `tombstone` will exclude a component from the component initialization.
-        This is helpful when the component hasn't been fully implemented yet and when it has been retired.
-      - The `release_stage` property refers to the release stage of the component (not to be mixed with the pre-release label of the version).
-        Unimplemented stages (`RELEASE_STAGE_COMING_SOON` or `RELEASE_STAGE_OPEN_FOR_CONTRIBUTION`) will hide the component from the console (i.e. they can't be used in pipelines) but they will appear in the `ListComponentDefinitions` endpoint.
-        This will showcase the upcoming component at [instill.tech](https://instill.tech).
-    - We define the `connection_configuration` in this file, which defines the connector connection setup.
-- `tasks.json`
-    - You can refer to [OpenAI connector](../pkg/connector/openai/v0/config/tasks.json) as an example.
-    - A component can have multiple tasks.
-    - The input and output schema of each task is defined in this file.
+Start by cloning this repository:
 
-<!-- TODO:
-1. describe more details about the api payload  -->
+```sh
+$ git clone https://github.com/instill-ai/component
+```
 
-### Component interfaces
+Although all the development will be done in this repository, if you want to
+[see your component in action](#use-the-component-in-vdp), you'll need to build
+VDP locally. First, launch the latest version of
+[Core](https://github.com/instill-ai/instill-core). Then, build and
+launch [VDP](https://github.com/instill-ai/pipeline-backend) with
+your local changes.
 
-In [component.go](https://github.com/instill-ai/component/blob/main/pkg/base/component.go), we define `IComponent` (`IConnector` and `IOperator`) and `IExecution` as base interfaces. All components (including connector and operator) must implement these interfaces.
+If you want to know more, you can refer to the documentation in these
+repositories, which explains in detail how to set up the
+development environment. In short, here's what we'll need to do for this guide:
 
-```go
-// All connectors need to implement this interface
-type IConnector interface {
-    CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error)
-    Test(defUid uuid.UUID, config *structpb.Struct, logger *zap.Logger) (bool, error)
-}
+#### Building Core
 
-// All operators need to implement this interface
-type IOperator interface {
-    CreateExecution(defUID uuid.UUID, task string, config *structpb.Struct, logger *zap.Logger) (base.IExecution, error)
-}
+```sh
+$ git clone https://github.com/instill-ai/instill-core && cd instill-core
+$ make latest PROFILE=all
+```
 
-// All connectors and operators need to implement this interface
-type IExecution interface {
-    Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error)
+#### Buidling VDP
+
+```sh
+$ git clone https://github.com/instill-ai/pipeline-backend && cd pipeline-backend
+$ make build
+```
+
+`component` is a dependency in `pipeline-backend` so, in order to take your
+changes into account, you need reference them.
+
+```sh
+go mod edit -replace="github.com/instill-ai/component=../component"
+```
+
+Then, mount the `component` directory when running the `pipeline-backend`
+container. Add the `-v $(PWD)/../component:/component` option to `make dev` in
+the Makefile:
+
+```Makefile
+dev:							## Run dev container
+	@docker compose ls -q | grep -q "instill-core" && true || \
+		(echo "Error: Run \"make latest PROFILE=pipeline\" in vdp repository (https://github.com/instill-ai/instill-core) in your local machine first." && exit 1)
+	@docker inspect --type container ${SERVICE_NAME} >/dev/null 2>&1 && echo "A container named ${SERVICE_NAME} is already running." || \
+		echo "Run dev container ${SERVICE_NAME}. To stop it, run \"make stop\"."
+	@docker run -d --rm \
+		-v $(PWD):/${SERVICE_NAME} \
+		-v $(PWD)/../component:/component \
+		-p ${SERVICE_PORT}:${SERVICE_PORT} \
+		--network instill-network \
+		--name ${SERVICE_NAME} \
+		instill/${SERVICE_NAME}:dev >/dev/null 2>&1
+```
+
+2 processes must know about the new component: `main` and `worker`. You'll need
+to stop their Core version before running the local one.
+
+```sh
+$ docker rm -f pipeline-backend pipeline-backend-worker
+$ make dev
+$ docker exec -d pipeline-backend go run ./cmd/worker # run without -d in a separate terminal if you want to access the logs
+$ docker exec pipeline-backend go run ./cmd/main
+```
+
+### Create the component package
+
+```sh
+$ cd $WORKSPACE/component
+$ mkdir -p pkg/operator/hello/v0 && cd $_
+```
+
+Components are isolated in their own packages under `pkg/connector` or
+`pkg/operator`. The package is versioned so, in case a breaking change needs to
+be introduced (e.g. supporting a new major version in a vendor API), existing
+pipelines using the previous version of the connector can keep being triggered.
+
+At the end of this guide, this will be the structure of the package:
+
+```
+pkg/operator/hello/v0
+ ├──assets
+ │  └──hello.svg
+ ├──config
+ │  ├──definition.json
+ │  └──tasks.json
+ ├──main.go
+ ├──operator_test.go
+ └──README.mdx
+ ```
+
+### Add the configuration files
+
+Create a `config` directory and add the files `definition.json` and
+`tasks.json`. Together, they define the behaviour of the component.
+
+#### `definition.json`
+
+```json
+{
+  "available_tasks": [
+    "TASK_GREET"
+  ],
+  "custom": false,
+  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/hello",
+  "icon": "assets/hello.svg",
+  "id": "hello",
+  "public": true,
+  "spec": {},
+  "title": "Hello",
+  "uid": "e05d3d71-779c-45f8-904d-e90a050ca3b2",
+  "version": "0.1.0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/hello/v0",
+  "description": "'Hello, world' operator used as a template for adding components",
+  "release_stage": "RELEASE_STAGE_ALPHA"
 }
 ```
 
-- `CreateExecution()`:
-    - We need to implement this for all components.
-    - We can store some additional data in the component struct via this function.
-- `Test()`
-    - We use this to test the connection between vdp and vendor.
-- `Execute()`
-    - This is the most important function for the component.
-    - All the data manipulation logic will be here.
-    - This function will be wrapped by `ExecuteWithValidation()` inside component [here](https://github.com/instill-ai/component/blob/e74bd510319ccf3c1dc2b3a5a97f762a0bce9414/pkg/base/execution.go#L74). `ExecuteWithValidation()` will do schema validation for both the input and output of `Execute()`. The schema is defined by the `openapi_specification` which is generated by `tasks.json`
+This file defines the component properties:
+- `id` is the ID of the component. It must be unique.
+- `uid` is a UUID string that must not be already taken by another component.
+  Once it is set, it must not change.
+- `title` is the end-user name of the component.
+- `description` is a short sentence describing the purpose of the component. It
+  should be written in imperative tense.
+- `spec` contains the parameters required to configure the component and that
+  are independent from its tasks. E.g., the API token of a vendor. In general,
+  only connectors need such parameters.
+- `available_tasks` defines the tasks the component can perform.
+  - When a component is created in a pipeline, one of the tasks has to be
+    selected, i.e., a configured component can only execute one task.
+  - Task configurations are defined in `tasks.json`.
+- `documentation_url` points to the official documentation of the component.
+- `icon` is the local path to the icon that will be displayed in the Console
+  when creating the component. If left blank, a placeholder icon will be shown.
+- `version` must be a [SemVer](https://semver.org/) string. It is encouraged to
+  keep a [tidy version history](#sane-version-control).
+- `source_url` points to the codebase that implements the component. This will
+  be used by the documentation generation tool and also will be part of the
+  [component definition list](https://openapi.instill.tech/reference/pipelinepublicservice_listcomponentdefinitions) endpoint.
+- `release_stage` describes the release stage of the component. Unimplemented
+  stages (`RELEASE_STAGE_COMING_SOON` or `RELEASE_STAGE_OPEN_FOR_CONTRIBUTION`)
+  will hide the component from the console (i.e. they can't be used in
+  pipelines) but they will appear in the component definition list endpoint.
 
-<!--
-TODO:
- 1. explain how we import the connectors or operators like [here](../pkg/connector/main.go)
- 2. Add a step by step example to implement a new connector or operator.
--->
 
-### Sane version control
+#### `tasks.json`
 
-The version of a component is useful to track its evolution and to set expectations about its stability.
-When the interface of a component (defined by its configuration files) changes, its version should change following the Semantic Versioning guidelines.
+```json
+{
+  "TASK_GREET": {
+    "instillShortDescription": "Greet someone / something",
+    "title": "Greet",
+    "input": {
+      "description": "Input",
+      "instillUIOrder": 0,
+      "properties": {
+        "target": {
+          "instillUIOrder": 0,
+          "description": "The target of the greeting",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillUIMultiline": true,
+          "title": "Greeting target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "The greeting sentence",
+      "instillUIOrder": 0,
+      "properties": {
+        "greeting": {
+          "description": "A greeting sentence addressed to the target",
+          "instillEditOnNodeFields": [],
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Greeting",
+          "type": "string",
+          "instillFormat": "string"
+        }
+      },
+      "required": [
+        "greeting"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  }
+}
+```
+
+This file defines the input and output schema of each task:
+
+- `title` and `instillShortDescription` will be used by the frontend to provide
+  information about the task.
+- For each property within the `input` and `output` objects:
+  - `instillUIOrder` defines the order in which the properties will be rendered
+    by the frontend.
+  - `required` properties will appear at the forefront of the component UI.
+    Optional properties can be set in the advanced configuration.
+  - `instillUpstreamTypes` define how an input property can be set: the direct
+    value, a reference to another value in the pipeline (e.g.
+    `${trigger.name}` or a combination of both (`my dear ${trigger.name}`).
+
+See the [example recipe](#example-recipe) to see how these fields map to the recipe
+of a pipeline when configured to use this operator.
+
+
+### Implement the component interfaces
+
+Pipeline communicates with components through the `IComponent`, `IConnector`,
+`IOperator` and `IExecution` interfaces, defined in the [`base`](../pkg/base)
+package. This package also defines base implementations for these interfaces, so
+the `hello` component will only need to override the following methods:
+- `CreateExecution(vars map[string]any, task string) (*ExecutionWrapper, error)`
+  will return an object that implements the `Execute` method.
+  - `ExecutionWrapper` will wrap the execution call with the input and output
+    schema validation.
+- `Execute([]*structpb.Struct) ([]*structpb.Struct, error)` is the most
+  important function in the component. All the data manipulation will take place
+  here.
+
+Paste the following code into a `main.go` file in `pkg/operator/hello/v0`:
+
+```go
+package hello
+
+import (
+	_ "embed"
+	"fmt"
+	"sync"
+
+	"go.uber.org/zap"
+	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/pkg/base"
+)
+
+const (
+	taskGreet = "TASK_GREET"
+)
+
+var (
+	//go:embed config/definition.json
+	definitionJSON []byte
+	//go:embed config/tasks.json
+	tasksJSON []byte
+
+	once sync.Once
+	op   *operator
+)
+
+type operator struct {
+	base.BaseOperator
+}
+
+type execution struct {
+	base.BaseOperatorExecution
+}
+
+// Init returns an implementation of IOperator that implements the greeting
+// task.
+func Init(l *zap.Logger, u base.UsageHandler) *operator {
+	once.Do(func() {
+		op = &operator{
+			BaseOperator: base.BaseOperator{
+				Logger:       l,
+				UsageHandler: u,
+			},
+		}
+		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
+		if err != nil {
+			panic(err)
+		}
+	})
+	return op
+}
+
+func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
+	e := &execution{
+		BaseOperatorExecution: base.BaseOperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
+	}
+
+	if task != taskGreet {
+		return nil, fmt.Errorf("unsupported task")
+	}
+
+	return &base.ExecutionWrapper{Execution: e}, nil
+}
+
+func (e *execution) Execute(_ []*structpb.Struct) ([]*structpb.Struct, error) {
+	return nil, nil
+}
+```
+
+### Add the execution logic
+
+The `hello` operator created in the previous section doesn't implement any
+logic. This section will add the greeting logic to the `Execute` method.
+
+Let's modify the following methods:
+
+```go
+type execution struct {
+	base.BaseOperatorExecution
+	execute func(*structpb.Struct) (*structpb.Struct, error)
+}
+
+func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
+	e := &execution{
+		BaseOperatorExecution: base.BaseOperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
+	}
+
+	// A simple if statement would be enough in a component with a single task.
+	// If the number of task grows, here is where the execution task would be
+	// selected.
+	switch task {
+	case taskGreet:
+		e.execute = e.greet
+	default:
+		return nil, fmt.Errorf("unsupported task")
+	}
+	return &base.ExecutionWrapper{Execution: e}, nil
+}
+
+func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+	outputs := make([]*structpb.Struct, len(inputs))
+
+	// An execution  might take several inputs. One result will be returned for
+	// each one of them, containing the execution output for that set of
+	// parameters.
+	for i, input := range inputs {
+		output, err := e.execute(input)
+		if err != nil {
+			return nil, err
+		}
+
+		outputs[i] = output
+	}
+
+	return outputs, nil
+}
+
+func (e *execution) greet(in *structpb.Struct) (*structpb.Struct, error) {
+	out := new(structpb.Struct)
+
+	target := in.Fields["target"].GetStringValue()
+	greeting := "Hello, " + target + "!"
+
+	out.Fields = map[string]*structpb.Value{
+		"greeting": structpb.NewStringValue(greeting),
+	}
+
+	return out, nil
+}
+```
+
+#### Unit tests
+
+Before initializing testing your component in VDP, we can unit test its
+behaviour. The following covers the newly added logic by replicating how the
+`pipeline-backend` workers execute the component logic:
+
+```go
+package hello
+
+import (
+	"testing"
+
+	qt "github.com/frankban/quicktest"
+	"go.uber.org/zap"
+	"google.golang.org/protobuf/types/known/structpb"
+)
+
+func TestOperator_Execute(t *testing.T) {
+	c := qt.New(t)
+
+	logger := zap.NewNop()
+	operator := Init(logger, nil)
+
+	c.Run("ok - greet", func(c *qt.C) {
+		exec, err := operator.CreateExecution(nil, taskGreet)
+		c.Assert(err, qt.IsNil)
+
+		pbIn, err := structpb.NewStruct(map[string]any{"target": "bolero-wombat"})
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
+		c.Check(err, qt.IsNil)
+		c.Assert(got, qt.HasLen, 1)
+
+		// Check JSON in the output string.
+		greeting := got[0].Fields["greeting"].GetStringValue()
+		c.Check(greeting, qt.Equals, "Hello, bolero-wombat!")
+	})
+}
+
+func TestOperator_CreateExecution(t *testing.T) {
+	c := qt.New(t)
+
+	logger := zap.NewNop()
+	operator := Init(logger, nil)
+
+	c.Run("nok - unsupported task", func(c *qt.C) {
+		task := "FOOBAR"
+
+		_, err := operator.CreateExecution(nil, task)
+		c.Check(err, qt.ErrorMatches, "unsupported task")
+	})
+}
+```
+
+### Initialize the component
+
+The last step before being able to use the component in VDP is loading the
+`hello` operator. This is done in the `Init` function in
+[`pkg/operator/main.go`](../pkg/operator/main.go):
+
+```go
+package operator
+
+import (
+	// ...
+	"github.com/instill-ai/component/pkg/operator/hello/v0"
+)
+
+// ...
+
+func Init(logger *zap.Logger, usageHandler base.UsageHandler) *OperatorStore {
+	once.Do(func() {
+		opStore = &OperatorStore{
+			operatorUIDMap: map[uuid.UUID]*operator{},
+			operatorIDMap:  map[string]*operator{},
+		}
+        // ...
+		opStore.Import(hello.Init(logger, usageHandler))
+	})
+
+	return opStore
+}
+```
+
+### Use the component in VDP
+
+Re-run your local `pipeline-backend` build:
+
+```sh
+$ make stop && make dev
+$ docker exec -d pipeline-backend go run ./cmd/worker
+$ docker exec pipeline-backend go run ./cmd/worker
+```
+
+Head to the console at http://localhost:3000/ (default password is `password`)
+and create a pipeline.
+
+- In the **trigger** component, add a `who` text field.
+- Create a **hello** operator and reference the **trigger** input field by adding
+  `${trigger.who}` to the `Target` field.
+- In the **response** component, add a `greeting` output value that references the
+  **hello** output by introducing `${hello_0.output.greeting}`.
+
+If you introduce a `Wombat` string value in the **trigger** component and
+**Run** the pipeline, you should see `Hello, Wombat!` in the response.
+
+#### Example recipe
+
+The created pipeline will have the following recipe:
+
+```json
+{
+  "version": "v1beta",
+  "components": [
+    {
+      "id": "hello_0",
+      "operator_component": {
+        "definition_name": "operator-definitions/hello",
+        "definition": null,
+        "task": "TASK_GREET",
+        "input": {
+          "target": "${trigger.who}"
+        },
+        "condition": ""
+      }
+    }
+  ],
+  "trigger": {
+    "trigger_by_request": {
+      "request_fields": {
+        "who": {
+          "title": "Who",
+          "description": "Who should be greeted?",
+          "instill_format": "string",
+          "instill_ui_order": 0,
+          "instill_ui_multiline": false
+        }
+      },
+      "response_fields": {
+        "greeting": {
+          "title": "Greeting",
+          "description": "",
+          "value": "${hello_0.output.greeting}",
+          "instill_ui_order": 0
+        }
+      }
+    }
+  }
+}
+```
+
+### Document the component
+
+Documentation helps user to integrate the component in their pipelines. A good
+component definition will have clear names for their fields, which will also
+contain useful descriptions. The information described in `definition.json` and
+`tasks.json` is enough to understand how a component should be used. `compogen`
+is a tool that parses the component configuration and builds a `README.mdx` file
+document displaying its information in a human-readable way. To generate the
+document, just add the following line on top of `pkg/operator/hello/v0/main.go`:
+
+```go
+//go:generate compogen readme --operator ./config ./README.mdx
+```
+
+Then, go to the base of the `component` repository and run:
+
+```sh
+$ make build-doc && make gen-doc
+```
+
+## Sane version control
+
+The version of a component is useful to track its evolution and to set
+expectations about its stability. When the interface of a component (defined by
+its configuration files) changes,
+its version should change following the Semantic Versioning guidelines.
+
 - Patch versions are intended for bug fixes.
-- Minor versions are intended for backwards-compatible changes, e.g., a new task or a new input field with a default value.
+- Minor versions are intended for backwards-compatible changes, e.g., a new task
+  or a new input field with a default value.
 - Major versions are intended for backwards-incompatible changes.
-  At this point, since there might be pipelines using the previous version, a new package MUST be created.
-  E.g., `operator/pkg/json/v0` -> `operator/pkg/json/v1`.
-- Build and pre-release labels are discouraged, as components are shipped as part of Instill VDP and they aren't likely to need such fine-grained version control.
+  - At this point, since there might be pipelines using the previous version, a
+    new package MUST be created. E.g., `operator/pkg/json/v0` -> `operator/pkg/json/v1`.
+- Build and pre-release labels are discouraged, as components are shipped as
+  part of Instill VDP and they aren't likely to need such fine-grained version
+  control.
 
 It is recommended to start a component at `v0.1.0`.
 A major version 0 is intended for rapid development.
 
 The `release_stage` property in `definition.json` indicates the stability of a component.
-  - A component skeleton (with only the minimal configuration files and a dummy implementation of the interfaces) may use the _Coming Soon_ or _Open For Contribution_ stages in order to communicate publicly about upcoming components.
-    The major and minor versions in this case MUST be 0.
-  - Alpha pre-releases are used in initial implementations, intended to gather feedback and issues from early adopters.
-    Breaking changes are acceptable at this stage.
-  - Beta pre-releases are intended for stable components that don't expect breaking changes.
-  - General availability indicates production readiness.
-    A broad adoption of the beta version in production indicates the transition to GA is ready.
 
-The typical version and release stage evolution of a component might look like this:
+- A component skeleton (with only the minimal configuration files and a dummy
+  implementation of the interfaces) may use the _Coming Soon_ or _Open For
+  Contribution_ stages in order to communicate publicly about upcoming
+  components. The major and minor versions in this case MUST be 0.
+- Alpha pre-releases are used in initial implementations, intended to gather
+  feedback and issues from early adopters.  Breaking changes are acceptable at
+  this stage.
+- Beta pre-releases are intended for stable components that don't expect
+  breaking changes.
+- General availability indicates production readiness. A broad adoption of the
+  beta version in production indicates the transition to GA is ready.
+
+The typical version and release stage evolution of a component might look like
+this:
 
 | Version | Release Stage |
 | :--- | :--- |
