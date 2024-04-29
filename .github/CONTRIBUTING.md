@@ -626,8 +626,8 @@ Re-run your local `pipeline-backend` build:
 
 ```sh
 $ make stop && make dev
-$ docker exec -d pipeline-backend go run ./cmd/worker
-$ docker exec pipeline-backend go run ./cmd/worker
+$ docker exec -d pipeline-backend go run ./cmd/worker # run without -d in a separate terminal if you want to access the logs
+$ docker exec pipeline-backend go run ./cmd/main
 ```
 
 Head to the console at http://localhost:3000/ (default password is `password`)
@@ -635,7 +635,7 @@ and create a pipeline.
 
 - In the **trigger** component, add a `who` text field.
 - Create a **hello** operator and reference the **trigger** input field by adding
-  `${trigger.who}` to the `Target` field.
+  `${trigger.who}` to the `target` field.
 - In the **response** component, add a `greeting` output value that references the
   **hello** output by introducing `${hello_0.output.greeting}`.
 
@@ -744,17 +744,17 @@ The `release_stage` property in `definition.json` indicates the stability of a c
 The typical version and release stage evolution of a component might look like
 this:
 
-| Version | Release Stage |
-| :--- | :--- |
-| 0.1.0 | `RELEASE_STAGE_ALPHA` |
-| 0.1.1 | `RELEASE_STAGE_ALPHA` |
-| 0.1.2 | `RELEASE_STAGE_ALPHA` |
-| 0.2.0 | `RELEASE_STAGE_ALPHA` |
-| 0.2.1 | `RELEASE_STAGE_ALPHA` |
-| 0.3.0 | `RELEASE_STAGE_BETA` |
-| 0.3.1 | `RELEASE_STAGE_BETA` |
-| 0.4.0 | `RELEASE_STAGE_BETA` |
-| 1.0.0 | `RELEASE_STAGE_GA` |
+| Version | Release Stage         |
+| :------ | :-------------------- |
+| 0.1.0   | `RELEASE_STAGE_ALPHA` |
+| 0.1.1   | `RELEASE_STAGE_ALPHA` |
+| 0.1.2   | `RELEASE_STAGE_ALPHA` |
+| 0.2.0   | `RELEASE_STAGE_ALPHA` |
+| 0.2.1   | `RELEASE_STAGE_ALPHA` |
+| 0.3.0   | `RELEASE_STAGE_BETA`  |
+| 0.3.1   | `RELEASE_STAGE_BETA`  |
+| 0.4.0   | `RELEASE_STAGE_BETA`  |
+| 1.0.0   | `RELEASE_STAGE_GA`    |
 
 ## Sending PRs
 
