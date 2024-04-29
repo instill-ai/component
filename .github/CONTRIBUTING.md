@@ -199,7 +199,7 @@ $ make build
 changes into account, you need reference them.
 
 ```sh
-go mod edit -replace="github.com/instill-ai/component=../component"
+$ go mod edit -replace="github.com/instill-ai/component=../component"
 ```
 
 Then, mount the `component` directory when running the `pipeline-backend`
@@ -612,7 +612,7 @@ func Init(logger *zap.Logger, usageHandler base.UsageHandler) *OperatorStore {
 			operatorUIDMap: map[uuid.UUID]*operator{},
 			operatorIDMap:  map[string]*operator{},
 		}
-        // ...
+		// ...
 		opStore.Import(hello.Init(logger, usageHandler))
 	})
 
