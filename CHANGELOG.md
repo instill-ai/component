@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.16.0-beta](https://github.com/instill-ai/component/compare/v0.15.0-beta...v0.16.0-beta) (2024-04-30)
+
+
+### Features
+
+* add contribution guide ([#106](https://github.com/instill-ai/component/issues/106)) ([3957579](https://github.com/instill-ai/component/commit/3957579268f4088798ecafeeb6d0553103c3987a))
+
+
+### Bug Fixes
+
+* typos in contribution guide ([#108](https://github.com/instill-ai/component/issues/108)) ([f01c049](https://github.com/instill-ai/component/commit/f01c0491e8eb171ccae0a076763405800f84383d))
+
 ## [0.15.0-beta](https://github.com/instill-ai/component/compare/v0.14.1-beta...v0.15.0-beta) (2024-04-25)
 
 
