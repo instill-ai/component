@@ -23,6 +23,7 @@ import (
 	"github.com/instill-ai/component/pkg/connector/restapi/v0"
 	"github.com/instill-ai/component/pkg/connector/stabilityai/v0"
 	"github.com/instill-ai/component/pkg/connector/website/v0"
+	"github.com/instill-ai/component/pkg/connector/slack/v0"
 
 	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -64,6 +65,7 @@ func Init(logger *zap.Logger, usageHandler base.UsageHandler) *ConnectorStore {
 		conStore.Import(redis.Init(logger, usageHandler))
 		conStore.Import(restapi.Init(logger, usageHandler))
 		conStore.Import(website.Init(logger, usageHandler))
+		conStore.Import(slack.Init(logger, usageHandler))
 
 	})
 	return conStore
