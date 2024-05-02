@@ -13,9 +13,7 @@
           "instillUIMultiline": true,
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
+            "value"
           ],
           "title": "Channel Name",
           "type": "string"
@@ -150,6 +148,70 @@
       },
       "required": [
         "conversations"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_WRITE_MESSAGE": {
+    "instillShortDescription": "send message to a specific channel",
+    "title": "Send Message",
+    "input": {
+      "description": "Input",
+      "instillUIOrder": 0,
+      "properties": {
+        "channel_name": {
+          "description": "A channel name display in Slack",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value"
+          ],
+          "title": "Channel Name",
+          "type": "string"
+        },
+        "message": {
+          "description": "message to be sent to the target channel",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_name",
+        "message"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "The greeting sentence",
+      "instillUIOrder": 0,
+      "properties": {
+        "result": {
+          "description": "result for sending message",
+          "instillEditOnNodeFields": [],
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Result",
+          "type": "string",
+          "instillFormat": "string"
+        }
+      },
+      "required": [
+        "result"
       ],
       "title": "Output",
       "type": "object"

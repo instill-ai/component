@@ -1,6 +1,7 @@
 {
   "available_tasks": [
-    "TASK_READ_MESSAGE"
+    "TASK_READ_MESSAGE",
+    "TASK_WRITE_MESSAGE"
   ],
   "custom": false,
   "documentation_url": "",
