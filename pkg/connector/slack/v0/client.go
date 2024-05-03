@@ -1,6 +1,7 @@
 package slack
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/instill-ai/component/pkg/connector/util/httpclient"
@@ -9,9 +10,11 @@ import (
 )
 
 const (
-	host            = "https://slack.com/api"
-	channelListPath = "/conversations.list"
-	sendMessagePath = "/chat.postMessage"
+	host                      = "https://slack.com/api"
+	channelListPath           = "/conversations.list"
+	sendMessagePath           = "/chat.postMessage"
+	conversationHistoriesPath = "/conversations.history"
+	conversationRepliesPath   = "/conversations.replies"
 )
 
 func newClient(config *structpb.Struct, logger *zap.Logger) *httpclient.Client {
@@ -47,19 +50,70 @@ func getBasePath(config *structpb.Struct) string {
 }
 
 // TODO: to be refactor with DI for API calling part
-func fetchChannelInfo(c *httpclient.Client) (*[]SlackChannel, error) {
-	resp := SlackChannelApiResp{}
-	req := c.R().SetResult(&resp)
+func fetchChannelInfo(c *httpclient.Client, apiParams ConversationsListParams) (*[]SlackChannel, error) {
+	resp := ConversationsListApiResp{}
 
-	if _, err := req.Get(channelListPath); err != nil {
+	req := c.R().SetQueryParams(setGetParams(apiParams))
+
+	response, err := req.Get(channelListPath)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(response.Body(), &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	if !resp.Ok {
+		err := fmt.Errorf("error: [%v]", resp.Error)
 		return nil, err
 	}
 
 	return &resp.Channels, nil
 }
 
-func postMessageToSlackChannel(c *httpclient.Client, params SendingData) error {
-	resp := SendingMessageResp{}
+func fetchConversations(c *httpclient.Client, apiParams ConversationsHistoryParams) (*ConversationsHistoryApiResp, error) {
+	resp := ConversationsHistoryApiResp{}
+	req := c.R().SetBody(apiParams).SetResult(&resp)
+
+	if _, err := req.Post(conversationHistoriesPath); err != nil {
+		return nil, err
+	}
+
+	if !resp.Ok {
+		err := fmt.Errorf("error: [%v]", resp.Error)
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
+func fetchReplies(c *httpclient.Client, apiParams ConversationReplyParams) (*ConversationReplyApiResp, error) {
+	resp := ConversationReplyApiResp{}
+
+	req := c.R().SetQueryParams(setGetParams(apiParams))
+
+	response, err := req.Get(conversationRepliesPath)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(response.Body(), &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	if !resp.Ok {
+		err := fmt.Errorf("error: [%v]", resp.Error)
+		return nil, err
+	}
+
+	return &resp, nil
+}
+
+func postMessageToSlackChannel(c *httpclient.Client, params ChatPostMessageParams) error {
+	resp := ChatPostMessageResp{}
 	req := c.R().SetBody(params).SetResult(&resp)
 
 	if _, err := req.Post(sendMessagePath); err != nil {

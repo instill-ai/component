@@ -16,6 +16,7 @@ import (
 
 const (
 	taskWriteMessage = "TASK_WRITE_MESSAGE"
+	taskReadMessage  = "TASK_READ_MESSAGE"
 )
 
 var (
@@ -65,6 +66,8 @@ func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb
 	switch task {
 	case taskWriteMessage:
 		e.execute = e.sendMessage
+	case taskReadMessage:
+		e.execute = e.readMessage
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),
@@ -91,50 +94,6 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	return outputs, nil
 }
 
-func (e *execution) sendMessage(in *structpb.Struct) (*structpb.Struct, error) {
-	params := SendingSlackMessage{}
-
-	if err := base.ConvertFromStructpb(in, &params); err != nil {
-		return nil, err
-	}
-
-	slackChannels, err := fetchChannelInfo(e.client)
-	if err != nil {
-		return nil, err
-	}
-
-	var slackChannelID string
-	for _, slackChannel := range *slackChannels {
-		if slackChannel.Name == params.ChannelName {
-			slackChannelID = slackChannel.ID
-			break
-		}
-	}
-
-	if slackChannelID == "" {
-		err := fmt.Errorf("there is no match name in slack channel [%v]", params.ChannelName)
-		return nil, err
-	}
-
-	sendingData := SendingData{
-		Channel: slackChannelID,
-		Text:    params.Message,
-	}
-
-	err = postMessageToSlackChannel(e.client, sendingData)
-	if err != nil {
-		return nil, err
-	}
-
-	out, err := base.ConvertToStructpb(WriteTaskResp{
-		Result: "succeed",
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return out, nil
-}
 
 func (c connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
 
