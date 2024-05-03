@@ -14,37 +14,21 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": false,
       "properties": {
-        "robot key": {
-          "description": "Fill your robot API key",
+        "api_key": {
+          "description": "Fill your API key",
           "instillUpstreamTypes": [
             "reference"
           ],
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": true,
+          "instillCredentialField": false,
           "instillUIOrder": 0,
-          "title": "Robot Key",
-          "type": "string"
-        },
-        "user_key": {
-          "description": "Fill your user key",
-          "instillUpstreamTypes": [
-            "reference"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillCredentialField": true,
-          "instillUIOrder": 1,
-          "title": "User Key",
+          "title": "API Key",
           "type": "string"
         }
       },
-      "required": [
-        "robot_key",
-        "user_key"
-      ],
+      "required": [],
       "title": "Slack Connection",
       "type": "object"
     }
