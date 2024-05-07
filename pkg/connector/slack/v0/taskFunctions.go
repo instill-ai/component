@@ -1,7 +1,6 @@
 package slack
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/instill-ai/component/pkg/base"
@@ -47,10 +46,8 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 			wg.Add(1)
 			go func(conversation Conversation) {
 				defer wg.Done()
-				fmt.Println("TEMP START TO GET REPLY")
 				replies, _ := getConversationReply(e, targetChannelID, conversation.Ts)
 
-				fmt.Println("TEMP FINISH TO GET REPLY")
 				// TODO: to be discussed about this error handdling
 				// fail? or not fail?
 				// if err != nil {
