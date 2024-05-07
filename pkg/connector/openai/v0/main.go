@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -24,6 +25,9 @@ const (
 	speechRecognitionTask = "TASK_SPEECH_RECOGNITION"
 	textToSpeechTask      = "TASK_TEXT_TO_SPEECH"
 	textToImageTask       = "TASK_TEXT_TO_IMAGE"
+
+	cfgAPIKey       = "api_key"
+	cfgOrganization = "organization"
 )
 
 var (
@@ -35,37 +39,91 @@ var (
 	openAIJSON []byte
 
 	once sync.Once
-	con  *connector
+	con  *Connector
 )
 
-type connector struct {
+// Connector executes queries against OpenAI.
+type Connector struct {
 	base.BaseConnector
+
+	// Global secrets.
+	globalAPIKey string
 }
 
 type execution struct {
 	base.BaseConnectorExecution
 }
 
-func Init(l *zap.Logger, u base.UsageHandler) *connector {
+// Init returns an initialized OpenAI connector.
+func Init(l *zap.Logger, u base.UsageHandler) *Connector {
 	once.Do(func() {
-		con = &connector{
+		con = &Connector{
 			BaseConnector: base.BaseConnector{
 				Logger:       l,
 				UsageHandler: u,
 			},
 		}
+
 		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, map[string][]byte{"openai.json": openAIJSON})
 		if err != nil {
 			panic(err)
 		}
 	})
+
 	return con
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+// The connection parameter is defined with snake_case, but the
+// environment variable configuration loader replaces underscores by dots,
+// so we can't use the parameter key directly.
+func readFromSecrets(key string, s map[string]any) string {
+	sanitized := strings.ReplaceAll(key, "_", "")
+	if v, ok := s[sanitized].(string); ok {
+		return v
+	}
+
+	return ""
+}
+
+// WithGlobalConnection reads the global connection configuration, which can
+// be used to execute the connector with globally defined secrets.
+func (c *Connector) WithGlobalConnection(s map[string]any) *Connector {
+	c.globalAPIKey = readFromSecrets(cfgAPIKey, s)
+
+	return c
+}
+
+// CreateExecution initializes a connector executor that can be used in a
+// pipeline trigger.
+func (c *Connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+	resolvedConnection, err := c.resolveSecrets(connection)
+	if err != nil {
+		return nil, err
+	}
+
 	return &base.ExecutionWrapper{Execution: &execution{
-		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		BaseConnectorExecution: base.BaseConnectorExecution{
+			Connector:       c,
+			SystemVariables: sysVars,
+			Connection:      resolvedConnection,
+			Task:            task,
+		},
 	}}, nil
+}
+
+// resolveSecrets looks for references to a global secret in the connection
+// and replaces them by the global secret injected during initialization.
+func (c *Connector) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, error) {
+	apiKey := conn.GetFields()[cfgAPIKey].GetStringValue()
+	if apiKey == base.ConnectionGlobalSecret {
+		if c.globalAPIKey == "" {
+			return nil, base.NewUnresolvedGlobalSecret(cfgAPIKey)
+		}
+
+		conn.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.globalAPIKey)
+	}
+
+	return conn, nil
 }
 
 // getBasePath returns OpenAI's API URL. This configuration param allows us to
@@ -82,11 +140,11 @@ func getBasePath(config *structpb.Struct) string {
 }
 
 func getAPIKey(config *structpb.Struct) string {
-	return config.GetFields()["api_key"].GetStringValue()
+	return config.GetFields()[cfgAPIKey].GetStringValue()
 }
 
 func getOrg(config *structpb.Struct) string {
-	val, ok := config.GetFields()["organization"]
+	val, ok := config.GetFields()[cfgOrganization]
 	if !ok {
 		return ""
 	}
@@ -328,7 +386,7 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 }
 
 // Test checks the connector state.
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *Connector) Test(_ map[string]any, connection *structpb.Struct) error {
 	models := ListModelsResponse{}
 	req := newClient(connection, c.Logger).R().SetResult(&models)
 
