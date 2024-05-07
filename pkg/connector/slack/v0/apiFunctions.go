@@ -1,46 +1,49 @@
 package slack
 
-import "reflect"
+import (
+	"github.com/slack-go/slack"
+)
 
 // Todo: make it multiple options
-func setChannelType(params *ConversationsListParams, isPublicChannel bool) {
+func setChannelType(params *slack.GetConversationsParameters, isPublicChannel bool) {
 	if !isPublicChannel {
-		params.Types = "private_channel"
+		params.Types = append(params.Types, "private_channel")
 	} else {
-		params.Types = "public_channel"
+		params.Types = append(params.Types, "public_channel")
 	}
 }
 
-func getChannelId(channelName string, channels []SlackChannel) string {
+func setChannelId(channelName string, channels []slack.Channel, targetChannelID *string) {
 	for _, slackChannel := range channels {
-		if slackChannel.Name == channelName {
-			return slackChannel.ID
+		if channelName == slackChannel.Name {
+			*targetChannelID = slackChannel.ID
+			break
 		}
 	}
-	return ""
 }
 
-func setGetParams(params any) map[string]string {
+// TODO: Read Task
+// func setGetParams(params any) map[string]string {
 
-	v := reflect.ValueOf(params)
-	typ := v.Type()
+// 	v := reflect.ValueOf(params)
+// 	typ := v.Type()
 
-	keyValueMap := make(map[string]string)
+// 	keyValueMap := make(map[string]string)
 
-	// TODO: make it extendable
-	for i := 0; i < v.NumField(); i++ {
-		if typ.Field(i).Name == "Types" {
-			keyValueMap["types"] = v.Field(i).String()
+// 	// TODO: make it extendable
+// 	for i := 0; i < v.NumField(); i++ {
+// 		if typ.Field(i).Name == "Types" {
+// 			keyValueMap["types"] = v.Field(i).String()
 
-		} else if typ.Field(i).Name == "ChannelID" {
-			keyValueMap["channel"] = v.Field(i).String()
-		} else if typ.Field(i).Name == "ThreadTs" {
-			keyValueMap["ts"] = v.Field(i).String()
-		}
-	}
-	return keyValueMap
-}
+// 		} else if typ.Field(i).Name == "ChannelID" {
+// 			keyValueMap["channel"] = v.Field(i).String()
+// 		} else if typ.Field(i).Name == "ThreadTs" {
+// 			keyValueMap["ts"] = v.Field(i).String()
+// 		}
+// 	}
+// 	return keyValueMap
+// }
 
-func appendToReadTaskResp(resp ConversationReplyApiResp, readTaskResp *ReadTaskResp) {
-	
-}
+// func appendToReadTaskResp(resp ConversationReplyApiResp, readTaskResp *ReadTaskResp) {
+
+// }

@@ -10,8 +10,8 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
-	"github.com/instill-ai/component/pkg/connector/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
+	"github.com/slack-go/slack"
 )
 
 const (
@@ -37,7 +37,7 @@ type execution struct {
 	base.BaseConnectorExecution
 
 	execute func(*structpb.Struct) (*structpb.Struct, error)
-	client  *httpclient.Client
+	client  *slack.Client
 }
 
 // Init returns an implementation of IConnector that interacts with Slack.
@@ -60,14 +60,15 @@ func Init(l *zap.Logger, u base.UsageHandler) *connector {
 func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
 		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
-		client:                 newClient(connection, c.Logger),
+		client:                 newClient(connection),
 	}
 
 	switch task {
 	case taskWriteMessage:
 		e.execute = e.sendMessage
 	case taskReadMessage:
-		e.execute = e.readMessage
+		// TODO: Read Task
+		// e.execute = e.readMessage
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),
@@ -93,7 +94,6 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 
 	return outputs, nil
 }
-
 
 func (c connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
 
