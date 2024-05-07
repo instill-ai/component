@@ -1,14 +1,11 @@
 package slack
 
 import (
-	"fmt"
-
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/slack-go/slack"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-// TODO: Read Task
 // func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 
 // 	params := UserInputReadTask{}
@@ -105,33 +102,13 @@ func (e *execution) sendMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	var apiParams slack.GetConversationsParameters
-	setChannelType(&apiParams, params.IsPublicChannel)
 	var targetChannelID string
-
-	for {
-
-		slackChannels, nextCur, err := e.client.GetConversations(&apiParams)
-		if err != nil {
-			return nil, err
-		}
-
-		setChannelId(params.ChannelName, slackChannels, &targetChannelID)
-
-		if targetChannelID != "" {
-			break
-		}
-
-		if targetChannelID == "" && nextCur == "" {
-			err := fmt.Errorf("there is no match name in slack channel [%v]", params.ChannelName)
-			return nil, err
-		}
-
-		apiParams.Cursor = nextCur
-
+	err := loopChannelListApi(e, params.IsPublicChannel, params.ChannelName, &targetChannelID)
+	if err != nil {
+		return nil, err
 	}
 
-	_, _, err := e.client.PostMessage(targetChannelID, slack.MsgOptionText(params.Message, false))
+	_, _, err = e.client.PostMessage(targetChannelID, slack.MsgOptionText(params.Message, false))
 
 	if err != nil {
 		return nil, err
