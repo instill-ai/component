@@ -1,99 +1,79 @@
 package slack
 
 import (
+	"fmt"
+	"sync"
+
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/slack-go/slack"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-// func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 
-// 	params := UserInputReadTask{}
+	params := UserInputReadTask{}
 
-// 	if err := base.ConvertFromStructpb(in, &params); err != nil {
-// 		return nil, err
-// 	}
+	if err := base.ConvertFromStructpb(in, &params); err != nil {
+		return nil, err
+	}
+	var targetChannelID string
+	err := loopChannelListApi(e, params.IsPublicChannel, params.ChannelName, &targetChannelID)
 
-// 	var apiListParams ConversationsListParams
+	if err != nil {
+		return nil, err
+	}
 
-// 	setChannelType(&apiListParams, params.IsPublicChannel)
+	resp, err := getConversationHistory(e, targetChannelID, "")
+	if err != nil {
+		return nil, err
+	}
 
-// 	slackChannels, err := fetchChannelInfo(e.client, apiListParams)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	var readTaskResp ReadTaskResp
+	err = setApiRespToReadTaskResp(resp.Messages, &readTaskResp)
+	if err != nil {
+		return nil, err
+	}
 
-// 	channelId := getChannelId(params.ChannelName, *slackChannels)
+	// TODO: fetch historyAPI first if there are more conversations.
+	// if resp.ResponseMetaData.NextCursor != "" {
 
-// 	if channelId == "" {
-// 		err := fmt.Errorf("there is no match name in slack channel [%v]", params.ChannelName)
-// 		return nil, err
-// 	}
+	// }
 
-// 	apiHistoryParams := ConversationsHistoryParams{
-// 		ChannelID: channelId,
-// 	}
+	var mu sync.Mutex
+	var wg sync.WaitGroup
 
-// 	conversations, err := fetchConversations(e.client, apiHistoryParams)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	for _, conversation := range readTaskResp.Conversations {
+		if conversation.ReplyCount > 0 {
+			wg.Add(1)
+			go func(conversation Conversation) {
+				defer wg.Done()
+				fmt.Println("TEMP START TO GET REPLY")
+				replies, _ := getConversationReply(e, targetChannelID, conversation.Ts)
 
-// 	// TODO: new thread to fetch next conversations
-// 	if conversations.ResponseMetadata.NextCursor != "" {
-// 	}
+				fmt.Println("TEMP FINISH TO GET REPLY")
+				// TODO: to be discussed about this error handdling
+				// fail? or not fail?
+				// if err != nil {
+				// }
 
-// 	// TODO: fetch historyAPI first if there are more conversations.
-// 	if conversations.HasMore {
-// 	}
+				// TODO: fetch further replies if there are
 
-// 	var responses []ConversationReplyApiResp
-// 	var mu sync.Mutex
-// 	var wg sync.WaitGroup
-// 	wg.Add(len(conversations.Messages))
+				mu.Lock()
+				setRepliedToConversation(&conversation, replies)
+				mu.Unlock()
 
-// 	var readTaskResp ReadTaskResp
+			}(conversation)
+		}
+	}
+	wg.Wait()
 
-// 	for _, message := range conversations.Messages {
-// 		if message.ReplyCount > 0 {
-// 			go func(message Message) {
-// 				defer wg.Done()
-// 				apiReplyParams := ConversationReplyParams{
-// 					ThreadTs:  message.Ts,
-// 					ChannelID: channelId,
-// 				}
-// 				replies, err := fetchReplies(e.client, apiReplyParams)
+	out, err := base.ConvertToStructpb(readTaskResp)
+	if err != nil {
+		return nil, err
+	}
 
-// 				// TODO: to be discussed about this error handdling
-// 				// fail? or not fail?
-// 				if err != nil {
-// 					// fmt.Printf("replies %v:  %v \n", i, replies)
-// 				}
-
-// 				// TODO: fetch further replies if there are
-
-// 				// !!! TODO next week:
-// 				// 1. transform replies to ThreadReplyMessage
-// 				// 2. Get the data from message
-// 				// 2-1. Transform ts to timestamp and compare with start-date
-// 				// 3. Make it as a conversation
-// 				// 4. lock and append and unlock
-// 				mu.Lock()
-// 				responses = append(responses, *replies)
-// 				mu.Unlock()
-
-// 			}(message)
-// 		}
-// 	}
-// 	wg.Wait()
-
-// 	out, err := base.ConvertToStructpb(readTaskResp)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return out, nil
-// }
+	return out, nil
+}
 
 func (e *execution) sendMessage(in *structpb.Struct) (*structpb.Struct, error) {
 	params := UserInputWriteTask{}

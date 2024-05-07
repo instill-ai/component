@@ -2,6 +2,8 @@ package slack
 
 import (
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/slack-go/slack"
 )
@@ -53,28 +55,97 @@ func setChannelId(channelName string, channels []slack.Channel, targetChannelID 
 	}
 }
 
-// TODO: Read Task
-// func setGetParams(params any) map[string]string {
+func getConversationHistory(e *execution, channelID string, nextCur string) (*slack.GetConversationHistoryResponse, error) {
+	apiHistoryParams := slack.GetConversationHistoryParameters{
+		ChannelID: channelID,
+		Cursor:    nextCur,
+	}
 
-// 	v := reflect.ValueOf(params)
-// 	typ := v.Type()
+	historiesResp, err := e.client.GetConversationHistory(&apiHistoryParams)
+	if err != nil {
+		return nil, err
+	}
+	if !historiesResp.Ok {
+		err := fmt.Errorf("slack api error: %v", historiesResp.Error)
+		return nil, err
+	}
 
-// 	keyValueMap := make(map[string]string)
+	return historiesResp, nil
+}
 
-// 	// TODO: make it extendable
-// 	for i := 0; i < v.NumField(); i++ {
-// 		if typ.Field(i).Name == "Types" {
-// 			keyValueMap["types"] = v.Field(i).String()
+func getConversationReply(e *execution, channelID string, ts string) ([]slack.Message, error) {
+	apiParams := slack.GetConversationRepliesParameters{
+		ChannelID: channelID,
+		Timestamp: ts,
+	}
+	msgs, _, _, err := e.client.GetConversationReplies(&apiParams)
 
-// 		} else if typ.Field(i).Name == "ChannelID" {
-// 			keyValueMap["channel"] = v.Field(i).String()
-// 		} else if typ.Field(i).Name == "ThreadTs" {
-// 			keyValueMap["ts"] = v.Field(i).String()
-// 		}
-// 	}
-// 	return keyValueMap
-// }
+	if err != nil {
+		return nil, err
+	}
 
-// func appendToReadTaskResp(resp ConversationReplyApiResp, readTaskResp *ReadTaskResp) {
+	// TODO: deal with the nextCur
+	// add one more input, nextCur string, in function
+	// if nextCur != "" {
 
-// }
+	// }
+
+	return msgs, nil
+}
+
+func setApiRespToReadTaskResp(apiResp []slack.Message, readTaskResp *ReadTaskResp) error {
+
+	for _, msg := range apiResp {
+		formatedDate, err := transformTsToDate(msg.Timestamp, "2006-01-02")
+
+		if err != nil {
+			return err
+		}
+
+		conversation := Conversation{
+			UserID:     msg.User,
+			Message:    msg.Text,
+			StartDate:  formatedDate,
+			ReplyCount: msg.ReplyCount,
+			Ts:         msg.Timestamp,
+		}
+		var threadReplyMessages []ThreadReplyMessage
+		conversation.ThreadReplyMessage = threadReplyMessages
+		readTaskResp.Conversations = append(readTaskResp.Conversations, conversation)
+	}
+	return nil
+}
+
+func setRepliedToConversation(c *Conversation, replies []slack.Message) error {
+	for _, msg := range replies {
+
+		if c.Ts == msg.Timestamp {
+			continue
+		}
+
+		formatedDateTime, err := transformTsToDate(msg.Timestamp, "2006-01-02 15:04:05")
+		if err != nil {
+			return err
+		}
+		reply := ThreadReplyMessage{
+			UserID:   msg.User,
+			DateTime: formatedDateTime,
+			Message:  msg.Text,
+		}
+		c.ThreadReplyMessage = append(c.ThreadReplyMessage, reply)
+	}
+	return nil
+}
+
+func transformTsToDate(ts string, format string) (string, error) {
+
+	tsFloat, err := strconv.ParseFloat(ts, 64)
+	if err != nil {
+		return "", err
+	}
+
+	timestamp := time.Unix(int64(tsFloat), int64((tsFloat-float64(int64(tsFloat)))*1e9))
+
+	formatedTs := timestamp.Format(format)
+	return formatedTs, nil
+}

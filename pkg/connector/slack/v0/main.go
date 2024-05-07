@@ -67,8 +67,7 @@ func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb
 	case taskWriteMessage:
 		e.execute = e.sendMessage
 	case taskReadMessage:
-		// TODO: Read Task
-		// e.execute = e.readMessage
+		e.execute = e.readMessage
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),
