@@ -109,8 +109,8 @@ func setApiRespToReadTaskResp(apiResp []slack.Message, readTaskResp *ReadTaskRes
 			ReplyCount: msg.ReplyCount,
 			Ts:         msg.Timestamp,
 		}
-		var threadReplyMessages []ThreadReplyMessage
-		conversation.ThreadReplyMessage = threadReplyMessages
+
+		conversation.ThreadReplyMessage = []ThreadReplyMessage{}
 		readTaskResp.Conversations = append(readTaskResp.Conversations, conversation)
 	}
 	return nil
