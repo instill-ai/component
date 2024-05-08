@@ -22,7 +22,7 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": true,
+          "instillSecret": true,
           "instillUIOrder": 0,
           "title": "API Key",
           "type": "string"
@@ -35,7 +35,7 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": false,
+          "instillSecret": false,
           "instillUIOrder": 1,
           "title": "Pinecone Base URL",
           "type": "string"

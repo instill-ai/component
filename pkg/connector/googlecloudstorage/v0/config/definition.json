@@ -21,7 +21,7 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": false,
+          "instillSecret": false,
           "instillUIOrder": 0,
           "title": "Bucket Name",
           "type": "string"
@@ -34,7 +34,7 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": true,
+          "instillSecret": true,
           "instillUIOrder": 1,
           "instillUIMultiline": true,
           "title": "JSON Key File contents",

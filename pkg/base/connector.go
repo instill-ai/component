@@ -26,7 +26,7 @@ type IConnector interface {
 	CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*ExecutionWrapper, error)
 	Test(sysVars map[string]any, connection *structpb.Struct) error
 
-	IsCredentialField(target string) bool
+	IsSecretField(target string) bool
 }
 
 // Connector implements the common connector methods.
@@ -36,8 +36,8 @@ type Connector struct {
 	taskInputSchemas  map[string]string
 	taskOutputSchemas map[string]string
 
-	definition       *pipelinePB.ConnectorDefinition
-	credentialFields []string
+	definition   *pipelinePB.ConnectorDefinition
+	secretFields []string
 }
 
 func (c *Connector) GetID() string {
@@ -67,7 +67,7 @@ func (c *Connector) LoadConnectorDefinition(definitionJSONBytes []byte, tasksJSO
 	var err error
 	var definitionJSON any
 
-	c.credentialFields = []string{}
+	c.secretFields = []string{}
 
 	err = json.Unmarshal(definitionJSONBytes, &definitionJSON)
 	if err != nil {
@@ -144,7 +144,7 @@ func (c *Connector) LoadConnectorDefinition(definitionJSONBytes []byte, tasksJSO
 		return err
 	}
 
-	c.initCredentialField(c.definition)
+	c.initSecretField(c.definition)
 
 	return nil
 
@@ -204,9 +204,9 @@ func (c *Connector) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb
 	return spec, nil
 }
 
-// IsCredentialField checks if the target field is credential field
-func (c *Connector) IsCredentialField(target string) bool {
-	for _, field := range c.credentialFields {
+// IsSecretField checks if the target field is secret field
+func (c *Connector) IsSecretField(target string) bool {
+	for _, field := range c.secretFields {
 		if target == field {
 			return true
 		}
@@ -214,47 +214,47 @@ func (c *Connector) IsCredentialField(target string) bool {
 	return false
 }
 
-// ListCredentialField lists the credential fields by definition id
-func (c *Connector) ListCredentialField() ([]string, error) {
-	return c.credentialFields, nil
+// ListSecretFields lists the secret fields by definition id
+func (c *Connector) ListSecretFields() ([]string, error) {
+	return c.secretFields, nil
 }
 
-func (c *Connector) initCredentialField(def *pipelinePB.ConnectorDefinition) {
-	if c.credentialFields == nil {
-		c.credentialFields = []string{}
+func (c *Connector) initSecretField(def *pipelinePB.ConnectorDefinition) {
+	if c.secretFields == nil {
+		c.secretFields = []string{}
 	}
-	credentialFields := []string{}
+	secretFields := []string{}
 	connection := def.Spec.GetComponentSpecification().GetFields()["properties"].GetStructValue().GetFields()["connection"].GetStructValue()
-	credentialFields = c.traverseCredentialField(connection.GetFields()["properties"], "", credentialFields)
+	secretFields = c.traverseSecretField(connection.GetFields()["properties"], "", secretFields)
 	if l, ok := connection.GetFields()["oneOf"]; ok {
 		for _, v := range l.GetListValue().Values {
-			credentialFields = c.traverseCredentialField(v.GetStructValue().GetFields()["properties"], "", credentialFields)
+			secretFields = c.traverseSecretField(v.GetStructValue().GetFields()["properties"], "", secretFields)
 		}
 	}
-	c.credentialFields = credentialFields
+	c.secretFields = secretFields
 }
 
-func (c *Connector) traverseCredentialField(input *structpb.Value, prefix string, credentialFields []string) []string {
+func (c *Connector) traverseSecretField(input *structpb.Value, prefix string, secretFields []string) []string {
 	for key, v := range input.GetStructValue().GetFields() {
-		if isCredential, ok := v.GetStructValue().GetFields()["instillCredentialField"]; ok {
-			if isCredential.GetBoolValue() || isCredential.GetStringValue() == "true" {
-				credentialFields = append(credentialFields, fmt.Sprintf("%s%s", prefix, key))
+		if isSecret, ok := v.GetStructValue().GetFields()["instillSecret"]; ok {
+			if isSecret.GetBoolValue() || isSecret.GetStringValue() == "true" {
+				secretFields = append(secretFields, fmt.Sprintf("%s%s", prefix, key))
 			}
 		}
 		if tp, ok := v.GetStructValue().GetFields()["type"]; ok {
 			if tp.GetStringValue() == "object" {
 				if l, ok := v.GetStructValue().GetFields()["oneOf"]; ok {
 					for _, v := range l.GetListValue().Values {
-						credentialFields = c.traverseCredentialField(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), credentialFields)
+						secretFields = c.traverseSecretField(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), secretFields)
 					}
 				}
-				credentialFields = c.traverseCredentialField(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), credentialFields)
+				secretFields = c.traverseSecretField(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), secretFields)
 			}
 
 		}
 	}
 
-	return credentialFields
+	return secretFields
 }
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.

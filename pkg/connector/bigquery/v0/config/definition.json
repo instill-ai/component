@@ -33,7 +33,7 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": true,
+          "instillSecret": true,
           "instillUIOrder": 0,
           "instillUIMultiline": true,
           "title": "JSON Key File contents",

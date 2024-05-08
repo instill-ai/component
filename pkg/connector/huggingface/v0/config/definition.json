@@ -37,7 +37,7 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": true,
+          "instillSecret": true,
           "instillUIOrder": 0,
           "title": "API Key",
           "type": "string"
@@ -51,7 +51,7 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": false,
+          "instillSecret": false,
           "instillUIOrder": 1,
           "title": "Base URL",
           "type": "string"
@@ -65,7 +65,7 @@
           "instillAcceptFormats": [
             "boolean"
           ],
-          "instillCredentialField": false,
+          "instillSecret": false,
           "instillUIOrder": 2,
           "title": "Is Custom Endpoint",
           "type": "boolean"
