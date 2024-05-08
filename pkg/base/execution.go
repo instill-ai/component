@@ -109,17 +109,14 @@ func Validate(data []*structpb.Struct, jsonSchema string, target string) error {
 	return nil
 }
 
-// ExecuteWithValidation executes the execution with validation
+// Execute wraps the execution method with validation and usage collection.
 func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-
 	if err := Validate(inputs, e.Execution.GetTaskInputSchema(), "inputs"); err != nil {
 		return nil, err
 	}
 
-	if e.Execution.GetUsageHandler() != nil {
-		if err := e.Execution.GetUsageHandler().Check(); err != nil {
-			return nil, err
-		}
+	if err := e.Execution.GetUsageHandler().Check(); err != nil {
+		return nil, err
 	}
 
 	outputs, err := e.Execution.Execute(inputs)
@@ -131,10 +128,8 @@ func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struc
 		return nil, err
 	}
 
-	if e.Execution.GetUsageHandler() != nil {
-		if err := e.Execution.GetUsageHandler().Collect(); err != nil {
-			return nil, err
-		}
+	if err := e.Execution.GetUsageHandler().Collect(); err != nil {
+		return nil, err
 	}
 
 	return outputs, err

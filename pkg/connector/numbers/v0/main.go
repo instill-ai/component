@@ -15,7 +15,6 @@ import (
 
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/gofrs/uuid"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
@@ -96,14 +95,9 @@ type Output struct {
 	AssetUrls []string `json:"asset_urls"`
 }
 
-func Init(l *zap.Logger, u base.UsageHandler) *connector {
+func Init(bc base.BaseConnector) *connector {
 	once.Do(func() {
-		con = &connector{
-			BaseConnector: base.BaseConnector{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
+		con = &connector{BaseConnector: bc}
 		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)

@@ -8,7 +8,6 @@ import (
 	"strings"
 	"sync"
 
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/gofrs/uuid"
@@ -47,14 +46,9 @@ type execution struct {
 
 // Init returns an implementation of IConnector that interacts with Archetype
 // AI.
-func Init(l *zap.Logger, u base.UsageHandler) *connector {
+func Init(bc base.BaseConnector) *connector {
 	once.Do(func() {
-		con = &connector{
-			BaseConnector: base.BaseConnector{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
+		con = &connector{BaseConnector: bc}
 		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)

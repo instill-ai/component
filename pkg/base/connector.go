@@ -290,7 +290,12 @@ func (e *BaseConnectorExecution) GetLogger() *zap.Logger {
 	return e.Connector.GetLogger()
 }
 func (e *BaseConnectorExecution) GetUsageHandler() UsageHandler {
-	return e.Connector.GetUsageHandler()
+	h := e.Connector.GetUsageHandler()
+	if h == nil {
+		return new(noopUsageHandler)
+	}
+
+	return h
 }
 func (e *BaseConnectorExecution) GetTaskInputSchema() string {
 	return e.Connector.GetTaskInputSchemas()[e.Task]

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"sync"
 
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
@@ -18,7 +17,7 @@ var definitionJSON []byte
 var tasksJSON []byte
 
 var once sync.Once
-var con *operator
+var op *operator
 
 type operator struct {
 	base.BaseOperator
@@ -28,20 +27,15 @@ type execution struct {
 	base.BaseOperatorExecution
 }
 
-func Init(l *zap.Logger, u base.UsageHandler) *operator {
+func Init(bo base.BaseOperator) *operator {
 	once.Do(func() {
-		con = &operator{
-			BaseOperator: base.BaseOperator{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
-		err := con.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
+		op = &operator{BaseOperator: bo}
+		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return op
 }
 
 func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {

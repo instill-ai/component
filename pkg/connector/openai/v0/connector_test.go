@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
+	"github.com/instill-ai/component/pkg/base"
 	"github.com/instill-ai/component/pkg/connector/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 )
@@ -28,8 +29,8 @@ const (
 func TestConnector_Execute(t *testing.T) {
 	c := qt.New(t)
 
-	logger := zap.NewNop()
-	connector := Init(logger, nil)
+	bc := base.BaseConnector{Logger: zap.NewNop()}
+	connector := Init(bc)
 
 	testcases := []struct {
 		name        string
@@ -127,8 +128,8 @@ func TestConnector_Execute(t *testing.T) {
 func TestConnector_Test(t *testing.T) {
 	c := qt.New(t)
 
-	logger := zap.NewNop()
-	connector := Init(logger, nil)
+	bc := base.BaseConnector{Logger: zap.NewNop()}
+	connector := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

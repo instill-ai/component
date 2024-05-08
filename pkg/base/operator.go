@@ -141,7 +141,12 @@ func (e *BaseOperatorExecution) GetLogger() *zap.Logger {
 	return e.Operator.GetLogger()
 }
 func (e *BaseOperatorExecution) GetUsageHandler() UsageHandler {
-	return e.Operator.GetUsageHandler()
+	h := e.Operator.GetUsageHandler()
+	if h == nil {
+		return new(noopUsageHandler)
+	}
+
+	return h
 }
 func (e *BaseOperatorExecution) GetTaskInputSchema() string {
 	return e.Operator.GetTaskInputSchemas()[e.Task]

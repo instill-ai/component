@@ -29,10 +29,11 @@ import (
 
 var (
 	once     sync.Once
-	conStore *ConnectorStore
+	conStore *Store
 )
 
-type ConnectorStore struct {
+// Store holds in-memory information about the initialized connectors.
+type Store struct {
 	connectorUIDs   []uuid.UUID
 	connectorUIDMap map[uuid.UUID]*connector
 	connectorIDMap  map[string]*connector
@@ -48,72 +49,78 @@ type connector struct {
 // connection.
 type ConnectionSecrets map[string]map[string]any
 
-func Init(logger *zap.Logger, usageHandler base.UsageHandler, secrets ConnectionSecrets) *ConnectorStore {
-	once.Do(func() {
+// Init initializes the different connector components and loads their
+// information to memory.
+func Init(logger *zap.Logger, secrets ConnectionSecrets) *Store {
+	baseConn := base.BaseConnector{Logger: logger}
 
-		conStore = &ConnectorStore{
+	once.Do(func() {
+		conStore = &Store{
 			connectorUIDMap: map[uuid.UUID]*connector{},
 			connectorIDMap:  map[string]*connector{},
 		}
 
-		conStore.Import(stabilityai.Init(logger, usageHandler))
-		conStore.Import(instill.Init(logger, usageHandler))
-		conStore.Import(huggingface.Init(logger, usageHandler))
+		conStore.Import(stabilityai.Init(baseConn))
+		conStore.Import(instill.Init(baseConn))
+		conStore.Import(huggingface.Init(baseConn))
 
 		{
 			// OpenAI
-			conn := openai.Init(logger, usageHandler)
+			conn := openai.Init(baseConn)
 			conn = conn.WithGlobalCredentials(secrets[conn.GetID()])
 			conStore.Import(conn)
 		}
 
-		conStore.Import(archetypeai.Init(logger, usageHandler))
-		conStore.Import(numbers.Init(logger, usageHandler))
-		conStore.Import(airbyte.Init(logger, usageHandler))
-		conStore.Import(bigquery.Init(logger, usageHandler))
-		conStore.Import(googlecloudstorage.Init(logger, usageHandler))
-		conStore.Import(googlesearch.Init(logger, usageHandler))
-		conStore.Import(pinecone.Init(logger, usageHandler))
-		conStore.Import(redis.Init(logger, usageHandler))
-		conStore.Import(restapi.Init(logger, usageHandler))
-		conStore.Import(website.Init(logger, usageHandler))
+		conStore.Import(archetypeai.Init(baseConn))
+		conStore.Import(numbers.Init(baseConn))
+		conStore.Import(airbyte.Init(baseConn))
+		conStore.Import(bigquery.Init(baseConn))
+		conStore.Import(googlecloudstorage.Init(baseConn))
+		conStore.Import(googlesearch.Init(baseConn))
+		conStore.Import(pinecone.Init(baseConn))
+		conStore.Import(redis.Init(baseConn))
+		conStore.Import(restapi.Init(baseConn))
+		conStore.Import(website.Init(baseConn))
 
 	})
+
 	return conStore
 }
 
-// Imports imports the connector definitions
-func (cs *ConnectorStore) Import(con base.IConnector) {
+// Import loads the connector definitions into memory.
+func (cs *Store) Import(con base.IConnector) {
 	c := &connector{con: con}
 	cs.connectorUIDMap[con.GetUID()] = c
 	cs.connectorIDMap[con.GetID()] = c
 	cs.connectorUIDs = append(cs.connectorUIDs, con.GetUID())
 }
 
-func (cs *ConnectorStore) CreateExecution(defUID uuid.UUID, sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+// CreateExecution initializes the execution of a connector given its UID.
+func (cs *Store) CreateExecution(defUID uuid.UUID, sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	if con, ok := cs.connectorUIDMap[defUID]; ok {
 		return con.con.CreateExecution(sysVars, connection, task)
 	}
 	return nil, fmt.Errorf("connector definition not found")
 }
 
-func (cs *ConnectorStore) GetConnectorDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+// GetConnectorDefinitionByUID returns a connector definition by its UID.
+func (cs *Store) GetConnectorDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	if con, ok := cs.connectorUIDMap[defUID]; ok {
 		return con.con.GetConnectorDefinition(sysVars, component)
 	}
 	return nil, fmt.Errorf("connector definition not found")
 }
 
-// Get the connector definition by definition id
-func (cs *ConnectorStore) GetConnectorDefinitionByID(defID string, sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+// GetConnectorDefinitionByID returns a connector definition by its ID.
+func (cs *Store) GetConnectorDefinitionByID(defID string, sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	if con, ok := cs.connectorIDMap[defID]; ok {
 		return con.con.GetConnectorDefinition(sysVars, component)
 	}
 	return nil, fmt.Errorf("connector definition not found")
 }
 
-// Get the list of connector definitions under this connector
-func (cs *ConnectorStore) ListConnectorDefinitions(sysVars map[string]any, returnTombstone bool) []*pipelinePB.ConnectorDefinition {
+// ListConnectorDefinitions returns all the loaded connector definitions.
+func (cs *Store) ListConnectorDefinitions(sysVars map[string]any, returnTombstone bool) []*pipelinePB.ConnectorDefinition {
 	defs := []*pipelinePB.ConnectorDefinition{}
 	for _, uid := range cs.connectorUIDs {
 		con := cs.connectorUIDMap[uid]
@@ -127,7 +134,9 @@ func (cs *ConnectorStore) ListConnectorDefinitions(sysVars map[string]any, retur
 	return defs
 }
 
-func (cs *ConnectorStore) IsCredentialField(defUID uuid.UUID, target string) (bool, error) {
+// IsCredentialField returns whether a given field in a connector contains
+// credentials.
+func (cs *Store) IsCredentialField(defUID uuid.UUID, target string) (bool, error) {
 	if con, ok := cs.connectorUIDMap[defUID]; ok {
 		return con.con.IsCredentialField(target), nil
 	}

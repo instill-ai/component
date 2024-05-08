@@ -220,8 +220,8 @@ func TestConnector_ExecuteSpeechRecognition(t *testing.T) {
 }
 
 func testTask(c *qt.C, p taskParams) {
-	logger := zap.NewNop()
-	connector := Init(logger, nil)
+	bc := base.BaseConnector{Logger: zap.NewNop()}
+	connector := Init(bc)
 
 	c.Run("nok - HTTP client error - "+p.task, func(c *qt.C) {
 		c.Parallel()

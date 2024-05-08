@@ -37,14 +37,9 @@ type execution struct {
 	base.BaseConnectorExecution
 }
 
-func Init(l *zap.Logger, u base.UsageHandler) *connector {
+func Init(bc base.BaseConnector) *connector {
 	once.Do(func() {
-		con = &connector{
-			BaseConnector: base.BaseConnector{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
+		con = &connector{BaseConnector: bc}
 		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)

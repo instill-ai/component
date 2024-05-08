@@ -9,6 +9,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
+	"github.com/instill-ai/component/pkg/base"
 	"github.com/instill-ai/x/errmsg"
 )
 
@@ -113,8 +114,8 @@ func TestOperator_Execute(t *testing.T) {
 		},
 	}
 
-	logger := zap.NewNop()
-	operator := Init(logger, nil)
+	bc := base.BaseOperator{Logger: zap.NewNop()}
+	operator := Init(bc)
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
@@ -150,8 +151,8 @@ func TestOperator_Execute(t *testing.T) {
 func TestOperator_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
-	logger := zap.NewNop()
-	operator := Init(logger, nil)
+	bc := base.BaseOperator{Logger: zap.NewNop()}
+	operator := Init(bc)
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"

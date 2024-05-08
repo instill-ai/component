@@ -7,7 +7,6 @@ import (
 
 	_ "embed" // embed
 
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
@@ -38,14 +37,9 @@ type execution struct {
 }
 
 // Init initializes the operator
-func Init(l *zap.Logger, u base.UsageHandler) *operator {
+func Init(bo base.BaseOperator) *operator {
 	once.Do(func() {
-		op = &operator{
-			BaseOperator: base.BaseOperator{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
+		op = &operator{BaseOperator: bo}
 		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)

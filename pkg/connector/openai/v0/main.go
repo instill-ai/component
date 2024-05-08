@@ -10,7 +10,6 @@ import (
 	"sync"
 
 	"github.com/gabriel-vasile/mimetype"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -55,15 +54,9 @@ type execution struct {
 }
 
 // Init returns an initialized OpenAI connector.
-func Init(l *zap.Logger, u base.UsageHandler) *Connector {
+func Init(bc base.BaseConnector) *Connector {
 	once.Do(func() {
-		con = &Connector{
-			BaseConnector: base.BaseConnector{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
-
+		con = &Connector{BaseConnector: bc}
 		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, map[string][]byte{"openai.json": openAIJSON})
 		if err != nil {
 			panic(err)
