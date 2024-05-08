@@ -22,7 +22,7 @@ type TextEmbeddingsResp struct {
 	Object string `json:"object"`
 	Data   []Data `json:"data"`
 	Model  string `json:"model"`
-	Usage  Usage  `json:"usage"`
+	Usage  usage  `json:"usage"`
 }
 
 type Data struct {

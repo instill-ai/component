@@ -158,7 +158,7 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	for _, input := range inputs {
 		switch e.Task {
 		case textGenerationTask:
-			inputStruct := TextCompletionInput{}
+			inputStruct := textCompletionInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
 				return nil, err
@@ -170,38 +170,37 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 			if inputStruct.ChatHistory != nil {
 				for _, chat := range inputStruct.ChatHistory {
 					if chat.Role == "user" {
-						messages = append(messages, MultiModalMessage{Role: chat.Role, Content: chat.Content})
+						messages = append(messages, multiModalMessage{Role: chat.Role, Content: chat.Content})
 					} else {
 						content := ""
 						for _, c := range chat.Content {
-							// OpenAI doesn't support MultiModal Content for non-user role
+							// OpenAI doesn't support multi-modal content for
+							// non-user roles.
 							if c.Type == "text" {
 								content = *c.Text
 							}
 						}
-						messages = append(messages, Message{Role: chat.Role, Content: content})
+						messages = append(messages, message{Role: chat.Role, Content: content})
 					}
 
 				}
-			} else {
+			} else if inputStruct.SystemMessage != nil {
 				// If chat history is not provided, add the system message to the messages
-				if inputStruct.SystemMessage != nil {
-					messages = append(messages, Message{Role: "system", Content: *inputStruct.SystemMessage})
-				}
+				messages = append(messages, message{Role: "system", Content: *inputStruct.SystemMessage})
 			}
-			userContents := []Content{}
-			userContents = append(userContents, Content{Type: "text", Text: &inputStruct.Prompt})
+			userContents := []content{}
+			userContents = append(userContents, content{Type: "text", Text: &inputStruct.Prompt})
 			for _, image := range inputStruct.Images {
 				b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(image))
 				if err != nil {
 					return nil, err
 				}
 				url := fmt.Sprintf("data:%s;base64,%s", mimetype.Detect(b).String(), base.TrimBase64Mime(image))
-				userContents = append(userContents, Content{Type: "image_url", ImageURL: &ImageURL{URL: url}})
+				userContents = append(userContents, content{Type: "image_url", ImageURL: &imageURL{URL: url}})
 			}
-			messages = append(messages, MultiModalMessage{Role: "user", Content: userContents})
+			messages = append(messages, multiModalMessage{Role: "user", Content: userContents})
 
-			body := TextCompletionReq{
+			body := textCompletionReq{
 				Messages:         messages,
 				Model:            inputStruct.Model,
 				MaxTokens:        inputStruct.MaxTokens,
@@ -217,13 +216,13 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 				body.ResponseFormat = inputStruct.ResponseFormat
 			}
 
-			resp := TextCompletionResp{}
+			resp := textCompletionResp{}
 			req := client.R().SetResult(&resp).SetBody(body)
 			if _, err := req.Post(completionsPath); err != nil {
 				return inputs, err
 			}
 
-			outputStruct := TextCompletionOutput{
+			outputStruct := textCompletionOutput{
 				Texts: []string{},
 			}
 			for _, c := range resp.Choices {
