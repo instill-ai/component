@@ -440,14 +440,9 @@ type execution struct {
 
 // Init returns an implementation of IOperator that implements the greeting
 // task.
-func Init(l *zap.Logger, u base.UsageHandler) *operator {
+func Init(bo base.BaseOperator) *operator {
 	once.Do(func() {
-		op = &operator{
-			BaseOperator: base.BaseOperator{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
+		op = &operator{BaseOperator: bo}
 		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
@@ -555,8 +550,8 @@ import (
 func TestOperator_Execute(t *testing.T) {
 	c := qt.New(t)
 
-	logger := zap.NewNop()
-	operator := Init(logger, nil)
+	bo := base.BaseOperator{Logger: zap.NewNop()}
+	operator := Init(bo)
 
 	c.Run("ok - greet", func(c *qt.C) {
 		exec, err := operator.CreateExecution(nil, taskGreet)
@@ -578,8 +573,8 @@ func TestOperator_Execute(t *testing.T) {
 func TestOperator_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
-	logger := zap.NewNop()
-	operator := Init(logger, nil)
+	bo := base.BaseOperator{Logger: zap.NewNop()}
+	operator := Init(bo)
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
@@ -606,14 +601,16 @@ import (
 
 // ...
 
-func Init(logger *zap.Logger, usageHandler base.UsageHandler) *OperatorStore {
+func Init(logger *zap.Logger) *OperatorStore {
+	baseOp := base.BaseOperator{Logger: logger}
+
 	once.Do(func() {
 		opStore = &OperatorStore{
 			operatorUIDMap: map[uuid.UUID]*operator{},
 			operatorIDMap:  map[string]*operator{},
 		}
 		// ...
-		opStore.Import(hello.Init(logger, usageHandler))
+		opStore.Import(hello.Init(baseOp))
 	})
 
 	return opStore

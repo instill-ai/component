@@ -31,6 +31,7 @@ type responseFormatStruct struct {
 
 type textCompletionOutput struct {
 	Texts []string `json:"texts"`
+	Usage usage    `json:"usage"`
 }
 
 type textCompletionReq struct {

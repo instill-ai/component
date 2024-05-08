@@ -114,8 +114,8 @@ func TestOperator_Execute(t *testing.T) {
 		},
 	}
 
-	bc := base.BaseOperator{Logger: zap.NewNop()}
-	operator := Init(bc)
+	bo := base.BaseOperator{Logger: zap.NewNop()}
+	operator := Init(bo)
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {

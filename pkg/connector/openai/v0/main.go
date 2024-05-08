@@ -217,6 +217,7 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 
 			outputStruct := textCompletionOutput{
 				Texts: []string{},
+				Usage: resp.Usage,
 			}
 			for _, c := range resp.Choices {
 				outputStruct.Texts = append(outputStruct.Texts, c.Message.Content)
