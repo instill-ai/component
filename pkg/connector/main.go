@@ -42,7 +42,13 @@ type connector struct {
 	con base.IConnector
 }
 
-func Init(logger *zap.Logger, usageHandler base.UsageHandler) *ConnectorStore {
+// ConnectionSecrets contains the global connection secrets of each
+// implemented connector (referenced by ID). Connectors may use these secrets
+// to skip the connector configuration step and have a ready-to-run
+// connection.
+type ConnectionSecrets map[string]map[string]any
+
+func Init(logger *zap.Logger, usageHandler base.UsageHandler, secrets ConnectionSecrets) *ConnectorStore {
 	once.Do(func() {
 
 		conStore = &ConnectorStore{
@@ -53,7 +59,14 @@ func Init(logger *zap.Logger, usageHandler base.UsageHandler) *ConnectorStore {
 		conStore.Import(stabilityai.Init(logger, usageHandler))
 		conStore.Import(instill.Init(logger, usageHandler))
 		conStore.Import(huggingface.Init(logger, usageHandler))
-		conStore.Import(openai.Init(logger, usageHandler))
+
+		{
+			// OpenAI
+			conn := openai.Init(logger, usageHandler)
+			conn = conn.WithGlobalCredentials(secrets[conn.GetID()])
+			conStore.Import(conn)
+		}
+
 		conStore.Import(archetypeai.Init(logger, usageHandler))
 		conStore.Import(numbers.Init(logger, usageHandler))
 		conStore.Import(airbyte.Init(logger, usageHandler))
