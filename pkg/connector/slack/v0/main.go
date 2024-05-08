@@ -37,7 +37,14 @@ type execution struct {
 	base.BaseConnectorExecution
 
 	execute func(*structpb.Struct) (*structpb.Struct, error)
-	client  *slack.Client
+	client  SlackClient
+}
+
+type SlackClient interface {
+	GetConversations(params *slack.GetConversationsParameters) ([]slack.Channel, string, error)
+	PostMessage(channelID string, options ...slack.MsgOption) (string, string, error)
+	GetConversationHistory(params *slack.GetConversationHistoryParameters) (*slack.GetConversationHistoryResponse, error)
+	GetConversationReplies(params *slack.GetConversationRepliesParameters) ([]slack.Message, bool, string, error)
 }
 
 // Init returns an implementation of IConnector that interacts with Slack.
@@ -56,6 +63,7 @@ func Init(l *zap.Logger, u base.UsageHandler) *connector {
 	})
 	return con
 }
+
 
 func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
