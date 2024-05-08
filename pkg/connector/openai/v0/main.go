@@ -85,9 +85,9 @@ func readFromSecrets(key string, s map[string]any) string {
 	return ""
 }
 
-// WithGlobalConnection reads the global connection configuration, which can
+// WithGlobalCredentials reads the global connection configuration, which can
 // be used to execute the connector with globally defined secrets.
-func (c *Connector) WithGlobalConnection(s map[string]any) *Connector {
+func (c *Connector) WithGlobalCredentials(s map[string]any) *Connector {
 	c.globalAPIKey = readFromSecrets(cfgAPIKey, s)
 
 	return c
@@ -115,7 +115,7 @@ func (c *Connector) CreateExecution(sysVars map[string]any, connection *structpb
 // and replaces them by the global secret injected during initialization.
 func (c *Connector) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, error) {
 	apiKey := conn.GetFields()[cfgAPIKey].GetStringValue()
-	if apiKey == base.ConnectionGlobalSecret {
+	if apiKey == base.CredentialGlobalSecret {
 		if c.globalAPIKey == "" {
 			return nil, base.NewUnresolvedGlobalSecret(cfgAPIKey)
 		}

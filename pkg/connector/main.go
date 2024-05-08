@@ -63,7 +63,7 @@ func Init(logger *zap.Logger, usageHandler base.UsageHandler, secrets Connection
 		{
 			// OpenAI
 			conn := openai.Init(logger, usageHandler)
-			conn = conn.WithGlobalConnection(secrets[conn.GetID()])
+			conn = conn.WithGlobalCredentials(secrets[conn.GetID()])
 			conStore.Import(conn)
 		}
 
