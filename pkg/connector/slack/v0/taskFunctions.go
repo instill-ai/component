@@ -2,6 +2,7 @@ package slack
 
 import (
 	"sync"
+	"time"
 
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/slack-go/slack"
@@ -27,8 +28,16 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
+	// TODO: discussed if only collect X days ago as default.
+	if params.StartToReadDate == "" {
+		currentTime := time.Now()
+		sevenDaysAgo := currentTime.AddDate(0, 0, -7)
+		sevenDaysAgoString := sevenDaysAgo.Format("2006-01-02")
+		params.StartToReadDate = sevenDaysAgoString
+	}
+
 	var readTaskResp ReadTaskResp
-	err = setApiRespToReadTaskResp(resp.Messages, &readTaskResp)
+	err = setApiRespToReadTaskResp(resp.Messages, &readTaskResp, params.StartToReadDate)
 	if err != nil {
 		return nil, err
 	}
@@ -41,13 +50,12 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 	var mu sync.Mutex
 	var wg sync.WaitGroup
 
-	for _, conversation := range readTaskResp.Conversations {
+	for i, conversation := range readTaskResp.Conversations {
 		if conversation.ReplyCount > 0 {
 			wg.Add(1)
-			go func(conversation Conversation) {
+			go func(readTaskResp *ReadTaskResp, idx int) {
 				defer wg.Done()
-				replies, _ := getConversationReply(e, targetChannelID, conversation.Ts)
-
+				replies, _ := getConversationReply(e, targetChannelID, readTaskResp.Conversations[idx].Ts)
 				// TODO: to be discussed about this error handdling
 				// fail? or not fail?
 				// if err != nil {
@@ -56,10 +64,10 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 				// TODO: fetch further replies if there are
 
 				mu.Lock()
-				setRepliedToConversation(&conversation, replies)
+				setRepliedToConversation(readTaskResp, replies, idx)
 				mu.Unlock()
 
-			}(conversation)
+			}(&readTaskResp, i)
 		}
 	}
 	wg.Wait()

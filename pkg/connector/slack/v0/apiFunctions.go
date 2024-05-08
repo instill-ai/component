@@ -93,30 +93,48 @@ func getConversationReply(e *execution, channelID string, ts string) ([]slack.Me
 	return msgs, nil
 }
 
-func setApiRespToReadTaskResp(apiResp []slack.Message, readTaskResp *ReadTaskResp) error {
+func setApiRespToReadTaskResp(apiResp []slack.Message, readTaskResp *ReadTaskResp, startReadDateString string) error {
 
 	for _, msg := range apiResp {
-		formatedDate, err := transformTsToDate(msg.Timestamp, "2006-01-02")
-
+		formatedDateString, err := transformTsToDate(msg.Timestamp, "2006-01-02")
 		if err != nil {
 			return err
+		}
+
+		startReadDate, err := time.Parse("2006-01-02", startReadDateString)
+		if err != nil {
+			return err
+		}
+
+		formatedDate, err := time.Parse("2006-01-02", formatedDateString)
+		if err != nil {
+			return err
+		}
+
+		if startReadDate.After(formatedDate) {
+			continue
 		}
 
 		conversation := Conversation{
 			UserID:     msg.User,
 			Message:    msg.Text,
-			StartDate:  formatedDate,
+			StartDate:  formatedDateString,
+			LastDate:   formatedDateString,
 			ReplyCount: msg.ReplyCount,
 			Ts:         msg.Timestamp,
 		}
-
 		conversation.ThreadReplyMessage = []ThreadReplyMessage{}
 		readTaskResp.Conversations = append(readTaskResp.Conversations, conversation)
 	}
 	return nil
 }
 
-func setRepliedToConversation(c *Conversation, replies []slack.Message) error {
+func setRepliedToConversation(resp *ReadTaskResp, replies []slack.Message, idx int) error {
+	c := resp.Conversations[idx]
+	lastDay, err := time.Parse("2006-01-02", c.LastDate)
+	if err != nil {
+		return err
+	}
 	for _, msg := range replies {
 
 		if c.Ts == msg.Timestamp {
@@ -132,7 +150,22 @@ func setRepliedToConversation(c *Conversation, replies []slack.Message) error {
 			DateTime: formatedDateTime,
 			Message:  msg.Text,
 		}
-		c.ThreadReplyMessage = append(c.ThreadReplyMessage, reply)
+
+		foramtedDate, err := transformTsToDate(msg.Timestamp, "2006-01-02")
+		if err != nil {
+			return err
+		}
+
+		replyDate, err := time.Parse("2006-01-02", foramtedDate)
+		if err != nil {
+			return err
+		}
+
+		if replyDate.After(lastDay) {
+			replyDateString := replyDate.Format("2006-01-02")
+			resp.Conversations[idx].LastDate = replyDateString
+		}
+		resp.Conversations[idx].ThreadReplyMessage = append(resp.Conversations[idx].ThreadReplyMessage, reply)
 	}
 	return nil
 }
