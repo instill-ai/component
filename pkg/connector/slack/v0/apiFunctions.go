@@ -8,7 +8,7 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func loopChannelListApi(e *execution, isPublic bool, channelName string, targetChannelID *string) error {
+func loopChannelListAPI(e *execution, isPublic bool, channelName string, targetChannelID *string) error {
 	var apiParams slack.GetConversationsParameters
 	setChannelType(&apiParams, isPublic)
 
@@ -19,7 +19,7 @@ func loopChannelListApi(e *execution, isPublic bool, channelName string, targetC
 			return err
 		}
 
-		setChannelId(channelName, slackChannels, targetChannelID)
+		setChannelID(channelName, slackChannels, targetChannelID)
 
 		if *targetChannelID != "" {
 			break
@@ -46,7 +46,7 @@ func setChannelType(params *slack.GetConversationsParameters, isPublicChannel bo
 	}
 }
 
-func setChannelId(channelName string, channels []slack.Channel, targetChannelID *string) {
+func setChannelID(channelName string, channels []slack.Channel, targetChannelID *string) {
 	for _, slackChannel := range channels {
 		if channelName == slackChannel.Name {
 			*targetChannelID = slackChannel.ID
@@ -93,10 +93,10 @@ func getConversationReply(e *execution, channelID string, ts string) ([]slack.Me
 	return msgs, nil
 }
 
-func setApiRespToReadTaskResp(apiResp []slack.Message, readTaskResp *ReadTaskResp, startReadDateString string) error {
+func setAPIRespToReadTaskResp(apiResp []slack.Message, readTaskResp *ReadTaskResp, startReadDateString string) error {
 
 	for _, msg := range apiResp {
-		formatedDateString, err := transformTsToDate(msg.Timestamp, "2006-01-02")
+		formatedDateString, err := transformTSToDate(msg.Timestamp, "2006-01-02")
 		if err != nil {
 			return err
 		}
@@ -121,7 +121,7 @@ func setApiRespToReadTaskResp(apiResp []slack.Message, readTaskResp *ReadTaskRes
 			StartDate:  formatedDateString,
 			LastDate:   formatedDateString,
 			ReplyCount: msg.ReplyCount,
-			Ts:         msg.Timestamp,
+			TS:         msg.Timestamp,
 		}
 		conversation.ThreadReplyMessage = []ThreadReplyMessage{}
 		readTaskResp.Conversations = append(readTaskResp.Conversations, conversation)
@@ -137,11 +137,11 @@ func setRepliedToConversation(resp *ReadTaskResp, replies []slack.Message, idx i
 	}
 	for _, msg := range replies {
 
-		if c.Ts == msg.Timestamp {
+		if c.TS == msg.Timestamp {
 			continue
 		}
 
-		formatedDateTime, err := transformTsToDate(msg.Timestamp, "2006-01-02 15:04:05")
+		formatedDateTime, err := transformTSToDate(msg.Timestamp, "2006-01-02 15:04:05")
 		if err != nil {
 			return err
 		}
@@ -151,7 +151,7 @@ func setRepliedToConversation(resp *ReadTaskResp, replies []slack.Message, idx i
 			Message:  msg.Text,
 		}
 
-		foramtedDate, err := transformTsToDate(msg.Timestamp, "2006-01-02")
+		foramtedDate, err := transformTSToDate(msg.Timestamp, "2006-01-02")
 		if err != nil {
 			return err
 		}
@@ -170,7 +170,7 @@ func setRepliedToConversation(resp *ReadTaskResp, replies []slack.Message, idx i
 	return nil
 }
 
-func transformTsToDate(ts string, format string) (string, error) {
+func transformTSToDate(ts string, format string) (string, error) {
 
 	tsFloat, err := strconv.ParseFloat(ts, 64)
 	if err != nil {
@@ -179,6 +179,6 @@ func transformTsToDate(ts string, format string) (string, error) {
 
 	timestamp := time.Unix(int64(tsFloat), int64((tsFloat-float64(int64(tsFloat)))*1e9))
 
-	formatedTs := timestamp.Format(format)
-	return formatedTs, nil
+	formatedTS := timestamp.Format(format)
+	return formatedTS, nil
 }

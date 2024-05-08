@@ -1,6 +1,7 @@
 package slack
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -17,7 +18,7 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 	var targetChannelID string
-	err := loopChannelListApi(e, params.IsPublicChannel, params.ChannelName, &targetChannelID)
+	err := loopChannelListAPI(e, params.IsPublicChannel, params.ChannelName, &targetChannelID)
 
 	if err != nil {
 		return nil, err
@@ -37,7 +38,7 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	var readTaskResp ReadTaskResp
-	err = setApiRespToReadTaskResp(resp.Messages, &readTaskResp, params.StartToReadDate)
+	err = setAPIRespToReadTaskResp(resp.Messages, &readTaskResp, params.StartToReadDate)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +56,7 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 			wg.Add(1)
 			go func(readTaskResp *ReadTaskResp, idx int) {
 				defer wg.Done()
-				replies, _ := getConversationReply(e, targetChannelID, readTaskResp.Conversations[idx].Ts)
+				replies, _ := getConversationReply(e, targetChannelID, readTaskResp.Conversations[idx].TS)
 				// TODO: to be discussed about this error handdling
 				// fail? or not fail?
 				// if err != nil {
@@ -64,7 +65,11 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 				// TODO: fetch further replies if there are
 
 				mu.Lock()
-				setRepliedToConversation(readTaskResp, replies, idx)
+				err := setRepliedToConversation(readTaskResp, replies, idx)
+				// TODO: think a better way to pass lint, maybe use channel
+				if err != nil {
+					fmt.Println("error when set the output: ", err)
+				}
 				mu.Unlock()
 
 			}(&readTaskResp, i)
@@ -88,7 +93,7 @@ func (e *execution) sendMessage(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	var targetChannelID string
-	err := loopChannelListApi(e, params.IsPublicChannel, params.ChannelName, &targetChannelID)
+	err := loopChannelListAPI(e, params.IsPublicChannel, params.ChannelName, &targetChannelID)
 	if err != nil {
 		return nil, err
 	}

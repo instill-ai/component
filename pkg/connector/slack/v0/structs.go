@@ -32,7 +32,7 @@ type Conversation struct {
 	Message            string               `json:"message"`
 	StartDate          string               `json:"start_date"`
 	LastDate           string               `json:"last_date"`
-	Ts                 string               `json:"ts"`
+	TS                 string               `json:"ts"`
 	ReplyCount         int                  `json:"reply_count"`
 	ThreadReplyMessage []ThreadReplyMessage `json:"thread_reply_messages"`
 }
