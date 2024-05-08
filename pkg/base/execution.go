@@ -23,6 +23,7 @@ type IExecution interface {
 	GetUsageHandler() UsageHandler
 	GetTaskInputSchema() string
 	GetTaskOutputSchema() string
+	UsesSecret() bool
 
 	Execute([]*structpb.Struct) ([]*structpb.Struct, error)
 }
@@ -115,7 +116,8 @@ func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struc
 		return nil, err
 	}
 
-	if err := e.Execution.GetUsageHandler().Check(); err != nil {
+	h := e.Execution.GetUsageHandler()
+	if err := h.Check(e.Execution.GetTask(), e.Execution.UsesSecret(), inputs); err != nil {
 		return nil, err
 	}
 
@@ -128,7 +130,7 @@ func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struc
 		return nil, err
 	}
 
-	if err := e.Execution.GetUsageHandler().Collect(); err != nil {
+	if err := h.Collect(e.Execution.GetTask(), e.Execution.UsesSecret(), inputs, outputs); err != nil {
 		return nil, err
 	}
 

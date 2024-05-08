@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 
 	qt "github.com/frankban/quicktest"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/instill-ai/component/pkg/connector/util/httpclient"
+	"github.com/instill-ai/component/pkg/mock"
 	"github.com/instill-ai/x/errmsg"
 )
 
@@ -196,5 +198,158 @@ func TestConnector_Test(t *testing.T) {
 
 		err = connector.Test(nil, connection)
 		c.Check(err, qt.IsNil)
+	})
+}
+
+func TestConnector_WithConfig(t *testing.T) {
+	c := qt.New(t)
+	cleanupConn := func() { once = sync.Once{} }
+
+	want := textCompletionOutput{
+		Texts: []string{"hello!"},
+		Usage: usage{TotalTokens: 25},
+	}
+	resp := `{"usage": {"total_tokens": 25}, "choices": [{"message": {"content": "hello!"}}]}`
+
+	pbIn, err := base.ConvertToStructpb(textCompletionInput{
+		Model:  "gpt-3.5-turbo",
+		Prompt: "what instrument did Yusef Lateef play?",
+		Images: []string{},
+	})
+	c.Assert(err, qt.IsNil)
+	inputs := []*structpb.Struct{pbIn}
+	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer "+apiKey)
+
+		w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+		fmt.Fprintln(w, resp)
+	})
+
+	pbOut, err := base.ConvertToStructpb(want)
+	c.Assert(err, qt.IsNil)
+	outputs := []*structpb.Struct{pbOut}
+
+	openAIServer := httptest.NewServer(h)
+	c.Cleanup(openAIServer.Close)
+
+	task := textGenerationTask
+
+	c.Run("nok - usage handler check error", func(c *qt.C) {
+		c.Cleanup(cleanupConn)
+
+		connector := Init(base.BaseConnector{Logger: zap.NewNop()})
+
+		uh := mock.NewUsageHandlerMock(c)
+		uh.CheckMock.When(task, false, inputs).Then(fmt.Errorf("check error"))
+		connector.WithUsageHandler(uh)
+
+		connection, err := structpb.NewStruct(map[string]any{})
+		c.Assert(err, qt.IsNil)
+
+		exec, err := connector.CreateExecution(nil, connection, task)
+		c.Assert(err, qt.IsNil)
+
+		_, err = exec.Execute(inputs)
+		c.Check(err, qt.IsNotNil)
+		c.Check(err, qt.ErrorMatches, "check error")
+	})
+
+	c.Run("nok - usage handler collect error", func(c *qt.C) {
+		c.Cleanup(cleanupConn)
+
+		connector := Init(base.BaseConnector{Logger: zap.NewNop()})
+
+		uh := mock.NewUsageHandlerMock(c)
+		uh.CheckMock.When(task, false, inputs).Then(nil)
+		uh.CollectMock.When(task, false, inputs, outputs).Then(fmt.Errorf("collect error"))
+		connector.WithUsageHandler(uh)
+
+		connection, err := structpb.NewStruct(map[string]any{
+			"base_path": openAIServer.URL,
+			"api_key":   apiKey,
+		})
+		c.Assert(err, qt.IsNil)
+
+		exec, err := connector.CreateExecution(nil, connection, task)
+		c.Assert(err, qt.IsNil)
+
+		_, err = exec.Execute(inputs)
+		c.Check(err, qt.IsNotNil)
+		c.Check(err, qt.ErrorMatches, "collect error")
+	})
+
+	c.Run("ok - with usage handler", func(c *qt.C) {
+		c.Cleanup(cleanupConn)
+
+		connector := Init(base.BaseConnector{Logger: zap.NewNop()})
+
+		uh := mock.NewUsageHandlerMock(c)
+		uh.CheckMock.When(task, false, inputs).Then(nil)
+		uh.CollectMock.When(task, false, inputs, outputs).Then(nil)
+		connector.WithUsageHandler(uh)
+
+		connection, err := structpb.NewStruct(map[string]any{
+			"base_path": openAIServer.URL,
+			"api_key":   apiKey,
+		})
+		c.Assert(err, qt.IsNil)
+
+		exec, err := connector.CreateExecution(nil, connection, task)
+		c.Assert(err, qt.IsNil)
+		c.Check(exec.Execution.UsesSecret(), qt.IsFalse)
+
+		got, err := exec.Execute(inputs)
+		c.Check(err, qt.IsNil)
+		c.Assert(got, qt.HasLen, 1)
+
+		gotJSON, err := got[0].MarshalJSON()
+		c.Assert(err, qt.IsNil)
+		c.Check(gotJSON, qt.JSONEquals, want)
+	})
+
+	c.Run("ok - with secrets & usage handler", func(c *qt.C) {
+		c.Cleanup(cleanupConn)
+
+		secrets := map[string]any{"apikey": apiKey}
+		connector := Init(base.BaseConnector{Logger: zap.NewNop()}).
+			WithGlobalCredentials(secrets)
+
+		uh := mock.NewUsageHandlerMock(c)
+		uh.CheckMock.When(task, true, inputs).Then(nil)
+		uh.CollectMock.When(task, true, inputs, outputs).Then(nil)
+		connector.WithUsageHandler(uh)
+
+		connection, err := structpb.NewStruct(map[string]any{
+			"base_path": openAIServer.URL,
+			"api_key":   "__INSTILL_CREDENTIAL", // will be replaced by secrets.apikey
+		})
+		c.Assert(err, qt.IsNil)
+
+		exec, err := connector.CreateExecution(nil, connection, task)
+		c.Assert(err, qt.IsNil)
+		c.Check(exec.Execution.UsesSecret(), qt.IsTrue)
+
+		got, err := exec.Execute(inputs)
+		c.Check(err, qt.IsNil)
+		c.Assert(got, qt.HasLen, 1)
+
+		gotJSON, err := got[0].MarshalJSON()
+		c.Assert(err, qt.IsNil)
+		c.Check(gotJSON, qt.JSONEquals, want)
+	})
+
+	c.Run("nok - secret not injected", func(c *qt.C) {
+		c.Cleanup(cleanupConn)
+
+		connector := Init(base.BaseConnector{Logger: zap.NewNop()})
+		connection, err := structpb.NewStruct(map[string]any{
+			"api_key": "__INSTILL_CREDENTIAL",
+		})
+		c.Assert(err, qt.IsNil)
+
+		_, err = connector.CreateExecution(nil, connection, task)
+		c.Check(err, qt.IsNotNil)
+		c.Check(err, qt.ErrorMatches, "unresolved global secret")
+		c.Check(errmsg.Message(err), qt.Equals, "The connection field api_key can't reference a global secret.")
 	})
 }

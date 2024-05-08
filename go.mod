@@ -15,6 +15,7 @@ require (
 	github.com/go-resty/resty/v2 v2.12.0
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/gofrs/uuid v4.4.0+incompatible
+	github.com/gojuno/minimock/v3 v3.3.6
 	github.com/h2non/filetype v1.1.3
 	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240423142304-54b986803884
 	github.com/instill-ai/x v0.4.0-alpha

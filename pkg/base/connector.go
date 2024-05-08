@@ -303,3 +303,10 @@ func (e *BaseConnectorExecution) GetTaskInputSchema() string {
 func (e *BaseConnectorExecution) GetTaskOutputSchema() string {
 	return e.Connector.GetTaskOutputSchemas()[e.Task]
 }
+
+// UsesSecret indicates wether the connector execution is configured with
+// global secrets. Components should override this method when they have the
+// ability to be executed with global secrets.
+func (e *BaseConnectorExecution) UsesSecret() bool {
+	return false
+}

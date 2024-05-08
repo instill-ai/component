@@ -154,3 +154,10 @@ func (e *BaseOperatorExecution) GetTaskInputSchema() string {
 func (e *BaseOperatorExecution) GetTaskOutputSchema() string {
 	return e.Operator.GetTaskOutputSchemas()[e.Task]
 }
+
+// UsesSecret indicates wether the operator execution is configured with
+// global secrets. Components should override this method when they have the
+// ability to be executed with global secrets.
+func (e *BaseOperatorExecution) UsesSecret() bool {
+	return false
+}

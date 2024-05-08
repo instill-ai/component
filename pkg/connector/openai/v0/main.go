@@ -49,10 +49,6 @@ type Connector struct {
 	globalAPIKey string
 }
 
-type execution struct {
-	base.BaseConnectorExecution
-}
-
 // Init returns an initialized OpenAI connector.
 func Init(bc base.BaseConnector) *Connector {
 	once.Do(func() {
@@ -86,10 +82,17 @@ func (c *Connector) WithGlobalCredentials(s map[string]any) *Connector {
 	return c
 }
 
+// WithUsageHandler injects a usage handler in the connector, e.g. to monitor
+// the tokens consumed by the queries.
+func (c *Connector) WithUsageHandler(h base.UsageHandler) *Connector {
+	c.UsageHandler = h
+	return c
+}
+
 // CreateExecution initializes a connector executor that can be used in a
 // pipeline trigger.
 func (c *Connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	resolvedConnection, err := c.resolveSecrets(connection)
+	resolvedConnection, resolved, err := c.resolveSecrets(connection)
 	if err != nil {
 		return nil, err
 	}
@@ -101,47 +104,33 @@ func (c *Connector) CreateExecution(sysVars map[string]any, connection *structpb
 			Connection:      resolvedConnection,
 			Task:            task,
 		},
+		usesSecret: resolved,
 	}}, nil
 }
 
 // resolveSecrets looks for references to a global secret in the connection
 // and replaces them by the global secret injected during initialization.
-func (c *Connector) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, error) {
+func (c *Connector) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, bool, error) {
 	apiKey := conn.GetFields()[cfgAPIKey].GetStringValue()
-	if apiKey == base.CredentialGlobalSecret {
-		if c.globalAPIKey == "" {
-			return nil, base.NewUnresolvedGlobalSecret(cfgAPIKey)
-		}
-
-		conn.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.globalAPIKey)
+	if apiKey != base.CredentialGlobalSecret {
+		return conn, false, nil
 	}
 
-	return conn, nil
-}
-
-// getBasePath returns OpenAI's API URL. This configuration param allows us to
-// override the API the connector will point to. It isn't meant to be exposed
-// to users. Rather, it can serve to test the logic against a fake server.
-// TODO instead of having the API value hardcoded in the codebase, it should be
-// read from a config file or environment variable.
-func getBasePath(config *structpb.Struct) string {
-	v, ok := config.GetFields()["base_path"]
-	if !ok {
-		return host
+	if c.globalAPIKey == "" {
+		return nil, false, base.NewUnresolvedGlobalSecret(cfgAPIKey)
 	}
-	return v.GetStringValue()
+
+	conn.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.globalAPIKey)
+	return conn, true, nil
 }
 
-func getAPIKey(config *structpb.Struct) string {
-	return config.GetFields()[cfgAPIKey].GetStringValue()
+type execution struct {
+	base.BaseConnectorExecution
+	usesSecret bool
 }
 
-func getOrg(config *structpb.Struct) string {
-	val, ok := config.GetFields()[cfgOrganization]
-	if !ok {
-		return ""
-	}
-	return val.GetStringValue()
+func (e *execution) UsesSecret() bool {
+	return e.usesSecret
 }
 
 func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
