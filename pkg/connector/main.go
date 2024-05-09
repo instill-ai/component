@@ -9,7 +9,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
-	"github.com/instill-ai/component/pkg/connector/airbyte/v0"
 	"github.com/instill-ai/component/pkg/connector/archetypeai/v0"
 	"github.com/instill-ai/component/pkg/connector/bigquery/v0"
 	"github.com/instill-ai/component/pkg/connector/googlecloudstorage/v0"
@@ -69,7 +68,6 @@ func Init(logger *zap.Logger, usageHandler base.UsageHandler, secrets Connection
 
 		conStore.Import(archetypeai.Init(logger, usageHandler))
 		conStore.Import(numbers.Init(logger, usageHandler))
-		conStore.Import(airbyte.Init(logger, usageHandler))
 		conStore.Import(bigquery.Init(logger, usageHandler))
 		conStore.Import(googlecloudstorage.Init(logger, usageHandler))
 		conStore.Import(googlesearch.Init(logger, usageHandler))

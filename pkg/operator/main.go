@@ -9,10 +9,8 @@ import (
 
 	"github.com/instill-ai/component/pkg/base"
 	"github.com/instill-ai/component/pkg/operator/base64/v0"
-	"github.com/instill-ai/component/pkg/operator/end/v0"
 	"github.com/instill-ai/component/pkg/operator/image/v0"
 	"github.com/instill-ai/component/pkg/operator/json/v0"
-	"github.com/instill-ai/component/pkg/operator/start/v0"
 	"github.com/instill-ai/component/pkg/operator/text/v0"
 
 	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
@@ -41,8 +39,6 @@ func Init(logger *zap.Logger, usageHandler base.UsageHandler) *OperatorStore {
 			operatorUIDMap: map[uuid.UUID]*operator{},
 			operatorIDMap:  map[string]*operator{},
 		}
-		opStore.Import(start.Init(logger, usageHandler)) // deprecated
-		opStore.Import(end.Init(logger, usageHandler))   // deprecated
 		opStore.Import(base64.Init(logger, usageHandler))
 		opStore.Import(json.Init(logger, usageHandler))
 		opStore.Import(image.Init(logger, usageHandler))
