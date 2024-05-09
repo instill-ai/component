@@ -13,7 +13,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/pkg/base"
@@ -30,23 +29,18 @@ var (
 
 // Operator is the derived operator
 type operator struct {
-	base.BaseOperator
+	base.Operator
 }
 
 // Execution is the derived execution
 type execution struct {
-	base.BaseOperatorExecution
+	base.OperatorExecution
 }
 
 // Init initializes the operator
-func Init(l *zap.Logger, u base.UsageHandler) *operator {
+func Init(bo base.Operator) *operator {
 	once.Do(func() {
-		op = &operator{
-			BaseOperator: base.BaseOperator{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
+		op = &operator{Operator: bo}
 		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
@@ -57,7 +51,7 @@ func Init(l *zap.Logger, u base.UsageHandler) *operator {
 
 func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		BaseOperatorExecution: base.BaseOperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
+		OperatorExecution: base.OperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
 	}}, nil
 }
 

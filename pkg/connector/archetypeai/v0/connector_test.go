@@ -224,8 +224,8 @@ func TestConnector_Execute(t *testing.T) {
 		},
 	}
 
-	logger := zap.NewNop()
-	connector := Init(logger, nil)
+	bc := base.Connector{Logger: zap.NewNop()}
+	connector := Init(bc)
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
@@ -284,8 +284,8 @@ func TestConnector_Execute(t *testing.T) {
 func TestConnector_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
-	logger := zap.NewNop()
-	connector := Init(logger, nil)
+	bc := base.Connector{Logger: zap.NewNop()}
+	connector := Init(bc)
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
@@ -300,8 +300,8 @@ func TestConnector_CreateExecution(t *testing.T) {
 func TestConnector_Test(t *testing.T) {
 	c := qt.New(t)
 
-	logger := zap.NewNop()
-	connector := Init(logger, nil)
+	bc := base.Connector{Logger: zap.NewNop()}
+	connector := Init(bc)
 
 	c.Run("ok - connected", func(c *qt.C) {
 		err := connector.Test(nil, nil)

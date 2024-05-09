@@ -30,21 +30,16 @@ var once sync.Once
 var con *connector
 
 type connector struct {
-	base.BaseConnector
+	base.Connector
 }
 
 type execution struct {
-	base.BaseConnectorExecution
+	base.ConnectorExecution
 }
 
-func Init(l *zap.Logger, u base.UsageHandler) *connector {
+func Init(bc base.Connector) *connector {
 	once.Do(func() {
-		con = &connector{
-			BaseConnector: base.BaseConnector{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
+		con = &connector{Connector: bc}
 		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
@@ -55,7 +50,7 @@ func Init(l *zap.Logger, u base.UsageHandler) *connector {
 
 func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
 	}}, nil
 }
 

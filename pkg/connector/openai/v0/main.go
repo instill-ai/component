@@ -10,7 +10,6 @@ import (
 	"sync"
 
 	"github.com/gabriel-vasile/mimetype"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -44,26 +43,16 @@ var (
 
 // Connector executes queries against OpenAI.
 type Connector struct {
-	base.BaseConnector
+	base.Connector
 
-	// Global secrets.
-	globalAPIKey string
-}
-
-type execution struct {
-	base.BaseConnectorExecution
+	usageHandlerCreator base.UsageHandlerCreator
+	secretAPIKey        string
 }
 
 // Init returns an initialized OpenAI connector.
-func Init(l *zap.Logger, u base.UsageHandler) *Connector {
+func Init(bc base.Connector) *Connector {
 	once.Do(func() {
-		con = &Connector{
-			BaseConnector: base.BaseConnector{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
-
+		con = &Connector{Connector: bc}
 		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, map[string][]byte{"openai.json": openAIJSON})
 		if err != nil {
 			panic(err)
@@ -85,70 +74,70 @@ func readFromSecrets(key string, s map[string]any) string {
 	return ""
 }
 
-// WithGlobalCredentials reads the global connection configuration, which can
-// be used to execute the connector with globally defined secrets.
-func (c *Connector) WithGlobalCredentials(s map[string]any) *Connector {
-	c.globalAPIKey = readFromSecrets(cfgAPIKey, s)
+// WithSecrets loads secrets into the connector, which can be used to configure
+// it with globaly defined parameters.
+func (c *Connector) WithSecrets(s map[string]any) *Connector {
+	c.secretAPIKey = readFromSecrets(cfgAPIKey, s)
 
 	return c
+}
+
+// WithUsageHandlerCreator overrides the UsageHandlerCreator method.
+func (c *Connector) WithUsageHandlerCreator(newUH base.UsageHandlerCreator) *Connector {
+	c.usageHandlerCreator = newUH
+	return c
+}
+
+// UsageHandlerCreator returns a function to initialize a UsageHandler.
+func (c *Connector) UsageHandlerCreator() base.UsageHandlerCreator {
+	if c.usageHandlerCreator == nil {
+		return c.Connector.UsageHandlerCreator()
+	}
+	return c.usageHandlerCreator
 }
 
 // CreateExecution initializes a connector executor that can be used in a
 // pipeline trigger.
 func (c *Connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	resolvedConnection, err := c.resolveSecrets(connection)
+	resolvedConnection, resolved, err := c.resolveSecrets(connection)
 	if err != nil {
 		return nil, err
 	}
 
 	return &base.ExecutionWrapper{Execution: &execution{
-		BaseConnectorExecution: base.BaseConnectorExecution{
+		ConnectorExecution: base.ConnectorExecution{
 			Connector:       c,
 			SystemVariables: sysVars,
 			Connection:      resolvedConnection,
 			Task:            task,
 		},
+		usesSecret: resolved,
 	}}, nil
 }
 
 // resolveSecrets looks for references to a global secret in the connection
 // and replaces them by the global secret injected during initialization.
-func (c *Connector) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, error) {
+func (c *Connector) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, bool, error) {
 	apiKey := conn.GetFields()[cfgAPIKey].GetStringValue()
-	if apiKey == base.CredentialGlobalSecret {
-		if c.globalAPIKey == "" {
-			return nil, base.NewUnresolvedGlobalSecret(cfgAPIKey)
-		}
-
-		conn.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.globalAPIKey)
+	if apiKey != base.SecretKeyword {
+		return conn, false, nil
 	}
 
-	return conn, nil
-}
-
-// getBasePath returns OpenAI's API URL. This configuration param allows us to
-// override the API the connector will point to. It isn't meant to be exposed
-// to users. Rather, it can serve to test the logic against a fake server.
-// TODO instead of having the API value hardcoded in the codebase, it should be
-// read from a config file or environment variable.
-func getBasePath(config *structpb.Struct) string {
-	v, ok := config.GetFields()["base_path"]
-	if !ok {
-		return host
+	if c.secretAPIKey == "" {
+		return nil, false, base.NewUnresolvedSecret(cfgAPIKey)
 	}
-	return v.GetStringValue()
+
+	conn.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.secretAPIKey)
+	return conn, true, nil
 }
 
-func getAPIKey(config *structpb.Struct) string {
-	return config.GetFields()[cfgAPIKey].GetStringValue()
+type execution struct {
+	base.ConnectorExecution
+	usesSecret bool
 }
 
-func getOrg(config *structpb.Struct) string {
-	val, ok := config.GetFields()[cfgOrganization]
-	if !ok {
-		return ""
-	}
-	return val.GetStringValue()
+func (e *execution) UsesSecret() bool {
+	return e.usesSecret
 }
 
 func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
@@ -158,7 +147,7 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	for _, input := range inputs {
 		switch e.Task {
 		case textGenerationTask:
-			inputStruct := TextCompletionInput{}
+			inputStruct := textCompletionInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
 				return nil, err
@@ -170,38 +159,37 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 			if inputStruct.ChatHistory != nil {
 				for _, chat := range inputStruct.ChatHistory {
 					if chat.Role == "user" {
-						messages = append(messages, MultiModalMessage{Role: chat.Role, Content: chat.Content})
+						messages = append(messages, multiModalMessage{Role: chat.Role, Content: chat.Content})
 					} else {
 						content := ""
 						for _, c := range chat.Content {
-							// OpenAI doesn't support MultiModal Content for non-user role
+							// OpenAI doesn't support multi-modal content for
+							// non-user roles.
 							if c.Type == "text" {
 								content = *c.Text
 							}
 						}
-						messages = append(messages, Message{Role: chat.Role, Content: content})
+						messages = append(messages, message{Role: chat.Role, Content: content})
 					}
 
 				}
-			} else {
+			} else if inputStruct.SystemMessage != nil {
 				// If chat history is not provided, add the system message to the messages
-				if inputStruct.SystemMessage != nil {
-					messages = append(messages, Message{Role: "system", Content: *inputStruct.SystemMessage})
-				}
+				messages = append(messages, message{Role: "system", Content: *inputStruct.SystemMessage})
 			}
-			userContents := []Content{}
-			userContents = append(userContents, Content{Type: "text", Text: &inputStruct.Prompt})
+			userContents := []content{}
+			userContents = append(userContents, content{Type: "text", Text: &inputStruct.Prompt})
 			for _, image := range inputStruct.Images {
 				b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(image))
 				if err != nil {
 					return nil, err
 				}
 				url := fmt.Sprintf("data:%s;base64,%s", mimetype.Detect(b).String(), base.TrimBase64Mime(image))
-				userContents = append(userContents, Content{Type: "image_url", ImageURL: &ImageURL{URL: url}})
+				userContents = append(userContents, content{Type: "image_url", ImageURL: &imageURL{URL: url}})
 			}
-			messages = append(messages, MultiModalMessage{Role: "user", Content: userContents})
+			messages = append(messages, multiModalMessage{Role: "user", Content: userContents})
 
-			body := TextCompletionReq{
+			body := textCompletionReq{
 				Messages:         messages,
 				Model:            inputStruct.Model,
 				MaxTokens:        inputStruct.MaxTokens,
@@ -217,14 +205,15 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 				body.ResponseFormat = inputStruct.ResponseFormat
 			}
 
-			resp := TextCompletionResp{}
+			resp := textCompletionResp{}
 			req := client.R().SetResult(&resp).SetBody(body)
 			if _, err := req.Post(completionsPath); err != nil {
 				return inputs, err
 			}
 
-			outputStruct := TextCompletionOutput{
+			outputStruct := textCompletionOutput{
 				Texts: []string{},
+				Usage: resp.Usage,
 			}
 			for _, c := range resp.Choices {
 				outputStruct.Texts = append(outputStruct.Texts, c.Message.Content)

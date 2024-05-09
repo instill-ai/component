@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"go.uber.org/zap"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -32,24 +31,19 @@ var (
 )
 
 type connector struct {
-	base.BaseConnector
+	base.Connector
 
 	// Workaround solution
 	cacheDefinition *pipelinePB.ConnectorDefinition
 }
 
 type execution struct {
-	base.BaseConnectorExecution
+	base.ConnectorExecution
 }
 
-func Init(l *zap.Logger, u base.UsageHandler) *connector {
+func Init(bc base.Connector) *connector {
 	once.Do(func() {
-		con = &connector{
-			BaseConnector: base.BaseConnector{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
+		con = &connector{Connector: bc}
 		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
@@ -60,7 +54,7 @@ func Init(l *zap.Logger, u base.UsageHandler) *connector {
 
 func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
 	}}, nil
 }
 
@@ -206,7 +200,7 @@ func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *pi
 		return c.cacheDefinition, nil
 	}
 
-	oriDef, err := c.BaseConnector.GetConnectorDefinition(nil, nil)
+	oriDef, err := c.Connector.GetConnectorDefinition(nil, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	"github.com/itchyny/gojq"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -33,24 +32,19 @@ var (
 )
 
 type operator struct {
-	base.BaseOperator
+	base.Operator
 }
 
 type execution struct {
-	base.BaseOperatorExecution
+	base.OperatorExecution
 
 	execute func(*structpb.Struct) (*structpb.Struct, error)
 }
 
 // Init returns an implementation of IOperator that processes JSON objects.
-func Init(l *zap.Logger, u base.UsageHandler) *operator {
+func Init(bo base.Operator) *operator {
 	once.Do(func() {
-		op = &operator{
-			BaseOperator: base.BaseOperator{
-				Logger:       l,
-				UsageHandler: u,
-			},
-		}
+		op = &operator{Operator: bo}
 		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
@@ -61,7 +55,7 @@ func Init(l *zap.Logger, u base.UsageHandler) *operator {
 
 func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
-		BaseOperatorExecution: base.BaseOperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
+		OperatorExecution: base.OperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
 	}
 
 	switch task {

@@ -45,8 +45,8 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 	text := "a cat and a dog"
 	engine := "engine"
 
-	logger := zap.NewNop()
-	connector := Init(logger, nil)
+	bc := base.Connector{Logger: zap.NewNop()}
+	connector := Init(bc)
 
 	testcases := []struct {
 		name      string
@@ -139,8 +139,8 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 	text := "a cat and a dog"
 	engine := "engine"
 
-	logger := zap.NewNop()
-	connector := Init(logger, nil)
+	bc := base.Connector{Logger: zap.NewNop()}
+	connector := Init(bc)
 
 	testcases := []struct {
 		name      string
@@ -229,8 +229,8 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 func TestConnector_Test(t *testing.T) {
 	c := qt.New(t)
 
-	logger := zap.NewNop()
-	connector := Init(logger, nil)
+	bc := base.Connector{Logger: zap.NewNop()}
+	connector := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

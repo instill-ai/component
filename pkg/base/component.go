@@ -34,9 +34,10 @@ type IComponent interface {
 	GetID() string
 	GetUID() uuid.UUID
 	GetLogger() *zap.Logger
-	GetUsageHandler() UsageHandler
 	GetTaskInputSchemas() map[string]string
 	GetTaskOutputSchemas() map[string]string
+
+	UsageHandlerCreator() UsageHandlerCreator
 }
 
 func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {

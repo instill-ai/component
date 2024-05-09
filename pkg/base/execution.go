@@ -13,16 +13,21 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+// ExecutionWrapper performs validation and usage collection around the
+// execution of a component.
 type ExecutionWrapper struct {
 	Execution IExecution
 }
 
+// IExecution allows components to be executed.
 type IExecution interface {
 	GetTask() string
 	GetLogger() *zap.Logger
-	GetUsageHandler() UsageHandler
 	GetTaskInputSchema() string
 	GetTaskOutputSchema() string
+
+	UsesSecret() bool
+	UsageHandlerCreator() UsageHandlerCreator
 
 	Execute([]*structpb.Struct) ([]*structpb.Struct, error)
 }
@@ -109,17 +114,16 @@ func Validate(data []*structpb.Struct, jsonSchema string, target string) error {
 	return nil
 }
 
-// ExecuteWithValidation executes the execution with validation
+// Execute wraps the execution method with validation and usage collection.
 func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-
 	if err := Validate(inputs, e.Execution.GetTaskInputSchema(), "inputs"); err != nil {
 		return nil, err
 	}
 
-	if e.Execution.GetUsageHandler() != nil {
-		if err := e.Execution.GetUsageHandler().Check(); err != nil {
-			return nil, err
-		}
+	newUH := e.Execution.UsageHandlerCreator()
+	h := newUH(e.Execution)
+	if err := h.Check(inputs); err != nil {
+		return nil, err
 	}
 
 	outputs, err := e.Execution.Execute(inputs)
@@ -131,26 +135,25 @@ func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struc
 		return nil, err
 	}
 
-	if e.Execution.GetUsageHandler() != nil {
-		if err := e.Execution.GetUsageHandler().Collect(); err != nil {
-			return nil, err
-		}
+	if err := h.Collect(inputs, outputs); err != nil {
+		return nil, err
 	}
 
 	return outputs, err
 }
 
-// CredentialGlobalSecret is a keyword to reference a global secret in a
-// component configuration. When a component detects this value in a
-// configuration parameter, it will used the pre-configured value, injected at
+// SecretKeyword is a keyword to reference a secret in a component
+// configuration. When a component detects this value in a configuration
+// parameter, it will used the pre-configured value, injected at
 // initialization.
-const CredentialGlobalSecret = "__INSTILL_CREDENTIAL"
+const SecretKeyword = "__INSTILL_SECRET"
 
-// NewUnresolvedGlobalSecret returns an end-user error signaling that  the
-// connection configuration references a global secret that
-func NewUnresolvedGlobalSecret(key string) error {
+// NewUnresolvedSecret returns an end-user error signaling that the component
+// configuration references a global secret that wasn't injected into the
+// component.
+func NewUnresolvedSecret(key string) error {
 	return errmsg.AddMessage(
 		fmt.Errorf("unresolved global secret"),
-		fmt.Sprintf("The connection field %s can't reference a global secret.", key),
+		fmt.Sprintf("The configuration field %s can't reference a global secret.", key),
 	)
 }

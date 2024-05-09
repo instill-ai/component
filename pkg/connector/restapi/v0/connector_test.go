@@ -29,8 +29,8 @@ var (
 func TestConnector_Execute(t *testing.T) {
 	c := qt.New(t)
 
-	logger := zap.NewNop()
-	connector := Init(logger, nil)
+	bc := base.Connector{Logger: zap.NewNop()}
+	connector := Init(bc)
 	reqBody := map[string]any{
 		"title": "Be the wheel",
 	}
@@ -155,8 +155,8 @@ func TestConnector_Execute(t *testing.T) {
 func TestConnector_Test(t *testing.T) {
 	c := qt.New(t)
 
-	logger := zap.NewNop()
-	connector := Init(logger, nil)
+	bc := base.Connector{Logger: zap.NewNop()}
+	connector := Init(bc)
 
 	c.Run("ok - connected (even with non-2xx status", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

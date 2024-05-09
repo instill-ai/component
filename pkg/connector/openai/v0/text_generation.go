@@ -4,14 +4,15 @@ const (
 	completionsPath = "/v1/chat/completions"
 )
 
-type TextMessage struct {
+type textMessage struct {
 	Role    string    `json:"role"`
-	Content []Content `json:"content"`
+	Content []content `json:"content"`
 }
-type TextCompletionInput struct {
+
+type textCompletionInput struct {
 	Prompt           string                `json:"prompt"`
 	Images           []string              `json:"images"`
-	ChatHistory      []*TextMessage        `json:"chat_history,omitempty"`
+	ChatHistory      []*textMessage        `json:"chat_history,omitempty"`
 	Model            string                `json:"model"`
 	SystemMessage    *string               `json:"system_message,omitempty"`
 	Temperature      *float32              `json:"temperature,omitempty"`
@@ -21,18 +22,19 @@ type TextCompletionInput struct {
 	MaxTokens        *int                  `json:"max_tokens,omitempty"`
 	PresencePenalty  *float32              `json:"presence_penalty,omitempty"`
 	FrequencyPenalty *float32              `json:"frequency_penalty,omitempty"`
-	ResponseFormat   *ResponseFormatStruct `json:"response_format,omitempty"`
+	ResponseFormat   *responseFormatStruct `json:"response_format,omitempty"`
 }
 
-type ResponseFormatStruct struct {
+type responseFormatStruct struct {
 	Type string `json:"type,omitempty"`
 }
 
-type TextCompletionOutput struct {
+type textCompletionOutput struct {
 	Texts []string `json:"texts"`
+	Usage usage    `json:"usage"`
 }
 
-type TextCompletionReq struct {
+type textCompletionReq struct {
 	Model            string                `json:"model"`
 	Messages         []interface{}         `json:"messages"`
 	Temperature      *float32              `json:"temperature,omitempty"`
@@ -42,48 +44,49 @@ type TextCompletionReq struct {
 	MaxTokens        *int                  `json:"max_tokens,omitempty"`
 	PresencePenalty  *float32              `json:"presence_penalty,omitempty"`
 	FrequencyPenalty *float32              `json:"frequency_penalty,omitempty"`
-	ResponseFormat   *ResponseFormatStruct `json:"response_format,omitempty"`
+	ResponseFormat   *responseFormatStruct `json:"response_format,omitempty"`
 }
 
-type MultiModalMessage struct {
+type multiModalMessage struct {
 	Role    string    `json:"role"`
-	Content []Content `json:"content"`
+	Content []content `json:"content"`
 }
 
-type Message struct {
+type message struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
 }
 
-type ImageURL struct {
+type imageURL struct {
 	URL string `json:"url"`
 }
-type Content struct {
+
+type content struct {
 	Type     string    `json:"type"`
 	Text     *string   `json:"text,omitempty"`
-	ImageURL *ImageURL `json:"image_url,omitempty"`
+	ImageURL *imageURL `json:"image_url,omitempty"`
 }
 
-type TextCompletionResp struct {
+type textCompletionResp struct {
 	ID      string    `json:"id"`
 	Object  string    `json:"object"`
 	Created int       `json:"created"`
-	Choices []Choices `json:"choices"`
-	Usage   Usage     `json:"usage"`
+	Choices []choices `json:"choices"`
+	Usage   usage     `json:"usage"`
 }
 
-type OutputMessage struct {
+type outputMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
 }
 
-type Choices struct {
+type choices struct {
 	Index        int           `json:"index"`
 	FinishReason string        `json:"finish_reason"`
-	Message      OutputMessage `json:"message"`
+	Message      outputMessage `json:"message"`
 }
 
-type Usage struct {
+type usage struct {
 	PromptTokens     int `json:"prompt_tokens"`
 	CompletionTokens int `json:"completion_tokens"`
 	TotalTokens      int `json:"total_tokens"`

@@ -397,6 +397,23 @@
           "description": "Texts",
           "title": "Texts",
           "type": "array"
+        },
+        "usage": {
+          "description": "Usage statistics related to the query",
+          "instillUIOrder": 1,
+          "properties": {
+            "total_tokens": {
+              "title": "Total tokens",
+              "description": "Total number of tokens used (request + response)",
+              "instillFormat": "integer",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "total_tokens"
+          ],
+          "title": "Usage",
+          "type": "object"
         }
       },
       "required": [
