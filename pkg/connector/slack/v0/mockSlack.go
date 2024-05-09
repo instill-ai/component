@@ -29,13 +29,16 @@ func (m *MockSlackClient) PostMessage(channelID string, options ...slack.MsgOpti
 func (m *MockSlackClient) GetConversationHistory(params *slack.GetConversationHistoryParameters) (*slack.GetConversationHistoryResponse, error) {
 
 	fakeResp := slack.GetConversationHistoryResponse{
+		SlackResponse: slack.SlackResponse{
+			Ok: true,
+		},
 		Messages: []slack.Message{
 			{
 				Msg: slack.Msg{
 					Timestamp:  "1715159446.644219",
 					User:       "user123",
 					Text:       "Hello, world!",
-					ReplyCount: 3,
+					ReplyCount: 1,
 				},
 			},
 		},
@@ -49,17 +52,16 @@ func (m *MockSlackClient) GetConversationReplies(params *slack.GetConversationRe
 	fakeMessages := []slack.Message{
 		{
 			Msg: slack.Msg{
-				Timestamp:  "1715159446.644219",
-				User:       "user123",
-				Text:       "Hello, world!",
+				Timestamp: "1715159446.644219",
+				User:      "user123",
+				Text:      "Hello, world!",
 			},
 		},
 		{
 			Msg: slack.Msg{
-				Timestamp:  "1715159449.399879",
-				User:       "user456",
-				Text:       "Hello, how are you",
-				
+				Timestamp: "1715159449.399879",
+				User:      "user456",
+				Text:      "Hello, how are you",
 			},
 		},
 	}
