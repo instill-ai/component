@@ -122,7 +122,7 @@ func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struc
 
 	newUH := e.Execution.UsageHandlerCreator()
 	h := newUH(e.Execution)
-	if err := h.Check(e.Execution.GetTask(), e.Execution.UsesSecret(), inputs); err != nil {
+	if err := h.Check(inputs); err != nil {
 		return nil, err
 	}
 
@@ -135,7 +135,7 @@ func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struc
 		return nil, err
 	}
 
-	if err := h.Collect(e.Execution.GetTask(), e.Execution.UsesSecret(), inputs, outputs); err != nil {
+	if err := h.Collect(inputs, outputs); err != nil {
 		return nil, err
 	}
 

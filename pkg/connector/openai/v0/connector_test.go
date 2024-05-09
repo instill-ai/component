@@ -239,7 +239,7 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Cleanup(cleanupConn)
 
 		uh := mock.NewUsageHandlerMock(c)
-		uh.CheckMock.When(task, false, inputs).Then(fmt.Errorf("check error"))
+		uh.CheckMock.When(inputs).Then(fmt.Errorf("check error"))
 		creator := usageHandlerCreator{uh}
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
@@ -258,8 +258,8 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Cleanup(cleanupConn)
 
 		uh := mock.NewUsageHandlerMock(c)
-		uh.CheckMock.When(task, false, inputs).Then(nil)
-		uh.CollectMock.When(task, false, inputs, outputs).Then(fmt.Errorf("collect error"))
+		uh.CheckMock.When(inputs).Then(nil)
+		uh.CollectMock.When(inputs, outputs).Then(fmt.Errorf("collect error"))
 		creator := usageHandlerCreator{uh}
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
@@ -281,8 +281,8 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Cleanup(cleanupConn)
 
 		uh := mock.NewUsageHandlerMock(c)
-		uh.CheckMock.When(task, false, inputs).Then(nil)
-		uh.CollectMock.When(task, false, inputs, outputs).Then(nil)
+		uh.CheckMock.When(inputs).Then(nil)
+		uh.CollectMock.When(inputs, outputs).Then(nil)
 		creator := usageHandlerCreator{uh}
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
@@ -310,8 +310,8 @@ func TestConnector_WithConfig(t *testing.T) {
 
 		secrets := map[string]any{"apikey": apiKey}
 		uh := mock.NewUsageHandlerMock(c)
-		uh.CheckMock.When(task, true, inputs).Then(nil)
-		uh.CollectMock.When(task, true, inputs, outputs).Then(nil)
+		uh.CheckMock.When(inputs).Then(nil)
+		uh.CollectMock.When(inputs, outputs).Then(nil)
 		creator := usageHandlerCreator{uh}
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH).
 			WithSecrets(secrets)
