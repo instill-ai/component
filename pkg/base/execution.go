@@ -27,7 +27,7 @@ type IExecution interface {
 	GetTaskOutputSchema() string
 
 	UsesSecret() bool
-	UsageHandlerCreator() func(IExecution) UsageHandler
+	UsageHandlerCreator() UsageHandlerCreator
 
 	Execute([]*structpb.Struct) ([]*structpb.Struct, error)
 }

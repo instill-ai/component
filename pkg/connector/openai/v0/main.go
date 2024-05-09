@@ -45,7 +45,7 @@ var (
 type Connector struct {
 	base.Connector
 
-	usageHandlerCreator func(base.IExecution) base.UsageHandler
+	usageHandlerCreator base.UsageHandlerCreator
 	secretAPIKey        string
 }
 
@@ -83,13 +83,13 @@ func (c *Connector) WithSecrets(s map[string]any) *Connector {
 }
 
 // WithUsageHandlerCreator overrides the UsageHandlerCreator method.
-func (c *Connector) WithUsageHandlerCreator(newUH func(base.IExecution) base.UsageHandler) *Connector {
+func (c *Connector) WithUsageHandlerCreator(newUH base.UsageHandlerCreator) *Connector {
 	c.usageHandlerCreator = newUH
 	return c
 }
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (c *Connector) UsageHandlerCreator() func(base.IExecution) base.UsageHandler {
+func (c *Connector) UsageHandlerCreator() base.UsageHandlerCreator {
 	return c.usageHandlerCreator
 }
 

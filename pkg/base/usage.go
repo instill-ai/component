@@ -9,6 +9,9 @@ type UsageHandler interface {
 	Collect(inputs, outputs []*structpb.Struct) error
 }
 
+// UsageHandlerCreator returns a function to initialize a UsageHandler.
+type UsageHandlerCreator func(IExecution) UsageHandler
+
 type noopUsageHandler struct{}
 
 func (h *noopUsageHandler) Check([]*structpb.Struct) error { return nil }

@@ -51,7 +51,12 @@ type ConnectionSecrets map[string]map[string]any
 
 // Init initializes the different connector components and loads their
 // information to memory.
-func Init(logger *zap.Logger, secrets ConnectionSecrets) *Store {
+func Init(
+	logger *zap.Logger,
+	secrets ConnectionSecrets,
+	usageHandlerCreators map[string]base.UsageHandlerCreator,
+) *Store {
+
 	baseConn := base.Connector{Logger: logger}
 
 	once.Do(func() {
@@ -67,7 +72,8 @@ func Init(logger *zap.Logger, secrets ConnectionSecrets) *Store {
 		{
 			// OpenAI
 			conn := openai.Init(baseConn)
-			conn = conn.WithSecrets(secrets[conn.GetID()])
+			conn = conn.WithSecrets(secrets[conn.GetID()]).
+				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
 			conStore.Import(conn)
 		}
 

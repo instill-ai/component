@@ -37,7 +37,7 @@ type IComponent interface {
 	GetTaskInputSchemas() map[string]string
 	GetTaskOutputSchemas() map[string]string
 
-	UsageHandlerCreator() func(IExecution) UsageHandler
+	UsageHandlerCreator() UsageHandlerCreator
 }
 
 func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {

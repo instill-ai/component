@@ -258,7 +258,7 @@ func (c *Connector) traverseCredentialField(input *structpb.Value, prefix string
 }
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (c *Connector) UsageHandlerCreator() func(IExecution) UsageHandler {
+func (c *Connector) UsageHandlerCreator() UsageHandlerCreator {
 	return newNoopUsageHandler
 }
 
@@ -301,6 +301,6 @@ func (e *ConnectorExecution) UsesSecret() bool {
 }
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (e *ConnectorExecution) UsageHandlerCreator() func(IExecution) UsageHandler {
+func (e *ConnectorExecution) UsageHandlerCreator() UsageHandlerCreator {
 	return e.Connector.UsageHandlerCreator()
 }
