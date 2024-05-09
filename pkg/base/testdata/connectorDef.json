@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/base",
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/pkg/base",
   "availableTasks": [
     "TASK_TEXT_EMBEDDINGS"
   ],
@@ -14,7 +14,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": true,
       "properties": {
-        "api_key": {
+        "api-key": {
           "description": "Fill your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
           "instillCredentialField": true,
           "instillUIOrder": 0,
@@ -23,7 +23,7 @@
         }
       },
       "required": [
-        "api_key"
+        "api-key"
       ],
       "title": "OpenAI Connection",
       "type": "object"

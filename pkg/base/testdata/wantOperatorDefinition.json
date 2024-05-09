@@ -69,7 +69,7 @@
       "title": "JSON Component",
       "type": "object"
     },
-    "data_specifications": {
+    "dataSpecifications": {
       "TASK_MARSHAL": {
         "input": {
           "description": "Input",

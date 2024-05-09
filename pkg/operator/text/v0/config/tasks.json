@@ -84,7 +84,7 @@
       ],
       "instillUIOrder": 0,
       "properties": {
-        "chunk_token_size": {
+        "chunk-token-size": {
           "default": 500,
           "description": "Number of tokens per text chunk",
           "instillAcceptFormats": [
@@ -177,14 +177,14 @@
       ],
       "instillUIOrder": 0,
       "properties": {
-        "chunk_num": {
+        "chunk-num": {
           "description": "Total number of output text chunks",
           "instillUIOrder": 2,
           "instillFormat": "integer",
           "title": "Number of Text Chunks",
           "type": "integer"
         },
-        "text_chunks": {
+        "text-chunks": {
           "description": "Text chunks after splitting",
           "instillUIOrder": 1,
           "instillFormat": "array:string",
@@ -198,7 +198,7 @@
           "title": "Text Chunks",
           "type": "array"
         },
-        "token_count": {
+        "token-count": {
           "description": "Total count of tokens in the input text",
           "instillUIOrder": 0,
           "instillFormat": "integer",
@@ -207,9 +207,9 @@
         }
       },
       "required": [
-        "token_count",
-        "text_chunks",
-        "chunk_num"
+        "token-count",
+        "text-chunks",
+        "chunk-num"
       ],
       "title": "Output",
       "type": "object"

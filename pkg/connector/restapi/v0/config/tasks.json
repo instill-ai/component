@@ -3,7 +3,7 @@
     "inputWithBody": {
       "instillEditOnNodeFields": [
         "body",
-        "endpoint_url"
+        "endpoint-url"
       ],
       "instillUIOrder": 0,
       "properties": {
@@ -21,7 +21,7 @@
           "required": [],
           "title": "Body"
         },
-        "endpoint_url": {
+        "endpoint-url": {
           "description": "The API endpoint url",
           "instillAcceptFormats": [
             "string"
@@ -35,7 +35,7 @@
           "title": "Endpoint Url",
           "type": "string"
         },
-        "output_body_schema": {
+        "output-body-schema": {
           "description": "The JSON schema of output body",
           "instillAcceptFormats": [
             "string"
@@ -54,7 +54,7 @@
         }
       },
       "required": [
-        "endpoint_url"
+        "endpoint-url"
       ],
       "title": "Input",
       "type": "object"
@@ -62,7 +62,7 @@
     "inputWithoutBody": {
       "instillUIOrder": 0,
       "properties": {
-        "endpoint_url": {
+        "endpoint-url": {
           "description": "The API endpoint url",
           "instillAcceptFormats": [
             "string"
@@ -76,7 +76,7 @@
           "title": "Endpoint Url",
           "type": "string"
         },
-        "output_body_schema": {
+        "output-body-schema": {
           "description": "The request body",
           "instillAcceptFormats": [
             "string"
@@ -95,7 +95,7 @@
         }
       },
       "required": [
-        "endpoint_url"
+        "endpoint-url"
       ],
       "title": "Input Without Body",
       "type": "object"
@@ -119,7 +119,7 @@
           "title": "Header",
           "type": "object"
         },
-        "status_code": {
+        "status-code": {
           "description": "The HTTP status code of the response",
           "instillFormat": "integer",
           "instillUIOrder": 0,
@@ -128,7 +128,7 @@
         }
       },
       "required": [
-        "status_code",
+        "status-code",
         "body",
         "header"
       ],

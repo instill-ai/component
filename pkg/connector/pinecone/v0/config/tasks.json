@@ -37,7 +37,7 @@
           "title": "Vector",
           "type": "array"
         },
-        "top_k": {
+        "top-k": {
           "description": "The number of results to return for each query",
           "instillAcceptFormats": [
             "integer"
@@ -79,7 +79,7 @@
           "title": "Filter",
           "type": "object"
         },
-        "min_score": {
+        "min-score": {
           "description": "Exclude results whose score is below this value",
           "instillAcceptFormats": [
             "number",
@@ -93,7 +93,7 @@
           "title": "Minimum Score",
           "type": "number"
         },
-        "include_metadata": {
+        "include-metadata": {
           "default": false,
           "description": "Indicates whether metadata is included in the response as well as the IDs",
           "instillAcceptFormats": [
@@ -107,7 +107,7 @@
           "title": "Include Metadata",
           "type": "boolean"
         },
-        "include_values": {
+        "include-values": {
           "default": false,
           "description": "Indicates whether vector values are included in the response",
           "instillAcceptFormats": [
@@ -123,7 +123,7 @@
         }
       },
       "required": [
-        "top_k",
+        "top-k",
         "vector"
       ],
       "title": "Input",
@@ -277,7 +277,7 @@
     "output": {
       "instillUIOrder": 0,
       "properties": {
-        "upserted_count": {
+        "upserted-count": {
           "description": "Number of records modified or added",
           "instillFormat": "integer",
           "instillUIOrder": 0,
@@ -286,7 +286,7 @@
         }
       },
       "required": [
-        "upserted_count"
+        "upserted-count"
       ],
       "title": "Output",
       "type": "object"

@@ -12,7 +12,7 @@
           "title": "Link",
           "type": "string"
         },
-        "link_html": {
+        "link-html": {
           "description": "The scraped raw html of the link associated with this search result",
           "instillAcceptFormats": [
             "string"
@@ -23,7 +23,7 @@
           "title": "Link HTML",
           "type": "string"
         },
-        "link_text": {
+        "link-text": {
           "description": "The scraped text of the link associated with this search result, in plain text",
           "instillAcceptFormats": [
             "string"
@@ -71,9 +71,9 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "include_link_html": {
+        "include-link-html": {
           "default": false,
-          "description": "Indicate whether to scrape the link and include the raw HTML of the link associated with this search result in the 'link_html' field",
+          "description": "Indicate whether to scrape the link and include the raw HTML of the link associated with this search result in the 'link-html' field",
           "instillAcceptFormats": [
             "boolean"
           ],
@@ -85,9 +85,9 @@
           "title": "Include Link HTML",
           "type": "boolean"
         },
-        "include_link_text": {
+        "include-link-text": {
           "default": false,
-          "description": "Indicate whether to scrape the link and include the text of the link associated with this search result in the 'link_text' field",
+          "description": "Indicate whether to scrape the link and include the text of the link associated with this search result in the 'link-text' field",
           "instillAcceptFormats": [
             "boolean"
           ],
@@ -114,7 +114,7 @@
           "title": "Query",
           "type": "string"
         },
-        "top_k": {
+        "top-k": {
           "default": 10,
           "description": "The number of results to return for each query",
           "instillAcceptFormats": [

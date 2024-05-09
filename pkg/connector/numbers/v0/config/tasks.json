@@ -50,7 +50,7 @@
           "title": "Caption",
           "type": "string"
         },
-        "asset_creator": {
+        "asset-creator": {
           "description": "Name of the asset creator.",
           "instillAcceptFormats": [
             "string"
@@ -64,7 +64,7 @@
           "title": "Asset Creator",
           "type": "string"
         },
-        "digital_source_type": {
+        "digital-source-type": {
           "default": "trainedAlgorithmicMedia",
           "description": "Specify the type of the source. More details <a href=\"https://docs.numbersprotocol.io/introduction/numbers-protocol/defining-web3-assets/assettree/digitalsourcetype\">here</a>",
           "enum": [
@@ -86,7 +86,7 @@
           "title": "Digital Source Type",
           "type": "string"
         },
-        "generated_by": {
+        "generated-by": {
           "description": "The AI model used to generate the content.",
           "instillAcceptFormats": [
             "string"
@@ -138,7 +138,7 @@
           "title": "License",
           "type": "object"
         },
-        "mining_preference": {
+        "mining-preference": {
           "default": "notAllowed",
           "description": "Designates the selection made by the asset creators or licensed owners to decide if the asset is suitable for inclusion in a data mining or AI/ML training workflow. More details <a href=\"https://docs.numbersprotocol.io/introduction/numbers-protocol/defining-web3-assets/assettree/miningpreference\">here</a>",
           "enum": [
@@ -174,7 +174,7 @@
       "description": "Output",
       "instillUIOrder": 0,
       "properties": {
-        "asset_urls": {
+        "asset-urls": {
           "description": "Asset Urls",
           "instillEnableCopyButton": true,
           "instillUIOrder": 0,
@@ -190,7 +190,7 @@
         }
       },
       "required": [
-        "asset_urls"
+        "asset-urls"
       ],
       "title": "Output",
       "type": "object"
