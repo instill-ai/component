@@ -96,7 +96,7 @@ func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, task
 	}
 
 	availableTasks := []string{}
-	for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
+	for _, availableTask := range definitionJSON.(map[string]interface{})["availableTasks"].([]interface{}) {
 		availableTasks = append(availableTasks, availableTask.(string))
 	}
 
@@ -145,7 +145,7 @@ func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, task
 	}
 	// TODO: Avoid using structpb traversal here.
 	if _, ok := raw.Fields["spec"]; ok {
-		if v, ok := raw.Fields["spec"].GetStructValue().Fields["connection_specification"]; ok {
+		if v, ok := raw.Fields["spec"].GetStructValue().Fields["connectionSpecification"]; ok {
 			connection, err := c.refineResourceSpec(v.GetStructValue())
 			if err != nil {
 				return err

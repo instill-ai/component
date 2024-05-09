@@ -1,16 +1,16 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_QUERY",
     "TASK_UPSERT"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/pinecone",
+  "documentationUrl": "https://www.instill.tech/docs/latest/vdp/data-connectors/pinecone",
   "icon": "assets/pinecone.svg",
-  "icon_url": "https://www.pinecone.io/favicon.ico",
+  "iconUrl": "https://www.pinecone.io/favicon.ico",
   "id": "pinecone",
   "public": true,
   "spec": {
-    "connection_specification": {
+    "connectionSpecification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": false,
       "properties": {
@@ -55,8 +55,8 @@
   "type": "CONNECTOR_TYPE_DATA",
   "uid": "4b1dcf82-e134-4ba7-992f-f9a02536ec2b",
   "vendor": "Pinecone",
-  "vendor_attributes": {},
+  "vendorAttributes": {},
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/pinecone/v0",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

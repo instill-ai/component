@@ -1,15 +1,15 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_INSERT"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/bigquery",
+  "documentationUrl": "https://www.instill.tech/docs/latest/vdp/data-connectors/bigquery",
   "icon": "assets/bigquery.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "bigquery",
   "public": true,
   "spec": {
-    "connection_specification": {
+    "connectionSpecification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": false,
       "properties": {
@@ -80,8 +80,8 @@
   "type": "CONNECTOR_TYPE_DATA",
   "uid": "e2ffe076-ab2c-4e5e-9587-a613a6b1c146",
   "vendor": "Google",
-  "vendor_attributes": {},
+  "vendorAttributes": {},
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/bigquery/v0",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

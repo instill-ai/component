@@ -82,7 +82,7 @@ func (o *BaseOperator) LoadOperatorDefinition(definitionJSONBytes []byte, tasksJ
 	}
 
 	availableTasks := []string{}
-	for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
+	for _, availableTask := range definitionJSON.(map[string]interface{})["availableTasks"].([]interface{}) {
 		availableTasks = append(availableTasks, availableTask.(string))
 	}
 

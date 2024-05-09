@@ -24,7 +24,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
 
 -- definition.json --
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_DUMMY",
     "TASK_DUMMIER_THAN_DUMMY"
   ],
@@ -33,7 +33,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
   "id": "dummy",
   "title": "Dummy",
   "description": "Perform an action",
-  "release_stage": "RELEASE_STAGE_BETA",
+  "releaseStage": "RELEASE_STAGE_BETA",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/dummy/v0"
 }
 -- tasks.json --

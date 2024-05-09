@@ -11,7 +11,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
 
 -- definition.json --
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_DUMMY"
   ],
   "public": true,
@@ -21,7 +21,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
   "prerequisites": "An account at [dummy.io](https://dummy.io) is required.",
   "type": "CONNECTOR_TYPE_DATA",
   "spec": {
-    "connection_specification": {
+    "connectionSpecification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": true,
       "properties": {
@@ -45,7 +45,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       "type": "object"
     }
   },
-  "release_stage": "RELEASE_STAGE_COMING_SOON",
+  "releaseStage": "RELEASE_STAGE_COMING_SOON",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/dummy/v0"
 }
 -- tasks.json --

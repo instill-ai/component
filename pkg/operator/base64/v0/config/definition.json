@@ -1,12 +1,12 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_ENCODE",
     "TASK_DECODE"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/base64",
+  "documentationUrl": "https://www.instill.tech/docs/latest/vdp/operators/base64",
   "icon": "assets/base64.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "base64",
   "public": true,
   "spec": {},
@@ -16,5 +16,5 @@
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/base64/v0",
   "description": "Encode or decode a string in Base64 format",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

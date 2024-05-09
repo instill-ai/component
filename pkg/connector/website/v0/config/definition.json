@@ -1,11 +1,11 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_SCRAPE_WEBSITE"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/website",
+  "documentationUrl": "https://www.instill.tech/docs/latest/vdp/data-connectors/website",
   "icon": "assets/website.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "website",
   "public": true,
   "title": "Website",
@@ -13,8 +13,8 @@
   "type": "CONNECTOR_TYPE_DATA",
   "uid": "98909958-db7d-4dfe-9858-7761904be17e",
   "vendor": "",
-  "vendor_attributes": {},
+  "vendorAttributes": {},
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/website/v0",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

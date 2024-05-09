@@ -1,13 +1,13 @@
 {
   "version": "1.0.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/base",
-  "available_tasks": [
+  "availableTasks": [
     "TASK_MARSHAL"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/json",
+  "documentationUrl": "https://www.instill.tech/docs/latest/vdp/operators/json",
   "icon": "Instill AI/json.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "json",
   "public": true,
   "spec": {},

@@ -1,11 +1,11 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_START"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/op-start",
+  "documentationUrl": "https://www.instill.tech/docs/latest/vdp/operators/op-start",
   "icon": "assets/start.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "start",
   "public": true,
   "spec": {},
@@ -15,5 +15,5 @@
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/start/v0",
   "description": "Define data formats customized for their AI-first applications",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

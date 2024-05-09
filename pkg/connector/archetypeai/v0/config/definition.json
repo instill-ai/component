@@ -1,17 +1,17 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_DESCRIBE",
     "TASK_SUMMARIZE",
     "TASK_UPLOAD_FILE"
   ],
   "custom": false,
-  "documentation_url": "",
+  "documentationUrl": "",
   "icon": "assets/archetype-ai.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "archetype-ai",
   "public": true,
   "spec": {
-    "connection_specification": {
+    "connectionSpecification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": false,
       "properties": {
@@ -42,8 +42,8 @@
   "type": "CONNECTOR_TYPE_AI",
   "uid": "e414a1f8-5fdf-4292-b050-9f9176254a4b",
   "vendor": "Archetype AI",
-  "vendor_attributes": {},
+  "vendorAttributes": {},
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/archetypeai/v0",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

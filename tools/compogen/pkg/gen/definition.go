@@ -10,7 +10,7 @@ import (
 )
 
 type spec struct {
-	ConnectionSpecification *objectSchema `json:"connection_specification" validate:"omitnil"`
+	ConnectionSpecification *objectSchema `json:"connectionSpecification" validate:"omitnil"`
 }
 
 type releaseStage pb.ComponentDefinition_ReleaseStage
@@ -39,8 +39,8 @@ type definition struct {
 	ID             string       `json:"id" validate:"required"`
 	Title          string       `json:"title" validate:"required"`
 	Description    string       `json:"description" validate:"required"`
-	ReleaseStage   releaseStage `json:"release_stage" validate:"required"`
-	AvailableTasks []string     `json:"available_tasks" validate:"gt=0"`
+	ReleaseStage   releaseStage `json:"releaseStage" validate:"required"`
+	AvailableTasks []string     `json:"availableTasks" validate:"gt=0"`
 	SourceURL      string       `json:"source_url" validate:"url"`
 
 	Public        bool   `json:"public"`

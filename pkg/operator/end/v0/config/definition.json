@@ -1,11 +1,11 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_END"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/op-end",
+  "documentationUrl": "https://www.instill.tech/docs/latest/vdp/operators/op-end",
   "icon": "assets/end.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "end",
   "public": true,
   "spec": {},
@@ -15,5 +15,5 @@
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/end/v0",
   "description": "Create an output interface in a pipeline when triggered synchronously",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

@@ -1,5 +1,5 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_GET",
     "TASK_POST",
     "TASK_PATCH",
@@ -9,13 +9,13 @@
     "TASK_OPTIONS"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/restapi",
+  "documentationUrl": "https://www.instill.tech/docs/latest/vdp/data-connectors/restapi",
   "icon": "assets/restapi.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "restapi",
   "public": true,
   "spec": {
-    "connection_specification": {
+    "connectionSpecification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": false,
       "properties": {
@@ -195,8 +195,8 @@
   "type": "CONNECTOR_TYPE_DATA",
   "uid": "5ee55a5c-6e30-4c7a-80e8-90165a729e0a",
   "vendor": "",
-  "vendor_attributes": {},
+  "vendorAttributes": {},
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/restapi/v0",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

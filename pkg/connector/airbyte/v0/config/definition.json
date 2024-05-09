@@ -1,15 +1,15 @@
 {
-  "available_tasks": [],
+  "availableTasks": [],
   "custom": false,
-  "documentation_url": "https://docs.airbyte.com/integrations/destinations",
+  "documentationUrl": "https://docs.airbyte.com/integrations/destinations",
   "icon": "Airbyte/airbyte.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "airbyte-destination",
   "public": true,
   "version": "0.1.0",
-  "release_stage": "RELEASE_STAGE_ALPHA",
+  "releaseStage": "RELEASE_STAGE_ALPHA",
   "spec": {
-    "connection_specification": {
+    "connectionSpecification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Destination",
       "type": "object"
@@ -20,5 +20,5 @@
   "type": "CONNECTOR_TYPE_DATA",
   "uid": "975678a2-5117-48a4-a135-019619dee18e",
   "vendor": "Airbyte",
-  "vendor_attributes": {}
+  "vendorAttributes": {}
 }

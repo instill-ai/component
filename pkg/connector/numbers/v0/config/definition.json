@@ -1,15 +1,15 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_REGISTER"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/app-connectors/numbers",
+  "documentationUrl": "https://www.instill.tech/docs/latest/vdp/app-connectors/numbers",
   "icon": "assets/numbers.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "numbers",
   "public": true,
   "spec": {
-    "connection_specification": {
+    "connectionSpecification": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": false,
       "properties": {
@@ -40,8 +40,8 @@
   "type": "CONNECTOR_TYPE_APPLICATION",
   "uid": "70d8664a-d512-4517-a5e8-5d4da81756a7",
   "vendor": "Numbers Protocol",
-  "vendor_attributes": {},
+  "vendorAttributes": {},
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/numbers/v0",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }
