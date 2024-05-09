@@ -90,6 +90,9 @@ func (c *Connector) WithUsageHandlerCreator(newUH base.UsageHandlerCreator) *Con
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
 func (c *Connector) UsageHandlerCreator() base.UsageHandlerCreator {
+	if c.usageHandlerCreator == nil {
+		return c.Connector.UsageHandlerCreator()
+	}
 	return c.usageHandlerCreator
 }
 

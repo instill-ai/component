@@ -309,12 +309,7 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Cleanup(cleanupConn)
 
 		secrets := map[string]any{"apikey": apiKey}
-		uh := mock.NewUsageHandlerMock(c)
-		uh.CheckMock.When(inputs).Then(nil)
-		uh.CollectMock.When(inputs, outputs).Then(nil)
-		creator := usageHandlerCreator{uh}
-		connector := Init(bc).WithUsageHandlerCreator(creator.newUH).
-			WithSecrets(secrets)
+		connector := Init(bc).WithSecrets(secrets)
 
 		connection, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
