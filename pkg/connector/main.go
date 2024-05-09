@@ -52,7 +52,7 @@ type ConnectionSecrets map[string]map[string]any
 // Init initializes the different connector components and loads their
 // information to memory.
 func Init(logger *zap.Logger, secrets ConnectionSecrets) *Store {
-	baseConn := base.BaseConnector{Logger: logger}
+	baseConn := base.Connector{Logger: logger}
 
 	once.Do(func() {
 		conStore = &Store{

@@ -23,7 +23,7 @@ func TestConnector_ListConnectorDefinitions(t *testing.T) {
 	c := qt.New(t)
 	logger := zap.NewNop()
 
-	conn := BaseConnector{
+	conn := Connector{
 		Logger: logger,
 	}
 

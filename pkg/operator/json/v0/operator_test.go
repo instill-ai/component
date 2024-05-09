@@ -114,7 +114,7 @@ func TestOperator_Execute(t *testing.T) {
 		},
 	}
 
-	bo := base.BaseOperator{Logger: zap.NewNop()}
+	bo := base.Operator{Logger: zap.NewNop()}
 	operator := Init(bo)
 
 	for _, tc := range testcases {
@@ -151,7 +151,7 @@ func TestOperator_Execute(t *testing.T) {
 func TestOperator_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.BaseOperator{Logger: zap.NewNop()}
+	bc := base.Operator{Logger: zap.NewNop()}
 	operator := Init(bc)
 
 	c.Run("nok - unsupported task", func(c *qt.C) {

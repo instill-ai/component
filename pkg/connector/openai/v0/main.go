@@ -43,7 +43,7 @@ var (
 
 // Connector executes queries against OpenAI.
 type Connector struct {
-	base.BaseConnector
+	base.Connector
 
 	usageHandlerCreator func(base.IExecution) base.UsageHandler
 
@@ -52,9 +52,9 @@ type Connector struct {
 }
 
 // Init returns an initialized OpenAI connector.
-func Init(bc base.BaseConnector) *Connector {
+func Init(bc base.Connector) *Connector {
 	once.Do(func() {
-		con = &Connector{BaseConnector: bc}
+		con = &Connector{Connector: bc}
 		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, map[string][]byte{"openai.json": openAIJSON})
 		if err != nil {
 			panic(err)
@@ -104,7 +104,7 @@ func (c *Connector) CreateExecution(sysVars map[string]any, connection *structpb
 	}
 
 	return &base.ExecutionWrapper{Execution: &execution{
-		BaseConnectorExecution: base.BaseConnectorExecution{
+		ConnectorExecution: base.ConnectorExecution{
 			Connector:       c,
 			SystemVariables: sysVars,
 			Connection:      resolvedConnection,
@@ -131,7 +131,7 @@ func (c *Connector) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, boo
 }
 
 type execution struct {
-	base.BaseConnectorExecution
+	base.ConnectorExecution
 	usesSecret bool
 }
 

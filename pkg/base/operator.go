@@ -24,8 +24,8 @@ type IOperator interface {
 	CreateExecution(sysVars map[string]any, task string) (*ExecutionWrapper, error)
 }
 
-// BaseOperator implements the common operator methods.
-type BaseOperator struct {
+// Operator implements the common operator methods.
+type Operator struct {
 	Logger *zap.Logger
 
 	taskInputSchemas  map[string]string
@@ -34,28 +34,28 @@ type BaseOperator struct {
 	definition *pipelinePB.OperatorDefinition
 }
 
-func (o *BaseOperator) GetID() string {
+func (o *Operator) GetID() string {
 	return o.definition.Id
 }
-func (o *BaseOperator) GetUID() uuid.UUID {
+func (o *Operator) GetUID() uuid.UUID {
 	return uuid.FromStringOrNil(o.definition.Uid)
 }
-func (o *BaseOperator) GetLogger() *zap.Logger {
+func (o *Operator) GetLogger() *zap.Logger {
 	return o.Logger
 }
-func (o *BaseOperator) GetTaskInputSchemas() map[string]string {
+func (o *Operator) GetTaskInputSchemas() map[string]string {
 	return o.taskInputSchemas
 }
-func (o *BaseOperator) GetTaskOutputSchemas() map[string]string {
+func (o *Operator) GetTaskOutputSchemas() map[string]string {
 	return o.taskOutputSchemas
 }
 
-func (o *BaseOperator) GetOperatorDefinition(sysVars map[string]any, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
+func (o *Operator) GetOperatorDefinition(sysVars map[string]any, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
 	return o.definition, nil
 }
 
 // LoadOperatorDefinition loads the operator definitions from json files
-func (o *BaseOperator) LoadOperatorDefinition(definitionJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
+func (o *Operator) LoadOperatorDefinition(definitionJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
 	var err error
 	var definitionJSON any
 
@@ -117,44 +117,44 @@ func (o *BaseOperator) LoadOperatorDefinition(definitionJSONBytes []byte, tasksJ
 
 // UsageHandlerCreator returns a no-op usage handler initializer. For the
 // moment there are no use cases for usage collection in operators.
-func (o *BaseOperator) UsageHandlerCreator() func(IExecution) UsageHandler {
+func (o *Operator) UsageHandlerCreator() func(IExecution) UsageHandler {
 	return newNoopUsageHandler
 }
 
-// BaseOperatorExecution implements the common methods for operator execution.
-type BaseOperatorExecution struct {
+// OperatorExecution implements the common methods for operator execution.
+type OperatorExecution struct {
 	Operator        IOperator
 	SystemVariables map[string]any
 	Task            string
 }
 
-func (e *BaseOperatorExecution) GetTask() string {
+func (e *OperatorExecution) GetTask() string {
 	return e.Task
 }
-func (e *BaseOperatorExecution) GetOperator() IOperator {
+func (e *OperatorExecution) GetOperator() IOperator {
 	return e.Operator
 }
-func (e *BaseOperatorExecution) GetSystemVariables() map[string]any {
+func (e *OperatorExecution) GetSystemVariables() map[string]any {
 	return e.SystemVariables
 }
-func (e *BaseOperatorExecution) GetLogger() *zap.Logger {
+func (e *OperatorExecution) GetLogger() *zap.Logger {
 	return e.Operator.GetLogger()
 }
-func (e *BaseOperatorExecution) GetTaskInputSchema() string {
+func (e *OperatorExecution) GetTaskInputSchema() string {
 	return e.Operator.GetTaskInputSchemas()[e.Task]
 }
-func (e *BaseOperatorExecution) GetTaskOutputSchema() string {
+func (e *OperatorExecution) GetTaskOutputSchema() string {
 	return e.Operator.GetTaskOutputSchemas()[e.Task]
 }
 
 // UsesSecret indicates wether the operator execution is configured with
 // global secrets. Components should override this method when they have the
 // ability to be executed with global secrets.
-func (e *BaseOperatorExecution) UsesSecret() bool {
+func (e *OperatorExecution) UsesSecret() bool {
 	return false
 }
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (e *BaseOperatorExecution) UsageHandlerCreator() func(IExecution) UsageHandler {
+func (e *OperatorExecution) UsageHandlerCreator() func(IExecution) UsageHandler {
 	return e.Operator.UsageHandlerCreator()
 }

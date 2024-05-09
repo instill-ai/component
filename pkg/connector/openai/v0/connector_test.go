@@ -31,7 +31,7 @@ const (
 func TestConnector_Execute(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.BaseConnector{Logger: zap.NewNop()}
+	bc := base.Connector{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -130,7 +130,7 @@ func TestConnector_Execute(t *testing.T) {
 func TestConnector_Test(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.BaseConnector{Logger: zap.NewNop()}
+	bc := base.Connector{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {
@@ -233,7 +233,7 @@ func TestConnector_WithConfig(t *testing.T) {
 	c.Cleanup(openAIServer.Close)
 
 	task := textGenerationTask
-	bc := base.BaseConnector{Logger: zap.NewNop()}
+	bc := base.Connector{Logger: zap.NewNop()}
 
 	c.Run("nok - usage handler check error", func(c *qt.C) {
 		c.Cleanup(cleanupConn)

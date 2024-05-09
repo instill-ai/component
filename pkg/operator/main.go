@@ -37,7 +37,7 @@ type operator struct {
 // Init initializes the different operator components and loads their
 // information to memory.
 func Init(logger *zap.Logger) *Store {
-	baseOp := base.BaseOperator{Logger: logger}
+	baseOp := base.Operator{Logger: logger}
 
 	once.Do(func() {
 		opStore = &Store{

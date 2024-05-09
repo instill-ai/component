@@ -190,7 +190,7 @@ func TestConnector_Execute(t *testing.T) {
 		},
 	}
 
-	bc := base.BaseConnector{Logger: zap.NewNop()}
+	bc := base.Connector{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	for _, tc := range testcases {

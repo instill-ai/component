@@ -29,8 +29,8 @@ type IConnector interface {
 	IsCredentialField(target string) bool
 }
 
-// BaseConnector implements the common connector methods.
-type BaseConnector struct {
+// Connector implements the common connector methods.
+type Connector struct {
 	Logger *zap.Logger
 
 	taskInputSchemas  map[string]string
@@ -40,30 +40,30 @@ type BaseConnector struct {
 	credentialFields []string
 }
 
-func (c *BaseConnector) GetID() string {
+func (c *Connector) GetID() string {
 	return c.definition.Id
 }
 
-func (c *BaseConnector) GetUID() uuid.UUID {
+func (c *Connector) GetUID() uuid.UUID {
 	return uuid.FromStringOrNil(c.definition.Uid)
 }
 
-func (c *BaseConnector) GetLogger() *zap.Logger {
+func (c *Connector) GetLogger() *zap.Logger {
 	return c.Logger
 }
-func (c *BaseConnector) GetConnectorDefinition(sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (c *Connector) GetConnectorDefinition(sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	return c.definition, nil
 }
 
-func (c *BaseConnector) GetTaskInputSchemas() map[string]string {
+func (c *Connector) GetTaskInputSchemas() map[string]string {
 	return c.taskInputSchemas
 }
-func (c *BaseConnector) GetTaskOutputSchemas() map[string]string {
+func (c *Connector) GetTaskOutputSchemas() map[string]string {
 	return c.taskOutputSchemas
 }
 
 // LoadConnectorDefinition loads the connector definitions from json files
-func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
+func (c *Connector) LoadConnectorDefinition(definitionJSONBytes []byte, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
 	var err error
 	var definitionJSON any
 
@@ -150,7 +150,7 @@ func (c *BaseConnector) LoadConnectorDefinition(definitionJSONBytes []byte, task
 
 }
 
-func (c *BaseConnector) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb.Struct, error) {
+func (c *Connector) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb.Struct, error) {
 
 	spec := proto.Clone(resourceSpec).(*structpb.Struct)
 	if _, ok := spec.Fields["instillShortDescription"]; !ok {
@@ -205,7 +205,7 @@ func (c *BaseConnector) refineResourceSpec(resourceSpec *structpb.Struct) (*stru
 }
 
 // IsCredentialField checks if the target field is credential field
-func (c *BaseConnector) IsCredentialField(target string) bool {
+func (c *Connector) IsCredentialField(target string) bool {
 	for _, field := range c.credentialFields {
 		if target == field {
 			return true
@@ -215,11 +215,11 @@ func (c *BaseConnector) IsCredentialField(target string) bool {
 }
 
 // ListCredentialField lists the credential fields by definition id
-func (c *BaseConnector) ListCredentialField() ([]string, error) {
+func (c *Connector) ListCredentialField() ([]string, error) {
 	return c.credentialFields, nil
 }
 
-func (c *BaseConnector) initCredentialField(def *pipelinePB.ConnectorDefinition) {
+func (c *Connector) initCredentialField(def *pipelinePB.ConnectorDefinition) {
 	if c.credentialFields == nil {
 		c.credentialFields = []string{}
 	}
@@ -234,7 +234,7 @@ func (c *BaseConnector) initCredentialField(def *pipelinePB.ConnectorDefinition)
 	c.credentialFields = credentialFields
 }
 
-func (c *BaseConnector) traverseCredentialField(input *structpb.Value, prefix string, credentialFields []string) []string {
+func (c *Connector) traverseCredentialField(input *structpb.Value, prefix string, credentialFields []string) []string {
 	for key, v := range input.GetStructValue().GetFields() {
 		if isCredential, ok := v.GetStructValue().GetFields()["instillCredentialField"]; ok {
 			if isCredential.GetBoolValue() || isCredential.GetStringValue() == "true" {
@@ -258,51 +258,49 @@ func (c *BaseConnector) traverseCredentialField(input *structpb.Value, prefix st
 }
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (c *BaseConnector) UsageHandlerCreator() func(IExecution) UsageHandler {
+func (c *Connector) UsageHandlerCreator() func(IExecution) UsageHandler {
 	return newNoopUsageHandler
 }
 
-// BaseConnectorExecution implements the common methods for connector
+// ConnectorExecution implements the common methods for connector
 // execution.
-// TODO update to ConnectorExecution
-type BaseConnectorExecution struct {
-	// TODO unexport if possible
+type ConnectorExecution struct {
 	Connector       IConnector
 	SystemVariables map[string]any
 	Connection      *structpb.Struct
 	Task            string
 }
 
-func (e *BaseConnectorExecution) GetTask() string {
+func (e *ConnectorExecution) GetTask() string {
 	return e.Task
 }
-func (e *BaseConnectorExecution) GetConnector() IConnector {
+func (e *ConnectorExecution) GetConnector() IConnector {
 	return e.Connector
 }
-func (e *BaseConnectorExecution) GetConnection() *structpb.Struct {
+func (e *ConnectorExecution) GetConnection() *structpb.Struct {
 	return e.Connection
 }
-func (e *BaseConnectorExecution) GetSystemVariables() map[string]any {
+func (e *ConnectorExecution) GetSystemVariables() map[string]any {
 	return e.SystemVariables
 }
-func (e *BaseConnectorExecution) GetLogger() *zap.Logger {
+func (e *ConnectorExecution) GetLogger() *zap.Logger {
 	return e.Connector.GetLogger()
 }
-func (e *BaseConnectorExecution) GetTaskInputSchema() string {
+func (e *ConnectorExecution) GetTaskInputSchema() string {
 	return e.Connector.GetTaskInputSchemas()[e.Task]
 }
-func (e *BaseConnectorExecution) GetTaskOutputSchema() string {
+func (e *ConnectorExecution) GetTaskOutputSchema() string {
 	return e.Connector.GetTaskOutputSchemas()[e.Task]
 }
 
 // UsesSecret indicates wether the connector execution is configured with
 // global secrets. Components should override this method when they have the
 // ability to be executed with global secrets.
-func (e *BaseConnectorExecution) UsesSecret() bool {
+func (e *ConnectorExecution) UsesSecret() bool {
 	return false
 }
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (e *BaseConnectorExecution) UsageHandlerCreator() func(IExecution) UsageHandler {
+func (e *ConnectorExecution) UsageHandlerCreator() func(IExecution) UsageHandler {
 	return e.Connector.UsageHandlerCreator()
 }

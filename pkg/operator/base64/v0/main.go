@@ -29,20 +29,20 @@ var (
 )
 
 type operator struct {
-	base.BaseOperator
+	base.Operator
 }
 
 type execution struct {
-	base.BaseOperatorExecution
+	base.OperatorExecution
 }
 
 type Base64 struct {
 	Data string `json:"data"`
 }
 
-func Init(bo base.BaseOperator) *operator {
+func Init(bo base.Operator) *operator {
 	once.Do(func() {
-		op = &operator{BaseOperator: bo}
+		op = &operator{Operator: bo}
 		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
@@ -53,7 +53,7 @@ func Init(bo base.BaseOperator) *operator {
 
 func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		BaseOperatorExecution: base.BaseOperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
+		OperatorExecution: base.OperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
 	}}, nil
 }
 

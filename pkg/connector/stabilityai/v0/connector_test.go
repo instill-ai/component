@@ -45,7 +45,7 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 	text := "a cat and a dog"
 	engine := "engine"
 
-	bc := base.BaseConnector{Logger: zap.NewNop()}
+	bc := base.Connector{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -139,7 +139,7 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 	text := "a cat and a dog"
 	engine := "engine"
 
-	bc := base.BaseConnector{Logger: zap.NewNop()}
+	bc := base.Connector{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -229,7 +229,7 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 func TestConnector_Test(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.BaseConnector{Logger: zap.NewNop()}
+	bc := base.Connector{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {

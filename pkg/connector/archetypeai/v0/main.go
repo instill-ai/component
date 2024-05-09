@@ -34,11 +34,11 @@ var (
 )
 
 type connector struct {
-	base.BaseConnector
+	base.Connector
 }
 
 type execution struct {
-	base.BaseConnectorExecution
+	base.ConnectorExecution
 
 	execute func(*structpb.Struct) (*structpb.Struct, error)
 	client  *httpclient.Client
@@ -46,9 +46,9 @@ type execution struct {
 
 // Init returns an implementation of IConnector that interacts with Archetype
 // AI.
-func Init(bc base.BaseConnector) *connector {
+func Init(bc base.Connector) *connector {
 	once.Do(func() {
-		con = &connector{BaseConnector: bc}
+		con = &connector{Connector: bc}
 		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
@@ -59,8 +59,8 @@ func Init(bc base.BaseConnector) *connector {
 
 func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
-		BaseConnectorExecution: base.BaseConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
-		client:                 newClient(connection, c.Logger),
+		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		client:             newClient(connection, c.Logger),
 	}
 
 	switch task {

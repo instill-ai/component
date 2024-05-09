@@ -21,7 +21,7 @@ func TestOperator_ListOperatorDefinitions(t *testing.T) {
 	c := qt.New(t)
 	logger := zap.NewNop()
 
-	op := BaseOperator{
+	op := Operator{
 		Logger: logger,
 	}
 
