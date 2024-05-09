@@ -233,15 +233,15 @@ func TestConnector_WithConfig(t *testing.T) {
 	c.Cleanup(openAIServer.Close)
 
 	task := textGenerationTask
+	bc := base.BaseConnector{Logger: zap.NewNop()}
 
 	c.Run("nok - usage handler check error", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
 
-		connector := Init(base.BaseConnector{Logger: zap.NewNop()})
-
 		uh := mock.NewUsageHandlerMock(c)
 		uh.CheckMock.When(task, false, inputs).Then(fmt.Errorf("check error"))
-		connector.WithUsageHandler(uh)
+		creator := usageHandlerCreator{uh}
+		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
 		connection, err := structpb.NewStruct(map[string]any{})
 		c.Assert(err, qt.IsNil)
@@ -257,12 +257,11 @@ func TestConnector_WithConfig(t *testing.T) {
 	c.Run("nok - usage handler collect error", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
 
-		connector := Init(base.BaseConnector{Logger: zap.NewNop()})
-
 		uh := mock.NewUsageHandlerMock(c)
 		uh.CheckMock.When(task, false, inputs).Then(nil)
 		uh.CollectMock.When(task, false, inputs, outputs).Then(fmt.Errorf("collect error"))
-		connector.WithUsageHandler(uh)
+		creator := usageHandlerCreator{uh}
+		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
 		connection, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
@@ -281,12 +280,11 @@ func TestConnector_WithConfig(t *testing.T) {
 	c.Run("ok - with usage handler", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
 
-		connector := Init(base.BaseConnector{Logger: zap.NewNop()})
-
 		uh := mock.NewUsageHandlerMock(c)
 		uh.CheckMock.When(task, false, inputs).Then(nil)
 		uh.CollectMock.When(task, false, inputs, outputs).Then(nil)
-		connector.WithUsageHandler(uh)
+		creator := usageHandlerCreator{uh}
+		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
 		connection, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
@@ -311,13 +309,12 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Cleanup(cleanupConn)
 
 		secrets := map[string]any{"apikey": apiKey}
-		connector := Init(base.BaseConnector{Logger: zap.NewNop()}).
-			WithGlobalCredentials(secrets)
-
 		uh := mock.NewUsageHandlerMock(c)
 		uh.CheckMock.When(task, true, inputs).Then(nil)
 		uh.CollectMock.When(task, true, inputs, outputs).Then(nil)
-		connector.WithUsageHandler(uh)
+		creator := usageHandlerCreator{uh}
+		connector := Init(bc).WithUsageHandlerCreator(creator.newUH).
+			WithGlobalCredentials(secrets)
 
 		connection, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
@@ -341,7 +338,7 @@ func TestConnector_WithConfig(t *testing.T) {
 	c.Run("nok - secret not injected", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
 
-		connector := Init(base.BaseConnector{Logger: zap.NewNop()})
+		connector := Init(bc)
 		connection, err := structpb.NewStruct(map[string]any{
 			"api_key": "__INSTILL_CREDENTIAL",
 		})
@@ -352,4 +349,12 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Check(err, qt.ErrorMatches, "unresolved global secret")
 		c.Check(errmsg.Message(err), qt.Equals, "The connection field api_key can't reference a global secret.")
 	})
+}
+
+type usageHandlerCreator struct {
+	uh base.UsageHandler
+}
+
+func (c usageHandlerCreator) newUH(base.IExecution) base.UsageHandler {
+	return c.uh
 }

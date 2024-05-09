@@ -13,17 +13,21 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+// ExecutionWrapper performs validation and usage collection around the
+// execution of a component.
 type ExecutionWrapper struct {
 	Execution IExecution
 }
 
+// IExecution allows components to be executed.
 type IExecution interface {
 	GetTask() string
 	GetLogger() *zap.Logger
-	GetUsageHandler() UsageHandler
 	GetTaskInputSchema() string
 	GetTaskOutputSchema() string
+
 	UsesSecret() bool
+	UsageHandlerCreator() func(IExecution) UsageHandler
 
 	Execute([]*structpb.Struct) ([]*structpb.Struct, error)
 }
@@ -116,7 +120,8 @@ func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struc
 		return nil, err
 	}
 
-	h := e.Execution.GetUsageHandler()
+	newUH := e.Execution.UsageHandlerCreator()
+	h := newUH(e.Execution)
 	if err := h.Check(e.Execution.GetTask(), e.Execution.UsesSecret(), inputs); err != nil {
 		return nil, err
 	}

@@ -45,6 +45,8 @@ var (
 type Connector struct {
 	base.BaseConnector
 
+	usageHandlerCreator func(base.IExecution) base.UsageHandler
+
 	// Global secrets.
 	globalAPIKey string
 }
@@ -82,11 +84,15 @@ func (c *Connector) WithGlobalCredentials(s map[string]any) *Connector {
 	return c
 }
 
-// WithUsageHandler injects a usage handler in the connector, e.g. to monitor
-// the tokens consumed by the queries.
-func (c *Connector) WithUsageHandler(h base.UsageHandler) *Connector {
-	c.UsageHandler = h
+// WithUsageHandlerCreator overrides the UsageHandlerCreator method.
+func (c *Connector) WithUsageHandlerCreator(newUH func(base.IExecution) base.UsageHandler) *Connector {
+	c.usageHandlerCreator = newUH
 	return c
+}
+
+// UsageHandlerCreator returns a function to initialize a UsageHandler.
+func (c *Connector) UsageHandlerCreator() func(base.IExecution) base.UsageHandler {
+	return c.usageHandlerCreator
 }
 
 // CreateExecution initializes a connector executor that can be used in a

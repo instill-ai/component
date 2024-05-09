@@ -15,3 +15,7 @@ func (h *noopUsageHandler) Check(string, bool, []*structpb.Struct) error { retur
 func (h *noopUsageHandler) Collect(_ string, _ bool, _, _ []*structpb.Struct) error {
 	return nil
 }
+
+func newNoopUsageHandler(IExecution) UsageHandler {
+	return new(noopUsageHandler)
+}
