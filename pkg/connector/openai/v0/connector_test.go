@@ -314,11 +314,11 @@ func TestConnector_WithConfig(t *testing.T) {
 		uh.CollectMock.When(task, true, inputs, outputs).Then(nil)
 		creator := usageHandlerCreator{uh}
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH).
-			WithGlobalCredentials(secrets)
+			WithSecrets(secrets)
 
 		connection, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
-			"api_key":   "__INSTILL_CREDENTIAL", // will be replaced by secrets.apikey
+			"api_key":   "__INSTILL_SECRET", // will be replaced by secrets.apikey
 		})
 		c.Assert(err, qt.IsNil)
 
@@ -340,14 +340,14 @@ func TestConnector_WithConfig(t *testing.T) {
 
 		connector := Init(bc)
 		connection, err := structpb.NewStruct(map[string]any{
-			"api_key": "__INSTILL_CREDENTIAL",
+			"api_key": "__INSTILL_SECRET",
 		})
 		c.Assert(err, qt.IsNil)
 
 		_, err = connector.CreateExecution(nil, connection, task)
 		c.Check(err, qt.IsNotNil)
 		c.Check(err, qt.ErrorMatches, "unresolved global secret")
-		c.Check(errmsg.Message(err), qt.Equals, "The connection field api_key can't reference a global secret.")
+		c.Check(errmsg.Message(err), qt.Equals, "The configuration field api_key can't reference a global secret.")
 	})
 }
 

@@ -142,17 +142,18 @@ func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struc
 	return outputs, err
 }
 
-// CredentialGlobalSecret is a keyword to reference a global secret in a
-// component configuration. When a component detects this value in a
-// configuration parameter, it will used the pre-configured value, injected at
+// SecretKeyword is a keyword to reference a secret in a component
+// configuration. When a component detects this value in a configuration
+// parameter, it will used the pre-configured value, injected at
 // initialization.
-const CredentialGlobalSecret = "__INSTILL_CREDENTIAL"
+const SecretKeyword = "__INSTILL_SECRET"
 
-// NewUnresolvedGlobalSecret returns an end-user error signaling that  the
-// connection configuration references a global secret that
-func NewUnresolvedGlobalSecret(key string) error {
+// NewUnresolvedSecret returns an end-user error signaling that the component
+// configuration references a global secret that wasn't injected into the
+// component.
+func NewUnresolvedSecret(key string) error {
 	return errmsg.AddMessage(
 		fmt.Errorf("unresolved global secret"),
-		fmt.Sprintf("The connection field %s can't reference a global secret.", key),
+		fmt.Sprintf("The configuration field %s can't reference a global secret.", key),
 	)
 }

@@ -46,9 +46,7 @@ type Connector struct {
 	base.Connector
 
 	usageHandlerCreator func(base.IExecution) base.UsageHandler
-
-	// Global secrets.
-	globalAPIKey string
+	secretAPIKey        string
 }
 
 // Init returns an initialized OpenAI connector.
@@ -76,10 +74,10 @@ func readFromSecrets(key string, s map[string]any) string {
 	return ""
 }
 
-// WithGlobalCredentials reads the global connection configuration, which can
-// be used to execute the connector with globally defined secrets.
-func (c *Connector) WithGlobalCredentials(s map[string]any) *Connector {
-	c.globalAPIKey = readFromSecrets(cfgAPIKey, s)
+// WithSecrets loads secrets into the connector, which can be used to configure
+// it with globaly defined parameters.
+func (c *Connector) WithSecrets(s map[string]any) *Connector {
+	c.secretAPIKey = readFromSecrets(cfgAPIKey, s)
 
 	return c
 }
@@ -118,15 +116,15 @@ func (c *Connector) CreateExecution(sysVars map[string]any, connection *structpb
 // and replaces them by the global secret injected during initialization.
 func (c *Connector) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, bool, error) {
 	apiKey := conn.GetFields()[cfgAPIKey].GetStringValue()
-	if apiKey != base.CredentialGlobalSecret {
+	if apiKey != base.SecretKeyword {
 		return conn, false, nil
 	}
 
-	if c.globalAPIKey == "" {
-		return nil, false, base.NewUnresolvedGlobalSecret(cfgAPIKey)
+	if c.secretAPIKey == "" {
+		return nil, false, base.NewUnresolvedSecret(cfgAPIKey)
 	}
 
-	conn.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.globalAPIKey)
+	conn.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.secretAPIKey)
 	return conn, true, nil
 }
 
