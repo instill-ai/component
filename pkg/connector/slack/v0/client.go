@@ -6,10 +6,10 @@ import (
 )
 
 func newClient(config *structpb.Struct) *slack.Client {
-	return slack.New(getAPIKey(config))
+	return slack.New(getToken(config))
 }
 
 // Need to confirm where the map is
-func getAPIKey(config *structpb.Struct) string {
-	return config.GetFields()["api_key"].GetStringValue()
+func getToken(config *structpb.Struct) string {
+	return config.GetFields()["token"].GetStringValue()
 }

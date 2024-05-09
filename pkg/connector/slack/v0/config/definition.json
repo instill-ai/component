@@ -14,8 +14,8 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "additionalProperties": false,
       "properties": {
-        "api_key": {
-          "description": "Fill your API key",
+        "token": {
+          "description": "Fill your token",
           "instillUpstreamTypes": [
             "reference"
           ],
@@ -24,7 +24,7 @@
           ],
           "instillCredentialField": false,
           "instillUIOrder": 0,
-          "title": "API Key",
+          "title": "token",
           "type": "string"
         }
       },
