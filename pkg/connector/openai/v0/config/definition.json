@@ -47,6 +47,9 @@
       "required": [
         "api_key"
       ],
+      "instillEditOnNodeFields": [
+        "api_key"
+      ],
       "title": "OpenAI Connection",
       "type": "object"
     }
