@@ -12,7 +12,7 @@ import (
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
 )
 
-const MaxPayloadSize int = 1024 * 1024 * 32
+const maxPayloadSize int = 1024 * 1024 * 32
 
 // initModelPublicServiceClient initialises a ModelPublicServiceClient instance
 func initModelPublicServiceClient(serverURL string) (modelPB.ModelPublicServiceClient, *grpc.ClientConn) {
@@ -25,7 +25,7 @@ func initModelPublicServiceClient(serverURL string) (modelPB.ModelPublicServiceC
 	}
 
 	serverURL = stripProtocolFromURL(serverURL)
-	clientConn, err := grpc.Dial(serverURL, clientDialOpts, grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(MaxPayloadSize), grpc.MaxCallSendMsgSize(MaxPayloadSize)))
+	clientConn, err := grpc.Dial(serverURL, clientDialOpts, grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(maxPayloadSize), grpc.MaxCallSendMsgSize(maxPayloadSize)))
 	if err != nil {
 		return nil, nil
 	}
