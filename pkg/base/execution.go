@@ -26,6 +26,7 @@ type IExecution interface {
 	GetLogger() *zap.Logger
 	GetTaskInputSchema() string
 	GetTaskOutputSchema() string
+	GetSystemVariables() map[string]any
 
 	UsesSecret() bool
 	UsageHandlerCreator() UsageHandlerCreator
