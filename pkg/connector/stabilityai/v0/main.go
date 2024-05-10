@@ -2,6 +2,7 @@
 package stabilityai
 
 import (
+	"context"
 	_ "embed"
 	"fmt"
 	"sync"
@@ -73,7 +74,7 @@ func getBasePath(config *structpb.Struct) string {
 	return v.GetStringValue()
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	client := newClient(e.Connection, e.GetLogger())
 	outputs := []*structpb.Struct{}
 

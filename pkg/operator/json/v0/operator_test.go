@@ -1,6 +1,7 @@
 package json
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"testing"
@@ -23,6 +24,7 @@ var asMap = map[string]any{"a": "27", "b": 27}
 
 func TestOperator_Execute(t *testing.T) {
 	c := qt.New(t)
+	ctx := context.Background()
 
 	testcases := []struct {
 		name string
@@ -125,7 +127,7 @@ func TestOperator_Execute(t *testing.T) {
 			pbIn, err := structpb.NewStruct(tc.in)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Check(errmsg.Message(err), qt.Matches, tc.wantErr)
 				return

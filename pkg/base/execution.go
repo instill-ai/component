@@ -1,6 +1,7 @@
 package base
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -29,7 +30,7 @@ type IExecution interface {
 	UsesSecret() bool
 	UsageHandlerCreator() UsageHandlerCreator
 
-	Execute([]*structpb.Struct) ([]*structpb.Struct, error)
+	Execute(context.Context, []*structpb.Struct) ([]*structpb.Struct, error)
 }
 
 func FormatErrors(inputPath string, e jsonschema.Detailed, errors *[]string) {
@@ -115,18 +116,18 @@ func Validate(data []*structpb.Struct, jsonSchema string, target string) error {
 }
 
 // Execute wraps the execution method with validation and usage collection.
-func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *ExecutionWrapper) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	if err := Validate(inputs, e.Execution.GetTaskInputSchema(), "inputs"); err != nil {
 		return nil, err
 	}
 
 	newUH := e.Execution.UsageHandlerCreator()
 	h := newUH(e.Execution)
-	if err := h.Check(inputs); err != nil {
+	if err := h.Check(ctx, inputs); err != nil {
 		return nil, err
 	}
 
-	outputs, err := e.Execution.Execute(inputs)
+	outputs, err := e.Execution.Execute(ctx, inputs)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +136,7 @@ func (e *ExecutionWrapper) Execute(inputs []*structpb.Struct) ([]*structpb.Struc
 		return nil, err
 	}
 
-	if err := h.Collect(inputs, outputs); err != nil {
+	if err := h.Collect(ctx, inputs, outputs); err != nil {
 		return nil, err
 	}
 

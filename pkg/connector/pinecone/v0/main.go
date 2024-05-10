@@ -2,6 +2,7 @@
 package pinecone
 
 import (
+	"context"
 	_ "embed"
 	"sync"
 
@@ -73,7 +74,7 @@ func getURL(config *structpb.Struct) string {
 	return config.GetFields()["url"].GetStringValue()
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	req := newClient(e.Connection, e.GetLogger()).R()
 	outputs := []*structpb.Struct{}
 

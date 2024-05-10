@@ -1,6 +1,7 @@
 package start
 
 import (
+	"context"
 	_ "embed"
 	"fmt"
 	"sync"
@@ -44,7 +45,7 @@ func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.E
 	}}, nil
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	return nil, fmt.Errorf("the Airbyte operator has been removed")
 }
 

@@ -1,6 +1,7 @@
 package text
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -79,7 +80,7 @@ func TestConvertToText(t *testing.T) {
 			e := &execution{}
 			e.Task = "TASK_CONVERT_TO_TEXT"
 
-			if outputs, err := e.Execute(inputs); err != nil {
+			if outputs, err := e.Execute(context.Background(), inputs); err != nil {
 				t.Fatalf("convertToText returned an error: %v", err)
 			} else if outputs[0].Fields["body"].GetStringValue() == "" {
 				t.Fatal("convertToText returned an empty body")

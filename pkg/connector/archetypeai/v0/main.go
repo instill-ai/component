@@ -3,6 +3,7 @@ package archetypeai
 
 import (
 	"bytes"
+	"context"
 	_ "embed"
 	"fmt"
 	"strings"
@@ -81,7 +82,7 @@ func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb
 }
 
 // Execute performs calls the Archetype AI API to execute a task.
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	for i, input := range inputs {

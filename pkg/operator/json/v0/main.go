@@ -2,6 +2,7 @@
 package json
 
 import (
+	"context"
 	_ "embed"
 	"encoding/json"
 	"fmt"
@@ -150,7 +151,7 @@ func (e *execution) jq(in *structpb.Struct) (*structpb.Struct, error) {
 	return out, nil
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	for i, input := range inputs {

@@ -2,6 +2,7 @@
 package huggingface
 
 import (
+	"context"
 	_ "embed"
 	"encoding/base64"
 	"encoding/json"
@@ -101,7 +102,7 @@ func wrapSliceInStruct(data []byte, key string) (*structpb.Struct, error) {
 	}, nil
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	client := newClient(e.Connection, e.GetLogger())
 	outputs := []*structpb.Struct{}
 

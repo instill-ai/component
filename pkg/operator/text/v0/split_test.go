@@ -1,6 +1,7 @@
 package text
 
 import (
+	"context"
 	"testing"
 
 	"google.golang.org/protobuf/types/known/structpb"
@@ -21,7 +22,7 @@ func TestSplitByToken(t *testing.T) {
 	e := &execution{}
 	e.Task = "TASK_SPLIT_BY_TOKEN"
 
-	if _, err := e.Execute(inputs); err != nil {
+	if _, err := e.Execute(context.Background(), inputs); err != nil {
 		t.Fatalf("splitByToken returned an error: %v", err)
 	}
 }

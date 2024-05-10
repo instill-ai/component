@@ -2,6 +2,7 @@
 package base64
 
 import (
+	"context"
 	_ "embed"
 	"encoding/base64"
 	"encoding/json"
@@ -57,7 +58,7 @@ func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.E
 	}}, nil
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 
 	for _, input := range inputs {

@@ -3,6 +3,7 @@
 package mock
 
 import (
+	"context"
 	"sync"
 	mm_atomic "sync/atomic"
 	mm_time "time"
@@ -16,14 +17,14 @@ type UsageHandlerMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcCheck          func(inputs []*structpb.Struct) (err error)
-	inspectFuncCheck   func(inputs []*structpb.Struct)
+	funcCheck          func(ctx context.Context, inputs []*structpb.Struct) (err error)
+	inspectFuncCheck   func(ctx context.Context, inputs []*structpb.Struct)
 	afterCheckCounter  uint64
 	beforeCheckCounter uint64
 	CheckMock          mUsageHandlerMockCheck
 
-	funcCollect          func(inputs []*structpb.Struct, outputs []*structpb.Struct) (err error)
-	inspectFuncCollect   func(inputs []*structpb.Struct, outputs []*structpb.Struct)
+	funcCollect          func(ctx context.Context, inputs []*structpb.Struct, outputs []*structpb.Struct) (err error)
+	inspectFuncCollect   func(ctx context.Context, inputs []*structpb.Struct, outputs []*structpb.Struct)
 	afterCollectCounter  uint64
 	beforeCollectCounter uint64
 	CollectMock          mUsageHandlerMockCollect
@@ -67,6 +68,7 @@ type UsageHandlerMockCheckExpectation struct {
 
 // UsageHandlerMockCheckParams contains parameters of the UsageHandler.Check
 type UsageHandlerMockCheckParams struct {
+	ctx    context.Context
 	inputs []*structpb.Struct
 }
 
@@ -76,7 +78,7 @@ type UsageHandlerMockCheckResults struct {
 }
 
 // Expect sets up expected params for UsageHandler.Check
-func (mmCheck *mUsageHandlerMockCheck) Expect(inputs []*structpb.Struct) *mUsageHandlerMockCheck {
+func (mmCheck *mUsageHandlerMockCheck) Expect(ctx context.Context, inputs []*structpb.Struct) *mUsageHandlerMockCheck {
 	if mmCheck.mock.funcCheck != nil {
 		mmCheck.mock.t.Fatalf("UsageHandlerMock.Check mock is already set by Set")
 	}
@@ -85,7 +87,7 @@ func (mmCheck *mUsageHandlerMockCheck) Expect(inputs []*structpb.Struct) *mUsage
 		mmCheck.defaultExpectation = &UsageHandlerMockCheckExpectation{}
 	}
 
-	mmCheck.defaultExpectation.params = &UsageHandlerMockCheckParams{inputs}
+	mmCheck.defaultExpectation.params = &UsageHandlerMockCheckParams{ctx, inputs}
 	for _, e := range mmCheck.expectations {
 		if minimock.Equal(e.params, mmCheck.defaultExpectation.params) {
 			mmCheck.mock.t.Fatalf("Expectation set by When has same params: %#v", *mmCheck.defaultExpectation.params)
@@ -96,7 +98,7 @@ func (mmCheck *mUsageHandlerMockCheck) Expect(inputs []*structpb.Struct) *mUsage
 }
 
 // Inspect accepts an inspector function that has same arguments as the UsageHandler.Check
-func (mmCheck *mUsageHandlerMockCheck) Inspect(f func(inputs []*structpb.Struct)) *mUsageHandlerMockCheck {
+func (mmCheck *mUsageHandlerMockCheck) Inspect(f func(ctx context.Context, inputs []*structpb.Struct)) *mUsageHandlerMockCheck {
 	if mmCheck.mock.inspectFuncCheck != nil {
 		mmCheck.mock.t.Fatalf("Inspect function is already set for UsageHandlerMock.Check")
 	}
@@ -120,7 +122,7 @@ func (mmCheck *mUsageHandlerMockCheck) Return(err error) *UsageHandlerMock {
 }
 
 // Set uses given function f to mock the UsageHandler.Check method
-func (mmCheck *mUsageHandlerMockCheck) Set(f func(inputs []*structpb.Struct) (err error)) *UsageHandlerMock {
+func (mmCheck *mUsageHandlerMockCheck) Set(f func(ctx context.Context, inputs []*structpb.Struct) (err error)) *UsageHandlerMock {
 	if mmCheck.defaultExpectation != nil {
 		mmCheck.mock.t.Fatalf("Default expectation is already set for the UsageHandler.Check method")
 	}
@@ -135,14 +137,14 @@ func (mmCheck *mUsageHandlerMockCheck) Set(f func(inputs []*structpb.Struct) (er
 
 // When sets expectation for the UsageHandler.Check which will trigger the result defined by the following
 // Then helper
-func (mmCheck *mUsageHandlerMockCheck) When(inputs []*structpb.Struct) *UsageHandlerMockCheckExpectation {
+func (mmCheck *mUsageHandlerMockCheck) When(ctx context.Context, inputs []*structpb.Struct) *UsageHandlerMockCheckExpectation {
 	if mmCheck.mock.funcCheck != nil {
 		mmCheck.mock.t.Fatalf("UsageHandlerMock.Check mock is already set by Set")
 	}
 
 	expectation := &UsageHandlerMockCheckExpectation{
 		mock:   mmCheck.mock,
-		params: &UsageHandlerMockCheckParams{inputs},
+		params: &UsageHandlerMockCheckParams{ctx, inputs},
 	}
 	mmCheck.expectations = append(mmCheck.expectations, expectation)
 	return expectation
@@ -155,15 +157,15 @@ func (e *UsageHandlerMockCheckExpectation) Then(err error) *UsageHandlerMock {
 }
 
 // Check implements base.UsageHandler
-func (mmCheck *UsageHandlerMock) Check(inputs []*structpb.Struct) (err error) {
+func (mmCheck *UsageHandlerMock) Check(ctx context.Context, inputs []*structpb.Struct) (err error) {
 	mm_atomic.AddUint64(&mmCheck.beforeCheckCounter, 1)
 	defer mm_atomic.AddUint64(&mmCheck.afterCheckCounter, 1)
 
 	if mmCheck.inspectFuncCheck != nil {
-		mmCheck.inspectFuncCheck(inputs)
+		mmCheck.inspectFuncCheck(ctx, inputs)
 	}
 
-	mm_params := UsageHandlerMockCheckParams{inputs}
+	mm_params := UsageHandlerMockCheckParams{ctx, inputs}
 
 	// Record call args
 	mmCheck.CheckMock.mutex.Lock()
@@ -180,7 +182,7 @@ func (mmCheck *UsageHandlerMock) Check(inputs []*structpb.Struct) (err error) {
 	if mmCheck.CheckMock.defaultExpectation != nil {
 		mm_atomic.AddUint64(&mmCheck.CheckMock.defaultExpectation.Counter, 1)
 		mm_want := mmCheck.CheckMock.defaultExpectation.params
-		mm_got := UsageHandlerMockCheckParams{inputs}
+		mm_got := UsageHandlerMockCheckParams{ctx, inputs}
 		if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
 			mmCheck.t.Errorf("UsageHandlerMock.Check got unexpected parameters, want: %#v, got: %#v%s\n", *mm_want, mm_got, minimock.Diff(*mm_want, mm_got))
 		}
@@ -192,9 +194,9 @@ func (mmCheck *UsageHandlerMock) Check(inputs []*structpb.Struct) (err error) {
 		return (*mm_results).err
 	}
 	if mmCheck.funcCheck != nil {
-		return mmCheck.funcCheck(inputs)
+		return mmCheck.funcCheck(ctx, inputs)
 	}
-	mmCheck.t.Fatalf("Unexpected call to UsageHandlerMock.Check. %v", inputs)
+	mmCheck.t.Fatalf("Unexpected call to UsageHandlerMock.Check. %v %v", ctx, inputs)
 	return
 }
 
@@ -282,6 +284,7 @@ type UsageHandlerMockCollectExpectation struct {
 
 // UsageHandlerMockCollectParams contains parameters of the UsageHandler.Collect
 type UsageHandlerMockCollectParams struct {
+	ctx     context.Context
 	inputs  []*structpb.Struct
 	outputs []*structpb.Struct
 }
@@ -292,7 +295,7 @@ type UsageHandlerMockCollectResults struct {
 }
 
 // Expect sets up expected params for UsageHandler.Collect
-func (mmCollect *mUsageHandlerMockCollect) Expect(inputs []*structpb.Struct, outputs []*structpb.Struct) *mUsageHandlerMockCollect {
+func (mmCollect *mUsageHandlerMockCollect) Expect(ctx context.Context, inputs []*structpb.Struct, outputs []*structpb.Struct) *mUsageHandlerMockCollect {
 	if mmCollect.mock.funcCollect != nil {
 		mmCollect.mock.t.Fatalf("UsageHandlerMock.Collect mock is already set by Set")
 	}
@@ -301,7 +304,7 @@ func (mmCollect *mUsageHandlerMockCollect) Expect(inputs []*structpb.Struct, out
 		mmCollect.defaultExpectation = &UsageHandlerMockCollectExpectation{}
 	}
 
-	mmCollect.defaultExpectation.params = &UsageHandlerMockCollectParams{inputs, outputs}
+	mmCollect.defaultExpectation.params = &UsageHandlerMockCollectParams{ctx, inputs, outputs}
 	for _, e := range mmCollect.expectations {
 		if minimock.Equal(e.params, mmCollect.defaultExpectation.params) {
 			mmCollect.mock.t.Fatalf("Expectation set by When has same params: %#v", *mmCollect.defaultExpectation.params)
@@ -312,7 +315,7 @@ func (mmCollect *mUsageHandlerMockCollect) Expect(inputs []*structpb.Struct, out
 }
 
 // Inspect accepts an inspector function that has same arguments as the UsageHandler.Collect
-func (mmCollect *mUsageHandlerMockCollect) Inspect(f func(inputs []*structpb.Struct, outputs []*structpb.Struct)) *mUsageHandlerMockCollect {
+func (mmCollect *mUsageHandlerMockCollect) Inspect(f func(ctx context.Context, inputs []*structpb.Struct, outputs []*structpb.Struct)) *mUsageHandlerMockCollect {
 	if mmCollect.mock.inspectFuncCollect != nil {
 		mmCollect.mock.t.Fatalf("Inspect function is already set for UsageHandlerMock.Collect")
 	}
@@ -336,7 +339,7 @@ func (mmCollect *mUsageHandlerMockCollect) Return(err error) *UsageHandlerMock {
 }
 
 // Set uses given function f to mock the UsageHandler.Collect method
-func (mmCollect *mUsageHandlerMockCollect) Set(f func(inputs []*structpb.Struct, outputs []*structpb.Struct) (err error)) *UsageHandlerMock {
+func (mmCollect *mUsageHandlerMockCollect) Set(f func(ctx context.Context, inputs []*structpb.Struct, outputs []*structpb.Struct) (err error)) *UsageHandlerMock {
 	if mmCollect.defaultExpectation != nil {
 		mmCollect.mock.t.Fatalf("Default expectation is already set for the UsageHandler.Collect method")
 	}
@@ -351,14 +354,14 @@ func (mmCollect *mUsageHandlerMockCollect) Set(f func(inputs []*structpb.Struct,
 
 // When sets expectation for the UsageHandler.Collect which will trigger the result defined by the following
 // Then helper
-func (mmCollect *mUsageHandlerMockCollect) When(inputs []*structpb.Struct, outputs []*structpb.Struct) *UsageHandlerMockCollectExpectation {
+func (mmCollect *mUsageHandlerMockCollect) When(ctx context.Context, inputs []*structpb.Struct, outputs []*structpb.Struct) *UsageHandlerMockCollectExpectation {
 	if mmCollect.mock.funcCollect != nil {
 		mmCollect.mock.t.Fatalf("UsageHandlerMock.Collect mock is already set by Set")
 	}
 
 	expectation := &UsageHandlerMockCollectExpectation{
 		mock:   mmCollect.mock,
-		params: &UsageHandlerMockCollectParams{inputs, outputs},
+		params: &UsageHandlerMockCollectParams{ctx, inputs, outputs},
 	}
 	mmCollect.expectations = append(mmCollect.expectations, expectation)
 	return expectation
@@ -371,15 +374,15 @@ func (e *UsageHandlerMockCollectExpectation) Then(err error) *UsageHandlerMock {
 }
 
 // Collect implements base.UsageHandler
-func (mmCollect *UsageHandlerMock) Collect(inputs []*structpb.Struct, outputs []*structpb.Struct) (err error) {
+func (mmCollect *UsageHandlerMock) Collect(ctx context.Context, inputs []*structpb.Struct, outputs []*structpb.Struct) (err error) {
 	mm_atomic.AddUint64(&mmCollect.beforeCollectCounter, 1)
 	defer mm_atomic.AddUint64(&mmCollect.afterCollectCounter, 1)
 
 	if mmCollect.inspectFuncCollect != nil {
-		mmCollect.inspectFuncCollect(inputs, outputs)
+		mmCollect.inspectFuncCollect(ctx, inputs, outputs)
 	}
 
-	mm_params := UsageHandlerMockCollectParams{inputs, outputs}
+	mm_params := UsageHandlerMockCollectParams{ctx, inputs, outputs}
 
 	// Record call args
 	mmCollect.CollectMock.mutex.Lock()
@@ -396,7 +399,7 @@ func (mmCollect *UsageHandlerMock) Collect(inputs []*structpb.Struct, outputs []
 	if mmCollect.CollectMock.defaultExpectation != nil {
 		mm_atomic.AddUint64(&mmCollect.CollectMock.defaultExpectation.Counter, 1)
 		mm_want := mmCollect.CollectMock.defaultExpectation.params
-		mm_got := UsageHandlerMockCollectParams{inputs, outputs}
+		mm_got := UsageHandlerMockCollectParams{ctx, inputs, outputs}
 		if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
 			mmCollect.t.Errorf("UsageHandlerMock.Collect got unexpected parameters, want: %#v, got: %#v%s\n", *mm_want, mm_got, minimock.Diff(*mm_want, mm_got))
 		}
@@ -408,9 +411,9 @@ func (mmCollect *UsageHandlerMock) Collect(inputs []*structpb.Struct, outputs []
 		return (*mm_results).err
 	}
 	if mmCollect.funcCollect != nil {
-		return mmCollect.funcCollect(inputs, outputs)
+		return mmCollect.funcCollect(ctx, inputs, outputs)
 	}
-	mmCollect.t.Fatalf("Unexpected call to UsageHandlerMock.Collect. %v %v", inputs, outputs)
+	mmCollect.t.Fatalf("Unexpected call to UsageHandlerMock.Collect. %v %v %v", ctx, inputs, outputs)
 	return
 }
 
