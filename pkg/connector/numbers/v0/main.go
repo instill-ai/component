@@ -3,6 +3,7 @@ package numbers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -191,7 +192,7 @@ func (e *execution) registerAsset(data []byte, reg Register) (string, error) {
 	}
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 
 	var outputs []*structpb.Struct
 

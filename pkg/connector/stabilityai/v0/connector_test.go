@@ -1,6 +1,7 @@
 package stabilityai
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -40,6 +41,7 @@ const (
 
 func TestConnector_ExecuteImageFromText(t *testing.T) {
 	c := qt.New(t)
+	ctx := context.Background()
 
 	weight := 0.5
 	text := "a cat and a dog"
@@ -106,7 +108,7 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Check(errmsg.Message(err), qt.Equals, tc.wantErr)
 				return
@@ -124,7 +126,7 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
+		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -134,6 +136,7 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 
 func TestConnector_ExecuteImageFromImage(t *testing.T) {
 	c := qt.New(t)
+	ctx := context.Background()
 
 	weight := 0.5
 	text := "a cat and a dog"
@@ -200,7 +203,7 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Check(errmsg.Message(err), qt.Equals, tc.wantErr)
 				return
@@ -218,7 +221,7 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
+		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."

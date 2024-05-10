@@ -53,7 +53,7 @@ func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb
 	}}, nil
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 
 	client, err := NewClient(e.Connection)

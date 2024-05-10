@@ -66,7 +66,7 @@ func getSearchEngineID(config *structpb.Struct) string {
 	return config.GetFields()["cse_id"].GetStringValue()
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 
 	service, err := NewService(getAPIKey(e.Connection))
 	if err != nil || service == nil {

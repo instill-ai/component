@@ -1,6 +1,7 @@
 package restapi
 
 import (
+	"context"
 	"encoding/base64"
 	"fmt"
 	"io"
@@ -28,6 +29,7 @@ var (
 
 func TestConnector_Execute(t *testing.T) {
 	c := qt.New(t)
+	ctx := context.Background()
 
 	bc := base.Connector{Logger: zap.NewNop()}
 	connector := Init(bc)
@@ -42,7 +44,7 @@ func TestConnector_Execute(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
+		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -81,7 +83,7 @@ func TestConnector_Execute(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()
@@ -112,7 +114,7 @@ func TestConnector_Execute(t *testing.T) {
 
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()
@@ -143,7 +145,7 @@ func TestConnector_Execute(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()

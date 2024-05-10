@@ -98,7 +98,7 @@ func getRequestMetadata(vars map[string]any) metadata.MD {
 	)
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	var err error
 
 	if len(inputs) <= 0 || inputs[0] == nil {
@@ -116,7 +116,7 @@ func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, erro
 	}
 
 	modelNameSplits := strings.Split(inputs[0].GetFields()["model_name"].GetStringValue(), "/")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))

@@ -1,6 +1,7 @@
 package airbyte
 
 import (
+	"context"
 	_ "embed"
 	"fmt"
 	"sync"
@@ -44,10 +45,10 @@ func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb
 	}}, nil
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(context.Context, []*structpb.Struct) ([]*structpb.Struct, error) {
 	return nil, fmt.Errorf("the Airbyte connector has been removed")
 }
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *connector) Test(map[string]any, *structpb.Struct) error {
 	return fmt.Errorf("the Airbyte connector has been removed")
 }

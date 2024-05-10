@@ -3,6 +3,7 @@ package image
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"fmt"
 	"image"
@@ -56,7 +57,7 @@ func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.E
 }
 
 // Execute executes the derived execution
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 	var base64ByteImg []byte
 	for _, input := range inputs {

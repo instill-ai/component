@@ -2,6 +2,7 @@
 package restapi
 
 import (
+	"context"
 	_ "embed"
 	"encoding/json"
 	"errors"
@@ -111,7 +112,7 @@ func getAuthentication(config *structpb.Struct) (authentication, error) {
 	}
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 
 	method, ok := taskMethod[e.Task]
 	if !ok {

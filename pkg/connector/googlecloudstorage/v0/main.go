@@ -63,7 +63,7 @@ func getJSONKey(config *structpb.Struct) string {
 	return config.GetFields()["json_key"].GetStringValue()
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 
 	client, err := NewClient(getJSONKey(e.Connection))

@@ -2,6 +2,7 @@
 package website
 
 import (
+	"context"
 	_ "embed"
 	"fmt"
 	"sync"
@@ -50,7 +51,7 @@ func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb
 	}}, nil
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 
 	for _, input := range inputs {

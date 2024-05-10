@@ -1,6 +1,7 @@
 package openai
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -8,6 +9,7 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
+	"github.com/gojuno/minimock/v3"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -30,6 +32,7 @@ const (
 
 func TestConnector_Execute(t *testing.T) {
 	c := qt.New(t)
+	ctx := context.Background()
 
 	bc := base.Connector{Logger: zap.NewNop()}
 	connector := Init(bc)
@@ -105,7 +108,7 @@ func TestConnector_Execute(t *testing.T) {
 			c.Assert(err, qt.IsNil)
 
 			pbIn := new(structpb.Struct)
-			_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
+			_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 			c.Check(err, qt.IsNotNil)
 
 			want := "OpenAI responded with a 401 status code. Incorrect API key provided."
@@ -119,7 +122,7 @@ func TestConnector_Execute(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execution.Execute([]*structpb.Struct{pbIn})
+		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -204,6 +207,7 @@ func TestConnector_Test(t *testing.T) {
 func TestConnector_WithConfig(t *testing.T) {
 	c := qt.New(t)
 	cleanupConn := func() { once = sync.Once{} }
+	ctx := context.Background()
 
 	want := textCompletionOutput{
 		Texts: []string{"hello!"},
@@ -239,7 +243,7 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Cleanup(cleanupConn)
 
 		uh := mock.NewUsageHandlerMock(c)
-		uh.CheckMock.When(inputs).Then(fmt.Errorf("check error"))
+		uh.CheckMock.When(minimock.AnyContext, inputs).Then(fmt.Errorf("check error"))
 		creator := usageHandlerCreator{uh}
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
@@ -249,7 +253,7 @@ func TestConnector_WithConfig(t *testing.T) {
 		exec, err := connector.CreateExecution(nil, connection, task)
 		c.Assert(err, qt.IsNil)
 
-		_, err = exec.Execute(inputs)
+		_, err = exec.Execute(ctx, inputs)
 		c.Check(err, qt.IsNotNil)
 		c.Check(err, qt.ErrorMatches, "check error")
 	})
@@ -258,8 +262,8 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Cleanup(cleanupConn)
 
 		uh := mock.NewUsageHandlerMock(c)
-		uh.CheckMock.When(inputs).Then(nil)
-		uh.CollectMock.When(inputs, outputs).Then(fmt.Errorf("collect error"))
+		uh.CheckMock.When(minimock.AnyContext, inputs).Then(nil)
+		uh.CollectMock.When(minimock.AnyContext, inputs, outputs).Then(fmt.Errorf("collect error"))
 		creator := usageHandlerCreator{uh}
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
@@ -272,7 +276,7 @@ func TestConnector_WithConfig(t *testing.T) {
 		exec, err := connector.CreateExecution(nil, connection, task)
 		c.Assert(err, qt.IsNil)
 
-		_, err = exec.Execute(inputs)
+		_, err = exec.Execute(ctx, inputs)
 		c.Check(err, qt.IsNotNil)
 		c.Check(err, qt.ErrorMatches, "collect error")
 	})
@@ -281,8 +285,8 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Cleanup(cleanupConn)
 
 		uh := mock.NewUsageHandlerMock(c)
-		uh.CheckMock.When(inputs).Then(nil)
-		uh.CollectMock.When(inputs, outputs).Then(nil)
+		uh.CheckMock.When(minimock.AnyContext, inputs).Then(nil)
+		uh.CollectMock.When(minimock.AnyContext, inputs, outputs).Then(nil)
 		creator := usageHandlerCreator{uh}
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
@@ -296,7 +300,7 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 		c.Check(exec.Execution.UsesSecret(), qt.IsFalse)
 
-		got, err := exec.Execute(inputs)
+		got, err := exec.Execute(ctx, inputs)
 		c.Check(err, qt.IsNil)
 		c.Assert(got, qt.HasLen, 1)
 
@@ -321,7 +325,7 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 		c.Check(exec.Execution.UsesSecret(), qt.IsTrue)
 
-		got, err := exec.Execute(inputs)
+		got, err := exec.Execute(ctx, inputs)
 		c.Check(err, qt.IsNil)
 		c.Assert(got, qt.HasLen, 1)
 
