@@ -396,7 +396,7 @@ the `hello` component will only need to override the following methods:
   will return an object that implements the `Execute` method.
   - `ExecutionWrapper` will wrap the execution call with the input and output
     schema validation.
-- `Execute([]*structpb.Struct) ([]*structpb.Struct, error)` is the most
+- `Execute(context.Context []*structpb.Struct) ([]*structpb.Struct, error)` is the most
   important function in the component. All the data manipulation will take place
   here.
 
@@ -463,7 +463,7 @@ func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.E
 	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
-func (e *execution) Execute(_ []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(context.Context, []*structpb.Struct) ([]*structpb.Struct, error) {
 	return nil, nil
 }
 ```
@@ -498,7 +498,7 @@ func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.E
 	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
-func (e *execution) Execute(inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	// An execution  might take several inputs. One result will be returned for
@@ -549,6 +549,7 @@ import (
 
 func TestOperator_Execute(t *testing.T) {
 	c := qt.New(t)
+	ctx := context.Background()
 
 	bo := base.BaseOperator{Logger: zap.NewNop()}
 	operator := Init(bo)
@@ -560,7 +561,7 @@ func TestOperator_Execute(t *testing.T) {
 		pbIn, err := structpb.NewStruct(map[string]any{"target": "bolero-wombat"})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute([]*structpb.Struct{pbIn})
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNil)
 		c.Assert(got, qt.HasLen, 1)
 
