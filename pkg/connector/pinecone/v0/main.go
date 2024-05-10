@@ -62,7 +62,7 @@ func newClient(config *structpb.Struct, logger *zap.Logger) *httpclient.Client {
 	)
 
 	c.SetHeader("Api-Key", getAPIKey(config))
-	c.SetHeader("Source-Tag", "instillai")
+	c.SetHeader("User-Agent", "source_tag=instillai")
 
 	return c
 }
