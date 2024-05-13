@@ -14,9 +14,12 @@ import (
 )
 
 const (
-	host             = "https://api.stability.ai"
-	textToImageTask  = "TASK_TEXT_TO_IMAGE"
-	imageToImageTask = "TASK_IMAGE_TO_IMAGE"
+	host = "https://api.stability.ai"
+
+	TextToImageTask  = "TASK_TEXT_TO_IMAGE"
+	ImageToImageTask = "TASK_IMAGE_TO_IMAGE"
+
+	cfgAPIKey = "api_key"
 )
 
 var (
@@ -27,20 +30,21 @@ var (
 	//go:embed config/stabilityai.json
 	stabilityaiJSON []byte
 	once            sync.Once
-	con             *connector
+	con             *Connector
 )
 
-type connector struct {
+// Connector executes queries against StabilityAI.
+type Connector struct {
 	base.Connector
+
+	usageHandlerCreator base.UsageHandlerCreator
+	secretAPIKey        string
 }
 
-type execution struct {
-	base.ConnectorExecution
-}
-
-func Init(bc base.Connector) *connector {
+// Init returns an initialized StabilityAI connector.
+func Init(bc base.Connector) *Connector {
 	once.Do(func() {
-		con = &connector{Connector: bc}
+		con = &Connector{Connector: bc}
 		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, map[string][]byte{"stabilityai.json": stabilityaiJSON})
 		if err != nil {
 			panic(err)
@@ -50,28 +54,70 @@ func Init(bc base.Connector) *connector {
 	return con
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+// WithSecrets loads secrets into the connector, which can be used to configure
+// it with globaly defined parameters.
+func (c *Connector) WithSecrets(s map[string]any) *Connector {
+	c.secretAPIKey = base.ReadFromSecrets(cfgAPIKey, s)
+
+	return c
+}
+
+// WithUsageHandlerCreator overrides the UsageHandlerCreator method.
+func (c *Connector) WithUsageHandlerCreator(newUH base.UsageHandlerCreator) *Connector {
+	c.usageHandlerCreator = newUH
+	return c
+}
+
+// UsageHandlerCreator returns a function to initialize a UsageHandler.
+func (c *Connector) UsageHandlerCreator() base.UsageHandlerCreator {
+	if c.usageHandlerCreator == nil {
+		return c.Connector.UsageHandlerCreator()
+	}
+	return c.usageHandlerCreator
+}
+
+// resolveSecrets looks for references to a global secret in the connection
+// and replaces them by the global secret injected during initialization.
+func (c *Connector) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, bool, error) {
+	apiKey := conn.GetFields()[cfgAPIKey].GetStringValue()
+	if apiKey != base.SecretKeyword {
+		return conn, false, nil
+	}
+
+	if c.secretAPIKey == "" {
+		return nil, false, base.NewUnresolvedSecret(cfgAPIKey)
+	}
+
+	conn.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.secretAPIKey)
+	return conn, true, nil
+}
+
+// CreateExecution initializes a connector executor that can be used in a
+// pipeline trigger.
+func (c *Connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+	resolvedConnection, resolved, err := c.resolveSecrets(connection)
+	if err != nil {
+		return nil, err
+	}
+
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ConnectorExecution: base.ConnectorExecution{
+			Connector:       c,
+			SystemVariables: sysVars,
+			Connection:      resolvedConnection,
+			Task:            task,
+		},
+		usesSecret: resolved,
 	}}, nil
 }
 
-func getAPIKey(config *structpb.Struct) string {
-	return config.GetFields()["api_key"].GetStringValue()
+type execution struct {
+	base.ConnectorExecution
+	usesSecret bool
 }
 
-// getBasePath returns Stability AI's API URL. This configuration param allows
-// us to override the API the connector will point to. It isn't meant to be
-// exposed to users. Rather, it can serve to test the logic against a fake
-// server.
-// TODO instead of having the API value hardcoded in the codebase, it should be
-// read from a config file or environment variable.
-func getBasePath(config *structpb.Struct) string {
-	v, ok := config.GetFields()["base_path"]
-	if !ok {
-		return host
-	}
-	return v.GetStringValue()
+func (e *execution) UsesSecret() bool {
+	return e.usesSecret
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
@@ -80,7 +126,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 	for _, input := range inputs {
 		switch e.Task {
-		case textToImageTask:
+		case TextToImageTask:
 			params, err := parseTextToImageReq(input)
 			if err != nil {
 				return inputs, err
@@ -99,7 +145,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			}
 
 			outputs = append(outputs, output)
-		case imageToImageTask:
+		case ImageToImageTask:
 			params, err := parseImageToImageReq(input)
 			if err != nil {
 				return inputs, err
@@ -135,7 +181,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 }
 
 // Test checks the connector state.
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *Connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
 	var engines []Engine
 	req := newClient(connection, c.Logger).R().SetResult(&engines)
 

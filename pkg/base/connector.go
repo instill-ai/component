@@ -3,6 +3,7 @@ package base
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
@@ -303,4 +304,20 @@ func (e *ConnectorExecution) UsesSecret() bool {
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
 func (e *ConnectorExecution) UsageHandlerCreator() UsageHandlerCreator {
 	return e.Connector.UsageHandlerCreator()
+}
+
+// ReadFromSecrets reads a component secret from a secret map that comes from
+// environment variable configuration.
+//
+// Connection parameters are defined with snake_case, but the
+// environment variable configuration loader replaces underscores by dots,
+// so we can't use the parameter key directly.
+// TODO using camelCase in configuration fields would fix this issue.
+func ReadFromSecrets(key string, secrets map[string]any) string {
+	sanitized := strings.ReplaceAll(key, "_", "")
+	if v, ok := secrets[sanitized].(string); ok {
+		return v
+	}
+
+	return ""
 }

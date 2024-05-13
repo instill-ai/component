@@ -97,7 +97,7 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(nil, connection, textToImageTask)
+			exec, err := connector.CreateExecution(nil, connection, TextToImageTask)
 			c.Assert(err, qt.IsNil)
 
 			weights := []float64{weight}
@@ -192,7 +192,7 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(nil, connection, imageToImageTask)
+			exec, err := connector.CreateExecution(nil, connection, ImageToImageTask)
 			c.Assert(err, qt.IsNil)
 
 			weights := []float64{weight}
