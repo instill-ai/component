@@ -33,7 +33,7 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": true,
+          "instillSecret": true,
           "instillUIOrder": 0,
           "instillUIMultiline": true,
           "title": "JSON Key File contents",
@@ -65,6 +65,12 @@
         }
       },
       "required": [
+        "json_key",
+        "project_id",
+        "dataset_id",
+        "table_name"
+      ],
+      "instillEditOnNodeFields": [
         "json_key",
         "project_id",
         "dataset_id",

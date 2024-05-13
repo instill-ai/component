@@ -18,7 +18,7 @@
           "instillUpstreamTypes": [
             "reference"
           ],
-          "instillCredentialField": true,
+          "instillSecret": true,
           "instillUIOrder": 0,
           "title": "API Key",
           "type": "string"
@@ -28,13 +28,17 @@
           "instillUpstreamTypes": [
             "value"
           ],
-          "instillCredentialField": false,
+          "instillSecret": false,
           "instillUIOrder": 1,
           "title": "Search Engine ID",
           "type": "string"
         }
       },
       "required": [
+        "api_key",
+        "cse_id"
+      ],
+      "instillEditOnNodeFields": [
         "api_key",
         "cse_id"
       ],

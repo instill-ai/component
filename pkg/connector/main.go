@@ -140,11 +140,9 @@ func (cs *Store) ListConnectorDefinitions(sysVars map[string]any, returnTombston
 	return defs
 }
 
-// IsCredentialField returns whether a given field in a connector contains
-// credentials.
-func (cs *Store) IsCredentialField(defUID uuid.UUID, target string) (bool, error) {
+func (cs *Store) IsSecretField(defUID uuid.UUID, target string) (bool, error) {
 	if con, ok := cs.connectorUIDMap[defUID]; ok {
-		return con.con.IsCredentialField(target), nil
+		return con.con.IsSecretField(target), nil
 	}
 	return false, fmt.Errorf("connector definition not found")
 }

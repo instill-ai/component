@@ -55,7 +55,7 @@
                   "instillAcceptFormats": [
                     "string"
                   ],
-                  "instillCredentialField": true,
+                  "instillSecret": true,
                   "instillUIOrder": 2,
                   "order": 2,
                   "title": "Password",
@@ -131,7 +131,7 @@
                   "instillAcceptFormats": [
                     "string"
                   ],
-                  "instillCredentialField": true,
+                  "instillSecret": true,
                   "instillUIOrder": 2,
                   "order": 2,
                   "title": "Key Value",
@@ -163,7 +163,7 @@
                   "instillAcceptFormats": [
                     "string"
                   ],
-                  "instillCredentialField": true,
+                  "instillSecret": true,
                   "instillUIOrder": 1,
                   "order": 1,
                   "title": "Token",

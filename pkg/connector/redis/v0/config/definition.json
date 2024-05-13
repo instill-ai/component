@@ -27,7 +27,7 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": false,
+          "instillSecret": false,
           "instillUIOrder": 0,
           "title": "Host",
           "type": "string"
@@ -40,7 +40,7 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": true,
+          "instillSecret": true,
           "instillUIOrder": 3,
           "title": "Password",
           "type": "string"
@@ -111,7 +111,7 @@
                   "instillAcceptFormats": [
                     "string"
                   ],
-                  "instillCredentialField": true,
+                  "instillSecret": true,
                   "instillUIOrder": 1,
                   "multiline": true,
                   "order": 1,
@@ -126,7 +126,7 @@
                   "instillAcceptFormats": [
                     "string"
                   ],
-                  "instillCredentialField": true,
+                  "instillSecret": true,
                   "instillUIOrder": 2,
                   "multiline": true,
                   "order": 2,
@@ -141,7 +141,7 @@
                   "instillAcceptFormats": [
                     "string"
                   ],
-                  "instillCredentialField": true,
+                  "instillSecret": true,
                   "instillUIOrder": 3,
                   "multiline": true,
                   "order": 3,
@@ -190,6 +190,10 @@
         }
       },
       "required": [
+        "host",
+        "port"
+      ],
+      "instillEditOnNodeFields": [
         "host",
         "port"
       ],

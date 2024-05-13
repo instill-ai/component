@@ -21,13 +21,16 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": true,
+          "instillSecret": true,
           "instillUIOrder": 0,
           "title": "Capture token",
           "type": "string"
         }
       },
       "required": [
+        "capture_token"
+      ],
+      "instillEditOnNodeFields": [
         "capture_token"
       ],
       "title": "Numbers Protocol Connection",

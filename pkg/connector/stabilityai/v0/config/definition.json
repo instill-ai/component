@@ -22,13 +22,16 @@
           "instillAcceptFormats": [
             "string"
           ],
-          "instillCredentialField": true,
+          "instillSecret": true,
           "instillUIOrder": 0,
           "title": "API Key",
           "type": "string"
         }
       },
       "required": [
+        "api_key"
+      ],
+      "instillEditOnNodeFields": [
         "api_key"
       ],
       "title": "Stability AI Connection",
