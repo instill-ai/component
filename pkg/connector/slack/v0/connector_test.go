@@ -96,8 +96,6 @@ func TestConnector_ExecuteReadTask(t *testing.T) {
 		wantResp ReadTaskResp
 		wantErr  string
 	}{
-		// TODO: modify the failure test. 
-		// The test failed on GitHub Action because the DateTime in ThreadReplyMessage is not the same.
 		{
 			name: "ok to read",
 			input: UserInputReadTask{
@@ -116,6 +114,8 @@ func TestConnector_ExecuteReadTask(t *testing.T) {
 							{
 								UserID:   "user456",
 								Message:  "Hello, how are you",
+								// TODO: under the current test structure, the DateTime is hard to mock.
+								// We will think about how to mock it in the future.
 								// DateTime: "2024-05-08T10:10:49+01:00", // For local
 								DateTime: "2024-05-08T09:10:49Z", // For GitHub Action
 							},
