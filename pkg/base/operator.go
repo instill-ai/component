@@ -118,7 +118,7 @@ func (o *Operator) LoadOperatorDefinition(definitionJSONBytes []byte, tasksJSONB
 // UsageHandlerCreator returns a no-op usage handler initializer. For the
 // moment there are no use cases for usage collection in operators.
 func (o *Operator) UsageHandlerCreator() UsageHandlerCreator {
-	return newNoopUsageHandler
+	return NewNoopUsageHandler
 }
 
 // OperatorExecution implements the common methods for operator execution.

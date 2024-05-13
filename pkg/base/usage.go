@@ -23,6 +23,7 @@ func (h *noopUsageHandler) Collect(_ context.Context, _, _ []*structpb.Struct) e
 	return nil
 }
 
-func newNoopUsageHandler(IExecution) UsageHandler {
+// NewNoopUsageHandler is a no-op usage handler initializer.
+func NewNoopUsageHandler(IExecution) UsageHandler {
 	return new(noopUsageHandler)
 }
