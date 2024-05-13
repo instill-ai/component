@@ -116,7 +116,8 @@ func TestConnector_ExecuteReadTask(t *testing.T) {
 							{
 								UserID:   "user456",
 								Message:  "Hello, how are you",
-								DateTime: "2024-05-08T10:10:49+01:00",
+								// DateTime: "2024-05-08T10:10:49+01:00", // For local
+								DateTime: "2024-05-08T09:10:49Z", // For GitHub Action
 							},
 						},
 					},
