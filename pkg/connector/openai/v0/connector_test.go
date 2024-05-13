@@ -45,31 +45,31 @@ func TestConnector_Execute(t *testing.T) {
 	}{
 		{
 			name:        "text generation",
-			task:        textGenerationTask,
+			task:        TextGenerationTask,
 			path:        completionsPath,
 			contentType: httpclient.MIMETypeJSON,
 		},
 		{
 			name:        "text embeddings",
-			task:        textEmbeddingsTask,
+			task:        TextEmbeddingsTask,
 			path:        embeddingsPath,
 			contentType: httpclient.MIMETypeJSON,
 		},
 		{
 			name:        "speech recognition",
-			task:        speechRecognitionTask,
+			task:        SpeechRecognitionTask,
 			path:        transcriptionsPath,
 			contentType: "multipart/form-data; boundary=.*",
 		},
 		{
 			name:        "text to speech",
-			task:        textToSpeechTask,
+			task:        TextToSpeechTask,
 			path:        createSpeechPath,
 			contentType: httpclient.MIMETypeJSON,
 		},
 		{
 			name:        "text to image",
-			task:        textToImageTask,
+			task:        TextToImageTask,
 			path:        imgGenerationPath,
 			contentType: httpclient.MIMETypeJSON,
 		},
@@ -209,13 +209,13 @@ func TestConnector_WithConfig(t *testing.T) {
 	cleanupConn := func() { once = sync.Once{} }
 	ctx := context.Background()
 
-	want := textCompletionOutput{
+	want := TextCompletionOutput{
 		Texts: []string{"hello!"},
 		Usage: usage{TotalTokens: 25},
 	}
 	resp := `{"usage": {"total_tokens": 25}, "choices": [{"message": {"content": "hello!"}}]}`
 
-	pbIn, err := base.ConvertToStructpb(textCompletionInput{
+	pbIn, err := base.ConvertToStructpb(TextCompletionInput{
 		Model:  "gpt-3.5-turbo",
 		Prompt: "what instrument did Yusef Lateef play?",
 		Images: []string{},
@@ -236,7 +236,7 @@ func TestConnector_WithConfig(t *testing.T) {
 	openAIServer := httptest.NewServer(h)
 	c.Cleanup(openAIServer.Close)
 
-	task := textGenerationTask
+	task := TextGenerationTask
 	bc := base.Connector{Logger: zap.NewNop()}
 
 	c.Run("nok - usage handler check error", func(c *qt.C) {

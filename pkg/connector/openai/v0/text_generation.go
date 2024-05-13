@@ -9,7 +9,7 @@ type textMessage struct {
 	Content []content `json:"content"`
 }
 
-type textCompletionInput struct {
+type TextCompletionInput struct {
 	Prompt           string                `json:"prompt"`
 	Images           []string              `json:"images"`
 	ChatHistory      []*textMessage        `json:"chat_history,omitempty"`
@@ -29,7 +29,7 @@ type responseFormatStruct struct {
 	Type string `json:"type,omitempty"`
 }
 
-type textCompletionOutput struct {
+type TextCompletionOutput struct {
 	Texts []string `json:"texts"`
 	Usage usage    `json:"usage"`
 }

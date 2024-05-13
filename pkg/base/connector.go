@@ -259,7 +259,7 @@ func (c *Connector) traverseSecretField(input *structpb.Value, prefix string, se
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
 func (c *Connector) UsageHandlerCreator() UsageHandlerCreator {
-	return newNoopUsageHandler
+	return NewNoopUsageHandler
 }
 
 // ConnectorExecution implements the common methods for connector

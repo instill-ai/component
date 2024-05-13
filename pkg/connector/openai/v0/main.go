@@ -19,12 +19,13 @@ import (
 )
 
 const (
-	host                  = "https://api.openai.com"
-	textGenerationTask    = "TASK_TEXT_GENERATION"
-	textEmbeddingsTask    = "TASK_TEXT_EMBEDDINGS"
-	speechRecognitionTask = "TASK_SPEECH_RECOGNITION"
-	textToSpeechTask      = "TASK_TEXT_TO_SPEECH"
-	textToImageTask       = "TASK_TEXT_TO_IMAGE"
+	host = "https://api.openai.com"
+
+	TextGenerationTask    = "TASK_TEXT_GENERATION"
+	TextEmbeddingsTask    = "TASK_TEXT_EMBEDDINGS"
+	SpeechRecognitionTask = "TASK_SPEECH_RECOGNITION"
+	TextToSpeechTask      = "TASK_TEXT_TO_SPEECH"
+	TextToImageTask       = "TASK_TEXT_TO_IMAGE"
 
 	cfgAPIKey       = "api_key"
 	cfgOrganization = "organization"
@@ -147,8 +148,8 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 	for _, input := range inputs {
 		switch e.Task {
-		case textGenerationTask:
-			inputStruct := textCompletionInput{}
+		case TextGenerationTask:
+			inputStruct := TextCompletionInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
 				return nil, err
@@ -212,7 +213,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				return inputs, err
 			}
 
-			outputStruct := textCompletionOutput{
+			outputStruct := TextCompletionOutput{
 				Texts: []string{},
 				Usage: resp.Usage,
 			}
@@ -231,7 +232,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			}
 			outputs = append(outputs, &output)
 
-		case textEmbeddingsTask:
+		case TextEmbeddingsTask:
 			inputStruct := TextEmbeddingsInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
@@ -258,7 +259,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			}
 			outputs = append(outputs, output)
 
-		case speechRecognitionTask:
+		case SpeechRecognitionTask:
 			inputStruct := AudioTranscriptionInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
@@ -293,7 +294,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			}
 			outputs = append(outputs, output)
 
-		case textToSpeechTask:
+		case TextToSpeechTask:
 			inputStruct := TextToSpeechInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
@@ -324,7 +325,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			}
 			outputs = append(outputs, output)
 
-		case textToImageTask:
+		case TextToImageTask:
 
 			inputStruct := ImagesGenerationInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
