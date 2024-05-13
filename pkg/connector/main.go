@@ -21,6 +21,7 @@ import (
 	"github.com/instill-ai/component/pkg/connector/pinecone/v0"
 	"github.com/instill-ai/component/pkg/connector/redis/v0"
 	"github.com/instill-ai/component/pkg/connector/restapi/v0"
+	"github.com/instill-ai/component/pkg/connector/slack/v0"
 	"github.com/instill-ai/component/pkg/connector/stabilityai/v0"
 	"github.com/instill-ai/component/pkg/connector/website/v0"
 
@@ -87,6 +88,7 @@ func Init(
 		conStore.Import(redis.Init(baseConn))
 		conStore.Import(restapi.Init(baseConn))
 		conStore.Import(website.Init(baseConn))
+		conStore.Import(slack.Init(baseConn))
 
 	})
 
