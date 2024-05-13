@@ -8,33 +8,34 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func loopChannelListAPI(e *execution, isPublic bool, channelName string, targetChannelID *string) error {
+func loopChannelListAPI(e *execution, isPublic bool, channelName string) (string, error) {
 	var apiParams slack.GetConversationsParameters
 	setChannelType(&apiParams, isPublic)
 
+	var targetChannelID string
 	for {
 
 		slackChannels, nextCur, err := e.client.GetConversations(&apiParams)
 		if err != nil {
-			return err
+			return "", err
 		}
 
-		setChannelID(channelName, slackChannels, targetChannelID)
+		targetChannelID := getChannelID(channelName, slackChannels)
 
-		if *targetChannelID != "" {
+		if targetChannelID != "" {
 			break
 		}
 
-		if *targetChannelID == "" && nextCur == "" {
+		if targetChannelID == "" && nextCur == "" {
 			err := fmt.Errorf("there is no match name in slack channel [%v]", channelName)
-			return err
+			return "", err
 		}
 
 		apiParams.Cursor = nextCur
 
 	}
 
-	return nil
+	return targetChannelID, nil
 }
 
 // Todo: make it multiple options
@@ -46,13 +47,13 @@ func setChannelType(params *slack.GetConversationsParameters, isPublicChannel bo
 	}
 }
 
-func setChannelID(channelName string, channels []slack.Channel, targetChannelID *string) {
+func getChannelID(channelName string, channels []slack.Channel) (channelID string) {
 	for _, slackChannel := range channels {
 		if channelName == slackChannel.Name {
-			*targetChannelID = slackChannel.ID
-			break
+			return slackChannel.ID
 		}
 	}
+	return ""
 }
 
 func getConversationHistory(e *execution, channelID string, nextCur string) (*slack.GetConversationHistoryResponse, error) {
@@ -78,19 +79,28 @@ func getConversationReply(e *execution, channelID string, ts string) ([]slack.Me
 		ChannelID: channelID,
 		Timestamp: ts,
 	}
-	msgs, _, _, err := e.client.GetConversationReplies(&apiParams)
+	msgs, _, nextCur, err := e.client.GetConversationReplies(&apiParams)
 
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: deal with the nextCur
-	// add one more input, nextCur string, in function
-	// if nextCur != "" {
+	if nextCur == "" {
+		return msgs, nil
+	}
 
-	// }
+	allMsgs := msgs
 
-	return msgs, nil
+	for nextCur != "" {
+		apiParams.Cursor = nextCur
+		msgs, _, nextCur, err = e.client.GetConversationReplies(&apiParams)
+		if err != nil {
+			return nil, err
+		}
+		allMsgs = append(allMsgs, msgs...)
+	}
+
+	return allMsgs, nil
 }
 
 func setAPIRespToReadTaskResp(apiResp []slack.Message, readTaskResp *ReadTaskResp, startReadDateString string) error {

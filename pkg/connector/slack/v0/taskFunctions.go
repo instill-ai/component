@@ -17,8 +17,8 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 	if err := base.ConvertFromStructpb(in, &params); err != nil {
 		return nil, err
 	}
-	var targetChannelID string
-	err := loopChannelListAPI(e, params.IsPublicChannel, params.ChannelName, &targetChannelID)
+	
+	targetChannelID, err := loopChannelListAPI(e, params.IsPublicChannel, params.ChannelName)
 
 	if err != nil {
 		return nil, err
@@ -92,8 +92,7 @@ func (e *execution) sendMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	var targetChannelID string
-	err := loopChannelListAPI(e, params.IsPublicChannel, params.ChannelName, &targetChannelID)
+	targetChannelID, err := loopChannelListAPI(e, params.IsPublicChannel, params.ChannelName)
 	if err != nil {
 		return nil, err
 	}

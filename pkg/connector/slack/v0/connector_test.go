@@ -57,10 +57,8 @@ func TestConnector_ExecuteWriteTask(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			// It will increase the modification range if we do DI to CreateExecution.
-			// So, I replaced it with the code below.
-			// exec, err := connector.CreateExecution(nil, connection, taskWriteMessage)
-			// c.Assert(err, qt.IsNil)
+			// It will increase the modification range if we change the input of CreateExecution.
+			// So, we replaced it with the code below to cover the test for taskFunctions.go
 			e := &execution{
 				ConnectorExecution: base.ConnectorExecution{Connector: connector, SystemVariables: nil, Connection: connection, Task: taskWriteMessage},
 				client:             &MockSlackClient{},
@@ -98,6 +96,8 @@ func TestConnector_ExecuteReadTask(t *testing.T) {
 		wantResp ReadTaskResp
 		wantErr  string
 	}{
+		// TODO: modify the failure test. 
+		// The test failed on GitHub Action because the DateTime in ThreadReplyMessage is not the same.
 		// {
 		// 	name: "ok to read",
 		// 	input: UserInputReadTask{
@@ -139,11 +139,8 @@ func TestConnector_ExecuteReadTask(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			// It will increase the modification range if we do DI to CreateExecution.
-			// So, I replaced it with the code below.
-			// exec, err := connector.CreateExecution(nil, connection, taskWriteMessage)
-			// c.Assert(err, qt.IsNil)
-
+			// It will increase the modification range if we change the input of CreateExecution.
+			// So, we replaced it with the code below to cover the test for taskFunctions.go
 			e := &execution{
 				ConnectorExecution: base.ConnectorExecution{Connector: connector, SystemVariables: nil, Connection: connection, Task: taskReadMessage},
 				client:             &MockSlackClient{},
