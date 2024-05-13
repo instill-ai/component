@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"strings"
 	"sync"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -64,22 +63,10 @@ func Init(bc base.Connector) *Connector {
 	return con
 }
 
-// The connection parameter is defined with snake_case, but the
-// environment variable configuration loader replaces underscores by dots,
-// so we can't use the parameter key directly.
-func readFromSecrets(key string, s map[string]any) string {
-	sanitized := strings.ReplaceAll(key, "_", "")
-	if v, ok := s[sanitized].(string); ok {
-		return v
-	}
-
-	return ""
-}
-
 // WithSecrets loads secrets into the connector, which can be used to configure
 // it with globaly defined parameters.
 func (c *Connector) WithSecrets(s map[string]any) *Connector {
-	c.secretAPIKey = readFromSecrets(cfgAPIKey, s)
+	c.secretAPIKey = base.ReadFromSecrets(cfgAPIKey, s)
 
 	return c
 }

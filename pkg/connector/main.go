@@ -65,7 +65,16 @@ func Init(
 			connectorIDMap:  map[string]*connector{},
 		}
 
-		conStore.Import(stabilityai.Init(baseConn))
+		{
+			// StabilityAI
+			conn := stabilityai.Init(baseConn)
+
+			// Secret doesn't allow hyphens
+			conn = conn.WithSecrets(secrets["stabilityai"]).
+				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
+			conStore.Import(conn)
+		}
+
 		conStore.Import(instill.Init(baseConn))
 		conStore.Import(huggingface.Init(baseConn))
 
