@@ -106,7 +106,7 @@ func getConversationReply(e *execution, channelID string, ts string) ([]slack.Me
 func setAPIRespToReadTaskResp(apiResp []slack.Message, readTaskResp *ReadTaskResp, startReadDateString string) error {
 
 	for _, msg := range apiResp {
-		formatedDateString, err := transformTSToDate(msg.Timestamp, "2006-01-02")
+		formatedDateString, err := transformTSToDate(msg.Timestamp, time.DateOnly)
 		if err != nil {
 			return err
 		}
@@ -151,7 +151,7 @@ func setRepliedToConversation(resp *ReadTaskResp, replies []slack.Message, idx i
 			continue
 		}
 
-		formatedDateTime, err := transformTSToDate(msg.Timestamp, "2006-01-02 15:04:05")
+		formatedDateTime, err := transformTSToDate(msg.Timestamp, time.RFC3339)
 		if err != nil {
 			return err
 		}
@@ -161,7 +161,7 @@ func setRepliedToConversation(resp *ReadTaskResp, replies []slack.Message, idx i
 			Message:  msg.Text,
 		}
 
-		foramtedDate, err := transformTSToDate(msg.Timestamp, "2006-01-02")
+		foramtedDate, err := transformTSToDate(msg.Timestamp, time.DateOnly)
 		if err != nil {
 			return err
 		}
