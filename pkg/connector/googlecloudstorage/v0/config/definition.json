@@ -45,6 +45,10 @@
         "json_key",
         "bucket_name"
       ],
+      "instillEditOnNodeFields": [
+        "json_key",
+        "bucket_name"
+      ],
       "title": "Google Cloud Storage Connection",
       "type": "object"
     }

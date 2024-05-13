@@ -38,6 +38,10 @@
         "api_key",
         "cse_id"
       ],
+      "instillEditOnNodeFields": [
+        "api_key",
+        "cse_id"
+      ],
       "title": "Google Search Connection",
       "type": "object"
     }

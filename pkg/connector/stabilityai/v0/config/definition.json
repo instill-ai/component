@@ -31,6 +31,9 @@
       "required": [
         "api_key"
       ],
+      "instillEditOnNodeFields": [
+        "api_key"
+      ],
       "title": "Stability AI Connection",
       "type": "object"
     }

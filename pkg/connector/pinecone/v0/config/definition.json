@@ -45,6 +45,10 @@
         "api_key",
         "url"
       ],
+      "instillEditOnNodeFields": [
+        "api_key",
+        "url"
+      ],
       "title": "Pinecone Connection",
       "type": "object"
     }

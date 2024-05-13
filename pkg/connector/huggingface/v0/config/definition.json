@@ -76,6 +76,11 @@
         "base_url",
         "is_custom_endpoint"
       ],
+      "instillEditOnNodeFields": [
+        "api_key",
+        "base_url",
+        "is_custom_endpoint"
+      ],
       "title": "Hugging Face Connection",
       "type": "object"
     }

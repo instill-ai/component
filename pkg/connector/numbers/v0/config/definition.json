@@ -30,6 +30,9 @@
       "required": [
         "capture_token"
       ],
+      "instillEditOnNodeFields": [
+        "capture_token"
+      ],
       "title": "Numbers Protocol Connection",
       "type": "object"
     }

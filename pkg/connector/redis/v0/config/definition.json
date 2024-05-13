@@ -193,6 +193,10 @@
         "host",
         "port"
       ],
+      "instillEditOnNodeFields": [
+        "host",
+        "port"
+      ],
       "title": "Redis Connection",
       "type": "object"
     }

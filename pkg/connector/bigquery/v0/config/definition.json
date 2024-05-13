@@ -70,6 +70,12 @@
         "dataset_id",
         "table_name"
       ],
+      "instillEditOnNodeFields": [
+        "json_key",
+        "project_id",
+        "dataset_id",
+        "table_name"
+      ],
       "title": "BigQuery Connection",
       "type": "object"
     }
