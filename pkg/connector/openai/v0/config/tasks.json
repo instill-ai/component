@@ -135,6 +135,15 @@
           ],
           "instillShortDescription": "ID of the model to use",
           "instillUIOrder": 0,
+          "instillCredentialMap": {
+            "values": [
+              "text-embedding-3-small",
+              "text-embedding-3-large"
+            ],
+            "targets": [
+              "connection.api_key"
+            ]
+          },
           "instillUpstreamTypes": [
             "value",
             "reference",
