@@ -77,6 +77,10 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 	wg.Wait()
 
+	if readTaskResp.Conversations == nil {
+		readTaskResp.Conversations = []Conversation{}
+	}
+	
 	out, err := base.ConvertToStructpb(readTaskResp)
 	if err != nil {
 		return nil, err

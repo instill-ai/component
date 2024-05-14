@@ -22,13 +22,14 @@
             "instillAcceptFormats": [
               "string"
             ],
-            "instillCredentialField": false,
+            "instillSecret": true,
             "instillUIOrder": 0,
             "title": "token",
             "type": "string"
           }
         },
-        "required": [],
+        "required": ["token"],
+        "instillEditOnNodeFields": ["token"],
         "title": "Slack Connection",
         "type": "object"
       }
