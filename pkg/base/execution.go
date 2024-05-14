@@ -123,7 +123,11 @@ func (e *ExecutionWrapper) Execute(ctx context.Context, inputs []*structpb.Struc
 	}
 
 	newUH := e.Execution.UsageHandlerCreator()
-	h := newUH(e.Execution)
+	h, err := newUH(e.Execution)
+	if err != nil {
+		return nil, err
+	}
+
 	if err := h.Check(ctx, inputs); err != nil {
 		return nil, err
 	}
