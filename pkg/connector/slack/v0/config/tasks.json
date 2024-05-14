@@ -1,0 +1,239 @@
+{
+    "TASK_READ_MESSAGE": {
+      "instillShortDescription": "Get the latest message since specific date",
+      "input": {
+        "description": "Please input the channel name and the date that we want to start to read",
+        "instillUIOrder": 0,
+        "properties": {
+          "channel_name": {
+            "description": "A channel name display in Slack",
+            "instillAcceptFormats": [
+              "string"
+            ],
+            "instillUIMultiline": true,
+            "instillUIOrder": 0,
+            "instillUpstreamTypes": [
+              "value",
+              "reference",
+              "template"
+            ],
+            "title": "Channel Name",
+            "type": "string"
+          },
+          "start_to_read_date": {
+            "description": "earliest date in all read messages",
+            "instillAcceptFormats": [
+              "string"
+            ],
+            "instillUIMultiline": true,
+            "instillUIOrder": 1,
+            "instillUpstreamTypes": [
+              "value",
+              "reference",
+              "template"
+            ],
+            "title": "Start to read date",
+            "type": "string"
+          },
+          "is_public_channel": {
+            "description": "Whether all members can read the channel",
+            "instillAcceptFormats": [
+              "boolean"
+            ],
+            "instillUIMultiline": true,
+            "instillUIOrder": 2,
+            "instillUpstreamTypes": [
+              "value",
+              "reference",
+              "template"
+            ],
+            "title": "Public channel",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "channel_name"
+        ],
+        "title": "Input",
+        "type": "object"
+      },
+      "output": {
+        "description": "All messages in Slack channel",
+        "instillUIOrder": 0,
+        "properties": {
+          "conversations": {
+            "description": "An array of conversations with thread messages",
+            "instillUIOrder": 0,
+            "title": "Conversations",
+            "type": "array",
+            "items": {
+              "title": "conversation details",
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "description": "unique id from Slack",
+                  "instillFormat": "string",
+                  "instillUIOrder": 1,
+                  "title": "User UID",
+                  "type": "string"
+                },
+                "message": {
+                  "description": "message to start a conversation",
+                  "instillFormat": "string",
+                  "instillUIOrder": 2,
+                  "title": "Start Conversation Message",
+                  "type": "string"
+                },
+                "start_date": {
+                  "description": "when a conversation starts",
+                  "instillFormat": "string",
+                  "instillUIOrder": 3,
+                  "required": [],
+                  "title": "Start Date",
+                  "type": "string"
+                },
+                "last_date": {
+                  "description": "Date of the last message",
+                  "instillFormat": "string",
+                  "instillUIOrder": 4,
+                  "required": [],
+                  "title": "Last Date",
+                  "type": "string"
+                },
+                "thread_reply_messages": {
+                  "description": "replies in a conversation",
+                  "instillFormat": "array",
+                  "instillUIOrder": 5,
+                  "title": "Replied messages",
+                  "type": "array",
+                  "items": {
+                    "title": "relied details",
+                    "type": "object",
+                    "properties": {
+                      "user_id": {
+                        "description": "unique id from Slack",
+                        "instillFormat": "string",
+                        "instillUIOrder": 1,
+                        "title": "User UID",
+                        "type": "string"
+                      },
+                      "datetime": {
+                        "description": "replied datetime",
+                        "instillFormat": "string",
+                        "instillUIOrder": 2,
+                        "title": "Replied Time",
+                        "type": "string"
+                      },
+                      "message": {
+                        "description": "message to reply a conversation",
+                        "instillFormat": "string",
+                        "instillUIOrder": 3,
+                        "title": "Replied Message",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "user_id",
+                      "datetime",
+                      "message"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "user_id",
+                "message",
+                "start_date"
+              ]
+            }
+          }
+        },
+        "required": [
+          "conversations"
+        ],
+        "title": "Output",
+        "type": "object"
+      }
+    },
+    "TASK_WRITE_MESSAGE": {
+      "instillShortDescription": "send message to a specific channel",
+      "title": "Send Message",
+      "input": {
+        "description": "Input",
+        "instillUIOrder": 0,
+        "properties": {
+          "channel_name": {
+            "description": "A channel name display in Slack",
+            "instillAcceptFormats": [
+              "string"
+            ],
+            "instillUIMultiline": true,
+            "instillUIOrder": 0,
+            "instillUpstreamTypes": [
+              "value",
+              "reference",
+              "template"
+            ],
+            "title": "Channel Name",
+            "type": "string"
+          },
+          "message": {
+            "description": "message to be sent to the target channel",
+            "instillAcceptFormats": [
+              "string"
+            ],
+            "instillUIMultiline": true,
+            "instillUIOrder": 1,
+            "instillUpstreamTypes": [
+              "value",
+              "reference",
+              "template"
+            ],
+            "title": "Message",
+            "type": "string"
+          },
+          "is_public_channel": {
+            "description": "Whether all members can read the channel",
+            "instillAcceptFormats": [
+              "boolean"
+            ],
+            "instillUIMultiline": true,
+            "instillUIOrder": 2,
+            "instillUpstreamTypes": [
+              "value",
+              "reference",
+              "template"
+            ],
+            "title": "Public channel",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "channel_name",
+          "message"
+        ],
+        "title": "Input",
+        "type": "object"
+      },
+      "output": {
+        "description": "The greeting sentence",
+        "instillUIOrder": 0,
+        "properties": {
+          "result": {
+            "description": "result for sending message",
+            "instillEditOnNodeFields": [],
+            "instillUIOrder": 0,
+            "required": [],
+            "title": "Result",
+            "type": "string",
+            "instillFormat": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "Output",
+        "type": "object"
+      }
+    }
+  }
