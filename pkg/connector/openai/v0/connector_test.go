@@ -354,6 +354,6 @@ type usageHandlerCreator struct {
 	uh base.UsageHandler
 }
 
-func (c usageHandlerCreator) newUH(base.IExecution) base.UsageHandler {
-	return c.uh
+func (c usageHandlerCreator) newUH(base.IExecution) (base.UsageHandler, error) {
+	return c.uh, nil
 }

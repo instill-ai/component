@@ -14,7 +14,7 @@ type UsageHandler interface {
 }
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
-type UsageHandlerCreator func(IExecution) UsageHandler
+type UsageHandlerCreator func(IExecution) (UsageHandler, error)
 
 type noopUsageHandler struct{}
 
@@ -24,6 +24,6 @@ func (h *noopUsageHandler) Collect(_ context.Context, _, _ []*structpb.Struct) e
 }
 
 // NewNoopUsageHandler is a no-op usage handler initializer.
-func NewNoopUsageHandler(IExecution) UsageHandler {
-	return new(noopUsageHandler)
+func NewNoopUsageHandler(IExecution) (UsageHandler, error) {
+	return new(noopUsageHandler), nil
 }
