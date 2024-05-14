@@ -20,10 +20,10 @@ func loopChannelListAPI(e *execution, isPublic bool, channelName string) (string
 			return "", err
 		}
 
-		targetChannelID := getChannelID(channelName, slackChannels)
+		targetChannelID = getChannelID(channelName, slackChannels)
 
 		if targetChannelID != "" {
-			break
+			return targetChannelID, nil
 		}
 
 		if targetChannelID == "" && nextCur == "" {
@@ -34,8 +34,6 @@ func loopChannelListAPI(e *execution, isPublic bool, channelName string) (string
 		apiParams.Cursor = nextCur
 
 	}
-
-	return targetChannelID, nil
 }
 
 // Todo: make it multiple options
