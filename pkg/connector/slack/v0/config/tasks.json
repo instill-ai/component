@@ -170,7 +170,9 @@
             "instillUIMultiline": true,
             "instillUIOrder": 0,
             "instillUpstreamTypes": [
-              "value"
+              "value",
+              "reference",
+              "template"
             ],
             "title": "Channel Name",
             "type": "string"
