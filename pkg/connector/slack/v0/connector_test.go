@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"testing"
+	"time"
 
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/pkg/base"
@@ -90,6 +91,7 @@ func TestConnector_ExecuteReadTask(t *testing.T) {
 	bc := base.Connector{Logger: zap.NewNop()}
 	connector := Init(bc)
 
+	mockDateTime, _ := transformTSToDate("1715159449.399879", time.RFC3339)
 	testcases := []struct {
 		name     string
 		input    UserInputReadTask
@@ -112,12 +114,9 @@ func TestConnector_ExecuteReadTask(t *testing.T) {
 						ReplyCount: 1,
 						ThreadReplyMessage: []ThreadReplyMessage{
 							{
-								UserID:   "user456",
-								Message:  "Hello, how are you",
-								// TODO: under the current test structure, the DateTime is hard to mock.
-								// We will think about how to mock it in the future.
-								// DateTime: "2024-05-08T10:10:49+01:00", // For local
-								DateTime: "2024-05-08T09:10:49Z", // For GitHub Action
+								UserID:  "user456",
+								Message: "Hello, how are you",
+								DateTime: mockDateTime,
 							},
 						},
 					},
