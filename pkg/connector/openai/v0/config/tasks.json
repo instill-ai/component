@@ -66,6 +66,14 @@
             "reference",
             "template"
           ],
+          "instillCredentialMap": {
+            "values": [
+              "whisper-1"
+            ],
+            "targets": [
+              "connection.api_key"
+            ]
+          },
           "title": "Model"
         },
         "prompt": {
@@ -452,6 +460,14 @@
       "properties": {
         "model": {
           "$ref": "openai.json#/components/schemas/CreateImageRequest/properties/model",
+          "instillCredentialMap": {
+            "values": [
+              "dall-e-3"
+            ],
+            "targets": [
+              "connection.api_key"
+            ]
+          },
           "instillAcceptFormats": [
             "string"
           ],
@@ -594,6 +610,15 @@
           "instillAcceptFormats": [
             "string"
           ],
+          "instillCredentialMap": {
+            "values": [
+              "tts-1",
+              "tts-1-hd"
+            ],
+            "targets": [
+              "connection.api_key"
+            ]
+          },
           "instillShortDescription": "ID of the model to use",
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
