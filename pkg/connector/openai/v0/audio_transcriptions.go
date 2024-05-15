@@ -21,15 +21,17 @@ type AudioTranscriptionInput struct {
 }
 
 type AudioTranscriptionReq struct {
-	File        []byte   `json:"file"`
-	Model       string   `json:"model"`
-	Prompt      *string  `json:"prompt,omitempty"`
-	Language    *string  `json:"language,omitempty"`
-	Temperature *float64 `json:"temperature,omitempty"`
+	File           []byte   `json:"file"`
+	Model          string   `json:"model"`
+	Prompt         *string  `json:"prompt,omitempty"`
+	Language       *string  `json:"language,omitempty"`
+	Temperature    *float64 `json:"temperature,omitempty"`
+	ResponseFormat string   `json:"response_format,omitempty"`
 }
 
 type AudioTranscriptionResp struct {
-	Text string `json:"text"`
+	Text     string  `json:"text"`
+	Duration float32 `json:"duration"`
 }
 
 func getBytes(req AudioTranscriptionReq) (*bytes.Reader, string, error) {
@@ -40,6 +42,7 @@ func getBytes(req AudioTranscriptionReq) (*bytes.Reader, string, error) {
 		return nil, "", err
 	}
 	util.WriteField(writer, "model", req.Model)
+	util.WriteField(writer, "response_format", req.ResponseFormat)
 	if req.Prompt != nil {
 		util.WriteField(writer, "prompt", *req.Prompt)
 	}

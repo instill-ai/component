@@ -264,6 +264,9 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				Prompt:      inputStruct.Prompt,
 				Language:    inputStruct.Prompt,
 				Temperature: inputStruct.Temperature,
+
+				// Verbosity is passed to extract result duration.
+				ResponseFormat: "verbose_json",
 			})
 			if err != nil {
 				return inputs, err
