@@ -184,21 +184,23 @@ func TaskIDToTitle(id string) string {
 	return cases.Title(language.English).String(title)
 }
 
-func generateComponentTaskCards(tasks map[string]*structpb.Struct) []*pipelinePB.ComponentTask {
+func generateComponentTaskCards(tasks []string, taskStructs map[string]*structpb.Struct) []*pipelinePB.ComponentTask {
 	taskCards := make([]*pipelinePB.ComponentTask, 0, len(tasks))
-	for k := range tasks {
-		title := tasks[k].Fields["title"].GetStringValue()
-		if title == "" {
-			title = TaskIDToTitle(k)
+	for _, k := range tasks {
+		if v, ok := taskStructs[k]; ok {
+			title := v.Fields["title"].GetStringValue()
+			if title == "" {
+				title = TaskIDToTitle(k)
+			}
+
+			description := taskStructs[k].Fields["instillShortDescription"].GetStringValue()
+
+			taskCards = append(taskCards, &pipelinePB.ComponentTask{
+				Name:        k,
+				Title:       title,
+				Description: description,
+			})
 		}
-
-		description := tasks[k].Fields["instillShortDescription"].GetStringValue()
-
-		taskCards = append(taskCards, &pipelinePB.ComponentTask{
-			Name:        k,
-			Title:       title,
-			Description: description,
-		})
 	}
 
 	return taskCards
@@ -420,7 +422,7 @@ func loadTasks(availableTasks []string, tasksJSONBytes []byte) ([]*pipelinePB.Co
 
 		}
 	}
-	tasks := generateComponentTaskCards(taskStructs)
+	tasks := generateComponentTaskCards(availableTasks, taskStructs)
 	return tasks, taskStructs, nil
 }
 

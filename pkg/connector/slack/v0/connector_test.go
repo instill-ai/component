@@ -101,7 +101,8 @@ func TestConnector_ExecuteReadTask(t *testing.T) {
 		{
 			name: "ok to read",
 			input: UserInputReadTask{
-				ChannelName: "test_channel",
+				ChannelName:     "test_channel",
+				StartToReadDate: "2024-05-05",
 			},
 			wantResp: ReadTaskResp{
 				Conversations: []Conversation{
@@ -114,8 +115,8 @@ func TestConnector_ExecuteReadTask(t *testing.T) {
 						ReplyCount: 1,
 						ThreadReplyMessage: []ThreadReplyMessage{
 							{
-								UserID:  "user456",
-								Message: "Hello, how are you",
+								UserID:   "user456",
+								Message:  "Hello, how are you",
 								DateTime: mockDateTime,
 							},
 						},

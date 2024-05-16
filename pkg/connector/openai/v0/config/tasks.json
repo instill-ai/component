@@ -674,6 +674,7 @@
           "instillAcceptFormats": [
             "string"
           ],
+          "default": "alloy",
           "instillShortDescription": "The voice to use when generating the audio",
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
