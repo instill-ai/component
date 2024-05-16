@@ -168,7 +168,7 @@ func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 }
 
 // Generate the model_name enum based on the task
-func (c *component) Definition(sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
+func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
 	oriDef, err := c.Component.GetDefinition(nil, nil)
 	if err != nil {
 		return nil, err

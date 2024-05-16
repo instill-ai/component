@@ -32,9 +32,6 @@ var (
 
 type component struct {
 	base.Component
-
-	// Workaround solution
-	cacheDefinition *pb.ComponentDefinition
 }
 
 type execution struct {
@@ -82,14 +79,6 @@ func getMgmtServerURL(vars map[string]any) string {
 	return ""
 }
 
-// This is a workaround solution for caching the definition in memory if the model list is static.
-func useStaticModelList(vars map[string]any) bool {
-	if v, ok := vars["__STATIC_MODEL_LIST"]; ok {
-		return v.(bool)
-	}
-	return false
-}
-
 func getRequestMetadata(vars map[string]any) metadata.MD {
 	return metadata.Pairs(
 		"Authorization", getHeaderAuthorization(vars),
@@ -105,11 +94,11 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 		return inputs, fmt.Errorf("invalid input")
 	}
 
-	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(e.SystemVariables))
-	if gRPCCLientConn != nil {
-		defer gRPCCLientConn.Close()
+	// TODO, we should move this to CreateExecution
+	gRPCClient, gRPCCientConn := initModelPublicServiceClient(getModelServerURL(e.SystemVariables))
+	if gRPCCientConn != nil {
+		defer gRPCCientConn.Close()
 	}
-
 	mgmtGRPCCLient, mgmtGRPCCLientConn := initMgmtPublicServiceClient(getMgmtServerURL(e.SystemVariables))
 	if mgmtGRPCCLientConn != nil {
 		defer mgmtGRPCCLientConn.Close()
@@ -133,34 +122,34 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 		nsType = "users"
 	}
 
-	modelName := fmt.Sprintf("%s/%s/models/%s", nsType, modelNameSplits[0], modelNameSplits[1])
+	modelName := fmt.Sprintf("%s/%s/models/%s/versions/%s", nsType, modelNameSplits[0], modelNameSplits[1], modelNameSplits[2])
 
 	var result []*structpb.Struct
 	switch e.Task {
 	case commonPB.Task_TASK_UNSPECIFIED.String():
-		result, err = e.executeUnspecified(gRPCCLient, modelName, inputs)
+		result, err = e.executeUnspecified(gRPCClient, modelName, inputs)
 	case commonPB.Task_TASK_CLASSIFICATION.String():
-		result, err = e.executeImageClassification(gRPCCLient, modelName, inputs)
+		result, err = e.executeImageClassification(gRPCClient, modelName, inputs)
 	case commonPB.Task_TASK_DETECTION.String():
-		result, err = e.executeObjectDetection(gRPCCLient, modelName, inputs)
+		result, err = e.executeObjectDetection(gRPCClient, modelName, inputs)
 	case commonPB.Task_TASK_KEYPOINT.String():
-		result, err = e.executeKeyPointDetection(gRPCCLient, modelName, inputs)
+		result, err = e.executeKeyPointDetection(gRPCClient, modelName, inputs)
 	case commonPB.Task_TASK_OCR.String():
-		result, err = e.executeOCR(gRPCCLient, modelName, inputs)
+		result, err = e.executeOCR(gRPCClient, modelName, inputs)
 	case commonPB.Task_TASK_INSTANCE_SEGMENTATION.String():
-		result, err = e.executeInstanceSegmentation(gRPCCLient, modelName, inputs)
+		result, err = e.executeInstanceSegmentation(gRPCClient, modelName, inputs)
 	case commonPB.Task_TASK_SEMANTIC_SEGMENTATION.String():
-		result, err = e.executeSemanticSegmentation(gRPCCLient, modelName, inputs)
+		result, err = e.executeSemanticSegmentation(gRPCClient, modelName, inputs)
 	case commonPB.Task_TASK_TEXT_TO_IMAGE.String():
-		result, err = e.executeTextToImage(gRPCCLient, modelName, inputs)
+		result, err = e.executeTextToImage(gRPCClient, modelName, inputs)
 	case commonPB.Task_TASK_TEXT_GENERATION.String():
-		result, err = e.executeTextGeneration(gRPCCLient, modelName, inputs)
+		result, err = e.executeTextGeneration(gRPCClient, modelName, inputs)
 	case commonPB.Task_TASK_TEXT_GENERATION_CHAT.String():
-		result, err = e.executeTextGenerationChat(gRPCCLient, modelName, inputs)
+		result, err = e.executeTextGenerationChat(gRPCClient, modelName, inputs)
 	case commonPB.Task_TASK_VISUAL_QUESTION_ANSWERING.String():
-		result, err = e.executeVisualQuestionAnswering(gRPCCLient, modelName, inputs)
+		result, err = e.executeVisualQuestionAnswering(gRPCClient, modelName, inputs)
 	case commonPB.Task_TASK_IMAGE_TO_IMAGE.String():
-		result, err = e.executeImageToImage(gRPCCLient, modelName, inputs)
+		result, err = e.executeImageToImage(gRPCClient, modelName, inputs)
 	default:
 		return inputs, fmt.Errorf("unsupported task: %s", e.Task)
 	}
@@ -193,12 +182,7 @@ type ModelsResp struct {
 }
 
 // Generate the `model_name` enum based on the task.
-// This implementation is a temporary solution due to the incomplete feature set of Instill Model.
-// We'll re-implement this after Instill Model is stable.
-func (c *component) Definition(sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
-	if useStaticModelList(sysVars) && c.cacheDefinition != nil {
-		return c.cacheDefinition, nil
-	}
+func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
 
 	oriDef, err := c.Component.GetDefinition(nil, nil)
 	if err != nil {
@@ -240,14 +224,33 @@ func (c *component) Definition(sysVars map[string]any, compConfig *base.Componen
 
 	modelNameMap := map[string]*structpb.ListValue{}
 
-	modelName := &structpb.ListValue{}
 	for _, model := range models {
-		if _, ok := modelNameMap[model.Task.String()]; !ok {
-			modelNameMap[model.Task.String()] = &structpb.ListValue{}
+
+		versions := []*modelPB.ModelVersion{}
+		switch model.Owner.Owner.(type) {
+		case *mgmtPB.Owner_Organization:
+			resp, err := gRPCCLient.ListOrganizationModelVersions(ctx, &modelPB.ListOrganizationModelVersionsRequest{Name: model.Name})
+			if err != nil {
+				return nil, err
+			}
+			versions = resp.Versions
+
+		case *mgmtPB.Owner_User:
+			resp, err := gRPCCLient.ListUserModelVersions(ctx, &modelPB.ListUserModelVersionsRequest{Name: model.Name})
+			if err != nil {
+				return nil, err
+			}
+			versions = resp.Versions
 		}
-		namePaths := strings.Split(model.Name, "/")
-		modelName.Values = append(modelName.Values, structpb.NewStringValue(fmt.Sprintf("%s/%s", namePaths[1], namePaths[3])))
-		modelNameMap[model.Task.String()].Values = append(modelNameMap[model.Task.String()].Values, structpb.NewStringValue(fmt.Sprintf("%s/%s", namePaths[1], namePaths[3])))
+
+		for _, version := range versions {
+			if _, ok := modelNameMap[model.Task.String()]; !ok {
+				modelNameMap[model.Task.String()] = &structpb.ListValue{}
+			}
+			namePaths := strings.Split(version.Name, "/")
+			modelNameMap[model.Task.String()].Values = append(modelNameMap[model.Task.String()].Values, structpb.NewStringValue(fmt.Sprintf("%s/%s/%s", namePaths[1], namePaths[3], namePaths[5])))
+		}
+
 	}
 	for _, sch := range def.Spec.ComponentSpecification.Fields["oneOf"].GetListValue().Values {
 		task := sch.GetStructValue().Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["const"].GetStringValue()
@@ -256,9 +259,7 @@ func (c *component) Definition(sysVars map[string]any, compConfig *base.Componen
 		}
 
 	}
-	if useStaticModelList(sysVars) {
-		c.cacheDefinition = def
-	}
+
 	return def, nil
 }
 
