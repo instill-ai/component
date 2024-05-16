@@ -29,6 +29,7 @@ require (
 	github.com/pkoukk/tiktoken-go v0.1.6
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.0
+	github.com/slack-go/slack v0.12.5
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.24.0
 	golang.org/x/image v0.15.0
@@ -96,7 +97,6 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
-	github.com/slack-go/slack v0.12.5 // indirect
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	github.com/temoto/robotstxt v1.1.1 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
