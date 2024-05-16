@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.17.0-beta](https://github.com/instill-ai/component/compare/v0.16.0-beta...v0.17.0-beta) (2024-05-15)
+
+
+### Features
+
+* add additional attribute in JSON schema for Instill Credit ([#118](https://github.com/instill-ai/component/issues/118)) ([a6751fa](https://github.com/instill-ai/component/commit/a6751fa8737be97e9b895924986798d6429c3986))
+* add global secrets to StabilityAI connector ([#122](https://github.com/instill-ai/component/issues/122)) ([1db0c9f](https://github.com/instill-ai/component/commit/1db0c9f9d34db415e5ba157d1263f25d99944bb9))
+* add sourceTag for pinecone ([#117](https://github.com/instill-ai/component/issues/117)) ([b202da1](https://github.com/instill-ai/component/commit/b202da1ac36d3a7ca1c4cef8dbb41b19a3d8e986))
+* allow global API key on OpenAI connector ([#110](https://github.com/instill-ai/component/issues/110)) ([42bccdd](https://github.com/instill-ai/component/commit/42bccdddf02d4bcc79576762a4bad16fa29c0fb5))
+* implement Slack component ([#120](https://github.com/instill-ai/component/issues/120)) ([1ecff8a](https://github.com/instill-ai/component/commit/1ecff8ac7612d785bf172a414d0768dd4df9c084))
+* **openai:** support gpt-4o model ([#127](https://github.com/instill-ai/component/issues/127)) ([536f5af](https://github.com/instill-ai/component/commit/536f5af2acc3456249da1b35e16f59a46ee071a6))
+* update Instill Credit supported model list ([#123](https://github.com/instill-ai/component/issues/123)) ([0b0cf81](https://github.com/instill-ai/component/commit/0b0cf81a2cc0b01558335d2bad3ffab4dc9911c9))
+
+
+### Bug Fixes
+
+* Fix the bug of setting channelID ([#125](https://github.com/instill-ai/component/issues/125)) ([47bc192](https://github.com/instill-ai/component/commit/47bc192129a7ddae77166d2b8ae987d5c9b2015d))
+* **slack:** add `instillSecret: true` to `token` field ([#126](https://github.com/instill-ai/component/issues/126)) ([7751585](https://github.com/instill-ai/component/commit/7751585698e7388dcaf0e101c55ee6ccb2a19a25))
+
 ## [0.16.0-beta](https://github.com/instill-ai/component/compare/v0.15.0-beta...v0.16.0-beta) (2024-04-30)
 
 
