@@ -143,7 +143,7 @@ participant p as pipeline-backend
 participant db as pipeline-db
 participant c as component
 
-u ->> gw: POST /users/<user>/pipelines/<pipeline_id>/trigger
+u ->> gw: POST /users/<user>/pipelines/<pipeline-id>/trigger
 gw ->> p: forward
 p ->> db: Get recipe
 db ->> p: Recipe
@@ -690,7 +690,7 @@ and create a pipeline.
 - Create a **hello** operator and reference the **trigger** input field by
   adding `${trigger.who}` to the `target` field.
 - In the **response** component, add a `greeting` output value that references
-  the **hello** output by introducing `${hello_0.output.greeting}`.
+  the **hello** output by introducing `${hello-0.output.greeting}`.
 
 If you introduce a `Wombat` string value in the **trigger** component and
 **Run** the pipeline, you should see `Hello, Wombat!` in the response.
@@ -714,7 +714,7 @@ The created pipeline will have the following recipe:
     "greeting": {
       "title": "Greeting",
       "description": "",
-      "value": "${hello_0.output.greeting}",
+      "value": "${hello-0.output.greeting}",
       "instillUIOrder": 0
     }
   },
