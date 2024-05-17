@@ -188,6 +188,9 @@ func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *pi
 	if err != nil {
 		return nil, err
 	}
+	if sysVars == nil && component == nil {
+		return oriDef, nil
+	}
 	def := proto.Clone(oriDef).(*pipelinePB.ConnectorDefinition)
 
 	if getModelServerURL(sysVars) == "" {
