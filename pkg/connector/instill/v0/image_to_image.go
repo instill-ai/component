@@ -1,8 +1,10 @@
 package instill
 
 import (
+	"context"
 	"fmt"
 
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -59,10 +61,16 @@ func (e *execution) executeImageToImage(grpcClient modelPB.ModelPublicServiceCli
 		}
 
 		// only support batch 1
-		taskOutputs, err := trigger(grpcClient, e.SystemVariables, modelName, []*modelPB.TaskInput{{Input: taskInput}})
-		if err != nil {
+		req := modelPB.TriggerUserModelRequest{
+			Name:       modelName,
+			TaskInputs: []*modelPB.TaskInput{{Input: taskInput}},
+		}
+		ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.SystemVariables))
+		res, err := grpcClient.TriggerUserModel(ctx, &req)
+		if err != nil || res == nil {
 			return nil, err
 		}
+		taskOutputs := res.GetTaskOutputs()
 		if len(taskOutputs) <= 0 {
 			return nil, fmt.Errorf("invalid output: %v for model: %s", taskOutputs, modelName)
 		}

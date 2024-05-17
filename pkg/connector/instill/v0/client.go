@@ -1,15 +1,12 @@
 package instill
 
 import (
-	"context"
 	"crypto/tls"
 	"strings"
-	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/metadata"
 
 	mgmtPB "github.com/instill-ai/protogen-go/core/mgmt/v1beta"
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
@@ -60,41 +57,4 @@ func stripProtocolFromURL(url string) string {
 		return url[strings.Index(url, "://")+3:]
 	}
 	return url
-}
-
-func trigger(gRPCClient modelPB.ModelPublicServiceClient, vars map[string]any, modelName string, taskInputs []*modelPB.TaskInput) ([]*modelPB.TaskOutput, error) {
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-	defer cancel()
-
-	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(vars))
-
-	nameSplits := strings.Split(modelName, "/")
-
-	if strings.HasPrefix(modelName, "user") {
-		req := modelPB.TriggerUserModelRequest{
-			Name:       strings.Join(nameSplits[0:4], "/"),
-			TaskInputs: taskInputs,
-			Version:    nameSplits[5],
-		}
-
-		res, err := gRPCClient.TriggerUserModel(ctx, &req)
-		if err != nil || res == nil {
-			return nil, err
-		}
-		return res.TaskOutputs, nil
-	} else {
-		req := modelPB.TriggerOrganizationModelRequest{
-			Name:       strings.Join(nameSplits[0:4], "/"),
-			TaskInputs: taskInputs,
-			Version:    nameSplits[5],
-		}
-
-		res, err := gRPCClient.TriggerOrganizationModel(ctx, &req)
-		if err != nil || res == nil {
-			return nil, err
-		}
-		return res.TaskOutputs, nil
-	}
-
 }
