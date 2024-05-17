@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.0-beta](https://github.com/instill-ai/component/compare/v0.17.0-beta...v0.18.0-beta) (2024-05-17)
+
+
+### Features
+
+* **instill:** adopt latest Instill Model endpoints ([#133](https://github.com/instill-ai/component/issues/133)) ([a53661c](https://github.com/instill-ai/component/commit/a53661c565b492c31d319e3f8946c17e5176eae9))
+
 ## [0.17.0-beta](https://github.com/instill-ai/component/compare/v0.16.0-beta...v0.17.0-beta) (2024-05-15)
 
 
