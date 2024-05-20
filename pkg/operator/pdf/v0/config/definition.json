@@ -1,0 +1,18 @@
+{
+  "available_tasks": [
+    "TASK_CONVERT_PDF_TO_MARKDOWN"
+  ],
+  "custom": false,
+  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/pdf",
+  "icon": "assets/pdf.svg",
+  "icon_url": "",
+  "id": "pdf",
+  "public": true,
+  "spec": {},
+  "title": "Pdf",
+  "uid": "e5b290ae-ad53-47c9-a64e-efbc5358520b",
+  "version": "0.1.1",
+  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/pdf/v0",
+  "description": "transform PDF to markdwon format",
+  "release_stage": "RELEASE_STAGE_ALPHA"
+}
