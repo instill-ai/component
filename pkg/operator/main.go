@@ -12,6 +12,7 @@ import (
 	"github.com/instill-ai/component/pkg/operator/end/v0"
 	"github.com/instill-ai/component/pkg/operator/image/v0"
 	"github.com/instill-ai/component/pkg/operator/json/v0"
+	"github.com/instill-ai/component/pkg/operator/pdf/v0"
 	"github.com/instill-ai/component/pkg/operator/start/v0"
 	"github.com/instill-ai/component/pkg/operator/text/v0"
 
@@ -50,6 +51,7 @@ func Init(logger *zap.Logger) *Store {
 		opStore.Import(json.Init(baseOp))
 		opStore.Import(image.Init(baseOp))
 		opStore.Import(text.Init(baseOp))
+		opStore.Import(pdf.Init(baseOp))
 
 	})
 	return opStore

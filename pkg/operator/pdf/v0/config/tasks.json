@@ -33,34 +33,25 @@
       "instillUIOrder": 0,
       "properties": {
         "body": {
-          "description": "Plain text converted from the document",
+          "description": "Markdown text converted from the pdf document",
           "instillFormat": "string",
           "instillUIMultiline": true,
           "instillUIOrder": 0,
           "title": "Body",
           "type": "string"
         },
-        "error": {
-          "description": "Error message if any during the conversion process",
-          "instillFormat": "string",
-          "instillUIMultiline": true,
-          "instillUIOrder": 3,
-          "title": "Error",
-          "type": "string"
-        },
-        "meta": {
-          "description": "Metadata extracted from the document",
+        "metadata": {
+          "description": "Metadata extracted from the pdf document",
           "instillFormat": "semi-structured/object",
           "instillUIOrder": 1,
           "required": [],
-          "title": "Meta",
+          "title": "Metadata",
           "type": "object"
         }
       },
       "required": [
         "body",
-        "meta",
-        "error"
+        "metadata"
       ],
       "title": "Output",
       "type": "object"

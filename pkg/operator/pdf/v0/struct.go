@@ -1,15 +1,18 @@
 package pdf
 
+type PdfTransformerOutput struct {
+	Body     string            `json:"body"`
+	Metadata map[string]string `json:"metadata"`
+}
+
 type ConvertPdfToMarkdownInput struct {
 	// Pdf: PDF document to convert
-	Pdf string `json:"pdf"`
+	Doc string `json:"doc"`
 }
 
 type ConvertPdfToMarkdownOutput struct {
 	// Markdown: Markdown content converted from the PDF document
-	Markdown string `json:"markdown"`
+	Body string `json:"body"`
 	// Meta: Metadata extracted from the PDF document
-	Meta map[string]string `json:"meta"`
-	// Error: Error message if any during the conversion process
-	Error string `json:"error"`
+	Metadata map[string]string `json:"metadata"`
 }
