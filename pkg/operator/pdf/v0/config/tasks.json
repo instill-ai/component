@@ -39,19 +39,10 @@
           "instillUIOrder": 0,
           "title": "Body",
           "type": "string"
-        },
-        "metadata": {
-          "description": "Metadata extracted from the pdf document",
-          "instillFormat": "semi-structured/object",
-          "instillUIOrder": 1,
-          "required": [],
-          "title": "Metadata",
-          "type": "object"
         }
       },
       "required": [
-        "body",
-        "metadata"
+        "body"
       ],
       "title": "Output",
       "type": "object"

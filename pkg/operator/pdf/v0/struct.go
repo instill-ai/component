@@ -16,5 +16,7 @@ type ConvertPdfToMarkdownOutput struct {
 	// Markdown: Markdown content converted from the PDF document
 	Body string `json:"body"`
 	// Metadata: Metadata extracted from the PDF document
-	Metadata map[string]string `json:"metadata"`
+	
+	// TODO: revert it when target the bug.
+	// Metadata map[string]string `json:"metadata"`
 }
