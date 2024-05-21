@@ -4,6 +4,7 @@ package pdf
 import (
 	"context"
 	"fmt"
+	"os/exec"
 	"sync"
 
 	_ "embed" // embed
@@ -66,7 +67,12 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			if err != nil {
 				return nil, err
 			}
-			outputStruct, err := convertPdfToMarkdown(inputStruct)
+
+			scriptPath := "/component/pkg/operator/pdf/v0/python/pdfTransformer.py"
+			pythonInterpreter := "/opt/venv/bin/python"
+			cmd := exec.Command(pythonInterpreter, scriptPath)
+
+			outputStruct, err := convertPdfToMarkdown(inputStruct, cmd)
 			if err != nil {
 				return nil, err
 			}

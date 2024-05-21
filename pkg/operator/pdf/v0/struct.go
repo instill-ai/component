@@ -1,5 +1,11 @@
 package pdf
 
+import "io"
+
+type CommandRunner interface {
+	CombinedOutput() ([]byte, error)
+	StdinPipe() (io.WriteCloser, error)
+}
 type PdfTransformerOutput struct {
 	Body     string            `json:"body"`
 	Metadata map[string]string `json:"metadata"`

@@ -9,7 +9,7 @@
       "instillUIOrder": 0,
       "properties": {
         "doc": {
-          "description": "PDF",
+          "description": "PDF file",
           "instillAcceptFormats": [
             "*/*"
           ],

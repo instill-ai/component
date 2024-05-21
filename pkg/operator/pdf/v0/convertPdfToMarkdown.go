@@ -3,23 +3,18 @@ package pdf
 import (
 	"encoding/base64"
 	"encoding/json"
-	"os/exec"
 
 	"github.com/instill-ai/component/pkg/base"
 )
 
-func convertPdfToMarkdown(input ConvertPdfToMarkdownInput) (ConvertPdfToMarkdownOutput, error) {
+func convertPdfToMarkdown(input ConvertPdfToMarkdownInput, cmdRunner CommandRunner) (ConvertPdfToMarkdownOutput, error) {
 
 	b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(input.Doc))
 	if err != nil {
 		return ConvertPdfToMarkdownOutput{}, err
 	}
 
-	scriptPath := "/component/pkg/operator/pdf/v0/python/pdfTransformer.py"
-	pythonInterpreter := "/opt/venv/bin/python"
-
-	cmd := exec.Command(pythonInterpreter, scriptPath)
-	stdin, err := cmd.StdinPipe()
+	stdin, err := cmdRunner.StdinPipe()
 	if err != nil {
 		return ConvertPdfToMarkdownOutput{}, err
 	}
@@ -36,14 +31,14 @@ func convertPdfToMarkdown(input ConvertPdfToMarkdownInput) (ConvertPdfToMarkdown
 		errChan <- nil
 	}()
 
-	outputBytes, err := cmd.CombinedOutput()
+	outputBytes, err := cmdRunner.CombinedOutput()
 	if err != nil {
 		return ConvertPdfToMarkdownOutput{}, err
 	}
 
 	writeErr := <-errChan
 	if writeErr != nil {
-		return ConvertPdfToMarkdownOutput{}, err
+		return ConvertPdfToMarkdownOutput{}, writeErr
 	}
 
 	var output PdfTransformerOutput
