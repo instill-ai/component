@@ -159,6 +159,7 @@ class PdfTransformer:
                     result += "\n\n"
                     result += self.transform_table_markdown(table)
                     result += "\n\n"
+                    self.tables.remove(table)
                 to_be_processed_table = []
                 
                 result += self.line_process(line, i, lines, result)
@@ -172,6 +173,16 @@ class PdfTransformer:
                 result += self.insert_image(line, lines[i+1]) 
             else:
                 result += self.insert_image(line, None)
+        if self.tables:
+            processed_table = []
+            for table in self.tables:
+                result += "\n\n"
+                result += self.transform_table_markdown(table)
+                result += "\n\n"
+                processed_table.append(table)
+            for table in processed_table:
+                self.tables.remove(table)
+                
         return result
 
     def line_process(self, line, i, lines, current_result):
