@@ -41,16 +41,11 @@ func convertPdfToMarkdown(input ConvertPdfToMarkdownInput, cmdRunner CommandRunn
 		return ConvertPdfToMarkdownOutput{}, writeErr
 	}
 
-	var output PdfTransformerOutput
+	var output ConvertPdfToMarkdownOutput
 	err = json.Unmarshal(outputBytes, &output)
 	if err != nil {
 		return ConvertPdfToMarkdownOutput{}, err
 	}
 
-	resp := ConvertPdfToMarkdownOutput{
-		Body:     output.Body,
-		Metadata: output.Metadata,
-	}
-
-	return resp, nil
+	return output, nil
 }

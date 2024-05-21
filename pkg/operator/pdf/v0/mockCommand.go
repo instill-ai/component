@@ -13,7 +13,7 @@ type MockWriteCloser struct {
 
 func (m *MockCommandRunner) CombinedOutput() ([]byte, error) {
 
-	output := PdfTransformerOutput{
+	output := ConvertPdfToMarkdownOutput{
 		Body: "# Test\n\nThis is a test document.\n\n",
 		Metadata: map[string]string{
 			"title": "Test",
