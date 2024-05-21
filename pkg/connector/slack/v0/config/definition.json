@@ -15,7 +15,7 @@
       "additionalProperties": false,
       "properties": {
         "token": {
-          "description": "Please go to the Slack API tutorial to create a Slack App, set the scope of token, and get the token.",
+          "description": "Fill in your Slack app access token. For more information about how to access to create app tokens, please refer to the Slack API documentation.",
           "instillUpstreamTypes": [
             "reference"
           ],
@@ -24,7 +24,7 @@
           ],
           "instillSecret": true,
           "instillUIOrder": 0,
-          "title": "token",
+          "title": "Token",
           "type": "string"
         }
       },
