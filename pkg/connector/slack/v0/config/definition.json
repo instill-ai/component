@@ -15,7 +15,7 @@
       "additionalProperties": false,
       "properties": {
         "token": {
-          "description": "Please follow this [Slack tutorial](https://api.slack.com/tutorials/tracks/posting-messages-with-curl) to create a Slack app, set the scope of tokens, and get the token.",
+          "description": "Please go to the Slack API tutorial to create a Slack App, set the scope of token, and get the token.",
           "instillUpstreamTypes": [
             "reference"
           ],
