@@ -21,7 +21,7 @@ func (m mockWriteCloser) Close() error {
 	return nil
 }
 
-func TestConvertPdfToText(t *testing.T) {
+func TestConvertPDFToText(t *testing.T) {
 
 	test := struct {
 		name     string

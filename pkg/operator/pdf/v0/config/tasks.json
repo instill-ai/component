@@ -1,10 +1,10 @@
 {
   "TASK_CONVERT_PDF_TO_MARKDOWN": {
-    "instillShortDescription": "Convert PDF to Markown format.",
+    "instillShortDescription": "Convert PDF to Markdown format.",
     "input": {
       "description": "Input",
       "instillEditOnNodeFields": [
-        "doc"
+        "pdf"
       ],
       "instillUIOrder": 0,
       "properties": {
@@ -23,7 +23,7 @@
         }
       },
       "required": [
-        "doc"
+        "pdf"
       ],
       "title": "Input",
       "type": "object"
