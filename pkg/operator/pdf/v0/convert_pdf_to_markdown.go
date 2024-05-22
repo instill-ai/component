@@ -8,7 +8,7 @@ import (
 	"github.com/instill-ai/component/pkg/base"
 )
 
-type CommandRunner interface {
+type commandRunner interface {
 	CombinedOutput() ([]byte, error)
 	StdinPipe() (io.WriteCloser, error)
 }
@@ -27,7 +27,7 @@ type convertPDFToMarkdownOutput struct {
 	// Metadata map[string]string `json:"metadata"`
 }
 
-func convertPDFToMarkdown(input convertPDFToMarkdownInput, cmdRunner CommandRunner) (convertPDFToMarkdownOutput, error) {
+func convertPDFToMarkdown(input convertPDFToMarkdownInput, cmdRunner commandRunner) (convertPDFToMarkdownOutput, error) {
 
 	b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(input.PFD))
 	if err != nil {
