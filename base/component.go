@@ -522,22 +522,22 @@ func checkFreeForm(compSpec *structpb.Struct) bool {
 }
 
 type ConnectorComponent struct {
-	Type       string                          `json:"type"`
-	Task       string                          `json:"task"`
-	Input      *structpb.Struct                `json:"input"`
+	Type       string                          `json:"type,omitempty"`
+	Task       string                          `json:"task,omitempty"`
+	Input      *structpb.Struct                `json:"input,omitempty"`
 	Condition  *string                         `json:"condition,omitempty"`
 	Connection *structpb.Struct                `json:"connection,omitempty"`
-	Metadata   datatypes.JSON                  `json:"metadata"`
-	Definition *pipelinePB.ConnectorDefinition `json:"definition"`
+	Metadata   datatypes.JSON                  `json:"metadata,omitempty"`
+	Definition *pipelinePB.ConnectorDefinition `json:"definition,omitempty"`
 }
 
 type OperatorComponent struct {
-	Type       string                         `json:"type"`
-	Task       string                         `json:"task"`
-	Input      *structpb.Struct               `json:"input"`
+	Type       string                         `json:"type,omitempty"`
+	Task       string                         `json:"task,omitempty"`
+	Input      *structpb.Struct               `json:"input,omitempty"`
 	Condition  *string                        `json:"condition,omitempty"`
-	Metadata   datatypes.JSON                 `json:"metadata"`
-	Definition *pipelinePB.OperatorDefinition `json:"definition"`
+	Metadata   datatypes.JSON                 `json:"metadata,omitempty"`
+	Definition *pipelinePB.OperatorDefinition `json:"definition,omitempty"`
 }
 
 func (c *ConnectorComponent) IsComponent() {}
