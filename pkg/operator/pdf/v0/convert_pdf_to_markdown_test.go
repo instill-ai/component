@@ -10,17 +10,6 @@ import (
 	"github.com/instill-ai/component/pkg/mock"
 )
 
-type mockWriteCloser struct {
-}
-
-func (m mockWriteCloser) Write(p []byte) (n int, err error) {
-	return len(p), nil
-}
-
-func (m mockWriteCloser) Close() error {
-	return nil
-}
-
 func TestConvertPDFToText(t *testing.T) {
 
 	test := struct {
@@ -68,12 +57,6 @@ func TestConvertPDFToText(t *testing.T) {
 
 		c.Assert(output.Body, qt.Equals, "# Test\n\nThis is a test document.\n\n")
 
-		// TODO: revert it when target the bug.
-		// https://linear.app/instill-ai/issue/INS-3098/[component][pdf-operator]-add-task-convert-to-markdown#comment-dc17f0f3
-		// if output.Metadata == nil {
-		// 	t.Fatalf("expected non-nil metadata")
-		// 	return
-		// }
 	})
 
 }
