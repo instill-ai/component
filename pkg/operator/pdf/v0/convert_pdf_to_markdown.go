@@ -14,7 +14,7 @@ type commandRunner interface {
 }
 
 type convertPDFToMarkdownInput struct {
-	PFD string `json:"pdf"`
+	PDF string `json:"pdf"`
 }
 
 type convertPDFToMarkdownOutput struct {
@@ -22,14 +22,14 @@ type convertPDFToMarkdownOutput struct {
 	Body string `json:"body"`
 	// Metadata: Metadata extracted from the PDF document
 
-	// https://linear.app/instill-ai/issue/INS-3098/[component][pdf-operator]-add-task-convert-to-markdown#comment-dc17f0f3
 	// TODO: revert it when target the bug.
+	// https://linear.app/instill-ai/issue/INS-3098/[component][pdf-operator]-add-task-convert-to-markdown#comment-dc17f0f3
 	// Metadata map[string]string `json:"metadata"`
 }
 
 func convertPDFToMarkdown(input convertPDFToMarkdownInput, cmdRunner commandRunner) (convertPDFToMarkdownOutput, error) {
 
-	b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(input.PFD))
+	b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(input.PDF))
 	if err != nil {
 		return convertPDFToMarkdownOutput{}, err
 	}
