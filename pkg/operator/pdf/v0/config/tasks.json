@@ -1,6 +1,6 @@
 {
   "TASK_CONVERT_PDF_TO_MARKDOWN": {
-    "instillShortDescription": "Convert pdf to markdwon format.",
+    "instillShortDescription": "Convert PDF to Markown format.",
     "input": {
       "description": "Input",
       "instillEditOnNodeFields": [
@@ -8,7 +8,7 @@
       ],
       "instillUIOrder": 0,
       "properties": {
-        "doc": {
+        "pdf": {
           "description": "PDF file",
           "instillAcceptFormats": [
             "*/*"
@@ -33,7 +33,7 @@
       "instillUIOrder": 0,
       "properties": {
         "body": {
-          "description": "Markdown text converted from the pdf document",
+          "description": "Markdown text converted from the PDF document",
           "instillFormat": "string",
           "instillUIMultiline": true,
           "instillUIOrder": 0,

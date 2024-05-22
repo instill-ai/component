@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"sync"
 
-	_ "embed" // embed
+	_ "embed"
 
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -15,7 +15,9 @@ import (
 )
 
 const (
-	taskConvertPdfToMarkdown string = "TASK_CONVERT_PDF_TO_MARKDOWN"
+	taskconvertPDFToMarkdown string = "TASK_CONVERT_PDF_TO_MARKDOWN"
+	scriptPath               string = "/component/pkg/operator/pdf/v0/python/pdf_transformer.py"
+	pythonInterpreter        string = "/opt/venv/bin/python"
 )
 
 var (
@@ -27,12 +29,10 @@ var (
 	op        *operator
 )
 
-// Operator is the derived operator
 type operator struct {
 	base.Operator
 }
 
-// Execution is the derived execution
 type execution struct {
 	base.OperatorExecution
 }
@@ -49,6 +49,7 @@ func Init(bo base.Operator) *operator {
 	return op
 }
 
+// CreateExecution creates an execution
 func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
 		OperatorExecution: base.OperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
@@ -61,18 +62,16 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 	for _, input := range inputs {
 		switch e.Task {
-		case taskConvertPdfToMarkdown:
-			inputStruct := ConvertPdfToMarkdownInput{}
+		case taskconvertPDFToMarkdown:
+			inputStruct := convertPDFToMarkdownInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
 				return nil, err
 			}
 
-			scriptPath := "/component/pkg/operator/pdf/v0/python/pdfTransformer.py"
-			pythonInterpreter := "/opt/venv/bin/python"
 			cmd := exec.Command(pythonInterpreter, scriptPath)
 
-			outputStruct, err := convertPdfToMarkdown(inputStruct, cmd)
+			outputStruct, err := convertPDFToMarkdown(inputStruct, cmd)
 			if err != nil {
 				return nil, err
 			}
