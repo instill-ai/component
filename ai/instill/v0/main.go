@@ -195,7 +195,7 @@ type ModelsResp struct {
 // Generate the `model_name` enum based on the task.
 // This implementation is a temporary solution due to the incomplete feature set of Instill Model.
 // We'll re-implement this after Instill Model is stable.
-func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *base.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	if useStaticModelList(sysVars) && c.cacheDefinition != nil {
 		return c.cacheDefinition, nil
 	}

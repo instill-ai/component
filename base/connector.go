@@ -22,7 +22,7 @@ type IConnector interface {
 
 	// Note: Some content in the definition JSON schema needs to be generated
 	// by sysVars or component setting.
-	GetConnectorDefinition(sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
+	GetConnectorDefinition(sysVars map[string]any, component *ConnectorComponent) (*pipelinePB.ConnectorDefinition, error)
 
 	CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*ExecutionWrapper, error)
 	Test(sysVars map[string]any, connection *structpb.Struct) error
@@ -52,7 +52,7 @@ func (c *Connector) GetUID() uuid.UUID {
 func (c *Connector) GetLogger() *zap.Logger {
 	return c.Logger
 }
-func (c *Connector) GetConnectorDefinition(sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (c *Connector) GetConnectorDefinition(sysVars map[string]any, component *ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	return c.definition, nil
 }
 

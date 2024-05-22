@@ -17,7 +17,7 @@ require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/gojuno/minimock/v3 v3.3.6
 	github.com/h2non/filetype v1.1.3
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240423142304-54b986803884
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240522015713-a8d62437e7b5
 	github.com/instill-ai/x v0.4.0-alpha
 	github.com/itchyny/gojq v0.12.14
 	github.com/lestrrat-go/jspointer v0.0.0-20181205001929-82fadba7561c
@@ -38,6 +38,7 @@ require (
 	google.golang.org/api v0.172.0
 	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.33.0
+	gorm.io/datatypes v1.2.0
 )
 
 require (
@@ -62,6 +63,7 @@ require (
 	github.com/gigawattio/window v0.0.0-20180317192513-0f5467e35573 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
@@ -77,6 +79,8 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0 // indirect
 	github.com/itchyny/timefmt-go v0.1.5 // indirect
 	github.com/jaytaylor/html2text v0.0.0-20200412013138-3577fbdbcff7 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/klauspost/compress v1.17.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
@@ -124,4 +128,6 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20240401170217-c3f982113cda // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240325203815-454cdb8f5daa // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gorm.io/driver/mysql v1.4.7 // indirect
+	gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11 // indirect
 )

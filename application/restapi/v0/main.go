@@ -167,7 +167,7 @@ func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) er
 }
 
 // Generate the model_name enum based on the task
-func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *base.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	oriDef, err := c.Connector.GetConnectorDefinition(nil, nil)
 	if err != nil {
 		return nil, err

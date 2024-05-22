@@ -19,7 +19,7 @@ type IOperator interface {
 
 	// Note: Some content in the definition JSON schema needs to be generated
 	// by sysVars or component setting.
-	GetOperatorDefinition(sysVars map[string]any, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error)
+	GetOperatorDefinition(sysVars map[string]any, component *OperatorComponent) (*pipelinePB.OperatorDefinition, error)
 
 	CreateExecution(sysVars map[string]any, task string) (*ExecutionWrapper, error)
 }
@@ -50,7 +50,7 @@ func (o *Operator) GetTaskOutputSchemas() map[string]string {
 	return o.taskOutputSchemas
 }
 
-func (o *Operator) GetOperatorDefinition(sysVars map[string]any, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
+func (o *Operator) GetOperatorDefinition(sysVars map[string]any, component *OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
 	return o.definition, nil
 }
 

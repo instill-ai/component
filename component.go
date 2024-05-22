@@ -149,7 +149,7 @@ func (s *Store) CreateExecution(defUID uuid.UUID, sysVars map[string]any, connec
 }
 
 // GetOperatorDefinitionByUID returns a operator definition by its UID.
-func (s *Store) GetOperatorDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
+func (s *Store) GetOperatorDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, component *base.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
 	if op, ok := s.operatorUIDMap[defUID]; ok {
 		return op.op.GetOperatorDefinition(sysVars, component)
 	}
@@ -157,7 +157,7 @@ func (s *Store) GetOperatorDefinitionByUID(defUID uuid.UUID, sysVars map[string]
 }
 
 // GetOperatorDefinitionByID returns a operator definition by its ID.
-func (s *Store) GetOperatorDefinitionByID(defID string, sysVars map[string]any, component *pipelinePB.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
+func (s *Store) GetOperatorDefinitionByID(defID string, sysVars map[string]any, component *base.OperatorComponent) (*pipelinePB.OperatorDefinition, error) {
 	if op, ok := s.operatorIDMap[defID]; ok {
 		return op.op.GetOperatorDefinition(sysVars, component)
 	}
@@ -180,7 +180,7 @@ func (s *Store) ListOperatorDefinitions(sysVars map[string]any, returnTombstone 
 }
 
 // GetConnectorDefinitionByUID returns a connector definition by its UID.
-func (s *Store) GetConnectorDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (s *Store) GetConnectorDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, component *base.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	if con, ok := s.connectorUIDMap[defUID]; ok {
 		return con.con.GetConnectorDefinition(sysVars, component)
 	}
@@ -188,7 +188,7 @@ func (s *Store) GetConnectorDefinitionByUID(defUID uuid.UUID, sysVars map[string
 }
 
 // GetConnectorDefinitionByID returns a connector definition by its ID.
-func (s *Store) GetConnectorDefinitionByID(defID string, sysVars map[string]any, component *pipelinePB.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (s *Store) GetConnectorDefinitionByID(defID string, sysVars map[string]any, component *base.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
 	if con, ok := s.connectorIDMap[defID]; ok {
 		return con.con.GetConnectorDefinition(sysVars, component)
 	}

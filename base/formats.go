@@ -181,6 +181,7 @@ func CompileInstillFormat(sch *structpb.Struct) error {
 		if k == "instillFormat" {
 			if strings.HasPrefix(v.GetStringValue(), "array:") {
 				itemInstillFormat := strings.Split(v.GetStringValue(), ":")[1]
+				sch.Fields["items"] = structpb.NewStructValue(&structpb.Struct{Fields: make(map[string]*structpb.Value)})
 				sch.Fields["items"].GetStructValue().Fields["instillFormat"], err = structpb.NewValue(itemInstillFormat)
 				if err != nil {
 					return err

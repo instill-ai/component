@@ -13,6 +13,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
+	"gorm.io/datatypes"
 
 	"github.com/instill-ai/component/internal/jsonref"
 
@@ -518,4 +519,33 @@ func checkFreeForm(compSpec *structpb.Struct) bool {
 	}
 
 	return false
+}
+
+type ConnectorComponent struct {
+	Type       string                          `json:"type"`
+	Task       string                          `json:"task"`
+	Input      *structpb.Struct                `json:"input"`
+	Condition  *string                         `json:"condition,omitempty"`
+	Connection *structpb.Struct                `json:"connection,omitempty"`
+	Metadata   datatypes.JSON                  `json:"metadata"`
+	Definition *pipelinePB.ConnectorDefinition `json:"definition"`
+}
+
+type OperatorComponent struct {
+	Type       string                         `json:"type"`
+	Task       string                         `json:"task"`
+	Input      *structpb.Struct               `json:"input"`
+	Condition  *string                        `json:"condition,omitempty"`
+	Metadata   datatypes.JSON                 `json:"metadata"`
+	Definition *pipelinePB.OperatorDefinition `json:"definition"`
+}
+
+func (c *ConnectorComponent) IsComponent() {}
+func (c *OperatorComponent) IsComponent()  {}
+
+func (c *ConnectorComponent) GetCondition() *string {
+	return c.Condition
+}
+func (c *OperatorComponent) GetCondition() *string {
+	return c.Condition
 }
