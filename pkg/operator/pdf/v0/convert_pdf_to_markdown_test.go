@@ -11,7 +11,7 @@ import (
 )
 
 func TestConvertPDFToText(t *testing.T) {
-
+	c := qt.New(t)
 	test := struct {
 		name     string
 		filepath string
@@ -20,8 +20,7 @@ func TestConvertPDFToText(t *testing.T) {
 		filepath: "testdata/test.pdf",
 	}
 
-	t.Run(test.name, func(t *testing.T) {
-		c := qt.New(t)
+	c.Run(test.name, func(c *qt.C) {
 		fakePDF := "# Test\n\nThis is a test document.\n\n"
 		b, err := json.Marshal(fakePDF)
 		c.Assert(err, qt.IsNil)
