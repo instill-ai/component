@@ -37,7 +37,6 @@ type execution struct {
 	base.OperatorExecution
 }
 
-// Init initializes the operator
 func Init(bo base.Operator) *operator {
 	once.Do(func() {
 		op = &operator{Operator: bo}
@@ -49,14 +48,12 @@ func Init(bo base.Operator) *operator {
 	return op
 }
 
-// CreateExecution creates an execution
 func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
 		OperatorExecution: base.OperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
 	}}, nil
 }
 
-// Execute executes the derived execution
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 
