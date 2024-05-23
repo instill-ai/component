@@ -19,10 +19,6 @@ type convertPDFToMarkdownInput struct {
 
 type convertPDFToMarkdownOutput struct {
 	Body string `json:"body"`
-
-	// TODO: revert it when target the bug.
-	// https://linear.app/instill-ai/issue/INS-3098/[component][pdf-operator]-add-task-convert-to-markdown#comment-dc17f0f3
-	// Metadata map[string]string `json:"metadata"`
 }
 
 func convertPDFToMarkdown(input convertPDFToMarkdownInput, cmdRunner commandRunner) (convertPDFToMarkdownOutput, error) {

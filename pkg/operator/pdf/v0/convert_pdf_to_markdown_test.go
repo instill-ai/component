@@ -40,11 +40,6 @@ func TestConvertPDFToText(t *testing.T) {
 
 		mockOutput := convertPDFToMarkdownOutput{
 			Body: "# Test\n\nThis is a test document.\n\n",
-			// TODO: revert it when target the bug.
-			// https://linear.app/instill-ai/issue/INS-3098/[component][pdf-operator]-add-task-convert-to-markdown#comment-dc17f0f3
-			// Metadata: map[string]string{
-			// 	"title": "Test",
-			// },
 		}
 		mockOutputBytes, err := json.Marshal(mockOutput)
 		c.Assert(err, qt.IsNil)
