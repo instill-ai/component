@@ -15,9 +15,9 @@ import (
 )
 
 const (
-	taskconvertPDFToMarkdown string = "TASK_CONVERT_PDF_TO_MARKDOWN"
-	scriptPath               string = "/component/pkg/operator/pdf/v0/python/pdf_transformer.py"
-	pythonInterpreter        string = "/opt/venv/bin/python"
+	taskConvertToMarkdown string = "TASK_CONVERT_TO_MARKDOWN"
+	scriptPath            string = "/component/pkg/operator/pdf/v0/python/pdf_transformer.py"
+	pythonInterpreter     string = "/opt/venv/bin/python"
 )
 
 var (
@@ -59,7 +59,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 	for _, input := range inputs {
 		switch e.Task {
-		case taskconvertPDFToMarkdown:
+		case taskConvertToMarkdown:
 			inputStruct := convertPDFToMarkdownInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {

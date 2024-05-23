@@ -1,5 +1,5 @@
 {
-  "TASK_CONVERT_PDF_TO_MARKDOWN": {
+  "TASK_CONVERT_TO_MARKDOWN": {
     "instillShortDescription": "Convert PDF to Markdown format.",
     "input": {
       "description": "Input",

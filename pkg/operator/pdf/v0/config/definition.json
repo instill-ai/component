@@ -1,6 +1,6 @@
 {
   "available_tasks": [
-    "TASK_CONVERT_PDF_TO_MARKDOWN"
+    "TASK_CONVERT_TO_MARKDOWN"
   ],
   "custom": false,
   "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/pdf",
