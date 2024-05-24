@@ -1,5 +1,5 @@
 //go:generate compogen readme --operator ./config ./README.mdx
-package pdf
+package document
 
 import (
 	"context"
