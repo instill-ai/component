@@ -25,9 +25,9 @@ In VDP, a **pipeline** is a DAG (Directed Acyclic Graph) consisting of multiple
 
 ```mermaid
 flowchart LR
-    s[Trigger] --> c1[OpenAI Connector]
-    c1 --> c2[Stability AI Connector]
-    c1 --> c3[MySQL Connector]
+    s[Trigger] --> c1[OpenAI Component]
+    c1 --> c2[Stability AI Component]
+    c1 --> c3[MySQL Component]
     c1 --> e[Response]
     c2 --> e
 ```
