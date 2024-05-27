@@ -50,7 +50,7 @@ There are different types of component: **AI**, **Data**, **Application**, **Ope
 
 #### Operator
 
-**Operators** perform data transformations inside the pipeline. They are defined
+**Operator** components perform data transformations inside the pipeline. They are defined
   and initialized in the [operator](../operator) package.
 
 #### Iterator
