@@ -16,7 +16,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/russross/blackfriday/v2"
 
-	component "github.com/instill-ai/component/pkg/base"
+	componentbase "github.com/instill-ai/component/base"
 )
 
 const (
@@ -53,7 +53,7 @@ func (g *READMEGenerator) parseDefinition(configDir string) (d definition, err e
 		return d, err
 	}
 
-	renderedDefinitionJSON, err := component.RenderJSON(definitionJSON, nil)
+	renderedDefinitionJSON, err := componentbase.RenderJSON(definitionJSON, nil)
 	if err != nil {
 		return d, err
 	}
@@ -94,7 +94,7 @@ func (g *READMEGenerator) parseTasks(configDir string) (map[string]task, error) 
 
 	}
 
-	renderedTasksJSON, err := component.RenderJSON(tasksJSON, additionalJSONs)
+	renderedTasksJSON, err := componentbase.RenderJSON(tasksJSON, additionalJSONs)
 	if err != nil {
 		return nil, err
 	}
@@ -237,7 +237,7 @@ func parseREADMETasks(availableTasks []string, tasks map[string]task) ([]readmeT
 		}
 
 		if rt.Title = t.Title; rt.Title == "" {
-			rt.Title = component.TaskIDToTitle(at)
+			rt.Title = componentbase.TaskIDToTitle(at)
 		}
 
 		readmeTasks[i] = rt
