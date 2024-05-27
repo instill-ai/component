@@ -36,7 +36,7 @@ var (
 	compStore *Store
 )
 
-// Store holds in-memory information about the initialized connectors and operators.
+// Store holds in-memory information about the initialized components.
 type Store struct {
 	operatorUIDs   []uuid.UUID
 	operatorUIDMap map[uuid.UUID]*operator
@@ -61,8 +61,8 @@ type connector struct {
 // connection.
 type ConnectionSecrets map[string]map[string]any
 
-// Init initializes the different operator components and loads their
-// information to memory.
+// Init initializes the components implemented in this repository and loads
+// their information to memory.
 func Init(
 	logger *zap.Logger,
 	secrets ConnectionSecrets,
@@ -119,7 +119,7 @@ func Init(
 	return compStore
 }
 
-// Import loads the operator definitions into memory.
+// ImportOperator loads the operator definitions into memory.
 func (s *Store) ImportOperator(op base.IOperator) {
 	o := &operator{op: op}
 	s.operatorUIDMap[op.GetUID()] = o
@@ -127,7 +127,7 @@ func (s *Store) ImportOperator(op base.IOperator) {
 	s.operatorUIDs = append(s.operatorUIDs, op.GetUID())
 }
 
-// Import loads the operator definitions into memory.
+// ImportConnector loads the connector definitions into memory.
 func (s *Store) ImportConnector(con base.IConnector) {
 	c := &connector{con: con}
 	s.connectorUIDMap[con.GetUID()] = c

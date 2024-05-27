@@ -34,35 +34,29 @@ flowchart LR
 
 ### Component
 
-There are different types of component:
-- **ai**
-  - Transforms unstructured data into formats that are easy to interpret and analyze, thereby facilitating the extraction of valuable insights.
-- **data**
-  - Establishes connections with remote data sources, such as IoT devices (e.g., IP cameras), cloud storage services (e.g., GCP Cloud Storage, AWS S3), data warehouses, or vector databases (e.g., Pinecone).
-- **application**
-  - Integrates various 3rd-party application services
-- **operator**
-  - Performs data injection and manipulation.
-- **iterator**
-  - Takes an array and executes an operation (defined by a set of nested
-    components) on each of its elements.
+There are different types of component: **AI**, **Data**, **Application**, **Operator** and **Iterator**.
 
 #### AI
 
-- **AI** components play a crucial role in transforming unstructured data into formats that are easy to interpret and analyze, thereby facilitating the extraction of valuable insights. These components integrate with AI models from various providers, whether it's the primary Instill Model or those from third-party AI vendors. They are defined and initialized in the [ai](../ai) package.
+**AI** components play a crucial role in transforming unstructured data into formats that are easy to interpret and analyze, thereby facilitating the extraction of valuable insights. These components integrate with AI models from various providers, whether it's the primary Instill Model or those from third-party AI vendors. They are defined and initialized in the [ai](../ai) package.
 
 #### Data
 
-- **Data** components play a crucial role in establishing connections with remote data sources, such as IoT devices (e.g., IP cameras), cloud storage services (e.g., GCP Cloud Storage, AWS S3), data warehouses, or vector databases (e.g., Pinecone). These connectors act as the bridge between VDP and various external data sources. Their primary function is to enable seamless data exchange, enhancing Instill VDP's capability to work with diverse data sources effectively. They are defined and initialized in the [data](../data) package.
+**Data** components play a crucial role in establishing connections with remote data sources, such as IoT devices (e.g., IP cameras), cloud storage services (e.g., GCP Cloud Storage, AWS S3), data warehouses, or vector databases (e.g., Pinecone). These connectors act as the bridge between VDP and various external data sources. Their primary function is to enable seamless data exchange, enhancing Instill VDP's capability to work with diverse data sources effectively. They are defined and initialized in the [data](../data) package.
 
 #### Application
 
-- **Application** components are used to seamlessly integrate various 3rd-party application services. They are defined and initialized in the [application](../application) package.
+**Application** components are used to seamlessly integrate various 3rd-party application services. They are defined and initialized in the [application](../application) package.
 
 #### Operator
 
-- **Operators** perform data transformations inside the pipeline. They are defined
+**Operators** perform data transformations inside the pipeline. They are defined
   and initialized in the [operator](../operator) package.
+
+#### Iterator
+
+**Iterator** takes an array and executes an operation (defined by a set of nested components)
+on each of its elements.
 
 #### Connection
 - For **AI**, **Data**, **Application** components, they are used by the pipeline to interact with an external service, you may need to introduce its **connection** details in the component connection properties.
