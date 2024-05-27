@@ -15,7 +15,7 @@
       "additionalProperties": false,
       "properties": {
         "token": {
-          "description": "Fill your token",
+          "description": "Fill in your Slack app access token. For more information about how to access to create app tokens, please refer to the Slack API documentation.",
           "instillUpstreamTypes": [
             "reference"
           ],
@@ -24,7 +24,7 @@
           ],
           "instillSecret": true,
           "instillUIOrder": 0,
-          "title": "token",
+          "title": "Token",
           "type": "string"
         }
       },
