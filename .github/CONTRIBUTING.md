@@ -36,6 +36,14 @@ flowchart LR
 
 There are different types of component: **AI**, **Data**, **Application**, **Operator** and **Iterator**.
 
+> **Note:**
+> - For **AI**, **Data**, **Application** components, they are used by the pipeline to interact with an external service, you may need to introduce its **connection** details in the component connection properties.
+>   - In order to prevent private keys from being unintentionally leaked when
+    sharing a pipeline, the connection properties only take reference to a
+    **secret** (e.g. `${secrets.my-secret}`).
+>   - You can create secrets from the console settings or through an [API
+    call](https://openapi.instill.tech/reference/pipelinepublicservice_createusersecret).
+
 #### AI
 
 **AI** components play a crucial role in transforming unstructured data into formats that are easy to interpret and analyze, thereby facilitating the extraction of valuable insights. These components integrate with AI models from various providers, whether it's the primary Instill Model or those from third-party AI vendors. They are defined and initialized in the [ai](../ai) package.
@@ -58,13 +66,6 @@ There are different types of component: **AI**, **Data**, **Application**, **Ope
 **Iterator** takes an array and executes an operation (defined by a set of nested components)
 on each of its elements.
 
-> **Note:**
-> - For **AI**, **Data**, **Application** components, they are used by the pipeline to interact with an external service, you may need to introduce its **connection** details in the component connection properties.
->   - In order to prevent private keys from being unintentionally leaked when
-    sharing a pipeline, the connection properties only take reference to a
-    **secret** (e.g. `${secrets.my-secret}`).
->   - You can create secrets from the console settings or through an [API
-    call](https://openapi.instill.tech/reference/pipelinepublicservice_createusersecret).
 
 ### Recipe
 
