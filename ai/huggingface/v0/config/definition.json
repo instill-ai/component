@@ -93,6 +93,6 @@
   "vendor": "Hugging Face",
   "vendor_attributes": {},
   "version": "0.1.1",
-  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/huggingface/v0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/ai/huggingface/v0",
   "release_stage": "RELEASE_STAGE_ALPHA"
 }

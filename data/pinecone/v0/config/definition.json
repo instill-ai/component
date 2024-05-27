@@ -61,6 +61,6 @@
   "vendor": "Pinecone",
   "vendor_attributes": {},
   "version": "0.1.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/pinecone/v0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/data/pinecone/v0",
   "release_stage": "RELEASE_STAGE_ALPHA"
 }

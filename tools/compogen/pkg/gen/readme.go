@@ -16,7 +16,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/russross/blackfriday/v2"
 
-	componentbase "github.com/instill-ai/component/pkg/base"
+	componentbase "github.com/instill-ai/component/base"
 )
 
 const (

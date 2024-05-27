@@ -47,6 +47,6 @@
   "vendor": "Archetype AI",
   "vendor_attributes": {},
   "version": "0.1.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/archetypeai/v0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/ai/archetypeai/v0",
   "release_stage": "RELEASE_STAGE_ALPHA"
 }

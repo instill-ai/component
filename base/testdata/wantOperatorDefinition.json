@@ -128,7 +128,7 @@
   },
   "public": true,
   "version": "1.0.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/base",
+  "source_url": "https://github.com/instill-ai/component/blob/main/base",
   "tasks": [
     {
       "name": "TASK_MARSHAL",

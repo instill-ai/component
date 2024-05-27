@@ -61,6 +61,6 @@
   "vendor": "Google",
   "vendor_attributes": {},
   "version": "0.1.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/connector/googlecloudstorage/v0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/data/googlecloudstorage/v0",
   "release_stage": "RELEASE_STAGE_ALPHA"
 }

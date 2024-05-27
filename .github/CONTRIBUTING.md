@@ -35,39 +35,42 @@ flowchart LR
 ### Component
 
 There are different types of component:
-- **connector**
-  - Queries, processes or transmits the ingested data to a service or app.
-  - Users need to configure their connectors (e.g. by providing an API token to
-    a remote service).
+- **ai**
+  - Transforms unstructured data into formats that are easy to interpret and analyze, thereby facilitating the extraction of valuable insights.
+- **data**
+  - Establishes connections with remote data sources, such as IoT devices (e.g., IP cameras), cloud storage services (e.g., GCP Cloud Storage, AWS S3), data warehouses, or vector databases (e.g., Pinecone).
+- **application**
+  - Integrates various 3rd-party application services
 - **operator**
   - Performs data injection and manipulation.
 - **iterator**
   - Takes an array and executes an operation (defined by a set of nested
     components) on each of its elements.
-- **trigger / response**
-  - These special components provide an input / output interface to pipeline
-    triggers.
 
-#### Connector
+#### AI
 
-- **Connectors** are used by the pipeline to interact with an external service.
-  They are defined and initialized in the [connector](../pkg/connector) package.
-- In order to set up a connector, you may need to introduce its **connection**
-  details in the connector properties.
+- **AI** components play a crucial role in transforming unstructured data into formats that are easy to interpret and analyze, thereby facilitating the extraction of valuable insights. These components integrate with AI models from various providers, whether it's the primary Instill Model or those from third-party AI vendors. They are defined and initialized in the [ai](../ai) package.
+
+#### Data
+
+- **Data** components play a crucial role in establishing connections with remote data sources, such as IoT devices (e.g., IP cameras), cloud storage services (e.g., GCP Cloud Storage, AWS S3), data warehouses, or vector databases (e.g., Pinecone). These connectors act as the bridge between VDP and various external data sources. Their primary function is to enable seamless data exchange, enhancing Instill VDP's capability to work with diverse data sources effectively. They are defined and initialized in the [data](../data) package.
+
+#### Application
+
+- **Application** components are used to seamlessly integrate various 3rd-party application services. They are defined and initialized in the [application](../application) package.
+
+#### Operator
+
+- **Operators** perform data transformations inside the pipeline. They are defined
+  and initialized in the [operator](../operator) package.
+
+#### Connection
+- For **AI**, **Data**, **Application** components, they are used by the pipeline to interact with an external service, you may need to introduce its **connection** details in the component connection properties.
   - In order to prevent private keys from being unintentionally leaked when
     sharing a pipeline, the connection properties only take reference to a
     **secret** (e.g. `${secrets.my-secret}`).
   - You can create secrets from the console settings or through an [API
     call](https://openapi.instill.tech/reference/pipelinepublicservice_createusersecret).
-
-#### Operator
-
-- **Operators** perform data transformations inside the pipeline. They are defined
-  and initialized in the [operator](../pkg/operator) package.
-
-The key difference between `connector` and `operator` is that the former will
-connect to an external service, so it's **I/O bound** while the latter is **CPU
-bound**. Connectors don't process but transfer data.
 
 ### Recipe
 
@@ -235,18 +238,18 @@ $ docker exec pipeline-backend go run ./cmd/main
 
 ```sh
 $ cd $WORKSPACE/component
-$ mkdir -p pkg/operator/hello/v0 && cd $_
+$ mkdir -p operator/hello/v0 && cd $_
 ```
 
-Components are isolated in their own packages under `pkg/connector` or
-`pkg/operator`. The package is versioned so, in case a breaking change needs to
+Components are isolated in their own packages under `ai`, `data`, `application` or
+`operator`. The package is versioned so, in case a breaking change needs to
 be introduced (e.g. supporting a new major version in a vendor API), existing
-pipelines using the previous version of the connector can keep being triggered.
+pipelines using the previous version of the component can keep being triggered.
 
 At the end of this guide, this will be the structure of the package:
 
 ```
-pkg/operator/hello/v0
+operator/hello/v0
  ├──assets
  │  └──hello.svg
  ├──config
@@ -278,7 +281,7 @@ Create a `config` directory and add the files `definition.json` and
   "title": "Hello",
   "uid": "e05d3d71-779c-45f8-904d-e90a050ca3b2",
   "version": "0.1.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/hello/v0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/operator/hello/v0",
   "description": "'Hello, world' operator used as a template for adding components",
   "release_stage": "RELEASE_STAGE_ALPHA"
 }
@@ -293,7 +296,7 @@ This file defines the component properties:
   should be written in imperative tense.
 - `spec` contains the parameters required to configure the component and that
   are independent from its tasks. E.g., the API token of a vendor. In general,
-  only connectors need such parameters.
+  only AI, data or application components need such parameters.
 - `available_tasks` defines the tasks the component can perform.
   - When a component is created in a pipeline, one of the tasks has to be
     selected, i.e., a configured component can only execute one task.
@@ -389,7 +392,7 @@ of a pipeline when configured to use this operator.
 ### Implement the component interfaces
 
 Pipeline communicates with components through the `IComponent`, `IConnector`,
-`IOperator` and `IExecution` interfaces, defined in the [`base`](../pkg/base)
+`IOperator` and `IExecution` interfaces, defined in the [`base`](../base)
 package. This package also defines base implementations for these interfaces, so
 the `hello` component will only need to override the following methods:
 - `CreateExecution(vars map[string]any, task string) (*ExecutionWrapper, error)`
@@ -400,7 +403,7 @@ the `hello` component will only need to override the following methods:
   important function in the component. All the data manipulation will take place
   here.
 
-Paste the following code into a `main.go` file in `pkg/operator/hello/v0`:
+Paste the following code into a `main.go` file in `operator/hello/v0`:
 
 ```go
 package hello
@@ -413,7 +416,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
-	"github.com/instill-ai/component/pkg/base"
+	"github.com/instill-ai/component/base"
 )
 
 const (
@@ -590,14 +593,14 @@ func TestOperator_CreateExecution(t *testing.T) {
 
 The last step before being able to use the component in VDP is loading the
 `hello` operator. This is done in the `Init` function in
-[`pkg/operator/main.go`](../pkg/operator/main.go):
+[`component.go`](../component.go):
 
 ```go
 package operator
 
 import (
 	// ...
-	"github.com/instill-ai/component/pkg/operator/hello/v0"
+	"github.com/instill-ai/component/operator/hello/v0"
 )
 
 // ...
@@ -693,7 +696,7 @@ contain useful descriptions. The information described in `definition.json` and
 `tasks.json` is enough to understand how a component should be used. `compogen`
 is a tool that parses the component configuration and builds a `README.mdx` file
 document displaying its information in a human-readable way. To generate the
-document, just add the following line on top of `pkg/operator/hello/v0/main.go`:
+document, just add the following line on top of `operator/hello/v0/main.go`:
 
 ```go
 //go:generate compogen readme --operator ./config ./README.mdx
@@ -717,7 +720,7 @@ its version should change following the Semantic Versioning guidelines.
   or a new input field with a default value.
 - Major versions are intended for backwards-incompatible changes.
   - At this point, since there might be pipelines using the previous version, a
-    new package MUST be created. E.g., `operator/pkg/json/v0` -> `operator/pkg/json/v1`.
+    new package MUST be created. E.g., `operator/json/v0` -> `operator/json/v1`.
 - Build and pre-release labels are discouraged, as components are shipped as
   part of Instill VDP and they aren't likely to need such fine-grained version
   control.

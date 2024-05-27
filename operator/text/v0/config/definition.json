@@ -13,7 +13,7 @@
   "title": "Text",
   "uid": "5b7aca5b-1ae3-477f-bf60-d34e1c993c87",
   "version": "0.1.1",
-  "source_url": "https://github.com/instill-ai/component/blob/main/pkg/operator/text/v0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/operator/text/v0",
   "description": "Extract and manipulate text from different sources",
   "release_stage": "RELEASE_STAGE_ALPHA"
 }

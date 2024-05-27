@@ -1,7 +1,7 @@
 //go:build integration
 // +build integration
 
-package pkg
+package ai
 
 import (
 	"testing"
@@ -11,8 +11,8 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
+	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/pkg/ai/openai/v0"
 	"github.com/instill-ai/x/errmsg"
 )
 
