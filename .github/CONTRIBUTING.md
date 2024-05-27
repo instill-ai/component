@@ -605,19 +605,19 @@ import (
 
 // ...
 
-func Init(logger *zap.Logger) *OperatorStore {
+func Init(logger *zap.Logger) *Store {
 	baseOp := base.BaseOperator{Logger: logger}
 
 	once.Do(func() {
-		opStore = &OperatorStore{
+		store = &Store{
 			operatorUIDMap: map[uuid.UUID]*operator{},
 			operatorIDMap:  map[string]*operator{},
 		}
 		// ...
-		opStore.Import(hello.Init(baseOp))
+		store.ImportOperator(hello.Init(baseOp))
 	})
 
-	return opStore
+	return store
 }
 ```
 
