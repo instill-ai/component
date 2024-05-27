@@ -58,12 +58,12 @@ There are different types of component: **AI**, **Data**, **Application**, **Ope
 **Iterator** takes an array and executes an operation (defined by a set of nested components)
 on each of its elements.
 
-#### Connection
-- For **AI**, **Data**, **Application** components, they are used by the pipeline to interact with an external service, you may need to introduce its **connection** details in the component connection properties.
-  - In order to prevent private keys from being unintentionally leaked when
+> **Note:**
+> - For **AI**, **Data**, **Application** components, they are used by the pipeline to interact with an external service, you may need to introduce its **connection** details in the component connection properties.
+>   - In order to prevent private keys from being unintentionally leaked when
     sharing a pipeline, the connection properties only take reference to a
     **secret** (e.g. `${secrets.my-secret}`).
-  - You can create secrets from the console settings or through an [API
+>   - You can create secrets from the console settings or through an [API
     call](https://openapi.instill.tech/reference/pipelinepublicservice_createusersecret).
 
 ### Recipe
