@@ -17,7 +17,7 @@
     },
     "chunk_size": {
       "default": 512,
-      "description": "An integer that sets the maximum number of characters allowed in a single chunk. This ensures that each chunk does not exceed a specified size.",
+      "description": "Specifies the maximum size of each chunk in terms of the number of tokens.",
       "instillAcceptFormats": [
         "integer"
       ],
@@ -31,8 +31,8 @@
       "type": "integer"
     },
     "chunk_overlap": {
-      "default": 512,
-      "description": "An integer that specifies the number of characters that should overlap between consecutive chunks. ",
+      "default": 100,
+      "description": "Determines the number of tokens that overlap between consecutive chunks.",
       "instillAcceptFormats": [
         "integer"
       ],
@@ -42,11 +42,11 @@
         "reference"
       ],
       "minimum": 1,
-      "title": "Chunk Size",
+      "title": "Chunk Overlap",
       "type": "integer"
     },
     "model_name": {
-      "description": "ID of the model to use for tokenization",
+      "description": "The name of the model used for tokenization.",
       "enum": [
         "gpt-4",
         "gpt-3.5-turbo",
@@ -170,7 +170,7 @@
     }
   },
   "TASK_SPLIT_BY_TOKEN": {
-    "instillShortDescription": "Split text by token.",
+    "instillShortDescription": "Split text by token. It will be decprecated soon. Please use Chunk Text task instead.",
     "input": {
       "description": "Input",
       "instillEditOnNodeFields": [
@@ -326,26 +326,19 @@
         "strategy": {
           "description": "Chunking strategy",
           "instillUIOrder": 1,
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "enum": [
-            "token", 
-            "recursive",
-            "markdown"
-          ],
           "properties": {
             "setting": {
               "description": "Chunk Setting",
               "additionalProperties": true,
+              "type": "object",
+              "required": ["chunk_method"],
               "oneOf": [
                 {
                   "properties": {
+                    "chunk_method": {
+                      "const": "Token",
+                      "type": "string"
+                    },
                     "chunk_size": {
                       "$ref": "#/$defs/chunk_size"
                     },
@@ -356,7 +349,7 @@
                       "$ref": "#/$defs/model_name"
                     },
                     "encoding_name": {
-                      "description": "Encoding name to use for tokenization",
+                      "description": "The name of the encoding used to convert text into tokens.",
                       "enum": [
                         "cl100k_base",
                         "p50k_base",
@@ -372,14 +365,19 @@
                         "reference",
                         "template"
                       ],
-                      "title": "Model",
+                      "title": "Encoding Name",
                       "type": "string"
                     },
                     "allowed_special": {
-                      "description": "Allowed special tokens",
+                      "default": [],
+                      "description": "A list of special tokens that are allowed within chunks. ",
                       "instillAcceptFormats": [
                         "array:string"
                       ],
+                      "items": {
+                        "instillUIMultiline": false,
+                        "type": "string"
+                      },
                       "instillUIOrder": 4,
                       "instillUpstreamTypes": [
                         "value",
@@ -387,13 +385,18 @@
                         "template"
                       ],
                       "title": "Allowed Special Tokens",
-                      "type": "array:string"
+                      "type": "array"
                     },
                     "disallowed_special": {
-                      "description": "Disallowed special tokens",
+                      "default": [],
+                      "description": "A list of special tokens that should not appear within chunks.",
                       "instillAcceptFormats": [
                         "array:string"
                       ],
+                      "items": {
+                        "instillUIMultiline": false,
+                        "type": "string"
+                      },
                       "instillUIOrder": 5,
                       "instillUpstreamTypes": [
                         "value",
@@ -401,16 +404,21 @@
                         "template"
                       ],
                       "title": "Disallowed Special Tokens",
-                      "type": "array:string"
+                      "type": "array"
                     }
                   },
-                  "title": "Split by Token"
+                  "required": ["chunk_method"],
+                  "instillEditOnNodeFields": ["chunk_method", "chunk_size", "chunk_overlap", "model_name", "encoding_name", "allowed_special", "disallowed_special"],
+                  "type": "object"
                 }
               ]
             }
           },
           "title": "Strategy",
-          "type": "string"
+          "required": [
+            "setting"
+          ],
+          "type": "object"
         }
       },
       "required": [
@@ -422,9 +430,6 @@
     },
     "output": {
       "description": "Output",
-      "instillEditOnNodeFields": [
-        "texts"
-      ],
       "instillUIOrder": 0,
       "properties": {
         "chunk_num": {
@@ -437,13 +442,35 @@
         "text_chunks": {
           "description": "Text chunks after splitting",
           "instillUIOrder": 1,
-          "instillFormat": "array:string",
+          "instillFormat": "array:object",
           "items": {
             "title": "Text Chunk",
             "description": "Text chunk after splitting",
-            "instillFormat": "string",
+            "instillFormat": "object",
+            "properties": {
+              "text": {
+                "title": "Text",
+                "description": "Text chunk after splitting",
+                "instillFormat": "string",
+                "instillUIMultiline": true,
+                "type": "string"
+              },
+              "start_position": {
+                "title": "Start Position",
+                "description": "The starting position of the chunk in the original text",
+                "instillFormat": "integer",
+                "type": "integer"
+              },
+              "end_position": {
+                "title": "End Position",
+                "description": "The ending position of the chunk in the original text",
+                "instillFormat": "integer",
+                "type": "integer"
+              }
+            },
+            "required": ["text", "start_position", "end_position"],
             "instillUIMultiline": true,
-            "type": "string"
+            "type": "object"
           },
           "title": "Text Chunks",
           "type": "array"
@@ -457,7 +484,6 @@
         }
       },
       "required": [
-        "token_count",
         "text_chunks",
         "chunk_num"
       ],

@@ -6,8 +6,16 @@ import (
 )
 
 type ChunkTextInput struct {
-	Text              string   `json:"text"`
-	ChunkStrategy     string   `json:"chunk_strategy"`
+	Text     string   `json:"text"`
+	Strategy Strategy `json:"strategy"`
+}
+
+type Strategy struct {
+	Setting Setting `json:"setting"`
+}
+
+type Setting struct {
+	ChunkMethod       string   `json:"chunk_method,omitempty"`
 	ChunkSize         int      `json:"chunk_size,omitempty"`
 	ChunkOverlap      int      `json:"chunk_overlap,omitempty"`
 	ModelName         string   `json:"model_name,omitempty"`
@@ -24,44 +32,68 @@ type ChunkTextInput struct {
 }
 
 type ChunkTextOutput struct {
-	Chunks     []Chunk `json:"chunks"`
-	ChunkNum   int     `json:"chunk_num"`
-	TokenCount int     `json:"token_count,omitempty"`
+	ChunkNum   int          `json:"chunk_num"`
+	TextChunks []TextChunks `json:"text_chunks"`
+	TokenCount int          `json:"token_count,omitempty"`
 }
 
-type Chunk struct {
+type TextChunks struct {
 	Text          string `json:"text"`
 	StartPosition int    `json:"start_position,omitempty"`
 	EndPosition   int    `json:"end_position,omitempty"`
 }
 
-func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
+func (s *Setting) SetDefault() {
+	if s.ChunkSize == 0 {
+		s.ChunkSize = 512
+	}
+	if s.ChunkOverlap == 0 {
+		s.ChunkOverlap = 100
+	}
+	if s.ModelName == "" {
+		s.ModelName = "gpt-3.5-turbo"
+	}
+	if s.EncodingName == "" {
+		s.EncodingName = "cl100k_base"
+	}
+	if s.AllowedSpecial == nil {
+		s.AllowedSpecial = []string{}
+	}
+	if s.DisallowedSpecial == nil {
+		s.DisallowedSpecial = []string{"all"}
+	}
+	if s.Separators == nil {
+		s.Separators = []string{"\n\n", "\n", " ", ""}
+	}
+}
 
+func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	var split textsplitter.TextSplitter
-	switch input.ChunkStrategy {
-	// TODO: default write in json file to reduce the complexity.
-	case "token":
+	setting := input.Strategy.Setting
+	setting.SetDefault()
+	switch setting.ChunkMethod {
+	case "Token":
 		split = textsplitter.NewTokenSplitter(
-			textsplitter.WithChunkSize(input.ChunkSize),
-			textsplitter.WithChunkOverlap(input.ChunkOverlap),
-			textsplitter.WithModelName(input.ModelName),
-			textsplitter.WithEncodingName(input.EncodingName),
-			textsplitter.WithAllowedSpecial(input.AllowedSpecial),
-			textsplitter.WithDisallowedSpecial(input.DisallowedSpecial),
+			textsplitter.WithChunkSize(setting.ChunkSize),
+			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
+			textsplitter.WithModelName(setting.ModelName),
+			textsplitter.WithEncodingName(setting.EncodingName),
+			textsplitter.WithAllowedSpecial(setting.AllowedSpecial),
+			textsplitter.WithDisallowedSpecial(setting.DisallowedSpecial),
 		)
-	case "markdown":
+	case "Markdown":
 		split = textsplitter.NewMarkdownTextSplitter(
-			textsplitter.WithChunkSize(input.ChunkSize),
-			textsplitter.WithChunkOverlap(input.ChunkOverlap),
-			textsplitter.WithCodeBlocks(input.CodeBlocks),
-			textsplitter.WithReferenceLinks(input.ReferenceLinks),
+			textsplitter.WithChunkSize(setting.ChunkSize),
+			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
+			textsplitter.WithCodeBlocks(setting.CodeBlocks),
+			textsplitter.WithReferenceLinks(setting.ReferenceLinks),
 		)
-	case "recursive":
+	case "Recursive":
 		split = textsplitter.NewRecursiveCharacter(
-			textsplitter.WithSeparators(input.Separators),
-			textsplitter.WithChunkSize(input.ChunkSize),
-			textsplitter.WithChunkOverlap(input.ChunkOverlap),
-			textsplitter.WithKeepSeparator(input.KeepSeparator),
+			textsplitter.WithSeparators(setting.Separators),
+			textsplitter.WithChunkSize(setting.ChunkSize),
+			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
+			textsplitter.WithKeepSeparator(setting.KeepSeparator),
 		)
 	}
 
@@ -74,19 +106,18 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		ChunkNum: len(chunks),
 	}
 
-	// To remain the original output
-	if input.ChunkStrategy == "token" {
-		tkm, err := tiktoken.EncodingForModel(input.ModelName)
+	if setting.ChunkMethod == "Token" {
+		tkm, err := tiktoken.EncodingForModel(setting.ModelName)
 		if err != nil {
 			return ChunkTextOutput{}, err
 		}
-		token := tkm.Encode(input.Text, input.AllowedSpecial, input.DisallowedSpecial)
+		token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
 		output.TokenCount = len(token)
 	}
 
-	startPosition := 0
+	startPosition := 1
 	for _, c := range chunks {
-		output.Chunks = append(output.Chunks, Chunk{
+		output.TextChunks = append(output.TextChunks, TextChunks{
 			Text:          c,
 			StartPosition: startPosition,
 			EndPosition:   startPosition + len(c) - 1,
