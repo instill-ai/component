@@ -18,17 +18,21 @@ func TestChunkText(t *testing.T) {
 		{
 			name: "chunk text by token",
 			input: ChunkTextInput{
-				Text:          "Hello world.",
-				ChunkStrategy: "token",
-				ModelName:     "gpt-3.5-turbo",
-				ChunkSize:     5,
+				Text: "Hello world.",
+				Strategy: Strategy{
+					Setting: Setting{
+						ChunkMethod: "Token",
+						ChunkSize:   512,
+						ModelName:   "gpt-3.5-turbo",
+					},
+				},
 			},
 			output: ChunkTextOutput{
-				Chunks: []Chunk{
+				TextChunks: []TextChunk{
 					{
 						Text:          "Hello world.",
-						StartPosition: 0,
-						EndPosition:   11,
+						StartPosition: 1,
+						EndPosition:   12,
 					},
 				},
 				ChunkNum: 1,
@@ -40,44 +44,48 @@ func TestChunkText(t *testing.T) {
 		{
 			name: "chunk text by markdown",
 			input: ChunkTextInput{
-				Text:          "Hello world.",
-				ChunkStrategy: "markdown",
-				ChunkSize:     5},
-			output: ChunkTextOutput{
-				Chunks: []Chunk{
-					{
-						Text:          "Hello",
-						StartPosition: 0,
-						EndPosition:   4,
-					},
-					{
-						Text:          "world.",
-						StartPosition: 5,
-						EndPosition:   10,
+				Text: "Hello world.",
+				Strategy: Strategy{
+					Setting: Setting{
+						ChunkMethod: "Markdown",
+						ChunkSize:   5,
 					},
 				},
-				ChunkNum: 2,
+			},
+			output: ChunkTextOutput{
+				TextChunks: []TextChunk{
+					{
+						Text:          "Hello world.",
+						StartPosition: 1,
+						EndPosition:   12,
+					},
+				},
+				ChunkNum: 1,
 			},
 		},
 		{
 			name: "chunk text by recursive",
 			input: ChunkTextInput{
-				Text:          "Hello world.",
-				ChunkStrategy: "recursive",
-				ChunkSize:     5,
-				Separators:    []string{" ", "."},
+				Text: "Hello world.",
+				Strategy: Strategy{
+					Setting: Setting{
+						ChunkMethod: "Recursive",
+						ChunkSize:   5,
+						Separators:  []string{" ", "."},
+					},
+				},
 			},
 			output: ChunkTextOutput{
-				Chunks: []Chunk{
+				TextChunks: []TextChunk{
 					{
 						Text:          "Hello",
-						StartPosition: 0,
-						EndPosition:   4,
+						StartPosition: 1,
+						EndPosition:   5,
 					},
 					{
 						Text:          "world",
-						StartPosition: 5,
-						EndPosition:   9,
+						StartPosition: 6,
+						EndPosition:   10,
 					},
 				},
 				ChunkNum: 2,

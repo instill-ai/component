@@ -1,6 +1,8 @@
 package text
 
 import (
+	"fmt"
+
 	"github.com/instill-ai/component/pkg/external/langchaingo/textsplitter"
 	"github.com/pkoukk/tiktoken-go"
 )
@@ -32,12 +34,12 @@ type Setting struct {
 }
 
 type ChunkTextOutput struct {
-	ChunkNum   int          `json:"chunk_num"`
-	TextChunks []TextChunks `json:"text_chunks"`
-	TokenCount int          `json:"token_count,omitempty"`
+	ChunkNum   int         `json:"chunk_num"`
+	TextChunks []TextChunk `json:"text_chunks"`
+	TokenCount int         `json:"token_count,omitempty"`
 }
 
-type TextChunks struct {
+type TextChunk struct {
 	Text          string `json:"text"`
 	StartPosition int    `json:"start_position,omitempty"`
 	EndPosition   int    `json:"end_position,omitempty"`
@@ -73,6 +75,12 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	setting.SetDefault()
 	switch setting.ChunkMethod {
 	case "Token":
+
+		if setting.ChunkOverlap >= setting.ChunkSize {
+			err := fmt.Errorf("ChunkOverlap must be less than ChunkSize when using Token method.")
+			return ChunkTextOutput{}, err
+		}
+
 		split = textsplitter.NewTokenSplitter(
 			textsplitter.WithChunkSize(setting.ChunkSize),
 			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
@@ -117,7 +125,7 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 
 	startPosition := 1
 	for _, c := range chunks {
-		output.TextChunks = append(output.TextChunks, TextChunks{
+		output.TextChunks = append(output.TextChunks, TextChunk{
 			Text:          c,
 			StartPosition: startPosition,
 			EndPosition:   startPosition + len(c) - 1,
