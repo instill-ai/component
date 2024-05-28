@@ -35,9 +35,7 @@ func TestChunkText(t *testing.T) {
 						EndPosition:   12,
 					},
 				},
-				ChunkNum: 1,
-				// TODO: minimock failed to generate the mock for tiktoken.EncodingForModel
-				// Please mock the tiktoken.EncodingForModel function to return the following value
+				ChunkNum:   1,
 				TokenCount: 3,
 			},
 		},
@@ -94,8 +92,9 @@ func TestChunkText(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
+		inputCopy := tc.input
 		c.Run(tc.name, func(c *quicktest.C) {
-			output, err := chunkText(tc.input)
+			output, err := chunkText(inputCopy)
 			c.Assert(err, quicktest.IsNil)
 			c.Check(output, quicktest.DeepEquals, tc.output)
 
