@@ -77,7 +77,7 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	case "Token":
 
 		if setting.ChunkOverlap >= setting.ChunkSize {
-			err := fmt.Errorf("ChunkOverlap must be less than ChunkSize when using Token method.")
+			err := fmt.Errorf("ChunkOverlap must be less than ChunkSize when using Token method")
 			return ChunkTextOutput{}, err
 		}
 
