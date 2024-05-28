@@ -24,6 +24,7 @@ import (
 	"github.com/instill-ai/component/data/googlecloudstorage/v0"
 	"github.com/instill-ai/component/data/pinecone/v0"
 	"github.com/instill-ai/component/operator/base64/v0"
+	"github.com/instill-ai/component/operator/document/v0"
 	"github.com/instill-ai/component/operator/image/v0"
 	"github.com/instill-ai/component/operator/json/v0"
 	"github.com/instill-ai/component/operator/text/v0"
@@ -82,6 +83,7 @@ func Init(
 		compStore.ImportOperator(json.Init(baseOp))
 		compStore.ImportOperator(image.Init(baseOp))
 		compStore.ImportOperator(text.Init(baseOp))
+		compStore.ImportOperator(document.Init(baseOp))
 
 		{
 			// StabilityAI
