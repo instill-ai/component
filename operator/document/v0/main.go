@@ -15,7 +15,6 @@ import (
 
 const (
 	taskConvertToMarkdown string = "TASK_CONVERT_TO_MARKDOWN"
-	scriptPath            string = "/component/pkg/operator/pdf/v0/python/pdf_transformer.py"
 	pythonInterpreter     string = "/opt/venv/bin/python"
 )
 
