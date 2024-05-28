@@ -335,19 +335,22 @@ more text`,
 	}
 
 	for _, tc := range tt {
+		optionsCopy := tc.options
+		markdownCopy := tc.markdown
+		expectedDocsCopy := tc.expectedDocs
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
 			rq := require.New(t)
 
-			splitter := NewMarkdownTextSplitter(append(tc.options,
+			splitter := NewMarkdownTextSplitter(append(optionsCopy,
 				WithChunkSize(512),
 				WithChunkOverlap(64),
 			)...)
 
-			docs, err := CreateDocuments(splitter, []string{tc.markdown}, nil)
+			docs, err := CreateDocuments(splitter, []string{markdownCopy}, nil)
 			rq.NoError(err)
-			rq.Equal(tc.expectedDocs, docs)
+			rq.Equal(expectedDocsCopy, docs)
 		})
 	}
 }
@@ -439,19 +442,22 @@ func TestMarkdownHeaderTextSplitter_SplitInline(t *testing.T) {
 	}
 
 	for _, tc := range tt {
+		optionsCopy := tc.options
+		markdownCopy := tc.markdown
+		expectedDocsCopy := tc.expectedDocs
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
 			rq := require.New(t)
 
-			splitter := NewMarkdownTextSplitter(append(tc.options,
+			splitter := NewMarkdownTextSplitter(append(optionsCopy,
 				WithChunkSize(512),
 				WithChunkOverlap(64),
 			)...)
 
-			docs, err := CreateDocuments(splitter, []string{tc.markdown}, nil)
+			docs, err := CreateDocuments(splitter, []string{markdownCopy}, nil)
 			rq.NoError(err)
-			rq.Equal(tc.expectedDocs, docs)
+			rq.Equal(expectedDocsCopy, docs)
 		})
 	}
 }

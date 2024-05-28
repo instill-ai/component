@@ -92,12 +92,10 @@ func TestChunkText(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		inputCopy := tc.input
 		c.Run(tc.name, func(c *quicktest.C) {
-			output, err := chunkText(inputCopy)
+			output, err := chunkText(tc.input)
 			c.Assert(err, quicktest.IsNil)
 			c.Check(output, quicktest.DeepEquals, tc.output)
-
 		})
 	}
 }
