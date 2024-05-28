@@ -410,7 +410,103 @@
                   "required": ["chunk_method"],
                   "instillEditOnNodeFields": ["chunk_method", "chunk_size", "chunk_overlap", "model_name", "encoding_name", "allowed_special", "disallowed_special"],
                   "type": "object"
+                },
+                {
+                  "properties": {
+                    "chunk_method": {
+                      "const": "Recursive",
+                      "type": "string"
+                    },
+                    "chunk_size": {
+                      "$ref": "#/$defs/chunk_size"
+                    },
+                    "chunk_overlap": {
+                      "$ref": "#/$defs/chunk_overlap"
+                    },
+                    "separators": {
+                      "default": [],
+                      "description": "A list of strings representing the separators used to split the text.",
+                      "instillAcceptFormats": [
+                        "array:string"
+                      ],
+                      "instillUIOrder": 2,
+                      "items": {
+                        "instillUIMultiline": false,
+                        "type": "string"
+                      },
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference",
+                        "template"
+                      ],
+                      "title": "Separators",
+                      "type": "array"
+                    },
+                    "keep_separator": {
+                      "description": "A flag indicating whether to keep the separator characters at the beginning or end of chunks.",
+                      "instillAcceptFormats": [
+                        "boolean"
+                      ],
+                      "instillUIOrder": 3,
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference",
+                        "template"
+                      ],
+                      "title": "Keep Separator",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["chunk_method"],
+                  "instillEditOnNodeFields": ["chunk_method", "chunk_size", "chunk_overlap", "separators", "keep_separator"],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "chunk_method": {
+                      "const": "Markdown",
+                      "type": "string"
+                    },
+                    "chunk_size": {
+                      "$ref": "#/$defs/chunk_size"
+                    },
+                    "chunk_overlap": {
+                      "$ref": "#/$defs/chunk_overlap"
+                    },
+                    "code_blocks": {
+                      "description": "A flag indicating whether code blocks should be treated as a single unit.",
+                      "instillAcceptFormats": [
+                        "boolean"
+                      ],
+                      "instillUIOrder": 3,
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference",
+                        "template"
+                      ],
+                      "title": "Code Blocks",
+                      "type": "boolean"
+                    },
+                    "reference_links": {
+                      "description": "A flag indicating whether reference links should be kept intact.",
+                      "instillAcceptFormats": [
+                        "boolean"
+                      ],
+                      "instillUIOrder": 4,
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference",
+                        "template"
+                      ],
+                      "title": "Reference Links",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["chunk_method"],
+                  "instillEditOnNodeFields": ["chunk_method", "chunk_size", "chunk_overlap", "code_blocks", "reference_links"],
+                  "type": "object"
                 }
+
               ]
             }
           },
