@@ -5,12 +5,12 @@ go 1.21.5
 require (
 	github.com/frankban/quicktest v1.14.6
 	github.com/go-playground/validator/v10 v10.18.0
-	github.com/instill-ai/component v0.14.1-beta.0.20240423152009-8ecbede39029
+	github.com/instill-ai/component v0.18.0-beta.0.20240527105221-4853d4cdb12f
 	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240423142304-54b986803884
 	github.com/rogpeppe/go-internal v1.12.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/spf13/cobra v1.8.0
-	golang.org/x/text v0.14.0
+	golang.org/x/text v0.15.0
 )
 
 require (
@@ -24,6 +24,7 @@ require (
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/instill-ai/x v0.4.0-alpha // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
@@ -38,9 +39,9 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
-	golang.org/x/crypto v0.21.0 // indirect
-	golang.org/x/net v0.23.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/crypto v0.23.0 // indirect
+	golang.org/x/net v0.25.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
 	google.golang.org/genproto v0.0.0-20231212172506-995d672761c0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240102182953-50ed04b92917 // indirect
