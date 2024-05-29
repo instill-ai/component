@@ -3,8 +3,8 @@ package text
 import (
 	"fmt"
 
-	"github.com/instill-ai/component/pkg/external/langchaingo/textsplitter"
 	"github.com/pkoukk/tiktoken-go"
+	"github.com/tmc/langchaingo/textsplitter"
 )
 
 type ChunkTextInput struct {
@@ -72,13 +72,17 @@ func (s *Setting) SetDefault() {
 func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	var split textsplitter.TextSplitter
 	setting := input.Strategy.Setting
+	// TODO: Take this out when we fix the error in frontend side.
+	// Bug: The default value is not set from frontend side.
 	setting.SetDefault()
+
+	var output ChunkTextOutput
 	switch setting.ChunkMethod {
 	case "Token":
 
 		if setting.ChunkOverlap >= setting.ChunkSize {
 			err := fmt.Errorf("ChunkOverlap must be less than ChunkSize when using Token method")
-			return ChunkTextOutput{}, err
+			return output, err
 		}
 
 		split = textsplitter.NewTokenSplitter(
@@ -89,6 +93,13 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 			textsplitter.WithAllowedSpecial(setting.AllowedSpecial),
 			textsplitter.WithDisallowedSpecial(setting.DisallowedSpecial),
 		)
+
+		tkm, err := tiktoken.EncodingForModel(setting.ModelName)
+		if err != nil {
+			return output, err
+		}
+		token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
+		output.TokenCount = len(token)
 	case "Markdown":
 		split = textsplitter.NewMarkdownTextSplitter(
 			textsplitter.WithChunkSize(setting.ChunkSize),
@@ -107,21 +118,9 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 
 	chunks, err := split.SplitText(input.Text)
 	if err != nil {
-		return ChunkTextOutput{}, err
+		return output, err
 	}
-
-	output := ChunkTextOutput{
-		ChunkNum: len(chunks),
-	}
-
-	if setting.ChunkMethod == "Token" {
-		tkm, err := tiktoken.EncodingForModel(setting.ModelName)
-		if err != nil {
-			return ChunkTextOutput{}, err
-		}
-		token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
-		output.TokenCount = len(token)
-	}
+	output.ChunkNum = len(chunks)
 
 	startPosition := 1
 	for _, c := range chunks {
