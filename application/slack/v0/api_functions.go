@@ -8,9 +8,9 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func loopChannelListAPI(e *execution, isPublic bool, channelName string) (string, error) {
+func loopChannelListAPI(e *execution, channelName string) (string, error) {
 	var apiParams slack.GetConversationsParameters
-	setChannelType(&apiParams, isPublic)
+	apiParams.Types = append(apiParams.Types, "private_channel", "public_channel")
 
 	var targetChannelID string
 	for {
@@ -33,15 +33,6 @@ func loopChannelListAPI(e *execution, isPublic bool, channelName string) (string
 
 		apiParams.Cursor = nextCur
 
-	}
-}
-
-// Todo: make it multiple options
-func setChannelType(params *slack.GetConversationsParameters, isPublicChannel bool) {
-	if !isPublicChannel {
-		params.Types = append(params.Types, "private_channel")
-	} else {
-		params.Types = append(params.Types, "public_channel")
 	}
 }
 

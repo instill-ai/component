@@ -102,7 +102,6 @@ func TestComponent_ExecuteWriteTask(t *testing.T) {
 			input: UserInputWriteTask{
 				ChannelName:     "test_channel",
 				Message:         "I am unit test",
-				IsPublicChannel: true,
 			},
 			wantResp: WriteTaskResp{
 				Result: "succeed",
@@ -113,7 +112,6 @@ func TestComponent_ExecuteWriteTask(t *testing.T) {
 			input: UserInputWriteTask{
 				ChannelName:     "test_channel_1",
 				Message:         "I am unit test",
-				IsPublicChannel: true,
 			},
 			wantErr: `there is no match name in slack channel \[test_channel_1\]`,
 		},

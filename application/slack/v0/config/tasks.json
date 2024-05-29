@@ -34,21 +34,6 @@
           ],
           "title": "Start to read date",
           "type": "string"
-        },
-        "is_public_channel": {
-          "description": "Whether all members can read the channel",
-          "instillAcceptFormats": [
-            "boolean"
-          ],
-          "instillUIMultiline": true,
-          "instillUIOrder": 2,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "Public channel",
-          "type": "boolean"
         }
       },
       "required": [
@@ -191,21 +176,6 @@
           ],
           "title": "Message",
           "type": "string"
-        },
-        "is_public_channel": {
-          "description": "Whether all members can read the channel",
-          "instillAcceptFormats": [
-            "boolean"
-          ],
-          "instillUIMultiline": true,
-          "instillUIOrder": 2,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "Public channel",
-          "type": "boolean"
         }
       },
       "required": [

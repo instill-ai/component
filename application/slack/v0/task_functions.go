@@ -13,7 +13,6 @@ import (
 type UserInputReadTask struct {
 	ChannelName     string `json:"channel_name"`
 	StartToReadDate string `json:"start_to_read_date"`
-	IsPublicChannel bool   `json:"is_public_channel"`
 }
 
 type ReadTaskResp struct {
@@ -39,7 +38,6 @@ type ThreadReplyMessage struct {
 type UserInputWriteTask struct {
 	ChannelName     string `json:"channel_name"`
 	Message         string `json:"message"`
-	IsPublicChannel bool   `json:"is_public_channel"`
 }
 
 type WriteTaskResp struct {
@@ -54,7 +52,7 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	targetChannelID, err := loopChannelListAPI(e, params.IsPublicChannel, params.ChannelName)
+	targetChannelID, err := loopChannelListAPI(e, params.ChannelName)
 
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (e *execution) sendMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	targetChannelID, err := loopChannelListAPI(e, params.IsPublicChannel, params.ChannelName)
+	targetChannelID, err := loopChannelListAPI(e, params.ChannelName)
 	if err != nil {
 		return nil, err
 	}
