@@ -21,6 +21,7 @@ type ReadTaskResp struct {
 
 type Conversation struct {
 	UserID             string               `json:"user_id"`
+	UserName           string               `json:"user_name"`
 	Message            string               `json:"message"`
 	StartDate          string               `json:"start_date"`
 	LastDate           string               `json:"last_date"`
@@ -31,13 +32,14 @@ type Conversation struct {
 
 type ThreadReplyMessage struct {
 	UserID   string `json:"user_id"`
+	UserName string `json:"user_name"`
 	DateTime string `json:"datetime"`
 	Message  string `json:"message"`
 }
 
 type UserInputWriteTask struct {
-	ChannelName     string `json:"channel_name"`
-	Message         string `json:"message"`
+	ChannelName string `json:"channel_name"`
+	Message     string `json:"message"`
 }
 
 type WriteTaskResp struct {
@@ -63,7 +65,6 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	// TODO: discussed if only collect X days ago as default.
 	if params.StartToReadDate == "" {
 		currentTime := time.Now()
 		sevenDaysAgo := currentTime.AddDate(0, 0, -7)
@@ -113,6 +114,40 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 
 	if readTaskResp.Conversations == nil {
 		readTaskResp.Conversations = []Conversation{}
+	}
+
+	// To reduce API calls, we get all user information in one call.
+	var userIDs []string
+	for _, conversation := range readTaskResp.Conversations {
+		userIDs = append(userIDs, conversation.UserID)
+		if len(conversation.ThreadReplyMessage) > 0 {
+			for _, threadReply := range conversation.ThreadReplyMessage {
+				userIDs = append(userIDs, threadReply.UserID)
+			}
+		}
+	}
+
+	userIDs = removeDuplicateUserIDs(userIDs)
+	users, err := e.client.GetUsersInfo(userIDs...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for i, conversation := range readTaskResp.Conversations {
+		for _, user := range *users {
+			if conversation.UserID == user.ID {
+				readTaskResp.Conversations[i].UserName = user.Name
+			}
+			
+			if len(conversation.ThreadReplyMessage) > 0 {
+				for j, threadReply := range conversation.ThreadReplyMessage {
+					if threadReply.UserID == user.ID {
+						readTaskResp.Conversations[i].ThreadReplyMessage[j].UserName = user.Name
+					}
+				}
+			}
+		}
 	}
 
 	out, err := base.ConvertToStructpb(readTaskResp)

@@ -81,6 +81,21 @@ func (m *MockSlackClient) GetConversationReplies(params *slack.GetConversationRe
 	return fakeMessages, hasMore, nextCursor, nil
 }
 
+func (m *MockSlackClient) GetUsersInfo(users ...string) (*[]slack.User, error) {
+	resp := &[]slack.User{
+		{
+			ID:   "user123",
+			Name: "Penguin",
+		},
+		{
+			ID:   "user456",
+			Name: "Giraffe",
+		},
+	}
+
+	return resp, nil
+}
+
 const (
 	apiKey = "testkey"
 )
@@ -100,8 +115,8 @@ func TestComponent_ExecuteWriteTask(t *testing.T) {
 		{
 			name: "ok to write",
 			input: UserInputWriteTask{
-				ChannelName:     "test_channel",
-				Message:         "I am unit test",
+				ChannelName: "test_channel",
+				Message:     "I am unit test",
 			},
 			wantResp: WriteTaskResp{
 				Result: "succeed",
@@ -110,8 +125,8 @@ func TestComponent_ExecuteWriteTask(t *testing.T) {
 		{
 			name: "fail to write",
 			input: UserInputWriteTask{
-				ChannelName:     "test_channel_1",
-				Message:         "I am unit test",
+				ChannelName: "test_channel_1",
+				Message:     "I am unit test",
 			},
 			wantErr: `there is no match name in slack channel \[test_channel_1\]`,
 		},
@@ -175,6 +190,7 @@ func TestComponent_ExecuteReadTask(t *testing.T) {
 				Conversations: []Conversation{
 					{
 						UserID:     "user123",
+						UserName:   "Penguin",
 						Message:    "Hello, world!",
 						StartDate:  "2024-05-08",
 						LastDate:   "2024-05-08",
@@ -183,6 +199,7 @@ func TestComponent_ExecuteReadTask(t *testing.T) {
 						ThreadReplyMessage: []ThreadReplyMessage{
 							{
 								UserID:   "user456",
+								UserName: "Giraffe",
 								Message:  "Hello, how are you",
 								DateTime: mockDateTime,
 							},

@@ -47,6 +47,7 @@ type SlackClient interface {
 	PostMessage(channelID string, options ...slack.MsgOption) (string, string, error)
 	GetConversationHistory(params *slack.GetConversationHistoryParameters) (*slack.GetConversationHistoryResponse, error)
 	GetConversationReplies(params *slack.GetConversationRepliesParameters) ([]slack.Message, bool, string, error)
+	GetUsersInfo(users ...string) (*[]slack.User, error)
 }
 
 // Init returns an implementation of IConnector that interacts with Slack.

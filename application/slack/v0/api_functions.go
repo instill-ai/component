@@ -181,3 +181,15 @@ func transformTSToDate(ts string, format string) (string, error) {
 	formatedTS := timestamp.Format(format)
 	return formatedTS, nil
 }
+
+func removeDuplicateUserIDs(userIDs []string) []string {
+	encountered := map[string]struct{}{}
+	result := []string{}
+	for _, v := range userIDs {
+		if _, ok := encountered[v]; !ok {
+			encountered[v] = struct{}{}
+			result = append(result, v)
+		}
+	}
+	return result
+}

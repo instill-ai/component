@@ -1,4 +1,20 @@
 {
+  "$defs": {
+    "user_id": {
+      "description": "unique id from Slack",
+      "instillFormat": "string",
+      "instillUIOrder": 0,
+      "title": "User UID",
+      "type": "string"
+    },
+    "user_name": {
+      "description": "user name in Slack",
+      "instillFormat": "string",
+      "instillUIOrder": 1,
+      "title": "User Name",
+      "type": "string"
+    }
+  },
   "TASK_READ_MESSAGE": {
     "instillShortDescription": "Get the latest message since specific date",
     "input": {
@@ -56,11 +72,10 @@
             "type": "object",
             "properties": {
               "user_id": {
-                "description": "unique id from Slack",
-                "instillFormat": "string",
-                "instillUIOrder": 1,
-                "title": "User UID",
-                "type": "string"
+                "$ref": "#/$defs/user_id"
+              },
+              "user_name": {
+                "$ref": "#/$defs/user_name"
               },
               "message": {
                 "description": "message to start a conversation",
@@ -96,11 +111,10 @@
                   "type": "object",
                   "properties": {
                     "user_id": {
-                      "description": "unique id from Slack",
-                      "instillFormat": "string",
-                      "instillUIOrder": 1,
-                      "title": "User UID",
-                      "type": "string"
+                      "$ref": "#/$defs/user_id"
+                    },
+                    "user_name": {
+                      "$ref": "#/$defs/user_name"
                     },
                     "datetime": {
                       "description": "replied datetime",
