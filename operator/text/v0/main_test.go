@@ -16,9 +16,6 @@ import (
 
 func TestConnector(t *testing.T) {
 	c := quicktest.New(t)
-	bc := base.Operator{Logger: zap.NewNop()}
-	ctx := context.Background()
-	connector := Init(bc)
 
 	fileContent, _ := os.ReadFile("testdata/test.txt")
 	base64DataURI := fmt.Sprintf("data:%s;base64,%s", docconv.MimeTypeByExtension("testdata/test.txt"), base64.StdEncoding.EncodeToString(fileContent))
@@ -65,14 +62,18 @@ func TestConnector(t *testing.T) {
 			},
 		},
 	}
-
+	bc := base.Operator{Logger: zap.NewNop()}
+	ctx := context.Background()
 	for i := range testcases {
 		tc := &testcases[i]
 		c.Run(tc.name, func(c *quicktest.C) {
+			connector := Init(bc)
 			execution, err := connector.CreateExecution(map[string]any{}, tc.task)
 			c.Assert(err, quicktest.IsNil)
+
 			input := []*structpb.Struct{&tc.input}
 			outputs, err := execution.Execute(ctx, input)
+			
 			c.Assert(err, quicktest.IsNil)
 			c.Assert(outputs, quicktest.HasLen, 1)
 		})
