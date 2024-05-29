@@ -71,7 +71,7 @@
               "whisper-1"
             ],
             "targets": [
-              "connection.api_key"
+              "setup.api_key"
             ]
           },
           "title": "Model"
@@ -149,7 +149,7 @@
               "text-embedding-3-large"
             ],
             "targets": [
-              "connection.api_key"
+              "setup.api_key"
             ]
           },
           "instillUpstreamTypes": [
@@ -287,7 +287,7 @@
               "gpt-3.5-turbo"
             ],
             "targets": [
-              "connection.api_key"
+              "setup.api_key"
             ]
           },
           "title": "Model"
@@ -465,7 +465,7 @@
               "dall-e-3"
             ],
             "targets": [
-              "connection.api_key"
+              "setup.api_key"
             ]
           },
           "instillAcceptFormats": [
@@ -616,7 +616,7 @@
               "tts-1-hd"
             ],
             "targets": [
-              "connection.api_key"
+              "setup.api_key"
             ]
           },
           "instillShortDescription": "ID of the model to use",

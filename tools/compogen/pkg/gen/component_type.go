@@ -4,51 +4,33 @@ import (
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
-// ComponentType defines the type of a component (e.g. operator, connector).
-// This will condition how the component definition is parsed and how the
-// documentation is generated.
+// ComponentType holds the possible subtypes of a component (e.g.
+// "operator", "AI", "data") and implements several helper methods.
 type ComponentType string
 
 const (
-	// ComponentTypeConnector ...
-	ComponentTypeConnector ComponentType = "connector"
-	// ComponentTypeOperator ...
-	ComponentTypeOperator ComponentType = "operator"
+	cstOperator    ComponentType = "operator"
+	cstAI          ComponentType = "AI"
+	cstApplication ComponentType = "application"
+	cstData        ComponentType = "data"
 )
 
-// HasConnectionConfig determines whether a component type requires the creation
-// of a component resource before making it available in pipelines.
-func (ct ComponentType) HasConnectionConfig() bool {
-	return ct == ComponentTypeConnector
+var toComponentType = map[string]ComponentType{
+	pb.ComponentType_COMPONENT_TYPE_AI.String():          cstAI,
+	pb.ComponentType_COMPONENT_TYPE_APPLICATION.String(): cstApplication,
+	pb.ComponentType_COMPONENT_TYPE_DATA.String():        cstData,
+	pb.ComponentType_COMPONENT_TYPE_OPERATOR.String():    cstOperator,
 }
 
-// ComponentSubtype holds the possible subtypes of a component (e.g.
-// "operator", "AI connector", "data connector") and implements several helper
-// methods.
-type ComponentSubtype string
-
-const (
-	cstOperator             ComponentSubtype = "operator"
-	cstAIConnector          ComponentSubtype = "AI connector"
-	cstApplicationConnector ComponentSubtype = "application connector"
-	cstDataConnector        ComponentSubtype = "data connector"
-)
-
-var toComponentSubtype = map[string]ComponentSubtype{
-	pb.ConnectorType_CONNECTOR_TYPE_AI.String():          cstAIConnector,
-	pb.ConnectorType_CONNECTOR_TYPE_APPLICATION.String(): cstApplicationConnector,
-	pb.ConnectorType_CONNECTOR_TYPE_DATA.String():        cstDataConnector,
-}
-
-var modifiesArticle = map[ComponentSubtype]bool{
-	cstOperator:    true,
-	cstAIConnector: true,
+var modifiesArticle = map[ComponentType]bool{
+	cstOperator: true,
+	cstAI:       true,
 }
 
 // IndefiniteArticle returns the correct indefinite article (in English) for a
-// component subtype, e.g., "an" (operator), "an" (AI connector), "a" (data
+// component subtype, e.g., "an" (operator), "an" (AI), "a" (data
 // connector).
-func (ct ComponentSubtype) IndefiniteArticle() string {
+func (ct ComponentType) IndefiniteArticle() string {
 	if modifiesArticle[ct] {
 		return "an"
 	}

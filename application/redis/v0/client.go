@@ -53,7 +53,7 @@ func (e *VerifyFullSSL) GetConfig() (*tls.Config, error) {
 		return nil, fmt.Errorf("failed to load client certificate and key: %v", err)
 	}
 
-	// Setup TLS config
+	// Config TLS setup
 	tlsConfig := &tls.Config{
 		RootCAs:      caCertPool,
 		Certificates: []tls.Certificate{clientCert},
@@ -65,37 +65,37 @@ func (e *VerifyFullSSL) GetConfig() (*tls.Config, error) {
 	return tlsConfig, nil
 }
 
-func getHost(config *structpb.Struct) string {
-	return config.GetFields()["host"].GetStringValue()
+func getHost(setup *structpb.Struct) string {
+	return setup.GetFields()["host"].GetStringValue()
 }
-func getPort(config *structpb.Struct) int {
-	return int(config.GetFields()["port"].GetNumberValue())
+func getPort(setup *structpb.Struct) int {
+	return int(setup.GetFields()["port"].GetNumberValue())
 }
-func getPassword(config *structpb.Struct) string {
-	val, ok := config.GetFields()["password"]
+func getPassword(setup *structpb.Struct) string {
+	val, ok := setup.GetFields()["password"]
 	if !ok {
 		return ""
 	}
 	return val.GetStringValue()
 }
-func getUsername(config *structpb.Struct) string {
-	val, ok := config.GetFields()["username"]
+func getUsername(setup *structpb.Struct) string {
+	val, ok := setup.GetFields()["username"]
 	if !ok {
 		return ""
 	}
 	return val.GetStringValue()
 }
 
-func getSSL(config *structpb.Struct) bool {
-	val, ok := config.GetFields()["ssl"]
+func getSSL(setup *structpb.Struct) bool {
+	val, ok := setup.GetFields()["ssl"]
 	if !ok {
 		return false
 	}
 	return val.GetBoolValue()
 }
 
-func getSSLMode(config *structpb.Struct) (SSLModeConfig, error) {
-	sslMode := config.GetFields()["ssl_mode"].GetStructValue()
+func getSSLMode(setup *structpb.Struct) (SSLModeConfig, error) {
+	sslMode := setup.GetFields()["ssl_mode"].GetStructValue()
 	mode := sslMode.GetFields()["mode"].GetStringValue()
 
 	var sslModeConfig SSLModeConfig
@@ -116,18 +116,18 @@ func getSSLMode(config *structpb.Struct) (SSLModeConfig, error) {
 }
 
 // NewClient creates a new redis client
-func NewClient(config *structpb.Struct) (*goredis.Client, error) {
+func NewClient(setup *structpb.Struct) (*goredis.Client, error) {
 	op := &goredis.Options{
-		Addr:     fmt.Sprintf("%s:%d", getHost(config), getPort(config)),
-		Password: getPassword(config),
+		Addr:     fmt.Sprintf("%s:%d", getHost(setup), getPort(setup)),
+		Password: getPassword(setup),
 		DB:       0,
 	}
-	if getUsername(config) != "" {
-		op.Username = getUsername(config)
+	if getUsername(setup) != "" {
+		op.Username = getUsername(setup)
 	}
 
-	if getSSL(config) {
-		sslConfig, err := getSSLMode(config)
+	if getSSL(setup) {
+		sslConfig, err := getSSLMode(setup)
 		if err != nil {
 			return nil, err
 		}

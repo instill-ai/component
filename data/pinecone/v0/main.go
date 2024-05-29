@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package pinecone
 
 import (
@@ -24,59 +24,62 @@ const (
 //go:embed config/definition.json
 var definitionJSON []byte
 
+//go:embed config/setup.json
+var setupJSON []byte
+
 //go:embed config/tasks.json
 var tasksJSON []byte
 
 var once sync.Once
-var con *connector
+var comp *component
 
-type connector struct {
-	base.Connector
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 }
 
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 	}}, nil
 }
 
-func newClient(config *structpb.Struct, logger *zap.Logger) *httpclient.Client {
-	c := httpclient.New("Pinecone", getURL(config),
+func newClient(setup *structpb.Struct, logger *zap.Logger) *httpclient.Client {
+	c := httpclient.New("Pinecone", getURL(setup),
 		httpclient.WithLogger(logger),
 		httpclient.WithEndUserError(new(errBody)),
 	)
 
-	c.SetHeader("Api-Key", getAPIKey(config))
+	c.SetHeader("Api-Key", getAPIKey(setup))
 	c.SetHeader("User-Agent", "source_tag=instillai")
 
 	return c
 }
 
-func getAPIKey(config *structpb.Struct) string {
-	return config.GetFields()["api_key"].GetStringValue()
+func getAPIKey(setup *structpb.Struct) string {
+	return setup.GetFields()["api_key"].GetStringValue()
 }
 
-func getURL(config *structpb.Struct) string {
-	return config.GetFields()["url"].GetStringValue()
+func getURL(setup *structpb.Struct) string {
+	return setup.GetFields()["url"].GetStringValue()
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-	req := newClient(e.Connection, e.GetLogger()).R()
+	req := newClient(e.Setup, e.GetLogger()).R()
 	outputs := []*structpb.Struct{}
 
 	for _, input := range inputs {
@@ -136,7 +139,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 	//TODO: change this
 	return nil
 }

@@ -21,7 +21,7 @@
   "title": "Instill Model",
   "description": "Connect the AI models served on the Instill Model Platform",
   "tombstone": false,
-  "type": "CONNECTOR_TYPE_AI",
+  "type": "COMPONENT_TYPE_AI",
   "uid": "ddcf42c3-4c30-4c65-9585-25f1c89b2b48",
   "vendor": "Instill",
   "vendor_attributes": {},

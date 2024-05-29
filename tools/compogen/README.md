@@ -50,7 +50,7 @@ Certain optional fields modify the document behaviour:
   an info block next to the resource configuration details.
   - Note that this section only applies when a connector is being documented,
     i.e. when the `--connector` flag is passed.`
-- A table will be built for the `spec.connection_specification` properties. They
+- A table will be built for the `spec.config_specification` properties. They
   must contain an `instillUIOrder` field so the row order is deterministic.
 
 ## TODO
@@ -62,7 +62,7 @@ Certain optional fields modify the document behaviour:
     - [invopop/jsonschema](https://github.com/invopop/jsonschema/blob/a446707/schema.go#L14)
     - [swaggest/jsonschema-go](https://pkg.go.dev/github.com/swaggest/jsonschema-go#Schema)
   - The schema loading carried out by the `component/base` package in
-    `LoadConnectorDefinition` or `LoadOperatorDefinition` might also be
+    `LoadDefinition` or `LoadDefinition` might also be
     useful, although it is oriented to transforming the data to a `structpb.Struct`
     rather than to define the object structure.
 - In the "supported tasks" tables, provide better documentation for nested

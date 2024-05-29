@@ -11,6 +11,7 @@
   "public": true,
   "spec": {},
   "title": "Base64",
+  "type": "COMPONENT_TYPE_OPERATOR",
   "tombstone": false,
   "uid": "3a836447-c211-4134-9cc5-ad45e1cc467e",
   "version": "0.1.0",

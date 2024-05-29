@@ -13,27 +13,30 @@ var (
 	connectorDefJSON []byte
 	//go:embed testdata/connectorTasks.json
 	connectorTasksJSON []byte
+	//go:embed testdata/connectorConfig.json
+	connectorConfigJSON []byte
 	//go:embed testdata/connectorAdditional.json
 	connectorAdditionalJSON []byte
 	//go:embed testdata/wantConnectorDefinition.json
 	wantConnectorDefinitionJSON []byte
 )
 
-func TestConnector_ListConnectorDefinitions(t *testing.T) {
+func TestComponent_ListConnectorDefinitions(t *testing.T) {
 	c := qt.New(t)
 	logger := zap.NewNop()
 
-	conn := Connector{
+	conn := Component{
 		Logger: logger,
 	}
 
-	err := conn.LoadConnectorDefinition(
+	err := conn.LoadDefinition(
 		connectorDefJSON,
+		connectorConfigJSON,
 		connectorTasksJSON,
 		map[string][]byte{"additional.json": connectorAdditionalJSON})
 	c.Assert(err, qt.IsNil)
 
-	got, err := conn.GetConnectorDefinition(nil, nil)
+	got, err := conn.GetDefinition(nil, nil)
 	c.Assert(err, qt.IsNil)
 	c.Check(wantConnectorDefinitionJSON, qt.JSONEquals, got)
 }

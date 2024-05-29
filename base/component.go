@@ -13,11 +13,10 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
-	"gorm.io/datatypes"
 
 	"github.com/instill-ai/component/internal/jsonref"
 
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
+	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 const conditionJSON = `
@@ -39,7 +38,29 @@ type IComponent interface {
 	GetTaskInputSchemas() map[string]string
 	GetTaskOutputSchemas() map[string]string
 
+	LoadDefinition(definitionJSON, setupJSON, tasksJSON []byte, additionalJSONBytes map[string][]byte) error
+
+	// Note: Some content in the definition JSON schema needs to be generated
+	// by sysVars or component setting.
+	GetDefinition(sysVars map[string]any, compConfig *ComponentConfig) (*pb.ComponentDefinition, error)
+
+	CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*ExecutionWrapper, error)
+	Test(sysVars map[string]any, config *structpb.Struct) error
+
+	IsSecretField(target string) bool
+
 	UsageHandlerCreator() UsageHandlerCreator
+}
+
+// Component implements the common component methods.
+type Component struct {
+	Logger *zap.Logger
+
+	taskInputSchemas  map[string]string
+	taskOutputSchemas map[string]string
+
+	definition   *pb.ComponentDefinition
+	secretFields []string
 }
 
 func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
@@ -186,8 +207,8 @@ func TaskIDToTitle(id string) string {
 	return cases.Title(language.English).String(title)
 }
 
-func generateComponentTaskCards(tasks []string, taskStructs map[string]*structpb.Struct) []*pipelinePB.ComponentTask {
-	taskCards := make([]*pipelinePB.ComponentTask, 0, len(tasks))
+func generateComponentTaskCards(tasks []string, taskStructs map[string]*structpb.Struct) []*pb.ComponentTask {
+	taskCards := make([]*pb.ComponentTask, 0, len(tasks))
 	for _, k := range tasks {
 		if v, ok := taskStructs[k]; ok {
 			title := v.Fields["title"].GetStringValue()
@@ -197,7 +218,7 @@ func generateComponentTaskCards(tasks []string, taskStructs map[string]*structpb
 
 			description := taskStructs[k].Fields["instillShortDescription"].GetStringValue()
 
-			taskCards = append(taskCards, &pipelinePB.ComponentTask{
+			taskCards = append(taskCards, &pb.ComponentTask{
 				Name:        k,
 				Title:       title,
 				Description: description,
@@ -208,7 +229,7 @@ func generateComponentTaskCards(tasks []string, taskStructs map[string]*structpb
 	return taskCards
 }
 
-func generateComponentSpec(title string, tasks []*pipelinePB.ComponentTask, taskStructs map[string]*structpb.Struct) (*structpb.Struct, error) {
+func generateComponentSpec(title string, tasks []*pb.ComponentTask, taskStructs map[string]*structpb.Struct) (*structpb.Struct, error) {
 	var err error
 	componentSpec := &structpb.Struct{Fields: map[string]*structpb.Value{}}
 	componentSpec.Fields["$schema"] = structpb.NewStringValue("http://json-schema.org/draft-07/schema#")
@@ -383,11 +404,11 @@ func formatDataSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
 	return compSpec, nil
 }
 
-func generateDataSpecs(tasks map[string]*structpb.Struct) (map[string]*pipelinePB.DataSpecification, error) {
+func generateDataSpecs(tasks map[string]*structpb.Struct) (map[string]*pb.DataSpecification, error) {
 
-	specs := map[string]*pipelinePB.DataSpecification{}
+	specs := map[string]*pb.DataSpecification{}
 	for k := range tasks {
-		spec := &pipelinePB.DataSpecification{}
+		spec := &pb.DataSpecification{}
 		var err error
 		taskJSONStruct := proto.Clone(tasks[k]).(*structpb.Struct)
 		spec.Input, err = formatDataSpec(taskJSONStruct.Fields["input"].GetStructValue())
@@ -404,7 +425,7 @@ func generateDataSpecs(tasks map[string]*structpb.Struct) (map[string]*pipelineP
 	return specs, nil
 }
 
-func loadTasks(availableTasks []string, tasksJSONBytes []byte) ([]*pipelinePB.ComponentTask, map[string]*structpb.Struct, error) {
+func loadTasks(availableTasks []string, tasksJSONBytes []byte) ([]*pb.ComponentTask, map[string]*structpb.Struct, error) {
 
 	taskStructs := map[string]*structpb.Struct{}
 	var err error
@@ -521,31 +542,306 @@ func checkFreeForm(compSpec *structpb.Struct) bool {
 	return false
 }
 
-type ConnectorComponent struct {
-	Type       string                          `json:"type,omitempty"`
-	Task       string                          `json:"task,omitempty"`
-	Input      *structpb.Struct                `json:"input,omitempty"`
-	Condition  *string                         `json:"condition,omitempty"`
-	Connection *structpb.Struct                `json:"connection,omitempty"`
-	Metadata   datatypes.JSON                  `json:"metadata,omitempty"`
-	Definition *pipelinePB.ConnectorDefinition `json:"definition,omitempty"`
+func (c *Component) GetID() string {
+	return c.definition.Id
 }
 
-type OperatorComponent struct {
-	Type       string                         `json:"type,omitempty"`
-	Task       string                         `json:"task,omitempty"`
-	Input      *structpb.Struct               `json:"input,omitempty"`
-	Condition  *string                        `json:"condition,omitempty"`
-	Metadata   datatypes.JSON                 `json:"metadata,omitempty"`
-	Definition *pipelinePB.OperatorDefinition `json:"definition,omitempty"`
+func (c *Component) GetUID() uuid.UUID {
+	return uuid.FromStringOrNil(c.definition.Uid)
 }
 
-func (c *ConnectorComponent) IsComponent() {}
-func (c *OperatorComponent) IsComponent()  {}
-
-func (c *ConnectorComponent) GetCondition() *string {
-	return c.Condition
+func (c *Component) GetLogger() *zap.Logger {
+	return c.Logger
 }
-func (c *OperatorComponent) GetCondition() *string {
+func (c *Component) GetDefinition(sysVars map[string]any, compConfig *ComponentConfig) (*pb.ComponentDefinition, error) {
+	return c.definition, nil
+}
+
+func (c *Component) GetTaskInputSchemas() map[string]string {
+	return c.taskInputSchemas
+}
+func (c *Component) GetTaskOutputSchemas() map[string]string {
+	return c.taskOutputSchemas
+}
+
+// LoadDefinition loads the component definitions from json files
+func (c *Component) LoadDefinition(definitionJSONBytes, setupJSONBytes, tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) error {
+	var err error
+	var definitionJSON any
+
+	c.secretFields = []string{}
+
+	err = json.Unmarshal(definitionJSONBytes, &definitionJSON)
+	if err != nil {
+		return err
+	}
+	renderedTasksJSON, err := RenderJSON(tasksJSONBytes, additionalJSONBytes)
+	if err != nil {
+		return nil
+	}
+
+	availableTasks := []string{}
+	for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
+		availableTasks = append(availableTasks, availableTask.(string))
+	}
+
+	tasks, taskStructs, err := loadTasks(availableTasks, renderedTasksJSON)
+	if err != nil {
+		return err
+	}
+
+	c.taskInputSchemas = map[string]string{}
+	c.taskOutputSchemas = map[string]string{}
+	for k := range taskStructs {
+		var s []byte
+		s, err = protojson.Marshal(taskStructs[k].Fields["input"].GetStructValue())
+		if err != nil {
+			return err
+		}
+		c.taskInputSchemas[k] = string(s)
+
+		s, err = protojson.Marshal(taskStructs[k].Fields["output"].GetStructValue())
+		if err != nil {
+			return err
+		}
+		c.taskOutputSchemas[k] = string(s)
+	}
+
+	c.definition = &pb.ComponentDefinition{}
+	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(definitionJSONBytes, c.definition)
+	if err != nil {
+		return err
+	}
+
+	c.definition.Name = fmt.Sprintf("component-definitions/%s", c.definition.Id)
+	c.definition.Tasks = tasks
+	if c.definition.Spec == nil {
+		c.definition.Spec = &pb.ComponentDefinition_Spec{}
+	}
+	c.definition.Spec.ComponentSpecification, err = generateComponentSpec(c.definition.Title, tasks, taskStructs)
+	if err != nil {
+		return err
+	}
+
+	raw := &structpb.Struct{}
+	err = protojson.Unmarshal(definitionJSONBytes, raw)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Avoid using structpb traversal here.
+	if setupJSONBytes != nil {
+		setup := &structpb.Struct{}
+		err = protojson.Unmarshal(setupJSONBytes, setup)
+		if err != nil {
+			return err
+		}
+		setup, err := c.refineResourceSpec(setup)
+		if err != nil {
+			return err
+		}
+		configPropStruct := &structpb.Struct{Fields: map[string]*structpb.Value{}}
+		configPropStruct.Fields["setup"] = structpb.NewStructValue(setup)
+		c.definition.Spec.ComponentSpecification.Fields["properties"] = structpb.NewStructValue(configPropStruct)
+
+	}
+
+	c.definition.Spec.DataSpecifications, err = generateDataSpecs(taskStructs)
+	if err != nil {
+		return err
+	}
+
+	c.initSecretField(c.definition)
+
+	return nil
+
+}
+
+func (c *Component) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb.Struct, error) {
+
+	spec := proto.Clone(resourceSpec).(*structpb.Struct)
+	if _, ok := spec.Fields["instillShortDescription"]; !ok {
+		spec.Fields["instillShortDescription"] = structpb.NewStringValue(spec.Fields["description"].GetStringValue())
+	}
+
+	if _, ok := spec.Fields["properties"]; ok {
+		for k, v := range spec.Fields["properties"].GetStructValue().AsMap() {
+			s, err := structpb.NewStruct(v.(map[string]interface{}))
+			if err != nil {
+				return nil, err
+			}
+			converted, err := c.refineResourceSpec(s)
+			if err != nil {
+				return nil, err
+			}
+			spec.Fields["properties"].GetStructValue().Fields[k] = structpb.NewStructValue(converted)
+
+		}
+	}
+	if _, ok := spec.Fields["patternProperties"]; ok {
+		for k, v := range spec.Fields["patternProperties"].GetStructValue().AsMap() {
+			s, err := structpb.NewStruct(v.(map[string]interface{}))
+			if err != nil {
+				return nil, err
+			}
+			converted, err := c.refineResourceSpec(s)
+			if err != nil {
+				return nil, err
+			}
+			spec.Fields["patternProperties"].GetStructValue().Fields[k] = structpb.NewStructValue(converted)
+
+		}
+	}
+	for _, target := range []string{"allOf", "anyOf", "oneOf"} {
+		if _, ok := spec.Fields[target]; ok {
+			for idx, item := range spec.Fields[target].GetListValue().AsSlice() {
+				s, err := structpb.NewStruct(item.(map[string]interface{}))
+				if err != nil {
+					return nil, err
+				}
+				converted, err := c.refineResourceSpec(s)
+				if err != nil {
+					return nil, err
+				}
+				spec.Fields[target].GetListValue().AsSlice()[idx] = structpb.NewStructValue(converted)
+			}
+		}
+	}
+
+	return spec, nil
+}
+
+// IsSecretField checks if the target field is secret field
+func (c *Component) IsSecretField(target string) bool {
+	for _, field := range c.secretFields {
+		if target == field {
+			return true
+		}
+	}
+	return false
+}
+
+// ListSecretFields lists the secret fields by definition id
+func (c *Component) ListSecretFields() ([]string, error) {
+	return c.secretFields, nil
+}
+
+func (c *Component) initSecretField(def *pb.ComponentDefinition) {
+	if c.secretFields == nil {
+		c.secretFields = []string{}
+	}
+	secretFields := []string{}
+	setup := def.Spec.GetComponentSpecification().GetFields()["properties"].GetStructValue().GetFields()["setup"].GetStructValue()
+	secretFields = c.traverseSecretField(setup.GetFields()["properties"], "", secretFields)
+	if l, ok := setup.GetFields()["oneOf"]; ok {
+		for _, v := range l.GetListValue().Values {
+			secretFields = c.traverseSecretField(v.GetStructValue().GetFields()["properties"], "", secretFields)
+		}
+	}
+	c.secretFields = secretFields
+}
+
+func (c *Component) traverseSecretField(input *structpb.Value, prefix string, secretFields []string) []string {
+	for key, v := range input.GetStructValue().GetFields() {
+		if isSecret, ok := v.GetStructValue().GetFields()["instillSecret"]; ok {
+			if isSecret.GetBoolValue() || isSecret.GetStringValue() == "true" {
+				secretFields = append(secretFields, fmt.Sprintf("%s%s", prefix, key))
+			}
+		}
+		if tp, ok := v.GetStructValue().GetFields()["type"]; ok {
+			if tp.GetStringValue() == "object" {
+				if l, ok := v.GetStructValue().GetFields()["oneOf"]; ok {
+					for _, v := range l.GetListValue().Values {
+						secretFields = c.traverseSecretField(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), secretFields)
+					}
+				}
+				secretFields = c.traverseSecretField(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), secretFields)
+			}
+
+		}
+	}
+
+	return secretFields
+}
+
+// UsageHandlerCreator returns a function to initialize a UsageHandler.
+func (c *Component) UsageHandlerCreator() UsageHandlerCreator {
+	return NewNoopUsageHandler
+}
+
+func (c *Component) Test(sysVars map[string]any, setup *structpb.Struct) error {
+	return nil
+}
+
+// ComponentExecution implements the common methods for component
+// execution.
+type ComponentExecution struct {
+	Component       IComponent
+	SystemVariables map[string]any
+	Setup           *structpb.Struct
+	Task            string
+}
+
+func (e *ComponentExecution) GetTask() string {
+	return e.Task
+}
+
+func (e *ComponentExecution) GetSetup() *structpb.Struct {
+	return e.Setup
+}
+func (e *ComponentExecution) GetSystemVariables() map[string]any {
+	return e.SystemVariables
+}
+func (e *ComponentExecution) GetLogger() *zap.Logger {
+	return e.Component.GetLogger()
+}
+func (e *ComponentExecution) GetTaskInputSchema() string {
+	return e.Component.GetTaskInputSchemas()[e.Task]
+}
+func (e *ComponentExecution) GetTaskOutputSchema() string {
+	return e.Component.GetTaskOutputSchemas()[e.Task]
+}
+
+// UsesSecret indicates wether the connector execution is configured with
+// global secrets. Components should override this method when they have the
+// ability to be executed with global secrets.
+func (e *ComponentExecution) UsesSecret() bool {
+	return false
+}
+
+// UsageHandlerCreator returns a function to initialize a UsageHandler.
+func (e *ComponentExecution) UsageHandlerCreator() UsageHandlerCreator {
+	return e.Component.UsageHandlerCreator()
+}
+
+// ReadFromSecrets reads a component secret from a secret map that comes from
+// environment variable configuration.
+//
+// Config parameters are defined with snake_case, but the
+// environment variable configuration loader replaces underscores by dots,
+// so we can't use the parameter key directly.
+// TODO using camelCase in configuration fields would fix this issue.
+func ReadFromSecrets(key string, secrets map[string]any) string {
+	sanitized := strings.ReplaceAll(key, "_", "")
+	if v, ok := secrets[sanitized].(string); ok {
+		return v
+	}
+
+	return ""
+}
+
+type ComponentConfig struct {
+	Type       string                  `json:"type,omitempty"`
+	Task       string                  `json:"task,omitempty"`
+	Input      map[string]any          `json:"input,omitempty"`
+	Condition  *string                 `json:"condition,omitempty"`
+	Setup      map[string]any          `json:"setup,omitempty"`
+	Metadata   map[string]any          `json:"metadata,omitempty"`
+	Definition *pb.ComponentDefinition `json:"definition,omitempty"`
+}
+
+func (c *ComponentConfig) IsComponent() {}
+
+func (c *ComponentConfig) GetCondition() *string {
 	return c.Condition
 }

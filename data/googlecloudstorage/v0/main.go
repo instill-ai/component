@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package googlecloudstorage
 
 import (
@@ -21,33 +21,37 @@ const (
 //go:embed config/definition.json
 var definitionJSON []byte
 
+//go:embed config/setup.json
+var setupJSON []byte
+
 //go:embed config/tasks.json
 var tasksJSON []byte
-var once sync.Once
-var con *connector
 
-type connector struct {
-	base.Connector
+var once sync.Once
+var comp *component
+
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 }
 
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 	}}, nil
 }
 
@@ -55,18 +59,18 @@ func NewClient(jsonKey string) (*storage.Client, error) {
 	return storage.NewClient(context.Background(), option.WithCredentialsJSON([]byte(jsonKey)))
 }
 
-func getBucketName(config *structpb.Struct) string {
-	return config.GetFields()["bucket_name"].GetStringValue()
+func getBucketName(setup *structpb.Struct) string {
+	return setup.GetFields()["bucket_name"].GetStringValue()
 }
 
-func getJSONKey(config *structpb.Struct) string {
-	return config.GetFields()["json_key"].GetStringValue()
+func getJSONKey(setup *structpb.Struct) string {
+	return setup.GetFields()["json_key"].GetStringValue()
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 
-	client, err := NewClient(getJSONKey(e.Connection))
+	client, err := NewClient(getJSONKey(e.Setup))
 	if err != nil || client == nil {
 		return nil, fmt.Errorf("error creating GCS client: %v", err)
 	}
@@ -77,7 +81,7 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 		case taskUpload, "":
 			objectName := input.GetFields()["object_name"].GetStringValue()
 			data := input.GetFields()["data"].GetStringValue()
-			bucketName := getBucketName(e.Connection)
+			bucketName := getBucketName(e.Setup)
 			err = uploadToGCS(client, bucketName, objectName, data)
 			if err != nil {
 				return nil, err
@@ -108,9 +112,9 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 	return outputs, nil
 }
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 
-	client, err := NewClient(getJSONKey(connection))
+	client, err := NewClient(getJSONKey(setup))
 	if err != nil {
 		return fmt.Errorf("error creating GCS client: %v", err)
 	}

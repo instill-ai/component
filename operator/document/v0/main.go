@@ -26,31 +26,31 @@ var (
 	//go:embed python/transformPDFToMarkdown.py
 	pythonCode string
 	once       sync.Once
-	op         *operator
+	comp       *component
 )
 
-type operator struct {
-	base.Operator
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.OperatorExecution
+	base.ComponentExecution
 }
 
-func Init(bo base.Operator) *operator {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		op = &operator{Operator: bo}
-		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, nil, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return op
+	return comp
 }
 
-func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		OperatorExecution: base.OperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
 	}}, nil
 }
 

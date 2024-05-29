@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package numbers
 
 import (
@@ -25,20 +25,23 @@ const urlRegisterAsset = "https://api.numbersprotocol.io/api/v3/assets/"
 const urlUserMe = "https://api.numbersprotocol.io/api/v3/auth/users/me"
 
 var once sync.Once
-var con *connector
+var comp *component
 
 //go:embed config/definition.json
 var definitionJSON []byte
 
+//go:embed config/setup.json
+var setupJSON []byte
+
 //go:embed config/tasks.json
 var tasksJSON []byte
 
-type connector struct {
-	base.Connector
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 }
 
 type CommitCustomLicense struct {
@@ -96,25 +99,25 @@ type Output struct {
 	AssetUrls []string `json:"asset_urls"`
 }
 
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 	}}, nil
 }
 
-func getToken(config *structpb.Struct) string {
-	return fmt.Sprintf("token %s", config.GetFields()["capture_token"].GetStringValue())
+func getToken(setup *structpb.Struct) string {
+	return fmt.Sprintf("token %s", setup.GetFields()["capture_token"].GetStringValue())
 }
 
 func (e *execution) registerAsset(data []byte, reg Register) (string, error) {
@@ -156,7 +159,7 @@ func (e *execution) registerAsset(data []byte, reg Register) (string, error) {
 		return "", err
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
-	req.Header.Set("Authorization", getToken(e.Connection))
+	req.Header.Set("Authorization", getToken(e.Setup))
 
 	tr := &http.Transport{
 		DisableKeepAlives: true,
@@ -268,13 +271,13 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 }
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 
 	req, err := http.NewRequest("GET", urlUserMe, nil)
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Authorization", getToken(connection))
+	req.Header.Set("Authorization", getToken(setup))
 
 	tr := &http.Transport{
 		DisableKeepAlives: true,
@@ -288,7 +291,7 @@ func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) er
 		return err
 	}
 	if res.StatusCode == http.StatusOK {
-		return fmt.Errorf("connection error")
+		return fmt.Errorf("setup error")
 	}
 	return nil
 }

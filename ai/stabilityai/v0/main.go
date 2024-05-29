@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package stabilityai
 
 import (
@@ -25,60 +25,62 @@ const (
 var (
 	//go:embed config/definition.json
 	definitionJSON []byte
+	//go:embed config/setup.json
+	setupJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
 	//go:embed config/stabilityai.json
 	stabilityaiJSON []byte
 	once            sync.Once
-	con             *Connector
+	comp            *component
 )
 
 // Connector executes queries against StabilityAI.
-type Connector struct {
-	base.Connector
+type component struct {
+	base.Component
 
 	usageHandlerCreator base.UsageHandlerCreator
 	secretAPIKey        string
 }
 
 // Init returns an initialized StabilityAI connector.
-func Init(bc base.Connector) *Connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &Connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, map[string][]byte{"stabilityai.json": stabilityaiJSON})
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, map[string][]byte{"stabilityai.json": stabilityaiJSON})
 		if err != nil {
 			panic(err)
 		}
 	})
 
-	return con
+	return comp
 }
 
 // WithSecrets loads secrets into the connector, which can be used to configure
 // it with globaly defined parameters.
-func (c *Connector) WithSecrets(s map[string]any) *Connector {
+func (c *component) WithSecrets(s map[string]any) *component {
 	c.secretAPIKey = base.ReadFromSecrets(cfgAPIKey, s)
 
 	return c
 }
 
 // WithUsageHandlerCreator overrides the UsageHandlerCreator method.
-func (c *Connector) WithUsageHandlerCreator(newUH base.UsageHandlerCreator) *Connector {
+func (c *component) WithUsageHandlerCreator(newUH base.UsageHandlerCreator) *component {
 	c.usageHandlerCreator = newUH
 	return c
 }
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (c *Connector) UsageHandlerCreator() base.UsageHandlerCreator {
+func (c *component) UsageHandlerCreator() base.UsageHandlerCreator {
 	if c.usageHandlerCreator == nil {
-		return c.Connector.UsageHandlerCreator()
+		return c.Component.UsageHandlerCreator()
 	}
 	return c.usageHandlerCreator
 }
 
-// resolveSecrets looks for references to a global secret in the connection
+// resolveSecrets looks for references to a global secret in the setup
 // and replaces them by the global secret injected during initialization.
-func (c *Connector) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, bool, error) {
+func (c *component) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, bool, error) {
 	apiKey := conn.GetFields()[cfgAPIKey].GetStringValue()
 	if apiKey != base.SecretKeyword {
 		return conn, false, nil
@@ -94,17 +96,17 @@ func (c *Connector) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, boo
 
 // CreateExecution initializes a connector executor that can be used in a
 // pipeline trigger.
-func (c *Connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	resolvedConnection, resolved, err := c.resolveSecrets(connection)
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+	resolvedSetup, resolved, err := c.resolveSecrets(setup)
 	if err != nil {
 		return nil, err
 	}
 
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{
-			Connector:       c,
+		ComponentExecution: base.ComponentExecution{
+			Component:       c,
 			SystemVariables: sysVars,
-			Connection:      resolvedConnection,
+			Setup:           resolvedSetup,
 			Task:            task,
 		},
 		usesSecret: resolved,
@@ -112,7 +114,7 @@ func (c *Connector) CreateExecution(sysVars map[string]any, connection *structpb
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 	usesSecret bool
 }
 
@@ -121,7 +123,7 @@ func (e *execution) UsesSecret() bool {
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-	client := newClient(e.Connection, e.GetLogger())
+	client := newClient(e.Setup, e.GetLogger())
 	outputs := []*structpb.Struct{}
 
 	for _, input := range inputs {
@@ -181,9 +183,9 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 }
 
 // Test checks the connector state.
-func (c *Connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 	var engines []Engine
-	req := newClient(connection, c.Logger).R().SetResult(&engines)
+	req := newClient(setup, c.Logger).R().SetResult(&engines)
 
 	if _, err := req.Get(listEnginesPath); err != nil {
 		return err

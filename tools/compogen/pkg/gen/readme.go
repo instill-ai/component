@@ -21,6 +21,7 @@ import (
 
 const (
 	definitionsFile = "definition.json"
+	setupFile       = "setup.json"
 	tasksFile       = "tasks.json"
 )
 
@@ -31,19 +32,17 @@ var readmeTmpl string
 type READMEGenerator struct {
 	validate *validator.Validate
 
-	componentType ComponentType
-	configDir     string
-	outputFile    string
+	configDir  string
+	outputFile string
 }
 
 // NewREADMEGenerator returns an initialized generator.
-func NewREADMEGenerator(configDir, outputFile string, componentType ComponentType) *READMEGenerator {
+func NewREADMEGenerator(configDir, outputFile string) *READMEGenerator {
 	return &READMEGenerator{
 		validate: validator.New(validator.WithRequiredStructEnabled()),
 
-		componentType: componentType,
-		configDir:     configDir,
-		outputFile:    outputFile,
+		configDir:  configDir,
+		outputFile: outputFile,
 	}
 }
 
@@ -67,12 +66,33 @@ func (g *READMEGenerator) parseDefinition(configDir string) (d definition, err e
 		return d, fmt.Errorf("invalid definitions file:\n%w", asValidationError(err))
 	}
 
-	_, ok := toComponentSubtype[def.Type]
-	if g.componentType == ComponentTypeConnector && !ok {
-		return d, fmt.Errorf("invalid definitions file:\nType field is invalid")
+	return def, nil
+}
+
+func (g *READMEGenerator) parseSetup(configDir string) (s *objectSchema, err error) {
+	setupJSON, err := os.ReadFile(filepath.Join(configDir, setupFile))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, err
 	}
 
-	return def, nil
+	renderedSetupJSON, err := componentbase.RenderJSON(setupJSON, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	setup := &objectSchema{}
+	if err := json.Unmarshal(renderedSetupJSON, &setup); err != nil {
+		return nil, err
+	}
+
+	if err := g.validate.Var(setup, "len=1,dive"); err != nil {
+		return nil, fmt.Errorf("invalid definitions file:\n%w", asValidationError(err))
+	}
+
+	return setup, nil
 }
 
 func (g *READMEGenerator) parseTasks(configDir string) (map[string]task, error) {
@@ -124,6 +144,11 @@ func (g *READMEGenerator) Generate() error {
 		return err
 	}
 
+	setup, err := g.parseSetup(g.configDir)
+	if err != nil {
+		return err
+	}
+
 	tasks, err := g.parseTasks(g.configDir)
 	if err != nil {
 		return err
@@ -150,7 +175,7 @@ func (g *READMEGenerator) Generate() error {
 
 	defer out.Close()
 
-	p, err := readmeParams{ComponentType: g.componentType}.parseDefinition(def, tasks)
+	p, err := readmeParams{}.parseDefinition(def, setup, tasks)
 	if err != nil {
 		return err
 	}
@@ -172,34 +197,26 @@ type resourceProperty struct {
 	Required bool
 }
 
-type connectionConfig struct {
+type setupConfig struct {
 	Prerequisites string
 	Properties    []resourceProperty
 }
 
 type readmeParams struct {
-	ID               string
-	Title            string
-	Description      string
-	IsDraft          bool
-	ComponentType    ComponentType
-	ComponentSubtype ComponentSubtype
-	ReleaseStage     releaseStage
-	SourceURL        string
-	ConnectionConfig connectionConfig
+	ID            string
+	Title         string
+	Description   string
+	IsDraft       bool
+	ComponentType ComponentType
+	ReleaseStage  releaseStage
+	SourceURL     string
+	SetupConfig   setupConfig
 
 	Tasks []readmeTask
 }
 
-func (p readmeParams) parseDefinition(d definition, tasks map[string]task) (readmeParams, error) {
-	switch p.ComponentType {
-	case ComponentTypeConnector:
-		p.ComponentSubtype = toComponentSubtype[d.Type]
-	case ComponentTypeOperator:
-		p.ComponentSubtype = cstOperator
-	default:
-		return p, fmt.Errorf("invalid component type")
-	}
+func (p readmeParams) parseDefinition(d definition, s *objectSchema, tasks map[string]task) (readmeParams, error) {
+	p.ComponentType = toComponentType[d.Type]
 
 	var err error
 	if p.Tasks, err = parseREADMETasks(d.AvailableTasks, tasks); err != nil {
@@ -213,9 +230,10 @@ func (p readmeParams) parseDefinition(d definition, tasks map[string]task) (read
 	p.ReleaseStage = d.ReleaseStage
 	p.SourceURL = d.SourceURL
 
-	p.ConnectionConfig = connectionConfig{Prerequisites: d.Prerequisites}
-	if d.Spec.ConnectionSpecification != nil {
-		p.ConnectionConfig.Properties = parseResourceProperties(d.Spec.ConnectionSpecification)
+	p.SetupConfig = setupConfig{Prerequisites: d.Prerequisites}
+
+	if s != nil {
+		p.SetupConfig.Properties = parseResourceProperties(s)
 	}
 
 	return p, nil

@@ -20,7 +20,7 @@ class PdfTransformer:
 			page_lines = page.extract_text_lines()
 			self.process_line(page_lines, page.page_number)
 			self.process_table(page)
-				
+
 		self.result = ""
 
 	def process_image(self):
@@ -52,7 +52,7 @@ class PdfTransformer:
 		self.set_line_type(self.title_height, self.subtitle_height, "indent")
 		self.result = self.transform_line_to_markdown(self.lines)
 		return self.result
-		
+
 		# export .md file
 		# file_name = "pdfTransform/output/" + self.path.split("/")[-1].replace(".pdf", ".md")
 		# with open(file_name, "w") as f:
@@ -106,7 +106,7 @@ class PdfTransformer:
 				line["type"] = 'title'
 				if current_paragraph:
 					for line_in_paragraph in current_paragraph:
-						line_in_paragraph["type"] = f'paragraph {paragraph_idx}'       
+						line_in_paragraph["type"] = f'paragraph {paragraph_idx}'
 					paragraph_idx += 1
 					current_paragraph = []
 
@@ -114,29 +114,29 @@ class PdfTransformer:
 				line["type"] = 'subtitle'
 				if current_paragraph:
 					for line_in_paragraph in current_paragraph:
-						line_in_paragraph["type"] = f'paragraph {paragraph_idx}'       
+						line_in_paragraph["type"] = f'paragraph {paragraph_idx}'
 					paragraph_idx += 1
 					current_paragraph = []
 			else:
 				if current_paragraph:
 					current_paragraph.append(line)
-					
-					if ((paragraph_strategy == "indent" and i < len(lines) - 1 and 
+
+					if ((paragraph_strategy == "indent" and i < len(lines) - 1 and
 							(   # if the next line starts a new paragraph
-								abs(lines[i+1]['x0'] - paragraph_start_position) < 10 
+								abs(lines[i+1]['x0'] - paragraph_start_position) < 10
 								# if the next line is not in the same layer
 								# or abs(line["middle"] - lines[i+1]["middle"]) > 5
 								)
 							) or
-						(paragraph_strategy == "no-indent" 
-							and line["distance_to_next_line"] 
+						(paragraph_strategy == "no-indent"
+							and line["distance_to_next_line"]
 							and line["distance_to_next_line"] > 10) or
 						(i == len(lines) - 1) # final line
 						):
-						
+
 						for line_in_paragraph in current_paragraph:
-							line_in_paragraph["type"] = f'paragraph {paragraph_idx}'       
-						
+							line_in_paragraph["type"] = f'paragraph {paragraph_idx}'
+
 						paragraph_idx += 1
 						current_paragraph = []
 				else:
@@ -160,16 +160,16 @@ class PdfTransformer:
 					result += "\n\n"
 					self.tables.remove(table)
 				to_be_processed_table = []
-				
+
 				result += self.line_process(line, i, lines, result)
 				result += "\n\n"
 
 			else:
 				result += self.line_process(line, i, lines, result)
-			
+
 			if i < len(lines) - 1:
 
-				result += self.insert_image(line, lines[i+1]) 
+				result += self.insert_image(line, lines[i+1])
 			else:
 				result += self.insert_image(line, None)
 		if self.tables:
@@ -181,7 +181,7 @@ class PdfTransformer:
 				processed_table.append(table)
 			for table in processed_table:
 				self.tables.remove(table)
-				
+
 		return result
 
 	def line_process(self, line, i, lines, current_result):
@@ -205,7 +205,7 @@ class PdfTransformer:
 			## It can be solved by using extract_words() instead of extract_text_lines()
 			## TODO: Chinese version is not working for bold.
 			## It is still under investigation.
-			for char in line["chars"]:                                    
+			for char in line["chars"]:
 				# if self.is_bold(char) and not bold_trigger: # start of bold text
 				#     bold_text += f"**{char['text']}"
 				#     bold_trigger = True
@@ -220,7 +220,7 @@ class PdfTransformer:
 				#     result += char["text"]
 				result += char["text"]
 			# extract numbers from line["type"] and add a change the line when the next line is a new paragraph
-			
+
 			if (
 				(i < len(lines) - 1) and
 				"type" in lines[i+1] and
@@ -251,26 +251,26 @@ class PdfTransformer:
 					if "\n" in col:
 						col = col.replace("\n", "<br>")
 					result += col
-					
+
 					if j < len(row) - 1:
 						result += " | "
 			if i == 0:
 				result += "\n"
-				## TODO: Judge table that cross the page, 
+				## TODO: Judge table that cross the page,
 				result += "|"
 				result += " --- |" * len(row)
 				result += "\n"
 			elif i < len(texts) - 1:
 				result += "\n"
-			
+
 		return result
 
-	
+
 	def insert_image(self, line, next_line):
 		result = ""
 		images = self.images
 		to_be_removed_images = []
-		
+
 		if images:
 			if next_line:
 				# If there is image between line and next_line, we insert image.
@@ -288,7 +288,7 @@ class PdfTransformer:
 							result += f"![image {image['img_number']}]"
 							result += "\n\n"
 							to_be_removed_images.append(image)
-				
+
 			else: # if images exists and there is no next_line, we insert image.
 				for image in images:
 					result += "\n\n"
@@ -297,7 +297,7 @@ class PdfTransformer:
 					to_be_removed_images.append(image)
 		for image in to_be_removed_images:
 			self.images.remove(image)
-		
+
 		return result
 
 

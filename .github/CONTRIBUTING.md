@@ -37,9 +37,9 @@ flowchart LR
 There are different types of component: **AI**, **Data**, **Application**, **Operator** and **Iterator**.
 
 > **Note:**
-> - For **AI**, **Data**, **Application** components, they are used by the pipeline to interact with an external service, you may need to introduce its **connection** details in the component connection properties.
+> - For **AI**, **Data**, **Application** components, they are used by the pipeline to interact with an external service, you may need to introduce its **setup** details in the component `setup` properties.
 >   - In order to prevent private keys from being unintentionally leaked when
-    sharing a pipeline, the connection properties only take reference to a
+    sharing a pipeline, the `setup` properties only take reference to a
     **secret** (e.g. `${secrets.my-secret}`).
 >   - You can create secrets from the console settings or through an [API
     call](https://openapi.instill.tech/reference/pipelinepublicservice_createusersecret).
@@ -76,32 +76,24 @@ Recipes are represented by a JSON object:
 
 ```json
 {
-  "version": "v1beta",
-  "components": [
-    {
-      "id": "<component_id>", // must be unique within the pipeline.
-      "<component_type>": { // operator_component, connector_component
-        "definition_name": "<definition_name>",
-        "task": "<task>",
-        "input": {
-          // values for the input fields
-        },
-        "condition": "<condition>", // conditional statement to execute or bypass the component
-        "connection": {
-          // connection specification values, optional
-        }
-      }
-    },
-  ],
-  "trigger": {
-    "trigger_by_request": {
-      "request_fields": {
-        // pipeline input fields
+  "component": {
+    "<component_id>": {
+      "type": "<component_definition_id>",
+      "task": "<task>",
+      "input": {
+        // values for the input fields
       },
-      "response_fields": {
-        // pipeline output fields
+      "condition": "<condition>", // conditional statement to execute or bypass the component
+      "setup": {
+        // setup specification values, optional
       }
     }
+  },
+  "variable": {
+    // pipeline input fields
+  },
+  "output": {
+    // pipeline output fields
   }
 }
 ```
@@ -386,11 +378,10 @@ of a pipeline when configured to use this operator.
 
 ### Implement the component interfaces
 
-Pipeline communicates with components through the `IComponent`, `IConnector`,
-`IOperator` and `IExecution` interfaces, defined in the [`base`](../base)
+Pipeline communicates with components through the `IComponent` interface, defined in the [`base`](../base)
 package. This package also defines base implementations for these interfaces, so
 the `hello` component will only need to override the following methods:
-- `CreateExecution(vars map[string]any, task string) (*ExecutionWrapper, error)`
+- `CreateExecution(vars map[string]any, setup *structpb.Struct, task string) (*ExecutionWrapper, error)`
   will return an object that implements the `Execute` method.
   - `ExecutionWrapper` will wrap the execution call with the input and output
     schema validation.
@@ -424,34 +415,34 @@ var (
 	//go:embed config/tasks.json
 	tasksJSON []byte
 
-	once sync.Once
-	op   *operator
+	once   sync.Once
+	comp   *component
 )
 
-type operator struct {
-	base.BaseOperator
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.BaseOperatorExecution
+	base.ComponentExecution
 }
 
-// Init returns an implementation of IOperator that implements the greeting
+// Init returns an implementation of IComponent that implements the greeting
 // task.
-func Init(bo base.BaseOperator) *operator {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		op = &operator{BaseOperator: bo}
-		err := op.LoadOperatorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, nil, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return op
+	return comp
 }
 
-func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
-		BaseOperatorExecution: base.BaseOperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
 	}
 
 	if task != taskGreet {
@@ -475,13 +466,13 @@ Let's modify the following methods:
 
 ```go
 type execution struct {
-	base.BaseOperatorExecution
+	base.ComponentExecution
 	execute func(*structpb.Struct) (*structpb.Struct, error)
 }
 
-func (o *operator) CreateExecution(sysVars map[string]any, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
-		BaseOperatorExecution: base.BaseOperatorExecution{Operator: o, SystemVariables: sysVars, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
 	}
 
 	// A simple if statement would be enough in a component with a single task.
@@ -549,11 +540,11 @@ func TestOperator_Execute(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 
-	bo := base.BaseOperator{Logger: zap.NewNop()}
-	operator := Init(bo)
+	bc := base.Component{Logger: zap.NewNop()}
+	component := Init(bc)
 
 	c.Run("ok - greet", func(c *qt.C) {
-		exec, err := operator.CreateExecution(nil, taskGreet)
+		exec, err := component.CreateExecution(nil, nil, taskGreet)
 		c.Assert(err, qt.IsNil)
 
 		pbIn, err := structpb.NewStruct(map[string]any{"target": "bolero-wombat"})
@@ -572,13 +563,13 @@ func TestOperator_Execute(t *testing.T) {
 func TestOperator_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
-	bo := base.BaseOperator{Logger: zap.NewNop()}
-	operator := Init(bo)
+	bc := base.Component{Logger: zap.NewNop()}
+	operator := Init(bc)
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 
-		_, err := operator.CreateExecution(nil, task)
+		_, err := operator.CreateExecution(nil, nil, task)
 		c.Check(err, qt.ErrorMatches, "unsupported task")
 	})
 }
@@ -601,15 +592,15 @@ import (
 // ...
 
 func Init(logger *zap.Logger) *Store {
-	baseOp := base.BaseOperator{Logger: logger}
+	baseComp := base.component{Logger: logger}
 
 	once.Do(func() {
 		store = &Store{
-			operatorUIDMap: map[uuid.UUID]*operator{},
-			operatorIDMap:  map[string]*operator{},
+			componentUIDMap: map[uuid.UUID]*component{},
+			componentIDMap:  map[string]*component{},
 		}
 		// ...
-		store.ImportOperator(hello.Init(baseOp))
+		store.Import(hello.Init(baseComp))
 	})
 
 	return store
@@ -644,40 +635,31 @@ The created pipeline will have the following recipe:
 
 ```json
 {
-  "version": "v1beta",
-  "components": [
-    {
-      "id": "hello_0",
-      "operator_component": {
-        "definition_name": "operator-definitions/hello",
-        "definition": null,
-        "task": "TASK_GREET",
-        "input": {
-          "target": "${trigger.who}"
-        },
-        "condition": ""
-      }
+  "variable": {
+    "who": {
+      "title": "Who",
+      "description": "Who should be greeted?",
+      "instill_format": "string",
+      "instill_ui_order": 0,
+      "instill_ui_multiline": false
     }
-  ],
-  "trigger": {
-    "trigger_by_request": {
-      "request_fields": {
-        "who": {
-          "title": "Who",
-          "description": "Who should be greeted?",
-          "instill_format": "string",
-          "instill_ui_order": 0,
-          "instill_ui_multiline": false
-        }
+  },
+  "output": {
+    "greeting": {
+      "title": "Greeting",
+      "description": "",
+      "value": "${hello_0.output.greeting}",
+      "instill_ui_order": 0
+    }
+  },
+  "component": {
+    "hello_0": {
+      "type": "hello",
+      "task": "TASK_GREET",
+      "input": {
+        "target": "${variable.who}"
       },
-      "response_fields": {
-        "greeting": {
-          "title": "Greeting",
-          "description": "",
-          "value": "${hello_0.output.greeting}",
-          "instill_ui_order": 0
-        }
-      }
+      "condition": ""
     }
   }
 }
@@ -694,7 +676,7 @@ document displaying its information in a human-readable way. To generate the
 document, just add the following line on top of `operator/hello/v0/main.go`:
 
 ```go
-//go:generate compogen readme --operator ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 ```
 
 Then, go to the base of the `component` repository and run:

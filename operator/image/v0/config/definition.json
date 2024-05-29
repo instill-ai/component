@@ -15,6 +15,7 @@
   "public": true,
   "spec": {},
   "title": "Image",
+  "type": "COMPONENT_TYPE_OPERATOR",
   "uid": "e9eb8fc8-f249-4e11-ad50-5035d79ffc18",
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/operator/image/v0",

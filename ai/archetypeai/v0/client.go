@@ -13,13 +13,13 @@ const (
 	uploadFilePath = "/v0.3/files"
 )
 
-func newClient(config *structpb.Struct, logger *zap.Logger) *httpclient.Client {
-	c := httpclient.New("Archetype AI", getBasePath(config),
+func newClient(setup *structpb.Struct, logger *zap.Logger) *httpclient.Client {
+	c := httpclient.New("Archetype AI", getBasePath(setup),
 		httpclient.WithLogger(logger),
 		httpclient.WithEndUserError(new(errBody)),
 	)
 
-	c.SetAuthToken(getAPIKey(config))
+	c.SetAuthToken(getAPIKey(setup))
 
 	return c
 }

@@ -16,10 +16,10 @@ const (
 	apiKey = "testkey"
 )
 
-func TestConnector_ExecuteWriteTask(t *testing.T) {
+func TestComponent_ExecuteWriteTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -53,7 +53,7 @@ func TestConnector_ExecuteWriteTask(t *testing.T) {
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
 
-			connection, err := structpb.NewStruct(map[string]any{
+			setup, err := structpb.NewStruct(map[string]any{
 				"api_key": apiKey,
 			})
 			c.Assert(err, qt.IsNil)
@@ -61,7 +61,7 @@ func TestConnector_ExecuteWriteTask(t *testing.T) {
 			// It will increase the modification range if we change the input of CreateExecution.
 			// So, we replaced it with the code below to cover the test for taskFunctions.go
 			e := &execution{
-				ConnectorExecution: base.ConnectorExecution{Connector: connector, SystemVariables: nil, Connection: connection, Task: taskWriteMessage},
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: taskWriteMessage},
 				client:             &MockSlackClient{},
 			}
 			e.execute = e.sendMessage
@@ -84,11 +84,11 @@ func TestConnector_ExecuteWriteTask(t *testing.T) {
 	}
 }
 
-func TestConnector_ExecuteReadTask(t *testing.T) {
+func TestComponent_ExecuteReadTask(t *testing.T) {
 
 	c := qt.New(t)
 	ctx := context.Background()
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	mockDateTime, _ := transformTSToDate("1715159449.399879", time.RFC3339)
@@ -135,7 +135,7 @@ func TestConnector_ExecuteReadTask(t *testing.T) {
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
-			connection, err := structpb.NewStruct(map[string]any{
+			setup, err := structpb.NewStruct(map[string]any{
 				"api_key": apiKey,
 			})
 			c.Assert(err, qt.IsNil)
@@ -143,7 +143,7 @@ func TestConnector_ExecuteReadTask(t *testing.T) {
 			// It will increase the modification range if we change the input of CreateExecution.
 			// So, we replaced it with the code below to cover the test for taskFunctions.go
 			e := &execution{
-				ConnectorExecution: base.ConnectorExecution{Connector: connector, SystemVariables: nil, Connection: connection, Task: taskReadMessage},
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: taskReadMessage},
 				client:             &MockSlackClient{},
 			}
 			e.execute = e.readMessage

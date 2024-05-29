@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package instill
 
 import (
@@ -18,7 +18,7 @@ import (
 	commonPB "github.com/instill-ai/protogen-go/common/task/v1alpha"
 	mgmtPB "github.com/instill-ai/protogen-go/core/mgmt/v1beta"
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
+	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 var (
@@ -27,34 +27,34 @@ var (
 	//go:embed config/tasks.json
 	tasksJSON []byte
 	once      sync.Once
-	con       *connector
+	comp      *component
 )
 
-type connector struct {
-	base.Connector
+type component struct {
+	base.Component
 
 	// Workaround solution
-	cacheDefinition *pipelinePB.ConnectorDefinition
+	cacheDefinition *pb.ComponentDefinition
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 }
 
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, nil, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 	}}, nil
 }
 
@@ -168,7 +168,7 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 	return result, err
 }
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(sysVars))
 	if gRPCCLientConn != nil {
 		defer gRPCCLientConn.Close()
@@ -195,19 +195,19 @@ type ModelsResp struct {
 // Generate the `model_name` enum based on the task.
 // This implementation is a temporary solution due to the incomplete feature set of Instill Model.
 // We'll re-implement this after Instill Model is stable.
-func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *base.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
+func (c *component) Definition(sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
 	if useStaticModelList(sysVars) && c.cacheDefinition != nil {
 		return c.cacheDefinition, nil
 	}
 
-	oriDef, err := c.Connector.GetConnectorDefinition(nil, nil)
+	oriDef, err := c.Component.GetDefinition(nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	if sysVars == nil && component == nil {
+	if sysVars == nil && compConfig == nil {
 		return oriDef, nil
 	}
-	def := proto.Clone(oriDef).(*pipelinePB.ConnectorDefinition)
+	def := proto.Clone(oriDef).(*pb.ComponentDefinition)
 
 	if getModelServerURL(sysVars) == "" {
 		return def, nil

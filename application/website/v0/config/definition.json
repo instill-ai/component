@@ -10,7 +10,7 @@
   "public": true,
   "title": "Website",
   "description": "Scrape websites",
-  "type": "CONNECTOR_TYPE_DATA",
+  "type": "COMPONENT_TYPE_APPLICATION",
   "uid": "98909958-db7d-4dfe-9858-7761904be17e",
   "vendor": "",
   "vendor_attributes": {},

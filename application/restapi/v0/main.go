@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package restapi
 
 import (
@@ -15,7 +15,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 
-	pipelinePB "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
+	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 const (
@@ -31,12 +31,13 @@ const (
 var (
 	//go:embed config/definition.json
 	definitionJSON []byte
-
+	//go:embed config/setup.json
+	setupJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
 
 	once sync.Once
-	con  *connector
+	comp *component
 
 	taskMethod = map[string]string{
 		taskGet:     http.MethodGet,
@@ -49,33 +50,33 @@ var (
 	}
 )
 
-type connector struct {
-	base.Connector
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 }
 
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 	}}, nil
 }
 
-func getAuthentication(config *structpb.Struct) (authentication, error) {
-	auth := config.GetFields()["authentication"].GetStructValue()
+func getAuthentication(setup *structpb.Struct) (authentication, error) {
+	auth := setup.GetFields()["authentication"].GetStructValue()
 	authType := auth.GetFields()["auth_type"].GetStringValue()
 
 	switch authType {
@@ -132,7 +133,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 		}
 
 		// We may have different url in batch.
-		client, err := newClient(e.Connection, e.GetLogger())
+		client, err := newClient(e.Setup, e.GetLogger())
 		if err != nil {
 			return nil, err
 		}
@@ -161,36 +162,38 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
-	// we don't need to validate the connection since no url setting here
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
+	// we don't need to validate the setup since no url setting here
 	return nil
 }
 
 // Generate the model_name enum based on the task
-func (c *connector) GetConnectorDefinition(sysVars map[string]any, component *base.ConnectorComponent) (*pipelinePB.ConnectorDefinition, error) {
-	oriDef, err := c.Connector.GetConnectorDefinition(nil, nil)
+func (c *component) Definition(sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
+	oriDef, err := c.Component.GetDefinition(nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	if sysVars == nil && component == nil {
+	if sysVars == nil && compConfig == nil {
 		return oriDef, nil
 	}
 
-	def := proto.Clone(oriDef).(*pipelinePB.ConnectorDefinition)
-	if component == nil {
+	def := proto.Clone(oriDef).(*pb.ComponentDefinition)
+	if compConfig == nil {
 		return def, nil
 	}
-	if component.Task == "" {
+	if compConfig.Task == "" {
 		return def, nil
 	}
-	if _, ok := component.Input.Fields["output_body_schema"]; !ok {
+	if _, ok := compConfig.Input["output_body_schema"]; !ok {
 		return def, nil
 	}
 
-	schStr := component.Input.Fields["output_body_schema"].GetStringValue()
-	sch := &structpb.Struct{}
-	_ = json.Unmarshal([]byte(schStr), sch)
-	spec := def.Spec.DataSpecifications[component.Task]
-	spec.Output = sch
+	if s, ok := compConfig.Input["output_body_schema"].(string); ok {
+		sch := &structpb.Struct{}
+		_ = json.Unmarshal([]byte(s), sch)
+		spec := def.Spec.DataSpecifications[compConfig.Task]
+		spec.Output = sch
+	}
+
 	return def, nil
 }

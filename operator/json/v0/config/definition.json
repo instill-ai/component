@@ -12,6 +12,7 @@
   "public": true,
   "spec": {},
   "title": "JSON",
+  "type": "COMPONENT_TYPE_OPERATOR",
   "uid": "28f53d15-6150-46e6-99aa-f76b70a926c0",
   "version": "0.1.0",
   "source_url": "https://github.com/instill-ai/component/blob/main/operator/json/v0",

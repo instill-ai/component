@@ -6,13 +6,13 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-func newClient(config *structpb.Struct, logger *zap.Logger) *httpclient.Client {
-	c := httpclient.New("Stability AI", getBasePath(config),
+func newClient(setup *structpb.Struct, logger *zap.Logger) *httpclient.Client {
+	c := httpclient.New("Stability AI", getBasePath(setup),
 		httpclient.WithLogger(logger),
 		httpclient.WithEndUserError(new(errBody)),
 	)
 
-	c.SetAuthToken(getAPIKey(config))
+	c.SetAuthToken(getAPIKey(setup))
 
 	return c
 }
@@ -30,15 +30,15 @@ func (e errBody) Message() string {
 // exposed to users. Rather, it can serve to test the logic against a fake
 // server.
 // TODO instead of having the API value hardcoded in the codebase, it should be
-// read from a config file or environment variable.
-func getBasePath(config *structpb.Struct) string {
-	v, ok := config.GetFields()["base_path"]
+// read from a setup file or environment variable.
+func getBasePath(setup *structpb.Struct) string {
+	v, ok := setup.GetFields()["base_path"]
 	if !ok {
 		return host
 	}
 	return v.GetStringValue()
 }
 
-func getAPIKey(config *structpb.Struct) string {
-	return config.GetFields()[cfgAPIKey].GetStringValue()
+func getAPIKey(setup *structpb.Struct) string {
+	return setup.GetFields()[cfgAPIKey].GetStringValue()
 }
