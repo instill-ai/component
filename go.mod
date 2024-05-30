@@ -31,6 +31,7 @@ require (
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.0
 	github.com/slack-go/slack v0.12.5
 	github.com/stretchr/testify v1.9.0
+	github.com/tmc/langchaingo v0.1.10
 	go.uber.org/zap v1.24.0
 	golang.org/x/image v0.15.0
 	golang.org/x/text v0.15.0
@@ -94,7 +95,6 @@ require (
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
-	github.com/tmc/langchaingo v0.1.10 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	gitlab.com/golang-commonmark/html v0.0.0-20191124015941-a22733972181 // indirect
 	gitlab.com/golang-commonmark/linkify v0.0.0-20191026162114-a0c2df6c8f82 // indirect
