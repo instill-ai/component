@@ -14,7 +14,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-func TestConnector(t *testing.T) {
+func TestOperator(t *testing.T) {
 	c := quicktest.New(t)
 
 	fileContent, _ := os.ReadFile("testdata/test.txt")
@@ -61,6 +61,11 @@ func TestConnector(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:  "error case",
+			task:  "FAKE_TASK",
+			input: structpb.Struct{},
+		},
 	}
 	bc := base.Operator{Logger: zap.NewNop()}
 	ctx := context.Background()
@@ -68,14 +73,24 @@ func TestConnector(t *testing.T) {
 		tc := &testcases[i]
 		c.Run(tc.name, func(c *quicktest.C) {
 			connector := Init(bc)
+			c.Assert(connector, quicktest.IsNotNil)
+
 			execution, err := connector.CreateExecution(map[string]any{}, tc.task)
 			c.Assert(err, quicktest.IsNil)
+			c.Assert(execution, quicktest.IsNotNil)
 
 			input := []*structpb.Struct{&tc.input}
-			outputs, err := execution.Execute(ctx, input)
-			
-			c.Assert(err, quicktest.IsNil)
-			c.Assert(outputs, quicktest.HasLen, 1)
+
+			outputs, err := execution.Execution.Execute(ctx, input)
+
+			if tc.name == "error case" {
+				c.Assert(err, quicktest.ErrorMatches, "not supported task: FAKE_TASK")
+				c.Assert(outputs, quicktest.IsNil)
+				return
+			} else {
+				c.Assert(err, quicktest.IsNil)
+				c.Assert(outputs, quicktest.HasLen, 1)
+			}
 		})
 	}
 }
