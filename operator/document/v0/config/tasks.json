@@ -1,0 +1,51 @@
+{
+  "TASK_CONVERT_TO_MARKDOWN": {
+    "instillShortDescription": "Convert PDF to Markdown format.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "pdf"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "pdf": {
+          "description": "PDF file",
+          "instillAcceptFormats": [
+            "*/*"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference"
+          ],
+          "title": "Document",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pdf"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillUIOrder": 0,
+      "properties": {
+        "body": {
+          "description": "Markdown text converted from the PDF document",
+          "instillFormat": "string",
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "title": "Body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  }
+}
