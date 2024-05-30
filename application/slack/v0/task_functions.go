@@ -2,6 +2,7 @@ package slack
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -139,7 +140,7 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 			if conversation.UserID == user.ID {
 				readTaskResp.Conversations[i].UserName = user.Name
 			}
-			
+
 			if len(conversation.ThreadReplyMessage) > 0 {
 				for j, threadReply := range conversation.ThreadReplyMessage {
 					if threadReply.UserID == user.ID {
@@ -170,7 +171,8 @@ func (e *execution) sendMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	_, _, err = e.client.PostMessage(targetChannelID, slack.MsgOptionText(params.Message, false))
+	message := strings.Replace(params.Message, "\\n", "\n", -1)
+	_, _, err = e.client.PostMessage(targetChannelID, slack.MsgOptionText(message, false))
 
 	if err != nil {
 		return nil, err
