@@ -1,4 +1,4 @@
-//go:generate compogen readme --operator ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package document
 
 import (

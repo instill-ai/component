@@ -6,17 +6,12 @@ cmp stdout want-help
 compogen help readme
 cmp stdout want-help
 
-# NOK - One flag needed
-
-! compogen readme foo bar
-cmp stderr want-component-type
-
 # NOK - Invalid positional args
 
-! compogen readme --operator
+! compogen readme
 cmp stderr want-0-args
 
-! compogen readme foo --operator
+! compogen readme foo
 cmp stderr want-1-arg
 
 -- want-help --
@@ -29,12 +24,7 @@ Usage:
   compogen readme [config dir] [target file] [flags]
 
 Flags:
-      --connector   Document connector component
-  -h, --help        help for readme
-      --operator    Document operator component
--- want-component-type --
-Error: at least one of the flags in the group [connector operator] is required
-Run 'compogen readme --help' for usage.
+  -h, --help   help for readme
 -- want-0-args --
 Error: accepts 2 arg(s), received 0
 Run 'compogen readme --help' for usage.

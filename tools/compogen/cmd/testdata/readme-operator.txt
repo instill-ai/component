@@ -6,20 +6,20 @@ cp tasks.json pkg/dummy/config/tasks.json
 
 # NOK - Wrong files
 
-! compogen readme pkg/dummy/wrong pkg/dummy/README.mdx --operator
+! compogen readme pkg/dummy/wrong pkg/dummy/README.mdx
 cmp stderr want-no-defs
 
 mkdir -p pkg/dummy/wrong
 cp definition.json pkg/dummy/wrong/definition.json
-! compogen readme pkg/dummy/wrong pkg/dummy/README.mdx --operator
+! compogen readme pkg/dummy/wrong pkg/dummy/README.mdx
 cmp stderr want-no-tasks
 
-! compogen readme pkg/dummy/config pkg/wrong/README.mdx --operator
+! compogen readme pkg/dummy/config pkg/wrong/README.mdx
 cmp stderr want-wrong-target
 
 # OK
 
-compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx --operator
+compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx
 cmp pkg/dummy/README.mdx want-readme.mdx
 
 -- definition.json --
@@ -32,6 +32,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
   "spec": {},
   "id": "dummy",
   "title": "Dummy",
+  "type": "COMPONENT_TYPE_OPERATOR",
   "description": "Perform an action",
   "release_stage": "RELEASE_STAGE_BETA",
   "source_url": "https://github.com/instill-ai/component/blob/main/operator/dummy/v0"
@@ -154,10 +155,10 @@ Definitions field has an invalid length
 title: "Dummy"
 lang: "en-US"
 draft: false
-description: "Learn about how to set up a VDP Dummy operator https://github.com/instill-ai/instill-core"
+description: "Learn about how to set up a VDP Dummy component https://github.com/instill-ai/instill-core"
 ---
 
-The Dummy component is an operator that allows users to perform an action.
+The Dummy component is an operator component that allows users to perform an action.
 It can carry out the following tasks:
 
 - [Dummy](#dummy)

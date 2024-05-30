@@ -7,7 +7,7 @@ cp tasks.json pkg/dummy/config/tasks.json
 
 # OK
 
-compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx --connector
+compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx
 cmp pkg/dummy/README.mdx want-readme.mdx
 
 -- definition.json --
@@ -84,10 +84,10 @@ cmp pkg/dummy/README.mdx want-readme.mdx
 title: "Dummy"
 lang: "en-US"
 draft: false
-description: "Learn about how to set up a VDP Dummy connector https://github.com/instill-ai/instill-core"
+description: "Learn about how to set up a VDP Dummy component https://github.com/instill-ai/instill-core"
 ---
 
-The Dummy component is a data connector that allows users to perform an action.
+The Dummy component is a data component that allows users to perform an action.
 It can carry out the following tasks:
 
 - [Dummy](#dummy)
