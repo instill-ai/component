@@ -16,7 +16,7 @@
   "uid": "fd0ad325-f2f7-41f3-b247-6c71d571b1b8",
   "vendor": "Redis Labs",
   "vendor_attributes": {},
-  "version": "0.1.0",
+  "version": "0.1.1",
   "source_url": "https://github.com/instill-ai/component/blob/main/application/redis/v0",
   "release_stage": "RELEASE_STAGE_ALPHA"
 }
