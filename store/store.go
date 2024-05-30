@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/ai/archetypeai/v0"
@@ -129,7 +130,11 @@ func (s *Store) CreateExecution(defUID uuid.UUID, sysVars map[string]any, setup 
 // GetDefinitionByUID returns a connector definition by its UID.
 func (s *Store) GetDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
 	if c, ok := s.componentUIDMap[defUID]; ok {
-		return c.comp.GetDefinition(sysVars, compConfig)
+		def, err := c.comp.GetDefinition(sysVars, compConfig)
+		if err != nil {
+			return nil, err
+		}
+		return proto.Clone(def).(*pb.ComponentDefinition), err
 	}
 	return nil, fmt.Errorf("connector definition not found")
 }
@@ -137,7 +142,11 @@ func (s *Store) GetDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, com
 // GetDefinitionByID returns a connector definition by its ID.
 func (s *Store) GetDefinitionByID(defID string, sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
 	if c, ok := s.componentIDMap[defID]; ok {
-		return c.comp.GetDefinition(sysVars, compConfig)
+		def, err := c.comp.GetDefinition(sysVars, compConfig)
+		if err != nil {
+			return nil, err
+		}
+		return proto.Clone(def).(*pb.ComponentDefinition), err
 	}
 	return nil, fmt.Errorf("connector definition not found")
 }
@@ -150,7 +159,7 @@ func (s *Store) ListDefinitions(sysVars map[string]any, returnTombstone bool) []
 		def, err := c.comp.GetDefinition(sysVars, nil)
 		if err == nil {
 			if !def.Tombstone || returnTombstone {
-				defs = append(defs, def)
+				defs = append(defs, proto.Clone(def).(*pb.ComponentDefinition))
 			}
 		}
 	}
