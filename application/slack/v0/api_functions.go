@@ -8,9 +8,11 @@ import (
 	"github.com/slack-go/slack"
 )
 
+var types = []string{"private_channel", "public_channel"}
+
 func loopChannelListAPI(e *execution, channelName string) (string, error) {
 	var apiParams slack.GetConversationsParameters
-	apiParams.Types = append(apiParams.Types, "private_channel", "public_channel")
+	apiParams.Types = types
 
 	var targetChannelID string
 	for {
