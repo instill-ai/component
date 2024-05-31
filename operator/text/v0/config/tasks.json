@@ -1,4 +1,99 @@
 {
+  "$defs": {
+    "text": {
+      "description": "Text to be chunked",
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIMultiline": true,
+      "instillUIOrder": 0,
+      "instillUpstreamTypes": [
+        "value",
+        "reference",
+        "template"
+      ],
+      "title": "Text",
+      "type": "string"
+    },
+    "chunk_size": {
+      "default": 512,
+      "description": "Specifies the maximum size of each chunk in terms of the number of tokens.",
+      "instillAcceptFormats": [
+        "integer"
+      ],
+      "instillUIOrder": 0,
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "minimum": 1,
+      "title": "Chunk Size",
+      "type": "integer"
+    },
+    "chunk_overlap": {
+      "default": 100,
+      "description": "Determines the number of tokens that overlap between consecutive chunks.",
+      "instillAcceptFormats": [
+        "integer"
+      ],
+      "instillUIOrder": 1,
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "minimum": 1,
+      "title": "Chunk Overlap",
+      "type": "integer"
+    },
+    "model_name": {
+      "description": "The name of the model used for tokenization.",
+      "enum": [
+        "gpt-4",
+        "gpt-3.5-turbo",
+        "text-davinci-003",
+        "text-davinci-002",
+        "text-davinci-001",
+        "text-curie-001",
+        "text-babbage-001",
+        "text-ada-001",
+        "davinci",
+        "curie",
+        "babbage",
+        "ada",
+        "code-davinci-002",
+        "code-davinci-001",
+        "code-cushman-002",
+        "code-cushman-001",
+        "davinci-codex",
+        "cushman-codex",
+        "text-davinci-edit-001",
+        "code-davinci-edit-001",
+        "text-embedding-ada-002",
+        "text-similarity-davinci-001",
+        "text-similarity-curie-001",
+        "text-similarity-babbage-001",
+        "text-similarity-ada-001",
+        "text-search-davinci-doc-001",
+        "text-search-curie-doc-001",
+        "text-search-babbage-doc-001",
+        "text-search-ada-doc-001",
+        "code-search-babbage-code-001",
+        "code-search-ada-code-001",
+        "gpt2"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 2,
+      "instillUpstreamTypes": [
+        "value",
+        "reference",
+        "template"
+      ],
+      "title": "Model",
+      "type": "string"
+    }
+  },
   "TASK_CONVERT_TO_TEXT": {
     "instillShortDescription": "Convert document to text.",
     "input": {
@@ -75,7 +170,7 @@
     }
   },
   "TASK_SPLIT_BY_TOKEN": {
-    "instillShortDescription": "Split text by token.",
+    "instillShortDescription": "Split text by token. It will be decprecated soon. Please use Chunk Text task instead.",
     "input": {
       "description": "Input",
       "instillEditOnNodeFields": [
@@ -208,6 +303,283 @@
       },
       "required": [
         "token_count",
+        "text_chunks",
+        "chunk_num"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CHUNK_TEXT": {
+    "instillShortDescription": "Chunk text with different strategies.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "text",
+        "strategy"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "text": {
+          "$ref": "#/$defs/text"
+        },
+        "strategy": {
+          "description": "Chunking strategy",
+          "instillUIOrder": 1,
+          "properties": {
+            "setting": {
+              "description": "Chunk Setting",
+              "additionalProperties": true,
+              "type": "object",
+              "required": ["chunk_method"],
+              "oneOf": [
+                {
+                  "properties": {
+                    "chunk_method": {
+                      "const": "Token",
+                      "type": "string"
+                    },
+                    "chunk_size": {
+                      "$ref": "#/$defs/chunk_size"
+                    },
+                    "chunk_overlap": {
+                      "$ref": "#/$defs/chunk_overlap"
+                    },
+                    "model_name": {
+                      "$ref": "#/$defs/model_name"
+                    },
+                    "encoding_name": {
+                      "description": "The name of the encoding used to convert text into tokens.",
+                      "enum": [
+                        "cl100k_base",
+                        "p50k_base",
+                        "r50k_base",
+                        "p50k_edit"
+                      ],
+                      "instillAcceptFormats": [
+                        "string"
+                      ],
+                      "instillUIOrder": 3,
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference",
+                        "template"
+                      ],
+                      "title": "Encoding Name",
+                      "type": "string"
+                    },
+                    "allowed_special": {
+                      "default": [],
+                      "description": "A list of special tokens that are allowed within chunks. ",
+                      "instillAcceptFormats": [
+                        "array:string"
+                      ],
+                      "items": {
+                        "instillUIMultiline": false,
+                        "type": "string"
+                      },
+                      "instillUIOrder": 4,
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference",
+                        "template"
+                      ],
+                      "title": "Allowed Special Tokens",
+                      "type": "array"
+                    },
+                    "disallowed_special": {
+                      "default": [],
+                      "description": "A list of special tokens that should not appear within chunks.",
+                      "instillAcceptFormats": [
+                        "array:string"
+                      ],
+                      "items": {
+                        "instillUIMultiline": false,
+                        "type": "string"
+                      },
+                      "instillUIOrder": 5,
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference",
+                        "template"
+                      ],
+                      "title": "Disallowed Special Tokens",
+                      "type": "array"
+                    }
+                  },
+                  "required": ["chunk_method"],
+                  "instillEditOnNodeFields": ["chunk_method", "chunk_size", "chunk_overlap", "model_name", "encoding_name", "allowed_special", "disallowed_special"],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "chunk_method": {
+                      "const": "Recursive",
+                      "type": "string"
+                    },
+                    "chunk_size": {
+                      "$ref": "#/$defs/chunk_size"
+                    },
+                    "chunk_overlap": {
+                      "$ref": "#/$defs/chunk_overlap"
+                    },
+                    "separators": {
+                      "default": [],
+                      "description": "A list of strings representing the separators used to split the text.",
+                      "instillAcceptFormats": [
+                        "array:string"
+                      ],
+                      "instillUIOrder": 2,
+                      "items": {
+                        "instillUIMultiline": false,
+                        "type": "string"
+                      },
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference",
+                        "template"
+                      ],
+                      "title": "Separators",
+                      "type": "array"
+                    },
+                    "keep_separator": {
+                      "description": "A flag indicating whether to keep the separator characters at the beginning or end of chunks.",
+                      "instillAcceptFormats": [
+                        "boolean"
+                      ],
+                      "instillUIOrder": 3,
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference",
+                        "template"
+                      ],
+                      "title": "Keep Separator",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["chunk_method"],
+                  "instillEditOnNodeFields": ["chunk_method", "chunk_size", "chunk_overlap", "separators", "keep_separator"],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "chunk_method": {
+                      "const": "Markdown",
+                      "type": "string"
+                    },
+                    "chunk_size": {
+                      "$ref": "#/$defs/chunk_size"
+                    },
+                    "chunk_overlap": {
+                      "$ref": "#/$defs/chunk_overlap"
+                    },
+                    "code_blocks": {
+                      "description": "A flag indicating whether code blocks should be treated as a single unit.",
+                      "instillAcceptFormats": [
+                        "boolean"
+                      ],
+                      "instillUIOrder": 3,
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference",
+                        "template"
+                      ],
+                      "title": "Code Blocks",
+                      "type": "boolean"
+                    },
+                    "reference_links": {
+                      "description": "A flag indicating whether reference links should be kept intact.",
+                      "instillAcceptFormats": [
+                        "boolean"
+                      ],
+                      "instillUIOrder": 4,
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference",
+                        "template"
+                      ],
+                      "title": "Reference Links",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["chunk_method"],
+                  "instillEditOnNodeFields": ["chunk_method", "chunk_size", "chunk_overlap", "code_blocks", "reference_links"],
+                  "type": "object"
+                }
+
+              ]
+            }
+          },
+          "title": "Strategy",
+          "required": [
+            "setting"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "text",
+        "strategy"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillUIOrder": 0,
+      "properties": {
+        "chunk_num": {
+          "description": "Total number of output text chunks",
+          "instillUIOrder": 2,
+          "instillFormat": "integer",
+          "title": "Number of Text Chunks",
+          "type": "integer"
+        },
+        "text_chunks": {
+          "description": "Text chunks after splitting",
+          "instillUIOrder": 1,
+          "instillFormat": "array:object",
+          "items": {
+            "title": "Text Chunk",
+            "description": "Text chunk after splitting",
+            "instillFormat": "object",
+            "properties": {
+              "text": {
+                "title": "Text",
+                "description": "Text chunk after splitting",
+                "instillFormat": "string",
+                "instillUIMultiline": true,
+                "type": "string"
+              },
+              "start_position": {
+                "title": "Start Position",
+                "description": "The starting position of the chunk in the original text",
+                "instillFormat": "integer",
+                "type": "integer"
+              },
+              "end_position": {
+                "title": "End Position",
+                "description": "The ending position of the chunk in the original text",
+                "instillFormat": "integer",
+                "type": "integer"
+              }
+            },
+            "required": ["text", "start_position", "end_position"],
+            "instillUIMultiline": true,
+            "type": "object"
+          },
+          "title": "Text Chunks",
+          "type": "array"
+        },
+        "token_count": {
+          "description": "Total count of tokens in the input text",
+          "instillUIOrder": 0,
+          "instillFormat": "integer",
+          "title": "Token Count",
+          "type": "integer"
+        }
+      },
+      "required": [
         "text_chunks",
         "chunk_num"
       ],

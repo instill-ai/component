@@ -16,6 +16,7 @@ import (
 const (
 	taskConvertToText string = "TASK_CONVERT_TO_TEXT"
 	taskSplitByToken  string = "TASK_SPLIT_BY_TOKEN"
+	taskChunkText     string = "TASK_CHUNK_TEXT"
 )
 
 var (
@@ -83,6 +84,22 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				return nil, err
 			}
 			outputStruct, err := splitTextIntoChunks(inputStruct)
+			if err != nil {
+				return nil, err
+			}
+			output, err := base.ConvertToStructpb(outputStruct)
+			if err != nil {
+				return nil, err
+			}
+			outputs = append(outputs, output)
+		case taskChunkText:
+			inputStruct := ChunkTextInput{}
+			err := base.ConvertFromStructpb(input, &inputStruct)
+			if err != nil {
+				return nil, err
+			}
+
+			outputStruct, err := chunkText(inputStruct)
 			if err != nil {
 				return nil, err
 			}
