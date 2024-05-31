@@ -55,6 +55,10 @@ func TestConvertToText(t *testing.T) {
 			name:     "Convert txt file",
 			filepath: "testdata/test.txt",
 		},
+		{
+			name:     "Convert md file",
+			filepath: "testdata/test.md",
+		},
 	}
 
 	for _, test := range tests {
