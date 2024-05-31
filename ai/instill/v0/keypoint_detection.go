@@ -1,10 +1,8 @@
 package instill
 
 import (
-	"context"
 	"fmt"
 
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -37,16 +35,10 @@ func (e *execution) executeKeyPointDetection(grpcClient modelPB.ModelPublicServi
 		taskInputs = append(taskInputs, &modelPB.TaskInput{Input: taskInput})
 	}
 
-	req := modelPB.TriggerUserModelRequest{
-		Name:       modelName,
-		TaskInputs: taskInputs,
-	}
-	ctx := metadata.NewOutgoingContext(context.Background(), getRequestMetadata(e.SystemVariables))
-	res, err := grpcClient.TriggerUserModel(ctx, &req)
-	if err != nil || res == nil {
+	taskOutputs, err := trigger(grpcClient, e.SystemVariables, modelName, taskInputs)
+	if err != nil {
 		return nil, err
 	}
-	taskOutputs := res.GetTaskOutputs()
 	if len(taskOutputs) <= 0 {
 		return nil, fmt.Errorf("invalid output: %v for model: %s", taskOutputs, modelName)
 	}
