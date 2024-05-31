@@ -9,7 +9,7 @@ import (
 	"encoding/base64"
 
 	"code.sajari.com/docconv"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 
 	"github.com/instill-ai/component/base"
 )
