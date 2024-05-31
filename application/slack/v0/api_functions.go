@@ -193,3 +193,11 @@ func removeDuplicateUserIDs(userIDs []string) []string {
 	}
 	return result
 }
+
+func createUserIDNameMap(users []slack.User) map[string]string {
+	userIDNameMap := make(map[string]string)
+	for _, user := range users {
+		userIDNameMap[user.ID] = user.Name
+	}
+	return userIDNameMap
+}

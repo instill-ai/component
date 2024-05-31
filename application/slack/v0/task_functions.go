@@ -135,18 +135,14 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	for i, conversation := range readTaskResp.Conversations {
-		for _, user := range *users {
-			if conversation.UserID == user.ID {
-				readTaskResp.Conversations[i].UserName = user.Name
-			}
+	userIDNameMap := createUserIDNameMap(*users)
 
-			if len(conversation.ThreadReplyMessage) > 0 {
-				for j, threadReply := range conversation.ThreadReplyMessage {
-					if threadReply.UserID == user.ID {
-						readTaskResp.Conversations[i].ThreadReplyMessage[j].UserName = user.Name
-					}
-				}
+	for i, conversation := range readTaskResp.Conversations {
+		readTaskResp.Conversations[i].UserName = userIDNameMap[conversation.UserID]
+
+		if len(conversation.ThreadReplyMessage) > 0 {
+			for j, threadReply := range conversation.ThreadReplyMessage {
+				readTaskResp.Conversations[i].ThreadReplyMessage[j].UserName = userIDNameMap[threadReply.UserID]
 			}
 		}
 	}
