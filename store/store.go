@@ -119,7 +119,7 @@ func (s *Store) Import(comp base.IComponent) {
 	s.componentUIDs = append(s.componentUIDs, comp.GetUID())
 }
 
-// CreateExecution initializes the execution of a connector given its UID.
+// CreateExecution initializes the execution of a component given its UID.
 func (s *Store) CreateExecution(defUID uuid.UUID, sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	if c, ok := s.componentUIDMap[defUID]; ok {
 		return c.comp.CreateExecution(sysVars, setup, task)
@@ -127,7 +127,7 @@ func (s *Store) CreateExecution(defUID uuid.UUID, sysVars map[string]any, setup 
 	return nil, fmt.Errorf("component definition not found")
 }
 
-// GetDefinitionByUID returns a connector definition by its UID.
+// GetDefinitionByUID returns a component definition by its UID.
 func (s *Store) GetDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
 	if c, ok := s.componentUIDMap[defUID]; ok {
 		def, err := c.comp.GetDefinition(sysVars, compConfig)
@@ -136,10 +136,10 @@ func (s *Store) GetDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, com
 		}
 		return proto.Clone(def).(*pb.ComponentDefinition), err
 	}
-	return nil, fmt.Errorf("connector definition not found")
+	return nil, fmt.Errorf("component definition not found")
 }
 
-// GetDefinitionByID returns a connector definition by its ID.
+// GetDefinitionByID returns a component definition by its ID.
 func (s *Store) GetDefinitionByID(defID string, sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
 	if c, ok := s.componentIDMap[defID]; ok {
 		def, err := c.comp.GetDefinition(sysVars, compConfig)
@@ -148,10 +148,10 @@ func (s *Store) GetDefinitionByID(defID string, sysVars map[string]any, compConf
 		}
 		return proto.Clone(def).(*pb.ComponentDefinition), err
 	}
-	return nil, fmt.Errorf("connector definition not found")
+	return nil, fmt.Errorf("component definition not found")
 }
 
-// ListDefinitions returns all the loaded connector definitions.
+// ListDefinitions returns all the loaded component definitions.
 func (s *Store) ListDefinitions(sysVars map[string]any, returnTombstone bool) []*pb.ComponentDefinition {
 	defs := []*pb.ComponentDefinition{}
 	for _, uid := range s.componentUIDs {
@@ -170,5 +170,5 @@ func (s *Store) IsSecretField(defUID uuid.UUID, target string) (bool, error) {
 	if c, ok := s.componentUIDMap[defUID]; ok {
 		return c.comp.IsSecretField(target), nil
 	}
-	return false, fmt.Errorf("connector definition not found")
+	return false, fmt.Errorf("component definition not found")
 }
