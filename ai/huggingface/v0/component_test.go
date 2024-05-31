@@ -212,7 +212,7 @@ var coveredTasks = []taskParams{
 	},
 }
 
-func TestConnector_ExecuteSpeechRecognition(t *testing.T) {
+func TestComponent_ExecuteSpeechRecognition(t *testing.T) {
 	c := qt.New(t)
 
 	for _, params := range coveredTasks {
@@ -221,19 +221,19 @@ func TestConnector_ExecuteSpeechRecognition(t *testing.T) {
 }
 
 func testTask(c *qt.C, p taskParams) {
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 	ctx := context.Background()
 
 	c.Run("nok - HTTP client error - "+p.task, func(c *qt.C) {
 		c.Parallel()
 
-		connection, err := structpb.NewStruct(map[string]any{
+		setup, err := structpb.NewStruct(map[string]any{
 			"base_url": "http://no-such.host",
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := connector.CreateExecution(nil, connection, p.task)
+		exec, err := connector.CreateExecution(nil, setup, p.task)
 		c.Assert(err, qt.IsNil)
 
 		pbIn, err := base.ConvertToStructpb(p.input)
@@ -315,13 +315,13 @@ func testTask(c *qt.C, p taskParams) {
 			srv := httptest.NewServer(h)
 			c.Cleanup(srv.Close)
 
-			connection, _ := structpb.NewStruct(map[string]any{
+			setup, _ := structpb.NewStruct(map[string]any{
 				"api_key":            apiKey,
 				"base_url":           srv.URL,
 				"is_custom_endpoint": tc.customEndpoint,
 			})
 
-			exec, err := connector.CreateExecution(nil, connection, p.task)
+			exec, err := connector.CreateExecution(nil, setup, p.task)
 			c.Assert(err, qt.IsNil)
 
 			pbIn, err := base.ConvertToStructpb(p.input)

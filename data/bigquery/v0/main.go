@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package bigquery
 
 import (
@@ -22,34 +22,37 @@ const (
 //go:embed config/definition.json
 var definitionJSON []byte
 
+//go:embed config/setup.json
+var setupJSON []byte
+
 //go:embed config/tasks.json
 var tasksJSON []byte
 
 var once sync.Once
-var con *connector
+var comp *component
 
-type connector struct {
-	base.Connector
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 }
 
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 	}}, nil
 }
 
@@ -57,23 +60,23 @@ func NewClient(jsonKey, projectID string) (*bigquery.Client, error) {
 	return bigquery.NewClient(context.Background(), projectID, option.WithCredentialsJSON([]byte(jsonKey)))
 }
 
-func getJSONKey(config *structpb.Struct) string {
-	return config.GetFields()["json_key"].GetStringValue()
+func getJSONKey(setup *structpb.Struct) string {
+	return setup.GetFields()["json_key"].GetStringValue()
 }
-func getProjectID(config *structpb.Struct) string {
-	return config.GetFields()["project_id"].GetStringValue()
+func getProjectID(setup *structpb.Struct) string {
+	return setup.GetFields()["project_id"].GetStringValue()
 }
-func getDatasetID(config *structpb.Struct) string {
-	return config.GetFields()["dataset_id"].GetStringValue()
+func getDatasetID(setup *structpb.Struct) string {
+	return setup.GetFields()["dataset_id"].GetStringValue()
 }
-func getTableName(config *structpb.Struct) string {
-	return config.GetFields()["table_name"].GetStringValue()
+func getTableName(setup *structpb.Struct) string {
+	return setup.GetFields()["table_name"].GetStringValue()
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 
-	client, err := NewClient(getJSONKey(e.Connection), getProjectID(e.Connection))
+	client, err := NewClient(getJSONKey(e.Setup), getProjectID(e.Setup))
 	if err != nil || client == nil {
 		return nil, fmt.Errorf("error creating BigQuery client: %v", err)
 	}
@@ -83,8 +86,8 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 		var output *structpb.Struct
 		switch e.Task {
 		case taskInsert, "":
-			datasetID := getDatasetID(e.Connection)
-			tableName := getTableName(e.Connection)
+			datasetID := getDatasetID(e.Setup)
+			tableName := getTableName(e.Setup)
 			tableRef := client.Dataset(datasetID).Table(tableName)
 			metaData, err := tableRef.Metadata(context.Background())
 			if err != nil {
@@ -94,7 +97,7 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 			if err != nil {
 				return nil, err
 			}
-			err = insertDataToBigQuery(getProjectID(e.Connection), datasetID, tableName, valueSaver, client)
+			err = insertDataToBigQuery(getProjectID(e.Setup), datasetID, tableName, valueSaver, client)
 			if err != nil {
 				return nil, err
 			}
@@ -107,14 +110,14 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 	return outputs, nil
 }
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 
-	client, err := NewClient(getJSONKey(connection), getProjectID(connection))
+	client, err := NewClient(getJSONKey(setup), getProjectID(setup))
 	if err != nil || client == nil {
 		return fmt.Errorf("error creating BigQuery client: %v", err)
 	}
 	defer client.Close()
-	if client.Project() == getProjectID(connection) {
+	if client.Project() == getProjectID(setup) {
 		return nil
 	}
 	return errors.New("project ID does not match")

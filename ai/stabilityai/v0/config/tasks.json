@@ -290,7 +290,7 @@
               "stable-diffusion-v1-6"
             ],
             "targets": [
-              "connection.api_key"
+              "setup.api_key"
             ]
           },
           "instillAcceptFormats": [

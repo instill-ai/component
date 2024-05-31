@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package huggingface
 
 import (
@@ -41,47 +41,49 @@ const (
 var (
 	//go:embed config/definition.json
 	definitionJSON []byte
+	//go:embed config/setup.json
+	setupJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
 	once      sync.Once
-	con       *connector
+	comp      *component
 )
 
-type connector struct {
-	base.Connector
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 }
 
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 	}}, nil
 }
 
-func getAPIKey(config *structpb.Struct) string {
-	return config.GetFields()["api_key"].GetStringValue()
+func getAPIKey(setup *structpb.Struct) string {
+	return setup.GetFields()["api_key"].GetStringValue()
 }
 
-func getBaseURL(config *structpb.Struct) string {
-	return config.GetFields()["base_url"].GetStringValue()
+func getBaseURL(setup *structpb.Struct) string {
+	return setup.GetFields()["base_url"].GetStringValue()
 }
 
-func isCustomEndpoint(config *structpb.Struct) bool {
-	return config.GetFields()["is_custom_endpoint"].GetBoolValue()
+func isCustomEndpoint(setup *structpb.Struct) bool {
+	return setup.GetFields()["is_custom_endpoint"].GetBoolValue()
 }
 
 func wrapSliceInStruct(data []byte, key string) (*structpb.Struct, error) {
@@ -103,11 +105,11 @@ func wrapSliceInStruct(data []byte, key string) (*structpb.Struct, error) {
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-	client := newClient(e.Connection, e.GetLogger())
+	client := newClient(e.Setup, e.GetLogger())
 	outputs := []*structpb.Struct{}
 
 	path := "/"
-	if !isCustomEndpoint(e.Connection) {
+	if !isCustomEndpoint(e.Setup) {
 		path = modelsPath + inputs[0].GetFields()["model"].GetStringValue()
 	}
 
@@ -563,15 +565,15 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
-	req := newClient(connection, c.Logger).R()
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
+	req := newClient(setup, c.Logger).R()
 	resp, err := req.Get("")
 	if err != nil {
 		return err
 	}
 
 	if resp.IsError() {
-		return fmt.Errorf("connection error")
+		return fmt.Errorf("setup error")
 	}
 
 	return nil

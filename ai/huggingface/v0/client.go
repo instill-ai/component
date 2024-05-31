@@ -15,13 +15,13 @@ const (
 	modelsPath = "/models/"
 )
 
-func newClient(config *structpb.Struct, logger *zap.Logger) *httpclient.Client {
-	c := httpclient.New("Hugging Face", getBaseURL(config),
+func newClient(setup *structpb.Struct, logger *zap.Logger) *httpclient.Client {
+	c := httpclient.New("Hugging Face", getBaseURL(setup),
 		httpclient.WithLogger(logger),
 		httpclient.WithEndUserError(new(errBody)),
 	)
 
-	c.SetAuthToken(getAPIKey(config))
+	c.SetAuthToken(getAPIKey(setup))
 
 	return c
 }

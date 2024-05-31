@@ -39,7 +39,7 @@ const (
 `
 )
 
-func TestConnector_ExecuteImageFromText(t *testing.T) {
+func TestComponent_ExecuteImageFromText(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 
@@ -47,7 +47,7 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 	text := "a cat and a dog"
 	engine := "engine"
 
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -91,13 +91,13 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 			srv := httptest.NewServer(h)
 			c.Cleanup(srv.Close)
 
-			connection, err := structpb.NewStruct(map[string]any{
+			setup, err := structpb.NewStruct(map[string]any{
 				"base_path": srv.URL,
 				"api_key":   apiKey,
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(nil, connection, TextToImageTask)
+			exec, err := connector.CreateExecution(nil, setup, TextToImageTask)
 			c.Assert(err, qt.IsNil)
 
 			weights := []float64{weight}
@@ -134,7 +134,7 @@ func TestConnector_ExecuteImageFromText(t *testing.T) {
 	})
 }
 
-func TestConnector_ExecuteImageFromImage(t *testing.T) {
+func TestComponent_ExecuteImageFromImage(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 
@@ -142,7 +142,7 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 	text := "a cat and a dog"
 	engine := "engine"
 
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -186,13 +186,13 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 			srv := httptest.NewServer(h)
 			c.Cleanup(srv.Close)
 
-			connection, err := structpb.NewStruct(map[string]any{
+			setup, err := structpb.NewStruct(map[string]any{
 				"base_path": srv.URL,
 				"api_key":   apiKey,
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(nil, connection, ImageToImageTask)
+			exec, err := connector.CreateExecution(nil, setup, ImageToImageTask)
 			c.Assert(err, qt.IsNil)
 
 			weights := []float64{weight}
@@ -229,10 +229,10 @@ func TestConnector_ExecuteImageFromImage(t *testing.T) {
 	})
 }
 
-func TestConnector_Test(t *testing.T) {
+func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {
@@ -248,12 +248,12 @@ func TestConnector_Test(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		connection, err := structpb.NewStruct(map[string]any{
+		setup, err := structpb.NewStruct(map[string]any{
 			"base_path": srv.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, connection)
+		err = connector.Test(nil, setup)
 		c.Check(err, qt.IsNotNil)
 
 		wantMsg := "Stability AI responded with a 401 status code. Incorrect API key provided"
@@ -272,12 +272,12 @@ func TestConnector_Test(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		connection, err := structpb.NewStruct(map[string]any{
+		setup, err := structpb.NewStruct(map[string]any{
 			"base_path": srv.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, connection)
+		err = connector.Test(nil, setup)
 		c.Check(err, qt.IsNotNil)
 	})
 
@@ -293,12 +293,12 @@ func TestConnector_Test(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		connection, err := structpb.NewStruct(map[string]any{
+		setup, err := structpb.NewStruct(map[string]any{
 			"base_path": srv.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, connection)
+		err = connector.Test(nil, setup)
 		c.Check(err, qt.IsNil)
 	})
 }

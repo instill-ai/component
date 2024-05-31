@@ -2,11 +2,12 @@
 
 mkdir -p pkg/dummy/config
 cp definition.json pkg/dummy/config/definition.json
+cp setup.json pkg/dummy/config/setup.json
 cp tasks.json pkg/dummy/config/tasks.json
 
 # OK
 
-compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx --connector
+compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx
 cmp pkg/dummy/README.mdx want-readme.mdx
 
 -- definition.json --
@@ -19,35 +20,36 @@ cmp pkg/dummy/README.mdx want-readme.mdx
   "title": "Dummy",
   "description": "Perform an action",
   "prerequisites": "An account at [dummy.io](https://dummy.io) is required.",
-  "type": "CONNECTOR_TYPE_DATA",
-  "spec": {
-    "connection_specification": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "additionalProperties": true,
-      "properties": {
-        "organization": {
-          "description": "Specify which organization is used for the requests",
-          "instillUIOrder": 1,
-          "title": "Organization ID",
-          "type": "string"
-        },
-        "api_key": {
-          "description": "Fill your Dummy API key",
-          "instillUIOrder": 0,
-          "title": "API Key",
-          "type": "string"
-        }
-      },
-      "required": [
-        "api_key"
-      ],
-      "title": "OpenAI Connection",
-      "type": "object"
-    }
-  },
+  "type": "COMPONENT_TYPE_DATA",
   "release_stage": "RELEASE_STAGE_COMING_SOON",
   "source_url": "https://github.com/instill-ai/component/blob/main/data/dummy/v0"
 }
+
+-- setup.json --
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": true,
+  "properties": {
+    "organization": {
+      "description": "Specify which organization is used for the requests",
+      "instillUIOrder": 1,
+      "title": "Organization ID",
+      "type": "string"
+    },
+    "api_key": {
+      "description": "Fill your Dummy API key",
+      "instillUIOrder": 0,
+      "title": "API Key",
+      "type": "string"
+    }
+  },
+  "required": [
+    "api_key"
+  ],
+  "title": "OpenAI Connection",
+  "type": "object"
+}
+
 -- tasks.json --
 {
   "TASK_DUMMY": {
@@ -82,10 +84,10 @@ cmp pkg/dummy/README.mdx want-readme.mdx
 title: "Dummy"
 lang: "en-US"
 draft: false
-description: "Learn about how to set up a VDP Dummy connector https://github.com/instill-ai/instill-core"
+description: "Learn about how to set up a VDP Dummy component https://github.com/instill-ai/instill-core"
 ---
 
-The Dummy component is a data connector that allows users to perform an action.
+The Dummy component is a data component that allows users to perform an action.
 It can carry out the following tasks:
 
 - [Dummy](#dummy)
@@ -98,7 +100,7 @@ It can carry out the following tasks:
 
 The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/dummy/v0/config/definition.json).
 
-## Connection
+## Setup
 
 <InfoBlock type="info" title="Prerequisites">An account at [dummy.io](https://dummy.io) is required.</InfoBlock>
 

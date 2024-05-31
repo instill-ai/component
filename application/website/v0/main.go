@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package website
 
 import (
@@ -23,31 +23,31 @@ var (
 	tasksJSON []byte
 
 	once sync.Once
-	con  *connector
+	comp *component
 )
 
-type connector struct {
-	base.Connector
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 }
 
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, nil, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 	}}, nil
 }
 
@@ -80,6 +80,6 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 	return nil
 }

@@ -89,7 +89,7 @@ var (
 	}
 )
 
-func TestConnector_Execute(t *testing.T) {
+func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 
@@ -192,7 +192,7 @@ func TestConnector_Execute(t *testing.T) {
 		},
 	}
 
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	for _, tc := range testcases {
@@ -221,12 +221,12 @@ func TestConnector_Execute(t *testing.T) {
 			pineconeServer := httptest.NewServer(h)
 			c.Cleanup(pineconeServer.Close)
 
-			connection, _ := structpb.NewStruct(map[string]any{
+			setup, _ := structpb.NewStruct(map[string]any{
 				"api_key": pineconeKey,
 				"url":     pineconeServer.URL,
 			})
 
-			exec, err := connector.CreateExecution(nil, connection, tc.task)
+			exec, err := connector.CreateExecution(nil, setup, tc.task)
 			c.Assert(err, qt.IsNil)
 
 			pbIn, err := base.ConvertToStructpb(tc.execIn)
@@ -252,11 +252,11 @@ func TestConnector_Execute(t *testing.T) {
 		pineconeServer := httptest.NewServer(h)
 		c.Cleanup(pineconeServer.Close)
 
-		connection, _ := structpb.NewStruct(map[string]any{
+		setup, _ := structpb.NewStruct(map[string]any{
 			"url": pineconeServer.URL,
 		})
 
-		exec, err := connector.CreateExecution(nil, connection, taskUpsert)
+		exec, err := connector.CreateExecution(nil, setup, taskUpsert)
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
@@ -268,11 +268,11 @@ func TestConnector_Execute(t *testing.T) {
 	})
 
 	c.Run("nok - URL misconfiguration", func(c *qt.C) {
-		connection, _ := structpb.NewStruct(map[string]any{
+		setup, _ := structpb.NewStruct(map[string]any{
 			"url": "http://no-such.host",
 		})
 
-		exec, err := connector.CreateExecution(nil, connection, taskUpsert)
+		exec, err := connector.CreateExecution(nil, setup, taskUpsert)
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)

@@ -99,7 +99,7 @@ var (
 	}
 )
 
-func TestConnector_Execute(t *testing.T) {
+func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 
@@ -226,8 +226,8 @@ func TestConnector_Execute(t *testing.T) {
 		},
 	}
 
-	bc := base.Connector{Logger: zap.NewNop()}
-	connector := Init(bc)
+	bc := base.Component{Logger: zap.NewNop()}
+	component := Init(bc)
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
@@ -256,12 +256,12 @@ func TestConnector_Execute(t *testing.T) {
 			srv := httptest.NewServer(h)
 			c.Cleanup(srv.Close)
 
-			connection, _ := structpb.NewStruct(map[string]any{
+			setup, _ := structpb.NewStruct(map[string]any{
 				"base_path": srv.URL,
 				"api_key":   apiKey,
 			})
 
-			exec, err := connector.CreateExecution(nil, connection, tc.task)
+			exec, err := component.CreateExecution(nil, setup, tc.task)
 			c.Assert(err, qt.IsNil)
 
 			pbIn, err := base.ConvertToStructpb(tc.in)
@@ -283,30 +283,30 @@ func TestConnector_Execute(t *testing.T) {
 	}
 }
 
-func TestConnector_CreateExecution(t *testing.T) {
+func TestComponent_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Connector{Logger: zap.NewNop()}
-	connector := Init(bc)
+	bc := base.Component{Logger: zap.NewNop()}
+	component := Init(bc)
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 		want := fmt.Sprintf("%s task is not supported.", task)
 
-		_, err := connector.CreateExecution(nil, new(structpb.Struct), task)
+		_, err := component.CreateExecution(nil, new(structpb.Struct), task)
 		c.Check(err, qt.IsNotNil)
 		c.Check(errmsg.Message(err), qt.Equals, want)
 	})
 }
 
-func TestConnector_Test(t *testing.T) {
+func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Connector{Logger: zap.NewNop()}
-	connector := Init(bc)
+	bc := base.Component{Logger: zap.NewNop()}
+	component := Init(bc)
 
 	c.Run("ok - connected", func(c *qt.C) {
-		err := connector.Test(nil, nil)
+		err := component.Test(nil, nil)
 		c.Check(err, qt.IsNil)
 	})
 }

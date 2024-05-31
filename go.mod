@@ -17,7 +17,7 @@ require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/gojuno/minimock/v3 v3.3.6
 	github.com/h2non/filetype v1.1.3
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240423142304-54b986803884
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240530065422-d384f728a1e2
 	github.com/instill-ai/x v0.4.0-alpha
 	github.com/itchyny/gojq v0.12.14
 	github.com/lestrrat-go/jspointer v0.0.0-20181205001929-82fadba7561c

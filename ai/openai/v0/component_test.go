@@ -30,11 +30,11 @@ const (
 }`
 )
 
-func TestConnector_Execute(t *testing.T) {
+func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -97,14 +97,14 @@ func TestConnector_Execute(t *testing.T) {
 			openAIServer := httptest.NewServer(h)
 			c.Cleanup(openAIServer.Close)
 
-			connection, err := structpb.NewStruct(map[string]any{
+			setup, err := structpb.NewStruct(map[string]any{
 				"base_path":    openAIServer.URL,
 				"api_key":      apiKey,
 				"organization": org,
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(nil, connection, tc.task)
+			exec, err := connector.CreateExecution(nil, setup, tc.task)
 			c.Assert(err, qt.IsNil)
 
 			pbIn := new(structpb.Struct)
@@ -130,10 +130,10 @@ func TestConnector_Execute(t *testing.T) {
 	})
 }
 
-func TestConnector_Test(t *testing.T) {
+func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {
@@ -149,12 +149,12 @@ func TestConnector_Test(t *testing.T) {
 		openAIServer := httptest.NewServer(h)
 		c.Cleanup(openAIServer.Close)
 
-		connection, err := structpb.NewStruct(map[string]any{
+		setup, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, connection)
+		err = connector.Test(nil, setup)
 		c.Check(err, qt.IsNotNil)
 
 		wantMsg := "OpenAI responded with a 401 status code. Incorrect API key provided."
@@ -173,12 +173,12 @@ func TestConnector_Test(t *testing.T) {
 		openAIServer := httptest.NewServer(h)
 		c.Cleanup(openAIServer.Close)
 
-		connection, err := structpb.NewStruct(map[string]any{
+		setup, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, connection)
+		err = connector.Test(nil, setup)
 		c.Check(err, qt.IsNotNil)
 	})
 
@@ -194,17 +194,17 @@ func TestConnector_Test(t *testing.T) {
 		openAIServer := httptest.NewServer(h)
 		c.Cleanup(openAIServer.Close)
 
-		connection, err := structpb.NewStruct(map[string]any{
+		setup, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, connection)
+		err = connector.Test(nil, setup)
 		c.Check(err, qt.IsNil)
 	})
 }
 
-func TestConnector_WithConfig(t *testing.T) {
+func TestComponent_WithConfig(t *testing.T) {
 	c := qt.New(t)
 	cleanupConn := func() { once = sync.Once{} }
 	ctx := context.Background()
@@ -237,7 +237,7 @@ func TestConnector_WithConfig(t *testing.T) {
 	c.Cleanup(openAIServer.Close)
 
 	task := TextGenerationTask
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 
 	c.Run("nok - usage handler check error", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
@@ -247,10 +247,10 @@ func TestConnector_WithConfig(t *testing.T) {
 		creator := usageHandlerCreator{uh}
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
-		connection, err := structpb.NewStruct(map[string]any{})
+		setup, err := structpb.NewStruct(map[string]any{})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := connector.CreateExecution(nil, connection, task)
+		exec, err := connector.CreateExecution(nil, setup, task)
 		c.Assert(err, qt.IsNil)
 
 		_, err = exec.Execute(ctx, inputs)
@@ -267,13 +267,13 @@ func TestConnector_WithConfig(t *testing.T) {
 		creator := usageHandlerCreator{uh}
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
-		connection, err := structpb.NewStruct(map[string]any{
+		setup, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
 			"api_key":   apiKey,
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := connector.CreateExecution(nil, connection, task)
+		exec, err := connector.CreateExecution(nil, setup, task)
 		c.Assert(err, qt.IsNil)
 
 		_, err = exec.Execute(ctx, inputs)
@@ -290,13 +290,13 @@ func TestConnector_WithConfig(t *testing.T) {
 		creator := usageHandlerCreator{uh}
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
-		connection, err := structpb.NewStruct(map[string]any{
+		setup, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
 			"api_key":   apiKey,
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := connector.CreateExecution(nil, connection, task)
+		exec, err := connector.CreateExecution(nil, setup, task)
 		c.Assert(err, qt.IsNil)
 		c.Check(exec.Execution.UsesSecret(), qt.IsFalse)
 
@@ -315,13 +315,13 @@ func TestConnector_WithConfig(t *testing.T) {
 		secrets := map[string]any{"apikey": apiKey}
 		connector := Init(bc).WithSecrets(secrets)
 
-		connection, err := structpb.NewStruct(map[string]any{
+		setup, err := structpb.NewStruct(map[string]any{
 			"base_path": openAIServer.URL,
 			"api_key":   "__INSTILL_SECRET", // will be replaced by secrets.apikey
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := connector.CreateExecution(nil, connection, task)
+		exec, err := connector.CreateExecution(nil, setup, task)
 		c.Assert(err, qt.IsNil)
 		c.Check(exec.Execution.UsesSecret(), qt.IsTrue)
 
@@ -338,12 +338,12 @@ func TestConnector_WithConfig(t *testing.T) {
 		c.Cleanup(cleanupConn)
 
 		connector := Init(bc)
-		connection, err := structpb.NewStruct(map[string]any{
+		setup, err := structpb.NewStruct(map[string]any{
 			"api_key": "__INSTILL_SECRET",
 		})
 		c.Assert(err, qt.IsNil)
 
-		_, err = connector.CreateExecution(nil, connection, task)
+		_, err = connector.CreateExecution(nil, setup, task)
 		c.Check(err, qt.IsNotNil)
 		c.Check(err, qt.ErrorMatches, "unresolved global secret")
 		c.Check(errmsg.Message(err), qt.Equals, "The configuration field api_key can't reference a global secret.")

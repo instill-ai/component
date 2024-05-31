@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package archetypeai
 
 import (
@@ -27,19 +27,21 @@ const (
 var (
 	//go:embed config/definition.json
 	definitionJSON []byte
+	//go:embed config/setup.json
+	setupJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
 
 	once sync.Once
-	con  *connector
+	comp *component
 )
 
-type connector struct {
-	base.Connector
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 
 	execute func(*structpb.Struct) (*structpb.Struct, error)
 	client  *httpclient.Client
@@ -47,21 +49,21 @@ type execution struct {
 
 // Init returns an implementation of IConnector that interacts with Archetype
 // AI.
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
-		client:             newClient(connection, c.Logger),
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
+		client:             newClient(setup, c.Logger),
 	}
 
 	switch task {
@@ -213,16 +215,16 @@ func (e *execution) uploadFile(in *structpb.Struct) (*structpb.Struct, error) {
 
 // Test checks the connectivity of the connector.
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
-	// TODO Archetype AI API is not public yet. We could test the connection
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
+	// TODO Archetype AI API is not public yet. We could test the setup
 	// by calling one of the endpoints used in the available tasks. However,
 	// these are not designed for specifically for this purpose. When we know
 	// of an endpoint that's more suited for this, it should be used instead.
 	return nil
 }
 
-func getAPIKey(config *structpb.Struct) string {
-	return config.GetFields()["api_key"].GetStringValue()
+func getAPIKey(setup *structpb.Struct) string {
+	return setup.GetFields()["api_key"].GetStringValue()
 }
 
 // getBasePath returns Archetype AI's API URL. This configuration param allows
@@ -230,9 +232,9 @@ func getAPIKey(config *structpb.Struct) string {
 // exposed to users. Rather, it can serve to test the logic against a fake
 // server.
 // TODO instead of having the API value hardcoded in the codebase, it should
-// be read from a config file or environment variable.
-func getBasePath(config *structpb.Struct) string {
-	v, ok := config.GetFields()["base_path"]
+// be read from a setup file or environment variable.
+func getBasePath(setup *structpb.Struct) string {
+	v, ok := setup.GetFields()["base_path"]
 	if !ok {
 		return host
 	}

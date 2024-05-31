@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package googlesearch
 
 import (
@@ -22,34 +22,37 @@ const (
 //go:embed config/definition.json
 var definitionJSON []byte
 
+//go:embed config/setup.json
+var setupJSON []byte
+
 //go:embed config/tasks.json
 var tasksJSON []byte
 
 var once sync.Once
-var con *connector
+var comp *component
 
-type connector struct {
-	base.Connector
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 }
 
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 	}}, nil
 }
 
@@ -58,21 +61,21 @@ func NewService(apiKey string) (*customsearch.Service, error) {
 	return customsearch.NewService(context.Background(), option.WithAPIKey(apiKey))
 }
 
-func getAPIKey(config *structpb.Struct) string {
-	return config.GetFields()["api_key"].GetStringValue()
+func getAPIKey(setup *structpb.Struct) string {
+	return setup.GetFields()["api_key"].GetStringValue()
 }
 
-func getSearchEngineID(config *structpb.Struct) string {
-	return config.GetFields()["cse_id"].GetStringValue()
+func getSearchEngineID(setup *structpb.Struct) string {
+	return setup.GetFields()["cse_id"].GetStringValue()
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 
-	service, err := NewService(getAPIKey(e.Connection))
+	service, err := NewService(getAPIKey(e.Setup))
 	if err != nil || service == nil {
 		return nil, fmt.Errorf("error creating Google custom search service: %v", err)
 	}
-	cseListCall := service.Cse.List().Cx(getSearchEngineID(e.Connection))
+	cseListCall := service.Cse.List().Cx(getSearchEngineID(e.Setup))
 
 	outputs := []*structpb.Struct{}
 
@@ -112,9 +115,9 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 	return outputs, nil
 }
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 
-	service, err := NewService(getAPIKey(connection))
+	service, err := NewService(getAPIKey(setup))
 	if err != nil || service == nil {
 		return fmt.Errorf("error creating Google custom search service: %v", err)
 	}

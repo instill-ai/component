@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package slack
 
 import (
@@ -22,19 +22,21 @@ const (
 var (
 	//go:embed config/definition.json
 	definitionJSON []byte
+	//go:embed config/setup.json
+	setupJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
 
 	once sync.Once
-	con  *connector
+	comp *component
 )
 
-type connector struct {
-	base.Connector
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 
 	execute func(*structpb.Struct) (*structpb.Struct, error)
 	client  SlackClient
@@ -48,22 +50,22 @@ type SlackClient interface {
 }
 
 // Init returns an implementation of IConnector that interacts with Slack.
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
 
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
-		client:             newClient(connection),
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
+		client:             newClient(setup),
 	}
 
 	switch task {
@@ -97,7 +99,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
-func (c connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 
 	return nil
 }

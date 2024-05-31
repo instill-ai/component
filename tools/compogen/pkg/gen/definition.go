@@ -9,10 +9,6 @@ import (
 	"golang.org/x/text/language"
 )
 
-type spec struct {
-	ConnectionSpecification *objectSchema `json:"connection_specification" validate:"omitnil"`
-}
-
 type releaseStage pb.ComponentDefinition_ReleaseStage
 
 func (rs *releaseStage) UnmarshalJSON(b []byte) error {
@@ -46,6 +42,4 @@ type definition struct {
 	Public        bool   `json:"public"`
 	Type          string `json:"type"`
 	Prerequisites string `json:"prerequisites"`
-
-	Spec spec `json:"spec" validate:"omitempty"`
 }

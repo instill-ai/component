@@ -116,12 +116,12 @@ func TestOperator_Execute(t *testing.T) {
 		},
 	}
 
-	bo := base.Operator{Logger: zap.NewNop()}
+	bo := base.Component{Logger: zap.NewNop()}
 	operator := Init(bo)
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
-			exec, err := operator.CreateExecution(nil, tc.task)
+			exec, err := operator.CreateExecution(nil, nil, tc.task)
 			c.Assert(err, qt.IsNil)
 
 			pbIn, err := structpb.NewStruct(tc.in)
@@ -153,14 +153,14 @@ func TestOperator_Execute(t *testing.T) {
 func TestOperator_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Operator{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	operator := Init(bc)
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 		want := fmt.Sprintf("%s task is not supported.", task)
 
-		_, err := operator.CreateExecution(nil, task)
+		_, err := operator.CreateExecution(nil, nil, task)
 		c.Check(err, qt.IsNotNil)
 		c.Check(errmsg.Message(err), qt.Equals, want)
 	})

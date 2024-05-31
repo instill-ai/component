@@ -12,6 +12,7 @@
   "public": true,
   "spec": {},
   "title": "Text",
+  "type": "COMPONENT_TYPE_OPERATOR",
   "uid": "5b7aca5b-1ae3-477f-bf60-d34e1c993c87",
   "version": "0.1.1",
   "source_url": "https://github.com/instill-ai/component/blob/main/operator/text/v0",

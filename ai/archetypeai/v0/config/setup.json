@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "api_key": {
+      "description": "Fill your Archetype AI API key",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": true,
+      "instillUIOrder": 0,
+      "title": "API Key",
+      "type": "string"
+    }
+  },
+  "required": [
+    "api_key"
+  ],
+  "instillEditOnNodeFields": [
+    "api_key"
+  ],
+  "title": "Archetype AI Connection",
+  "type": "object"
+}

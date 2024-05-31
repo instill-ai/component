@@ -30,13 +30,13 @@ func TestComponentType_IndefiniteArticle(t *testing.T) {
 	c := qt.New(t)
 
 	testcases := []struct {
-		in   ComponentSubtype
+		in   ComponentType
 		want string
 	}{
 		{in: cstOperator, want: "an"},
-		{in: cstAIConnector, want: "an"},
-		{in: cstApplicationConnector, want: "a"},
-		{in: cstDataConnector, want: "a"},
+		{in: cstAI, want: "an"},
+		{in: cstApplication, want: "a"},
+		{in: cstData, want: "a"},
 	}
 
 	for _, tc := range testcases {

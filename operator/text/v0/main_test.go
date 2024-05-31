@@ -67,15 +67,15 @@ func TestOperator(t *testing.T) {
 			input: structpb.Struct{},
 		},
 	}
-	bc := base.Operator{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	ctx := context.Background()
 	for i := range testcases {
 		tc := &testcases[i]
 		c.Run(tc.name, func(c *quicktest.C) {
-			connector := Init(bc)
-			c.Assert(connector, quicktest.IsNotNil)
+			component := Init(bc)
+			c.Assert(component, quicktest.IsNotNil)
 
-			execution, err := connector.CreateExecution(map[string]any{}, tc.task)
+			execution, err := component.CreateExecution(map[string]any{}, nil, tc.task)
 			c.Assert(err, quicktest.IsNil)
 			c.Assert(execution, quicktest.IsNotNil)
 

@@ -5,8 +5,8 @@ go 1.22.3
 require (
 	github.com/frankban/quicktest v1.14.6
 	github.com/go-playground/validator/v10 v10.18.0
-	github.com/instill-ai/component v0.18.0-beta.0.20240527105221-4853d4cdb12f
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240423142304-54b986803884
+	github.com/instill-ai/component v0.18.0-beta.0.20240530065709-1937ec752f14
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240530065422-d384f728a1e2
 	github.com/rogpeppe/go-internal v1.12.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/spf13/cobra v1.8.0

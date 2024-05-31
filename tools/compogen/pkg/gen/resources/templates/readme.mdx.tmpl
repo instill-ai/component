@@ -2,10 +2,10 @@
 title: "{{ .Title }}"
 lang: "en-US"
 draft: {{ .IsDraft }}
-description: "Learn about how to set up a VDP {{ .Title }} {{ .ComponentType }} https://github.com/instill-ai/instill-core"
+description: "Learn about how to set up a VDP {{ .Title }} component https://github.com/instill-ai/instill-core"
 ---
 
-The {{ .Title }} component is {{ .ComponentSubtype.IndefiniteArticle }} {{ .ComponentSubtype }} that allows users to {{ firstToLower .Description }}.
+The {{ .Title }} component is {{ .ComponentType.IndefiniteArticle }} {{ .ComponentType }} component that allows users to {{ firstToLower .Description }}.
 It can carry out the following tasks:
 {{ range .Tasks }}
 - [{{ .Title }}](#{{ asAnchor .Title}}){{ end }}
@@ -17,11 +17,11 @@ It can carry out the following tasks:
 ## Configuration
 
 The component configuration is defined and maintained [here]({{ .SourceURL }}/config/definition.json).
-{{ if and .ComponentType.HasConnectionConfig ( or .ConnectionConfig.Prerequisites .ConnectionConfig.Properties ) }}
-## Connection
-{{ with .ConnectionConfig.Prerequisites}}
+{{ if or .SetupConfig.Prerequisites .SetupConfig.Properties }}
+## Setup
+{{ with .SetupConfig.Prerequisites}}
 <InfoBlock type="info" title="Prerequisites">{{ . }}</InfoBlock>
-{{ end }}{{ with .ConnectionConfig.Properties }}
+{{ end }}{{ with .SetupConfig.Properties }}
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range . }}
 | {{ .Title }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}

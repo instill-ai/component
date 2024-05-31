@@ -1,4 +1,4 @@
-//go:generate compogen readme --connector ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx
 package redis
 
 import (
@@ -21,42 +21,44 @@ const (
 var (
 	//go:embed config/definition.json
 	definitionJSON []byte
+	//go:embed config/setup.json
+	setupJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
 
 	once sync.Once
-	con  *connector
+	comp *component
 )
 
-type connector struct {
-	base.Connector
+type component struct {
+	base.Component
 }
 
 type execution struct {
-	base.ConnectorExecution
+	base.ComponentExecution
 }
 
-func Init(bc base.Connector) *connector {
+func Init(bc base.Component) *component {
 	once.Do(func() {
-		con = &connector{Connector: bc}
-		err := con.LoadConnectorDefinition(definitionJSON, tasksJSON, nil)
+		comp = &component{Component: bc}
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
 	})
-	return con
+	return comp
 }
 
-func (c *connector) CreateExecution(sysVars map[string]any, connection *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	return &base.ExecutionWrapper{Execution: &execution{
-		ConnectorExecution: base.ConnectorExecution{Connector: c, SystemVariables: sysVars, Connection: connection, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 	}}, nil
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := []*structpb.Struct{}
 
-	client, err := NewClient(e.Connection)
+	client, err := NewClient(e.Setup)
 	if err != nil {
 		return outputs, err
 	}
@@ -106,14 +108,14 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 	return outputs, nil
 }
 
-func (c *connector) Test(sysVars map[string]any, connection *structpb.Struct) error {
-	client, err := NewClient(connection)
+func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
+	client, err := NewClient(setup)
 	if err != nil {
 		return err
 	}
 	defer client.Close()
 
-	// Ping the Redis server to check the connection
+	// Ping the Redis server to check the setup
 	_, err = client.Ping(context.Background()).Result()
 	if err != nil {
 		return err

@@ -27,11 +27,11 @@ var (
 	path = "/good-songs/10"
 )
 
-func TestConnector_Execute(t *testing.T) {
+func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 	reqBody := map[string]any{
 		"title": "Be the wheel",
@@ -154,10 +154,10 @@ func TestConnector_Execute(t *testing.T) {
 	})
 }
 
-func TestConnector_Test(t *testing.T) {
+func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Connector{Logger: zap.NewNop()}
+	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	c.Run("ok - connected (even with non-2xx status", func(c *qt.C) {
@@ -202,9 +202,9 @@ var testAuth = map[authType]map[string]any{
 func cfg(atype authType) *structpb.Struct {
 	auth := testAuth[atype]
 	auth["auth_type"] = string(atype)
-	config, _ := structpb.NewStruct(map[string]any{
+	setup, _ := structpb.NewStruct(map[string]any{
 		"authentication": auth,
 	})
 
-	return config
+	return setup
 }
