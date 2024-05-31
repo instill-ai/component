@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+	"time"
 
 	"encoding/base64"
 
 	"code.sajari.com/docconv"
+	"gopkg.in/yaml.v2"
 
 	"github.com/instill-ai/component/base"
 )
@@ -43,17 +45,13 @@ func getContentTypeFromBase64(base64String string) (string, error) {
 	return parts[0], nil
 }
 
-func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
+type converter interface {
+	convert(contentType string, b []byte) (ConvertToTextOutput, error)
+}
 
-	contentType, err := getContentTypeFromBase64(input.Doc)
-	if err != nil {
-		return ConvertToTextOutput{}, err
-	}
+type docconvConverter struct{}
 
-	b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(input.Doc))
-	if err != nil {
-		return ConvertToTextOutput{}, err
-	}
+func (d docconvConverter) convert(contentType string, b []byte) (ConvertToTextOutput, error) {
 
 	res, err := docconv.Convert(bytes.NewReader(b), contentType, false)
 	if err != nil {
@@ -70,4 +68,76 @@ func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
 		MSecs: res.MSecs,
 		Error: res.Error,
 	}, nil
+}
+
+type markdownConverter struct{}
+
+func extractMetadata(content string) map[string]string {
+	var metadata map[string]string
+
+	if !strings.HasPrefix(content, "---") {
+		return metadata
+	}
+
+	parts := strings.SplitN(content, "---", 3)
+	if len(parts) < 3 {
+		return metadata
+	}
+
+	yamlContent := parts[1]
+	err := yaml.Unmarshal([]byte(yamlContent), &metadata)
+	if err != nil {
+		return metadata
+	}
+
+	return metadata
+}
+
+func (m markdownConverter) convert(contentType string, b []byte) (ConvertToTextOutput, error) {
+
+	before := time.Now()
+	content := string(b)
+	metadata := extractMetadata(content)
+
+	duration := time.Since(before)
+	millis := duration.Milliseconds()
+
+	if metadata == nil {
+		metadata = map[string]string{}
+	}
+
+	return ConvertToTextOutput{
+		Body:  content,
+		Meta:  metadata,
+		MSecs: uint32(millis),
+		Error: "",
+	}, nil
+}
+
+func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
+
+	contentType, err := getContentTypeFromBase64(input.Doc)
+	if err != nil {
+		return ConvertToTextOutput{}, err
+	}
+
+	b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(input.Doc))
+	if err != nil {
+		return ConvertToTextOutput{}, err
+	}
+
+	var converter converter
+	switch contentType {
+	case "application/octet-stream":
+		converter = markdownConverter{}
+	default:
+		converter = docconvConverter{}
+	}
+
+	res, err := converter.convert(contentType, b)
+	if err != nil {
+		return ConvertToTextOutput{}, err
+	}
+
+	return res, nil
 }
