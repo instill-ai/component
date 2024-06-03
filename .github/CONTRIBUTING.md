@@ -53,7 +53,7 @@ There are different types of component: **AI**, **Data**, **Application**,
 formats that are easy to interpret and analyze, thereby facilitating the
 extraction of valuable insights. These components integrate with AI models from
 various providers, whether it's the primary Instill Model or those from
-third-party AI vendors. They are defined and initialized in the [ai](../ai)
+third-party AI vendors. They are defined and initialized in the [`ai`](../ai)
 package.
 
 #### Data
@@ -64,18 +64,18 @@ data sources, such as IoT devices (e.g., IP cameras), cloud storage services
 Pinecone). These connectors act as the bridge between VDP and various external
 data sources. Their primary function is to enable seamless data exchange,
 enhancing Instill VDP's capability to work with diverse data sources
-effectively. They are defined and initialized in the [data](../data) package.
+effectively. They are defined and initialized in the [`data`](../data) package.
 
 #### Application
 
 **Application** components are used to seamlessly integrate various 3rd-party
 application services. They are defined and initialized in the
-[application](../application) package.
+[`application`](../application) package.
 
 #### Operator
 
 **Operator** components perform data transformations inside the pipeline. They
-  are defined and initialized in the [operator](../operator) package.
+  are defined and initialized in the [`operator`](../operator) package.
 
 #### Iterator
 
@@ -400,11 +400,10 @@ This file defines the input and output schema of each task:
 - **`type`**: describes the JSON type of this field, which could be `integer`,
   `number`, `boolean`, `string`, `array`, or `object`.
 - **`title`** is used by the Console to provide the title of the property.
-- **`description`** is used by Console to show this description in a popup when
-  you click the question mark beside the field.
-- **`instillShortDescription`**: is used by Console to show this under the field
-  (the original description is shown only when hovered). If this value does not
-  exist, it will be the same as the description.
+- **`description`** is used by Console to provide information about this task.
+- **`instillShortDescription`**: is a concise version of `description`, used to
+  fit smaller spaces such as a component form field. If this value is empty,
+  the `description` value will be used.
 - **`instillUIOrder`** defines the order in which the properties will be
   rendered by Console.
 - **`instillUIMultiline`** indicates whether the text field on Console is
