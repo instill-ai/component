@@ -8,9 +8,11 @@ import (
 	"github.com/slack-go/slack"
 )
 
-func loopChannelListAPI(e *execution, isPublic bool, channelName string) (string, error) {
+var types = []string{"private_channel", "public_channel"}
+
+func loopChannelListAPI(e *execution, channelName string) (string, error) {
 	var apiParams slack.GetConversationsParameters
-	setChannelType(&apiParams, isPublic)
+	apiParams.Types = types
 
 	var targetChannelID string
 	for {
@@ -33,15 +35,6 @@ func loopChannelListAPI(e *execution, isPublic bool, channelName string) (string
 
 		apiParams.Cursor = nextCur
 
-	}
-}
-
-// Todo: make it multiple options
-func setChannelType(params *slack.GetConversationsParameters, isPublicChannel bool) {
-	if !isPublicChannel {
-		params.Types = append(params.Types, "private_channel")
-	} else {
-		params.Types = append(params.Types, "public_channel")
 	}
 }
 
@@ -189,4 +182,24 @@ func transformTSToDate(ts string, format string) (string, error) {
 
 	formatedTS := timestamp.Format(format)
 	return formatedTS, nil
+}
+
+func removeDuplicateUserIDs(userIDs []string) []string {
+	encountered := map[string]struct{}{}
+	result := []string{}
+	for _, v := range userIDs {
+		if _, ok := encountered[v]; !ok {
+			encountered[v] = struct{}{}
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+func createUserIDNameMap(users []slack.User) map[string]string {
+	userIDNameMap := make(map[string]string)
+	for _, user := range users {
+		userIDNameMap[user.ID] = user.Name
+	}
+	return userIDNameMap
 }

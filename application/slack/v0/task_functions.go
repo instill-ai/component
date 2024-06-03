@@ -2,6 +2,7 @@ package slack
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -9,6 +10,42 @@ import (
 	"github.com/slack-go/slack"
 	"google.golang.org/protobuf/types/known/structpb"
 )
+
+type UserInputReadTask struct {
+	ChannelName     string `json:"channel_name"`
+	StartToReadDate string `json:"start_to_read_date"`
+}
+
+type ReadTaskResp struct {
+	Conversations []Conversation `json:"conversations"`
+}
+
+type Conversation struct {
+	UserID             string               `json:"user_id"`
+	UserName           string               `json:"user_name"`
+	Message            string               `json:"message"`
+	StartDate          string               `json:"start_date"`
+	LastDate           string               `json:"last_date"`
+	TS                 string               `json:"ts"`
+	ReplyCount         int                  `json:"reply_count"`
+	ThreadReplyMessage []ThreadReplyMessage `json:"thread_reply_messages"`
+}
+
+type ThreadReplyMessage struct {
+	UserID   string `json:"user_id"`
+	UserName string `json:"user_name"`
+	DateTime string `json:"datetime"`
+	Message  string `json:"message"`
+}
+
+type UserInputWriteTask struct {
+	ChannelName string `json:"channel_name"`
+	Message     string `json:"message"`
+}
+
+type WriteTaskResp struct {
+	Result string `json:"result"`
+}
 
 func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 
@@ -18,7 +55,7 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	targetChannelID, err := loopChannelListAPI(e, params.IsPublicChannel, params.ChannelName)
+	targetChannelID, err := loopChannelListAPI(e, params.ChannelName)
 
 	if err != nil {
 		return nil, err
@@ -29,7 +66,6 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	// TODO: discussed if only collect X days ago as default.
 	if params.StartToReadDate == "" {
 		currentTime := time.Now()
 		sevenDaysAgo := currentTime.AddDate(0, 0, -7)
@@ -81,6 +117,36 @@ func (e *execution) readMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		readTaskResp.Conversations = []Conversation{}
 	}
 
+	// To reduce API calls, we get all user information in one call.
+	var userIDs []string
+	for _, conversation := range readTaskResp.Conversations {
+		userIDs = append(userIDs, conversation.UserID)
+		if len(conversation.ThreadReplyMessage) > 0 {
+			for _, threadReply := range conversation.ThreadReplyMessage {
+				userIDs = append(userIDs, threadReply.UserID)
+			}
+		}
+	}
+
+	userIDs = removeDuplicateUserIDs(userIDs)
+	users, err := e.client.GetUsersInfo(userIDs...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	userIDNameMap := createUserIDNameMap(*users)
+
+	for i, conversation := range readTaskResp.Conversations {
+		readTaskResp.Conversations[i].UserName = userIDNameMap[conversation.UserID]
+
+		if len(conversation.ThreadReplyMessage) > 0 {
+			for j, threadReply := range conversation.ThreadReplyMessage {
+				readTaskResp.Conversations[i].ThreadReplyMessage[j].UserName = userIDNameMap[threadReply.UserID]
+			}
+		}
+	}
+
 	out, err := base.ConvertToStructpb(readTaskResp)
 	if err != nil {
 		return nil, err
@@ -96,12 +162,13 @@ func (e *execution) sendMessage(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	targetChannelID, err := loopChannelListAPI(e, params.IsPublicChannel, params.ChannelName)
+	targetChannelID, err := loopChannelListAPI(e, params.ChannelName)
 	if err != nil {
 		return nil, err
 	}
 
-	_, _, err = e.client.PostMessage(targetChannelID, slack.MsgOptionText(params.Message, false))
+	message := strings.Replace(params.Message, "\\n", "\n", -1)
+	_, _, err = e.client.PostMessage(targetChannelID, slack.MsgOptionText(message, false))
 
 	if err != nil {
 		return nil, err

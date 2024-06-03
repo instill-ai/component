@@ -47,6 +47,7 @@ type SlackClient interface {
 	PostMessage(channelID string, options ...slack.MsgOption) (string, string, error)
 	GetConversationHistory(params *slack.GetConversationHistoryParameters) (*slack.GetConversationHistoryResponse, error)
 	GetConversationReplies(params *slack.GetConversationRepliesParameters) ([]slack.Message, bool, string, error)
+	GetUsersInfo(users ...string) (*[]slack.User, error)
 }
 
 // Init returns an implementation of IConnector that interacts with Slack.
@@ -83,7 +84,6 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
-// Execute performs calls the Slack API to execute a task.
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
 

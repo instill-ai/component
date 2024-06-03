@@ -8,9 +8,93 @@ import (
 
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
+	"github.com/slack-go/slack"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
+
+type MockSlackClient struct{}
+
+func (m *MockSlackClient) GetConversations(params *slack.GetConversationsParameters) ([]slack.Channel, string, error) {
+
+	var channels []slack.Channel
+	nextCursor := ""
+	fakeChannel := slack.Channel{
+		GroupConversation: slack.GroupConversation{
+			Conversation: slack.Conversation{
+				ID: "G0AKFJBEU",
+			},
+			Name: "test_channel",
+		},
+	}
+	channels = append(channels, fakeChannel)
+
+	return channels, nextCursor, nil
+}
+
+func (m *MockSlackClient) PostMessage(channelID string, options ...slack.MsgOption) (string, string, error) {
+
+	return "", "", nil
+}
+
+func (m *MockSlackClient) GetConversationHistory(params *slack.GetConversationHistoryParameters) (*slack.GetConversationHistoryResponse, error) {
+
+	fakeResp := slack.GetConversationHistoryResponse{
+		SlackResponse: slack.SlackResponse{
+			Ok: true,
+		},
+		Messages: []slack.Message{
+			{
+				Msg: slack.Msg{
+					Timestamp:  "1715159446.644219",
+					User:       "user123",
+					Text:       "Hello, world!",
+					ReplyCount: 1,
+				},
+			},
+		},
+	}
+
+	return &fakeResp, nil
+}
+
+func (m *MockSlackClient) GetConversationReplies(params *slack.GetConversationRepliesParameters) ([]slack.Message, bool, string, error) {
+
+	fakeMessages := []slack.Message{
+		{
+			Msg: slack.Msg{
+				Timestamp: "1715159446.644219",
+				User:      "user123",
+				Text:      "Hello, world!",
+			},
+		},
+		{
+			Msg: slack.Msg{
+				Timestamp: "1715159449.399879",
+				User:      "user456",
+				Text:      "Hello, how are you",
+			},
+		},
+	}
+	hasMore := false
+	nextCursor := ""
+	return fakeMessages, hasMore, nextCursor, nil
+}
+
+func (m *MockSlackClient) GetUsersInfo(users ...string) (*[]slack.User, error) {
+	resp := &[]slack.User{
+		{
+			ID:   "user123",
+			Name: "Penguin",
+		},
+		{
+			ID:   "user456",
+			Name: "Giraffe",
+		},
+	}
+
+	return resp, nil
+}
 
 const (
 	apiKey = "testkey"
@@ -31,9 +115,8 @@ func TestComponent_ExecuteWriteTask(t *testing.T) {
 		{
 			name: "ok to write",
 			input: UserInputWriteTask{
-				ChannelName:     "test_channel",
-				Message:         "I am unit test",
-				IsPublicChannel: true,
+				ChannelName: "test_channel",
+				Message:     "I am unit test",
 			},
 			wantResp: WriteTaskResp{
 				Result: "succeed",
@@ -42,9 +125,8 @@ func TestComponent_ExecuteWriteTask(t *testing.T) {
 		{
 			name: "fail to write",
 			input: UserInputWriteTask{
-				ChannelName:     "test_channel_1",
-				Message:         "I am unit test",
-				IsPublicChannel: true,
+				ChannelName: "test_channel_1",
+				Message:     "I am unit test",
 			},
 			wantErr: `there is no match name in slack channel \[test_channel_1\]`,
 		},
@@ -108,6 +190,7 @@ func TestComponent_ExecuteReadTask(t *testing.T) {
 				Conversations: []Conversation{
 					{
 						UserID:     "user123",
+						UserName:   "Penguin",
 						Message:    "Hello, world!",
 						StartDate:  "2024-05-08",
 						LastDate:   "2024-05-08",
@@ -116,6 +199,7 @@ func TestComponent_ExecuteReadTask(t *testing.T) {
 						ThreadReplyMessage: []ThreadReplyMessage{
 							{
 								UserID:   "user456",
+								UserName: "Giraffe",
 								Message:  "Hello, how are you",
 								DateTime: mockDateTime,
 							},
