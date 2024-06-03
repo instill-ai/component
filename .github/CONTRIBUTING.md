@@ -34,10 +34,13 @@ flowchart LR
 
 ### Component
 
-There are different types of component: **AI**, **Data**, **Application**, **Operator** and **Iterator**.
+There are different types of component: **AI**, **Data**, **Application**,
+**Operator** and **Iterator**.
 
 > **Note:**
-> - For **AI**, **Data**, **Application** components, they are used by the pipeline to interact with an external service, you may need to introduce its **setup** details in the component `setup` properties.
+> - For **AI**, **Data**, **Application** components, they are used by the
+>   pipeline to interact with an external service, you may need to introduce its
+>   **setup** details in the component `setup` properties.
 >   - In order to prevent private keys from being unintentionally leaked when
     sharing a pipeline, the `setup` properties only take reference to a
     **secret** (e.g. `${secrets.my-secret}`).
@@ -46,25 +49,38 @@ There are different types of component: **AI**, **Data**, **Application**, **Ope
 
 #### AI
 
-**AI** components play a crucial role in transforming unstructured data into formats that are easy to interpret and analyze, thereby facilitating the extraction of valuable insights. These components integrate with AI models from various providers, whether it's the primary Instill Model or those from third-party AI vendors. They are defined and initialized in the [ai](../ai) package.
+**AI** components play a crucial role in transforming unstructured data into
+formats that are easy to interpret and analyze, thereby facilitating the
+extraction of valuable insights. These components integrate with AI models from
+various providers, whether it's the primary Instill Model or those from
+third-party AI vendors. They are defined and initialized in the [ai](../ai)
+package.
 
 #### Data
 
-**Data** components play a crucial role in establishing connections with remote data sources, such as IoT devices (e.g., IP cameras), cloud storage services (e.g., GCP Cloud Storage, AWS S3), data warehouses, or vector databases (e.g., Pinecone). These connectors act as the bridge between VDP and various external data sources. Their primary function is to enable seamless data exchange, enhancing Instill VDP's capability to work with diverse data sources effectively. They are defined and initialized in the [data](../data) package.
+**Data** components play a crucial role in establishing connections with remote
+data sources, such as IoT devices (e.g., IP cameras), cloud storage services
+(e.g., GCP Cloud Storage, AWS S3), data warehouses, or vector databases (e.g.,
+Pinecone). These connectors act as the bridge between VDP and various external
+data sources. Their primary function is to enable seamless data exchange,
+enhancing Instill VDP's capability to work with diverse data sources
+effectively. They are defined and initialized in the [data](../data) package.
 
 #### Application
 
-**Application** components are used to seamlessly integrate various 3rd-party application services. They are defined and initialized in the [application](../application) package.
+**Application** components are used to seamlessly integrate various 3rd-party
+application services. They are defined and initialized in the
+[application](../application) package.
 
 #### Operator
 
-**Operator** components perform data transformations inside the pipeline. They are defined
-  and initialized in the [operator](../operator) package.
+**Operator** components perform data transformations inside the pipeline. They
+  are defined and initialized in the [operator](../operator) package.
 
 #### Iterator
 
-**Iterator** takes an array and executes an operation (defined by a set of nested components)
-on each of its elements.
+**Iterator** takes an array and executes an operation (defined by a set of
+nested components) on each of its elements.
 
 
 ### Recipe
@@ -163,13 +179,12 @@ $ git clone https://github.com/instill-ai/component
 Although all the development will be done in this repository, if you want to
 [see your component in action](#use-the-component-in-vdp), you'll need to build
 VDP locally. First, launch the latest version of
-[Core](https://github.com/instill-ai/instill-core). Then, build and
-launch [VDP](https://github.com/instill-ai/pipeline-backend) with
-your local changes.
+[Core](https://github.com/instill-ai/instill-core). Then, build and launch
+[VDP](https://github.com/instill-ai/pipeline-backend) with your local changes.
 
 If you want to know more, you can refer to the documentation in these
-repositories, which explains in detail how to set up the
-development environment. In short, here's what we'll need to do for this guide:
+repositories, which explains in detail how to set up the development
+environment. In short, here's what we'll need to do for this guide:
 
 #### Building Core
 
@@ -228,8 +243,8 @@ $ cd $WORKSPACE/component
 $ mkdir -p operator/hello/v0 && cd $_
 ```
 
-Components are isolated in their own packages under `ai`, `data`, `application` or
-`operator`. The package is versioned so, in case a breaking change needs to
+Components are isolated in their own packages under `ai`, `data`, `application`
+or `operator`. The package is versioned so, in case a breaking change needs to
 be introduced (e.g. supporting a new major version in a vendor API), existing
 pipelines using the previous version of the component can keep being triggered.
 
@@ -249,10 +264,14 @@ operator/hello/v0
 
 ### Add the configuration files
 
-Create a `config` directory and add the files `definition.json` and
-`tasks.json`. Together, they define the behaviour of the component.
+Create a `config` directory and add the files `definition.json`, `tasks.json`,
+and `setup.json` (optional). Together, these files define the behavior of the
+component.
 
 #### `definition.json`
+
+The `definition.json` file describes the high-level information of the
+component.
 
 ```json
 {
@@ -275,34 +294,40 @@ Create a `config` directory and add the files `definition.json` and
 ```
 
 This file defines the component properties:
-- `id` is the ID of the component. It must be unique.
-- `uid` is a UUID string that must not be already taken by another component.
-  Once it is set, it must not change.
-- `title` is the end-user name of the component.
-- `description` is a short sentence describing the purpose of the component. It
-  should be written in imperative tense.
-- `spec` contains the parameters required to configure the component and that
-  are independent from its tasks. E.g., the API token of a vendor. In general,
-  only AI, data or application components need such parameters.
-- `available_tasks` defines the tasks the component can perform.
+
+- **`id`** is the ID of the component. It must be unique.
+- **`uid`** is a UUID string that must not be already taken by another
+  component. Once it is set, it must not change.
+- **`title`**: is the display title of the component.
+- **`description`**: is a short sentence describing the purpose of the
+  component. It should be written in imperative tense.
+- **`spec`** contains the parameters required to configure the component and
+  that are independent from its tasks. E.g., the API token of a vendor. In
+  general, only AI, data or application components need such parameters.
+- **`available_tasks`** defines the tasks the component can perform.
   - When a component is created in a pipeline, one of the tasks has to be
     selected, i.e., a configured component can only execute one task.
   - Task configurations are defined in `tasks.json`.
-- `documentation_url` points to the official documentation of the component.
-- `icon` is the local path to the icon that will be displayed in the Console
+- **`documentation_url`** points to the official documentation of the component.
+- **`icon`** is the local path to the icon that will be displayed in the Console
   when creating the component. If left blank, a placeholder icon will be shown.
-- `version` must be a [SemVer](https://semver.org/) string. It is encouraged to
-  keep a [tidy version history](#sane-version-control).
-- `source_url` points to the codebase that implements the component. This will
-  be used by the documentation generation tool and also will be part of the
-  [component definition list](https://openapi.instill.tech/reference/pipelinepublicservice_listcomponentdefinitions) endpoint.
-- `release_stage` describes the release stage of the component. Unimplemented
-  stages (`RELEASE_STAGE_COMING_SOON` or `RELEASE_STAGE_OPEN_FOR_CONTRIBUTION`)
-  will hide the component from the console (i.e. they can't be used in
-  pipelines) but they will appear in the component definition list endpoint.
-
+- **`version`** must be a [SemVer](https://semver.org/) string. It is encouraged
+  to keep a [tidy version history](#sane-version-control).
+- **`source_url`** points to the codebase that implements the component. This
+  will be used by the documentation generation tool and also will be part of the
+  [component definition
+  list](https://openapi.instill.tech/reference/pipelinepublicservice_listcomponentdefinitions)
+  endpoint.
+- **`release_stage`** describes the release stage of the component.
+  Unimplemented stages (`RELEASE_STAGE_COMING_SOON` or
+  `RELEASE_STAGE_OPEN_FOR_CONTRIBUTION`) will hide the component from the
+  console (i.e. they can't be used in pipelines) but they will appear in the
+  component definition list endpoint.
 
 #### `tasks.json`
+
+The `tasks.json` file describes the task details of the component. The key
+should be in the format `TASK_NAME`.
 
 ```json
 {
@@ -341,7 +366,6 @@ This file defines the component properties:
       "properties": {
         "greeting": {
           "description": "A greeting sentence addressed to the target",
-          "instillEditOnNodeFields": [],
           "instillUIOrder": 0,
           "required": [],
           "title": "Greeting",
@@ -361,33 +385,76 @@ This file defines the component properties:
 
 This file defines the input and output schema of each task:
 
-- `title` and `instillShortDescription` will be used by the frontend to provide
-  information about the task.
-- For each property within the `input` and `output` objects:
-  - `instillUIOrder` defines the order in which the properties will be rendered
-    by the frontend.
-  - `required` properties will appear at the forefront of the component UI.
-    Optional properties can be set in the advanced configuration.
-  - `instillUpstreamTypes` define how an input property can be set: the direct
-    value, a reference to another value in the pipeline (e.g.
-    `${trigger.name}` or a combination of both (`my dear ${trigger.name}`).
+**Properties within a Task**
 
-See the [example recipe](#example-recipe) to see how these fields map to the recipe
-of a pipeline when configured to use this operator.
+- **`title`** is used by Console to provide the title of the task.
+- **`description`** and **`instillShortDescription`** are used by Console to
+  provide a description of the task. If `instillShortDescription` does not
+  exist, it will be the same as `description`.
+- **`input`** is a JSON schema that describes the input of the task.
+- **`output`** is a JSON schema that describes the output of the task.
 
+**Properties within `input` and `output` Objects**
+
+- **`required`** indicates whether the property is required.
+- **`type`**: describes the JSON type of this field, which could be `integer`,
+  `number`, `boolean`, `string`, `array`, or `object`.
+- **`title`** is used by the Console to provide the title of the property.
+- **`description`** is used by Console to show this description in a popup when
+  you click the question mark beside the field.
+- **`instillShortDescription`**: is used by Console to show this under the field
+  (the original description is shown only when hovered). If this value does not
+  exist, it will be the same as the description.
+- **`instillUIOrder`** defines the order in which the properties will be
+  rendered by Console.
+- **`instillUIMultiline`** indicates whether the text field on Console is
+  multiline.
+
+**Properties within `input` Objects**
+
+- **`instillEditOnNodeFields`** determines where this field will appear at the
+  forefront of the component node in the pipeline builder. Optional properties
+  can be set in the advanced configuration.
+- **`instillAcceptFormats`** is an array indicating the data types of acceptable
+  input fields. It should be an array of [Instill
+  Format](https://www.instill.tech/docs/vdp/instill-format).
+- **`instillUpstreamTypes`** defines how an input property can be set: as a
+  direct value, a reference to another value in the pipeline, or a combination
+  of both (e.g., `${variable.name}` or `my dear ${variable.name}`).
+- **`instillSecret`** indicates the data must reference the secrets and cannot
+  be used in plaintext.
+
+**Properties within `output` Objects**
+
+- **`instillFormat`** indicates the data type of the output field, which should
+  be one of `number`, `integer`, `string`, `object`, `boolean`, or MIME type.
+  Please refer to [Instill
+  Format](https://www.instill.tech/docs/vdp/instill-format) for more details.
+
+See the [example recipe](#example-recipe) to understand how these fields map to
+the recipe of a pipeline when configured to use this operator.
+
+#### `setup.json`
+
+For components that need to set up some configuration before execution, such as
+the `api_key` required by the component, `setup.json` can be used to describe
+these configurations. The format is the same as the `input` objects in
+`tasks.json`.
 
 ### Implement the component interfaces
 
-Pipeline communicates with components through the `IComponent` interface, defined in the [`base`](../base)
-package. This package also defines base implementations for these interfaces, so
-the `hello` component will only need to override the following methods:
-- `CreateExecution(vars map[string]any, setup *structpb.Struct, task string) (*ExecutionWrapper, error)`
-  will return an object that implements the `Execute` method.
+Pipeline communicates with components through the `IComponent` interface,
+defined in the [`base`](../base) package. This package also defines base
+implementations for these interfaces, so the `hello` component will only need to
+override the following methods:
+- `CreateExecution(vars map[string]any, setup *structpb.Struct, task string)
+  (*ExecutionWrapper, error)` will return an object that implements the
+  `Execute` method.
   - `ExecutionWrapper` will wrap the execution call with the input and output
     schema validation.
-- `Execute(context.Context []*structpb.Struct) ([]*structpb.Struct, error)` is the most
-  important function in the component. All the data manipulation will take place
-  here.
+- `Execute(context.Context []*structpb.Struct) ([]*structpb.Struct, error)` is
+  the most important function in the component. All the data manipulation will
+  take place here.
 
 Paste the following code into a `main.go` file in `operator/hello/v0`:
 
@@ -621,10 +688,10 @@ Head to the console at http://localhost:3000/ (default password is `password`)
 and create a pipeline.
 
 - In the **trigger** component, add a `who` text field.
-- Create a **hello** operator and reference the **trigger** input field by adding
-  `${trigger.who}` to the `target` field.
-- In the **response** component, add a `greeting` output value that references the
-  **hello** output by introducing `${hello_0.output.greeting}`.
+- Create a **hello** operator and reference the **trigger** input field by
+  adding `${trigger.who}` to the `target` field.
+- In the **response** component, add a `greeting` output value that references
+  the **hello** output by introducing `${hello_0.output.greeting}`.
 
 If you introduce a `Wombat` string value in the **trigger** component and
 **Run** the pipeline, you should see `Hello, Wombat!` in the response.
@@ -689,8 +756,8 @@ $ make build-doc && make gen-doc
 
 The version of a component is useful to track its evolution and to set
 expectations about its stability. When the interface of a component (defined by
-its configuration files) changes,
-its version should change following the Semantic Versioning guidelines.
+its configuration files) changes, its version should change following the
+Semantic Versioning guidelines.
 
 - Patch versions are intended for bug fixes.
 - Minor versions are intended for backwards-compatible changes, e.g., a new task
@@ -702,10 +769,11 @@ its version should change following the Semantic Versioning guidelines.
   part of Instill VDP and they aren't likely to need such fine-grained version
   control.
 
-It is recommended to start a component at `v0.1.0`.
-A major version 0 is intended for rapid development.
+It is recommended to start a component at `v0.1.0`. A major version 0 is
+intended for rapid development.
 
-The `release_stage` property in `definition.json` indicates the stability of a component.
+The `release_stage` property in `definition.json` indicates the stability of a
+component.
 
 - A component skeleton (with only the minimal configuration files and a dummy
   implementation of the interfaces) may use the _Coming Soon_ or _Open For
@@ -736,18 +804,39 @@ this:
 
 ## Sending PRs
 
-Please take these general guidelines into consideration when you are sending a PR:
+Please take these general guidelines into consideration when you are sending a
+PR:
 
-1. **Fork the Repository:** Begin by forking the repository to your GitHub account.
-2. **Create a New Branch:** Create a new branch to house your work. Use a clear and descriptive name, like `<your-github-username>/<what-your-pr-about>`.
-3. **Make and Commit Changes:** Implement your changes and commit them. We encourage you to follow these best practices for commits to ensure an efficient review process:
-   - Adhere to the [conventional commits guidelines](https://www.conventionalcommits.org/) for meaningful commit messages.
-   - Follow the [7 rules of commit messages](https://chris.beams.io/posts/git-commit/) for well-structured and informative commits.
-   - Rearrange commits to squash trivial changes together, if possible. Utilize [git rebase](http://gitready.com/advanced/2009/03/20/reorder-commits-with-rebase.html) for this purpose.
-4. **Push to Your Branch:** Push your branch to your GitHub repository: `git push origin feat/<your-feature-name>`.
-5. **Open a Pull Request:** Initiate a pull request to our repository. Our team will review your changes and collaborate with you on any necessary refinements.
+1. **Fork the Repository:** Begin by forking the repository to your GitHub
+   account.
+2. **Create a New Branch:** Create a new branch to house your work. Use a clear
+   and descriptive name, like `<your-github-username>/<what-your-pr-about>`.
+3. **Make and Commit Changes:** Implement your changes and commit them. We
+   encourage you to follow these best practices for commits to ensure an
+   efficient review process:
+   - Adhere to the [conventional commits
+     guidelines](https://www.conventionalcommits.org/) for meaningful commit
+     messages.
+   - Follow the [7 rules of commit
+     messages](https://chris.beams.io/posts/git-commit/) for well-structured and
+     informative commits.
+   - Rearrange commits to squash trivial changes together, if possible. Utilize
+     [git
+     rebase](http://gitready.com/advanced/2009/03/20/reorder-commits-with-rebase.html)
+     for this purpose.
+4. **Push to Your Branch:** Push your branch to your GitHub repository: `git
+   push origin feat/<your-feature-name>`.
+5. **Open a Pull Request:** Initiate a pull request to our repository. Our team
+   will review your changes and collaborate with you on any necessary
+   refinements.
 
-When you are ready to send a PR, we recommend you to first open a `draft` one. This will trigger a bunch of `tests` [workflows](https://github.com/instill-ai/component/tree/main/.github/workflows) running a thorough test suite on multiple platforms. After the tests are done and passed, you can now mark the PR `open` to notify the codebase owners to review. We appreciate your endeavour to pass the integration test for your PR to make sure the sanity with respect to the entire scope of **Instill Core**.
+When you are ready to send a PR, we recommend you to first open a `draft` one.
+This will trigger a bunch of `tests`
+[workflows](https://github.com/instill-ai/component/tree/main/.github/workflows)
+running a thorough test suite on multiple platforms. After the tests are done
+and passed, you can now mark the PR `open` to notify the codebase owners to
+review. We appreciate your endeavour to pass the integration test for your PR to
+make sure the sanity with respect to the entire scope of **Instill Core**.
 
 
 ## Last words
