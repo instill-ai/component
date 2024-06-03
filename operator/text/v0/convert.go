@@ -14,21 +14,31 @@ import (
 	"github.com/instill-ai/component/base"
 )
 
-var supportedByDocconvConvertMimeTypes = []string{
-	"application/msword",
-	"application/vnd.ms-word",
-	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-	"application/vnd.openxmlformats-officedocument.presentationml.presentation",
-	"application/vnd.oasis.opendocument.text",
-	"application/vnd.apple.pages", "application/x-iwork-pages-sffpages",
-	"application/pdf",
-	"application/rtf", "application/x-rtf", "text/rtf", "text/richtext",
-	"text/html",
-	"text/url",
-	"text/xml", "application/xml",
-	"image/jpeg", "image/png", "image/tif", "image/tiff",
-	"text/plain",
-}
+var (
+	supportedByDocconvConvertMimeTypes = map[string]bool{
+		"application/msword":      true,
+		"application/vnd.ms-word": true,
+		"application/vnd.openxmlformats-officedocument.wordprocessingml.document":   true,
+		"application/vnd.openxmlformats-officedocument.presentationml.presentation": true,
+		"application/vnd.oasis.opendocument.text":                                   true,
+		"application/vnd.apple.pages":                                               true,
+		"application/x-iwork-pages-sffpages":                                        true,
+		"application/pdf":                                                           true,
+		"application/rtf":                                                           true,
+		"application/x-rtf":                                                         true,
+		"text/rtf":                                                                  true,
+		"text/richtext":                                                             true,
+		"text/html":                                                                 true,
+		"text/url":                                                                  true,
+		"text/xml":                                                                  true,
+		"application/xml":                                                           true,
+		"image/jpeg":                                                                true,
+		"image/png":                                                                 true,
+		"image/tif":                                                                 true,
+		"image/tiff":                                                                true,
+		"text/plain":                                                                true,
+	}
+)
 
 // ConvertToTextInput defines the input for convert to text task
 type ConvertToTextInput struct {
@@ -107,12 +117,7 @@ func (m uft8EncodedFileConverter) convert(contentType string, b []byte) (Convert
 }
 
 func isSupportedByDocconvConvert(contentType string) bool {
-	for _, supported := range supportedByDocconvConvertMimeTypes {
-		if contentType == supported {
-			return true
-		}
-	}
-	return false
+	return supportedByDocconvConvertMimeTypes[contentType]
 }
 
 func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
