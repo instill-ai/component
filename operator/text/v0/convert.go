@@ -91,10 +91,7 @@ func (m uft8EncodedFileConverter) convert(contentType string, b []byte) (Convert
 }
 
 func isSupportedByDocconv(contentType string) bool {
-	if contentType == "application/octet-stream" {
-		return false
-	}
-	return true
+	return contentType != "application/octet-stream"
 }
 
 func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
@@ -115,7 +112,7 @@ func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
 		converter = docconvConverter{}
 	} else if utf8.Valid(b) {
 		converter = uft8EncodedFileConverter{}
-	} else { 
+	} else {
 		return ConvertToTextOutput{}, fmt.Errorf("unsupported content type")
 	}
 
