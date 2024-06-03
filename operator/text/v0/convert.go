@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"encoding/base64"
 
 	"code.sajari.com/docconv"
-	"gopkg.in/yaml.v3"
 
 	"github.com/instill-ai/component/base"
 )
@@ -70,41 +70,17 @@ func (d docconvConverter) convert(contentType string, b []byte) (ConvertToTextOu
 	}, nil
 }
 
-type markdownConverter struct{}
+type uft8EncodedFileConverter struct{}
 
-func extractMetadata(content string) map[string]string {
-	var metadata map[string]string
-
-	if !strings.HasPrefix(content, "---") {
-		return metadata
-	}
-
-	parts := strings.SplitN(content, "---", 3)
-	if len(parts) < 3 {
-		return metadata
-	}
-
-	yamlContent := parts[1]
-	err := yaml.Unmarshal([]byte(yamlContent), &metadata)
-	if err != nil {
-		return metadata
-	}
-
-	return metadata
-}
-
-func (m markdownConverter) convert(contentType string, b []byte) (ConvertToTextOutput, error) {
+func (m uft8EncodedFileConverter) convert(contentType string, b []byte) (ConvertToTextOutput, error) {
 
 	before := time.Now()
 	content := string(b)
-	metadata := extractMetadata(content)
 
 	duration := time.Since(before)
 	millis := duration.Milliseconds()
 
-	if metadata == nil {
-		metadata = map[string]string{}
-	}
+	metadata := map[string]string{}
 
 	return ConvertToTextOutput{
 		Body:  content,
@@ -112,6 +88,13 @@ func (m markdownConverter) convert(contentType string, b []byte) (ConvertToTextO
 		MSecs: uint32(millis),
 		Error: "",
 	}, nil
+}
+
+func isSupportedByDocconv(contentType string) bool {
+	if contentType == "application/octet-stream" {
+		return false
+	}
+	return true
 }
 
 func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
@@ -126,12 +109,14 @@ func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
 		return ConvertToTextOutput{}, err
 	}
 
+	// TODO: support xlsx file type with https://github.com/qax-os/excelize
 	var converter converter
-	switch contentType {
-	case "application/octet-stream":
-		converter = markdownConverter{}
-	default:
+	if isSupportedByDocconv(contentType) {
 		converter = docconvConverter{}
+	} else if utf8.Valid(b) {
+		converter = uft8EncodedFileConverter{}
+	} else { 
+		return ConvertToTextOutput{}, fmt.Errorf("unsupported content type")
 	}
 
 	res, err := converter.convert(contentType, b)
