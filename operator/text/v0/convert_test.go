@@ -20,42 +20,42 @@ func TestConvertToText(t *testing.T) {
 		name     string
 		filepath string
 	}{
-		// {
-		// 	name:     "Convert pdf file",
-		// 	filepath: "testdata/test.pdf",
-		// },
-		// {
-		// 	name:     "Convert docx file",
-		// 	filepath: "testdata/test.docx",
-		// },
-		// {
-		// 	name:     "Convert html file",
-		// 	filepath: "testdata/test.html",
-		// },
-		// {
-		// 	name:     "Convert odt file",
-		// 	filepath: "testdata/test.odt",
-		// },
-		// {
-		// 	name:     "Convert rtf file",
-		// 	filepath: "testdata/test.rtf",
-		// },
-		// {
-		// 	name:     "Convert png file",
-		// 	filepath: "testdata/test.png",
-		// },
-		// {
-		// 	name:     "Convert jpg file",
-		// 	filepath: "testdata/test.jpg",
-		// },
-		// {
-		// 	name:     "Convert tiff file",
-		// 	filepath: "testdata/test.tif",
-		// },
-		// {
-		// 	name:     "Convert txt file",
-		// 	filepath: "testdata/test.txt",
-		// },
+		{
+			name:     "Convert pdf file",
+			filepath: "testdata/test.pdf",
+		},
+		{
+			name:     "Convert docx file",
+			filepath: "testdata/test.docx",
+		},
+		{
+			name:     "Convert html file",
+			filepath: "testdata/test.html",
+		},
+		{
+			name:     "Convert odt file",
+			filepath: "testdata/test.odt",
+		},
+		{
+			name:     "Convert rtf file",
+			filepath: "testdata/test.rtf",
+		},
+		{
+			name:     "Convert png file",
+			filepath: "testdata/test.png",
+		},
+		{
+			name:     "Convert jpg file",
+			filepath: "testdata/test.jpg",
+		},
+		{
+			name:     "Convert tiff file",
+			filepath: "testdata/test.tif",
+		},
+		{
+			name:     "Convert txt file",
+			filepath: "testdata/test.txt",
+		},
 		{
 			name:     "Convert md file",
 			filepath: "testdata/test.md",
