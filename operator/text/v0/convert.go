@@ -14,6 +14,22 @@ import (
 	"github.com/instill-ai/component/base"
 )
 
+var supportedByDocconvConvertMimeTypes = []string{
+	"application/msword",
+	"application/vnd.ms-word",
+	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+	"application/vnd.oasis.opendocument.text",
+	"application/vnd.apple.pages", "application/x-iwork-pages-sffpages",
+	"application/pdf",
+	"application/rtf", "application/x-rtf", "text/rtf", "text/richtext",
+	"text/html",
+	"text/url",
+	"text/xml", "application/xml",
+	"image/jpeg", "image/png", "image/tif", "image/tiff",
+	"text/plain",
+}
+
 // ConvertToTextInput defines the input for convert to text task
 type ConvertToTextInput struct {
 	// Doc: Document to convert
@@ -90,8 +106,13 @@ func (m uft8EncodedFileConverter) convert(contentType string, b []byte) (Convert
 	}, nil
 }
 
-func isSupportedByDocconv(contentType string) bool {
-	return contentType != "application/octet-stream"
+func isSupportedByDocconvConvert(contentType string) bool {
+	for _, supported := range supportedByDocconvConvertMimeTypes {
+		if contentType == supported {
+			return true
+		}
+	}
+	return false
 }
 
 func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
@@ -108,7 +129,7 @@ func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
 
 	// TODO: support xlsx file type with https://github.com/qax-os/excelize
 	var converter converter
-	if isSupportedByDocconv(contentType) {
+	if isSupportedByDocconvConvert(contentType) {
 		converter = docconvConverter{}
 	} else if utf8.Valid(b) {
 		converter = uft8EncodedFileConverter{}
