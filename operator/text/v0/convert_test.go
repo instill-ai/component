@@ -9,12 +9,13 @@ import (
 	"encoding/base64"
 
 	"code.sajari.com/docconv"
+	"github.com/frankban/quicktest"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // TestConvertToText tests the convert to text task
 func TestConvertToText(t *testing.T) {
-
+	c := quicktest.New(t)
 	tests := []struct {
 		name     string
 		filepath string
@@ -55,16 +56,25 @@ func TestConvertToText(t *testing.T) {
 			name:     "Convert txt file",
 			filepath: "testdata/test.txt",
 		},
+		{
+			name:     "Convert md file",
+			filepath: "testdata/test.md",
+		},
+		{
+			name:     "Convert csv file",
+			filepath: "testdata/test.csv",
+		},
+		{
+			name:     "Convert xlsx file",
+			filepath: "testdata/test.xlsx",
+		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// Read the fileContent content
 			fileContent, err := os.ReadFile(test.filepath)
-			if err != nil {
-				t.Fatalf("error reading the file: %s\n", err)
-				return
-			}
+			c.Assert(err, quicktest.IsNil)
 
 			base64DataURI := fmt.Sprintf("data:%s;base64,%s", docconv.MimeTypeByExtension(test.filepath), base64.StdEncoding.EncodeToString(fileContent))
 
@@ -79,6 +89,12 @@ func TestConvertToText(t *testing.T) {
 
 			e := &execution{}
 			e.Task = "TASK_CONVERT_TO_TEXT"
+
+			if test.name == "Convert xlsx file" {
+				_, err := e.Execute(context.Background(), inputs)
+				c.Assert(err, quicktest.ErrorMatches, "unsupported content type")
+				return
+			}
 
 			if outputs, err := e.Execute(context.Background(), inputs); err != nil {
 				t.Fatalf("convertToText returned an error: %v", err)
