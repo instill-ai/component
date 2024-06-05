@@ -331,7 +331,9 @@
               "description": "Chunk Setting",
               "additionalProperties": true,
               "type": "object",
-              "required": ["chunk_method"],
+              "required": [
+                "chunk_method"
+              ],
               "oneOf": [
                 {
                   "properties": {
@@ -407,8 +409,18 @@
                       "type": "array"
                     }
                   },
-                  "required": ["chunk_method"],
-                  "instillEditOnNodeFields": ["chunk_method", "chunk_size", "chunk_overlap", "model_name", "encoding_name", "allowed_special", "disallowed_special"],
+                  "required": [
+                    "chunk_method"
+                  ],
+                  "instillEditOnNodeFields": [
+                    "chunk_method",
+                    "chunk_size",
+                    "chunk_overlap",
+                    "model_name",
+                    "encoding_name",
+                    "allowed_special",
+                    "disallowed_special"
+                  ],
                   "type": "object"
                 },
                 {
@@ -457,8 +469,16 @@
                       "type": "boolean"
                     }
                   },
-                  "required": ["chunk_method"],
-                  "instillEditOnNodeFields": ["chunk_method", "chunk_size", "chunk_overlap", "separators", "keep_separator"],
+                  "required": [
+                    "chunk_method"
+                  ],
+                  "instillEditOnNodeFields": [
+                    "chunk_method",
+                    "chunk_size",
+                    "chunk_overlap",
+                    "separators",
+                    "keep_separator"
+                  ],
                   "type": "object"
                 },
                 {
@@ -502,11 +522,18 @@
                       "type": "boolean"
                     }
                   },
-                  "required": ["chunk_method"],
-                  "instillEditOnNodeFields": ["chunk_method", "chunk_size", "chunk_overlap", "code_blocks", "reference_links"],
+                  "required": [
+                    "chunk_method"
+                  ],
+                  "instillEditOnNodeFields": [
+                    "chunk_method",
+                    "chunk_size",
+                    "chunk_overlap",
+                    "code_blocks",
+                    "reference_links"
+                  ],
                   "type": "object"
                 }
-
               ]
             }
           },
@@ -538,11 +565,9 @@
         "text_chunks": {
           "description": "Text chunks after splitting",
           "instillUIOrder": 1,
-          "instillFormat": "array:object",
           "items": {
             "title": "Text Chunk",
             "description": "Text chunk after splitting",
-            "instillFormat": "object",
             "properties": {
               "text": {
                 "title": "Text",
@@ -564,7 +589,11 @@
                 "type": "integer"
               }
             },
-            "required": ["text", "start_position", "end_position"],
+            "required": [
+              "text",
+              "start_position",
+              "end_position"
+            ],
             "instillUIMultiline": true,
             "type": "object"
           },
