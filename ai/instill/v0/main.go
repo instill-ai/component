@@ -181,6 +181,11 @@ type ModelsResp struct {
 	} `json:"models"`
 }
 
+type taskModelNames struct {
+	task       string
+	modelNames []*structpb.Value
+}
+
 // Generate the `model_name` enum based on the task.
 func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
 
@@ -224,32 +229,50 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 
 	modelNameMap := map[string]*structpb.ListValue{}
 
+	ch := make(chan *taskModelNames)
 	for _, model := range models {
 
-		var versions []*modelPB.ModelVersion
-		if strings.HasPrefix(model.Name, "organizations") {
-			resp, err := gRPCCLient.ListOrganizationModelVersions(ctx, &modelPB.ListOrganizationModelVersionsRequest{Name: model.Name})
-			if err != nil {
-				return nil, err
+		go func(m *modelPB.Model) {
+			var versions []*modelPB.ModelVersion
+			if strings.HasPrefix(m.Name, "organizations") {
+				resp, err := gRPCCLient.ListOrganizationModelVersions(ctx, &modelPB.ListOrganizationModelVersionsRequest{Name: m.Name})
+				if err != nil {
+					ch <- nil
+					return
+				}
+				versions = resp.Versions
+			} else {
+				resp, err := gRPCCLient.ListUserModelVersions(ctx, &modelPB.ListUserModelVersionsRequest{Name: m.Name})
+				if err != nil {
+					ch <- nil
+					return
+				}
+				versions = resp.Versions
 			}
-			versions = resp.Versions
-		} else {
-			resp, err := gRPCCLient.ListUserModelVersions(ctx, &modelPB.ListUserModelVersionsRequest{Name: model.Name})
-			if err != nil {
-				return nil, err
-			}
-			versions = resp.Versions
-		}
 
-		for _, version := range versions {
-			if _, ok := modelNameMap[model.Task.String()]; !ok {
-				modelNameMap[model.Task.String()] = &structpb.ListValue{}
-			}
-			namePaths := strings.Split(version.Name, "/")
-			modelNameMap[model.Task.String()].Values = append(modelNameMap[model.Task.String()].Values, structpb.NewStringValue(fmt.Sprintf("%s/%s/%s", namePaths[1], namePaths[3], namePaths[5])))
-		}
+			t := &taskModelNames{}
+			t.task = m.Task.String()
 
+			for _, version := range versions {
+				namePaths := strings.Split(version.Name, "/")
+				t.modelNames = append(t.modelNames, structpb.NewStringValue(fmt.Sprintf("%s/%s/%s", namePaths[1], namePaths[3], namePaths[5])))
+			}
+
+			ch <- t
+
+		}(model)
 	}
+
+	for range models {
+		m := <-ch
+		if m != nil {
+			if _, ok := modelNameMap[m.task]; !ok {
+				modelNameMap[m.task] = &structpb.ListValue{}
+			}
+			modelNameMap[m.task].Values = append(modelNameMap[m.task].Values, m.modelNames...)
+		}
+	}
+
 	for _, sch := range def.Spec.ComponentSpecification.Fields["oneOf"].GetListValue().Values {
 		task := sch.GetStructValue().Fields["properties"].GetStructValue().Fields["task"].GetStructValue().Fields["const"].GetStringValue()
 		if _, ok := modelNameMap[task]; ok {
