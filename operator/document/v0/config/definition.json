@@ -9,6 +9,7 @@
   "public": true,
   "spec": {},
   "title": "Document",
+  "type": "COMPONENT_TYPE_OPERATOR",
   "uid": "e5b290ae-ad53-47c9-a64e-efbc5358520b",
   "version": "0.1.1",
   "source_url": "https://github.com/instill-ai/component/blob/main/operator/document/v0",
