@@ -226,16 +226,14 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 
 	for _, model := range models {
 
-		versions := []*modelPB.ModelVersion{}
-		switch model.Owner.Owner.(type) {
-		case *mgmtPB.Owner_Organization:
+		var versions []*modelPB.ModelVersion
+		if strings.HasPrefix(model.Name, "organizations") {
 			resp, err := gRPCCLient.ListOrganizationModelVersions(ctx, &modelPB.ListOrganizationModelVersionsRequest{Name: model.Name})
 			if err != nil {
 				return nil, err
 			}
 			versions = resp.Versions
-
-		case *mgmtPB.Owner_User:
+		} else {
 			resp, err := gRPCCLient.ListUserModelVersions(ctx, &modelPB.ListUserModelVersionsRequest{Name: model.Name})
 			if err != nil {
 				return nil, err
