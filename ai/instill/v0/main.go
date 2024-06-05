@@ -184,6 +184,7 @@ type ModelsResp struct {
 // Generate the `model_name` enum based on the task.
 func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
 
+	fmt.Println(11)
 	oriDef, err := c.Component.GetDefinition(nil, nil)
 	if err != nil {
 		return nil, err
@@ -197,6 +198,7 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 		return def, nil
 	}
 
+	fmt.Println(22)
 	gRPCCLient, gRPCCLientConn := initModelPublicServiceClient(getModelServerURL(sysVars))
 	if gRPCCLientConn != nil {
 		defer gRPCCLientConn.Close()
@@ -209,6 +211,7 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 
 	pageToken := ""
 	models := []*modelPB.Model{}
+	fmt.Println(33)
 	for {
 		resp, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{PageToken: &pageToken})
 		if err != nil {
@@ -221,11 +224,13 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 			break
 		}
 	}
+	fmt.Println(44)
 
 	modelNameMap := map[string]*structpb.ListValue{}
 
 	for _, model := range models {
 
+		fmt.Println(55)
 		versions := []*modelPB.ModelVersion{}
 		switch model.Owner.Owner.(type) {
 		case *mgmtPB.Owner_Organization:
@@ -243,6 +248,8 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 			versions = resp.Versions
 		}
 
+		fmt.Println(66, versions)
+
 		for _, version := range versions {
 			if _, ok := modelNameMap[model.Task.String()]; !ok {
 				modelNameMap[model.Task.String()] = &structpb.ListValue{}
@@ -250,6 +257,7 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 			namePaths := strings.Split(version.Name, "/")
 			modelNameMap[model.Task.String()].Values = append(modelNameMap[model.Task.String()].Values, structpb.NewStringValue(fmt.Sprintf("%s/%s/%s", namePaths[1], namePaths[3], namePaths[5])))
 		}
+		fmt.Println(77)
 
 	}
 	for _, sch := range def.Spec.ComponentSpecification.Fields["oneOf"].GetListValue().Values {
@@ -259,6 +267,7 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 		}
 
 	}
+	fmt.Println(88)
 
 	return def, nil
 }
