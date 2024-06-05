@@ -203,10 +203,11 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 	if gRPCCLientConn != nil {
 		defer gRPCCLientConn.Close()
 	}
+	fmt.Println(221)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-
+	fmt.Println(222)
 	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(sysVars))
 
 	pageToken := ""
@@ -231,16 +232,14 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 	for _, model := range models {
 
 		fmt.Println(55)
-		versions := []*modelPB.ModelVersion{}
-		switch model.Owner.Owner.(type) {
-		case *mgmtPB.Owner_Organization:
+		var versions []*modelPB.ModelVersion
+		if strings.HasPrefix(model.Name, "organizations") {
 			resp, err := gRPCCLient.ListOrganizationModelVersions(ctx, &modelPB.ListOrganizationModelVersionsRequest{Name: model.Name})
 			if err != nil {
 				return nil, err
 			}
 			versions = resp.Versions
-
-		case *mgmtPB.Owner_User:
+		} else {
 			resp, err := gRPCCLient.ListUserModelVersions(ctx, &modelPB.ListUserModelVersionsRequest{Name: model.Name})
 			if err != nil {
 				return nil, err
