@@ -32,10 +32,10 @@ func convertPDFToMarkdown(input convertPDFToMarkdownInput, cmdRunner commandRunn
 	if err != nil {
 		return convertPDFToMarkdownOutput{}, err
 	}
-	defer stdin.Close()
 	errChan := make(chan error, 1)
 
 	go func() {
+		defer stdin.Close()
 		_, err := stdin.Write(b)
 		if err != nil {
 			errChan <- err
