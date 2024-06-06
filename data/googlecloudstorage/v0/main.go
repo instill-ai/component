@@ -16,6 +16,7 @@ import (
 
 const (
 	taskUpload = "TASK_UPLOAD"
+	taskRead   = "TASK_READ"
 )
 
 //go:embed config/definition.json
@@ -106,7 +107,25 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 				"public-url":        {Kind: &structpb.Value_StringValue{StringValue: publicURL}},
 				"public-access":     {Kind: &structpb.Value_BoolValue{BoolValue: publicAccess}},
 				"status":            {Kind: &structpb.Value_StringValue{StringValue: "success"}}}}
+
+		case taskRead:
+			inputStruct := ReadInput{}
+
+			err := base.ConvertFromStructpb(input, &inputStruct)
+			if err != nil {
+				return nil, err
+			}
+			outputStruct, err := readObjects(inputStruct, client)
+			if err != nil {
+				return nil, err
+			}
+			output, err = base.ConvertToStructpb(outputStruct)
+
+			if err != nil {
+				return nil, err
+			}
 		}
+
 		outputs = append(outputs, output)
 	}
 	return outputs, nil
