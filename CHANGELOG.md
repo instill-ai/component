@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.19.0-beta](https://github.com/instill-ai/component/compare/v0.18.0-beta...v0.19.0-beta) (2024-06-05)
+
+
+### Features
+
+* add pdf component ([#138](https://github.com/instill-ai/component/issues/138)) ([517afcf](https://github.com/instill-ai/component/commit/517afcffaff085864b34568de43425ae7c5e7fc0))
+* add task chunk text ([#139](https://github.com/instill-ai/component/issues/139)) ([7b36553](https://github.com/instill-ai/component/commit/7b365537a95494b5d8ec6889fa84e1638738a0a5))
+* **instill:** adopt latest Model endpoints ([#146](https://github.com/instill-ai/component/issues/146)) ([7f2537b](https://github.com/instill-ai/component/commit/7f2537baa8258811db8d25b7ce2e270a4392c2d3))
+* optimise ux for slack component ([#143](https://github.com/instill-ai/component/issues/143)) ([ed60235](https://github.com/instill-ai/component/commit/ed60235d4f734fc8f0f1713fdba97e1b96c645d5))
+* refactor package structure ([#140](https://github.com/instill-ai/component/issues/140)) ([4853d4c](https://github.com/instill-ai/component/commit/4853d4cdb12ffe238a97c6d62e653b91cd3e1311))
+* support markdown to text function in text operator ([#149](https://github.com/instill-ai/component/issues/149)) ([dcbae37](https://github.com/instill-ai/component/commit/dcbae3711d65a70301cd634e21bd9786fe508aa7))
+* unify component interface ([#144](https://github.com/instill-ai/component/issues/144)) ([ad35e10](https://github.com/instill-ai/component/commit/ad35e10384ba6eb1e7fe4997de0bbe5a6e2111a4))
+
+
+### Bug Fixes
+
+* bug of failure of document component ([#152](https://github.com/instill-ai/component/issues/152)) ([aed51f8](https://github.com/instill-ai/component/commit/aed51f883c7b5fc244159a34c57cf3a608106b50))
+
 ## [0.18.0-beta](https://github.com/instill-ai/component/compare/v0.17.0-beta...v0.18.0-beta) (2024-05-17)
 
 
