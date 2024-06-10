@@ -1,0 +1,51 @@
+{
+    "TASK_GREET": {
+      "instillShortDescription": "Greet someone / something",
+      "title": "Greet",
+      "input": {
+        "description": "Input",
+        "instillUIOrder": 0,
+        "properties": {
+          "target": {
+            "instillUIOrder": 0,
+            "description": "The target of the greeting",
+            "instillAcceptFormats": [
+              "string"
+            ],
+            "instillUpstreamTypes": [
+              "value",
+              "reference",
+              "template"
+            ],
+            "instillUIMultiline": true,
+            "title": "Greeting target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "title": "Input",
+        "type": "object"
+      },
+      "output": {
+        "description": "The greeting sentence",
+        "instillUIOrder": 0,
+        "properties": {
+          "greeting": {
+            "description": "A greeting sentence addressed to the target",
+            "instillUIOrder": 0,
+            "required": [],
+            "title": "Greeting",
+            "type": "string",
+            "instillFormat": "string"
+          }
+        },
+        "required": [
+          "greeting"
+        ],
+        "title": "Output",
+        "type": "object"
+      }
+    }
+  }

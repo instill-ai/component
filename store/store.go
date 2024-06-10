@@ -5,10 +5,7 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/structpb"
-
+	"github.com/instill-ai/component/ai/anthropic/v0"
 	"github.com/instill-ai/component/ai/archetypeai/v0"
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
@@ -29,6 +26,9 @@ import (
 	"github.com/instill-ai/component/operator/image/v0"
 	"github.com/instill-ai/component/operator/json/v0"
 	"github.com/instill-ai/component/operator/text/v0"
+	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/structpb"
 
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -95,7 +95,7 @@ func Init(
 				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
 			compStore.Import(conn)
 		}
-
+		compStore.Import(anthropic.Init(baseComp))
 		compStore.Import(archetypeai.Init(baseComp))
 		compStore.Import(numbers.Init(baseComp))
 		compStore.Import(bigquery.Init(baseComp))
