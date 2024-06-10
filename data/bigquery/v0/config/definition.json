@@ -1,6 +1,7 @@
 {
-  "availableTasks": [
-    "TASK_INSERT"
+  "available_tasks": [
+    "TASK_INSERT",
+    "TASK_READ"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/data/bigquery",

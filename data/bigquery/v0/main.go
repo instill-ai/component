@@ -17,6 +17,7 @@ import (
 
 const (
 	taskInsert = "TASK_INSERT"
+	taskRead   = "TASK_READ"
 )
 
 //go:embed config/definition.json
@@ -102,6 +103,28 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 				return nil, err
 			}
 			output = &structpb.Struct{Fields: map[string]*structpb.Value{"status": {Kind: &structpb.Value_StringValue{StringValue: "success"}}}}
+		case taskRead:
+
+			inputStruct := ReadInput{
+				ProjectID: getProjectID(e.Setup),
+				DatasetID: getDatasetID(e.Setup),
+				TableName: getTableName(e.Setup),
+				Client:    client,
+			}
+			fmt.Println("inputStruct", inputStruct)
+			err := base.ConvertFromStructpb(input, &inputStruct)
+			if err != nil {
+				return nil, err
+			}
+			outputStruct, err := readDataFromBigQuery(inputStruct)
+			if err != nil {
+				return nil, err
+			}
+			output, err = base.ConvertToStructpb(outputStruct)
+			if err != nil {
+				return nil, err
+			}
+
 		default:
 			return nil, fmt.Errorf("unsupported task: %s", e.Task)
 		}
