@@ -1,51 +1,100 @@
 {
-    "TASK_GREET": {
-      "instillShortDescription": "Greet someone / something",
-      "title": "Greet",
-      "input": {
-        "description": "Input",
-        "instillUIOrder": 0,
-        "properties": {
-          "target": {
-            "instillUIOrder": 0,
-            "description": "The target of the greeting",
-            "instillAcceptFormats": [
-              "string"
-            ],
-            "instillUpstreamTypes": [
-              "value",
-              "reference",
-              "template"
-            ],
-            "instillUIMultiline": true,
-            "title": "Greeting target",
-            "type": "string"
-          }
-        },
-        "required": [
-          "target"
-        ],
-        "title": "Input",
-        "type": "object"
+  "TASK_GREET": {
+    "instillShortDescription": "Greet someone / something",
+    "title": "Greet",
+    "input": {
+      "description": "Input",
+      "instillUIOrder": 0,
+      "properties": {
+        "target": {
+          "instillUIOrder": 0,
+          "description": "The target of the greeting",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillUIMultiline": true,
+          "title": "Greeting target",
+          "type": "string"
+        }
       },
-      "output": {
-        "description": "The greeting sentence",
-        "instillUIOrder": 0,
-        "properties": {
-          "greeting": {
-            "description": "A greeting sentence addressed to the target",
-            "instillUIOrder": 0,
-            "required": [],
-            "title": "Greeting",
-            "type": "string",
-            "instillFormat": "string"
-          }
-        },
-        "required": [
-          "greeting"
-        ],
-        "title": "Output",
-        "type": "object"
-      }
+      "required": [
+        "target"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "The greeting sentence",
+      "instillUIOrder": 0,
+      "properties": {
+        "greeting": {
+          "description": "A greeting sentence addressed to the target",
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Greeting",
+          "type": "string",
+          "instillFormat": "string"
+        }
+      },
+      "required": [
+        "greeting"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_TEXT_GENERATION": {
+    "instillShortDescription": "Provide text outputs in response to their inputs.",
+    "description": "Anthropic's text generation models (often called generative pre-trained transformers or large language models) have been trained to understand natural language, code, and images. The models provide text outputs in response to their inputs. The inputs to these models are also referred to as \"prompts\". Designing a prompt is essentially how you \u201cprogram\u201d a large language model model, usually by providing instructions or some examples of how to successfully complete a task.",
+    "input": {
+      "description": "Input",
+      "instillUIOrder": 0,
+      "properties": {
+        "target": {
+          "instillUIOrder": 0,
+          "description": "The target of the greeting",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillUIMultiline": true,
+          "title": "Greeting target",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "The greeting sentence",
+      "instillUIOrder": 0,
+      "properties": {
+        "greeting": {
+          "description": "A greeting sentence addressed to the target",
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Greeting",
+          "type": "string",
+          "instillFormat": "string"
+        }
+      },
+      "required": [
+        "greeting"
+      ],
+      "title": "Output",
+      "type": "object"
     }
   }
+}
