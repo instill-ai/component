@@ -1,6 +1,5 @@
 {
     "available_tasks": [
-      "TASK_GREET",
       "TASK_TEXT_GENERATION"
     ],
     "custom": false,

@@ -3,21 +3,28 @@ package anthropic
 import (
 	"context"
 	_ "embed"
+	"encoding/json"
 	"fmt"
 	"sync"
 
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
 )
 
 const (
-	taskGreet = "TASK_GREET"
+	textGenerationTask = "TASK_TEXT_GENERATION"
+	cfgAPIKey          = "api_key"
+	host               = "https://api.anthropic.com"
+	messagesPath       = "/v1/messages"
 )
 
 var (
 	//go:embed config/definition.json
 	definitionJSON []byte
+	//go:embed config/setup.json
+	setupJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
 
@@ -34,7 +41,7 @@ type component struct {
 func Init(bc base.Component) *component {
 	once.Do(func() {
 		comp = &component{Component: bc}
-		err := comp.LoadDefinition(definitionJSON, nil, tasksJSON, nil)
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
@@ -49,15 +56,15 @@ type execution struct {
 
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
+		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: setup},
 	}
 
 	// A simple if statement would be enough in a component with a single task.
 	// If the number of task grows, here is where the execution task would be
 	// selected.
 	switch task {
-	case taskGreet:
-		e.execute = e.greet
+	case textGenerationTask:
+		e.execute = e.generateText
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
@@ -82,15 +89,47 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
-func (e *execution) greet(in *structpb.Struct) (*structpb.Struct, error) {
-	out := new(structpb.Struct)
+func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) {
+	client := newClient(e.Setup, e.GetLogger())
 
-	target := in.Fields["target"].GetStringValue()
-	greeting := "Hello, " + target + "!"
+	prompt := in.Fields["prompt"].GetStringValue()
+	model := in.Fields["model"].GetStringValue()
+	max_token := 1024
 
-	out.Fields = map[string]*structpb.Value{
-		"greeting": structpb.NewStringValue(greeting),
+	messages := []message{{
+		Role:    "user",
+		Content: []content{{Type: "text", Text: prompt}},
+	}}
+
+	body := messagesReq{
+		Messages:  messages,
+		Model:     model,
+		MaxTokens: max_token,
 	}
 
-	return out, nil
+	resp := messagesResp{}
+	req := client.R().SetResult(&resp).SetBody(body)
+	if _, err := req.Post(messagesPath); err != nil {
+		//fmt.Println(req.RawRequest)
+		return in, err
+	}
+
+	outputStruct := messagesOutput{
+		Texts: []string{},
+		Usage: resp.Usage,
+	}
+	for _, c := range resp.Content {
+		outputStruct.Texts = append(outputStruct.Texts, c.Text)
+	}
+
+	outputJSON, err := json.Marshal(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	output := structpb.Struct{}
+	err = protojson.Unmarshal(outputJSON, &output)
+	if err != nil {
+		return nil, err
+	}
+	return &output, nil
 }
