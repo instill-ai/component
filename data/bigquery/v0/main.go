@@ -9,7 +9,10 @@ import (
 	"sync"
 
 	"cloud.google.com/go/bigquery"
+	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
+	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
@@ -19,6 +22,8 @@ const (
 	taskInsert = "TASK_INSERT"
 	taskRead   = "TASK_READ"
 )
+
+var instillUpstreamTypes = []string{"value", "reference", "template"}
 
 //go:embed config/definition.json
 var definitionJSON []byte
@@ -111,7 +116,6 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 				TableName: getTableName(e.Setup),
 				Client:    client,
 			}
-			fmt.Println("inputStruct", inputStruct)
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
 				return nil, err
@@ -120,7 +124,7 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 			if err != nil {
 				return nil, err
 			}
-			output, err = base.ConvertToStructpb(outputStruct)
+ 			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
 				return nil, err
 			}
@@ -144,4 +148,138 @@ func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 		return nil
 	}
 	return errors.New("project ID does not match")
+}
+
+type TableColumns struct {
+	TableName string
+	Columns   []Column
+}
+
+type Column struct {
+	Name string
+	Type string
+}
+
+func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
+
+	ctx := context.Background()
+	oriDef, err := c.Component.GetDefinition(nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if sysVars == nil && compConfig == nil {
+		return oriDef, nil
+	}
+
+	def := proto.Clone(oriDef).(*pb.ComponentDefinition)
+	client, err := NewClient(compConfig.Setup["json_key"].(string), compConfig.Setup["project_id"].(string))
+	if err != nil || client == nil {
+		return nil, fmt.Errorf("error creating BigQuery client: %v", err)
+	}
+	defer client.Close()
+
+	myDataset := client.Dataset(compConfig.Setup["dataset_id"].(string))
+	tables, err := constructTableColumns(myDataset, ctx, compConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	tableProperties, err := constructTableProperties(tables)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: chuang8511, remove table from definition.json and make it dynamic.
+	tableProperty := tableProperties[0]
+	for _, sch := range def.Spec.ComponentSpecification.Fields["oneOf"].GetListValue().Values {
+		data := sch.GetStructValue().Fields["properties"].GetStructValue().Fields["input"].GetStructValue().Fields["properties"].GetStructValue().Fields["data"].GetStructValue()
+		if data != nil {
+			data.Fields["properties"] = structpb.NewStructValue(tableProperty)
+		}
+	}
+
+	for _, dataSpec := range def.Spec.DataSpecifications {
+		dataInput := dataSpec.Input.Fields["properties"].GetStructValue().Fields["data"].GetStructValue()
+		if dataInput != nil {
+			dataInput.Fields["properties"] = structpb.NewStructValue(tableProperty)
+		}
+		dataOutput := dataSpec.Output.Fields["properties"].GetStructValue().Fields["data"].GetStructValue()
+
+		if dataOutput != nil {
+			aPieceData := dataOutput.Fields["items"].GetStructValue()
+			if aPieceData != nil {
+				aPieceData.Fields["properties"] = structpb.NewStructValue(tableProperty)
+			}
+
+		}
+	}
+
+	return def, nil
+}
+
+func constructTableColumns(myDataset *bigquery.Dataset, ctx context.Context, compConfig *base.ComponentConfig) ([]TableColumns, error) {
+	tableIT := myDataset.Tables(ctx)
+	tables := []TableColumns{}
+	for {
+		table, err := tableIT.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		tableName := table.TableID
+		tableDetail := myDataset.Table(tableName)
+		metadata, err := tableDetail.Metadata(ctx)
+		if err != nil {
+			return nil, err
+		}
+		schema := metadata.Schema
+		columns := []Column{}
+		for _, field := range schema {
+			columns = append(columns, Column{Name: field.Name, Type: string(field.Type)})
+		}
+
+		// TODO: chuang8511, remove table from definition.json and make it dynamic.
+		if compConfig.Setup["table_name"].(string) == tableName {
+			tables = append(tables, TableColumns{TableName: tableName, Columns: columns})
+		}
+	}
+	return tables, nil
+}
+
+func constructTableProperties(tables []TableColumns) ([]*structpb.Struct, error) {
+	tableProperties := make([]*structpb.Struct, len(tables))
+
+	for idx, table := range tables {
+		propertiesMap := make(map[string]interface{})
+		for _, column := range table.Columns {
+			propertiesMap[column.Name] = map[string]interface{}{
+				"instillAcceptFormats": []string{getInstillAcceptFormat(column.Type)},
+				"instillUpstreamTypes": instillUpstreamTypes,
+				"type":                 getInstillAcceptFormat(column.Type),
+			}
+		}
+		propertyStructPB, err := base.ConvertToStructpb(propertiesMap)
+		if err != nil {
+			return nil, err
+		}
+
+		tableProperties[idx] = propertyStructPB
+	}
+	return tableProperties, nil
+}
+
+func getInstillAcceptFormat(tableType string) string {
+	switch tableType {
+	case "STRING":
+		return "string"
+	case "INTEGER":
+		return "integer"
+	case "BOOLEAN":
+		return "boolean"
+	default:
+		return "string"
+	}
 }

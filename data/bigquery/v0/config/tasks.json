@@ -5,31 +5,16 @@
       "instillUIOrder": 0,
       "properties": {
         "data": {
-          "additionalProperties": false,
+          "additionalProperties": true,
           "instillShortDescription": "The data to be inserted to BigQuery",
           "description": "The data to be inserted to BigQuery",
           "instillUIOrder": 0,
-          "patternProperties": {
-            "^[a-z_][-a-z_0-9]{0,31}$": {
-              "instillAcceptFormats": [
-                "*"
-              ],
-              "instillUIOrder": 0,
-              "instillUpstreamTypes": [
-                "reference",
-                "template"
-              ],
-              "title": "Data"
-            }
-          },
           "required": [],
           "title": "Data",
           "type": "object"
         }
       },
-      "required": [
-        "data"
-      ],
+      "required": [],
       "title": "Input",
       "type": "object"
     },
@@ -56,27 +41,13 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "data": {
-          "additionalProperties": false,
-          "instillShortDescription": "The data to be inserted to BigQuery",
-          "description": "The data to be inserted to BigQuery",
+        "filtering": {
+          "instillShortDescription": "The filter to be applied to the data",
+          "description": "The filter to be applied to the data",
           "instillUIOrder": 0,
-          "patternProperties": {
-            "^[a-z_][-a-z_0-9]{0,31}$": {
-              "instillAcceptFormats": [
-                "*"
-              ],
-              "instillUIOrder": 0,
-              "instillUpstreamTypes": [
-                "reference",
-                "template"
-              ],
-              "title": "Data"
-            }
-          },
           "required": [],
-          "title": "Data",
-          "type": "object"
+          "title": "Filtering",
+          "type": "string"
         }
       },
       "required": [],
@@ -86,12 +57,18 @@
     "output": {
       "instillUIOrder": 0,
       "properties": {
-        "status": {
-          "description": "Status of the upload operation",
-          "instillFormat": "string",
+        "data": {
+          "instillShortDescription": "The data to be read from BigQuery",
+          "description": "The data to be read from BigQuery",
           "instillUIOrder": 0,
-          "title": "Status",
-          "type": "string"
+          "items": {
+            "title": "Data item",
+            "type": "object",
+            "required": []
+          },
+          "required": [],
+          "title": "Data",
+          "type": "array"
         }
       },
       "required": [],
