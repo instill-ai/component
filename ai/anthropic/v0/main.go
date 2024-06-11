@@ -94,7 +94,8 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 
 	prompt := in.Fields["prompt"].GetStringValue()
 	model := in.Fields["model"].GetStringValue()
-	max_token := 1024
+	max_token := int(in.Fields["max_tokens"].GetNumberValue())
+	system := in.Fields["system"].GetStringValue()
 
 	messages := []message{{
 		Role:    "user",
@@ -105,6 +106,7 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		Messages:  messages,
 		Model:     model,
 		MaxTokens: max_token,
+		System:    system,
 	}
 
 	resp := messagesResp{}

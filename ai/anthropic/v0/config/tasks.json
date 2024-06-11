@@ -48,6 +48,48 @@
             ]
           },
           "title": "Model"
+        },
+        "max_tokens": {
+          "description": "The maximum number of tokens to generate before stopping.\n\nNote that our models may stop before reaching this maximum. This parameter only specifies the absolute maximum number of tokens to generate.\n\nDifferent models have different maximum values for this parameter. See [models](https://docs.anthropic.com/en/docs/models-overview) for details.\n",
+          "type": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillShortDescription": "The maximum number of tokens to generate before stopping.",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Max Tokens"
+        },
+        "system": {
+          "description": "A system prompt is a way of providing context and instructions to Claude, such as specifying a particular goal or role. See our [guide to system prompts](https://docs.anthropic.com/en/docs/system-prompts).",
+          "type": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "System prompt.",
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "System prompt"
+        },
+        "temperture": {
+          "description": "Amount of randomness injected into the response.\n\nDefaults to 1.0. Ranges from 0.0 to 1.0. Use temperature closer to 0.0 for analytical / multiple choice, and closer to 1.0 for creative and generative tasks.\n\nNote that even with temperature of 0.0, the results will not be fully deterministic.",
+          "type": "number",
+          "instillAcceptFormats": [
+            "number"
+          ],
+          "instillShortDescription": "Amount of randomness injected into the response.",
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Temperture"
         }
       },
       "required": [
