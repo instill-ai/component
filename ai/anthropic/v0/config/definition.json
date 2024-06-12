@@ -1,0 +1,20 @@
+{
+  "available_tasks": [
+    "TASK_TEXT_GENERATION_CHAT"
+  ],
+  "custom": false,
+  "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/anthropic",
+  "icon": "assets/anthropic.svg",
+  "icon_url": "",
+  "id": "anthropic",
+  "public": true,
+  "title": "Anthropic",
+  "description": "Connect AI models from Anthropic",
+  "type": "COMPONENT_TYPE_AI",
+  "uid": "cd6be237-1cb9-4e56-b940-b5ed7f60fd96",
+  "vendor": "Anthropic",
+  "vendor_attributes": {},
+  "version": "0.1.0",
+  "source_url": "https://github.com/instill-ai/component/blob/main/ai/anthropic/v0",
+  "release_stage": "RELEASE_STAGE_COMING_SOON"
+}
