@@ -93,42 +93,53 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 	client := newClient(e.Setup, e.GetLogger())
 
 	prompt := in.Fields["prompt"].GetStringValue()
-	model := in.Fields["model"].GetStringValue()
-	max_token := int(in.Fields["max_tokens"].GetNumberValue())
-	system := in.Fields["system"].GetStringValue()
 
 	messages := []message{}
 
-	if in.Fields["image"] == nil {
-		messages = []message{{
-			Role:    "user",
-			Content: []content{{Type: "text", Text: prompt}},
-		}}
-	} else {
-		messages = []message{{
-			Role: "user",
-			Content: []content{
-				{Type: "text", Text: prompt},
-				{Type: "image", Source: &source{
-					Type:      "base64",
-					MediaType: "image/jpeg",
-					Data:      base.TrimBase64Mime(in.Fields["image"].GetStringValue())}},
-			},
-		}}
+	if in.Fields["chat_history"] != nil {
+		for _, el := range in.Fields["chat_history"].GetListValue().GetValues() {
+
+			contents := []content{}
+			for _, cn := range el.GetStructValue().Fields["content"].GetListValue().GetValues() {
+
+				content_type := cn.GetStructValue().Fields["type"].GetStringValue()
+				// anthrothpic models does not support image urls
+				if content_type == "text" {
+					content := content{
+						Type: "text",
+						Text: cn.GetStructValue().Fields["text"].GetStringValue(),
+					}
+					contents = append(contents, content)
+				}
+			}
+			message := message{
+				Role:    el.GetStructValue().Fields["role"].GetStringValue(),
+				Content: contents,
+			}
+			messages = append(messages, message)
+		}
 	}
 
+	final_message := message{
+		Role:    "user",
+		Content: []content{{Type: "text", Text: prompt}},
+	}
+	messages = append(messages, final_message)
+
 	body := messagesReq{
-		Messages:  messages,
-		Model:     model,
-		MaxTokens: max_token,
-		System:    system,
+		Messages:    messages,
+		Model:       in.Fields["model_name"].GetStringValue(),
+		MaxTokens:   int(in.Fields["max_new_tokens"].GetNumberValue()),
+		System:      in.Fields["system_message"].GetStringValue(),
+		TopK:        int(in.Fields["top_k"].GetNumberValue()),
+		Temperature: float32(in.Fields["temperature"].GetNumberValue()),
 	}
 
 	resp := messagesResp{}
 	req := client.R().SetResult(&resp).SetBody(body)
 	if _, err := req.Post(messagesPath); err != nil {
 		fmt.Println("#### request body ###")
-		j, _ := json.Marshal(body)
+		j, _ := json.MarshalIndent(body, "", "\t")
 		fmt.Println(string(j))
 		return in, err
 	}
