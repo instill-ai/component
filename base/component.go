@@ -831,17 +831,7 @@ func ReadFromSecrets(key string, secrets map[string]any) string {
 }
 
 type ComponentConfig struct {
-	Type       string                  `json:"type,omitempty"`
-	Task       string                  `json:"task,omitempty"`
-	Input      map[string]any          `json:"input,omitempty"`
-	Condition  *string                 `json:"condition,omitempty"`
-	Setup      map[string]any          `json:"setup,omitempty"`
-	Metadata   map[string]any          `json:"metadata,omitempty"`
-	Definition *pb.ComponentDefinition `json:"definition,omitempty"`
-}
-
-func (c *ComponentConfig) IsComponent() {}
-
-func (c *ComponentConfig) GetCondition() *string {
-	return c.Condition
+	Task  string
+	Input map[string]any
+	Setup map[string]any
 }
