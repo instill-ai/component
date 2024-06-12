@@ -2,10 +2,12 @@ package base
 
 import (
 	_ "embed"
+	"encoding/json"
 	"testing"
 
 	qt "github.com/frankban/quicktest"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var (
@@ -38,5 +40,11 @@ func TestComponent_ListConnectorDefinitions(t *testing.T) {
 
 	got, err := conn.GetDefinition(nil, nil)
 	c.Assert(err, qt.IsNil)
-	c.Check(wantConnectorDefinitionJSON, qt.JSONEquals, got)
+	gotJSON, err := protojson.Marshal(got)
+	c.Assert(err, qt.IsNil)
+
+	wantConnectorDefinitionStruct := map[string]any{}
+	err = json.Unmarshal(wantConnectorDefinitionJSON, &wantConnectorDefinitionStruct)
+	c.Assert(err, qt.IsNil)
+	c.Check(gotJSON, qt.JSONEquals, wantConnectorDefinitionStruct)
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/base",
-  "available_tasks": [
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/base",
+  "availableTasks": [
     "TASK_TEXT_EMBEDDINGS"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/component/ai/openai",
+  "documentationUrl": "https://www.instill.tech/docs/component/ai/openai",
   "icon": "OpenAI/openai.svg",
   "id": "openai",
   "public": true,
@@ -13,5 +13,5 @@
   "type": "COMPONENT_TYPE_AI",
   "uid": "9fb6a2cb-bff5-4c69-bc6d-4538dd8e3362",
   "vendor": "OpenAI",
-  "vendor_attributes": {}
+  "vendorAttributes": {}
 }

@@ -581,7 +581,7 @@ func (c *Component) LoadDefinition(definitionJSONBytes, setupJSONBytes, tasksJSO
 	}
 
 	availableTasks := []string{}
-	for _, availableTask := range definitionJSON.(map[string]interface{})["available_tasks"].([]interface{}) {
+	for _, availableTask := range definitionJSON.(map[string]interface{})["availableTasks"].([]interface{}) {
 		availableTasks = append(availableTasks, availableTask.(string))
 	}
 

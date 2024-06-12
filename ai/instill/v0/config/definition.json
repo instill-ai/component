@@ -1,5 +1,5 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_CLASSIFICATION",
     "TASK_INSTANCE_SEGMENTATION",
     "TASK_KEYPOINT",
@@ -13,9 +13,9 @@
     "TASK_IMAGE_TO_IMAGE"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/component/ai/instill",
+  "documentationUrl": "https://www.instill.tech/docs/component/ai/instill",
   "icon": "assets/instill-model.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "instill-model",
   "public": true,
   "title": "Instill Model",
@@ -24,8 +24,8 @@
   "type": "COMPONENT_TYPE_AI",
   "uid": "ddcf42c3-4c30-4c65-9585-25f1c89b2b48",
   "vendor": "Instill",
-  "vendor_attributes": {},
+  "vendorAttributes": {},
   "version": "0.1.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/ai/instill/v0",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/ai/instill/v0",
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

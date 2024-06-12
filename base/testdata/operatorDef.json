@@ -1,13 +1,13 @@
 {
   "version": "1.0.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/base",
-  "available_tasks": [
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/base",
+  "availableTasks": [
     "TASK_MARSHAL"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/component/operator/json",
+  "documentationUrl": "https://www.instill.tech/docs/component/operator/json",
   "icon": "Instill AI/json.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "json",
   "public": true,
   "spec": {},

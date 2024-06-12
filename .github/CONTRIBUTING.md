@@ -275,11 +275,11 @@ component.
 
 ```json
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_GREET"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/component/operator/hello",
+  "documentationUrl": "https://www.instill.tech/docs/component/operator/hello",
   "icon": "assets/hello.svg",
   "id": "hello",
   "public": true,
@@ -287,9 +287,9 @@ component.
   "title": "Hello",
   "uid": "e05d3d71-779c-45f8-904d-e90a050ca3b2",
   "version": "0.1.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/operator/hello/v0",
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/operator/hello/v0",
   "description": "'Hello, world' operator used as a template for adding components",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }
 ```
 
@@ -304,21 +304,21 @@ This file defines the component properties:
 - **`spec`** contains the parameters required to configure the component and
   that are independent from its tasks. E.g., the API token of a vendor. In
   general, only AI, data or application components need such parameters.
-- **`available_tasks`** defines the tasks the component can perform.
+- **`availableTasks`** defines the tasks the component can perform.
   - When a component is created in a pipeline, one of the tasks has to be
     selected, i.e., a configured component can only execute one task.
   - Task configurations are defined in `tasks.json`.
-- **`documentation_url`** points to the official documentation of the component.
+- **`documentationUrl`** points to the official documentation of the component.
 - **`icon`** is the local path to the icon that will be displayed in the Console
   when creating the component. If left blank, a placeholder icon will be shown.
 - **`version`** must be a [SemVer](https://semver.org/) string. It is encouraged
   to keep a [tidy version history](#sane-version-control).
-- **`source_url`** points to the codebase that implements the component. This
+- **`sourceUrl`** points to the codebase that implements the component. This
   will be used by the documentation generation tool and also will be part of the
   [component definition
   list](https://openapi.instill.tech/reference/pipelinepublicservice_listcomponentdefinitions)
   endpoint.
-- **`release_stage`** describes the release stage of the component.
+- **`releaseStage`** describes the release stage of the component.
   Unimplemented stages (`RELEASE_STAGE_COMING_SOON` or
   `RELEASE_STAGE_OPEN_FOR_CONTRIBUTION`) will hide the component from the
   console (i.e. they can't be used in pipelines) but they will appear in the
@@ -771,7 +771,7 @@ Semantic Versioning guidelines.
 It is recommended to start a component at `v0.1.0`. A major version 0 is
 intended for rapid development.
 
-The `release_stage` property in `definition.json` indicates the stability of a
+The `releaseStage` property in `definition.json` indicates the stability of a
 component.
 
 - A component skeleton (with only the minimal configuration files and a dummy

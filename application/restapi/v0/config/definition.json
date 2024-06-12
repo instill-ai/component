@@ -1,5 +1,5 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_GET",
     "TASK_POST",
     "TASK_PATCH",
@@ -9,9 +9,9 @@
     "TASK_OPTIONS"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/component/application/restapi",
+  "documentationUrl": "https://www.instill.tech/docs/component/application/restapi",
   "icon": "assets/restapi.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "restapi",
   "public": true,
   "title": "REST API",
@@ -20,8 +20,8 @@
   "type": "COMPONENT_TYPE_APPLICATION",
   "uid": "5ee55a5c-6e30-4c7a-80e8-90165a729e0a",
   "vendor": "",
-  "vendor_attributes": {},
+  "vendorAttributes": {},
   "version": "0.1.1",
-  "source_url": "https://github.com/instill-ai/component/blob/main/application/restapi/v0",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/application/restapi/v0",
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }
