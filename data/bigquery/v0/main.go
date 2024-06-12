@@ -191,7 +191,7 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 	}
 
 	// TODO: chuang8511, remove table from definition.json and make it dynamic.
-	// It will be change before 2024-06-26.
+	// It will be changed before 2024-06-26.
 	tableProperty := tableProperties[0]
 	for _, sch := range def.Spec.ComponentSpecification.Fields["oneOf"].GetListValue().Values {
 		data := sch.GetStructValue().Fields["properties"].GetStructValue().Fields["input"].GetStructValue().Fields["properties"].GetStructValue().Fields["data"].GetStructValue()
