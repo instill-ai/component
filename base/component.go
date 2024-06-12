@@ -835,3 +835,38 @@ type ComponentConfig struct {
 	Input map[string]any
 	Setup map[string]any
 }
+
+func (c *ComponentConfig) MarshalJSON() ([]byte, error) {
+
+	// Note: when using `json.Marshal`` for the `*pb.ComponentDefinition``, it
+	// will convert to snake_case. However, we want camelCase, so we need to use
+	// `protojson` for conversion here. This step will be removed when we
+	// refactor our component definition embedding mechanism.
+	def := map[string]any{}
+	b, err := protojson.Marshal(c.Definition)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(b, &def)
+	if err != nil {
+		return nil, err
+	}
+
+	return json.Marshal(&struct {
+		Type       string         `json:"type,omitempty"`
+		Task       string         `json:"task,omitempty"`
+		Input      map[string]any `json:"input,omitempty"`
+		Condition  *string        `json:"condition,omitempty"`
+		Setup      map[string]any `json:"setup,omitempty"`
+		Metadata   map[string]any `json:"metadata,omitempty"`
+		Definition map[string]any `json:"definition,omitempty"`
+	}{
+		Type:       c.Type,
+		Task:       c.Task,
+		Input:      c.Input,
+		Condition:  c.Condition,
+		Setup:      c.Setup,
+		Metadata:   c.Metadata,
+		Definition: def,
+	})
+}
