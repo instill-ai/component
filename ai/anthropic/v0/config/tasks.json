@@ -1,6 +1,6 @@
 {
   "TASK_TEXT_GENERATION": {
-    "instillShortDescription": "Provide text outputs in response to their inputs.",
+    "instillShortDescription": "Provide text outputs in response to text inputs.",
     "description": "Anthropic's text generation models (often called generative pre-trained transformers or large language models) have been trained to understand natural language, code, and images. The models provide text outputs in response to their inputs. The inputs to these models are also referred to as \"prompts\". Designing a prompt is essentially how you \u201cprogram\u201d a large language model model, usually by providing instructions or some examples of how to successfully complete a task.",
     "input": {
       "description": "Input",
@@ -95,6 +95,163 @@
       "required": [
         "prompt",
         "model"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "texts": {
+          "instillUIOrder": 0,
+          "instillFormat": "array:string",
+          "items": {
+            "instillFormat": "string",
+            "instillUIMultiline": true,
+            "title": "Text",
+            "type": "string"
+          },
+          "description": "Texts",
+          "title": "Texts",
+          "type": "array"
+        },
+        "usage": {
+          "description": "Usage statistics related to the query",
+          "instillUIOrder": 1,
+          "properties": {
+            "input_tokens": {
+              "title": "Input tokens",
+              "description": "Number of input tokens",
+              "instillFormat": "integer",
+              "type": "integer"
+            },
+            "output_tokens": {
+              "title": "Output tokens",
+              "description": "Number of output tokens",
+              "instillFormat": "integer",
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "title": "Usage",
+          "type": "object"
+        }
+      },
+      "required": [
+        "texts"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_MULTIMODAL_GENERATION": {
+    "instillShortDescription": "Provide text outputs in response to text and imagery inputs.",
+    "description": "Anthropic's text generation models (often called generative pre-trained transformers or large language models) have been trained to understand natural language, code, and images. The models provide text outputs in response to their inputs. The inputs to these models are also referred to as \"prompts\". Designing a prompt is essentially how you \u201cprogram\u201d a large language model model, usually by providing instructions or some examples of how to successfully complete a task.",
+    "input": {
+      "description": "Input",
+      "instillUIOrder": 0,
+      "properties": {
+        "prompt": {
+          "description": "The prompt text",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Prompt",
+          "type": "string"
+        },
+        "image": {
+          "description": "The image",
+          "instillAcceptFormats": [
+            "image/*"
+          ],
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference"
+          ],
+          "title": "Image",
+          "type": "string"
+        },
+        "model": {
+          "description": "ID of the model to use. See the [model endpoint compatibility](/docs/models/model-endpoint-compatibility) table for details on which models work with the Chat API.",
+          "enum": [
+            "claude-3-opus-20240229",
+            "claude-3-sonnet-20240229",
+            "claude-3-haiku-20240307"
+          ],
+          "example": "claude-3-sonnet-20240229",
+          "type": "string",
+          "x-oaiTypeLabel": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "ID of the model to use",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillCredentialMap": {
+            "values": [],
+            "targets": [
+              "setup.api_key"
+            ]
+          },
+          "title": "Model"
+        },
+        "max_tokens": {
+          "default": 16,
+          "description": "The maximum number of tokens to generate before stopping.\n\nNote that our models may stop before reaching this maximum. This parameter only specifies the absolute maximum number of tokens to generate.\n\nDifferent models have different maximum values for this parameter. See [models](https://docs.anthropic.com/en/docs/models-overview) for details.\n",
+          "type": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillShortDescription": "The maximum number of tokens to generate before stopping.",
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Max Tokens"
+        },
+        "system": {
+          "description": "A system prompt is a way of providing context and instructions to Claude, such as specifying a particular goal or role. See our [guide to system prompts](https://docs.anthropic.com/en/docs/system-prompts).",
+          "type": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "System prompt.",
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "System prompt"
+        },
+        "temperture": {
+          "description": "Amount of randomness injected into the response.\n\nDefaults to 1.0. Ranges from 0.0 to 1.0. Use temperature closer to 0.0 for analytical / multiple choice, and closer to 1.0 for creative and generative tasks.\n\nNote that even with temperature of 0.0, the results will not be fully deterministic.",
+          "type": "number",
+          "instillAcceptFormats": [
+            "number"
+          ],
+          "instillShortDescription": "Amount of randomness injected into the response.",
+          "instillUIOrder": 5,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Temperture"
+        }
+      },
+      "required": [
+        "prompt","image"
       ],
       "title": "Input",
       "type": "object"

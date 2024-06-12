@@ -14,10 +14,11 @@ import (
 )
 
 const (
-	textGenerationTask = "TASK_TEXT_GENERATION"
-	cfgAPIKey          = "api_key"
-	host               = "https://api.anthropic.com"
-	messagesPath       = "/v1/messages"
+	textGenerationTask       = "TASK_TEXT_GENERATION"
+	multiModalGenerationTask = "TASK_MULTIMODAL_GENERATION"
+	cfgAPIKey                = "api_key"
+	host                     = "https://api.anthropic.com"
+	messagesPath             = "/v1/messages"
 )
 
 var (
@@ -63,7 +64,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	// If the number of task grows, here is where the execution task would be
 	// selected.
 	switch task {
-	case textGenerationTask:
+	case textGenerationTask, multiModalGenerationTask:
 		e.execute = e.generateText
 	default:
 		return nil, fmt.Errorf("unsupported task")
@@ -97,10 +98,25 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 	max_token := int(in.Fields["max_tokens"].GetNumberValue())
 	system := in.Fields["system"].GetStringValue()
 
-	messages := []message{{
-		Role:    "user",
-		Content: []content{{Type: "text", Text: prompt}},
-	}}
+	messages := []message{}
+
+	if in.Fields["image"] == nil {
+		messages = []message{{
+			Role:    "user",
+			Content: []content{{Type: "text", Text: prompt}},
+		}}
+	} else {
+		messages = []message{{
+			Role: "user",
+			Content: []content{
+				{Type: "text", Text: prompt},
+				{Type: "image", Source: &source{
+					Type:      "base64",
+					MediaType: "image/jpeg",
+					Data:      base.TrimBase64Mime(in.Fields["image"].GetStringValue())}},
+			},
+		}}
+	}
 
 	body := messagesReq{
 		Messages:  messages,
@@ -112,7 +128,9 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 	resp := messagesResp{}
 	req := client.R().SetResult(&resp).SetBody(body)
 	if _, err := req.Post(messagesPath); err != nil {
-		//fmt.Println(req.RawRequest)
+		fmt.Println("#### request body ###")
+		j, _ := json.Marshal(body)
+		fmt.Println(string(j))
 		return in, err
 	}
 

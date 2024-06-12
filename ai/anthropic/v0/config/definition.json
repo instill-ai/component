@@ -1,21 +1,21 @@
 {
-    "available_tasks": [
-      "TASK_TEXT_GENERATION"
-    ],
-    "custom": false,
-    "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/anthropic",
-    "icon": "assets/anthropic.svg",
-    "icon_url": "",
-    "id": "anthropic",
-    "public": true,
-    "title": "Anthropic",
-    "description": "Connect the AI models served on the Anthropic Platform",
-    "type": "COMPONENT_TYPE_AI",
-    "uid": "42bdb620-74ad-486a-82da-25e45431b42c",
-    "vendor": "Anthropic",
-    "vendor_attributes": {},
-    "version": "0.1.1",
-    "source_url": "https://github.com/instill-ai/component/blob/main/ai/anthropic/v0",
-    "release_stage": "RELEASE_STAGE_ALPHA"
-  }
-  
+  "available_tasks": [
+    "TASK_MULTIMODAL_GENERATION",
+    "TASK_TEXT_GENERATION"
+  ],
+  "custom": false,
+  "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/anthropic",
+  "icon": "assets/anthropic.svg",
+  "icon_url": "",
+  "id": "anthropic",
+  "public": true,
+  "title": "Anthropic",
+  "description": "Connect the AI models served on the Anthropic Platform",
+  "type": "COMPONENT_TYPE_AI",
+  "uid": "42bdb620-74ad-486a-82da-25e45431b42c",
+  "vendor": "Anthropic",
+  "vendor_attributes": {},
+  "version": "0.1.1",
+  "source_url": "https://github.com/instill-ai/component/blob/main/ai/anthropic/v0",
+  "release_stage": "RELEASE_STAGE_ALPHA"
+}
