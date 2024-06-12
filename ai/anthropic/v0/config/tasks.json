@@ -197,7 +197,7 @@
           "type": "string"
         },
         "prompt_images": {
-          "description": "The prompt images (Note: From the restiction of Anthropic platform, we only support .jpeg file format at the moment)",
+          "description": "The prompt images (Note: Not supported by Anthropic Models, use chat_history instead)",
           "instillAcceptFormats": [
             "array:image/*"
           ],
