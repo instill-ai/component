@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "properties": {
-    "dataset_id": {
+    "dataset-id": {
       "description": "Fill in your BigQuery Dataset ID.",
       "instillUpstreamTypes": [
         "value"
@@ -14,7 +14,7 @@
       "title": "BigQuery Dataset ID",
       "type": "string"
     },
-    "json_key": {
+    "json-key": {
       "description": "Contents of the JSON key file with access to the bucket.",
       "instillUpstreamTypes": [
         "reference"
@@ -28,7 +28,7 @@
       "title": "JSON Key File contents",
       "type": "string"
     },
-    "project_id": {
+    "project-id": {
       "description": "Fill in your BigQuery Project ID.",
       "instillUpstreamTypes": [
         "value"
@@ -40,7 +40,7 @@
       "title": "BigQuery Project ID",
       "type": "string"
     },
-    "table_name": {
+    "table-name": {
       "description": "Fill in your BigQuery Table Name.",
       "instillUpstreamTypes": [
         "value"
@@ -54,16 +54,16 @@
     }
   },
   "required": [
-    "json_key",
-    "project_id",
-    "dataset_id",
-    "table_name"
+    "json-key",
+    "project-id",
+    "dataset-id",
+    "table-name"
   ],
   "instillEditOnNodeFields": [
-    "json_key",
-    "project_id",
-    "dataset_id",
-    "table_name"
+    "json-key",
+    "project-id",
+    "dataset-id",
+    "table-name"
   ],
   "title": "BigQuery Connection",
   "type": "object"

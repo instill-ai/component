@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "properties": {
-    "api_key": {
+    "api-key": {
       "description": "Fill your Stability AI API key. To find your keys, visit - https://platform.stability.ai/account/keys",
       "instillUpstreamTypes": [
         "reference"
@@ -18,10 +18,10 @@
     }
   },
   "required": [
-    "api_key"
+    "api-key"
   ],
   "instillEditOnNodeFields": [
-    "api_key"
+    "api-key"
   ],
   "title": "Stability AI Connection",
   "type": "object"

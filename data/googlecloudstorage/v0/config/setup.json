@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "properties": {
-    "bucket_name": {
+    "bucket-name": {
       "description": "Name of the bucket to be used for object storage.",
       "instillUpstreamTypes": [
         "value"
@@ -15,7 +15,7 @@
       "title": "Bucket Name",
       "type": "string"
     },
-    "json_key": {
+    "json-key": {
       "description": "Contents of the JSON key file with access to the bucket.",
       "instillUpstreamTypes": [
         "reference"
@@ -31,12 +31,12 @@
     }
   },
   "required": [
-    "json_key",
-    "bucket_name"
+    "json-key",
+    "bucket-name"
   ],
   "instillEditOnNodeFields": [
-    "json_key",
-    "bucket_name"
+    "json-key",
+    "bucket-name"
   ],
   "title": "Google Cloud Storage Connection",
   "type": "object"

@@ -8,7 +8,7 @@
       "oneOf": [
         {
           "properties": {
-            "auth_type": {
+            "auth-type": {
               "const": "NO_AUTH",
               "description": "No Authentication",
               "instillUIOrder": 0,
@@ -17,13 +17,13 @@
             }
           },
           "required": [
-            "auth_type"
+            "auth-type"
           ],
           "title": "No Auth"
         },
         {
           "properties": {
-            "auth_type": {
+            "auth-type": {
               "const": "BASIC_AUTH",
               "description": "Basic auth",
               "instillUIOrder": 0,
@@ -59,7 +59,7 @@
             }
           },
           "required": [
-            "auth_type",
+            "auth-type",
             "username",
             "password"
           ],
@@ -67,7 +67,7 @@
         },
         {
           "properties": {
-            "auth_location": {
+            "auth-location": {
               "default": "header",
               "description": "Add the API key to the header or query params",
               "enum": [
@@ -85,7 +85,7 @@
               "title": "Where to Add API Key to",
               "type": "string"
             },
-            "auth_type": {
+            "auth-type": {
               "const": "API_KEY",
               "description": "API key authentication",
               "instillUIOrder": 0,
@@ -122,16 +122,16 @@
             }
           },
           "required": [
-            "auth_type",
+            "auth-type",
             "key",
             "value",
-            "auth_location"
+            "auth-location"
           ],
           "title": "API Key"
         },
         {
           "properties": {
-            "auth_type": {
+            "auth-type": {
               "const": "BEARER_TOKEN",
               "description": "Bearer token authentication",
               "instillUIOrder": 0,
@@ -154,7 +154,7 @@
             }
           },
           "required": [
-            "auth_type",
+            "auth-type",
             "token"
           ],
           "title": "Bearer Token"

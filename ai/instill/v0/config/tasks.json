@@ -1,9 +1,9 @@
 {
   "$defs": {
-    "chat_message": {
+    "chat-message": {
       "properties": {
         "content": {
-          "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/multi_modal_content",
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/multi-modal-content",
           "description": "The message content",
           "instillUIOrder": 1,
           "title": "Content"
@@ -26,12 +26,12 @@
     "common": {
       "description": "Input",
       "instillEditOnNodeFields": [
-        "image_base64",
-        "model_name"
+        "image-base64",
+        "model-name"
       ],
       "instillUIOrder": 0,
       "properties": {
-        "image_base64": {
+        "image-base64": {
           "description": "Image base64",
           "instillAcceptFormats": [
             "image/*"
@@ -43,7 +43,7 @@
           "title": "Image",
           "type": "string"
         },
-        "model_name": {
+        "model-name": {
           "description": "The Instill Model model to be used.",
           "instillAcceptFormats": [
             "string"
@@ -59,13 +59,13 @@
         }
       },
       "required": [
-        "image_base64",
-        "model_name"
+        "image-base64",
+        "model-name"
       ],
       "title": "Input",
       "type": "object"
     },
-    "extra_params": {
+    "extra-params": {
       "description": "Extra Parameters",
       "instillAcceptFormats": [
         "semi-structured/object"
@@ -86,7 +86,7 @@
       "type": "object"
     },
     "output": {
-      "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/classification",
+      "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/classification",
       "description": "Output",
       "instillUIOrder": 0,
       "title": "Output",
@@ -100,7 +100,7 @@
       "type": "object"
     },
     "output": {
-      "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/detection",
+      "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/detection",
       "description": "Output",
       "instillUIOrder": 0,
       "title": "Output",
@@ -113,12 +113,12 @@
       "description": "Input",
       "instillEditOnNodeFields": [
         "prompt",
-        "image_base64",
-        "model_name"
+        "image-base64",
+        "model-name"
       ],
       "instillUIOrder": 0,
       "properties": {
-        "cfg_scale": {
+        "cfg-scale": {
           "description": "The guidance scale, default is 7.5",
           "instillAcceptFormats": [
             "number",
@@ -132,10 +132,10 @@
           "title": "CFG Scale",
           "type": "number"
         },
-        "extra_params": {
-          "$ref": "#/$defs/extra_params"
+        "extra-params": {
+          "$ref": "#/$defs/extra-params"
         },
-        "image_base64": {
+        "image-base64": {
           "description": "The prompt image",
           "instillAcceptFormats": [
             "image/*"
@@ -147,7 +147,7 @@
           "title": "Prompt Image",
           "type": "string"
         },
-        "model_name": {
+        "model-name": {
           "description": "The Instill Model model to be used.",
           "instillAcceptFormats": [
             "string"
@@ -202,7 +202,7 @@
           "title": "Seed",
           "type": "integer"
         },
-        "top_k": {
+        "top-k": {
           "default": 10,
           "description": "Top k for sampling",
           "instillAcceptFormats": [
@@ -219,8 +219,8 @@
       },
       "required": [
         "prompt",
-        "image_base64",
-        "model_name"
+        "image-base64",
+        "model-name"
       ],
       "title": "Input",
       "type": "object"
@@ -259,7 +259,7 @@
       "type": "object"
     },
     "output": {
-      "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/instance_segmentation",
+      "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/instance-segmentation",
       "description": "Output",
       "instillUIOrder": 0,
       "title": "Output",
@@ -273,7 +273,7 @@
       "type": "object"
     },
     "output": {
-      "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/keypoint",
+      "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/keypoint",
       "description": "Output",
       "instillUIOrder": 0,
       "title": "Output",
@@ -287,7 +287,7 @@
       "type": "object"
     },
     "output": {
-      "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/ocr",
+      "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/ocr",
       "description": "Output",
       "instillUIOrder": 0,
       "title": "Output",
@@ -301,7 +301,7 @@
       "type": "object"
     },
     "output": {
-      "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/semantic_segmentation",
+      "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/semantic-segmentation",
       "description": "Output",
       "instillUIOrder": 0,
       "title": "Output",
@@ -314,14 +314,14 @@
       "description": "Input",
       "instillEditOnNodeFields": [
         "prompt",
-        "model_name"
+        "model-name"
       ],
       "instillUIOrder": 0,
       "properties": {
-        "chat_history": {
+        "chat-history": {
           "description": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
           "instillAcceptFormats": [
-            "structured/chat_messages"
+            "structured/chat-messages"
           ],
           "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
           "instillUIOrder": 4,
@@ -329,15 +329,15 @@
             "reference"
           ],
           "items": {
-            "$ref": "#/$defs/chat_message"
+            "$ref": "#/$defs/chat-message"
           },
           "title": "Chat history",
           "type": "array"
         },
-        "extra_params": {
-          "$ref": "#/$defs/extra_params"
+        "extra-params": {
+          "$ref": "#/$defs/extra-params"
         },
-        "max_new_tokens": {
+        "max-new-tokens": {
           "default": 50,
           "description": "The maximum number of tokens for model to generate",
           "instillAcceptFormats": [
@@ -351,7 +351,7 @@
           "title": "Max new tokens",
           "type": "integer"
         },
-        "model_name": {
+        "model-name": {
           "description": "The Instill Model model to be used.",
           "instillAcceptFormats": [
             "string"
@@ -380,7 +380,7 @@
           "title": "Prompt",
           "type": "string"
         },
-        "prompt_images": {
+        "prompt-images": {
           "description": "The prompt images",
           "instillAcceptFormats": [
             "array:image/*"
@@ -408,7 +408,7 @@
           "title": "Seed",
           "type": "integer"
         },
-        "system_message": {
+        "system-message": {
           "default": "You are a helpful assistant.",
           "description": "The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model\u2019s behavior is using a generic message as \"You are a helpful assistant.\"",
           "instillAcceptFormats": [
@@ -439,7 +439,7 @@
           "title": "Temperature",
           "type": "number"
         },
-        "top_k": {
+        "top-k": {
           "default": 10,
           "description": "Top k for sampling",
           "instillAcceptFormats": [
@@ -456,7 +456,7 @@
       },
       "required": [
         "prompt",
-        "model_name"
+        "model-name"
       ],
       "title": "Input",
       "type": "object"
@@ -494,11 +494,11 @@
       "description": "Input",
       "instillEditOnNodeFields": [
         "prompt",
-        "model_name"
+        "model-name"
       ],
       "instillUIOrder": 0,
       "properties": {
-        "cfg_scale": {
+        "cfg-scale": {
           "description": "The guidance scale, default is 7.5",
           "instillAcceptFormats": [
             "number",
@@ -512,10 +512,10 @@
           "title": "CFG Scale",
           "type": "number"
         },
-        "extra_params": {
-          "$ref": "#/$defs/extra_params"
+        "extra-params": {
+          "$ref": "#/$defs/extra-params"
         },
-        "model_name": {
+        "model-name": {
           "description": "The Instill Model model to be used.",
           "instillAcceptFormats": [
             "string"
@@ -586,7 +586,7 @@
       },
       "required": [
         "prompt",
-        "model_name"
+        "model-name"
       ],
       "title": "Input",
       "type": "object"
@@ -624,15 +624,15 @@
       "description": "Input",
       "instillEditOnNodeFields": [
         "prompt",
-        "prompt_images",
-        "model_name"
+        "prompt-images",
+        "model-name"
       ],
       "instillUIOrder": 0,
       "properties": {
-        "chat_history": {
+        "chat-history": {
           "description": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
           "instillAcceptFormats": [
-            "structured/chat_messages"
+            "structured/chat-messages"
           ],
           "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
           "instillUIOrder": 4,
@@ -640,15 +640,15 @@
             "reference"
           ],
           "items": {
-            "$ref": "#/$defs/chat_message"
+            "$ref": "#/$defs/chat-message"
           },
           "title": "Chat history",
           "type": "array"
         },
-        "extra_params": {
-          "$ref": "#/$defs/extra_params"
+        "extra-params": {
+          "$ref": "#/$defs/extra-params"
         },
-        "max_new_tokens": {
+        "max-new-tokens": {
           "default": 50,
           "description": "The maximum number of tokens for model to generate",
           "instillAcceptFormats": [
@@ -662,7 +662,7 @@
           "title": "Max new tokens",
           "type": "integer"
         },
-        "model_name": {
+        "model-name": {
           "description": "The Instill Model model to be used.",
           "instillAcceptFormats": [
             "string"
@@ -691,7 +691,7 @@
           "title": "Prompt",
           "type": "string"
         },
-        "prompt_images": {
+        "prompt-images": {
           "description": "The prompt images",
           "instillAcceptFormats": [
             "array:image/*"
@@ -719,7 +719,7 @@
           "title": "Seed",
           "type": "integer"
         },
-        "system_message": {
+        "system-message": {
           "default": "You are a helpful assistant.",
           "description": "The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model\u2019s behavior is using a generic message as \"You are a helpful assistant.\"",
           "instillAcceptFormats": [
@@ -750,7 +750,7 @@
           "title": "Temperature",
           "type": "number"
         },
-        "top_k": {
+        "top-k": {
           "default": 10,
           "description": "Top k for sampling",
           "instillAcceptFormats": [
@@ -767,8 +767,8 @@
       },
       "required": [
         "prompt",
-        "prompt_images",
-        "model_name"
+        "prompt-images",
+        "model-name"
       ],
       "title": "Input",
       "type": "object"

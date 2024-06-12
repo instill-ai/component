@@ -93,8 +93,8 @@ Recipes are represented by a JSON object:
 ```json
 {
   "component": {
-    "<component_id>": {
-      "type": "<component_definition_id>",
+    "<component-id>": {
+      "type": "<component-definition-id>",
       "task": "<task>",
       "input": {
         // values for the input fields
@@ -705,9 +705,9 @@ The created pipeline will have the following recipe:
     "who": {
       "title": "Who",
       "description": "Who should be greeted?",
-      "instill_format": "string",
-      "instill_ui_order": 0,
-      "instill_ui_multiline": false
+      "instillFormat": "string",
+      "instillUIOrder": 0,
+      "instillUIMultiline": false
     }
   },
   "output": {
@@ -715,11 +715,11 @@ The created pipeline will have the following recipe:
       "title": "Greeting",
       "description": "",
       "value": "${hello_0.output.greeting}",
-      "instill_ui_order": 0
+      "instillUIOrder": 0
     }
   },
   "component": {
-    "hello_0": {
+    "hello-0": {
       "type": "hello",
       "task": "TASK_GREET",
       "input": {

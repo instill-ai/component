@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "properties": {
-    "api_key": {
+    "api-key": {
       "description": "Fill your Pinecone AI API key. You can create a api key in Pinecone Console",
       "instillUpstreamTypes": [
         "reference"
@@ -30,11 +30,11 @@
     }
   },
   "required": [
-    "api_key",
+    "api-key",
     "url"
   ],
   "instillEditOnNodeFields": [
-    "api_key",
+    "api-key",
     "url"
   ],
   "title": "Pinecone Connection",

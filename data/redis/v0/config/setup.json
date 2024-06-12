@@ -60,7 +60,7 @@
       "title": "SSL Connection",
       "type": "boolean"
     },
-    "ssl_mode": {
+    "ssl-mode": {
       "description": "SSL connection modes. \n  <b>verify-full</b> - This is the most secure mode. Always require encryption and verifies the identity of the source database server",
       "instillUIOrder": 5,
       "oneOf": [
@@ -90,7 +90,7 @@
           "additionalProperties": false,
           "description": "Verify-full SSL mode. Always require encryption and verifies the identity of the server.",
           "properties": {
-            "ca_cert": {
+            "ca-cert": {
               "description": "CA certificate to use for SSL connection",
               "instillUpstreamTypes": [
                 "reference"
@@ -105,7 +105,7 @@
               "title": "CA Certificate",
               "type": "string"
             },
-            "client_cert": {
+            "client-cert": {
               "description": "Client certificate to use for SSL connection",
               "instillUpstreamTypes": [
                 "reference"
@@ -120,7 +120,7 @@
               "title": "Client Certificate",
               "type": "string"
             },
-            "client_key": {
+            "client-key": {
               "description": "Client key to use for SSL connection",
               "instillUpstreamTypes": [
                 "reference"
@@ -150,9 +150,9 @@
           },
           "required": [
             "mode",
-            "ca_cert",
-            "client_cert",
-            "client_key"
+            "ca-cert",
+            "client-cert",
+            "client-key"
           ],
           "title": "Verify Full SSL Mode"
         }
