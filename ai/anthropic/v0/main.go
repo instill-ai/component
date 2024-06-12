@@ -14,11 +14,10 @@ import (
 )
 
 const (
-	textGenerationTask       = "TASK_TEXT_GENERATION"
-	multiModalGenerationTask = "TASK_MULTIMODAL_GENERATION"
-	cfgAPIKey                = "api_key"
-	host                     = "https://api.anthropic.com"
-	messagesPath             = "/v1/messages"
+	textGenerationTask = "TASK_TEXT_GENERATION"
+	cfgAPIKey          = "api_key"
+	host               = "https://api.anthropic.com"
+	messagesPath       = "/v1/messages"
 )
 
 var (
@@ -64,7 +63,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	// If the number of task grows, here is where the execution task would be
 	// selected.
 	switch task {
-	case textGenerationTask, multiModalGenerationTask:
+	case textGenerationTask:
 		e.execute = e.generateText
 	default:
 		return nil, fmt.Errorf("unsupported task")
