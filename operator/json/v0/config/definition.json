@@ -2,6 +2,7 @@
   "available_tasks": [
     "TASK_MARSHAL",
     "TASK_UNMARSHAL",
+    "TASK_UNMARSHAL_LIST",
     "TASK_JQ"
   ],
   "custom": false,

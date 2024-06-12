@@ -107,6 +107,60 @@
       "type": "object"
     }
   },
+  "TASK_UNMARSHAL_LIST": {
+    "instillShortDescription": "Convert a string to JSON list",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "string"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "string": {
+          "description": "JSON string to be unmarshaled",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "String",
+          "type": "string"
+        }
+      },
+      "required": [
+        "string"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillEditOnNodeFields": [
+        "json"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "json": {
+          "description": "JSON list extracted from the string input",
+          "instillEditOnNodeFields": [],
+          "instillFormat": "semi-structured/json",
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "JSON"
+        }
+      },
+      "required": [
+        "json"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
   "TASK_JQ": {
     "instillShortDescription": "Process JSON through a `jq` command",
     "title": "jq",
