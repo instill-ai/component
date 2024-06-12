@@ -25,8 +25,7 @@ type messagesReq struct {
 }
 
 type messagesOutput struct {
-	Texts []string `json:"texts"`
-	Usage usage    `json:"usage"`
+	Text string `json:"text"`
 }
 
 type message struct {

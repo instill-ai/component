@@ -135,11 +135,10 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 	}
 
 	outputStruct := messagesOutput{
-		Texts: []string{},
-		Usage: resp.Usage,
+		Text: "",
 	}
 	for _, c := range resp.Content {
-		outputStruct.Texts = append(outputStruct.Texts, c.Text)
+		outputStruct.Text += c.Text
 	}
 
 	outputJSON, err := json.Marshal(outputStruct)

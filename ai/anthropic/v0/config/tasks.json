@@ -102,43 +102,16 @@
     "output": {
       "instillUIOrder": 0,
       "properties": {
-        "texts": {
+        "text": {
           "instillUIOrder": 0,
-          "instillFormat": "array:string",
-          "items": {
-            "instillFormat": "string",
-            "instillUIMultiline": true,
-            "title": "Text",
-            "type": "string"
-          },
-          "description": "Texts",
-          "title": "Texts",
-          "type": "array"
-        },
-        "usage": {
-          "description": "Usage statistics related to the query",
-          "instillUIOrder": 1,
-          "properties": {
-            "input_tokens": {
-              "title": "Input tokens",
-              "description": "Number of input tokens",
-              "instillFormat": "integer",
-              "type": "integer"
-            },
-            "output_tokens": {
-              "title": "Output tokens",
-              "description": "Number of output tokens",
-              "instillFormat": "integer",
-              "type": "integer"
-            }
-          },
-          "required": [],
-          "title": "Usage",
-          "type": "object"
+          "instillFormat": "string",
+          "instillUIMultiline": true,
+          "title": "Text",
+          "type": "string"
         }
       },
       "required": [
-        "texts"
+        "text"
       ],
       "title": "Output",
       "type": "object"
