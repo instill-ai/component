@@ -17,7 +17,7 @@ type ReadInput struct {
 }
 
 type ReadOutput struct {
-	Data []map[string]any
+	Data []map[string]any `json:"data"`
 }
 
 func queryBuilder(input ReadInput) string {

@@ -56,22 +56,21 @@
     },
     "output": {
       "instillUIOrder": 0,
+      "description": "The data to be read from BigQuery",
       "properties": {
         "data": {
-          "instillShortDescription": "The data to be read from BigQuery",
           "description": "The data to be read from BigQuery",
           "instillUIOrder": 0,
+          "title": "Data",
+          "type": "array",
           "items": {
             "title": "Data item",
             "type": "object",
             "required": []
-          },
-          "required": [],
-          "title": "Data",
-          "type": "array"
+          }
         }
       },
-      "required": [],
+      "required": ["data"],
       "title": "Output",
       "type": "object"
     }

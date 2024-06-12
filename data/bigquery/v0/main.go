@@ -124,7 +124,7 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 			if err != nil {
 				return nil, err
 			}
- 			output, err = base.ConvertToStructpb(outputStruct)
+			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
 				return nil, err
 			}
@@ -191,6 +191,7 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 	}
 
 	// TODO: chuang8511, remove table from definition.json and make it dynamic.
+	// It will be change before 2024-06-26.
 	tableProperty := tableProperties[0]
 	for _, sch := range def.Spec.ComponentSpecification.Fields["oneOf"].GetListValue().Values {
 		data := sch.GetStructValue().Fields["properties"].GetStructValue().Fields["input"].GetStructValue().Fields["properties"].GetStructValue().Fields["data"].GetStructValue()
@@ -254,10 +255,14 @@ func constructTableProperties(tables []TableColumns) ([]*structpb.Struct, error)
 
 	for idx, table := range tables {
 		propertiesMap := make(map[string]interface{})
-		for _, column := range table.Columns {
+		for idx, column := range table.Columns {
 			propertiesMap[column.Name] = map[string]interface{}{
-				"instillAcceptFormats": []string{getInstillAcceptFormat(column.Type)},
+				"title":                column.Name,
+				"instillUIOrder":       idx,
+				"description":          "Column " + column.Name + " of table " + table.TableName,
+				"instillFormat":        getInstillAcceptFormat(column.Type),
 				"instillUpstreamTypes": instillUpstreamTypes,
+				"required":             []string{},
 				"type":                 getInstillAcceptFormat(column.Type),
 			}
 		}
