@@ -251,7 +251,9 @@
         }
       },
       "required": [
-        "prompt","image"
+        "prompt",
+        "image",
+        "model"
       ],
       "title": "Input",
       "type": "object"
