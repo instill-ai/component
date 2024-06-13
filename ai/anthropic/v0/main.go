@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	textGenerationTask = "TASK_TEXT_GENERATION"
+	textGenerationTask = "TASK_TEXT_GENERATION_CHAT"
 	cfgAPIKey          = "api_key"
 	host               = "https://api.anthropic.com"
 	messagesPath       = "/v1/messages"
@@ -124,6 +124,18 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		Role:    "user",
 		Content: []content{{Type: "text", Text: prompt}},
 	}
+
+	if in.Fields["prompt_images"] != nil {
+		for _, image := range in.Fields["prompt_images"].GetListValue().GetValues() {
+			// need to add support for different file types in the future.
+			image := content{
+				Type:   "image",
+				Source: &source{Type: "base64", MediaType: "image/jpeg", Data: base.TrimBase64Mime(image.GetStringValue())},
+			}
+			final_message.Content = append(final_message.Content, image)
+		}
+	}
+
 	messages = append(messages, final_message)
 
 	body := messagesReq{

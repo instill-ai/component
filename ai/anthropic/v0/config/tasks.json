@@ -117,7 +117,7 @@
       "type": "object"
     }
   },
-  "TASK_TEXT_GENERATION": {
+  "TASK_TEXT_GENERATION_CHAT": {
     "instillShortDescription": "Provide text outputs in response to text inputs.",
     "description": "Anthropic's text generation models (often called generative pre-trained transformers or large language models) have been trained to understand natural language, code, and images. The models provide text outputs in response to their inputs. The inputs to these models are also referred to as \"prompts\". Designing a prompt is essentially how you \u201cprogram\u201d a large language model model, usually by providing instructions or some examples of how to successfully complete a task.",
     "input": {
@@ -133,7 +133,7 @@
           "instillAcceptFormats": [
             "structured/chat_messages"
           ],
-          "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
+          "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. (Note: Anthropic doesn't support sending images via image_url, use the 'prompt_images' field instead)",
           "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "reference"
@@ -197,7 +197,7 @@
           "type": "string"
         },
         "prompt_images": {
-          "description": "The prompt images (Note: Not supported by Anthropic Models, use chat_history instead)",
+          "description": "The prompt images (Note: The prompt images will be injected in the order they are provided to the 'prompt' message. Also we currently only support JPEG file format.)",
           "instillAcceptFormats": [
             "array:image/*"
           ],

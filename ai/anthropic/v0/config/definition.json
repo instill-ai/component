@@ -1,7 +1,6 @@
 {
   "available_tasks": [
-    "TASK_MULTIMODAL_GENERATION",
-    "TASK_TEXT_GENERATION"
+    "TASK_TEXT_GENERATION_CHAT"
   ],
   "custom": false,
   "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/anthropic",
