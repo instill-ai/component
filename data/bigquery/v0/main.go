@@ -247,6 +247,9 @@ func constructTableColumns(myDataset *bigquery.Dataset, ctx context.Context, com
 			tables = append(tables, TableColumns{TableName: tableName, Columns: columns})
 		}
 	}
+	if len(tables) == 0 {
+		return nil, fmt.Errorf("table name is not found in the dataset")
+	}
 	return tables, nil
 }
 
