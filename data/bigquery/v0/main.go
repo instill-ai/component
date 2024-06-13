@@ -252,11 +252,13 @@ func constructTableColumns(myDataset *bigquery.Dataset, ctx context.Context, com
 
 func constructTableProperties(tables []TableColumns) ([]*structpb.Struct, error) {
 	tableProperties := make([]*structpb.Struct, len(tables))
+	transformer := base.InstillDynamicFormatTransformer{}
 
 	for idx, table := range tables {
 		propertiesMap := make(map[string]interface{})
 		for idx, column := range table.Columns {
-			propertiesMap[column.Name] = map[string]interface{}{
+			kebabCaseColumnName := transformer.ConvertToKebab(column.Name)
+			propertiesMap[kebabCaseColumnName] = map[string]interface{}{
 				"title":                column.Name,
 				"instillUIOrder":       idx,
 				"description":          "Column " + column.Name + " of table " + table.TableName,

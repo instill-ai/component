@@ -2,7 +2,9 @@ package base
 
 import (
 	"encoding/base64"
+	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/santhosh-tekuri/jsonschema/v5"
@@ -196,4 +198,40 @@ func CompileInstillFormat(sch *structpb.Struct) error {
 func TrimBase64Mime(b64 string) string {
 	splitB64 := strings.Split(b64, ",")
 	return splitB64[len(splitB64)-1]
+}
+
+type InstillDynamicFormatTransformer struct{}
+
+func (InstillDynamicFormatTransformer) ConvertToKebab(str string) string {
+	if strings.Index(str, "_") >= 0 {
+		re := regexp.MustCompile(`_`)
+		return strings.ToLower(re.ReplaceAllString(str, "-"))
+	} else if containsCapital(str) {
+		return camelToKebab(str)
+	}
+	return str
+}
+
+func containsCapital(s string) bool {
+	for _, r := range s {
+		if unicode.IsUpper(r) {
+			return true
+		}
+	}
+	return false
+}
+
+func camelToKebab(s string) string {
+	var result strings.Builder
+	for i, r := range s {
+		if unicode.IsUpper(r) {
+			if i != 0 {
+				result.WriteRune('-')
+			}
+			result.WriteRune(unicode.ToLower(r))
+		} else {
+			result.WriteRune(r)
+		}
+	}
+	return result.String()
 }
