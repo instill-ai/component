@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.1-beta](https://github.com/instill-ai/component/compare/v0.19.0-beta...v0.19.1-beta) (2024-06-13)
+
+
+### Bug Fixes
+
+* fix component document links ([#159](https://github.com/instill-ai/component/issues/159)) ([fd38a8b](https://github.com/instill-ai/component/commit/fd38a8bfa2954c7818d79e94b7658c5ad7f2c4b5))
+
 ## [0.19.0-beta](https://github.com/instill-ai/component/compare/v0.18.0-beta...v0.19.0-beta) (2024-06-05)
 
 
