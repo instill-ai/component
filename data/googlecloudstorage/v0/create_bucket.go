@@ -2,7 +2,6 @@ package googlecloudstorage
 
 import (
 	"context"
-	"fmt"
 
 	"cloud.google.com/go/storage"
 )
@@ -28,12 +27,9 @@ func createBucket(input CreateBucketInput, client *storage.Client, ctx context.C
 		Location: input.Location,
 	}
 
-	fmt.Println("Creating bucket with name: ", input.BucketName)
 	if err := bkt.Create(ctx, input.ProjectID, &attr); err != nil {
-		fmt.Println("Error creating bucket: ", err)
 		return output, err
 	}
-
 
 	newBktAttrs, err := bkt.Attrs(ctx)
 	if err != nil {
