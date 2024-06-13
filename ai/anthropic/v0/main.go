@@ -102,9 +102,9 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 			contents := []content{}
 			for _, cn := range el.GetStructValue().Fields["content"].GetListValue().GetValues() {
 
-				content_type := cn.GetStructValue().Fields["type"].GetStringValue()
+				contentType := cn.GetStructValue().Fields["type"].GetStringValue()
 				// anthrothpic models does not support image urls
-				if content_type == "text" {
+				if contentType == "text" {
 					content := content{
 						Type: "text",
 						Text: cn.GetStructValue().Fields["text"].GetStringValue(),
@@ -120,7 +120,7 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		}
 	}
 
-	final_message := message{
+	finalMessage := message{
 		Role:    "user",
 		Content: []content{{Type: "text", Text: prompt}},
 	}
@@ -132,11 +132,11 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 				Type:   "image",
 				Source: &source{Type: "base64", MediaType: "image/jpeg", Data: base.TrimBase64Mime(image.GetStringValue())},
 			}
-			final_message.Content = append(final_message.Content, image)
+			finalMessage.Content = append(finalMessage.Content, image)
 		}
 	}
 
-	messages = append(messages, final_message)
+	messages = append(messages, finalMessage)
 
 	body := messagesReq{
 		Messages:    messages,
