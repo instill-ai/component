@@ -244,6 +244,7 @@ func constructTableColumns(myDataset *bigquery.Dataset, ctx context.Context, com
 		}
 
 		// TODO: chuang8511, remove table from definition.json and make it dynamic.
+		// It will be changed before 2024-06-26.
 		if compConfig.Setup["table_name"].(string) == tableName {
 			tables = append(tables, TableColumns{TableName: tableName, Columns: columns})
 		}
