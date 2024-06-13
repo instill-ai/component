@@ -61,10 +61,6 @@ func NewClient(jsonKey string) (*storage.Client, error) {
 	return storage.NewClient(context.Background(), option.WithCredentialsJSON([]byte(jsonKey)))
 }
 
-func getBucketName(setup *structpb.Struct) string {
-	return setup.GetFields()["bucket-name"].GetStringValue()
-}
-
 func getJSONKey(setup *structpb.Struct) string {
 	return setup.GetFields()["json-key"].GetStringValue()
 }
