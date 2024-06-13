@@ -107,11 +107,11 @@ func TestComponent_Test(t *testing.T) {
 			fmt.Fprintln(w, errResp)
 		})
 
-		openAIServer := httptest.NewServer(h)
-		c.Cleanup(openAIServer.Close)
+		anthropicServer := httptest.NewServer(h)
+		c.Cleanup(anthropicServer.Close)
 
 		_, err := structpb.NewStruct(map[string]any{
-			"base_path": openAIServer.URL,
+			"base_path": anthropicServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 	})
@@ -141,11 +141,11 @@ func TestComponent_Test(t *testing.T) {
 			fmt.Fprintln(w, `{"data": [{}]}`)
 		})
 
-		openAIServer := httptest.NewServer(h)
-		c.Cleanup(openAIServer.Close)
+		anthropicServer := httptest.NewServer(h)
+		c.Cleanup(anthropicServer.Close)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base_path": openAIServer.URL,
+			"base_path": anthropicServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
