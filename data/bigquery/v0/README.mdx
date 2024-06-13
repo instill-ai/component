@@ -9,6 +9,7 @@ The BigQuery component is a data component that allows users to insert data to B
 It can carry out the following tasks:
 
 - [Insert](#insert)
+- [Read](#read)
 
 ## Release Stage
 
@@ -36,8 +37,21 @@ Insert data to BigQuery.
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_INSERT` |
-| Data (required) | `data` | object | The data to be inserted to BigQuery |
+| Data | `data` | object | The data to be inserted to BigQuery |
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Status of the upload operation |
+
+### Read
+
+Read data from BigQuery.
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_READ` |
+| Filtering | `filtering` | string | The filter to be applied to the data, please start with where clause |
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Data | `data` | array[object] | The data to be read from BigQuery |
