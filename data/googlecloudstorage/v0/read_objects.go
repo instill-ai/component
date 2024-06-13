@@ -69,9 +69,8 @@ type Attributes struct {
 	StorageClass       string            `json:"storage-class"`
 }
 
-func readObjects(input ReadInput, client *storage.Client) (ReadOutput, error) {
+func readObjects(input ReadInput, client *storage.Client, ctx context.Context) (ReadOutput, error) {
 	bucketName := input.BucketName
-	ctx := context.Background()
 	query := &storage.Query{
 		Delimiter:                input.Delimiter,
 		Prefix:                   input.Prefix,

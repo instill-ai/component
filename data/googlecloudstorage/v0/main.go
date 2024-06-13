@@ -15,8 +15,9 @@ import (
 )
 
 const (
-	taskUpload      = "TASK_UPLOAD"
-	taskReadObjects = "TASK_READ_OBJECTS"
+	taskUpload       = "TASK_UPLOAD"
+	taskReadObjects  = "TASK_READ_OBJECTS"
+	taskCreateBucket = "TASK_CREATE_BUCKET"
 )
 
 //go:embed config/definition.json
@@ -117,12 +118,29 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 			if err != nil {
 				return nil, err
 			}
-			outputStruct, err := readObjects(inputStruct, client)
+			outputStruct, err := readObjects(inputStruct, client, ctx)
 			if err != nil {
 				return nil, err
 			}
 			output, err = base.ConvertToStructpb(outputStruct)
 
+			if err != nil {
+				return nil, err
+			}
+
+		case taskCreateBucket:
+			inputStruct := CreateBucketInput{}
+			err := base.ConvertFromStructpb(input, &inputStruct)
+			if err != nil {
+				return nil, err
+			}
+
+			outputStruct, err := createBucket(inputStruct, client, ctx)
+			if err != nil {
+				return nil, err
+			}
+
+			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
 				return nil, err
 			}

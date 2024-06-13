@@ -4,7 +4,8 @@
     "bucket-name": {
       "description": "Name of the bucket to be used for object storage.",
       "instillUpstreamTypes": [
-        "value"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"
@@ -437,6 +438,80 @@
             "title": "Object",
             "type": "object"
           }
+        }
+      },
+      "required": [],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_BUCKET": {
+    "instillShortDescription": "Read objects from Google Cloud Storage.",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+       "bucket-name": {
+          "$ref": "#/$defs/bucket-name"
+        },
+        "project-id": {
+          "description": "The project ID to create the bucket in",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Project ID",
+          "type": "string"
+        },
+        "location": {
+          "description": "The location to create the bucket in",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket-name",
+        "project-id"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "result": {
+          "description": "The result of the operation",
+          "instillFormat": "string",
+          "instillUIOrder": 0,
+          "title": "Result",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the bucket",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Bucket Name",
+          "type": "string"
+        },
+        "location": {
+          "description": "The location of the bucket",
+          "instillFormat": "string",
+          "instillUIOrder": 2,
+          "title": "Location",
+          "type": "string"
         }
       },
       "required": [],
