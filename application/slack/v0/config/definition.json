@@ -4,7 +4,7 @@
     "TASK_WRITE_MESSAGE"
   ],
   "custom": false,
-  "documentation_url": "",
+  "documentation_url": "https://www.instill.tech/docs/component/application/slack",
   "icon": "assets/slack.svg",
   "icon_url": "",
   "id": "slack",

@@ -5,7 +5,7 @@
     "TASK_UPLOAD_FILE"
   ],
   "custom": false,
-  "documentation_url": "",
+  "documentation_url": "https://www.instill.tech/docs/component/ai/archetypeai",
   "icon": "assets/archetype-ai.svg",
   "icon_url": "",
   "id": "archetype-ai",
