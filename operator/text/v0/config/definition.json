@@ -5,7 +5,7 @@
     "TASK_CHUNK_TEXT"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/text",
+  "documentation_url": "https://www.instill.tech/docs/component/operator/text",
   "icon": "assets/text.svg",
   "icon_url": "",
   "id": "text",

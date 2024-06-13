@@ -7,7 +7,7 @@
     "TASK_TEXT_TO_IMAGE"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/openai",
+  "documentation_url": "https://www.instill.tech/docs/component/ai/openai",
   "icon": "assets/openai.svg",
   "icon_url": "",
   "id": "openai",

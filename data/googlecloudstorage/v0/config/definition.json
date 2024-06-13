@@ -3,7 +3,7 @@
     "TASK_UPLOAD"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/googlecloudstorage",
+  "documentation_url": "https://www.instill.tech/docs/component/data/googlecloudstorage",
   "icon": "assets/gcs.svg",
   "icon_url": "",
   "id": "gcs",

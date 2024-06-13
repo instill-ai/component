@@ -9,7 +9,7 @@
     "TASK_OPTIONS"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/restapi",
+  "documentation_url": "https://www.instill.tech/docs/component/application/restapi",
   "icon": "assets/restapi.svg",
   "icon_url": "",
   "id": "restapi",

@@ -4,7 +4,7 @@
     "TASK_DECODE"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/base64",
+  "documentation_url": "https://www.instill.tech/docs/component/operator/base64",
   "icon": "assets/base64.svg",
   "icon_url": "",
   "id": "base64",
