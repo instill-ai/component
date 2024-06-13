@@ -3,7 +3,7 @@
     "TASK_REGISTER"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/app-connectors/numbers",
+  "documentation_url": "https://www.instill.tech/docs/component/application/numbers",
   "icon": "assets/numbers.svg",
   "icon_url": "",
   "id": "numbers",

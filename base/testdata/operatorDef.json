@@ -5,7 +5,7 @@
     "TASK_MARSHAL"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/json",
+  "documentation_url": "https://www.instill.tech/docs/component/operator/json",
   "icon": "Instill AI/json.svg",
   "icon_url": "",
   "id": "json",

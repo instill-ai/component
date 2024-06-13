@@ -3,7 +3,7 @@
     "TASK_SCRAPE_WEBSITE"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/data-connectors/website",
+  "documentation_url": "https://www.instill.tech/docs/component/application/website",
   "icon": "assets/website.svg",
   "icon_url": "",
   "id": "website",

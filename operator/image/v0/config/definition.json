@@ -8,7 +8,7 @@
     "TASK_DRAW_SEMANTIC_SEGMENTATION"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/image",
+  "documentation_url": "https://www.instill.tech/docs/component/operator/image",
   "icon": "assets/image.svg",
   "icon_url": "",
   "id": "image",

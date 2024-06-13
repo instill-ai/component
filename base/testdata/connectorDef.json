@@ -5,7 +5,7 @@
     "TASK_TEXT_EMBEDDINGS"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/openai",
+  "documentation_url": "https://www.instill.tech/docs/component/ai/openai",
   "icon": "OpenAI/openai.svg",
   "id": "openai",
   "public": true,

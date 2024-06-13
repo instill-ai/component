@@ -3,7 +3,7 @@
     "TASK_CONVERT_TO_MARKDOWN"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/document",
+  "documentation_url": "https://www.instill.tech/docs/component/operator/document",
   "icon": "assets/document.svg",
   "id": "document",
   "public": true,

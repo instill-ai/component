@@ -279,7 +279,7 @@ component.
     "TASK_GREET"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/operators/hello",
+  "documentation_url": "https://www.instill.tech/docs/component/operator/hello",
   "icon": "assets/hello.svg",
   "id": "hello",
   "public": true,

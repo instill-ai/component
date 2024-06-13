@@ -3,7 +3,7 @@
   "uid": "9fb6a2cb-bff5-4c69-bc6d-4538dd8e3362",
   "id": "openai",
   "title": "OpenAI",
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/openai",
+  "documentation_url": "https://www.instill.tech/docs/component/ai/openai",
   "icon": "OpenAI/openai.svg",
   "spec": {
     "component_specification": {
