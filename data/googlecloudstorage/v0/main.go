@@ -78,11 +78,11 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 	defer client.Close()
 	for _, input := range inputs {
 		var output *structpb.Struct
+		bucketName := input.GetFields()["bucket-name"].GetStringValue()
 		switch e.Task {
 		case taskUpload, "":
 			objectName := input.GetFields()["object-name"].GetStringValue()
 			data := input.GetFields()["data"].GetStringValue()
-			bucketName := getBucketName(e.Setup)
 			err = uploadToGCS(client, bucketName, objectName, data)
 			if err != nil {
 				return nil, err
@@ -110,7 +110,7 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 
 		case taskReadObjects:
 			inputStruct := ReadInput{
-				BucketName: getBucketName(e.Setup),
+				BucketName: bucketName,
 			}
 
 			err := base.ConvertFromStructpb(input, &inputStruct)

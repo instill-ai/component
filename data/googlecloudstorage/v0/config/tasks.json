@@ -1,6 +1,19 @@
 
 {
   "$defs": {
+    "bucket-name": {
+      "description": "Name of the bucket to be used for object storage.",
+      "instillUpstreamTypes": [
+        "value"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": false,
+      "instillUIOrder": 0,
+      "title": "Bucket Name",
+      "type": "string"
+    },
     "data": {
       "description": "The data of the object",
       "instillUIOrder": 0,
@@ -98,6 +111,9 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "bucket-name": {
+          "$ref": "#/$defs/bucket-name"
+        },
         "data": {
           "description": "The data to be saved in the object",
           "instillAcceptFormats": [
@@ -128,6 +144,7 @@
       },
       "required": [
         "object-name",
+        "bucket-name",
         "data"
       ],
       "title": "Input",
@@ -186,6 +203,9 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "bucket-name": {
+          "$ref": "#/$defs/bucket-name"
+        },
         "delimiter": {
           "description": "The delimiter to use when listing objects",
           "instillAcceptFormats": [
@@ -300,6 +320,7 @@
         }
       },
       "required": [
+        "bucket-name"
       ],
       "title": "Input",
       "type": "object"
