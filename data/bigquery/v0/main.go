@@ -99,6 +99,7 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 			if err != nil {
 				return nil, err
 			}
+			fmt.Println("input", input)
 			valueSaver, err := getDataSaver(input, metaData.Schema)
 			if err != nil {
 				return nil, err
