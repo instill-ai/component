@@ -203,7 +203,7 @@ func TrimBase64Mime(b64 string) string {
 type InstillDynamicFormatTransformer struct{}
 
 func (InstillDynamicFormatTransformer) ConvertToKebab(str string) string {
-	if strings.Index(str, "_") >= 0 {
+	if strings.Contains(str, "_") {
 		re := regexp.MustCompile(`_`)
 		return strings.ToLower(re.ReplaceAllString(str, "-"))
 	} else if containsCapital(str) {
