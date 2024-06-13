@@ -23,38 +23,50 @@ type ReadInput struct {
 }
 
 type ReadOutput struct {
-	TextObjects     []TextObject
-	ImageObjects    []ImageObject
-	DocumentObjects []DocumentObject
+	TextObjects     []TextObject     `json:"text-objects"`
+	ImageObjects    []ImageObject    `json:"image-objects"`
+	DocumentObjects []DocumentObject `json:"document-objects"`
+	AudioObjects    []AudioObject    `json:"audio-objects"`
+	VideoObjects    []VideoObject    `json:"video-objects"`
 }
 
 type TextObject struct {
-	Data       string
-	Attributes Attributes
+	Data       string     `json:"data"`
+	Attributes Attributes `json:"attributes"`
 }
 
 type ImageObject struct {
-	Data       string
-	Attributes Attributes
+	Data       string     `json:"data"`
+	Attributes Attributes `json:"attributes"`
 }
 
 type DocumentObject struct {
-	Data       string
-	Attributes Attributes
+	Data       string     `json:"data"`
+	Attributes Attributes `json:"attributes"`
+}
+
+type AudioObject struct {
+	Data       string     `json:"data"`
+	Attributes Attributes `json:"attributes"`
+}
+
+type VideoObject struct {
+	Data       string     `json:"data"`
+	Attributes Attributes `json:"attributes"`
 }
 
 type Attributes struct {
-	Name               string
-	ContentType        string
-	ContentLanguage    string
-	Owner              string
-	Size               int64
-	ContentEncoding    string
-	ContentDisposition string
-	MD5                []byte
-	MediaLink          string
-	Metadata           map[string]string
-	StorageClass       string
+	Name               string            `json:"name"`
+	ContentType        string            `json:"content-type"`
+	ContentLanguage    string            `json:"content-language"`
+	Owner              string            `json:"owner"`
+	Size               int64             `json:"size"`
+	ContentEncoding    string            `json:"content-encoding"`
+	ContentDisposition string            `json:"content-disposition"`
+	MD5                []byte            `json:"md5"`
+	MediaLink          string            `json:"media-link"`
+	Metadata           map[string]string `json:"metadata"`
+	StorageClass       string            `json:"storage-class"`
 }
 
 func readObjects(input ReadInput, client *storage.Client) (ReadOutput, error) {
@@ -77,7 +89,10 @@ func readObjects(input ReadInput, client *storage.Client) (ReadOutput, error) {
 		TextObjects:     []TextObject{},
 		ImageObjects:    []ImageObject{},
 		DocumentObjects: []DocumentObject{},
+		AudioObjects:    []AudioObject{},
+		VideoObjects:    []VideoObject{},
 	}
+
 	for {
 		attrs, err := it.Next()
 
@@ -111,6 +126,10 @@ func readObjects(input ReadInput, client *storage.Client) (ReadOutput, error) {
 			StorageClass:       attrs.StorageClass,
 		}
 
+		if attrs.Metadata == nil {
+			attribute.Metadata = map[string]string{}
+		}
+
 		if strings.Contains(attrs.ContentType, "text") {
 			textObject := TextObject{
 				Data:       string(b),
@@ -123,7 +142,19 @@ func readObjects(input ReadInput, client *storage.Client) (ReadOutput, error) {
 				Attributes: attribute,
 			}
 			output.ImageObjects = append(output.ImageObjects, imageObject)
-		} else { // TODO chuang8511: discuss with reviewer what types should we specify here?
+		} else if strings.Contains(attrs.ContentType, "audio") {
+			audioObject := AudioObject{
+				Data:       string(b),
+				Attributes: attribute,
+			}
+			output.AudioObjects = append(output.AudioObjects, audioObject)
+		} else if strings.Contains(attrs.ContentType, "video") {
+			videoObject := VideoObject{
+				Data:       string(b),
+				Attributes: attribute,
+			}
+			output.VideoObjects = append(output.VideoObjects, videoObject)
+		} else {
 			documentObject := DocumentObject{
 				Data:       string(b),
 				Attributes: attribute,
@@ -131,6 +162,5 @@ func readObjects(input ReadInput, client *storage.Client) (ReadOutput, error) {
 			output.DocumentObjects = append(output.DocumentObjects, documentObject)
 		}
 	}
-
 	return output, nil
 }

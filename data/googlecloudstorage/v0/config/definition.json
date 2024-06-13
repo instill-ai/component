@@ -1,6 +1,7 @@
 {
   "availableTasks": [
-    "TASK_UPLOAD"
+    "TASK_UPLOAD",
+    "TASK_READ_OBJECTS"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/data/googlecloudstorage",
