@@ -75,20 +75,20 @@ type Meta struct {
 }
 
 type Register struct {
-	Caption         *string       `json:"caption,omitempty"`
-	Headline        *string       `json:"headline,omitempty"`
-	NITCommitCustom *CommitCustom `json:"nit_commit_custom,omitempty"`
+	Caption         *string
+	Headline        *string
+	NITCommitCustom *CommitCustom
 	Meta
 }
 
 type Input struct {
 	Images            []string `json:"images"`
-	AssetCreator      *string  `json:"asset_creator,omitempty"`
+	AssetCreator      *string  `json:"asset-creator,omitempty"`
 	Caption           *string  `json:"caption,omitempty"`
 	Headline          *string  `json:"headline,omitempty"`
-	DigitalSourceType *string  `json:"digital_source_type,omitempty"`
-	MiningPreference  *string  `json:"mining_preference,omitempty"`
-	GeneratedBy       *string  `json:"generated_by,omitempty"`
+	DigitalSourceType *string  `json:"digital-source-type,omitempty"`
+	MiningPreference  *string  `json:"mining-preference,omitempty"`
+	GeneratedBy       *string  `json:"generated-by,omitempty"`
 	License           *struct {
 		Name     *string `json:"name,omitempty"`
 		Document *string `json:"document,omitempty"`
@@ -96,7 +96,7 @@ type Input struct {
 }
 
 type Output struct {
-	AssetUrls []string `json:"asset_urls"`
+	AssetUrls []string `json:"asset-urls"`
 }
 
 func Init(bc base.Component) *component {
@@ -117,7 +117,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 }
 
 func getToken(setup *structpb.Struct) string {
-	return fmt.Sprintf("token %s", setup.GetFields()["capture_token"].GetStringValue())
+	return fmt.Sprintf("token %s", setup.GetFields()["capture-token"].GetStringValue())
 }
 
 func (e *execution) registerAsset(data []byte, reg Register) (string, error) {

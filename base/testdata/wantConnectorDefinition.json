@@ -173,6 +173,7 @@
           "properties": {
             "embedding": {
               "instillUIOrder": 0,
+              "instillFormat": "array:number",
               "items": {
                 "description": "",
                 "instillFormat": "number",

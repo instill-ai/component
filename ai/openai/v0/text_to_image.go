@@ -15,7 +15,7 @@ type ImagesGenerationInput struct {
 
 type ImageGenerationsOutputResult struct {
 	Image         string `json:"image"`
-	RevisedPrompt string `json:"revised_prompt"`
+	RevisedPrompt string `json:"revised-prompt"`
 }
 type ImageGenerationsOutput struct {
 	Results []ImageGenerationsOutputResult `json:"results"`

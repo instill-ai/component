@@ -34,14 +34,14 @@ func (e *execution) convertLLMInput(input *structpb.Struct) *LLMInput {
 		Prompt: input.GetFields()["prompt"].GetStringValue(),
 	}
 
-	if _, ok := input.GetFields()["system_message"]; ok {
-		v := input.GetFields()["system_message"].GetStringValue()
+	if _, ok := input.GetFields()["system-message"]; ok {
+		v := input.GetFields()["system-message"].GetStringValue()
 		llmInput.SystemMessage = &v
 	}
 
-	if _, ok := input.GetFields()["prompt_images"]; ok {
+	if _, ok := input.GetFields()["prompt-images"]; ok {
 		promptImages := []*modelPB.PromptImage{}
-		for _, item := range input.GetFields()["prompt_images"].GetListValue().GetValues() {
+		for _, item := range input.GetFields()["prompt-images"].GetListValue().GetValues() {
 			image := &modelPB.PromptImage{}
 			image.Type = &modelPB.PromptImage_PromptImageBase64{
 				PromptImageBase64: base.TrimBase64Mime(item.GetStringValue()),
@@ -51,9 +51,9 @@ func (e *execution) convertLLMInput(input *structpb.Struct) *LLMInput {
 		llmInput.PromptImages = promptImages
 	}
 
-	if _, ok := input.GetFields()["chat_history"]; ok {
+	if _, ok := input.GetFields()["chat-history"]; ok {
 		history := []*modelPB.Message{}
-		for _, item := range input.GetFields()["chat_history"].GetListValue().GetValues() {
+		for _, item := range input.GetFields()["chat-history"].GetListValue().GetValues() {
 			contents := []*modelPB.MessageContent{}
 			for _, contentItem := range item.GetStructValue().Fields["content"].GetListValue().GetValues() {
 				t := contentItem.GetStructValue().Fields["type"].GetStringValue()
@@ -67,7 +67,7 @@ func (e *execution) convertLLMInput(input *structpb.Struct) *LLMInput {
 				} else {
 					image := &modelPB.PromptImage{}
 					image.Type = &modelPB.PromptImage_PromptImageBase64{
-						PromptImageBase64: contentItem.GetStructValue().Fields["image_url"].GetStructValue().Fields["url"].GetStringValue(),
+						PromptImageBase64: contentItem.GetStructValue().Fields["image-url"].GetStructValue().Fields["url"].GetStringValue(),
 					}
 					content.Content = &modelPB.MessageContent_ImageUrl{
 						ImageUrl: &modelPB.ImageContent{
@@ -106,24 +106,24 @@ func (e *execution) convertLLMInput(input *structpb.Struct) *LLMInput {
 		llmInput.ChatHistory = history
 	}
 
-	if _, ok := input.GetFields()["max_new_tokens"]; ok {
-		v := int32(input.GetFields()["max_new_tokens"].GetNumberValue())
+	if _, ok := input.GetFields()["max-new-tokens"]; ok {
+		v := int32(input.GetFields()["max-new-tokens"].GetNumberValue())
 		llmInput.MaxNewTokens = &v
 	}
 	if _, ok := input.GetFields()["temperature"]; ok {
 		v := float32(input.GetFields()["temperature"].GetNumberValue())
 		llmInput.Temperature = &v
 	}
-	if _, ok := input.GetFields()["top_k"]; ok {
-		v := int32(input.GetFields()["top_k"].GetNumberValue())
+	if _, ok := input.GetFields()["top-k"]; ok {
+		v := int32(input.GetFields()["top-k"].GetNumberValue())
 		llmInput.TopK = &v
 	}
 	if _, ok := input.GetFields()["seed"]; ok {
 		v := int32(input.GetFields()["seed"].GetNumberValue())
 		llmInput.Seed = &v
 	}
-	if _, ok := input.GetFields()["extra_params"]; ok {
-		v := input.GetFields()["extra_params"].GetStructValue()
+	if _, ok := input.GetFields()["extra-params"]; ok {
+		v := input.GetFields()["extra-params"].GetStructValue()
 		llmInput.ExtraParams = v
 	}
 	return llmInput

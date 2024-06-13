@@ -17,32 +17,32 @@ type Strategy struct {
 }
 
 type Setting struct {
-	ChunkMethod       string   `json:"chunk_method,omitempty"`
-	ChunkSize         int      `json:"chunk_size,omitempty"`
-	ChunkOverlap      int      `json:"chunk_overlap,omitempty"`
-	ModelName         string   `json:"model_name,omitempty"`
-	EncodingName      string   `json:"encoding_name,omitempty"`
-	AllowedSpecial    []string `json:"allowed_special,omitempty"`
-	DisallowedSpecial []string `json:"disallowed_special,omitempty"`
+	ChunkMethod       string   `json:"chunk-method,omitempty"`
+	ChunkSize         int      `json:"chunk-size,omitempty"`
+	ChunkOverlap      int      `json:"chunk-overlap,omitempty"`
+	ModelName         string   `json:"model-name,omitempty"`
+	EncodingName      string   `json:"encoding-name,omitempty"`
+	AllowedSpecial    []string `json:"allowed-special,omitempty"`
+	DisallowedSpecial []string `json:"disallowed-special,omitempty"`
 	Separators        []string `json:"separators,omitempty"`
-	KeepSeparator     bool     `json:"keep_separator,omitempty"`
-	CodeBlocks        bool     `json:"code_blocks,omitempty"`
-	ReferenceLinks    bool     `json:"reference_links,omitempty"`
+	KeepSeparator     bool     `json:"keep-separator,omitempty"`
+	CodeBlocks        bool     `json:"code-blocks,omitempty"`
+	ReferenceLinks    bool     `json:"reference-links,omitempty"`
 	// TODO: Add SecondSplitter, which is to set the details about how to chunk the paragraphs in Markdown format.
 	// https://pkg.go.dev/github.com/tmc/langchaingo@v0.1.10/textsplitter#MarkdownTextSplitter
 	// secondSplitter textsplitter.TextSplitter
 }
 
 type ChunkTextOutput struct {
-	ChunkNum   int         `json:"chunk_num"`
-	TextChunks []TextChunk `json:"text_chunks"`
-	TokenCount int         `json:"token_count,omitempty"`
+	ChunkNum   int         `json:"chunk-num"`
+	TextChunks []TextChunk `json:"text-chunks"`
+	TokenCount int         `json:"token-count,omitempty"`
 }
 
 type TextChunk struct {
 	Text          string `json:"text"`
-	StartPosition int    `json:"start_position,omitempty"`
-	EndPosition   int    `json:"end_position,omitempty"`
+	StartPosition int    `json:"start-position,omitempty"`
+	EndPosition   int    `json:"end-position,omitempty"`
 }
 
 func (s *Setting) SetDefault() {

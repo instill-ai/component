@@ -19,7 +19,7 @@ const (
 	TextToImageTask  = "TASK_TEXT_TO_IMAGE"
 	ImageToImageTask = "TASK_IMAGE_TO_IMAGE"
 
-	cfgAPIKey = "api_key"
+	cfgAPIKey = "api-key"
 )
 
 var (

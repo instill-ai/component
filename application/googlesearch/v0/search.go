@@ -32,13 +32,13 @@ type SearchInput struct {
 	Query string `json:"query"`
 
 	// TopK: The number of search results to return.
-	TopK *int `json:"top_k,omitempty"`
+	TopK *int `json:"top-k,omitempty"`
 
 	// IncludeLinkText: Whether to include the scraped text of the search web page result.
-	IncludeLinkText *bool `json:"include_link_text,omitempty"`
+	IncludeLinkText *bool `json:"include-link-text,omitempty"`
 
 	// IncludeLinkHTML: Whether to include the scraped HTML of the search web page result.
-	IncludeLinkHTML *bool `json:"include_link_html,omitempty"`
+	IncludeLinkHTML *bool `json:"include-link-html,omitempty"`
 }
 
 type Result struct {
@@ -53,10 +53,10 @@ type Result struct {
 	Snippet string `json:"snippet"`
 
 	// LinkText: The scraped text of the search web page result, in plain text.
-	LinkText string `json:"link_text"`
+	LinkText string `json:"link-text"`
 
 	// LinkHTML: The full raw HTML of the search web page result.
-	LinkHTML string `json:"link_html"`
+	LinkHTML string `json:"link-html"`
 }
 
 // SearchOutput defines the output of the search task
@@ -128,7 +128,7 @@ func search(cseListCall *customsearch.CseListCall, input SearchInput) (SearchOut
 		input.TopK = &defaultTopK
 	}
 	if *input.TopK <= 0 || int64(*input.TopK) > MaxResults {
-		return output, fmt.Errorf("top_k must be between 1 and %d", MaxResults)
+		return output, fmt.Errorf("top-k must be between 1 and %d", MaxResults)
 	}
 
 	if input.IncludeLinkHTML == nil {

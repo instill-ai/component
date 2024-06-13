@@ -61,16 +61,16 @@ func NewClient(jsonKey, projectID string) (*bigquery.Client, error) {
 }
 
 func getJSONKey(setup *structpb.Struct) string {
-	return setup.GetFields()["json_key"].GetStringValue()
+	return setup.GetFields()["json-key"].GetStringValue()
 }
 func getProjectID(setup *structpb.Struct) string {
-	return setup.GetFields()["project_id"].GetStringValue()
+	return setup.GetFields()["project-id"].GetStringValue()
 }
 func getDatasetID(setup *structpb.Struct) string {
-	return setup.GetFields()["dataset_id"].GetStringValue()
+	return setup.GetFields()["dataset-id"].GetStringValue()
 }
 func getTableName(setup *structpb.Struct) string {
-	return setup.GetFields()["table_name"].GetStringValue()
+	return setup.GetFields()["table-name"].GetStringValue()
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {

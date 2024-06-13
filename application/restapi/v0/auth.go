@@ -21,7 +21,7 @@ type authentication interface {
 }
 
 type noAuth struct {
-	AuthType authType `json:"auth_type"`
+	AuthType authType `json:"auth-type"`
 }
 
 func (a noAuth) setAuthInClient(_ *httpclient.Client) error {
@@ -29,7 +29,7 @@ func (a noAuth) setAuthInClient(_ *httpclient.Client) error {
 }
 
 type basicAuth struct {
-	AuthType authType `json:"auth_type"`
+	AuthType authType `json:"auth-type"`
 	Username string   `json:"username"`
 	Password string   `json:"password"`
 }
@@ -55,10 +55,10 @@ const (
 )
 
 type apiKeyAuth struct {
-	AuthType     authType     `json:"auth_type"`
+	AuthType     authType     `json:"auth-type"`
 	Key          string       `json:"key"`
 	Value        string       `json:"value"`
-	AuthLocation authLocation `json:"auth_location"`
+	AuthLocation authLocation `json:"auth-location"`
 }
 
 func (a apiKeyAuth) setAuthInClient(c *httpclient.Client) error {
@@ -80,7 +80,7 @@ func (a apiKeyAuth) setAuthInClient(c *httpclient.Client) error {
 }
 
 type bearerTokenAuth struct {
-	AuthType authType `json:"auth_type"`
+	AuthType authType `json:"auth-type"`
 	Token    string   `json:"token"`
 }
 

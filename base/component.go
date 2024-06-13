@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
+
 	"github.com/lestrrat-go/jsref/provider"
 	"go.uber.org/zap"
 	"golang.org/x/text/cases"
@@ -13,6 +14,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	jsoniter "github.com/json-iterator/go"
 
 	"github.com/instill-ai/component/internal/jsonref"
 
@@ -28,6 +31,36 @@ const conditionJSON = `
     "instillUpstreamTypes": ["value", "template"]
 }
 `
+
+type InstillExtension struct {
+	jsoniter.DummyExtension
+}
+
+func (e *InstillExtension) UpdateStructDescriptor(structDescriptor *jsoniter.StructDescriptor) {
+
+	// We use kebab-case for JSON keys in component input and output, while
+	// vendors sometimes use camelCase or snake_case in requests and responses.
+	// This often requires us to write two structs and convert between them.
+	// However, most of the time, they can share the same struct with only
+	// different tags. `jsoniter` is a good tool that can help us manage using
+	// different tags to encode/decode JSON. Here, we implement an extension
+	// where the JSON encoder/decoder will first use the `instill` tag as the
+	// JSON key; if no `instill` tag is present, it will use the default `json`
+	// tag. We'll use jsoniter in `ConvertFromStructpb()` and
+	// `ConvertToStructpb()`.
+
+	for _, v := range structDescriptor.Fields {
+		t := v.Field.Tag()
+		if instill, ok := t.Lookup("instill"); ok {
+			v.FromNames = []string{instill}
+			v.ToNames = []string{instill}
+		}
+	}
+}
+
+func init() {
+	jsoniter.RegisterExtension(&InstillExtension{})
+}
 
 // IComponent is the interface that wraps the basic component methods.
 // All component need to implement this interface.
@@ -88,7 +121,7 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 
 		if _, ok := compSpec.Fields["properties"]; ok {
 			for k, v := range compSpec.Fields["properties"].GetStructValue().AsMap() {
-				s, err := structpb.NewStruct(v.(map[string]interface{}))
+				s, err := structpb.NewStruct(v.(map[string]any))
 				if err != nil {
 					return nil, err
 				}
@@ -102,7 +135,7 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 		}
 		if _, ok := compSpec.Fields["patternProperties"]; ok {
 			for k, v := range compSpec.Fields["patternProperties"].GetStructValue().AsMap() {
-				s, err := structpb.NewStruct(v.(map[string]interface{}))
+				s, err := structpb.NewStruct(v.(map[string]any))
 				if err != nil {
 					return nil, err
 				}
@@ -117,7 +150,7 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 		for _, target := range []string{"allOf", "anyOf", "oneOf"} {
 			if _, ok := compSpec.Fields[target]; ok {
 				for idx, item := range compSpec.Fields[target].GetListValue().AsSlice() {
-					s, err := structpb.NewStruct(item.(map[string]interface{}))
+					s, err := structpb.NewStruct(item.(map[string]any))
 					if err != nil {
 						return nil, err
 					}
@@ -165,7 +198,7 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 			}
 			if v.GetStringValue() == "reference" {
 				item, err := structpb.NewValue(
-					map[string]interface{}{
+					map[string]any{
 						"type":                "string",
 						"pattern":             "^\\{.*\\}$",
 						"instillUpstreamType": "reference",
@@ -178,7 +211,7 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 			}
 			if v.GetStringValue() == "template" {
 				item, err := structpb.NewValue(
-					map[string]interface{}{
+					map[string]any{
 						"type":                "string",
 						"instillUpstreamType": "template",
 					},
@@ -250,7 +283,7 @@ func generateComponentSpec(title string, tasks []*pb.ComponentTask, taskStructs 
 		oneOf.Fields["type"] = structpb.NewStringValue("object")
 		oneOf.Fields["properties"] = structpb.NewStructValue(&structpb.Struct{Fields: make(map[string]*structpb.Value)})
 
-		oneOf.Fields["properties"].GetStructValue().Fields["task"], err = structpb.NewValue(map[string]interface{}{
+		oneOf.Fields["properties"].GetStructValue().Fields["task"], err = structpb.NewValue(map[string]any{
 			"const": task.Name,
 			"title": task.Title,
 		})
@@ -336,7 +369,7 @@ func formatDataSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
 
 		if _, ok := compSpec.Fields["properties"]; ok {
 			for k, v := range compSpec.Fields["properties"].GetStructValue().AsMap() {
-				s, err := structpb.NewStruct(v.(map[string]interface{}))
+				s, err := structpb.NewStruct(v.(map[string]any))
 				if err != nil {
 					return nil, err
 				}
@@ -350,7 +383,7 @@ func formatDataSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
 		}
 		if _, ok := compSpec.Fields["patternProperties"]; ok {
 			for k, v := range compSpec.Fields["patternProperties"].GetStructValue().AsMap() {
-				s, err := structpb.NewStruct(v.(map[string]interface{}))
+				s, err := structpb.NewStruct(v.(map[string]any))
 				if err != nil {
 					return nil, err
 				}
@@ -365,7 +398,7 @@ func formatDataSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
 		for _, target := range []string{"allOf", "anyOf", "oneOf"} {
 			if _, ok := compSpec.Fields[target]; ok {
 				for idx, item := range compSpec.Fields[target].GetListValue().AsSlice() {
-					s, err := structpb.NewStruct(item.(map[string]interface{}))
+					s, err := structpb.NewStruct(item.(map[string]any))
 					if err != nil {
 						return nil, err
 					}
@@ -430,7 +463,7 @@ func loadTasks(availableTasks []string, tasksJSONBytes []byte) ([]*pb.ComponentT
 	taskStructs := map[string]*structpb.Struct{}
 	var err error
 
-	tasksJSONMap := map[string]map[string]interface{}{}
+	tasksJSONMap := map[string]map[string]any{}
 	err = json.Unmarshal(tasksJSONBytes, &tasksJSONMap)
 	if err != nil {
 		return nil, nil, err
@@ -450,13 +483,13 @@ func loadTasks(availableTasks []string, tasksJSONBytes []byte) ([]*pb.ComponentT
 }
 
 // ConvertFromStructpb converts from structpb.Struct to a struct
-func ConvertFromStructpb(from *structpb.Struct, to interface{}) error {
+func ConvertFromStructpb(from *structpb.Struct, to any) error {
 	inputJSON, err := protojson.Marshal(from)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(inputJSON, to)
+	err = jsoniter.Unmarshal(inputJSON, to)
 	if err != nil {
 		return err
 	}
@@ -464,9 +497,10 @@ func ConvertFromStructpb(from *structpb.Struct, to interface{}) error {
 }
 
 // ConvertToStructpb converts from a struct to structpb.Struct
-func ConvertToStructpb(from interface{}) (*structpb.Struct, error) {
+func ConvertToStructpb(from any) (*structpb.Struct, error) {
 	to := &structpb.Struct{}
-	outputJSON, err := json.Marshal(from)
+
+	outputJSON, err := jsoniter.Marshal(from)
 	if err != nil {
 		return nil, err
 	}
@@ -482,7 +516,7 @@ func RenderJSON(tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) ([
 	var err error
 	mp := provider.NewMap()
 	for k, v := range additionalJSONBytes {
-		var i interface{}
+		var i any
 		err = json.Unmarshal(v, &i)
 		if err != nil {
 			return nil, err
@@ -502,7 +536,7 @@ func RenderJSON(tasksJSONBytes []byte, additionalJSONBytes map[string][]byte) ([
 		return nil, err
 	}
 
-	var tasksJSON interface{}
+	var tasksJSON any
 	err = json.Unmarshal(tasksJSONBytes, &tasksJSON)
 	if err != nil {
 		return nil, err
@@ -577,11 +611,11 @@ func (c *Component) LoadDefinition(definitionJSONBytes, setupJSONBytes, tasksJSO
 	}
 	renderedTasksJSON, err := RenderJSON(tasksJSONBytes, additionalJSONBytes)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	availableTasks := []string{}
-	for _, availableTask := range definitionJSON.(map[string]interface{})["availableTasks"].([]interface{}) {
+	for _, availableTask := range definitionJSON.(map[string]any)["availableTasks"].([]any) {
 		availableTasks = append(availableTasks, availableTask.(string))
 	}
 
@@ -666,7 +700,7 @@ func (c *Component) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb
 
 	if _, ok := spec.Fields["properties"]; ok {
 		for k, v := range spec.Fields["properties"].GetStructValue().AsMap() {
-			s, err := structpb.NewStruct(v.(map[string]interface{}))
+			s, err := structpb.NewStruct(v.(map[string]any))
 			if err != nil {
 				return nil, err
 			}
@@ -680,7 +714,7 @@ func (c *Component) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb
 	}
 	if _, ok := spec.Fields["patternProperties"]; ok {
 		for k, v := range spec.Fields["patternProperties"].GetStructValue().AsMap() {
-			s, err := structpb.NewStruct(v.(map[string]interface{}))
+			s, err := structpb.NewStruct(v.(map[string]any))
 			if err != nil {
 				return nil, err
 			}
@@ -695,7 +729,7 @@ func (c *Component) refineResourceSpec(resourceSpec *structpb.Struct) (*structpb
 	for _, target := range []string{"allOf", "anyOf", "oneOf"} {
 		if _, ok := spec.Fields[target]; ok {
 			for idx, item := range spec.Fields[target].GetListValue().AsSlice() {
-				s, err := structpb.NewStruct(item.(map[string]interface{}))
+				s, err := structpb.NewStruct(item.(map[string]any))
 				if err != nil {
 					return nil, err
 				}
@@ -822,7 +856,7 @@ func (e *ComponentExecution) UsageHandlerCreator() UsageHandlerCreator {
 // so we can't use the parameter key directly.
 // TODO using camelCase in configuration fields would fix this issue.
 func ReadFromSecrets(key string, secrets map[string]any) string {
-	sanitized := strings.ReplaceAll(key, "_", "")
+	sanitized := strings.ReplaceAll(key, "-", "")
 	if v, ok := secrets[sanitized].(string); ok {
 		return v
 	}

@@ -19,10 +19,10 @@ type TextEmbeddingsReq struct {
 }
 
 type TextEmbeddingsResp struct {
-	Object string `json:"object"`
-	Data   []Data `json:"data"`
-	Model  string `json:"model"`
-	Usage  usage  `json:"usage"`
+	Object string      `json:"object"`
+	Data   []Data      `json:"data"`
+	Model  string      `json:"model"`
+	Usage  usageOpenAI `json:"usage"`
 }
 
 type Data struct {

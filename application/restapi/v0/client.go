@@ -7,12 +7,12 @@ import (
 )
 
 type TaskInput struct {
-	EndpointURL string      `json:"endpoint_url"`
+	EndpointURL string      `json:"endpoint-url"`
 	Body        interface{} `json:"body,omitempty"`
 }
 
 type TaskOutput struct {
-	StatusCode int                 `json:"status_code"`
+	StatusCode int                 `json:"status-code"`
 	Body       interface{}         `json:"body"`
 	Header     map[string][]string `json:"header"`
 }

@@ -20,19 +20,19 @@ type ImageToImageInput struct {
 	Task               string     `json:"task"`
 	Engine             string     `json:"engine"`
 	Prompts            []string   `json:"prompts"`
-	InitImage          string     `json:"init_image"`
+	InitImage          string     `json:"init-image"`
 	Weights            *[]float64 `json:"weights,omitempty"`
-	InitImageMode      *string    `json:"init_image_mode,omitempty"`
-	ImageStrength      *float64   `json:"image_strength,omitempty"`
-	StepScheduleStart  *float64   `json:"step_schedule_start,omitempty"`
-	StepScheduleEnd    *float64   `json:"step_schedule_end,omitempty"`
-	CfgScale           *float64   `json:"cfg_scale,omitempty"`
-	ClipGuidancePreset *string    `json:"clip_guidance_preset,omitempty"`
+	InitImageMode      *string    `json:"init-image-mode,omitempty"`
+	ImageStrength      *float64   `json:"image-strength,omitempty"`
+	StepScheduleStart  *float64   `json:"step-schedule-start,omitempty"`
+	StepScheduleEnd    *float64   `json:"step-schedule-end,omitempty"`
+	CfgScale           *float64   `json:"cfg-scale,omitempty"`
+	ClipGuidancePreset *string    `json:"clip-guidance-preset,omitempty"`
 	Sampler            *string    `json:"sampler,omitempty"`
 	Samples            *uint32    `json:"samples,omitempty"`
 	Seed               *uint32    `json:"seed,omitempty"`
 	Steps              *uint32    `json:"steps,omitempty"`
-	StylePreset        *string    `json:"style_preset,omitempty"`
+	StylePreset        *string    `json:"style-preset,omitempty"`
 }
 
 type ImageToImageOutput struct {
@@ -42,19 +42,19 @@ type ImageToImageOutput struct {
 
 // ImageToImageReq represents the request body for image-to-image API
 type ImageToImageReq struct {
-	TextPrompts        []TextPrompt `json:"text_prompts" om:"texts[:]"`
-	InitImage          string       `json:"init_image" om:"images[0]"`
-	CFGScale           *float64     `json:"cfg_scale,omitempty" om:"metadata.cfg_scale"`
-	ClipGuidancePreset *string      `json:"clip_guidance_preset,omitempty" om:"metadata.clip_guidance_preset"`
-	Sampler            *string      `json:"sampler,omitempty" om:"metadata.sampler"`
-	Samples            *uint32      `json:"samples,omitempty" om:"metadata.samples"`
-	Seed               *uint32      `json:"seed,omitempty" om:"metadata.seed"`
-	Steps              *uint32      `json:"steps,omitempty" om:"metadata.steps"`
-	StylePreset        *string      `json:"style_preset,omitempty" om:"metadata.style_preset"`
-	InitImageMode      *string      `json:"init_image_mode,omitempty" om:"metadata.init_image_mode"`
-	ImageStrength      *float64     `json:"image_strength,omitempty" om:"metadata.image_strength"`
-	StepScheduleStart  *float64     `json:"step_schedule_start,omitempty" om:"metadata.step_schedule_start"`
-	StepScheduleEnd    *float64     `json:"step_schedule_end,omitempty" om:"metadata.step_schedule_end"`
+	TextPrompts        []TextPrompt `json:"text_prompts"`
+	InitImage          string       `json:"init_image"`
+	CFGScale           *float64     `json:"cfg_scale,omitempty"`
+	ClipGuidancePreset *string      `json:"clip_guidance_preset,omitempty"`
+	Sampler            *string      `json:"sampler,omitempty"`
+	Samples            *uint32      `json:"samples,omitempty"`
+	Seed               *uint32      `json:"seed,omitempty"`
+	Steps              *uint32      `json:"steps,omitempty"`
+	StylePreset        *string      `json:"style_preset,omitempty"`
+	InitImageMode      *string      `json:"init_image_mode,omitempty"`
+	ImageStrength      *float64     `json:"image_strength,omitempty"`
+	StepScheduleStart  *float64     `json:"step_schedule_start,omitempty"`
+	StepScheduleEnd    *float64     `json:"step_schedule_end,omitempty"`
 
 	path string
 }

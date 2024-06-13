@@ -98,8 +98,8 @@ func TestComponent_Execute(t *testing.T) {
 			c.Cleanup(openAIServer.Close)
 
 			setup, err := structpb.NewStruct(map[string]any{
-				"base_path":    openAIServer.URL,
-				"api_key":      apiKey,
+				"base-path":    openAIServer.URL,
+				"api-key":      apiKey,
 				"organization": org,
 			})
 			c.Assert(err, qt.IsNil)
@@ -150,7 +150,7 @@ func TestComponent_Test(t *testing.T) {
 		c.Cleanup(openAIServer.Close)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base_path": openAIServer.URL,
+			"base-path": openAIServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
@@ -174,7 +174,7 @@ func TestComponent_Test(t *testing.T) {
 		c.Cleanup(openAIServer.Close)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base_path": openAIServer.URL,
+			"base-path": openAIServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
@@ -195,7 +195,7 @@ func TestComponent_Test(t *testing.T) {
 		c.Cleanup(openAIServer.Close)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base_path": openAIServer.URL,
+			"base-path": openAIServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
@@ -268,8 +268,8 @@ func TestComponent_WithConfig(t *testing.T) {
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base_path": openAIServer.URL,
-			"api_key":   apiKey,
+			"base-path": openAIServer.URL,
+			"api-key":   apiKey,
 		})
 		c.Assert(err, qt.IsNil)
 
@@ -291,8 +291,8 @@ func TestComponent_WithConfig(t *testing.T) {
 		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base_path": openAIServer.URL,
-			"api_key":   apiKey,
+			"base-path": openAIServer.URL,
+			"api-key":   apiKey,
 		})
 		c.Assert(err, qt.IsNil)
 
@@ -316,8 +316,8 @@ func TestComponent_WithConfig(t *testing.T) {
 		connector := Init(bc).WithSecrets(secrets)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base_path": openAIServer.URL,
-			"api_key":   "__INSTILL_SECRET", // will be replaced by secrets.apikey
+			"base-path": openAIServer.URL,
+			"api-key":   "__INSTILL_SECRET", // will be replaced by secrets.apikey
 		})
 		c.Assert(err, qt.IsNil)
 
@@ -339,14 +339,14 @@ func TestComponent_WithConfig(t *testing.T) {
 
 		connector := Init(bc)
 		setup, err := structpb.NewStruct(map[string]any{
-			"api_key": "__INSTILL_SECRET",
+			"api-key": "__INSTILL_SECRET",
 		})
 		c.Assert(err, qt.IsNil)
 
 		_, err = connector.CreateExecution(nil, setup, task)
 		c.Check(err, qt.IsNotNil)
 		c.Check(err, qt.ErrorMatches, "unresolved global secret")
-		c.Check(errmsg.Message(err), qt.Equals, "The configuration field api_key can't reference a global secret.")
+		c.Check(errmsg.Message(err), qt.Equals, "The configuration field api-key can't reference a global secret.")
 	})
 }
 

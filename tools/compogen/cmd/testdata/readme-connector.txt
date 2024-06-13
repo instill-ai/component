@@ -36,7 +36,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       "title": "Organization ID",
       "type": "string"
     },
-    "api_key": {
+    "api-key": {
       "description": "Fill your Dummy API key",
       "instillUIOrder": 0,
       "title": "API Key",
@@ -44,7 +44,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
     }
   },
   "required": [
-    "api_key"
+    "api-key"
   ],
   "title": "OpenAI Connection",
   "type": "object"

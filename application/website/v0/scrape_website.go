@@ -15,18 +15,18 @@ import (
 type PageInfo struct {
 	Link     string `json:"link"`
 	Title    string `json:"title"`
-	LinkText string `json:"link_text"`
-	LinkHTML string `json:"link_html"`
+	LinkText string `json:"link-text"`
+	LinkHTML string `json:"link-html"`
 }
 
 // ScrapeWebsiteInput defines the input of the scrape website task
 type ScrapeWebsiteInput struct {
 	// TargetURL: The URL of the website to scrape.
-	TargetURL string `json:"target_url"`
+	TargetURL string `json:"target-url"`
 	// AllowedDomains: The list of allowed domains to scrape.
-	AllowedDomains []string `json:"allowed_domains"`
+	AllowedDomains []string `json:"allowed-domains"`
 	// MaxK: The maximum number of pages to scrape.
-	MaxK int `json:"max_k"`
+	MaxK int `json:"max-k"`
 	// IncludeLinkText: Whether to include the scraped text of the scraped web page.
 	IncludeLinkText *bool `json:"include_link_text"`
 	// IncludeLinkHTML: Whether to include the scraped HTML of the scraped web page.

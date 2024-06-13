@@ -92,8 +92,8 @@ func TestComponent_ExecuteImageFromText(t *testing.T) {
 			c.Cleanup(srv.Close)
 
 			setup, err := structpb.NewStruct(map[string]any{
-				"base_path": srv.URL,
-				"api_key":   apiKey,
+				"base-path": srv.URL,
+				"api-key":   apiKey,
 			})
 			c.Assert(err, qt.IsNil)
 
@@ -187,8 +187,8 @@ func TestComponent_ExecuteImageFromImage(t *testing.T) {
 			c.Cleanup(srv.Close)
 
 			setup, err := structpb.NewStruct(map[string]any{
-				"base_path": srv.URL,
-				"api_key":   apiKey,
+				"base-path": srv.URL,
+				"api-key":   apiKey,
 			})
 			c.Assert(err, qt.IsNil)
 
@@ -249,7 +249,7 @@ func TestComponent_Test(t *testing.T) {
 		c.Cleanup(srv.Close)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base_path": srv.URL,
+			"base-path": srv.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
@@ -273,7 +273,7 @@ func TestComponent_Test(t *testing.T) {
 		c.Cleanup(srv.Close)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base_path": srv.URL,
+			"base-path": srv.URL,
 		})
 		c.Assert(err, qt.IsNil)
 
@@ -294,7 +294,7 @@ func TestComponent_Test(t *testing.T) {
 		c.Cleanup(srv.Close)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base_path": srv.URL,
+			"base-path": srv.URL,
 		})
 		c.Assert(err, qt.IsNil)
 

@@ -28,13 +28,13 @@ func (e *execution) executeTextToImage(grpcClient modelPB.ModelPublicServiceClie
 			v := int32(input.GetFields()["steps"].GetNumberValue())
 			textToImageInput.Steps = &v
 		}
-		if _, ok := input.GetFields()["image_base64"]; ok {
+		if _, ok := input.GetFields()["image-base64"]; ok {
 			textToImageInput.Type = &modelPB.TextToImageInput_PromptImageBase64{
-				PromptImageBase64: base.TrimBase64Mime(input.GetFields()["image_base64"].GetStringValue()),
+				PromptImageBase64: base.TrimBase64Mime(input.GetFields()["image-base64"].GetStringValue()),
 			}
 		}
-		if _, ok := input.GetFields()["cfg_scale"]; ok {
-			v := float32(input.GetFields()["cfg_scale"].GetNumberValue())
+		if _, ok := input.GetFields()["cfg-scale"]; ok {
+			v := float32(input.GetFields()["cfg-scale"].GetNumberValue())
 			textToImageInput.CfgScale = &v
 		}
 		if _, ok := input.GetFields()["samples"]; ok {

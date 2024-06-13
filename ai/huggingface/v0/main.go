@@ -75,15 +75,15 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 }
 
 func getAPIKey(setup *structpb.Struct) string {
-	return setup.GetFields()["api_key"].GetStringValue()
+	return setup.GetFields()["api-key"].GetStringValue()
 }
 
 func getBaseURL(setup *structpb.Struct) string {
-	return setup.GetFields()["base_url"].GetStringValue()
+	return setup.GetFields()["base-url"].GetStringValue()
 }
 
 func isCustomEndpoint(setup *structpb.Struct) bool {
-	return setup.GetFields()["is_custom_endpoint"].GetBoolValue()
+	return setup.GetFields()["is-custom-endpoint"].GetBoolValue()
 }
 
 func wrapSliceInStruct(data []byte, key string) (*structpb.Struct, error) {
@@ -132,7 +132,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				return nil, errmsg.AddMessage(err, "Hugging Face didn't return any result")
 			}
 
-			output, err := structpb.NewStruct(map[string]any{"generated_text": resp[0].GeneratedText})
+			output, err := structpb.NewStruct(map[string]any{"generated-text": resp[0].GeneratedText})
 			if err != nil {
 				return nil, err
 			}
@@ -194,7 +194,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				return nil, errmsg.AddMessage(err, "Hugging Face didn't return any result")
 			}
 
-			output, err := structpb.NewStruct(map[string]any{"summary_text": resp[0].SummaryText})
+			output, err := structpb.NewStruct(map[string]any{"summary-text": resp[0].SummaryText})
 			if err != nil {
 				return nil, err
 			}
@@ -263,7 +263,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				return nil, errmsg.AddMessage(err, "Hugging Face didn't return any result")
 			}
 
-			output, err := structpb.NewStruct(map[string]any{"translation_text": resp[0].TranslationText})
+			output, err := structpb.NewStruct(map[string]any{"translation-text": resp[0].TranslationText})
 			if err != nil {
 				return nil, err
 			}
@@ -380,18 +380,19 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				return nil, err
 			}
 
-			req := client.R().SetBody(inputStruct)
-			resp, err := post(req, path)
+			resp := ConversationalResponse{}
+			req := client.R().SetBody(inputStruct).SetResult(&resp)
+
+			if _, err := post(req, path); err != nil {
+				return nil, err
+			}
+
+			out, err := base.ConvertToStructpb(resp)
 			if err != nil {
 				return nil, err
 			}
+			outputs = append(outputs, out)
 
-			var output structpb.Struct
-			if err = protojson.Unmarshal(resp.Body(), &output); err != nil {
-				return nil, err
-			}
-
-			outputs = append(outputs, &output)
 		case imageClassificationTask:
 			inputStruct := ImageRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
@@ -519,18 +520,19 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				return nil, err
 			}
 
-			req := client.R().SetBody(b)
-			resp, err := post(req, path)
+			resp := SpeechRecognitionResponse{}
+			req := client.R().SetBody(b).SetResult(&resp)
+
+			if _, err := post(req, path); err != nil {
+				return nil, err
+			}
+
+			out, err := base.ConvertToStructpb(resp)
 			if err != nil {
 				return nil, err
 			}
+			outputs = append(outputs, out)
 
-			output := new(structpb.Struct)
-			if err := protojson.Unmarshal(resp.Body(), output); err != nil {
-				return nil, err
-			}
-
-			outputs = append(outputs, output)
 		case audioClassificationTask:
 			inputStruct := AudioRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {

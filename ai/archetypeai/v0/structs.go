@@ -4,6 +4,11 @@ package archetypeai
 // e.g. video description or image summarization tasks.
 type fileQueryParams struct {
 	Query   string   `json:"query"`
+	FileIDs []string `json:"file-ids"`
+}
+
+type fileQueryReq struct {
+	Query   string   `json:"query"`
 	FileIDs []string `json:"file_ids"`
 }
 
@@ -26,22 +31,28 @@ type summarizeResp struct {
 	} `json:"response"`
 }
 
-type frameDescription struct {
+type frameDescriptionResp struct {
 	Timestamp   float32 `json:"timestamp"`
 	FrameID     uint64  `json:"frame_id"`
 	Description string  `json:"description"`
 }
 
+type frameDescriptionOutput struct {
+	Timestamp   float32 `json:"timestamp"`
+	FrameID     uint64  `json:"frame-id"`
+	Description string  `json:"description"`
+}
+
 // describeResp holds the response from the Archetype AI API call.
 type describeResp struct {
-	QueryID  string             `json:"query_id"`
-	Status   string             `json:"status"`
-	Response []frameDescription `json:"response"`
+	QueryID  string                 `json:"query_id"`
+	Status   string                 `json:"status"`
+	Response []frameDescriptionResp `json:"response"`
 }
 
 // summarizeOutput is used to return the output of a TASK_DESCRIBE execution.
 type describeOutput struct {
-	Descriptions []frameDescription `json:"descriptions"`
+	Descriptions []frameDescriptionOutput `json:"descriptions"`
 }
 
 // uploadFileParams holds the input of a file upload task.
@@ -52,13 +63,12 @@ type uploadFileParams struct {
 // uploadFileOutput is used to return the output of a file TASK_UPLOAD_FILE
 // execution.
 type uploadFileOutput struct {
-	FileID string `json:"file_id"`
+	FileID string `json:"file-id"`
 }
 
 // uploadFileResp holds the response from the Archetype AI API call.
 type uploadFileResp struct {
-	uploadFileOutput
-
+	FileID  string   `json:"file_id"`
 	IsValid bool     `json:"is_valid"`
 	Errors  []string `json:"errors"`
 }

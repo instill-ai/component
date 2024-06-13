@@ -77,7 +77,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 
 func getAuthentication(setup *structpb.Struct) (authentication, error) {
 	auth := setup.GetFields()["authentication"].GetStructValue()
-	authType := auth.GetFields()["auth_type"].GetStringValue()
+	authType := auth.GetFields()["auth-type"].GetStringValue()
 
 	switch authType {
 	case string(noAuthType):
@@ -184,11 +184,11 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 	if compConfig.Task == "" {
 		return def, nil
 	}
-	if _, ok := compConfig.Input["output_body_schema"]; !ok {
+	if _, ok := compConfig.Input["output-body-schema"]; !ok {
 		return def, nil
 	}
 
-	if s, ok := compConfig.Input["output_body_schema"].(string); ok {
+	if s, ok := compConfig.Input["output-body-schema"].(string); ok {
 		sch := &structpb.Struct{}
 		_ = json.Unmarshal([]byte(s), sch)
 		spec := def.Spec.DataSpecifications[compConfig.Task]

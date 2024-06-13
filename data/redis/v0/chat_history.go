@@ -31,7 +31,7 @@ type MultiModalContent struct {
 	Text     *string `json:"text,omitempty"`
 	ImageURL *struct {
 		URL string `json:"url"`
-	} `json:"image_url,omitempty"`
+	} `json:"image-url,omitempty"`
 }
 
 type MessageWithTime struct {
@@ -45,12 +45,12 @@ type MultiModalMessageWithTime struct {
 }
 
 type ChatMessageWriteInput struct {
-	SessionID string `json:"session_id"`
+	SessionID string `json:"session-id"`
 	Message
 }
 
 type ChatMultiModalMessageWriteInput struct {
-	SessionID string `json:"session_id"`
+	SessionID string `json:"session-id"`
 	MultiModalMessage
 }
 
@@ -59,9 +59,9 @@ type ChatMessageWriteOutput struct {
 }
 
 type ChatHistoryRetrieveInput struct {
-	SessionID            string `json:"session_id"`
-	LatestK              *int   `json:"latest_k,omitempty"`
-	IncludeSystemMessage bool   `json:"include_system_message"`
+	SessionID            string `json:"session-id"`
+	LatestK              *int   `json:"latest-k,omitempty"`
+	IncludeSystemMessage bool   `json:"include-system-message"`
 }
 
 // ChatHistoryReadOutput is a wrapper struct for the messages associated with a session ID

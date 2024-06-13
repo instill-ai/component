@@ -53,7 +53,7 @@ func TestOperator(t *testing.T) {
 						Fields: map[string]*structpb.Value{
 							"setting": {Kind: &structpb.Value_StructValue{StructValue: &structpb.Struct{
 								Fields: map[string]*structpb.Value{
-									"chunk_method": {Kind: &structpb.Value_StringValue{StringValue: "Token"}},
+									"chunk-method": {Kind: &structpb.Value_StringValue{StringValue: "Token"}},
 								},
 							}}},
 						},

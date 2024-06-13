@@ -71,7 +71,7 @@ func newClient(setup *structpb.Struct, logger *zap.Logger) *httpclient.Client {
 }
 
 func getAPIKey(setup *structpb.Struct) string {
-	return setup.GetFields()["api_key"].GetStringValue()
+	return setup.GetFields()["api-key"].GetStringValue()
 }
 
 func getURL(setup *structpb.Struct) string {

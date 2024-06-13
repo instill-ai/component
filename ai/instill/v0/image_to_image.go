@@ -31,17 +31,17 @@ func (e *execution) executeImageToImage(grpcClient modelPB.ModelPublicServiceCli
 			v := int32(input.GetFields()["steps"].GetNumberValue())
 			imageToImageInput.Steps = &v
 		}
-		if _, ok := input.GetFields()["image_base64"]; ok {
+		if _, ok := input.GetFields()["image-base64"]; ok {
 			imageToImageInput.Type = &modelPB.ImageToImageInput_PromptImageBase64{
-				PromptImageBase64: base.TrimBase64Mime(input.GetFields()["image_base64"].GetStringValue()),
+				PromptImageBase64: base.TrimBase64Mime(input.GetFields()["image-base64"].GetStringValue()),
 			}
 		}
 		if _, ok := input.GetFields()["temperature"]; ok {
 			v := int32(input.GetFields()["temperature"].GetNumberValue())
 			imageToImageInput.Seed = &v
 		}
-		if _, ok := input.GetFields()["cfg_scale"]; ok {
-			v := float32(input.GetFields()["cfg_scale"].GetNumberValue())
+		if _, ok := input.GetFields()["cfg-scale"]; ok {
+			v := float32(input.GetFields()["cfg-scale"].GetNumberValue())
 			imageToImageInput.CfgScale = &v
 		}
 
@@ -49,8 +49,8 @@ func (e *execution) executeImageToImage(grpcClient modelPB.ModelPublicServiceCli
 			v := int32(input.GetFields()["seed"].GetNumberValue())
 			imageToImageInput.Seed = &v
 		}
-		if _, ok := input.GetFields()["extra_params"]; ok {
-			v := input.GetFields()["extra_params"].GetStructValue()
+		if _, ok := input.GetFields()["extra-params"]; ok {
+			v := input.GetFields()["extra-params"].GetStructValue()
 			imageToImageInput.ExtraParams = v
 		}
 

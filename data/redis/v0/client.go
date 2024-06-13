@@ -35,9 +35,9 @@ func (d *DisableSSL) GetConfig() (*tls.Config, error) {
 // VerifyFullSSL is the struct for verify-full SSL. It always requires encryption and verification of the identify of the server.
 type VerifyFullSSL struct {
 	Mode       SSLMode `json:"mode"`
-	CaCert     string  `json:"ca_cert"`
-	ClientCert string  `json:"client_cert"`
-	ClientKey  string  `json:"client_key"`
+	CaCert     string  `json:"ca-cert"`
+	ClientCert string  `json:"client-cert"`
+	ClientKey  string  `json:"client-key"`
 }
 
 func (e *VerifyFullSSL) GetConfig() (*tls.Config, error) {
@@ -95,7 +95,7 @@ func getSSL(setup *structpb.Struct) bool {
 }
 
 func getSSLMode(setup *structpb.Struct) (SSLModeConfig, error) {
-	sslMode := setup.GetFields()["ssl_mode"].GetStructValue()
+	sslMode := setup.GetFields()["ssl-mode"].GetStructValue()
 	mode := sslMode.GetFields()["mode"].GetStringValue()
 
 	var sslModeConfig SSLModeConfig

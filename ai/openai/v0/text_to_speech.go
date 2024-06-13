@@ -8,7 +8,7 @@ type TextToSpeechInput struct {
 	Text           string   `json:"text"`
 	Model          string   `json:"model"`
 	Voice          string   `json:"voice"`
-	ResponseFormat *string  `json:"response_format,omitempty"`
+	ResponseFormat *string  `json:"response-format,omitempty"`
 	Speed          *float64 `json:"speed,omitempty"`
 }
 

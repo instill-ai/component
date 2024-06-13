@@ -13,17 +13,17 @@ type SplitByTokenInput struct {
 	// Model: ID of the model to use for tokenization
 	Model string `json:"model"`
 	// ChunkTokenSize: Number of tokens per text chunk
-	ChunkTokenSize *int `json:"chunk_token_size,omitempty"`
+	ChunkTokenSize *int `json:"chunk-token-size,omitempty"`
 }
 
 // SplitByTokenOutput defines the output for split by token task
 type SplitByTokenOutput struct {
 	// TokenCount: Number of tokens in the text
-	TokenCount int `json:"token_count"`
+	TokenCount int `json:"token-count"`
 	// TextChunks: List of text chunks
-	TextChunks []string `json:"text_chunks"`
+	TextChunks []string `json:"text-chunks"`
 	// ChunkNum: Number of text chunks
-	ChunkNum int `json:"chunk_num"`
+	ChunkNum int `json:"chunk-num"`
 }
 
 // splitTextIntoChunks splits text into text chunks based on token size

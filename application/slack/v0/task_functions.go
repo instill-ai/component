@@ -12,8 +12,8 @@ import (
 )
 
 type UserInputReadTask struct {
-	ChannelName     string `json:"channel_name"`
-	StartToReadDate string `json:"start_to_read_date"`
+	ChannelName     string `json:"channel-name"`
+	StartToReadDate string `json:"start-to-read-date"`
 }
 
 type ReadTaskResp struct {
@@ -21,25 +21,25 @@ type ReadTaskResp struct {
 }
 
 type Conversation struct {
-	UserID             string               `json:"user_id"`
-	UserName           string               `json:"user_name"`
+	UserID             string               `json:"user-id"`
+	UserName           string               `json:"user-name"`
 	Message            string               `json:"message"`
-	StartDate          string               `json:"start_date"`
-	LastDate           string               `json:"last_date"`
+	StartDate          string               `json:"start-date"`
+	LastDate           string               `json:"last-date"`
 	TS                 string               `json:"ts"`
-	ReplyCount         int                  `json:"reply_count"`
-	ThreadReplyMessage []ThreadReplyMessage `json:"thread_reply_messages"`
+	ReplyCount         int                  `json:"reply-count"`
+	ThreadReplyMessage []ThreadReplyMessage `json:"thread-reply-messages"`
 }
 
 type ThreadReplyMessage struct {
-	UserID   string `json:"user_id"`
-	UserName string `json:"user_name"`
+	UserID   string `json:"user-id"`
+	UserName string `json:"user-name"`
 	DateTime string `json:"datetime"`
 	Message  string `json:"message"`
 }
 
 type UserInputWriteTask struct {
-	ChannelName string `json:"channel_name"`
+	ChannelName string `json:"channel-name"`
 	Message     string `json:"message"`
 }
 

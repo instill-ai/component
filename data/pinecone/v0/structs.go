@@ -2,13 +2,13 @@ package pinecone
 
 type queryInput struct {
 	Namespace       string      `json:"namespace"`
-	TopK            int64       `json:"top_k"`
+	TopK            int64       `json:"top-k"`
 	Vector          []float64   `json:"vector"`
-	IncludeValues   bool        `json:"include_values"`
-	IncludeMetadata bool        `json:"include_metadata"`
+	IncludeValues   bool        `json:"include-values"`
+	IncludeMetadata bool        `json:"include-metadata"`
 	ID              string      `json:"id"`
 	Filter          interface{} `json:"filter"`
-	MinScore        float64     `json:"min_score"`
+	MinScore        float64     `json:"min-score"`
 }
 
 type queryReq struct {
@@ -80,7 +80,7 @@ type upsertResp struct {
 }
 
 type upsertOutput struct {
-	RecordsUpserted int64 `json:"upserted_count"`
+	RecordsUpserted int64 `json:"upserted-count"`
 }
 
 type errBody struct {
