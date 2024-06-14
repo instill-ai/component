@@ -153,7 +153,7 @@
       "type": "object"
     }
   },
-  "TASK_DRAW_instance-segmentation": {
+  "TASK_DRAW_INSTANCE_SEGMENTATION": {
     "instillShortDescription": "Draw instance segmentation result on the image.",
     "input": {
       "description": "Input",
@@ -363,7 +363,7 @@
       "type": "object"
     }
   },
-  "TASK_DRAW_semantic-segmentation": {
+  "TASK_DRAW_SEMANTIC_SEGMENTATION": {
     "instillShortDescription": "Draw semantic segmentation result on the image.",
     "input": {
       "description": "Input",
