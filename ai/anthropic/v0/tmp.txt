@@ -1,2 +1,0 @@
-### This document is for storing temperate variables
-[{"role":"user","content":[{"type":"text","text":"Answer the following question in traditional chinses"}]},{"role":"assistant","content":[{"type":"text","text":"沒問題"}]}]

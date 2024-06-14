@@ -11,6 +11,7 @@ func newClient(setup *structpb.Struct, logger *zap.Logger) *httpclient.Client {
 		httpclient.WithLogger(logger),
 		httpclient.WithEndUserError(new(errBody)),
 	)
+	// Anthropic requires an API key to be set in the header "x-api-key" rather than normal "Authorization" header.
 	c.Header.Set("X-Api-Key", getAPIKey(setup))
 	c.Header.Set("anthropic-version", "2023-06-01")
 
@@ -27,7 +28,7 @@ func (e errBody) Message() string {
 	return e.Error.Message
 }
 
-// getBasePath returns OpenAI's API URL. This configuration param allows us to
+// getBasePath returns Anthropic's API URL. This configuration param allows us to
 // override the API the connector will point to. It isn't meant to be exposed
 // to users. Rather, it can serve to test the logic against a fake server.
 // TODO instead of having the API value hardcoded in the codebase, it should be
