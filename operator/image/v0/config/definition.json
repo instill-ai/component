@@ -1,5 +1,5 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_DRAW_CLASSIFICATION",
     "TASK_DRAW_DETECTION",
     "TASK_DRAW_KEYPOINT",
@@ -8,9 +8,9 @@
     "TASK_DRAW_SEMANTIC_SEGMENTATION"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/component/operator/image",
+  "documentationUrl": "https://www.instill.tech/docs/component/operator/image",
   "icon": "assets/image.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "image",
   "public": true,
   "spec": {},
@@ -18,7 +18,7 @@
   "type": "COMPONENT_TYPE_OPERATOR",
   "uid": "e9eb8fc8-f249-4e11-ad50-5035d79ffc18",
   "version": "0.1.0",
-  "source_url": "https://github.com/instill-ai/component/blob/main/operator/image/v0",
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/operator/image/v0",
   "description": "Manipulate image files",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

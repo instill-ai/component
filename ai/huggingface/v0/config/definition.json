@@ -1,5 +1,5 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_TEXT_GENERATION",
     "TASK_FILL_MASK",
     "TASK_SUMMARIZATION",
@@ -19,9 +19,9 @@
     "TASK_AUDIO_CLASSIFICATION"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/component/ai/huggingface",
+  "documentationUrl": "https://www.instill.tech/docs/component/ai/huggingface",
   "icon": "assets/hugging-face.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "hugging-face",
   "public": true,
   "title": "Hugging Face",
@@ -30,8 +30,8 @@
   "type": "COMPONENT_TYPE_AI",
   "uid": "0255ef87-33ce-4f88-b9db-8897f8c17233",
   "vendor": "Hugging Face",
-  "vendor_attributes": {},
+  "vendorAttributes": {},
   "version": "0.1.1",
-  "source_url": "https://github.com/instill-ai/component/blob/main/ai/huggingface/v0",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/ai/huggingface/v0",
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

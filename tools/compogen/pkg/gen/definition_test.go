@@ -118,7 +118,7 @@ func TestReleaseStage_UnmarshalAndStringify(t *testing.T) {
 	for _, tc := range testcases {
 		c.Run(tc.in, func(c *qt.C) {
 			def := definition{}
-			j := json.RawMessage(`{"release_stage": "` + tc.in + `"}`)
+			j := json.RawMessage(`{"releaseStage": "` + tc.in + `"}`)
 
 			err := json.Unmarshal(j, &def)
 			c.Check(err, qt.IsNil)

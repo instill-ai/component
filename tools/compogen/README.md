@@ -33,14 +33,14 @@ following fields must be present and comply with the following guidelines:
 - `description` - It should contain a single sentence describing the component.
   The template will use it next to the component title (`{{ .Title }}{{
   .Description }}.`) so it must be written in imperative tense.
-- `release_stage` - Must be the string representation of one of the nonzero
+- `releaseStage` - Must be the string representation of one of the nonzero
   values of `ComponentDefinition.ReleaseStage`,defined in
   [protobufs](https://github.com/instill-ai/protobufs/blob/main/vdp/pipeline/v1beta/component_definition.proto).
 - `type` - Component definitions must contain this field and its value must
   match one of the (string) values defined in [protobufs](https://github.com/instill-ai/protobufs/blob/main/vdp/pipeline/v1beta/component_definition.proto).
-- `available_tasks` - This array must have at least one value, which should be
+- `availableTasks` - This array must have at least one value, which should be
   one of the root-level keys in the `tasks.json` file.
-- `source_url` - Must be a valid URL. It must not end with a slash, as the
+- `sourceUrl` - Must be a valid URL. It must not end with a slash, as the
   definitions path will be appended.
 
 Certain optional fields modify the document behaviour:

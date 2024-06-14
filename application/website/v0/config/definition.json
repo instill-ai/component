@@ -1,11 +1,11 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_SCRAPE_WEBSITE"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/component/application/website",
+  "documentationUrl": "https://www.instill.tech/docs/component/application/website",
   "icon": "assets/website.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "website",
   "public": true,
   "title": "Website",
@@ -13,8 +13,8 @@
   "type": "COMPONENT_TYPE_APPLICATION",
   "uid": "98909958-db7d-4dfe-9858-7761904be17e",
   "vendor": "",
-  "vendor_attributes": {},
+  "vendorAttributes": {},
   "version": "0.1.1",
-  "source_url": "https://github.com/instill-ai/component/blob/main/application/website/v0",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/application/website/v0",
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }

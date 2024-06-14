@@ -12,7 +12,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
 
 -- definition.json --
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_DUMMY"
   ],
   "public": true,
@@ -21,8 +21,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
   "description": "Perform an action",
   "prerequisites": "An account at [dummy.io](https://dummy.io) is required.",
   "type": "COMPONENT_TYPE_DATA",
-  "release_stage": "RELEASE_STAGE_COMING_SOON",
-  "source_url": "https://github.com/instill-ai/component/blob/main/data/dummy/v0"
+  "releaseStage": "RELEASE_STAGE_COMING_SOON",
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/data/dummy/v0"
 }
 
 -- setup.json --

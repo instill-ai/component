@@ -1,13 +1,13 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_CONVERT_TO_TEXT",
     "TASK_SPLIT_BY_TOKEN",
     "TASK_CHUNK_TEXT"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/component/operator/text",
+  "documentationUrl": "https://www.instill.tech/docs/component/operator/text",
   "icon": "assets/text.svg",
-  "icon_url": "",
+  "iconUrl": "",
   "id": "text",
   "public": true,
   "spec": {},
@@ -15,7 +15,7 @@
   "type": "COMPONENT_TYPE_OPERATOR",
   "uid": "5b7aca5b-1ae3-477f-bf60-d34e1c993c87",
   "version": "0.1.1",
-  "source_url": "https://github.com/instill-ai/component/blob/main/operator/text/v0",
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/operator/text/v0",
   "description": "Extract and manipulate text from different sources",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }
