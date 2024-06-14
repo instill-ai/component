@@ -7,27 +7,24 @@ import (
 
 	qt "github.com/frankban/quicktest"
 	"github.com/gojuno/minimock/v3"
+	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/mock"
 )
 
 func TestConvertPDFToText(t *testing.T) {
 	c := qt.New(t)
-	test := struct {
-		name     string
-		filepath string
-	}{
-		name:     "Convert PDF file",
-		filepath: "testdata/test.pdf",
-	}
 
-	c.Run(test.name, func(c *qt.C) {
+	c.Run("Convert PDF file", func(c *qt.C) {
+
 		fakePDF := "# Test\n\nThis is a test document.\n\n"
 		b, err := json.Marshal(fakePDF)
 		c.Assert(err, qt.IsNil)
 
 		encoded := base64.StdEncoding.EncodeToString(b)
+
 		input := convertPDFToMarkdownInput{
-			PDF: encoded,
+			PDF:             encoded,
+			DisplayImageTag: false,
 		}
 
 		mc := minimock.NewController(t)
@@ -35,7 +32,14 @@ func TestConvertPDFToText(t *testing.T) {
 		mockIoWriteCloser := mock.NewWriteCloserMock(mc)
 		mockIoWriteCloser.CloseMock.Expect().Return(nil)
 
-		mockIoWriteCloser.WriteMock.Expect(b).Return(len(fakePDF), nil)
+		fakeParams, err := json.Marshal(map[string]interface{}{
+			"PDF":               base.TrimBase64Mime(encoded),
+			"display-image-tag": false,
+		})
+
+		c.Assert(err, qt.IsNil)
+
+		mockIoWriteCloser.WriteMock.Expect(fakeParams).Return(len(fakePDF), nil)
 		mockRunner.StdinPipeMock.Expect().Return(mockIoWriteCloser, nil)
 
 		mockOutput := convertPDFToMarkdownOutput{
