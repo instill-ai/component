@@ -1,7 +1,6 @@
 package document
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"io"
 
@@ -14,7 +13,8 @@ type commandRunner interface {
 }
 
 type convertPDFToMarkdownInput struct {
-	PDF string `json:"pdf"`
+	PDF             string `json:"pdf"`
+	DisplayImageTag bool   `json:"display-image-tag"`
 }
 
 type convertPDFToMarkdownOutput struct {
@@ -23,7 +23,11 @@ type convertPDFToMarkdownOutput struct {
 
 func convertPDFToMarkdown(input convertPDFToMarkdownInput, cmdRunner commandRunner) (convertPDFToMarkdownOutput, error) {
 
-	b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(input.PDF))
+	paramsJSON, err := json.Marshal(map[string]interface{}{
+		"PDF":               base.TrimBase64Mime(input.PDF),
+		"display-image-tag": input.DisplayImageTag,
+	})
+
 	if err != nil {
 		return convertPDFToMarkdownOutput{}, err
 	}
@@ -36,7 +40,7 @@ func convertPDFToMarkdown(input convertPDFToMarkdownInput, cmdRunner commandRunn
 
 	go func() {
 		defer stdin.Close()
-		_, err := stdin.Write(b)
+		_, err := stdin.Write(paramsJSON)
 		if err != nil {
 			errChan <- err
 			return

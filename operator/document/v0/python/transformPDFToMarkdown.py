@@ -2,9 +2,10 @@ import pdfplumber
 import sys
 from io import BytesIO
 import json
+import base64
 
 class PdfTransformer:
-	def __init__(self, x):
+	def __init__(self, x, display_image_tag=False):
 		# self.path = path
 		# x can be a path or a file object.
 		self.pdf = pdfplumber.open(x)
@@ -15,7 +16,9 @@ class PdfTransformer:
 		self.lines = []
 		self.tables = []
 		self.images = []
-		self.process_image()
+		if display_image_tag:
+			self.process_image()
+	
 		for page in self.pages:
 			page_lines = page.extract_text_lines()
 			self.process_line(page_lines, page.page_number)
@@ -302,9 +305,13 @@ class PdfTransformer:
 
 
 if __name__ == "__main__":
-	pdf_bytes = sys.stdin.buffer.read()
-	pdf_file_obj = BytesIO(pdf_bytes)
-	pdf = PdfTransformer(pdf_file_obj)
+	json_str = sys.stdin.buffer.read().decode('utf-8')
+	params = json.loads(json_str)
+	display_image_tag = params["display-image-tag"]
+	pdf_string = params["PDF"]
+	decoded_bytes = base64.b64decode(pdf_string)
+	pdf_file_obj = BytesIO(decoded_bytes)
+	pdf = PdfTransformer(pdf_file_obj, display_image_tag)
 	result = pdf.execute()
 	output = {
 		"body": result,
