@@ -109,7 +109,7 @@ func (e *execution) describe(in *structpb.Struct) (*structpb.Struct, error) {
 	// request. If this stops being the case in the future, we'll need a
 	// describeReq structure.
 	resp := describeResp{}
-	req := e.client.R().SetBody(params).SetResult(&resp)
+	req := e.client.R().SetBody(fileQueryReq(params)).SetResult(&resp)
 
 	if _, err := req.Post(describePath); err != nil {
 		return nil, err
@@ -124,8 +124,12 @@ func (e *execution) describe(in *structpb.Struct) (*structpb.Struct, error) {
 		)
 	}
 
+	frameDescriptionOutputs := make([]frameDescriptionOutput, len(resp.Response))
+	for i := range resp.Response {
+		frameDescriptionOutputs[i] = frameDescriptionOutput(resp.Response[i])
+	}
 	out, err := base.ConvertToStructpb(describeOutput{
-		Descriptions: resp.Response,
+		Descriptions: frameDescriptionOutputs,
 	})
 	if err != nil {
 		return nil, err
@@ -144,7 +148,7 @@ func (e *execution) summarize(in *structpb.Struct) (*structpb.Struct, error) {
 	// request. If this stops being the case in the future, we'll need a
 	// summarizeReq structure.
 	resp := summarizeResp{}
-	req := e.client.R().SetBody(params).SetResult(&resp)
+	req := e.client.R().SetBody(fileQueryReq(params)).SetResult(&resp)
 
 	if _, err := req.Post(summarizePath); err != nil {
 		return nil, err
@@ -205,7 +209,7 @@ func (e *execution) uploadFile(in *structpb.Struct) (*structpb.Struct, error) {
 		)
 	}
 
-	out, err := base.ConvertToStructpb(resp.uploadFileOutput)
+	out, err := base.ConvertToStructpb(uploadFileOutput{FileID: resp.FileID})
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +228,7 @@ func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 }
 
 func getAPIKey(setup *structpb.Struct) string {
-	return setup.GetFields()["api_key"].GetStringValue()
+	return setup.GetFields()["api-key"].GetStringValue()
 }
 
 // getBasePath returns Archetype AI's API URL. This configuration param allows
@@ -234,7 +238,7 @@ func getAPIKey(setup *structpb.Struct) string {
 // TODO instead of having the API value hardcoded in the codebase, it should
 // be read from a setup file or environment variable.
 func getBasePath(setup *structpb.Struct) string {
-	v, ok := setup.GetFields()["base_path"]
+	v, ok := setup.GetFields()["base-path"]
 	if !ok {
 		return host
 	}

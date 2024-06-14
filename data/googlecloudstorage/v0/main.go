@@ -60,11 +60,11 @@ func NewClient(jsonKey string) (*storage.Client, error) {
 }
 
 func getBucketName(setup *structpb.Struct) string {
-	return setup.GetFields()["bucket_name"].GetStringValue()
+	return setup.GetFields()["bucket-name"].GetStringValue()
 }
 
 func getJSONKey(setup *structpb.Struct) string {
-	return setup.GetFields()["json_key"].GetStringValue()
+	return setup.GetFields()["json-key"].GetStringValue()
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
@@ -79,7 +79,7 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 		var output *structpb.Struct
 		switch e.Task {
 		case taskUpload, "":
-			objectName := input.GetFields()["object_name"].GetStringValue()
+			objectName := input.GetFields()["object-name"].GetStringValue()
 			data := input.GetFields()["data"].GetStringValue()
 			bucketName := getBucketName(e.Setup)
 			err = uploadToGCS(client, bucketName, objectName, data)
@@ -101,10 +101,10 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 			}
 
 			output = &structpb.Struct{Fields: map[string]*structpb.Value{
-				"authenticated_url": {Kind: &structpb.Value_StringValue{StringValue: authenticatedURL}},
-				"gsutil_uri":        {Kind: &structpb.Value_StringValue{StringValue: gsutilURI}},
-				"public_url":        {Kind: &structpb.Value_StringValue{StringValue: publicURL}},
-				"public_access":     {Kind: &structpb.Value_BoolValue{BoolValue: publicAccess}},
+				"authenticated-url": {Kind: &structpb.Value_StringValue{StringValue: authenticatedURL}},
+				"gsutil-uri":        {Kind: &structpb.Value_StringValue{StringValue: gsutilURI}},
+				"public-url":        {Kind: &structpb.Value_StringValue{StringValue: publicURL}},
+				"public-access":     {Kind: &structpb.Value_BoolValue{BoolValue: publicAccess}},
 				"status":            {Kind: &structpb.Value_StringValue{StringValue: "success"}}}}
 		}
 		outputs = append(outputs, output)

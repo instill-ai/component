@@ -104,7 +104,7 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 		defer mgmtGRPCCLientConn.Close()
 	}
 
-	modelNameSplits := strings.Split(inputs[0].GetFields()["model_name"].GetStringValue(), "/")
+	modelNameSplits := strings.Split(inputs[0].GetFields()["model-name"].GetStringValue(), "/")
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
 	defer cancel()
 
@@ -289,7 +289,7 @@ func addModelEnum(compSpec map[string]*structpb.Value, modelName *structpb.ListV
 		return
 	}
 	for key, sch := range compSpec {
-		if key == "model_name" {
+		if key == "model-name" {
 			sch.GetStructValue().Fields["enum"] = structpb.NewListValue(modelName)
 		}
 

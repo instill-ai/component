@@ -26,7 +26,7 @@ const (
 	TextToSpeechTask      = "TASK_TEXT_TO_SPEECH"
 	TextToImageTask       = "TASK_TEXT_TO_IMAGE"
 
-	cfgAPIKey       = "api_key"
+	cfgAPIKey       = "api-key"
 	cfgOrganization = "organization"
 )
 
@@ -204,7 +204,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 			outputStruct := TextCompletionOutput{
 				Texts: []string{},
-				Usage: resp.Usage,
+				Usage: usage(resp.Usage),
 			}
 			for _, c := range resp.Choices {
 				outputStruct.Texts = append(outputStruct.Texts, c.Message.Content)

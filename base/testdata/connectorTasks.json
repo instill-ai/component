@@ -45,7 +45,7 @@
       "instillUIOrder": 0,
       "properties": {
         "embedding": {
-          "$ref": "https://raw.githubusercontent.com/instill-ai/component/88cf79188084a6f4afd87f715e13f334d3674013/schema.json#/$defs/instill_types/embedding",
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/embedding",
           "instillUIOrder": 0,
           "title": "Embedding"
         }

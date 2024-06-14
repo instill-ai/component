@@ -1,9 +1,9 @@
 {
   "$defs": {
-    "chat_message": {
+    "chat-message": {
       "properties": {
         "content": {
-          "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/multi_modal_content",
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/multi-modal-content",
           "description": "The message content",
           "instillUIOrder": 1,
           "title": "Content"
@@ -71,7 +71,7 @@
               "whisper-1"
             ],
             "targets": [
-              "setup.api_key"
+              "setup.api-key"
             ]
           },
           "title": "Model"
@@ -149,7 +149,7 @@
               "text-embedding-3-large"
             ],
             "targets": [
-              "setup.api_key"
+              "setup.api-key"
             ]
           },
           "instillUpstreamTypes": [
@@ -186,7 +186,7 @@
       "instillUIOrder": 0,
       "properties": {
         "embedding": {
-          "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/embedding",
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/embedding",
           "description": "Embedding of the input text",
           "instillUIOrder": 0,
           "title": "Embedding"
@@ -205,10 +205,10 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "chat_history": {
+        "chat-history": {
           "description": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
           "instillAcceptFormats": [
-            "structured/chat_messages"
+            "structured/chat-messages"
           ],
           "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
           "instillUIOrder": 4,
@@ -217,12 +217,12 @@
             "reference"
           ],
           "items": {
-            "$ref": "#/$defs/chat_message"
+            "$ref": "#/$defs/chat-message"
           },
           "title": "Chat history",
           "type": "array"
         },
-        "frequency_penalty": {
+        "frequency-penalty": {
           "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/frequency_penalty",
           "instillAcceptFormats": [
             "number",
@@ -252,7 +252,7 @@
           "title": "Image",
           "type": "array"
         },
-        "max_tokens": {
+        "max-tokens": {
           "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/max_tokens",
           "instillAcceptFormats": [
             "integer"
@@ -287,7 +287,7 @@
               "gpt-3.5-turbo"
             ],
             "targets": [
-              "setup.api_key"
+              "setup.api-key"
             ]
           },
           "title": "Model"
@@ -304,7 +304,7 @@
           ],
           "title": "N"
         },
-        "presence_penalty": {
+        "presence-penalty": {
           "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/presence_penalty",
           "instillAcceptFormats": [
             "number",
@@ -334,7 +334,7 @@
           "title": "Prompt",
           "type": "string"
         },
-        "response_format": {
+        "response-format": {
           "description": "An object specifying the format that the model must output. Used to enable JSON mode.",
           "instillUIOrder": 8,
           "properties": {
@@ -359,7 +359,7 @@
           "title": "Response Format",
           "type": "object"
         },
-        "system_message": {
+        "system-message": {
           "default": "You are a helpful assistant.",
           "description": "The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model\u2019s behavior is using a generic message as \"You are a helpful assistant.\"",
           "instillAcceptFormats": [
@@ -390,7 +390,7 @@
           ],
           "title": "Temperature"
         },
-        "top_p": {
+        "top-p": {
           "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/top_p",
           "instillAcceptFormats": [
             "number",
@@ -432,7 +432,7 @@
           "description": "Usage statistics related to the query",
           "instillUIOrder": 1,
           "properties": {
-            "total_tokens": {
+            "total-tokens": {
               "title": "Total tokens",
               "description": "Total number of tokens used (request + response)",
               "instillFormat": "integer",
@@ -440,7 +440,7 @@
             }
           },
           "required": [
-            "total_tokens"
+            "total-tokens"
           ],
           "title": "Usage",
           "type": "object"
@@ -465,7 +465,7 @@
               "dall-e-3"
             ],
             "targets": [
-              "setup.api_key"
+              "setup.api-key"
             ]
           },
           "instillAcceptFormats": [
@@ -569,7 +569,7 @@
                 "instillFormat": "image/webp",
                 "type": "string"
               },
-              "revised_prompt": {
+              "revised-prompt": {
                 "title": "Revised Prompt",
                 "description": "Revised prompt",
                 "instillFormat": "string",
@@ -579,7 +579,7 @@
             },
             "required": [
               "image",
-              "revised_prompt"
+              "revised-prompt"
             ],
             "title": "Image",
             "type": "object"
@@ -616,7 +616,7 @@
               "tts-1-hd"
             ],
             "targets": [
-              "setup.api_key"
+              "setup.api-key"
             ]
           },
           "instillShortDescription": "ID of the model to use",
@@ -629,7 +629,7 @@
           "title": "Model",
           "type": "string"
         },
-        "response_format": {
+        "response-format": {
           "$ref": "openai.json#/components/schemas/CreateSpeechRequest/properties/response_format",
           "instillAcceptFormats": [
             "string"

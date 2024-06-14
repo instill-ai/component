@@ -10,7 +10,7 @@
       ],
       "instillUIOrder": 0,
       "properties": {
-        "cfg_scale": {
+        "cfg-scale": {
           "$ref": "stabilityai.json#/components/schemas/CfgScale",
           "instillAcceptFormats": [
             "number",
@@ -23,7 +23,7 @@
           ],
           "title": "Cfg Scale"
         },
-        "clip_guidance_preset": {
+        "clip-guidance-preset": {
           "$ref": "stabilityai.json#/components/schemas/ClipGuidancePreset",
           "description": "Clip guidance preset",
           "instillAcceptFormats": [
@@ -60,13 +60,13 @@
           "title": "Engine",
           "type": "string"
         },
-        "image_strength": {
+        "image-strength": {
           "$ref": "stabilityai.json#/components/schemas/InitImageStrength",
           "instillAcceptFormats": [
             "number",
             "integer"
           ],
-          "instillShortDescription": "How much influence the `init_image` has on the diffusion process.",
+          "instillShortDescription": "How much influence the `init-image` has on the diffusion process.",
           "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "value",
@@ -74,7 +74,7 @@
           ],
           "title": "Image Strength"
         },
-        "init_image": {
+        "init-image": {
           "$ref": "stabilityai.json#/components/schemas/InitImage",
           "instillAcceptFormats": [
             "image/*"
@@ -85,7 +85,7 @@
           ],
           "title": "Init Image"
         },
-        "init_image_mode": {
+        "init-image-mode": {
           "$ref": "stabilityai.json#/components/schemas/InitImageMode",
           "instillAcceptFormats": [
             "string"
@@ -153,7 +153,7 @@
           ],
           "title": "Seed"
         },
-        "step_schedule_end": {
+        "step-schedule-end": {
           "$ref": "stabilityai.json#/components/schemas/StepScheduleEnd",
           "instillAcceptFormats": [
             "number",
@@ -167,7 +167,7 @@
           ],
           "title": "Step Schedule End"
         },
-        "step_schedule_start": {
+        "step-schedule-start": {
           "$ref": "stabilityai.json#/components/schemas/StepScheduleStart",
           "instillAcceptFormats": [
             "number",
@@ -193,7 +193,7 @@
           ],
           "title": "Steps"
         },
-        "style_preset": {
+        "style-preset": {
           "$ref": "stabilityai.json#/components/schemas/StylePreset",
           "instillAcceptFormats": [
             "string"
@@ -246,7 +246,7 @@
       ],
       "instillUIOrder": 0,
       "properties": {
-        "cfg_scale": {
+        "cfg-scale": {
           "$ref": "stabilityai.json#/components/schemas/CfgScale",
           "instillAcceptFormats": [
             "number",
@@ -259,7 +259,7 @@
           ],
           "title": "CFG Scale"
         },
-        "clip_guidance_preset": {
+        "clip-guidance-preset": {
           "$ref": "stabilityai.json#/components/schemas/ClipGuidancePreset",
           "description": "Clip guidance preset",
           "instillAcceptFormats": [
@@ -290,7 +290,7 @@
               "stable-diffusion-v1-6"
             ],
             "targets": [
-              "setup.api_key"
+              "setup.api-key"
             ]
           },
           "instillAcceptFormats": [
@@ -384,7 +384,7 @@
           ],
           "title": "Steps"
         },
-        "style_preset": {
+        "style-preset": {
           "$ref": "stabilityai.json#/components/schemas/StylePreset",
           "instillAcceptFormats": [
             "string"

@@ -115,7 +115,7 @@
           "additionalProperties": true,
           "instillShortDescription": "",
           "properties": {
-            "api_key": {
+            "api-key": {
               "description": "Fill your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
               "instillSecret": true,
               "instillShortDescription": "Fill your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
@@ -125,7 +125,7 @@
             }
           },
           "required": [
-            "api_key"
+            "api-key"
           ],
           "title": "OpenAI Connection",
           "type": "object"
@@ -173,6 +173,7 @@
           "properties": {
             "embedding": {
               "instillUIOrder": 0,
+              "instillFormat": "array:number",
               "items": {
                 "description": "",
                 "instillFormat": "number",

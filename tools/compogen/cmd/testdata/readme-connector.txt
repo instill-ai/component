@@ -36,7 +36,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       "title": "Organization ID",
       "type": "string"
     },
-    "api_key": {
+    "api-key": {
       "description": "Fill your Dummy API key",
       "instillUIOrder": 0,
       "title": "API Key",
@@ -44,7 +44,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
     }
   },
   "required": [
-    "api_key"
+    "api-key"
   ],
   "title": "OpenAI Connection",
   "type": "object"
@@ -106,7 +106,7 @@ The component configuration is defined and maintained [here](https://github.com/
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api_key` | string | Fill your Dummy API key |
+| API Key (required) | `api-key` | string | Fill your Dummy API key |
 | Organization ID | `organization` | string | Specify which organization is used for the requests |
 
 ## Supported Tasks

@@ -32,7 +32,7 @@ func (e errBody) Message() string {
 // TODO instead of having the API value hardcoded in the codebase, it should be
 // read from a setup file or environment variable.
 func getBasePath(setup *structpb.Struct) string {
-	v, ok := setup.GetFields()["base_path"]
+	v, ok := setup.GetFields()["base-path"]
 	if !ok {
 		return host
 	}

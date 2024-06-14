@@ -15,7 +15,7 @@
     },
     "options": {
       "properties": {
-        "use_cache": {
+        "use-cache": {
           "description": "There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.",
           "instillAcceptFormats": [
             "boolean"
@@ -29,7 +29,7 @@
           "title": "Use Cache",
           "type": "boolean"
         },
-        "wait_for_model": {
+        "wait-for-model": {
           "description": "If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.",
           "instillAcceptFormats": [
             "boolean"
@@ -49,7 +49,7 @@
       "title": "Options",
       "type": "object"
     },
-    "string_input": {
+    "string-input": {
       "description": "String input",
       "instillAcceptFormats": [
         "string"
@@ -145,7 +145,7 @@
         "inputs": {
           "instillUIOrder": 1,
           "properties": {
-            "generated_responses": {
+            "generated-responses": {
               "description": "A list of strings corresponding to the earlier replies from the model.",
               "instillAcceptFormats": [
                 "array:string"
@@ -163,8 +163,8 @@
               "title": "Generated Responses",
               "type": "array"
             },
-            "past_user_inputs": {
-              "description": "A list of strings corresponding to the earlier replies from the user. Should be of the same length of generated_responses.",
+            "past-user-inputs": {
+              "description": "A list of strings corresponding to the earlier replies from the user. Should be of the same length of generated-responses.",
               "instillAcceptFormats": [
                 "array:string"
               ],
@@ -216,7 +216,7 @@
         "parameters": {
           "instillUIOrder": 2,
           "properties": {
-            "max_length": {
+            "max-length": {
               "description": "Integer to define the maximum length in tokens of the output summary.",
               "instillAcceptFormats": [
                 "integer"
@@ -229,7 +229,7 @@
               "title": "Max Length",
               "type": "integer"
             },
-            "max_time": {
+            "max-time": {
               "description": "The amount of time in seconds that the query should take maximum. Network can cause some overhead so it will be a soft limit.",
               "instillAcceptFormats": [
                 "number",
@@ -246,7 +246,7 @@
               "title": "Max Time",
               "type": "number"
             },
-            "min_length": {
+            "min-length": {
               "description": "Integer to define the minimum length in tokens of the output summary.",
               "instillAcceptFormats": [
                 "integer"
@@ -259,7 +259,7 @@
               "title": "Min Length",
               "type": "integer"
             },
-            "repetition_penalty": {
+            "repetition-penalty": {
               "description": "The more a token is used within generation the more it is penalized to not be picked in successive generation passes.",
               "instillAcceptFormats": [
                 "number",
@@ -293,7 +293,7 @@
               "title": "Temperature",
               "type": "number"
             },
-            "top_k": {
+            "top-k": {
               "description": "Integer to define the top tokens considered within the sample operation to create new text.",
               "instillAcceptFormats": [
                 "integer"
@@ -306,8 +306,8 @@
               "title": "Top K",
               "type": "integer"
             },
-            "top_p": {
-              "description": "Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top_p.",
+            "top-p": {
+              "description": "Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p.",
               "instillAcceptFormats": [
                 "number",
                 "integer"
@@ -342,7 +342,7 @@
           "description": "A facility dictionnary to send back for the next input (with the new user input addition).",
           "instillUIOrder": 0,
           "properties": {
-            "generated_responses": {
+            "generated-responses": {
               "description": "List of strings. The last outputs from the model in the conversation, after the model has run.",
               "instillUIOrder": 0,
               "instillFormat": "array:string",
@@ -356,7 +356,7 @@
               "title": "Generated Responses",
               "type": "array"
             },
-            "past_user_inputs": {
+            "past-user-inputs": {
               "description": "List of strings. The last inputs from the user in the conversation, after the model has run.",
               "instillUIOrder": 1,
               "instillFormat": "array:string",
@@ -372,13 +372,13 @@
             }
           },
           "required": [
-            "generated_responses",
-            "past_user_inputs"
+            "generated-responses",
+            "past-user-inputs"
           ],
           "title": "Conversation",
           "type": "object"
         },
-        "generated_text": {
+        "generated-text": {
           "description": "The answer of the bot",
           "instillFormat": "string",
           "instillUIMultiline": true,
@@ -388,7 +388,7 @@
         }
       },
       "required": [
-        "generated_text"
+        "generated-text"
       ],
       "title": "Output",
       "type": "object"
@@ -401,7 +401,7 @@
       "instillUIOrder": 0,
       "properties": {
         "inputs": {
-          "$ref": "#/$defs/string_input",
+          "$ref": "#/$defs/string-input",
           "description": "a string to be filled from, must contain the [MASK] token (check model card for exact name of the mask)",
           "instillUIOrder": 1
         },
@@ -450,7 +450,7 @@
                 "title": "Token",
                 "type": "integer"
               },
-              "token_str": {
+              "token-str": {
                 "description": "The string representation of the token",
                 "instillFormat": "string",
                 "instillUIOrder": 3,
@@ -905,7 +905,7 @@
           "instillUIOrder": 1,
           "properties": {
             "sentences": {
-              "description": "A list of strings which will be compared against the source_sentence.",
+              "description": "A list of strings which will be compared against the source-sentence.",
               "instillAcceptFormats": [
                 "array:string"
               ],
@@ -922,7 +922,7 @@
               "title": "Sentences",
               "type": "array"
             },
-            "source_sentence": {
+            "source-sentence": {
               "description": "The string that you wish to compare the other strings with. This can be a phrase, sentence, or longer passage, depending on the model being used.",
               "instillAcceptFormats": [
                 "string"
@@ -939,7 +939,7 @@
             }
           },
           "required": [
-            "source_sentence",
+            "source-sentence",
             "sentences"
           ],
           "description": "Inputs",
@@ -1042,7 +1042,7 @@
       "instillUIOrder": 0,
       "properties": {
         "inputs": {
-          "$ref": "#/$defs/string_input",
+          "$ref": "#/$defs/string-input",
           "instillUIOrder": 1
         },
         "model": {
@@ -1056,7 +1056,7 @@
         "parameters": {
           "instillUIOrder": 2,
           "properties": {
-            "max_length": {
+            "max-length": {
               "description": "Integer to define the maximum length in tokens of the output summary.",
               "instillAcceptFormats": [
                 "integer"
@@ -1069,7 +1069,7 @@
               "title": "Max Length",
               "type": "integer"
             },
-            "max_time": {
+            "max-time": {
               "instillAcceptFormats": [
                 "number",
                 "integer"
@@ -1084,7 +1084,7 @@
               "title": "Max Time",
               "type": "number"
             },
-            "min_length": {
+            "min-length": {
               "description": "Integer to define the minimum length in tokens of the output summary.",
               "instillAcceptFormats": [
                 "integer"
@@ -1097,7 +1097,7 @@
               "title": "Min Length",
               "type": "integer"
             },
-            "repetition_penalty": {
+            "repetition-penalty": {
               "description": "The more a token is used within generation the more it is penalized to not be picked in successive generation passes.",
               "instillAcceptFormats": [
                 "number",
@@ -1131,7 +1131,7 @@
               "title": "Temperature",
               "type": "number"
             },
-            "top_k": {
+            "top-k": {
               "description": "Integer to define the top tokens considered within the sample operation to create new text.",
               "instillAcceptFormats": [
                 "integer"
@@ -1144,8 +1144,8 @@
               "title": "Top K",
               "type": "integer"
             },
-            "top_p": {
-              "description": "Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top_p.",
+            "top-p": {
+              "description": "Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p.",
               "instillAcceptFormats": [
                 "number",
                 "integer"
@@ -1176,7 +1176,7 @@
     "output": {
       "instillUIOrder": 0,
       "properties": {
-        "summary_text": {
+        "summary-text": {
           "description": "The string after summarization",
           "instillFormat": "string",
           "instillUIMultiline": true,
@@ -1186,7 +1186,7 @@
         }
       },
       "required": [
-        "summary_text"
+        "summary-text"
       ],
       "title": "Output",
       "type": "object"
@@ -1316,7 +1316,7 @@
       "instillUIOrder": 0,
       "properties": {
         "inputs": {
-          "$ref": "#/$defs/string_input",
+          "$ref": "#/$defs/string-input",
           "instillUIOrder": 1
         },
         "model": {
@@ -1384,7 +1384,7 @@
       "instillUIOrder": 0,
       "properties": {
         "inputs": {
-          "$ref": "#/$defs/string_input",
+          "$ref": "#/$defs/string-input",
           "instillUIOrder": 1
         },
         "model": {
@@ -1398,7 +1398,7 @@
         "parameters": {
           "instillUIOrder": 2,
           "properties": {
-            "do_sample": {
+            "do-sample": {
               "description": "Whether or not to use sampling, use greedy decoding otherwise.",
               "instillAcceptFormats": [
                 "boolean"
@@ -1411,7 +1411,7 @@
               "title": "Do Sample",
               "type": "boolean"
             },
-            "max_new_tokens": {
+            "max-new-tokens": {
               "description": "The amount of new tokens to be generated, this does not include the input length it is a estimate of the size of generated text you want. Each new tokens slows down the request, so look for balance between response times and length of text generated.",
               "instillAcceptFormats": [
                 "integer"
@@ -1425,8 +1425,8 @@
               "title": "Max New Tokens",
               "type": "integer"
             },
-            "max_time": {
-              "description": "The amount of time in seconds that the query should take maximum. Network can cause some overhead so it will be a soft limit. Use that in combination with max_new_tokens for best results.",
+            "max-time": {
+              "description": "The amount of time in seconds that the query should take maximum. Network can cause some overhead so it will be a soft limit. Use that in combination with max-new-tokens for best results.",
               "instillAcceptFormats": [
                 "number",
                 "integer"
@@ -1440,7 +1440,7 @@
               "title": "Max Time",
               "type": "number"
             },
-            "num_return_sequences": {
+            "num-return-sequences": {
               "description": "The number of proposition you want to be returned.",
               "instillAcceptFormats": [
                 "integer"
@@ -1453,7 +1453,7 @@
               "title": "Num Return Sequences",
               "type": "integer"
             },
-            "repetition_penalty": {
+            "repetition-penalty": {
               "description": "The more a token is used within generation the more it is penalized to not be picked in successive generation passes.",
               "instillAcceptFormats": [
                 "number",
@@ -1467,7 +1467,7 @@
               "title": "Repetition Penalty",
               "type": "number"
             },
-            "return_full_text": {
+            "return-full-text": {
               "description": "If set to False, the return results will not contain the original query making it easier for prompting.",
               "instillAcceptFormats": [
                 "boolean"
@@ -1495,7 +1495,7 @@
               "title": "Temperature",
               "type": "number"
             },
-            "top_k": {
+            "top-k": {
               "description": "Integer to define the top tokens considered within the sample operation to create new text.",
               "instillAcceptFormats": [
                 "integer"
@@ -1508,8 +1508,8 @@
               "title": "Top K",
               "type": "integer"
             },
-            "top_p": {
-              "description": "Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top_p.",
+            "top-p": {
+              "description": "Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p.",
               "instillAcceptFormats": [
                 "number",
                 "integer"
@@ -1540,7 +1540,7 @@
     "output": {
       "instillUIOrder": 0,
       "properties": {
-        "generated_text": {
+        "generated-text": {
           "description": "The continuated string",
           "instillFormat": "string",
           "instillUIMultiline": true,
@@ -1550,7 +1550,7 @@
         }
       },
       "required": [
-        "generated_text"
+        "generated-text"
       ],
       "title": "Output",
       "type": "object"
@@ -1563,7 +1563,7 @@
       "instillUIOrder": 0,
       "properties": {
         "inputs": {
-          "$ref": "#/$defs/string_input",
+          "$ref": "#/$defs/string-input",
           "instillUIOrder": 1
         },
         "model": {
@@ -1577,7 +1577,7 @@
         "parameters": {
           "instillUIOrder": 2,
           "properties": {
-            "guidance_scale": {
+            "guidance-scale": {
               "description": "Guidance scale",
               "instillAcceptFormats": [
                 "number",
@@ -1604,7 +1604,7 @@
               "title": "Height",
               "type": "integer"
             },
-            "negative_prompt": {
+            "negative-prompt": {
               "description": "Negative prompt for generating the image",
               "instillAcceptFormats": [
                 "string"
@@ -1619,7 +1619,7 @@
               "title": "Negative Prompt",
               "type": "string"
             },
-            "num_inference_steps": {
+            "num-inference-steps": {
               "description": "Number of inference steps",
               "instillAcceptFormats": [
                 "integer"
@@ -1684,7 +1684,7 @@
       "instillUIOrder": 0,
       "properties": {
         "inputs": {
-          "$ref": "#/$defs/string_input",
+          "$ref": "#/$defs/string-input",
           "instillUIOrder": 1
         },
         "model": {
@@ -1698,7 +1698,7 @@
         "parameters": {
           "instillUIOrder": 2,
           "properties": {
-            "aggregation_strategy": {
+            "aggregation-strategy": {
               "description": "There are several aggregation strategies:\nnone: Every token gets classified without further aggregation.\nsimple: Entities are grouped according to the default schema (B-, I- tags get merged when the tag is similar).\nfirst: Same as the simple strategy except words cannot end up with different tags. Words will use the tag of the first token when there is ambiguity.\naverage: Same as the simple strategy except words cannot end up with different tags. Scores are averaged across tokens and then the maximum label is applied.\nmax: Same as the simple strategy except words cannot end up with different tags. Word entity will be the token with the maximum score.",
               "instillAcceptFormats": [
                 "string"
@@ -1741,7 +1741,7 @@
                 "title": "End",
                 "type": "integer"
               },
-              "entity_group": {
+              "entity-group": {
                 "description": "The type for the entity being recognized (model specific).",
                 "instillFormat": "string",
                 "instillUIOrder": 1,
@@ -1793,7 +1793,7 @@
       "instillUIOrder": 0,
       "properties": {
         "inputs": {
-          "$ref": "#/$defs/string_input",
+          "$ref": "#/$defs/string-input",
           "instillUIOrder": 1
         },
         "model": {
@@ -1815,7 +1815,7 @@
     "output": {
       "instillUIOrder": 0,
       "properties": {
-        "translation_text": {
+        "translation-text": {
           "description": "The string after translation",
           "instillFormat": "string",
           "instillUIMultiline": true,
@@ -1825,7 +1825,7 @@
         }
       },
       "required": [
-        "translation_text"
+        "translation-text"
       ],
       "title": "Output",
       "type": "object"
@@ -1837,7 +1837,7 @@
       "instillUIOrder": 0,
       "properties": {
         "inputs": {
-          "$ref": "#/$defs/string_input",
+          "$ref": "#/$defs/string-input",
           "instillUIOrder": 1
         },
         "model": {
@@ -1851,8 +1851,8 @@
         "parameters": {
           "instillUIOrder": 2,
           "properties": {
-            "candidate_labels": {
-              "description": "a list of strings that are potential classes for inputs. (max 10 candidate_labels, for more, simply run multiple requests, results are going to be misleading if using too many candidate_labels anyway. If you want to keep the exact same, you can simply run multi_label=True and do the scaling on your end. )",
+            "candidate-labels": {
+              "description": "a list of strings that are potential classes for inputs. (max 10 candidate-labels, for more, simply run multiple requests, results are going to be misleading if using too many candidate-labels anyway. If you want to keep the exact same, you can simply run multi-label=True and do the scaling on your end. )",
               "instillShortDescription": "a list of strings that are potential classes for inputs.",
               "instillUIOrder": 0,
               "instillUpstreamTypes": [
@@ -1861,13 +1861,13 @@
               ],
               "items": {
                 "description": "a string that are potential class for inputs.",
-                "title": "candidate_label",
+                "title": "candidate-label",
                 "type": "string"
               },
               "title": "Candidate Labels",
               "type": "array"
             },
-            "multi_label": {
+            "multi-label": {
               "description": "Boolean that is set to True if classes can overlap",
               "instillAcceptFormats": [
                 "boolean"
@@ -1882,7 +1882,7 @@
             }
           },
           "required": [
-            "candidate_labels"
+            "candidate-labels"
           ],
           "description": "Parameters",
           "title": "Parameters",

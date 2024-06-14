@@ -136,7 +136,7 @@ func TestComponent_ExecuteWriteTask(t *testing.T) {
 		c.Run(tc.name, func(c *qt.C) {
 
 			setup, err := structpb.NewStruct(map[string]any{
-				"api_key": apiKey,
+				"api-key": apiKey,
 			})
 			c.Assert(err, qt.IsNil)
 
@@ -220,7 +220,7 @@ func TestComponent_ExecuteReadTask(t *testing.T) {
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
 			setup, err := structpb.NewStruct(map[string]any{
-				"api_key": apiKey,
+				"api-key": apiKey,
 			})
 			c.Assert(err, qt.IsNil)
 

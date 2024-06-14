@@ -24,9 +24,9 @@ const (
 
 	testInput = "testing generation"
 
-	fillMaskResp            = `[{"score": 0.234, "token": 3, "sequence": "one", "token_str": "three"}]`
+	fillMaskResp            = `[{"score": 0.234, "token": 3, "sequence": "one", "token-str": "three"}]`
 	classificationResp      = `[{"score": 0.123, "label": "backpack hip-hop"}, {"score": 0.894, "label": "lo-fi jazz"}]`
-	tokenClassificationResp = `[{"entity_group":"foo", "score": 0.234, "start": 0, "end": 5, "word": "bar"}]`
+	tokenClassificationResp = `[{"entity-group":"foo", "score": 0.234, "start": 0, "end": 5, "word": "bar"}]`
 	objDetectionResp        = `
 [
   {
@@ -72,7 +72,7 @@ var coveredTasks = []taskParams{
 		contentType: httpclient.MIMETypeJSON,
 		wantBody:    inputsBody,
 		okResp:      `[{"generated_text": "text response"}]`,
-		wantResp:    `{"generated_text": "text response"}`,
+		wantResp:    `{"generated-text": "text response"}`,
 	},
 	{
 		task:        textToImageTask,
@@ -96,7 +96,7 @@ var coveredTasks = []taskParams{
 		contentType: httpclient.MIMETypeJSON,
 		wantBody:    inputsBody,
 		okResp:      `[{"summary_text": "summary"}]`,
-		wantResp:    `{"summary_text": "summary"}`,
+		wantResp:    `{"summary-text": "summary"}`,
 	},
 	{
 		task:        textClassificationTask,
@@ -120,7 +120,7 @@ var coveredTasks = []taskParams{
 		contentType: httpclient.MIMETypeJSON,
 		wantBody:    inputsBody,
 		okResp:      `[{"translation_text": "translated"}]`,
-		wantResp:    `{"translation_text": "translated"}`,
+		wantResp:    `{"translation-text": "translated"}`,
 	},
 	{
 		task:        zeroShotClassificationTask,
@@ -160,7 +160,7 @@ var coveredTasks = []taskParams{
 		contentType: httpclient.MIMETypeJSON,
 		wantBody:    []byte(`{"inputs": {}}`),
 		okResp:      `{"generated_text": "gen"}`,
-		wantResp:    `{"generated_text": "gen"}`,
+		wantResp:    `{"generated-text": "gen"}`,
 	},
 	{
 		task:        imageClassificationTask,
@@ -229,7 +229,7 @@ func testTask(c *qt.C, p taskParams) {
 		c.Parallel()
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base_url": "http://no-such.host",
+			"base-url": "http://no-such.host",
 		})
 		c.Assert(err, qt.IsNil)
 
@@ -316,9 +316,9 @@ func testTask(c *qt.C, p taskParams) {
 			c.Cleanup(srv.Close)
 
 			setup, _ := structpb.NewStruct(map[string]any{
-				"api_key":            apiKey,
-				"base_url":           srv.URL,
-				"is_custom_endpoint": tc.customEndpoint,
+				"api-key":            apiKey,
+				"base-url":           srv.URL,
+				"is-custom-endpoint": tc.customEndpoint,
 			})
 
 			exec, err := connector.CreateExecution(nil, setup, p.task)

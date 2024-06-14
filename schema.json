@@ -1,10 +1,10 @@
 {
   "$defs": {
-    "instill_types": {
-      "bounding_box": {
+    "instill-types": {
+      "bounding-box": {
         "additionalProperties": false,
         "description": "The detected bounding box in (left, top, width, height) format.",
-        "instillFormat": "structured/bounding_box",
+        "instillFormat": "structured/bounding-box",
         "properties": {
           "height": {
             "description": "Bounding box height value",
@@ -44,13 +44,13 @@
         "title": "Bounding Box",
         "type": "object"
       },
-      "chat_messages": {
-        "instillFormat": "array:structured/chat_messages",
+      "chat-messages": {
+        "instillFormat": "array:structured/chat-messages",
         "items": {
-          "instillFormat": "structured/chat_message",
+          "instillFormat": "structured/chat-message",
           "properties": {
             "content": {
-              "$ref": "#/$defs/instill_types/multi_modal_content",
+              "$ref": "#/$defs/instill-types/multi-modal-content",
               "description": "The message content",
               "instillUIOrder": 1,
               "title": "Content"
@@ -110,14 +110,14 @@
         "properties": {
           "objects": {
             "description": "A list of detected objects.",
-            "instillFormat": "array:structured/detection_object",
+            "instillFormat": "array:structured/detection-object",
             "instillUIOrder": 0,
             "items": {
               "additionalProperties": false,
-              "instillFormat": "structured/detection_object",
+              "instillFormat": "structured/detection-object",
               "properties": {
-                "bounding_box": {
-                  "$ref": "#/$defs/instill_types/bounding_box",
+                "bounding-box": {
+                  "$ref": "#/$defs/instill-types/bounding-box",
                   "instillUIOrder": 1,
                   "title": "Bounding box"
                 },
@@ -137,7 +137,7 @@
                 }
               },
               "required": [
-                "bounding_box",
+                "bounding-box",
                 "category",
                 "score"
               ],
@@ -163,18 +163,18 @@
         "title": "Embedding",
         "type": "array"
       },
-      "instance_segmentation": {
+      "instance-segmentation": {
         "additionalProperties": false,
         "properties": {
           "objects": {
             "description": "A list of detected instance bounding boxes.",
-            "instillFormat": "array:structured/instance_segmentation_object",
+            "instillFormat": "array:structured/instance-segmentation-object",
             "instillUIOrder": 0,
             "items": {
-              "instillFormat": "structured/instance_segmentation_object",
+              "instillFormat": "structured/instance-segmentation-object",
               "properties": {
-                "bounding_box": {
-                  "$ref": "#/$defs/instill_types/bounding_box",
+                "bounding-box": {
+                  "$ref": "#/$defs/instill-types/bounding-box",
                   "instillUIOrder": 1,
                   "title": "Bounding Box"
                 },
@@ -202,7 +202,7 @@
               },
               "required": [
                 "rle",
-                "bounding_box",
+                "bounding-box",
                 "category",
                 "score"
               ],
@@ -223,13 +223,13 @@
         "properties": {
           "objects": {
             "description": "A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object.",
-            "instillFormat": "array:structured/keypoint_object",
+            "instillFormat": "array:structured/keypoint-object",
             "instillUIOrder": 0,
             "items": {
-              "instillFormat": "structured/keypoint_object",
+              "instillFormat": "structured/keypoint-object",
               "properties": {
-                "bounding_box": {
-                  "$ref": "#/$defs/instill_types/bounding_box",
+                "bounding-box": {
+                  "$ref": "#/$defs/instill-types/bounding-box",
                   "instillUIOrder": 2,
                   "title": "Bounding Box"
                 },
@@ -280,7 +280,7 @@
               "required": [
                 "keypoints",
                 "score",
-                "bounding_box"
+                "bounding-box"
               ],
               "title": "Object",
               "type": "object"
@@ -294,11 +294,11 @@
         ],
         "type": "object"
       },
-      "multi_modal_content": {
-        "instillFormat": "structured/multi_modal_content",
+      "multi-modal-content": {
+        "instillFormat": "structured/multi-modal-content",
         "items": {
           "properties": {
-            "image_url": {
+            "image-url": {
               "properties": {
                 "url": {
                   "description": "Either a URL of the image or the base64 encoded image data.",
@@ -319,7 +319,7 @@
               "description": "The type of the content part.",
               "enum": [
                 "text",
-                "image_url"
+                "image-url"
               ],
               "instillFormat": "string",
               "type": "string"
@@ -337,13 +337,13 @@
         "properties": {
           "objects": {
             "description": "A list of detected bounding boxes.",
-            "instillFormat": "array:structured/ocr_object",
+            "instillFormat": "array:structured/ocr-object",
             "instillUIOrder": 0,
             "items": {
-              "instillFormat": "structured/ocr_object",
+              "instillFormat": "structured/ocr-object",
               "properties": {
-                "bounding_box": {
-                  "$ref": "#/$defs/instill_types/bounding_box",
+                "bounding-box": {
+                  "$ref": "#/$defs/instill-types/bounding-box",
                   "instillUIOrder": 0,
                   "title": "Bounding Box"
                 },
@@ -363,7 +363,7 @@
                 }
               },
               "required": [
-                "bounding_box",
+                "bounding-box",
                 "text",
                 "score"
               ],
@@ -379,15 +379,15 @@
         ],
         "type": "object"
       },
-      "semantic_segmentation": {
+      "semantic-segmentation": {
         "additionalProperties": false,
         "properties": {
           "stuffs": {
             "description": "A list of RLE binary masks.",
-            "instillFormat": "array:structured/semantic_segmentation_stuff",
+            "instillFormat": "array:structured/semantic-segmentation-stuff",
             "instillUIOrder": 0,
             "items": {
-              "instillFormat": "structured/semantic_segmentation_stuff",
+              "instillFormat": "structured/semantic-segmentation-stuff",
               "properties": {
                 "category": {
                   "description": "Category text string corresponding to each stuff mask.",

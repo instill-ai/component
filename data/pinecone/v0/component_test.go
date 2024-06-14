@@ -222,7 +222,7 @@ func TestComponent_Execute(t *testing.T) {
 			c.Cleanup(pineconeServer.Close)
 
 			setup, _ := structpb.NewStruct(map[string]any{
-				"api_key": pineconeKey,
+				"api-key": pineconeKey,
 				"url":     pineconeServer.URL,
 			})
 

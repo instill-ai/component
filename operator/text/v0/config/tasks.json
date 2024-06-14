@@ -15,7 +15,7 @@
       "title": "Text",
       "type": "string"
     },
-    "chunk_size": {
+    "chunk-size": {
       "default": 512,
       "description": "Specifies the maximum size of each chunk in terms of the number of tokens.",
       "instillAcceptFormats": [
@@ -30,7 +30,7 @@
       "title": "Chunk Size",
       "type": "integer"
     },
-    "chunk_overlap": {
+    "chunk-overlap": {
       "default": 100,
       "description": "Determines the number of tokens that overlap between consecutive chunks.",
       "instillAcceptFormats": [
@@ -45,7 +45,7 @@
       "title": "Chunk Overlap",
       "type": "integer"
     },
-    "model_name": {
+    "model-name": {
       "description": "The name of the model used for tokenization.",
       "enum": [
         "gpt-4",
@@ -179,7 +179,7 @@
       ],
       "instillUIOrder": 0,
       "properties": {
-        "chunk_token_size": {
+        "chunk-token-size": {
           "default": 500,
           "description": "Number of tokens per text chunk",
           "instillAcceptFormats": [
@@ -272,14 +272,14 @@
       ],
       "instillUIOrder": 0,
       "properties": {
-        "chunk_num": {
+        "chunk-num": {
           "description": "Total number of output text chunks",
           "instillUIOrder": 2,
           "instillFormat": "integer",
           "title": "Number of Text Chunks",
           "type": "integer"
         },
-        "text_chunks": {
+        "text-chunks": {
           "description": "Text chunks after splitting",
           "instillUIOrder": 1,
           "instillFormat": "array:string",
@@ -293,7 +293,7 @@
           "title": "Text Chunks",
           "type": "array"
         },
-        "token_count": {
+        "token-count": {
           "description": "Total count of tokens in the input text",
           "instillUIOrder": 0,
           "instillFormat": "integer",
@@ -302,9 +302,9 @@
         }
       },
       "required": [
-        "token_count",
-        "text_chunks",
-        "chunk_num"
+        "token-count",
+        "text-chunks",
+        "chunk-num"
       ],
       "title": "Output",
       "type": "object"
@@ -332,25 +332,25 @@
               "additionalProperties": true,
               "type": "object",
               "required": [
-                "chunk_method"
+                "chunk-method"
               ],
               "oneOf": [
                 {
                   "properties": {
-                    "chunk_method": {
+                    "chunk-method": {
                       "const": "Token",
                       "type": "string"
                     },
-                    "chunk_size": {
-                      "$ref": "#/$defs/chunk_size"
+                    "chunk-size": {
+                      "$ref": "#/$defs/chunk-size"
                     },
-                    "chunk_overlap": {
-                      "$ref": "#/$defs/chunk_overlap"
+                    "chunk-overlap": {
+                      "$ref": "#/$defs/chunk-overlap"
                     },
-                    "model_name": {
-                      "$ref": "#/$defs/model_name"
+                    "model-name": {
+                      "$ref": "#/$defs/model-name"
                     },
-                    "encoding_name": {
+                    "encoding-name": {
                       "description": "The name of the encoding used to convert text into tokens.",
                       "enum": [
                         "cl100k_base",
@@ -370,7 +370,7 @@
                       "title": "Encoding Name",
                       "type": "string"
                     },
-                    "allowed_special": {
+                    "allowed-special": {
                       "default": [],
                       "description": "A list of special tokens that are allowed within chunks. ",
                       "instillAcceptFormats": [
@@ -389,7 +389,7 @@
                       "title": "Allowed Special Tokens",
                       "type": "array"
                     },
-                    "disallowed_special": {
+                    "disallowed-special": {
                       "default": [],
                       "description": "A list of special tokens that should not appear within chunks.",
                       "instillAcceptFormats": [
@@ -410,30 +410,30 @@
                     }
                   },
                   "required": [
-                    "chunk_method"
+                    "chunk-method"
                   ],
                   "instillEditOnNodeFields": [
-                    "chunk_method",
-                    "chunk_size",
-                    "chunk_overlap",
-                    "model_name",
-                    "encoding_name",
-                    "allowed_special",
-                    "disallowed_special"
+                    "chunk-method",
+                    "chunk-size",
+                    "chunk-overlap",
+                    "model-name",
+                    "encoding-name",
+                    "allowed-special",
+                    "disallowed-special"
                   ],
                   "type": "object"
                 },
                 {
                   "properties": {
-                    "chunk_method": {
+                    "chunk-method": {
                       "const": "Recursive",
                       "type": "string"
                     },
-                    "chunk_size": {
-                      "$ref": "#/$defs/chunk_size"
+                    "chunk-size": {
+                      "$ref": "#/$defs/chunk-size"
                     },
-                    "chunk_overlap": {
-                      "$ref": "#/$defs/chunk_overlap"
+                    "chunk-overlap": {
+                      "$ref": "#/$defs/chunk-overlap"
                     },
                     "separators": {
                       "default": [],
@@ -454,7 +454,7 @@
                       "title": "Separators",
                       "type": "array"
                     },
-                    "keep_separator": {
+                    "keep-separator": {
                       "description": "A flag indicating whether to keep the separator characters at the beginning or end of chunks.",
                       "instillAcceptFormats": [
                         "boolean"
@@ -470,30 +470,30 @@
                     }
                   },
                   "required": [
-                    "chunk_method"
+                    "chunk-method"
                   ],
                   "instillEditOnNodeFields": [
-                    "chunk_method",
-                    "chunk_size",
-                    "chunk_overlap",
+                    "chunk-method",
+                    "chunk-size",
+                    "chunk-overlap",
                     "separators",
-                    "keep_separator"
+                    "keep-separator"
                   ],
                   "type": "object"
                 },
                 {
                   "properties": {
-                    "chunk_method": {
+                    "chunk-method": {
                       "const": "Markdown",
                       "type": "string"
                     },
-                    "chunk_size": {
-                      "$ref": "#/$defs/chunk_size"
+                    "chunk-size": {
+                      "$ref": "#/$defs/chunk-size"
                     },
-                    "chunk_overlap": {
-                      "$ref": "#/$defs/chunk_overlap"
+                    "chunk-overlap": {
+                      "$ref": "#/$defs/chunk-overlap"
                     },
-                    "code_blocks": {
+                    "code-blocks": {
                       "description": "A flag indicating whether code blocks should be treated as a single unit.",
                       "instillAcceptFormats": [
                         "boolean"
@@ -507,7 +507,7 @@
                       "title": "Code Blocks",
                       "type": "boolean"
                     },
-                    "reference_links": {
+                    "reference-links": {
                       "description": "A flag indicating whether reference links should be kept intact.",
                       "instillAcceptFormats": [
                         "boolean"
@@ -523,14 +523,14 @@
                     }
                   },
                   "required": [
-                    "chunk_method"
+                    "chunk-method"
                   ],
                   "instillEditOnNodeFields": [
-                    "chunk_method",
-                    "chunk_size",
-                    "chunk_overlap",
-                    "code_blocks",
-                    "reference_links"
+                    "chunk-method",
+                    "chunk-size",
+                    "chunk-overlap",
+                    "code-blocks",
+                    "reference-links"
                   ],
                   "type": "object"
                 }
@@ -555,14 +555,14 @@
       "description": "Output",
       "instillUIOrder": 0,
       "properties": {
-        "chunk_num": {
+        "chunk-num": {
           "description": "Total number of output text chunks",
           "instillUIOrder": 2,
           "instillFormat": "integer",
           "title": "Number of Text Chunks",
           "type": "integer"
         },
-        "text_chunks": {
+        "text-chunks": {
           "description": "Text chunks after splitting",
           "instillUIOrder": 1,
           "items": {
@@ -576,13 +576,13 @@
                 "instillUIMultiline": true,
                 "type": "string"
               },
-              "start_position": {
+              "start-position": {
                 "title": "Start Position",
                 "description": "The starting position of the chunk in the original text",
                 "instillFormat": "integer",
                 "type": "integer"
               },
-              "end_position": {
+              "end-position": {
                 "title": "End Position",
                 "description": "The ending position of the chunk in the original text",
                 "instillFormat": "integer",
@@ -591,8 +591,8 @@
             },
             "required": [
               "text",
-              "start_position",
-              "end_position"
+              "start-position",
+              "end-position"
             ],
             "instillUIMultiline": true,
             "type": "object"
@@ -600,7 +600,7 @@
           "title": "Text Chunks",
           "type": "array"
         },
-        "token_count": {
+        "token-count": {
           "description": "Total count of tokens in the input text",
           "instillUIOrder": 0,
           "instillFormat": "integer",
@@ -609,8 +609,8 @@
         }
       },
       "required": [
-        "text_chunks",
-        "chunk_num"
+        "text-chunks",
+        "chunk-num"
       ],
       "title": "Output",
       "type": "object"

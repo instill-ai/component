@@ -20,6 +20,7 @@ require (
 	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240530065422-d384f728a1e2
 	github.com/instill-ai/x v0.4.0-alpha
 	github.com/itchyny/gojq v0.12.14
+	github.com/json-iterator/go v1.1.12
 	github.com/lestrrat-go/jspointer v0.0.0-20181205001929-82fadba7561c
 	github.com/lestrrat-go/jsref v0.0.0-20211028120858-c0bcbb5abf20
 	github.com/lestrrat-go/option v1.0.0
@@ -84,6 +85,8 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/levigross/exp-html v0.0.0-20120902181939-8df60c69a8f5 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/olekukonko/tablewriter v0.0.4 // indirect
 	github.com/otiai10/gosseract/v2 v2.2.4 // indirect
 	github.com/pierrec/lz4/v4 v4.1.18 // indirect

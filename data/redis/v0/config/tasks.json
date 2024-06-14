@@ -4,7 +4,7 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "include_system_message": {
+        "include-system-message": {
           "default": true,
           "description": "Include system message in the retrieved conversation turns if exists",
           "instillAcceptFormats": [
@@ -18,7 +18,7 @@
           "title": "Include System Message If Exists",
           "type": "boolean"
         },
-        "latest_k": {
+        "latest-k": {
           "default": 5,
           "description": "The number of latest conversation turns to retrieve. A conversation turn typically includes one participant speaking or sending a message, and the other participant(s) responding to it.",
           "instillAcceptFormats": [
@@ -33,7 +33,7 @@
           "title": "Latest K",
           "type": "integer"
         },
-        "session_id": {
+        "session-id": {
           "description": "A unique identifier for the chat session",
           "instillAcceptFormats": [
             "string"
@@ -49,7 +49,7 @@
         }
       },
       "required": [
-        "session_id"
+        "session-id"
       ],
       "title": "Input",
       "type": "object"
@@ -58,7 +58,7 @@
       "instillUIOrder": 0,
       "properties": {
         "messages": {
-          "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/chat_messages",
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/chat-messages",
           "description": "Messages",
           "instillUIOrder": 0
         }
@@ -70,7 +70,7 @@
       "type": "object"
     }
   },
-  "TASK_WRITE_CHAT_MESSAGE": {
+  "TASK_WRITE_chat-message": {
     "instillShortDescription": "Write chat message into Redis.",
     "input": {
       "instillUIOrder": 0,
@@ -112,7 +112,7 @@
           "title": "Role",
           "type": "string"
         },
-        "session_id": {
+        "session-id": {
           "description": "A unique identifier for the chat session",
           "instillAcceptFormats": [
             "string"
@@ -128,7 +128,7 @@
         }
       },
       "required": [
-        "session_id",
+        "session-id",
         "role",
         "content"
       ],
@@ -153,16 +153,16 @@
       "type": "object"
     }
   },
-  "TASK_WRITE_MULTI_MODAL_CHAT_MESSAGE": {
+  "TASK_WRITE_MULTI_MODAL_chat-message": {
     "instillShortDescription": "Write multi-modal chat message into Redis.",
     "input": {
       "instillUIOrder": 0,
       "properties": {
         "content": {
-          "$ref": "https://raw.githubusercontent.com/instill-ai/component/b530a7ac8558f38f45bd116c503b1e2a31a4f92b/schema.json#/$defs/instill_types/multi_modal_content",
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/multi-modal-content",
           "description": "The multi-modal message content",
           "instillAcceptFormats": [
-            "structured/multi_modal_content"
+            "structured/multi-modal-content"
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
@@ -193,7 +193,7 @@
           "title": "Role",
           "type": "string"
         },
-        "session_id": {
+        "session-id": {
           "description": "A unique identifier for the chat session",
           "instillAcceptFormats": [
             "string"
@@ -209,7 +209,7 @@
         }
       },
       "required": [
-        "session_id",
+        "session-id",
         "role",
         "content"
       ],

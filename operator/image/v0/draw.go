@@ -495,14 +495,14 @@ func drawDetection(srcImg image.Image, objs []*structpb.Value) ([]byte, error) {
 	catIdx := indexUniqueCategories(objs)
 
 	for _, obj := range objs {
-		bbox := structpbToBoundingBox(obj.GetStructValue().Fields["bounding_box"].GetStructValue())
+		bbox := structpbToBoundingBox(obj.GetStructValue().Fields["bounding-box"].GetStructValue())
 		if err := drawBoundingBox(img, bbox, catIdx[obj.GetStructValue().Fields["category"].GetStringValue()]); err != nil {
 			return nil, err
 		}
 	}
 
 	for _, obj := range objs {
-		bbox := structpbToBoundingBox(obj.GetStructValue().Fields["bounding_box"].GetStructValue())
+		bbox := structpbToBoundingBox(obj.GetStructValue().Fields["bounding-box"].GetStructValue())
 		if err := drawObjectLabel(img, bbox, obj.GetStructValue().Fields["category"].GetStringValue(), false, catIdx[obj.GetStructValue().Fields["category"].GetStringValue()]); err != nil {
 			return nil, err
 		}
@@ -538,7 +538,7 @@ func drawOCR(srcImg image.Image, objs []*structpb.Value) ([]byte, error) {
 	img := convertToRGBA(srcImg)
 
 	for _, obj := range objs {
-		bbox := structpbToBoundingBox(obj.GetStructValue().Fields["bounding_box"].GetStructValue())
+		bbox := structpbToBoundingBox(obj.GetStructValue().Fields["bounding-box"].GetStructValue())
 		if err := draOCRLabel(img, bbox, obj.GetStructValue().Fields["text"].GetStringValue()); err != nil {
 			return nil, err
 		}
@@ -557,20 +557,20 @@ func drawInstanceSegmentation(srcImg image.Image, objs []*structpb.Value) ([]byt
 
 	// Sort the objects by size.
 	sort.Slice(objs, func(i, j int) bool {
-		bbox1 := structpbToBoundingBox(objs[i].GetStructValue().Fields["bounding_box"].GetStructValue())
-		bbox2 := structpbToBoundingBox(objs[j].GetStructValue().Fields["bounding_box"].GetStructValue())
+		bbox1 := structpbToBoundingBox(objs[i].GetStructValue().Fields["bounding-box"].GetStructValue())
+		bbox2 := structpbToBoundingBox(objs[j].GetStructValue().Fields["bounding-box"].GetStructValue())
 		return bbox1.Size() > bbox2.Size()
 	})
 
 	for instIdx, obj := range objs {
-		bbox := structpbToBoundingBox(obj.GetStructValue().Fields["bounding_box"].GetStructValue())
+		bbox := structpbToBoundingBox(obj.GetStructValue().Fields["bounding-box"].GetStructValue())
 		if err := drawInstanceMask(img, bbox, obj.GetStructValue().Fields["rle"].GetStringValue(), instIdx); err != nil {
 			return nil, err
 		}
 	}
 
 	for instIdx, obj := range objs {
-		bbox := structpbToBoundingBox(obj.GetStructValue().Fields["bounding_box"].GetStructValue())
+		bbox := structpbToBoundingBox(obj.GetStructValue().Fields["bounding-box"].GetStructValue())
 		text := obj.GetStructValue().Fields["category"].GetStringValue()
 		if err := drawObjectLabel(img, bbox, text, true, instIdx); err != nil {
 			return nil, err

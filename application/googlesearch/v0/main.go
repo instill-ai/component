@@ -62,11 +62,11 @@ func NewService(apiKey string) (*customsearch.Service, error) {
 }
 
 func getAPIKey(setup *structpb.Struct) string {
-	return setup.GetFields()["api_key"].GetStringValue()
+	return setup.GetFields()["api-key"].GetStringValue()
 }
 
 func getSearchEngineID(setup *structpb.Struct) string {
-	return setup.GetFields()["cse_id"].GetStringValue()
+	return setup.GetFields()["cse-id"].GetStringValue()
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {

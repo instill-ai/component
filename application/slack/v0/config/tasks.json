@@ -1,13 +1,13 @@
 {
   "$defs": {
-    "user_id": {
+    "user-id": {
       "description": "unique id from Slack",
       "instillFormat": "string",
       "instillUIOrder": 0,
       "title": "User UID",
       "type": "string"
     },
-    "user_name": {
+    "user-name": {
       "description": "user name in Slack",
       "instillFormat": "string",
       "instillUIOrder": 1,
@@ -21,7 +21,7 @@
       "description": "Please input the channel name and the date that we want to start to read",
       "instillUIOrder": 0,
       "properties": {
-        "channel_name": {
+        "channel-name": {
           "description": "A channel name display in Slack",
           "instillAcceptFormats": [
             "string"
@@ -36,7 +36,7 @@
           "title": "Channel Name",
           "type": "string"
         },
-        "start_to_read_date": {
+        "start-to-read-date": {
           "description": "earliest date in all read messages",
           "instillAcceptFormats": [
             "string"
@@ -53,7 +53,7 @@
         }
       },
       "required": [
-        "channel_name"
+        "channel-name"
       ],
       "title": "Input",
       "type": "object"
@@ -71,11 +71,11 @@
             "title": "conversation details",
             "type": "object",
             "properties": {
-              "user_id": {
-                "$ref": "#/$defs/user_id"
+              "user-id": {
+                "$ref": "#/$defs/user-id"
               },
-              "user_name": {
-                "$ref": "#/$defs/user_name"
+              "user-name": {
+                "$ref": "#/$defs/user-name"
               },
               "message": {
                 "description": "message to start a conversation",
@@ -84,7 +84,7 @@
                 "title": "Start Conversation Message",
                 "type": "string"
               },
-              "start_date": {
+              "start-date": {
                 "description": "when a conversation starts",
                 "instillFormat": "string",
                 "instillUIOrder": 3,
@@ -92,7 +92,7 @@
                 "title": "Start Date",
                 "type": "string"
               },
-              "last_date": {
+              "last-date": {
                 "description": "Date of the last message",
                 "instillFormat": "string",
                 "instillUIOrder": 4,
@@ -100,7 +100,7 @@
                 "title": "Last Date",
                 "type": "string"
               },
-              "thread_reply_messages": {
+              "thread-reply-messages": {
                 "description": "replies in a conversation",
                 "instillFormat": "array",
                 "instillUIOrder": 5,
@@ -110,11 +110,11 @@
                   "title": "relied details",
                   "type": "object",
                   "properties": {
-                    "user_id": {
-                      "$ref": "#/$defs/user_id"
+                    "user-id": {
+                      "$ref": "#/$defs/user-id"
                     },
-                    "user_name": {
-                      "$ref": "#/$defs/user_name"
+                    "user-name": {
+                      "$ref": "#/$defs/user-name"
                     },
                     "datetime": {
                       "description": "replied datetime",
@@ -132,7 +132,7 @@
                     }
                   },
                   "required": [
-                    "user_id",
+                    "user-id",
                     "datetime",
                     "message"
                   ]
@@ -140,9 +140,9 @@
               }
             },
             "required": [
-              "user_id",
+              "user-id",
               "message",
-              "start_date"
+              "start-date"
             ]
           }
         }
@@ -161,7 +161,7 @@
       "description": "Input",
       "instillUIOrder": 0,
       "properties": {
-        "channel_name": {
+        "channel-name": {
           "description": "A channel name display in Slack",
           "instillAcceptFormats": [
             "string"
@@ -193,7 +193,7 @@
         }
       },
       "required": [
-        "channel_name",
+        "channel-name",
         "message"
       ],
       "title": "Input",

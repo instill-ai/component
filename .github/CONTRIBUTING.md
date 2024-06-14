@@ -93,8 +93,8 @@ Recipes are represented by a JSON object:
 ```json
 {
   "component": {
-    "<component_id>": {
-      "type": "<component_definition_id>",
+    "<component-id>": {
+      "type": "<component-definition-id>",
       "task": "<task>",
       "input": {
         // values for the input fields
@@ -436,7 +436,7 @@ the recipe of a pipeline when configured to use this operator.
 #### `setup.json`
 
 For components that need to set up some configuration before execution, such as
-the `api_key` required by the component, `setup.json` can be used to describe
+the `api-key` required by the component, `setup.json` can be used to describe
 these configurations. The format is the same as the `input` objects in
 `tasks.json`.
 
@@ -705,9 +705,9 @@ The created pipeline will have the following recipe:
     "who": {
       "title": "Who",
       "description": "Who should be greeted?",
-      "instill_format": "string",
-      "instill_ui_order": 0,
-      "instill_ui_multiline": false
+      "instillFormat": "string",
+      "instillUIOrder": 0,
+      "instillUIMultiline": false
     }
   },
   "output": {
@@ -715,11 +715,11 @@ The created pipeline will have the following recipe:
       "title": "Greeting",
       "description": "",
       "value": "${hello_0.output.greeting}",
-      "instill_ui_order": 0
+      "instillUIOrder": 0
     }
   },
   "component": {
-    "hello_0": {
+    "hello-0": {
       "type": "hello",
       "task": "TASK_GREET",
       "input": {

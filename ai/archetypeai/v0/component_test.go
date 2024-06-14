@@ -12,6 +12,7 @@ import (
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
+
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -94,6 +95,7 @@ var (
 		Query:   "Describe what's happening",
 		FileIDs: []string{"test.file"},
 	}
+	queryReq     = fileQueryReq(queryIn)
 	uploadFileIn = uploadFileParams{
 		File: "data:text/plain;base64,aG9sYQ==",
 	}
@@ -124,7 +126,7 @@ func TestComponent_Execute(t *testing.T) {
 			task: taskDescribe,
 			in:   queryIn,
 			want: describeOutput{
-				Descriptions: []frameDescription{
+				Descriptions: []frameDescriptionOutput{
 					{
 						Timestamp:   2.0,
 						FrameID:     60,
@@ -139,7 +141,7 @@ func TestComponent_Execute(t *testing.T) {
 			},
 
 			wantPath:        describePath,
-			wantReq:         queryIn,
+			wantReq:         queryReq,
 			wantContentType: httpclient.MIMETypeJSON,
 			gotStatus:       http.StatusOK,
 			gotResp:         describeJSON,
@@ -152,7 +154,7 @@ func TestComponent_Execute(t *testing.T) {
 			wantErr: `Archetype AI didn't complete query 2401242b4d59e48bbf6e0d: status is "failed".`,
 
 			wantPath:        describePath,
-			wantReq:         queryIn,
+			wantReq:         queryReq,
 			wantContentType: httpclient.MIMETypeJSON,
 			gotStatus:       http.StatusOK,
 			gotResp:         describeErrJSON,
@@ -167,7 +169,7 @@ func TestComponent_Execute(t *testing.T) {
 			},
 
 			wantPath:        summarizePath,
-			wantReq:         queryIn,
+			wantReq:         queryReq,
 			wantContentType: httpclient.MIMETypeJSON,
 			gotStatus:       http.StatusOK,
 			gotResp:         summarizeJSON,
@@ -180,7 +182,7 @@ func TestComponent_Execute(t *testing.T) {
 			wantErr: `Archetype AI didn't complete query 2401233472bde249e60260: status is "failed".`,
 
 			wantPath:        summarizePath,
-			wantReq:         queryIn,
+			wantReq:         queryReq,
 			wantContentType: httpclient.MIMETypeJSON,
 			gotStatus:       http.StatusOK,
 			gotResp:         summarizeErrJSON,
@@ -219,7 +221,7 @@ func TestComponent_Execute(t *testing.T) {
 			wantErr: "Archetype AI responded with a 401 status code. Invalid access.",
 
 			wantPath:        summarizePath,
-			wantReq:         queryIn,
+			wantReq:         queryReq,
 			wantContentType: httpclient.MIMETypeJSON,
 			gotStatus:       http.StatusUnauthorized,
 			gotResp:         errJSON,
@@ -257,8 +259,8 @@ func TestComponent_Execute(t *testing.T) {
 			c.Cleanup(srv.Close)
 
 			setup, _ := structpb.NewStruct(map[string]any{
-				"base_path": srv.URL,
-				"api_key":   apiKey,
+				"base-path": srv.URL,
+				"api-key":   apiKey,
 			})
 
 			exec, err := component.CreateExecution(nil, setup, tc.task)

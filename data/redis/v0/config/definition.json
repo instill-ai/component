@@ -1,8 +1,8 @@
 {
   "availableTasks": [
     "TASK_RETRIEVE_CHAT_HISTORY",
-    "TASK_WRITE_CHAT_MESSAGE",
-    "TASK_WRITE_MULTI_MODAL_CHAT_MESSAGE"
+    "TASK_WRITE_chat-message",
+    "TASK_WRITE_MULTI_MODAL_chat-message"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/data/redis",

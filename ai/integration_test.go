@@ -28,7 +28,7 @@ func TestOpenAITextGeneration(t *testing.T) {
 	c := qt.New(t)
 
 	config, err := structpb.NewStruct(map[string]any{
-		"api_key":      openAIKey,
+		"api-key":      openAIKey,
 		"organization": openAIOrg,
 	})
 	c.Assert(err, qt.IsNil)

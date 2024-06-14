@@ -87,7 +87,7 @@ func TestComponent_Execute(t *testing.T) {
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()
-		c.Check(resp["status_code"], qt.Equals, float64(http.StatusBadRequest))
+		c.Check(resp["status-code"], qt.Equals, float64(http.StatusBadRequest))
 		c.Check(resp["body"], qt.ContentEquals, map[string]any{"message": "Bad request"})
 	})
 
@@ -118,7 +118,7 @@ func TestComponent_Execute(t *testing.T) {
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()
-		c.Check(resp["status_code"], qt.Equals, float64(http.StatusOK))
+		c.Check(resp["status-code"], qt.Equals, float64(http.StatusOK))
 		c.Check(resp["body"], qt.ContentEquals, map[string]any{"title": "Be the wheel"})
 	})
 
@@ -149,7 +149,7 @@ func TestComponent_Execute(t *testing.T) {
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()
-		c.Check(resp["status_code"], qt.Equals, float64(http.StatusOK))
+		c.Check(resp["status-code"], qt.Equals, float64(http.StatusOK))
 		c.Check(resp["body"], qt.ContentEquals, map[string]any{"title": "Be the wheel"})
 	})
 }
@@ -193,7 +193,7 @@ var testAuth = map[authType]map[string]any{
 	},
 	bearerTokenType: map[string]any{"token": token},
 	apiKeyType: map[string]any{
-		"auth_location": string(query),
+		"auth-location": string(query),
 		"key":           authKey,
 		"value":         authValue,
 	},
@@ -201,7 +201,7 @@ var testAuth = map[authType]map[string]any{
 
 func cfg(atype authType) *structpb.Struct {
 	auth := testAuth[atype]
-	auth["auth_type"] = string(atype)
+	auth["auth-type"] = string(atype)
 	setup, _ := structpb.NewStruct(map[string]any{
 		"authentication": auth,
 	})
