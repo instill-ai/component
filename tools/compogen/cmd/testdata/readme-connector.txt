@@ -106,7 +106,7 @@ The component configuration is defined and maintained [here](https://github.com/
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api_key` | string | Fill your Dummy API key |
+| API Key (required) | `api-key` | string | Fill your Dummy API key |
 | Organization ID | `organization` | string | Specify which organization is used for the requests |
 
 ## Supported Tasks

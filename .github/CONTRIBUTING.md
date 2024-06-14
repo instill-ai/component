@@ -436,7 +436,7 @@ the recipe of a pipeline when configured to use this operator.
 #### `setup.json`
 
 For components that need to set up some configuration before execution, such as
-the `api_key` required by the component, `setup.json` can be used to describe
+the `api-key` required by the component, `setup.json` can be used to describe
 these configurations. The format is the same as the `input` objects in
 `tasks.json`.
 
