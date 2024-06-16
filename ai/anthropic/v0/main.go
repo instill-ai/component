@@ -87,6 +87,33 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
+func retriveMessageContent(contentsPbValue *structpb.ListValue) []content {
+	contents := []content{}
+	for _, contentPbValue := range contentsPbValue.GetValues() {
+		contentType := contentPbValue.GetStructValue().Fields["type"].GetStringValue()
+		// anthrothpic models does not support image urls
+		if contentType == "text" {
+			content := content{
+				Type: "text",
+				Text: contentPbValue.GetStructValue().Fields["text"].GetStringValue(),
+			}
+			contents = append(contents, content)
+		}
+	}
+	return contents
+}
+
+func retriveChatMessage(chatHistoryPbList *structpb.ListValue) []message {
+	messages := []message{}
+
+	for _, messagePbValue := range chatHistoryPbList.GetValues() {
+		contents := retriveMessageContent(messagePbValue.GetStructValue().Fields["content"].GetListValue())
+		completeMessage := message{Role: messagePbValue.GetStructValue().Fields["role"].GetStringValue(), Content: contents}
+		messages = append(messages, completeMessage)
+	}
+	return messages
+}
+
 func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) {
 	client := newClient(e.Setup, e.GetLogger())
 
@@ -94,28 +121,10 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 
 	messages := []message{}
 
-	if in.Fields["chat_history"] != nil {
-		for _, el := range in.Fields["chat_history"].GetListValue().GetValues() {
+	chatHistory := in.Fields["chat_history"].GetListValue()
 
-			contents := []content{}
-			for _, cn := range el.GetStructValue().Fields["content"].GetListValue().GetValues() {
-
-				contentType := cn.GetStructValue().Fields["type"].GetStringValue()
-				// anthrothpic models does not support image urls
-				if contentType == "text" {
-					content := content{
-						Type: "text",
-						Text: cn.GetStructValue().Fields["text"].GetStringValue(),
-					}
-					contents = append(contents, content)
-				}
-			}
-			message := message{
-				Role:    el.GetStructValue().Fields["role"].GetStringValue(),
-				Content: contents,
-			}
-			messages = append(messages, message)
-		}
+	if chatHistory != nil {
+		messages = retriveChatMessage(chatHistory)
 	}
 
 	finalMessage := message{
