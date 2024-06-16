@@ -33,17 +33,6 @@ type message struct {
 	Content []content `json:"content"`
 }
 
-/*
-from openai component
-type textCompletionResp struct {
-	ID      string    `json:"id"`
-	Object  string    `json:"object"`
-	Created int       `json:"created"`
-	Choices []choices `json:"choices"`
-	Usage   usage     `json:"usage"`
-}
-*/
-
 type usage struct {
 	InputTokens  int `json:"input_tokens"`
 	OutputTokens int `json:"output_tokens"`
