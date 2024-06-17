@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"cloud.google.com/go/bigquery"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -32,10 +31,8 @@ func insertDataToBigQuery(projectID, datasetID, tableName string, valueSaver Dat
 func getDataSaver(input *structpb.Struct, schema bigquery.Schema) (DataSaver, error) {
 	inputObj := input.GetFields()["data"].GetStructValue()
 	dataMap := map[string]bigquery.Value{}
-	transformer := base.InstillDynamicFormatTransformer{}
 	for _, sc := range schema {
-		kebabName := transformer.ConvertToKebab(sc.Name)
-		dataMap[sc.Name] = inputObj.GetFields()[kebabName].AsInterface()
+		dataMap[sc.Name] = inputObj.GetFields()[sc.Name].AsInterface()
 	}
 	return DataSaver{Schema: schema, DataMap: dataMap}, nil
 }
