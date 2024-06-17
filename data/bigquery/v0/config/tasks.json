@@ -14,7 +14,9 @@
           "type": "object"
         }
       },
-      "required": [],
+      "required": [
+        "data"
+      ],
       "title": "Input",
       "type": "object"
     },
