@@ -5,7 +5,6 @@
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/latest/vdp/ai-connectors/anthropic",
   "icon": "assets/anthropic.svg",
-  "icon_url": "",
   "id": "anthropic",
   "public": true,
   "title": "Anthropic",

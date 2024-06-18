@@ -278,9 +278,11 @@
       "type": "object"
     },
     "output": {
+      "description": "Output",
       "instillUIOrder": 0,
       "properties": {
         "text": {
+          "description": "Model Output",
           "instillUIOrder": 0,
           "instillFormat": "string",
           "instillUIMultiline": true,
