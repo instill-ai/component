@@ -330,18 +330,18 @@
         "type": "string"
       },
       "DiffuseImageHeight": {
-        "default": 512,
+        "default": 1024,
         "description": "Height of the image to generate, in pixels, in an increment divible by 64.\n\nEngine-specific dimension validation:\n- SDXL Beta: must be between 128x128 and 512x896 (or 896x512); only one dimension can be greater than 512.  \n- SDXL v0.9: must be one of 1024x1024, 1152x896, 1216x832, 1344x768, 1536x640, 640x1536, 768x1344, 832x1216, or 896x1152\n- SDXL v1.0: same as SDXL v0.9\n- SD   v1.6: must be between 320x320 and 1536x1536",
-        "example": 512,
+        "example": 1024,
         "minimum": 128,
         "multipleOf": 64,
         "type": "integer",
         "x-go-type": "uint64"
       },
       "DiffuseImageWidth": {
-        "default": 512,
+        "default": 1024,
         "description": "Width of the image to generate, in pixels, in an increment divible by 64.\n\nEngine-specific dimension validation:\n- SDXL Beta: must be between 128x128 and 512x896 (or 896x512); only one dimension can be greater than 512.  \n- SDXL v0.9: must be one of 1024x1024, 1152x896, 1216x832, 1344x768, 1536x640, 640x1536, 768x1344, 832x1216, or 896x1152\n- SDXL v1.0: same as SDXL v0.9\n- SD   v1.6: must be between 320x320 and 1536x1536",
-        "example": 512,
+        "example": 1024,
         "minimum": 128,
         "multipleOf": 64,
         "type": "integer",
