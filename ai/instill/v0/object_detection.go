@@ -3,7 +3,6 @@ package instill
 import (
 	"fmt"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
@@ -21,18 +20,9 @@ func (e *execution) executeObjectDetection(grpcClient modelPB.ModelPublicService
 
 	taskInputs := []*modelPB.TaskInput{}
 	for _, input := range inputs {
-		inputJSON, err := protojson.Marshal(input)
-		if err != nil {
-			return nil, err
-		}
-
 		detectionInput := &modelPB.DetectionInput{}
-		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(inputJSON, detectionInput)
-		if err != nil {
-			return nil, err
-		}
 		detectionInput.Type = &modelPB.DetectionInput_ImageBase64{
-			ImageBase64: base.TrimBase64Mime(detectionInput.GetImageBase64()),
+			ImageBase64: base.TrimBase64Mime(input.Fields["image-base64"].GetStringValue()),
 		}
 
 		modelInput := &modelPB.TaskInput_Detection{
@@ -55,15 +45,23 @@ func (e *execution) executeObjectDetection(grpcClient modelPB.ModelPublicService
 		if objDetectionOutput == nil {
 			return nil, fmt.Errorf("invalid output: %v for model: %s", objDetectionOutput, modelName)
 		}
-		outputJSON, err := protojson.MarshalOptions{
-			UseProtoNames:   true,
-			EmitUnpopulated: true,
-		}.Marshal(objDetectionOutput)
-		if err != nil {
-			return nil, err
+		objects := make([]any, len(objDetectionOutput.Objects))
+
+		for i := range objDetectionOutput.Objects {
+			objects[i] = map[string]any{
+				"category": objDetectionOutput.Objects[i].Category,
+				"score":    objDetectionOutput.Objects[i].Score,
+				"bounding-box": map[string]any{
+					"top":    objDetectionOutput.Objects[i].BoundingBox.Top,
+					"left":   objDetectionOutput.Objects[i].BoundingBox.Left,
+					"width":  objDetectionOutput.Objects[i].BoundingBox.Width,
+					"height": objDetectionOutput.Objects[i].BoundingBox.Height,
+				},
+			}
 		}
-		output := &structpb.Struct{}
-		err = protojson.Unmarshal(outputJSON, output)
+		output, err := structpb.NewStruct(map[string]any{
+			"objects": objects,
+		})
 		if err != nil {
 			return nil, err
 		}

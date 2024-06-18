@@ -3,7 +3,6 @@ package instill
 import (
 	"fmt"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
@@ -16,17 +15,9 @@ func (e *execution) executeKeyPointDetection(grpcClient modelPB.ModelPublicServi
 	}
 	taskInputs := []*modelPB.TaskInput{}
 	for _, input := range inputs {
-		inputJSON, err := protojson.Marshal(input)
-		if err != nil {
-			return nil, err
-		}
 		keypointInput := &modelPB.KeypointInput{}
-		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(inputJSON, keypointInput)
-		if err != nil {
-			return nil, err
-		}
 		keypointInput.Type = &modelPB.KeypointInput_ImageBase64{
-			ImageBase64: base.TrimBase64Mime(keypointInput.GetImageBase64()),
+			ImageBase64: base.TrimBase64Mime(input.Fields["image-base64"].GetStringValue()),
 		}
 
 		taskInput := &modelPB.TaskInput_Keypoint{
@@ -48,15 +39,31 @@ func (e *execution) executeKeyPointDetection(grpcClient modelPB.ModelPublicServi
 		if keyPointOutput == nil {
 			return nil, fmt.Errorf("invalid output: %v for model: %s", keyPointOutput, modelName)
 		}
-		outputJSON, err := protojson.MarshalOptions{
-			UseProtoNames:   true,
-			EmitUnpopulated: true,
-		}.Marshal(keyPointOutput)
-		if err != nil {
-			return nil, err
+		objects := make([]any, len(keyPointOutput.Objects))
+
+		for i := range keyPointOutput.Objects {
+			keypoints := make([]any, len(keyPointOutput.Objects[i].Keypoints))
+			for j := range keyPointOutput.Objects[i].Keypoints {
+				keypoints[j] = map[string]any{
+					"x": keyPointOutput.Objects[i].Keypoints[j].X,
+					"y": keyPointOutput.Objects[i].Keypoints[j].Y,
+					"v": keyPointOutput.Objects[i].Keypoints[j].V,
+				}
+			}
+			objects[i] = map[string]any{
+				"score": keyPointOutput.Objects[i].Score,
+				"bounding-box": map[string]any{
+					"top":    keyPointOutput.Objects[i].BoundingBox.Top,
+					"left":   keyPointOutput.Objects[i].BoundingBox.Left,
+					"width":  keyPointOutput.Objects[i].BoundingBox.Width,
+					"height": keyPointOutput.Objects[i].BoundingBox.Height,
+				},
+				"keypoints": keypoints,
+			}
 		}
-		output := &structpb.Struct{}
-		err = protojson.Unmarshal(outputJSON, output)
+		output, err := structpb.NewStruct(map[string]any{
+			"objects": objects,
+		})
 		if err != nil {
 			return nil, err
 		}

@@ -19,17 +19,9 @@ func (e *execution) executeSemanticSegmentation(grpcClient modelPB.ModelPublicSe
 	}
 	taskInputs := []*modelPB.TaskInput{}
 	for _, input := range inputs {
-		inputJSON, err := protojson.Marshal(input)
-		if err != nil {
-			return nil, err
-		}
 		semanticSegmentationInput := &modelPB.SemanticSegmentationInput{}
-		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(inputJSON, semanticSegmentationInput)
-		if err != nil {
-			return nil, err
-		}
 		semanticSegmentationInput.Type = &modelPB.SemanticSegmentationInput_ImageBase64{
-			ImageBase64: base.TrimBase64Mime(semanticSegmentationInput.GetImageBase64()),
+			ImageBase64: base.TrimBase64Mime(input.Fields["image-base64"].GetStringValue()),
 		}
 
 		taskInput := &modelPB.TaskInput_SemanticSegmentation{

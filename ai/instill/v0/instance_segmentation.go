@@ -3,7 +3,6 @@ package instill
 import (
 	"fmt"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
@@ -21,17 +20,9 @@ func (e *execution) executeInstanceSegmentation(grpcClient modelPB.ModelPublicSe
 
 	taskInputs := []*modelPB.TaskInput{}
 	for _, input := range inputs {
-		inputJSON, err := protojson.Marshal(input)
-		if err != nil {
-			return nil, err
-		}
 		segmentationInput := &modelPB.InstanceSegmentationInput{}
-		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(inputJSON, segmentationInput)
-		if err != nil {
-			return nil, err
-		}
 		segmentationInput.Type = &modelPB.InstanceSegmentationInput_ImageBase64{
-			ImageBase64: base.TrimBase64Mime(segmentationInput.GetImageBase64()),
+			ImageBase64: base.TrimBase64Mime(input.Fields["image-base64"].GetStringValue()),
 		}
 
 		taskInput := &modelPB.TaskInput_InstanceSegmentation{
@@ -53,15 +44,25 @@ func (e *execution) executeInstanceSegmentation(grpcClient modelPB.ModelPublicSe
 		if instanceSegmentationOp == nil {
 			return nil, fmt.Errorf("invalid output: %v for model: %s", instanceSegmentationOp, modelName)
 		}
-		outputJSON, err := protojson.MarshalOptions{
-			UseProtoNames:   true,
-			EmitUnpopulated: true,
-		}.Marshal(instanceSegmentationOp)
-		if err != nil {
-			return nil, err
+
+		objects := make([]any, len(instanceSegmentationOp.Objects))
+
+		for i := range instanceSegmentationOp.Objects {
+			objects[i] = map[string]any{
+				"category": instanceSegmentationOp.Objects[i].Category,
+				"rle":      instanceSegmentationOp.Objects[i].Rle,
+				"score":    instanceSegmentationOp.Objects[i].Score,
+				"bounding-box": map[string]any{
+					"top":    instanceSegmentationOp.Objects[i].BoundingBox.Top,
+					"left":   instanceSegmentationOp.Objects[i].BoundingBox.Left,
+					"width":  instanceSegmentationOp.Objects[i].BoundingBox.Width,
+					"height": instanceSegmentationOp.Objects[i].BoundingBox.Height,
+				},
+			}
 		}
-		output := &structpb.Struct{}
-		err = protojson.Unmarshal(outputJSON, output)
+		output, err := structpb.NewStruct(map[string]any{
+			"objects": objects,
+		})
 		if err != nil {
 			return nil, err
 		}
