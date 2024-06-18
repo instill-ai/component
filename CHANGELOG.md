@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.20.0-beta](https://github.com/instill-ai/component/compare/v0.19.1-beta...v0.20.0-beta) (2024-06-18)
+
+
+### Features
+
+* add toggle image tag function for document pdf to markdown task ([#162](https://github.com/instill-ai/component/issues/162)) ([f12ecd2](https://github.com/instill-ai/component/commit/f12ecd286699241361e8e81790ad97f6f2707eaf))
+* use camelCase in JSON files ([#158](https://github.com/instill-ai/component/issues/158)) ([ecf4dd9](https://github.com/instill-ai/component/commit/ecf4dd906133ba3f89792bd91e7bcc19ff48a40b))
+* use kebab-case for all component input and output properties ([#164](https://github.com/instill-ai/component/issues/164)) ([4a82be7](https://github.com/instill-ai/component/commit/4a82be7a0e4ba011db9997af9f2209735f5f0b61))
+
 ## [0.19.1-beta](https://github.com/instill-ai/component/compare/v0.19.0-beta...v0.19.1-beta) (2024-06-13)
 
 
