@@ -3,9 +3,9 @@ package instill
 import (
 	"fmt"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
+	"github.com/instill-ai/component/base"
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
 )
 
@@ -20,18 +20,12 @@ func (e *execution) executeOCR(grpcClient modelPB.ModelPublicServiceClient, mode
 
 	outputs := []*structpb.Struct{}
 	for _, input := range inputs {
-		inputJSON, err := protojson.Marshal(input)
-		if err != nil {
-			return nil, err
-		}
-		ocrInput := &modelPB.OcrInput{}
-		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(inputJSON, ocrInput)
-		if err != nil {
-			return nil, err
-		}
-
 		taskInput := &modelPB.TaskInput_Ocr{
-			Ocr: ocrInput,
+			Ocr: &modelPB.OcrInput{
+				Type: &modelPB.OcrInput_ImageBase64{
+					ImageBase64: base.TrimBase64Mime(input.Fields["image-base64"].GetStringValue()),
+				},
+			},
 		}
 
 		// only support batch 1
@@ -47,15 +41,23 @@ func (e *execution) executeOCR(grpcClient modelPB.ModelPublicServiceClient, mode
 		if ocrOutput == nil {
 			return nil, fmt.Errorf("invalid output: %v for model: %s", ocrOutput, modelName)
 		}
-		outputJSON, err := protojson.MarshalOptions{
-			UseProtoNames:   true,
-			EmitUnpopulated: true,
-		}.Marshal(ocrOutput)
-		if err != nil {
-			return nil, err
+		objects := make([]any, len(ocrOutput.Objects))
+
+		for i := range ocrOutput.Objects {
+			objects[i] = map[string]any{
+				"text":  ocrOutput.Objects[i].Text,
+				"score": ocrOutput.Objects[i].Score,
+				"bounding-box": map[string]any{
+					"top":    ocrOutput.Objects[i].BoundingBox.Top,
+					"left":   ocrOutput.Objects[i].BoundingBox.Left,
+					"width":  ocrOutput.Objects[i].BoundingBox.Width,
+					"height": ocrOutput.Objects[i].BoundingBox.Height,
+				},
+			}
 		}
-		output := &structpb.Struct{}
-		err = protojson.Unmarshal(outputJSON, output)
+		output, err := structpb.NewStruct(map[string]any{
+			"objects": objects,
+		})
 		if err != nil {
 			return nil, err
 		}

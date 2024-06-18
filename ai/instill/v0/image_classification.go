@@ -22,17 +22,9 @@ func (e *execution) executeImageClassification(grpcClient modelPB.ModelPublicSer
 	taskInputs := []*modelPB.TaskInput{}
 	for _, input := range inputs {
 
-		inputJSON, err := protojson.Marshal(input)
-		if err != nil {
-			return nil, err
-		}
 		classificationInput := &modelPB.ClassificationInput{}
-		err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(inputJSON, classificationInput)
-		if err != nil {
-			return nil, err
-		}
 		classificationInput.Type = &modelPB.ClassificationInput_ImageBase64{
-			ImageBase64: base.TrimBase64Mime(classificationInput.GetImageBase64()),
+			ImageBase64: base.TrimBase64Mime(input.Fields["image-base64"].GetStringValue()),
 		}
 
 		taskInput := &modelPB.TaskInput_Classification{

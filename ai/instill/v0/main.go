@@ -21,6 +21,9 @@ import (
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
+// TODO: The Instill Model component will be refactored soon to align the data
+// structure with Instill Model.
+
 var (
 	//go:embed config/definition.json
 	definitionJSON []byte
