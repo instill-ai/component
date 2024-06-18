@@ -17,10 +17,9 @@ import (
 )
 
 const (
-	taskMarshal       = "TASK_MARSHAL"
-	taskUnmarshal     = "TASK_UNMARSHAL"
-	taskUnmarshalList = "TASK_UNMARSHAL_LIST"
-	taskJQ            = "TASK_JQ"
+	taskMarshal   = "TASK_MARSHAL"
+	taskUnmarshal = "TASK_UNMARSHAL"
+	taskJQ        = "TASK_JQ"
 )
 
 var (
@@ -65,8 +64,6 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.marshal
 	case taskUnmarshal:
 		e.execute = e.unmarshal
-	case taskUnmarshalList:
-		e.execute = e.unmarshalList
 	case taskJQ:
 		e.execute = e.jq
 	default:
@@ -104,22 +101,6 @@ func (e *execution) unmarshal(in *structpb.Struct) (*structpb.Struct, error) {
 
 	out.Fields = map[string]*structpb.Value{
 		"json": structpb.NewStructValue(obj),
-	}
-
-	return out, nil
-}
-
-func (e *execution) unmarshalList(in *structpb.Struct) (*structpb.Struct, error) {
-	out := new(structpb.Struct)
-
-	b := []byte(in.Fields["string"].GetStringValue())
-	obj := new(structpb.ListValue)
-	if err := json.Unmarshal(b, obj); err != nil {
-		return nil, errmsg.AddMessage(err, "Couldn't parse the JSON list. Please check the syntax is correct.")
-	}
-
-	out.Fields = map[string]*structpb.Value{
-		"json": structpb.NewListValue(obj),
 	}
 
 	return out, nil
