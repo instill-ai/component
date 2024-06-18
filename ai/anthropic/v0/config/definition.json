@@ -1,9 +1,9 @@
 {
-  "available_tasks": [
+  "availableTasks": [
     "TASK_TEXT_GENERATION_CHAT"
   ],
   "custom": false,
-  "documentation_url": "https://www.instill.tech/docs/latest/vdp/ai-connectors/anthropic",
+  "documentationUrl": "https://www.instill.tech/docs/latest/vdp/ai-connectors/anthropic",
   "icon": "assets/anthropic.svg",
   "icon_url": "",
   "id": "anthropic",
@@ -13,8 +13,9 @@
   "type": "COMPONENT_TYPE_AI",
   "uid": "42bdb620-74ad-486a-82da-25e45431b42c",
   "vendor": "Anthropic",
-  "vendor_attributes": {},
+  "vendorAttributes": {},
   "version": "0.1.1",
-  "source_url": "https://github.com/instill-ai/component/blob/main/ai/anthropic/v0",
-  "release_stage": "RELEASE_STAGE_ALPHA"
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/ai/anthropic/v0",
+  "releaseStage": "RELEASE_STAGE_ALPHA"
 }
+
