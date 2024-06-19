@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.1-beta](https://github.com/instill-ai/component/compare/v0.20.0-beta...v0.20.1-beta) (2024-06-19)
+
+
+### Bug Fixes
+
+* **redis:** fix typo ([#167](https://github.com/instill-ai/component/issues/167)) ([9dd783a](https://github.com/instill-ai/component/commit/9dd783a1852d273360f55245f258e8d74687c846))
+
 ## [0.20.0-beta](https://github.com/instill-ai/component/compare/v0.19.1-beta...v0.20.0-beta) (2024-06-18)
 
 
