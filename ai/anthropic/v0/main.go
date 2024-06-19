@@ -217,9 +217,6 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 	resp := messagesResp{}
 	req := client.R().SetResult(&resp).SetBody(body)
 	if _, err := req.Post(messagesPath); err != nil {
-		fmt.Println("#### request body ###")
-		j, _ := json.MarshalIndent(body, "", "\t")
-		fmt.Println(string(j))
 		return in, err
 	}
 

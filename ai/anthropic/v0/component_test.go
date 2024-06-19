@@ -68,8 +68,8 @@ func TestComponent_Execute(t *testing.T) {
 			c.Cleanup(anthropicServer.Close)
 
 			setup, err := structpb.NewStruct(map[string]any{
-				"base_path": anthropicServer.URL,
-				"api_key":   apiKey,
+				"base-path": anthropicServer.URL,
+				"api-key":   apiKey,
 			})
 			c.Assert(err, qt.IsNil)
 
@@ -111,7 +111,7 @@ func TestComponent_Test(t *testing.T) {
 		c.Cleanup(anthropicServer.Close)
 
 		_, err := structpb.NewStruct(map[string]any{
-			"base_path": anthropicServer.URL,
+			"base-path": anthropicServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
 	})
