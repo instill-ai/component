@@ -17,7 +17,7 @@ import (
 
 const (
 	textGenerationTask = "TASK_TEXT_GENERATION_CHAT"
-	cfgAPIKey          = "api_key"
+	cfgAPIKey          = "api-key"
 	host               = "https://api.anthropic.com"
 	messagesPath       = "/v1/messages"
 )

@@ -18,10 +18,10 @@
       }
     },
     "required": [
-      "api_key"
+      "api-key"
     ],
     "instillEditOnNodeFields": [
-      "api_key"
+      "api-key"
     ],
     "title": "Anthropic Connection",
     "type": "object"
