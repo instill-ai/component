@@ -2,6 +2,8 @@ package base
 
 import (
 	"encoding/base64"
+	"fmt"
+	"mime"
 	"strings"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -196,4 +198,30 @@ func CompileInstillFormat(sch *structpb.Struct) error {
 func TrimBase64Mime(b64 string) string {
 	splitB64 := strings.Split(b64, ",")
 	return splitB64[len(splitB64)-1]
+}
+
+// return the extension of the file from the base64 string, in the "jpeg" , "png" format, check with magic number
+func GetBase64FileExtensionSlow(b64 string) string {
+	fileBytes, err := base64.StdEncoding.DecodeString(TrimBase64Mime(b64))
+	if err != nil {
+		return err.Error()
+	}
+	mtype := mimetype.Detect(fileBytes)
+	extension := mtype.Extension()
+	extension = strings.Replace(extension, ".", "", 1)
+	return extension
+}
+
+// return the extension of the file from the base64 string, in the "jpeg" , "png" format, check with provided header
+func GetBase64FileExtensionFast(b64 string) string {
+	splitB64 := strings.Split(b64, ",")
+	header := splitB64[0]
+	header = strings.TrimPrefix(header, "data:")
+	header = strings.TrimSuffix(header, ";base64")
+	fmt.Println("### header:", header)
+	mtype, _, err := mime.ParseMediaType(header)
+	if err != nil {
+		return err.Error()
+	}
+	return strings.Split(mtype, "/")[1]
 }
