@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"sync"
 
 	"google.golang.org/protobuf/encoding/protojson"
@@ -31,10 +32,64 @@ var (
 
 	once sync.Once
 	comp *component
+
+	supportedImageExtensions = []string{"jpeg", "png", "gif", "webp"}
 )
 
 type component struct {
 	base.Component
+}
+
+// These structs are used to send the request /  parse the response from the API, this following their naming convension.
+// reference: https://docs.anthropic.com/en/api/messages
+type messagesResp struct {
+	ID         string    `json:"id"`
+	Type       string    `json:"type"`
+	Role       string    `json:"role"`
+	Content    []content `json:"content"`
+	Model      string    `json:"model"`
+	StopReason string    `json:"stop_reason,omitempty"`
+	Usage      usage     `json:"usage"`
+}
+
+type messagesReq struct {
+	Model         string      `json:"model"`
+	Messages      []message   `json:"messages"`
+	MaxTokens     int         `json:"max_tokens"`
+	Metadata      interface{} `json:"metadata"`
+	StopSequences []string    `json:"stop_sequences,omitempty"`
+	Stream        bool        `json:"stream,omitempty"`
+	System        string      `json:"system,omitempty"`
+	Temperature   float32     `json:"temperature,omitempty"`
+	TopK          int         `json:"top_k,omitempty"`
+	TopP          float32     `json:"top_p,omitempty"`
+}
+
+type messagesOutput struct {
+	Text string `json:"text"`
+}
+
+type message struct {
+	Role    string    `json:"role"`
+	Content []content `json:"content"`
+}
+
+type usage struct {
+	InputTokens  int `json:"input_tokens"`
+	OutputTokens int `json:"output_tokens"`
+}
+
+// doesn't support anthropic tools at the moment
+type content struct {
+	Type   string  `json:"type"`
+	Text   string  `json:"text,omitempty"`
+	Source *source `json:"source,omitempty"`
+}
+
+type source struct {
+	Type      string `json:"type"`
+	MediaType string `json:"media_type"`
+	Data      string `json:"data"`
 }
 
 func Init(bc base.Component) *component {
@@ -122,7 +177,7 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 
 	messages := []message{}
 
-	chatHistory := in.Fields["chat_history"].GetListValue()
+	chatHistory := in.Fields["chatHistory"].GetListValue()
 
 	if chatHistory != nil {
 		messages = retriveChatMessage(chatHistory)
@@ -133,12 +188,16 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		Content: []content{{Type: "text", Text: prompt}},
 	}
 
-	if in.Fields["prompt_images"] != nil {
-		for _, image := range in.Fields["prompt_images"].GetListValue().GetValues() {
-			// need to add support for different file types in the future.
+	if in.Fields["prompt-images"] != nil {
+		for _, image := range in.Fields["prompt-images"].GetListValue().GetValues() {
+			extension := base.GetBase64FileExtensionFast(image.GetStringValue())
+			// check if the image extension is supported
+			if !slices.Contains(supportedImageExtensions, extension) {
+				return nil, fmt.Errorf("unsupported image extension, expected one of: %v , got %s", supportedImageExtensions, extension)
+			}
 			image := content{
 				Type:   "image",
-				Source: &source{Type: "base64", MediaType: "image/jpeg", Data: base.TrimBase64Mime(image.GetStringValue())},
+				Source: &source{Type: "base64", MediaType: fmt.Sprintf("image/%s", extension), Data: base.TrimBase64Mime(image.GetStringValue())},
 			}
 			finalMessage.Content = append(finalMessage.Content, image)
 		}
@@ -148,16 +207,19 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 
 	body := messagesReq{
 		Messages:    messages,
-		Model:       in.Fields["model_name"].GetStringValue(),
-		MaxTokens:   int(in.Fields["max_new_tokens"].GetNumberValue()),
-		System:      in.Fields["system_message"].GetStringValue(),
-		TopK:        int(in.Fields["top_k"].GetNumberValue()),
+		Model:       in.Fields["model-name"].GetStringValue(),
+		MaxTokens:   int(in.Fields["max-new-tokens"].GetNumberValue()),
+		System:      in.Fields["system-message"].GetStringValue(),
+		TopK:        int(in.Fields["top-k"].GetNumberValue()),
 		Temperature: float32(in.Fields["temperature"].GetNumberValue()),
 	}
 
 	resp := messagesResp{}
 	req := client.R().SetResult(&resp).SetBody(body)
 	if _, err := req.Post(messagesPath); err != nil {
+		fmt.Println("#### request body ###")
+		j, _ := json.MarshalIndent(body, "", "\t")
+		fmt.Println(string(j))
 		return in, err
 	}
 

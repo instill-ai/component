@@ -1,10 +1,10 @@
 {
   "$defs": {
-    "multi_modal_content": {
-      "instillFormat": "structured/multi_modal_content",
+    "multi-modal-content": {
+      "instillFormat": "structured/multi-modal-content",
       "items": {
         "properties": {
-          "image_url": {
+          "image-url": {
             "properties": {
               "url": {
                 "description": "Either a URL of the image or the base64 encoded image data.",
@@ -25,7 +25,7 @@
             "description": "The type of the content part.",
             "enum": [
               "text",
-              "image_url"
+              "image_url" 
             ],
             "instillFormat": "string",
             "type": "string"
@@ -38,10 +38,10 @@
       },
       "type": "array"
     },
-    "chat_message": {
+    "chat-message": {
       "properties": {
         "content": {
-          "$ref": "#/$defs/multi_modal_content",
+          "$ref": "#/$defs/multi-modal-content",
           "description": "The message content",
           "instillUIOrder": 1,
           "title": "Content"
@@ -64,12 +64,12 @@
     "common": {
       "description": "Input",
       "instillEditOnNodeFields": [
-        "image_base64",
-        "model_name"
+        "image-base64",
+        "model-name"
       ],
       "instillUIOrder": 0,
       "properties": {
-        "image_base64": {
+        "image-base64": {
           "description": "Image base64",
           "instillAcceptFormats": [
             "image/*"
@@ -81,7 +81,7 @@
           "title": "Image",
           "type": "string"
         },
-        "model_name": {
+        "model-name": {
           "description": "The Instill Model model to be used.",
           "instillAcceptFormats": [
             "string"
@@ -97,13 +97,13 @@
         }
       },
       "required": [
-        "image_base64",
-        "model_name"
+        "image-base64",
+        "model-name"
       ],
       "title": "Input",
       "type": "object"
     },
-    "extra_params": {
+    "extra-params": {
       "description": "Extra Parameters",
       "instillAcceptFormats": [
         "semi-structured/object"
@@ -124,30 +124,30 @@
       "description": "Input",
       "instillEditOnNodeFields": [
         "prompt",
-        "model_name"
+        "model-name"
       ],
       "instillUIOrder": 0,
       "properties": {
-        "chat_history": {
+        "chat-history": {
           "description": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
           "instillAcceptFormats": [
-            "structured/chat_messages"
+            "structured/chat-messages"
           ],
-          "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. (Note: Anthropic doesn't support sending images via image_url, use the 'prompt_images' field instead)",
+          "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. (Note: Anthropic doesn't support sending images via image-url, use the 'prompt-images' field instead)",
           "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "reference"
           ],
           "items": {
-            "$ref": "#/$defs/chat_message"
+            "$ref": "#/$defs/chat-message"
           },
           "title": "Chat history",
           "type": "array"
         },
-        "extra_params": {
-          "$ref": "#/$defs/extra_params"
+        "extra-params": {
+          "$ref": "#/$defs/extra-params"
         },
-        "max_new_tokens": {
+        "max-new-tokens": {
           "default": 50,
           "description": "The maximum number of tokens for model to generate",
           "instillAcceptFormats": [
@@ -161,7 +161,7 @@
           "title": "Max new tokens",
           "type": "integer"
         },
-        "model_name": {
+        "model-name": {
           "enum": [
             "claude-3-opus-20240229",
             "claude-3-sonnet-20240229",
@@ -196,7 +196,7 @@
           "title": "Prompt",
           "type": "string"
         },
-        "prompt_images": {
+        "prompt-images": {
           "description": "The prompt images (Note: The prompt images will be injected in the order they are provided to the 'prompt' message. Also we currently only support JPEG file format.)",
           "instillAcceptFormats": [
             "array:image/*"
@@ -224,7 +224,7 @@
           "title": "Seed",
           "type": "integer"
         },
-        "system_message": {
+        "system-message": {
           "default": "You are a helpful assistant.",
           "description": "The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model\u2019s behavior is using a generic message as \"You are a helpful assistant.\"",
           "instillAcceptFormats": [
@@ -255,7 +255,7 @@
           "title": "Temperature",
           "type": "number"
         },
-        "top_k": {
+        "top-k": {
           "default": 10,
           "description": "Top k for sampling",
           "instillAcceptFormats": [
@@ -272,7 +272,7 @@
       },
       "required": [
         "prompt",
-        "model_name"
+        "model-name"
       ],
       "title": "Input",
       "type": "object"
