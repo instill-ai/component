@@ -28,9 +28,9 @@ type ScrapeWebsiteInput struct {
 	// MaxK: The maximum number of pages to scrape.
 	MaxK int `json:"max-k"`
 	// IncludeLinkText: Whether to include the scraped text of the scraped web page.
-	IncludeLinkText *bool `json:"include_link_text"`
+	IncludeLinkText *bool `json:"include-link-text"`
 	// IncludeLinkHTML: Whether to include the scraped HTML of the scraped web page.
-	IncludeLinkHTML *bool `json:"include_link_html"`
+	IncludeLinkHTML *bool `json:"include-link-html"`
 }
 
 // ScrapeWebsiteOutput defines the output of the scrape website task
