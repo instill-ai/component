@@ -70,7 +70,7 @@
       "type": "object"
     }
   },
-  "TASK_WRITE_chat-message": {
+  "TASK_WRITE_CHAT_MESSAGE": {
     "instillShortDescription": "Write chat message into Redis.",
     "input": {
       "instillUIOrder": 0,
@@ -153,7 +153,7 @@
       "type": "object"
     }
   },
-  "TASK_WRITE_MULTI_MODAL_chat-message": {
+  "TASK_WRITE_MULTI_MODAL_CHAT_MESSAGE": {
     "instillShortDescription": "Write multi-modal chat message into Redis.",
     "input": {
       "instillUIOrder": 0,
