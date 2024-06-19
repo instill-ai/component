@@ -168,18 +168,18 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 		return nil, err
 	}
 
-	if sysVars == nil && compConfig == nil {
+	if compConfig == nil {
 		return oriDef, nil
 	}
 
 	def := proto.Clone(oriDef).(*pb.ComponentDefinition)
-	client, err := NewClient(compConfig.Setup["json_key"].(string), compConfig.Setup["project_id"].(string))
+	client, err := NewClient(compConfig.Setup["json-key"].(string), compConfig.Setup["project-id"].(string))
 	if err != nil || client == nil {
 		return nil, fmt.Errorf("error creating BigQuery client: %v", err)
 	}
 	defer client.Close()
 
-	myDataset := client.Dataset(compConfig.Setup["dataset_id"].(string))
+	myDataset := client.Dataset(compConfig.Setup["dataset-id"].(string))
 	tables, err := constructTableColumns(myDataset, ctx, compConfig)
 	if err != nil {
 		return nil, err
@@ -244,7 +244,7 @@ func constructTableColumns(myDataset *bigquery.Dataset, ctx context.Context, com
 
 		// TODO: chuang8511, remove table from definition.json and make it dynamic.
 		// It will be changed before 2024-06-26.
-		if compConfig.Setup["table_name"].(string) == tableName {
+		if compConfig.Setup["table-name"].(string) == tableName {
 			tables = append(tables, TableColumns{TableName: tableName, Columns: columns})
 		}
 	}
@@ -266,6 +266,7 @@ func constructTableProperties(tables []TableColumns) ([]*structpb.Struct, error)
 				"description":          "Column " + column.Name + " of table " + table.TableName,
 				"instillFormat":        getInstillAcceptFormat(column.Type),
 				"instillUpstreamTypes": instillUpstreamTypes,
+				"instillAcceptFormats": []string{getInstillAcceptFormat(column.Type)},
 				"required":             []string{},
 				"type":                 getInstillAcceptFormat(column.Type),
 			}
