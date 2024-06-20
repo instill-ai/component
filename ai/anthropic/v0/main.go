@@ -126,9 +126,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
 
-	// An execution  might take several inputs. One result will be returned for
-	// each one of them, containing the execution output for that set of
-	// parameters.
+	// The execution takes a array of inputs and returns an array of outputs. The execution is done sequentially.
 	for i, input := range inputs {
 		output, err := e.execute(input)
 		if err != nil {
