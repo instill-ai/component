@@ -113,9 +113,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: setup},
 	}
 
-	// A simple if statement would be enough in a component with a single task.
-	// If the number of task grows, here is where the execution task would be
-	// selected.
+	// Leave space for future tasks, such as image generation. As for 2024-06-20, only text generation is supported on Anthropic platform.
 	switch task {
 	case textGenerationTask:
 		e.execute = e.generateText
