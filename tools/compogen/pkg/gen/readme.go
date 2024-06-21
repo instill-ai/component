@@ -2,7 +2,6 @@ package gen
 
 import (
 	"cmp"
-	_ "embed"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -12,6 +11,8 @@ import (
 	"text/template"
 	"unicode"
 	"unicode/utf8"
+
+	_ "embed"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/russross/blackfriday/v2"
@@ -177,8 +178,17 @@ func (g *READMEGenerator) Generate() error {
 
 	p, err := readmeParams{}.parseDefinition(def, setup, tasks)
 	if err != nil {
-		return err
+		return fmt.Errorf("converting to template params: %w", err)
 	}
+
+	// Extra content should be defined as a Markdown file, it will be injected
+	// verbatim.
+	extra, err := os.ReadFile(".compogen/extra.mdx")
+	if err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("reading extra contents: %w", err)
+	}
+
+	p.ExtraContent = string(extra)
 
 	return readme.Execute(out, p)
 }
@@ -213,8 +223,14 @@ type readmeParams struct {
 	SetupConfig   setupConfig
 
 	Tasks []readmeTask
+
+	// ExtraContent allows component maintainers to inject an extra section
+	// into the generated document.
+	ExtraContent string
 }
 
+// parseDefinition converts a component definition and its tasks to the README
+// template params.
 func (p readmeParams) parseDefinition(d definition, s *objectSchema, tasks map[string]task) (readmeParams, error) {
 	p.ComponentType = toComponentType[d.Type]
 

@@ -4,6 +4,9 @@ mkdir -p pkg/dummy/config
 cp definition.json pkg/dummy/config/definition.json
 cp tasks.json pkg/dummy/config/tasks.json
 
+mkdir -p .compogen
+cp extra.mdx .compogen/extra.mdx
+
 # NOK - Wrong files
 
 ! compogen readme pkg/dummy/wrong pkg/dummy/README.mdx
@@ -141,6 +144,14 @@ cmp pkg/dummy/README.mdx want-readme.mdx
     }
   }
 }
+-- extra.mdx --
+## Extra section
+
+This section defines some extra content. It contains some markdown syntax like:
+
+- Bullets
+- **Bold sentences**
+- _Italic sentences_
 -- want-no-defs --
 Error: open pkg/dummy/wrong/definition.json: no such file or directory
 -- want-no-tasks --
@@ -167,6 +178,15 @@ It can carry out the following tasks:
 ## Release Stage
 
 `Beta`
+
+## Extra section
+
+This section defines some extra content. It contains some markdown syntax like:
+
+- Bullets
+- **Bold sentences**
+- _Italic sentences_
+
 
 ## Configuration
 

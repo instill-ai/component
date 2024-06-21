@@ -96,6 +96,8 @@ It can carry out the following tasks:
 
 `Coming Soon`
 
+
+
 ## Configuration
 
 The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/dummy/v0/config/definition.json).
