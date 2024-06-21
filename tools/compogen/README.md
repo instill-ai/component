@@ -97,9 +97,6 @@ compogen readme path/to/component/config path/to/component/README.mdx \
   arrays and objects (currently the type doesn't support nesting).
 - If task definitions contain examples for the (required) input and output
   fields, generate param samples as in https://github.com/instill-ai/instill.tech/blob/main/docs/component/ai/openai.en.mdx
-- Implement a way to inject extra sections if a component needs further
-  documentation (e.g. by adding a `doc.json` file with a structured array that
-  describes the position and content of the new section.
 
 ## Next steps
 
