@@ -2,6 +2,7 @@ package anthropic
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -92,7 +93,7 @@ func TestComponent_Execute(t *testing.T) {
 	})
 }
 
-func TestComponent_Test(t *testing.T) {
+func TestComponent_Connection(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
@@ -151,5 +152,62 @@ func TestComponent_Test(t *testing.T) {
 
 		err = connector.Test(nil, setup)
 		c.Check(err, qt.IsNil)
+	})
+}
+
+type MockAnthropicClient struct{}
+
+func (m *MockAnthropicClient) generateTextChat(request messagesReq) (messagesResp, error) {
+
+	resp := messagesResp{
+		ID:         "msg_013Zva2CMHLNnXjNJJKqJ2EF",
+		Type:       "message",
+		Role:       "assistant",
+		Content:    []content{{Text: "Hi! My name is Claude.", Type: "text"}},
+		Model:      "claude-3-5-sonnet-20240620",
+		StopReason: "end_turn",
+		Usage:      usage{InputTokens: 10, OutputTokens: 25},
+	}
+
+	return resp, nil
+}
+
+func TestComponent_Generation(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	tc := struct {
+		input    map[string]any
+		wantResp messagesOutput
+	}{
+		input:    map[string]any{"prompt": "Hi! What's your name?"},
+		wantResp: messagesOutput{Text: "Hi! My name is Claude."},
+	}
+
+	c.Run("nok - error", func(c *qt.C) {
+		setup, err := structpb.NewStruct(map[string]any{
+			"api-key": apiKey,
+		})
+		c.Assert(err, qt.IsNil)
+
+		// It will increase the modification range if we change the input of CreateExecution.
+		// So, we replaced it with the code below to cover the test for taskFunctions.go
+		e := &execution{
+			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: textGenerationTask},
+			client:             &MockAnthropicClient{},
+		}
+		e.execute = e.generateText
+		exec := &base.ExecutionWrapper{Execution: e}
+
+		pbIn, err := base.ConvertToStructpb(tc.input)
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+		wantJSON, err := json.Marshal(tc.wantResp)
+		c.Assert(err, qt.IsNil)
+		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
 }
