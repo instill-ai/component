@@ -10,8 +10,8 @@ type anthropicClient struct {
 	httpClient *httpclient.Client
 }
 
-func newClient(apiKey string, baseUrl string, logger *zap.Logger) *anthropicClient {
-	c := httpclient.New("Anthropic", baseUrl,
+func newClient(apiKey string, baseURL string, logger *zap.Logger) *anthropicClient {
+	c := httpclient.New("Anthropic", baseURL,
 		httpclient.WithLogger(logger),
 		httpclient.WithEndUserError(new(errBody)),
 	)
