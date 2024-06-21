@@ -51,6 +51,7 @@ func TestComponent_Execute(t *testing.T) {
 	// TODO we'll likely want to have a test function per task and test at
 	// least OK, NOK. For now, only errors are tested in order to verify
 	// end-user messages.
+	// 2024-06-21 summer intern An-Che: Implemented text generation test case
 	for _, tc := range testcases {
 		c.Run("nok - "+tc.name+" 401", func(c *qt.C) {
 			h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -192,8 +193,6 @@ func TestComponent_Generation(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		// It will increase the modification range if we change the input of CreateExecution.
-		// So, we replaced it with the code below to cover the test for taskFunctions.go
 		e := &execution{
 			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: textGenerationTask},
 			client:             &MockAnthropicClient{},
