@@ -40,6 +40,10 @@ type component struct {
 	base.Component
 }
 
+type AnthropicClient interface {
+	generateTextChat(request messagesReq) (messagesResp, error)
+}
+
 // These structs are used to send the request /  parse the response from the API, this following their naming convension.
 // reference: https://docs.anthropic.com/en/api/messages
 type messagesResp struct {
@@ -106,11 +110,13 @@ func Init(bc base.Component) *component {
 type execution struct {
 	base.ComponentExecution
 	execute func(*structpb.Struct) (*structpb.Struct, error)
+	client  AnthropicClient
 }
 
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: setup},
+		client:             newClient(getAPIKey(setup), getBasePath(setup), c.GetLogger()),
 	}
 
 	// Leave space for future tasks, such as image generation. As for 2024-06-20, only text generation is supported on Anthropic platform.
@@ -175,7 +181,6 @@ func retriveChatMessage(chatHistoryPbList *structpb.ListValue) []message {
 }
 
 func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) {
-	client := newClient(e.Setup, e.GetLogger())
 
 	prompt := in.Fields["prompt"].GetStringValue()
 
@@ -209,7 +214,7 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 
 	messages = append(messages, finalMessage)
 
-	body := messagesReq{
+	req := messagesReq{
 		Messages:    messages,
 		Model:       in.Fields["model-name"].GetStringValue(),
 		MaxTokens:   int(in.Fields["max-new-tokens"].GetNumberValue()),
@@ -218,11 +223,7 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		Temperature: float32(in.Fields["temperature"].GetNumberValue()),
 	}
 
-	resp := messagesResp{}
-	req := client.R().SetResult(&resp).SetBody(body)
-	if _, err := req.Post(messagesPath); err != nil {
-		return in, err
-	}
+	resp, err := e.client.generateTextChat(req)
 
 	outputStruct := messagesOutput{
 		Text: "",

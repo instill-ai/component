@@ -6,16 +6,29 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-func newClient(setup *structpb.Struct, logger *zap.Logger) *httpclient.Client {
-	c := httpclient.New("Anthropic", getBasePath(setup),
+type anthropicClient struct {
+	httpClient *httpclient.Client
+}
+
+func newClient(apiKey string, baseUrl string, logger *zap.Logger) *anthropicClient {
+	c := httpclient.New("Anthropic", baseUrl,
 		httpclient.WithLogger(logger),
 		httpclient.WithEndUserError(new(errBody)),
 	)
 	// Anthropic requires an API key to be set in the header "x-api-key" rather than normal "Authorization" header.
-	c.Header.Set("X-Api-Key", getAPIKey(setup))
+	c.Header.Set("X-Api-Key", apiKey)
 	c.Header.Set("anthropic-version", "2023-06-01")
 
-	return c
+	return &anthropicClient{httpClient: c}
+}
+
+func (cl *anthropicClient) generateTextChat(request messagesReq) (messagesResp, error) {
+	resp := messagesResp{}
+	req := cl.httpClient.R().SetResult(&resp).SetBody(request)
+	if _, err := req.Post(messagesPath); err != nil {
+		return resp, err
+	}
+	return resp, nil
 }
 
 type errBody struct {
