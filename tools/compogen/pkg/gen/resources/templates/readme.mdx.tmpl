@@ -10,35 +10,54 @@ It can carry out the following tasks:
 {{ range .Tasks }}
 - [{{ .Title }}](#{{ asAnchor .Title}}){{ end }}
 
+{{ loadExtraContent "intro" }}
+
 ## Release Stage
 
 `{{ .ReleaseStage.String }}`
 
-{{ .ExtraContent }}
+{{ loadExtraContent "release" }}
 
 ## Configuration
 
 The component configuration is defined and maintained [here]({{ .SourceURL }}/config/definition.json).
+
+{{ loadExtraContent "config" }}
+
 {{ if or .SetupConfig.Prerequisites .SetupConfig.Properties }}
 ## Setup
 {{ with .SetupConfig.Prerequisites}}
 <InfoBlock type="info" title="Prerequisites">{{ . }}</InfoBlock>
-{{ end }}{{ with .SetupConfig.Properties }}
+{{ end }}
+{{ with .SetupConfig.Properties }}
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range . }}
 | {{ .Title }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
-{{ end }}{{ end }}
+{{ end }}
+{{ loadExtraContent "setup" }}
+{{ end }}
+
 ## Supported Tasks{{ range $i, $task := .Tasks}}
 
 ### {{ $task.Title }}
 {{ with $task.Description }}
 {{ . }}
-{{ end }}{{ if $task.Input }}
+{{ end }}
+{{ if $task.Input }}
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `{{ $task.ID }}` |{{ range $task.Input }}
 | {{ .Title }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
-{{ end }}{{ if $task.Output }}
+{{ end }}
+
+{{ if $task.Output }}
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |{{ range $task.Output }}
-| {{ .Title }}{{ if not .Required }} (optional){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}{{ end }}{{ end }}
+| {{ .Title }}{{ if not .Required }} (optional){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
+{{ end }}
+
+{{ loadExtraContent $task.ID }}
+
+{{ end }}
+
+{{ loadExtraContent "bottom" }}

@@ -5,9 +5,12 @@ cp definition.json pkg/dummy/config/definition.json
 cp setup.json pkg/dummy/config/setup.json
 cp tasks.json pkg/dummy/config/tasks.json
 
+mkdir -p pkg/dummy/.compogen
+cp extra-setup.mdx pkg/dummy/.compogen/extra-setup.mdx
+
 # OK
 
-compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx
+compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx --extraContents setup=./pkg/dummy/.compogen/extra-setup.mdx
 cmp pkg/dummy/README.mdx want-readme.mdx
 
 -- definition.json --
@@ -79,6 +82,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
     }
   }
 }
+-- extra-setup.mdx --
+This is some crucial information about setup: do it before execution.
 -- want-readme.mdx --
 ---
 title: "Dummy"
@@ -92,6 +97,8 @@ It can carry out the following tasks:
 
 - [Dummy](#dummy)
 
+
+
 ## Release Stage
 
 `Coming Soon`
@@ -102,24 +109,42 @@ It can carry out the following tasks:
 
 The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/dummy/v0/config/definition.json).
 
+
+
+
 ## Setup
 
 <InfoBlock type="info" title="Prerequisites">An account at [dummy.io](https://dummy.io) is required.</InfoBlock>
+
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | API Key (required) | `api-key` | string | Fill your Dummy API key |
 | Organization ID | `organization` | string | Specify which organization is used for the requests |
 
+This is some crucial information about setup: do it before execution.
+
+
+
 ## Supported Tasks
 
 ### Dummy
+
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DUMMY` |
 | Durna (required) | `durna` | string | Lorem ipsum dolor sit amet, consectetur adipiscing elit |
 
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Orci (optional) | `orci` | string | Orci sagittis eu volutpat odio facilisis mauris sit |
+
+
+
+
+
+
+

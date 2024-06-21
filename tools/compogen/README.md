@@ -58,12 +58,27 @@ documentation. For instance, one might want to dedicate a section to add a guide
 to configuring an account in a 3rd party vendor or to explain in details a
 particular configuration of a component.
 
-The `extraConfig` flag in the `readme` subcommand lets `compogen` inject the
+The `exttraContents` flag in the `readme` subcommand lets `compogen` inject the
 content of a document into the generated file. The content will be added
 verbatim, so it should complain with the MDX syntax.
 
+This flag takes a key and a value, where the key specifies under which section
+(at the bottom) the content will be added. The value is the path to the content.
+The following section IDs are accepted:
+
+- `intro`
+- `release`
+- `config`
+- `setup`
+- Any task ID defined in `tasks.json` (e.g. `TASK_SPLIT_BY_TOKEN`)
+- `bottom`
+
+More than one section can be extended with this flag:
+
 ```shell
-compogen readme path/to/component/config path/to/component/README.mdx --extraContent path/to/component/.compogen/detailed-setup.mdx
+compogen readme path/to/component/config path/to/component/README.mdx \
+  --extraContents setup=path/to/component/.compogen/detailed-setup.mdx
+  --extraContents TASK_DO_SOMETHING=path/to/component/.compogen/detailed-task.mdx
 ```
 
 ## TODO

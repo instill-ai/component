@@ -33,19 +33,19 @@ var readmeTmpl string
 type READMEGenerator struct {
 	validate *validator.Validate
 
-	configDir        string
-	outputFile       string
-	extraContentPath string
+	configDir         string
+	outputFile        string
+	extraContentPaths map[string]string
 }
 
 // NewREADMEGenerator returns an initialized generator.
-func NewREADMEGenerator(configDir, outputFile, extraContentPath string) *READMEGenerator {
+func NewREADMEGenerator(configDir, outputFile string, extraContentPaths map[string]string) *READMEGenerator {
 	return &READMEGenerator{
 		validate: validator.New(validator.WithRequiredStructEnabled()),
 
-		configDir:        configDir,
-		outputFile:       outputFile,
-		extraContentPath: extraContentPath,
+		configDir:         configDir,
+		outputFile:        outputFile,
+		extraContentPaths: extraContentPaths,
 	}
 }
 
@@ -158,8 +158,9 @@ func (g *READMEGenerator) Generate() error {
 	}
 
 	readme, err := template.New("readme").Funcs(template.FuncMap{
-		"firstToLower": firstToLower,
-		"asAnchor":     blackfriday.SanitizedAnchorName,
+		"firstToLower":     firstToLower,
+		"asAnchor":         blackfriday.SanitizedAnchorName,
+		"loadExtraContent": g.loadExtraContent,
 		"hosts": func() []host {
 			return []host{
 				{Name: "Instill-Cloud", URL: "https://api.instill.tech"},
@@ -183,24 +184,17 @@ func (g *READMEGenerator) Generate() error {
 		return fmt.Errorf("converting to template params: %w", err)
 	}
 
-	// Extra content should be defined as a Markdown file, it will be injected
-	// verbatim.
-	p.ExtraContent, err = g.loadExtraContent()
-	if err != nil {
-		return err
-	}
-
 	return readme.Execute(out, p)
 }
 
-func (g *READMEGenerator) loadExtraContent() (string, error) {
-	if g.extraContentPath == "" {
+func (g *READMEGenerator) loadExtraContent(section string) (string, error) {
+	if g.extraContentPaths[section] == "" {
 		return "", nil
 	}
 
-	extra, err := os.ReadFile(g.extraContentPath)
-	if err != nil && !os.IsNotExist(err) {
-		return "", fmt.Errorf("reading extra contents: %w", err)
+	extra, err := os.ReadFile(g.extraContentPaths[section])
+	if err != nil {
+		return "", fmt.Errorf("reading extra contents for sectino %s: %w", section, err)
 	}
 
 	return string(extra), nil
@@ -236,10 +230,6 @@ type readmeParams struct {
 	SetupConfig   setupConfig
 
 	Tasks []readmeTask
-
-	// ExtraContent allows component maintainers to inject an extra section
-	// into the generated document.
-	ExtraContent string
 }
 
 // parseDefinition converts a component definition and its tasks to the README
