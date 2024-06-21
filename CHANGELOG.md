@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.20.2-beta](https://github.com/instill-ai/component/compare/v0.20.1-beta...v0.20.2-beta) (2024-06-21)
+
+
+### Bug Fixes
+
+* **openai:** fix OpenAI image_url field can't work ([#170](https://github.com/instill-ai/component/issues/170)) ([f077309](https://github.com/instill-ai/component/commit/f07730960e853163f067ab471aa8326683420c8c))
+* **website:** fix typo ([481bc83](https://github.com/instill-ai/component/commit/481bc836e8a3c1b0bfeade93a6cb76b63d95c6bf))
+
 ## [0.20.1-beta](https://github.com/instill-ai/component/compare/v0.20.0-beta...v0.20.1-beta) (2024-06-19)
 
 
