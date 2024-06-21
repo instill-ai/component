@@ -163,11 +163,12 @@
         },
         "model-name": {
           "enum": [
+            "claude-3-5-sonnet-20240620",
             "claude-3-opus-20240229",
             "claude-3-sonnet-20240229",
             "claude-3-haiku-20240307"
           ],
-          "example": "claude-3-sonnet-20240229",
+          "example": "claude-3-5-sonnet-20240620",
           "description": "The Anthropic model to be used.",
           "instillAcceptFormats": [
             "string"
