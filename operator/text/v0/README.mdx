@@ -12,6 +12,7 @@ It can carry out the following tasks:
 - [Split By Token](#split-by-token)
 - [Chunk Text](#chunk-text)
 
+The Text operator is particularly important for RAG applications.
 
 
 ## Release Stage
@@ -99,6 +100,16 @@ Chunk text with different strategies.
 | Number of Text Chunks | `chunk-num` | integer | Total number of output text chunks |
 
 
+The `strategy field defines the chunking method through the `chunk-method`
+property. The following methods are implemented:
+
+- Token
+- Markdown
+- Recursive
+
+Please refer to
+[`tasks.json`](https://github.com/instill-ai/component/blob/main/operator/text/v0/config/tasks.json)
+for more information.
 
 
 
