@@ -225,6 +225,10 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 
 	resp, err := e.client.generateTextChat(req)
 
+	if err != nil {
+		return nil, err
+	}
+
 	outputStruct := messagesOutput{
 		Text: "",
 	}
