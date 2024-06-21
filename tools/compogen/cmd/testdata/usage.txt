@@ -1,5 +1,8 @@
 # OK - CLI help.
 
+compogen --version
+cmp stdout want-version
+
 compogen --help
 cmp stdout want-help
 
@@ -11,6 +14,8 @@ cmp stdout want-help
 ! compogen --unknown
 cmp stderr want-usage
 
+-- want-version --
+compogen version 1.0.0
 -- want-usage --
 Error: unknown flag: --unknown
 Run 'compogen --help' for usage.
@@ -26,6 +31,7 @@ Available Commands:
   readme      Generate component README
 
 Flags:
-  -h, --help   help for compogen
+  -h, --help      help for compogen
+  -v, --version   version for compogen
 
 Use "compogen [command] --help" for more information about a command.
