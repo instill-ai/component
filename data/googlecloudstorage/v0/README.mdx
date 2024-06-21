@@ -12,19 +12,30 @@ It can carry out the following tasks:
 - [Read Objects](#read-objects)
 - [Create Bucket](#create-bucket)
 
+
+
 ## Release Stage
 
 `Alpha`
+
+
 
 ## Configuration
 
 The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/googlecloudstorage/v0/config/definition.json).
 
+
+
+
 ## Setup
+
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | JSON Key File contents (required) | `json-key` | string | Contents of the JSON key file with access to the bucket. |
+
+
+
 
 ## Supported Tasks
 
@@ -32,12 +43,15 @@ The component configuration is defined and maintained [here](https://github.com/
 
 Upload data to Google Cloud Storage.
 
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UPLOAD` |
 | Bucket Name (required) | `bucket-name` | string | Name of the bucket to be used for object storage. |
 | Object Name (required) | `object-name` | string | The name of the object to be created |
 | Data (required) | `data` | string | The data to be saved in the object |
+
+
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -47,9 +61,15 @@ Upload data to Google Cloud Storage.
 | Public URL (optional) | `public-url` | string | Anyone with this link can access the object on the public Internet |
 | Upload Status | `status` | string | Status of the upload operation |
 
+
+
+
+
+
 ### Read Objects
 
 Read objects from Google Cloud Storage.
+
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -64,6 +84,8 @@ Read objects from Google Cloud Storage.
 | Match Glob | `match-glob` | string | Whether to match objects using a glob pattern |
 | Include Folders As Prefixes | `include-folders-as-prefixes` | boolean | Whether to include folders as prefixes |
 
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Audio Objects (optional) | `audio-objects` | array[object] | The audio objects in the bucket |
@@ -72,9 +94,15 @@ Read objects from Google Cloud Storage.
 | Text Objects (optional) | `text-objects` | array[object] | The text objects in the bucket |
 | Video Objects (optional) | `video-objects` | array[object] | The video objects in the bucket |
 
+
+
+
+
+
 ### Create Bucket
 
 Read objects from Google Cloud Storage.
+
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -83,8 +111,17 @@ Read objects from Google Cloud Storage.
 | Project ID (required) | `project-id` | string | The project ID to create the bucket in |
 | Location | `location` | string | The location to create the bucket in |
 
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result (optional) | `result` | string | The result of the operation |
 | Bucket Name (optional) | `name` | string | The name of the bucket |
 | Location (optional) | `location` | string | The location of the bucket |
+
+
+
+
+
+
+
