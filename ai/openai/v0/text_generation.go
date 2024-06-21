@@ -64,7 +64,7 @@ type imageURL struct {
 type content struct {
 	Type     string    `json:"type"`
 	Text     *string   `json:"text,omitempty"`
-	ImageURL *imageURL `json:"image-url,omitempty"`
+	ImageURL *imageURL `json:"image_url,omitempty"`
 }
 
 type textCompletionResp struct {
