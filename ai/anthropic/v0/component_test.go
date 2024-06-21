@@ -205,6 +205,7 @@ func TestComponent_Generation(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)
 		c.Assert(err, qt.IsNil)
