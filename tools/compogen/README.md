@@ -51,6 +51,21 @@ Certain optional fields modify the document behaviour:
 - A table will be built for the `setup` properties described in `setup.json`. They
   must contain an `instillUIOrder` field so the row order is deterministic.
 
+### Injecting extra content
+
+Some components might require or benefit from having extra sections in their
+documentation. For instance, one might want to dedicate a section to add a guide
+to configuring an account in a 3rd party vendor or to explain in details a
+particular configuration of a component.
+
+The `extraConfig` flag in the `readme` subcommand lets `compogen` inject the
+content of a document into the generated file. The content will be added
+verbatim, so it should complain with the MDX syntax.
+
+```shell
+compogen readme path/to/component/config path/to/component/README.mdx --extraContent path/to/component/.compogen/detailed-setup.mdx
+```
+
 ## TODO
 
 - Support `oneOf` schemas for resource properties, present in, e.g., the [REST API](https://github.com/instill-ai/component/blob/main/application/restapi/v0/config/definition.json#L26) component.

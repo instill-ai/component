@@ -24,7 +24,8 @@ Usage:
   compogen readme [config dir] [target file] [flags]
 
 Flags:
-  -h, --help   help for readme
+      --extraContent string   Path to extra content to inject into the document
+  -h, --help                  help for readme
 -- want-0-args --
 Error: accepts 2 arg(s), received 0
 Run 'compogen readme --help' for usage.

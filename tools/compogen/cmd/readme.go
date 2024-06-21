@@ -7,6 +7,8 @@ import (
 )
 
 func init() {
+	var extraContentPath string
+
 	genReadmeCmd := &cobra.Command{
 		Use:  "readme [config dir] [target file]",
 		Args: cobra.ExactArgs(2),
@@ -18,10 +20,17 @@ The first argument specifies the path to the component config directory, i.e., t
 The second argument allows users to specify the path to the generated README file.`,
 
 		RunE: wrapRun(func(cmd *cobra.Command, args []string) error {
-			return gen.NewREADMEGenerator(args[0], args[1]).
+			return gen.NewREADMEGenerator(args[0], args[1], extraContentPath).
 				Generate()
 		}),
 	}
+
+	genReadmeCmd.Flags().StringVar(
+		&extraContentPath,
+		"extraContent",
+		"",
+		"Path to extra content to inject into the document",
+	)
 
 	rootCmd.AddCommand(genReadmeCmd)
 }

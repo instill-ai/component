@@ -4,8 +4,8 @@ mkdir -p pkg/dummy/config
 cp definition.json pkg/dummy/config/definition.json
 cp tasks.json pkg/dummy/config/tasks.json
 
-mkdir -p .compogen
-cp extra.mdx .compogen/extra.mdx
+mkdir -p pkg/dummy/.compogen
+cp extra.mdx pkg/dummy/.compogen/extra.mdx
 
 # NOK - Wrong files
 
@@ -22,7 +22,7 @@ cmp stderr want-wrong-target
 
 # OK
 
-compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx
+compogen readme ./pkg/dummy/config ./pkg/dummy/README.mdx --extraContent ./pkg/dummy/.compogen/extra.mdx
 cmp pkg/dummy/README.mdx want-readme.mdx
 
 -- definition.json --

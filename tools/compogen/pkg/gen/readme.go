@@ -33,17 +33,19 @@ var readmeTmpl string
 type READMEGenerator struct {
 	validate *validator.Validate
 
-	configDir  string
-	outputFile string
+	configDir        string
+	outputFile       string
+	extraContentPath string
 }
 
 // NewREADMEGenerator returns an initialized generator.
-func NewREADMEGenerator(configDir, outputFile string) *READMEGenerator {
+func NewREADMEGenerator(configDir, outputFile, extraContentPath string) *READMEGenerator {
 	return &READMEGenerator{
 		validate: validator.New(validator.WithRequiredStructEnabled()),
 
-		configDir:  configDir,
-		outputFile: outputFile,
+		configDir:        configDir,
+		outputFile:       outputFile,
+		extraContentPath: extraContentPath,
 	}
 }
 
@@ -183,14 +185,25 @@ func (g *READMEGenerator) Generate() error {
 
 	// Extra content should be defined as a Markdown file, it will be injected
 	// verbatim.
-	extra, err := os.ReadFile(".compogen/extra.mdx")
-	if err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("reading extra contents: %w", err)
+	p.ExtraContent, err = g.loadExtraContent()
+	if err != nil {
+		return err
 	}
 
-	p.ExtraContent = string(extra)
-
 	return readme.Execute(out, p)
+}
+
+func (g *READMEGenerator) loadExtraContent() (string, error) {
+	if g.extraContentPath == "" {
+		return "", nil
+	}
+
+	extra, err := os.ReadFile(g.extraContentPath)
+	if err != nil && !os.IsNotExist(err) {
+		return "", fmt.Errorf("reading extra contents: %w", err)
+	}
+
+	return string(extra), nil
 }
 
 type readmeTask struct {
