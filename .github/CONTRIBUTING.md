@@ -252,6 +252,8 @@ At the end of this guide, this will be the structure of the package:
 
 ```
 operator/hello/v0
+ ├──.compogen
+ │  └──extra-bottom.mdx
  ├──assets
  │  └──hello.svg
  ├──config
@@ -751,6 +753,23 @@ Then, go to the base of the `component` repository and run:
 $ make build-doc && make gen-doc
 ```
 
+#### Adding extra sections
+
+The documentation of the component can be extended with the `--extraContents`
+flag:
+
+```sh
+$ mkdir -p operator/hello/.compogen
+$ echo '### Final words
+
+Thank you for reading!' > operator/hello/.compogen/extra-bottom.mdx
+```
+
+```go
+//go:generate compogen readme ./config ./README.mdx --extraContents bottom=.compogen/extra-bottom.mdx
+```
+
+Check `compogen`'s [README](./tools/compogen/README.md) for more information.
 ## Sane version control
 
 The version of a component is useful to track its evolution and to set
