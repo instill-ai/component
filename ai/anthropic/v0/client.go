@@ -41,13 +41,6 @@ func (e errBody) Message() string {
 	return e.Error.Message
 }
 
-// getBasePath returns Anthropic's API URL. This configuration param allows us to
-// override the API the connector will point to. It isn't meant to be exposed
-// to users. Rather, it can serve to test the logic against a fake server.
-
-// TODO instead of having the API value hardcoded in the codebase, it should be
-// read from a setup file or environment variable.
-// 2024-06-20 summer intern An-Che: This is the same implementation as the one in openai component, keep it as is for now?
 func getBasePath(setup *structpb.Struct) string {
 	v, ok := setup.GetFields()["base-path"]
 	if !ok {

@@ -118,8 +118,6 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: setup},
 		client:             newClient(getAPIKey(setup), getBasePath(setup), c.GetLogger()),
 	}
-
-	// Leave space for future tasks, such as image generation. As for 2024-06-20, only text generation is supported on Anthropic platform.
 	switch task {
 	case textGenerationTask:
 		e.execute = e.generateText
