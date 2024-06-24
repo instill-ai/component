@@ -19,6 +19,7 @@ require (
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/gojuno/minimock/v3 v3.3.6
+	github.com/google/go-github/v62 v62.0.0
 	github.com/h2non/filetype v1.1.3
 	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240530065422-d384f728a1e2
 	github.com/instill-ai/x v0.4.0-alpha
@@ -38,6 +39,7 @@ require (
 	github.com/tmc/langchaingo v0.1.10
 	go.uber.org/zap v1.24.0
 	golang.org/x/image v0.18.0
+	golang.org/x/oauth2 v0.18.0
 	golang.org/x/text v0.16.0
 	google.golang.org/api v0.172.0
 	google.golang.org/grpc v1.64.1
@@ -76,6 +78,7 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/flatbuffers v23.5.26+incompatible // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
@@ -122,7 +125,6 @@ require (
 	golang.org/x/crypto v0.24.0 // indirect
 	golang.org/x/mod v0.17.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
-	golang.org/x/oauth2 v0.18.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
