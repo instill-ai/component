@@ -1,0 +1,156 @@
+{
+  "$defs": {
+    "user-id": {
+      "description": "unique id from GitHub",
+      "instillFormat": "string",
+      "instillUIOrder": 0,
+      "title": "User UID",
+      "type": "string"
+    },
+    "user-name": {
+      "description": "user name in GitHub",
+      "instillFormat": "string",
+      "instillUIOrder": 1,
+      "title": "User Name",
+      "type": "string"
+    }
+  },
+  "TASK_GET_ALL_PULL_REQUESTS": {
+    "instillShortDescription": "Get the list of all pull requests in a repository",
+    "input": {
+      "description": "Please input the repository name and owner",
+      "instillUIOrder": 0,
+      "properties": {
+        "owner": {
+          "description": "owner of the repository",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": false,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Owner",
+          "type": "string"
+        },
+        "repository": {
+          "description": "repository name",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": false,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Repository",
+          "type": "string"
+        },
+        "list-options": {
+          "title": "list options",
+          "type": "object",
+          "instillUIOrder": 3,
+          "properties": {
+            "state": {
+              "default": "open",
+              "title": "State",
+              "description": "State of the PRs, including open, closed, all",
+              "enum": [
+                "open",
+                "closed",
+                "all"
+              ],
+              "example": "open, closed, all",
+              "instillFormat": "string",
+              "instillUIOrder": 10,
+              "type": "string"
+            },
+            "sort": {
+              "default": "created",
+              "title": "Sort",
+              "description": "Sort the PRs by created, updated, popularity, or long-running",
+              "enum": [
+                "created",
+                "updated",
+                "popularity",
+                "long-running"
+              ],
+              "example": "created, updated, popularity, long-running",
+              "instillFormat": "string",
+              "instillUIOrder": 11,
+              "type": "string"
+            },
+            "direction": {
+              "default": "asc",
+              "title": "Direction",
+              "description": "Direction of the sort, including asc or desc",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "example": "asc, desc",
+              "instillFormat": "string",
+              "instillUIOrder": 12,
+              "type": "string"
+            }
+          },
+          "required": [
+            "state"
+          ]
+        }
+      },
+      "required": [
+        "owner",
+        "repository"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "All PRs in GitHub repository",
+      "instillUIOrder": 0,
+      "properties": {
+        "pull-requests": {
+          "description": "An array of PRs",
+          "instillUIOrder": 0,
+          "title": "Pull Requests",
+          "type": "array",
+          "items": {
+            "title": "Pull Request",
+            "type": "object",
+            "properties": {
+              "title": {
+                "description": "title of the PR",
+                "instillFormat": "string",
+                "instillUIOrder": 1,
+                "title": "PR Title",
+                "type": "string"
+              },
+              "body": {
+                "description": "body of the PR",
+                "instillFormat": "string",
+                "instillUIOrder": 1,
+                "title": "PR body",
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "body"
+            ]
+          }
+        }
+      },
+      "required": [
+        "pull-requests"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  }
+}
