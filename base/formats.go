@@ -2,7 +2,6 @@ package base
 
 import (
 	"encoding/base64"
-	"fmt"
 	"mime"
 	"strings"
 
@@ -218,7 +217,6 @@ func GetBase64FileExtensionFast(b64 string) string {
 	header := splitB64[0]
 	header = strings.TrimPrefix(header, "data:")
 	header = strings.TrimSuffix(header, ";base64")
-	fmt.Println("### header:", header)
 	mtype, _, err := mime.ParseMediaType(header)
 	if err != nil {
 		return err.Error()
