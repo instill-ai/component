@@ -15,7 +15,9 @@ import (
 )
 
 const (
-	taskUpload = "TASK_UPLOAD"
+	taskUpload       = "TASK_UPLOAD"
+	taskReadObjects  = "TASK_READ_OBJECTS"
+	taskCreateBucket = "TASK_CREATE_BUCKET"
 )
 
 //go:embed config/definition.json
@@ -59,10 +61,6 @@ func NewClient(jsonKey string) (*storage.Client, error) {
 	return storage.NewClient(context.Background(), option.WithCredentialsJSON([]byte(jsonKey)))
 }
 
-func getBucketName(setup *structpb.Struct) string {
-	return setup.GetFields()["bucket-name"].GetStringValue()
-}
-
 func getJSONKey(setup *structpb.Struct) string {
 	return setup.GetFields()["json-key"].GetStringValue()
 }
@@ -77,11 +75,11 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 	defer client.Close()
 	for _, input := range inputs {
 		var output *structpb.Struct
+		bucketName := input.GetFields()["bucket-name"].GetStringValue()
 		switch e.Task {
 		case taskUpload, "":
 			objectName := input.GetFields()["object-name"].GetStringValue()
 			data := input.GetFields()["data"].GetStringValue()
-			bucketName := getBucketName(e.Setup)
 			err = uploadToGCS(client, bucketName, objectName, data)
 			if err != nil {
 				return nil, err
@@ -106,7 +104,44 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 				"public-url":        {Kind: &structpb.Value_StringValue{StringValue: publicURL}},
 				"public-access":     {Kind: &structpb.Value_BoolValue{BoolValue: publicAccess}},
 				"status":            {Kind: &structpb.Value_StringValue{StringValue: "success"}}}}
+
+		case taskReadObjects:
+			inputStruct := ReadInput{
+				BucketName: bucketName,
+			}
+
+			err := base.ConvertFromStructpb(input, &inputStruct)
+			if err != nil {
+				return nil, err
+			}
+			outputStruct, err := readObjects(inputStruct, client, ctx)
+			if err != nil {
+				return nil, err
+			}
+			output, err = base.ConvertToStructpb(outputStruct)
+
+			if err != nil {
+				return nil, err
+			}
+
+		case taskCreateBucket:
+			inputStruct := CreateBucketInput{}
+			err := base.ConvertFromStructpb(input, &inputStruct)
+			if err != nil {
+				return nil, err
+			}
+
+			outputStruct, err := createBucket(inputStruct, client, ctx)
+			if err != nil {
+				return nil, err
+			}
+
+			output, err = base.ConvertToStructpb(outputStruct)
+			if err != nil {
+				return nil, err
+			}
 		}
+
 		outputs = append(outputs, output)
 	}
 	return outputs, nil
