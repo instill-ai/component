@@ -51,6 +51,36 @@ Certain optional fields modify the document behaviour:
 - A table will be built for the `setup` properties described in `setup.json`. They
   must contain an `instillUIOrder` field so the row order is deterministic.
 
+### Injecting extra content
+
+Some components might require or benefit from having extra sections in their
+documentation. For instance, one might want to dedicate a section to add a guide
+to configuring an account in a 3rd party vendor or to explain in details a
+particular configuration of a component.
+
+The `exttraContents` flag in the `readme` subcommand lets `compogen` inject the
+content of a document into the generated file. The content will be added
+verbatim, so it should complain with the MDX syntax.
+
+This flag takes a key and a value, where the key specifies under which section
+(at the bottom) the content will be added. The value is the path to the content.
+The following section IDs are accepted:
+
+- `intro`
+- `release`
+- `config`
+- `setup`
+- Any task ID defined in `tasks.json` (e.g. `TASK_SPLIT_BY_TOKEN`)
+- `bottom`
+
+More than one section can be extended with this flag:
+
+```shell
+compogen readme path/to/component/config path/to/component/README.mdx \
+  --extraContents setup=path/to/component/.compogen/detailed-setup.mdx
+  --extraContents TASK_DO_SOMETHING=path/to/component/.compogen/detailed-task.mdx
+```
+
 ## TODO
 
 - Support `oneOf` schemas for resource properties, present in, e.g., the [REST API](https://github.com/instill-ai/component/blob/main/application/restapi/v0/config/definition.json#L26) component.
@@ -67,9 +97,6 @@ Certain optional fields modify the document behaviour:
   arrays and objects (currently the type doesn't support nesting).
 - If task definitions contain examples for the (required) input and output
   fields, generate param samples as in https://github.com/instill-ai/instill.tech/blob/main/docs/component/ai/openai.en.mdx
-- Implement a way to inject extra sections if a component needs further
-  documentation (e.g. by adding a `doc.json` file with a structured array that
-  describes the position and content of the new section.
 
 ## Next steps
 

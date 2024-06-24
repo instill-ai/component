@@ -2,7 +2,6 @@ package gen
 
 import (
 	"cmp"
-	_ "embed"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -12,6 +11,8 @@ import (
 	"text/template"
 	"unicode"
 	"unicode/utf8"
+
+	_ "embed"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/russross/blackfriday/v2"
@@ -32,17 +33,19 @@ var readmeTmpl string
 type READMEGenerator struct {
 	validate *validator.Validate
 
-	configDir  string
-	outputFile string
+	configDir         string
+	outputFile        string
+	extraContentPaths map[string]string
 }
 
 // NewREADMEGenerator returns an initialized generator.
-func NewREADMEGenerator(configDir, outputFile string) *READMEGenerator {
+func NewREADMEGenerator(configDir, outputFile string, extraContentPaths map[string]string) *READMEGenerator {
 	return &READMEGenerator{
 		validate: validator.New(validator.WithRequiredStructEnabled()),
 
-		configDir:  configDir,
-		outputFile: outputFile,
+		configDir:         configDir,
+		outputFile:        outputFile,
+		extraContentPaths: extraContentPaths,
 	}
 }
 
@@ -155,8 +158,9 @@ func (g *READMEGenerator) Generate() error {
 	}
 
 	readme, err := template.New("readme").Funcs(template.FuncMap{
-		"firstToLower": firstToLower,
-		"asAnchor":     blackfriday.SanitizedAnchorName,
+		"firstToLower":     firstToLower,
+		"asAnchor":         blackfriday.SanitizedAnchorName,
+		"loadExtraContent": g.loadExtraContent,
 		"hosts": func() []host {
 			return []host{
 				{Name: "Instill-Cloud", URL: "https://api.instill.tech"},
@@ -177,10 +181,23 @@ func (g *READMEGenerator) Generate() error {
 
 	p, err := readmeParams{}.parseDefinition(def, setup, tasks)
 	if err != nil {
-		return err
+		return fmt.Errorf("converting to template params: %w", err)
 	}
 
 	return readme.Execute(out, p)
+}
+
+func (g *READMEGenerator) loadExtraContent(section string) (string, error) {
+	if g.extraContentPaths[section] == "" {
+		return "", nil
+	}
+
+	extra, err := os.ReadFile(g.extraContentPaths[section])
+	if err != nil {
+		return "", fmt.Errorf("reading extra contents for sectino %s: %w", section, err)
+	}
+
+	return string(extra), nil
 }
 
 type readmeTask struct {
@@ -215,6 +232,8 @@ type readmeParams struct {
 	Tasks []readmeTask
 }
 
+// parseDefinition converts a component definition and its tasks to the README
+// template params.
 func (p readmeParams) parseDefinition(d definition, s *objectSchema, tasks map[string]task) (readmeParams, error) {
 	p.ComponentType = toComponentType[d.Type]
 
