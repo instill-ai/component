@@ -58,7 +58,7 @@
         "server-port": {
             "description": "The port of the email server",
             "instillAcceptFormats": [
-                "string"
+                "integer"
             ],
             "instillUpstreamTypes": [
                 "value",
@@ -66,7 +66,20 @@
             ],
             "instillUIOrder": 1,
             "title": "Server Port",
-            "type": "string"
+            "type": "integer"
+        },
+        "limit": {
+            "description": "The maximum number of emails to search for",
+            "instillAcceptFormats": [
+                "integer"
+            ],
+            "instillUpstreamTypes": [
+                "value",
+                "reference"
+            ],
+            "instillUIOrder": 5,
+            "title": "Limit",
+            "type": "integer"
         }
     },
     "TASK_SEND_EMAILS": {
@@ -214,6 +227,7 @@
                                         "type": "string",
                                         "default": "INBOX"
                                     },
+                                    
                                     "search-subject-text": {
                                         "$ref": "#/$defs/search-subject-text"
                                     },
@@ -222,6 +236,9 @@
                                     },
                                     "search-to-email": {
                                         "$ref": "#/$defs/search-to-email"
+                                    },
+                                    "limit": {
+                                        "$ref": "#/$defs/limit"
                                     }
                                 },
                                 "required": [
@@ -235,7 +252,8 @@
                                     "mailbox",
                                     "search-subject-text",
                                     "search-from-email",
-                                    "search-to-email"
+                                    "search-to-email",
+                                    "limit"
                                 ],
                                 "type": "object"
                             },
@@ -260,6 +278,9 @@
                                     },
                                     "search-to-email": {
                                         "$ref": "#/$defs/search-to-email"
+                                    },
+                                    "limit": {
+                                        "$ref": "#/$defs/limit"
                                     }
                                 },
                                 "required": [
@@ -273,7 +294,8 @@
                                     "mailbox",
                                     "search-subject-text",
                                     "search-from-email",
-                                    "search-to-email"
+                                    "search-to-email",
+                                    "limit"
                                 ],
                                 "type": "object"
                             },
@@ -298,6 +320,9 @@
                                     },
                                     "search-to-email": {
                                         "$ref": "#/$defs/search-to-email"
+                                    },
+                                    "limit": {
+                                        "$ref": "#/$defs/limit"
                                     }
                                 },
                                 "required": [
@@ -311,7 +336,8 @@
                                     "mailbox",
                                     "search-subject-text",
                                     "search-from-email",
-                                    "search-to-email"
+                                    "search-to-email",
+                                    "limit"
                                 ],
                                 "type": "object"
                             }
@@ -333,6 +359,12 @@
                     "description": "The emails that match the search criteria",
                     "items": {
                         "properties": {
+                            "date": {
+                                "description": "The date the email was sent",
+                                "instillFormat": "string",
+                                "title": "Date",
+                                "type": "string"
+                            },
                             "from": {
                                 "description": "The email address of the sender",
                                 "instillFormat": "string",
@@ -347,7 +379,7 @@
                                     "type": "string"
                                 },
                                 "title": "To",
-                                "type": "string"
+                                "type": "array"
                             },
                             "subject": {
                                 "description": "The subject of the email",
