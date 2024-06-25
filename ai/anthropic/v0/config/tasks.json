@@ -198,7 +198,7 @@
           "type": "string"
         },
         "prompt-images": {
-          "description": "The prompt images (Note: The prompt images will be injected in the order they are provided to the 'prompt' message. Also we currently only support JPEG file format.)",
+          "description": "The prompt images (Note: The prompt images will be injected in the order they are provided to the 'prompt' message. Anthropic doesn't support sending images via image-url, use this field instead)",
           "instillAcceptFormats": [
             "array:image/*"
           ],
