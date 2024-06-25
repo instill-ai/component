@@ -3,11 +3,9 @@
         "TASK_SEND_EMAILS",
         "TASK_READ_EMAILS"
     ],
-    "custom": false,
     "documentationUrl": "https://www.instill.tech/docs/component/application/gmail",
     "icon": "assets/gmail.svg",
     "id": "gmail",
-    "public": true,
     "title": "Gmail",
     "description": "Get and send emails from Gmail.",
     "tombstone": false,

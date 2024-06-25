@@ -10,7 +10,7 @@
                 "reference",
                 "template"
             ],
-            "instillUIOrder": 3,
+            "instillUIOrder": 4,
             "title": "Subject",
             "type": "string"
         },
@@ -24,7 +24,7 @@
                 "reference",
                 "template"
             ],
-            "instillUIOrder": 1,
+            "instillUIOrder": 2,
             "title": "From",
             "type": "string"
         },
@@ -38,8 +38,34 @@
                 "reference",
                 "template"
             ],
-            "instillUIOrder": 2,
+            "instillUIOrder": 3,
             "title": "To",
+            "type": "string"
+        },
+        "server-address": {
+            "description": "The address of the email server",
+            "instillAcceptFormats": [
+                "string"
+            ],
+            "instillUpstreamTypes": [
+                "value",
+                "reference"
+            ],
+            "instillUIOrder": 0,
+            "title": "Server Address",
+            "type": "string"
+        },
+        "server-port": {
+            "description": "The port of the email server",
+            "instillAcceptFormats": [
+                "string"
+            ],
+            "instillUpstreamTypes": [
+                "value",
+                "reference"
+            ],
+            "instillUIOrder": 1,
+            "title": "Server Port",
             "type": "string"
         }
     },
@@ -49,6 +75,12 @@
             "description": "Input",
             "instillUIOrder": 0,
             "properties": {
+                "server-address": {
+                    "$ref": "#/$defs/server-address"
+                },
+                "server-port": {
+                    "$ref": "#/$defs/server-port"
+                },
                 "recipients": {
                     "description": "The email addresses of the recipients",
                     "instillAcceptFormats": [
@@ -62,7 +94,7 @@
                         "instillUIMultiline": false,
                         "type": "string"
                     },
-                    "instillUIOrder": 0,
+                    "instillUIOrder": 2,
                     "title": "Recipient",
                     "type": "array"
                 },
@@ -79,7 +111,7 @@
                         "instillUIMultiline": false,
                         "type": "string"
                     },
-                    "instillUIOrder": 1,
+                    "instillUIOrder": 3,
                     "title": "Cc",
                     "type": "array"
                 },
@@ -96,7 +128,7 @@
                         "instillUIMultiline": false,
                         "type": "string"
                     },
-                    "instillUIOrder": 2,
+                    "instillUIOrder": 4,
                     "title": "Bcc",
                     "type": "array"
                 },
@@ -110,7 +142,7 @@
                         "reference",
                         "template"
                       ],
-                    "instillUIOrder": 3,
+                    "instillUIOrder": 5,
                     "title": "Subject",
                     "type": "string"
                 },
@@ -125,12 +157,14 @@
                         "template"
                       ],
                     "instillUIMultiline": true,
-                    "instillUIOrder": 4,
+                    "instillUIOrder": 6,
                     "title": "Message",
                     "type": "string"
                 }
             },
             "required": [
+                "server-address",
+                "server-port",
                 "recipients",
                 "message"
             ],
@@ -169,6 +203,12 @@
                     "oneOf": [
                             {
                                 "properties": {
+                                    "server-address": {
+                                        "$ref": "#/$defs/server-address"
+                                    },
+                                    "server-port": {
+                                        "$ref": "#/$defs/server-port"
+                                    },
                                     "mailbox": {
                                         "const": "INBOX",
                                         "type": "string",
@@ -185,9 +225,13 @@
                                     }
                                 },
                                 "required": [
+                                    "server-address",
+                                    "server-port",
                                     "mailbox"
                                 ],
                                 "instillEditOnNodeFields": [
+                                    "server-address",
+                                    "server-port",
                                     "mailbox",
                                     "search-subject-text",
                                     "search-from-email",
@@ -197,6 +241,12 @@
                             },
                             {
                                 "properties": {
+                                    "server-address": {
+                                        "$ref": "#/$defs/server-address"
+                                    },
+                                    "server-port": {
+                                        "$ref": "#/$defs/server-port"
+                                    },
                                     "mailbox": {
                                         "const": "SENT",
                                         "type": "string",
@@ -213,9 +263,13 @@
                                     }
                                 },
                                 "required": [
+                                    "server-address",
+                                    "server-port",
                                     "mailbox"
                                 ],
                                 "instillEditOnNodeFields": [
+                                    "server-address",
+                                    "server-port",
                                     "mailbox",
                                     "search-subject-text",
                                     "search-from-email",
@@ -225,6 +279,12 @@
                             },
                             {
                                 "properties": {
+                                    "server-address": {
+                                        "$ref": "#/$defs/server-address"
+                                    },
+                                    "server-port": {
+                                        "$ref": "#/$defs/server-port"
+                                    },
                                     "mailbox": {
                                         "const": "DRAFTS",
                                         "type": "string",
@@ -241,9 +301,13 @@
                                     }
                                 },
                                 "required": [
+                                    "server-address",
+                                    "server-port",
                                     "mailbox"
                                 ],
                                 "instillEditOnNodeFields": [
+                                    "server-address",
+                                    "server-port",
                                     "mailbox",
                                     "search-subject-text",
                                     "search-from-email",
