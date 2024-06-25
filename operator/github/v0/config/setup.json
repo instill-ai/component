@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "token": {
-      "description": "Fill in your GitHub access token for advanced usages. For more information about how create tokens, please refer to the [GitHub API documentation](https://github.com/settings/tokens?type=beta).",
+      "description": "Fill in your GitHub access token for advanced usages. For more information about how create tokens, please refer to the https://github.com/settings/tokens.",
       "instillUpstreamTypes": [
         "reference"
       ],
@@ -17,9 +17,7 @@
     }
   },
   "required": [],
-  "instillEditOnNodeFields": [
-    "token"
-  ],
+  "instillEditOnNodeFields": [],
   "title": "GitHub Connection",
   "type": "object"
 }

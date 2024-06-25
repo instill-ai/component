@@ -1,18 +1,99 @@
 {
   "$defs": {
-    "user-id": {
-      "description": "unique id from GitHub",
-      "instillFormat": "string",
-      "instillUIOrder": 0,
-      "title": "User UID",
-      "type": "string"
+    "pull_request": {
+      "description": "A pull request object.",
+      "properties": {
+        "id": {
+          "description": "id of the PR",
+          "instillFormat": "integer",
+          "instillUIOrder": 1,
+          "title": "PR id",
+          "type": "integer"
+        },
+        "number": {
+          "description": "number of the PR",
+          "instillFormat": "integer",
+          "instillUIOrder": 1,
+          "title": "PR number",
+          "type": "integer"
+        },
+        "state": {
+          "description": "state of the PR",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "PR state",
+          "type": "string"
+        },
+        "title": {
+          "description": "title of the PR",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "PR Title",
+          "type": "string"
+        },
+        "body": {
+          "description": "body of the PR",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "PR body",
+          "type": "string"
+        },
+        "diff_url": {
+          "description": "url to the diff of the PR",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "PR diff url",
+          "type": "string"
+        },
+        "head": {
+          "description": "head commit of the PR (in SHA value)",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "PR head",
+          "type": "string"
+        },
+        "base": {
+          "description": "base commit of the PR (in SHA value)",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "PR base",
+          "type": "string"
+        }
+      },
+      "title": "Pull Request",
+      "type": "object"
     },
-    "user-name": {
-      "description": "user name in GitHub",
-      "instillFormat": "string",
-      "instillUIOrder": 1,
-      "title": "User Name",
-      "type": "string"
+    "repository_info": {
+      "owner": {
+        "description": "owner of the repository",
+        "instillAcceptFormats": [
+          "string"
+        ],
+        "instillUIMultiline": false,
+        "instillUIOrder": 0,
+        "instillUpstreamTypes": [
+          "value",
+          "reference",
+          "template"
+        ],
+        "title": "Owner",
+        "type": "string"
+      },
+      "repository": {
+        "description": "repository name",
+        "instillAcceptFormats": [
+          "string"
+        ],
+        "instillUIMultiline": false,
+        "instillUIOrder": 1,
+        "instillUpstreamTypes": [
+          "value",
+          "reference",
+          "template"
+        ],
+        "title": "Repository",
+        "type": "string"
+      }
     }
   },
   "TASK_GET_ALL_PULL_REQUESTS": {
@@ -20,93 +101,79 @@
     "input": {
       "description": "Please input the repository name and owner",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "owner",
+        "repository"
+      ],
       "properties": {
-        "owner": {
-          "description": "owner of the repository",
+        "$ref": "#/$defs/repository_info",
+        "state": {
+          "default": "open",
+          "title": "State",
+          "description": "State of the PRs, including open, closed, all. Default: open",
+          "enum": [
+            "open",
+            "closed",
+            "all"
+          ],
+          "instillFormat": "string",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillUIMultiline": false,
-          "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "value",
-            "reference",
-            "template"
+            "reference"
           ],
-          "title": "Owner",
+          "instillUIOrder": 10,
           "type": "string"
         },
-        "repository": {
-          "description": "repository name",
+        "sort": {
+          "default": "created",
+          "title": "Sort",
+          "description": "Sort the PRs by created, updated, popularity, or long-running. Default: created",
+          "enum": [
+            "created",
+            "updated",
+            "popularity",
+            "long-running"
+          ],
+          "instillFormat": "string",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillUIMultiline": false,
-          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "value",
-            "reference",
-            "template"
+            "reference"
           ],
-          "title": "Repository",
+          "instillUIOrder": 11,
           "type": "string"
         },
-        "list-options": {
-          "title": "list options",
-          "type": "object",
-          "instillUIOrder": 3,
-          "properties": {
-            "state": {
-              "default": "open",
-              "title": "State",
-              "description": "State of the PRs, including open, closed, all",
-              "enum": [
-                "open",
-                "closed",
-                "all"
-              ],
-              "example": "open, closed, all",
-              "instillFormat": "string",
-              "instillUIOrder": 10,
-              "type": "string"
-            },
-            "sort": {
-              "default": "created",
-              "title": "Sort",
-              "description": "Sort the PRs by created, updated, popularity, or long-running",
-              "enum": [
-                "created",
-                "updated",
-                "popularity",
-                "long-running"
-              ],
-              "example": "created, updated, popularity, long-running",
-              "instillFormat": "string",
-              "instillUIOrder": 11,
-              "type": "string"
-            },
-            "direction": {
-              "default": "asc",
-              "title": "Direction",
-              "description": "Direction of the sort, including asc or desc",
-              "enum": [
-                "asc",
-                "desc"
-              ],
-              "example": "asc, desc",
-              "instillFormat": "string",
-              "instillUIOrder": 12,
-              "type": "string"
-            }
-          },
-          "required": [
-            "state"
-          ]
+        "direction": {
+          "default": "desc",
+          "title": "Direction",
+          "description": "Direction of the sort, including asc or desc. Default: asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 12,
+          "type": "string"
         }
       },
       "required": [
         "owner",
-        "repository"
+        "repository",
+        "state",
+        "sort",
+        "direction"
       ],
       "title": "Input",
       "type": "object"
@@ -121,33 +188,79 @@
           "title": "Pull Requests",
           "type": "array",
           "items": {
-            "title": "Pull Request",
-            "type": "object",
-            "properties": {
-              "title": {
-                "description": "title of the PR",
-                "instillFormat": "string",
-                "instillUIOrder": 1,
-                "title": "PR Title",
-                "type": "string"
-              },
-              "body": {
-                "description": "body of the PR",
-                "instillFormat": "string",
-                "instillUIOrder": 1,
-                "title": "PR body",
-                "type": "string"
-              }
-            },
+            "$ref": "#/$defs/pull_request",
             "required": [
+              "id",
+              "number",
+              "state",
               "title",
               "body"
-            ]
+            ],
+            "description": "A pull request in GitHub"
           }
         }
       },
       "required": [
         "pull-requests"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_PULL_REQUEST": {
+    "instillShortDescription": "Get a pull request from a repository, given the PR number. Default is the latest PR",
+    "input": {
+      "description": "Please input the repository name and owner, and the PR number",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "owner",
+        "repository",
+        "pr_number"
+      ],
+      "properties": {
+        "$ref": "#/$defs/repository_info",
+        "pr_number": {
+          "default": 0,
+          "title": "PR Number",
+          "description": "Number of the PR. Default is the latest PR",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 3,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "owner",
+        "repository",
+        "pr_number"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "The specific pr in GitHub repository",
+      "instillUIOrder": 0,
+      "properties": {
+        "pull-request": {
+          "$ref": "#/$defs/pull_request",
+          "required": [
+            "id",
+            "number",
+            "state",
+            "title",
+            "body"
+          ],
+          "description": "A pull request in GitHub"
+        }
+      },
+      "required": [
+        "pull-request"
       ],
       "title": "Output",
       "type": "object"
