@@ -1,6 +1,7 @@
 {
   "availableTasks": [
-    "TASK_GET_ALL_PULL_REQUESTS"
+    "TASK_GET_ALL_PULL_REQUESTS",
+    "TASK_GET_PULL_REQUEST"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/application/github",
