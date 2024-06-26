@@ -15,18 +15,23 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+// Decide it temporarily
+const EmailReadingDefaultCapacity = 100
+
 type ReadEmailsInput struct {
 	Search Search `json:"search"`
 }
 
 type Search struct {
-	ServerAddress     string `json:"server-address"`
-	ServerPort        int    `json:"server-port"`
-	Mailbox           string `json:"mailbox"`
-	SearchSubjectText string `json:"search-subject-text,omitempty"`
-	SearchFromEmail   string `json:"search-from-email,omitempty"`
-	SearchToEmail     string `json:"search-to-email,omitempty"`
-	Limit             int    `json:"limit,omitempty"`
+	ServerAddress      string `json:"server-address"`
+	ServerPort         int    `json:"server-port"`
+	Mailbox            string `json:"mailbox"`
+	SearchSubjectText  string `json:"search-subject-text,omitempty"`
+	SearchFromEmail    string `json:"search-from-email,omitempty"`
+	SearchToEmail      string `json:"search-to-email,omitempty"`
+	Limit              int    `json:"limit,omitempty"`
+	Date               string `json:"date,omitempty"`
+	SearchEmailMessage string `json:"search-email-message,omitempty"`
 }
 
 type ReadEmailsOutput struct {
@@ -59,10 +64,13 @@ func (e *execution) readEmails(input *structpb.Struct) (*structpb.Struct, error)
 	defer client.Close()
 
 	setup := e.GetSetup()
-	client.Login(
+	err = client.Login(
 		setup.GetFields()["email-address"].GetStringValue(),
 		setup.GetFields()["password"].GetStringValue(),
 	).Wait()
+	if err != nil {
+		return nil, err
+	}
 
 	emails, err := fetchEmails(client, inputStruct.Search)
 	if err != nil {
@@ -105,19 +113,18 @@ func fetchEmails(c *imapclient.Client, search Search) ([]Email, error) {
 		return nil, err
 	}
 
-	if selectedMbox.NumMessages == 0 {
-		return []Email{}, nil
-	}
-
 	emails := []Email{}
 
+	if selectedMbox.NumMessages == 0 {
+		return emails, nil
+	}
+
 	if search.Limit == 0 {
-		// To avoid fetching all emails, we limit the number of emails to 100.
-		search.Limit = 100
+		search.Limit = EmailReadingDefaultCapacity
 	}
 	limit := search.Limit
 
-	// TODO: chuang8511, make it concurrent.
+	// TODO: chuang8511, Research how to fetch emails by filter and concurrency.
 	// It will be done before 2024-07-26.
 	for i := selectedMbox.NumMessages; limit > 0; i-- {
 		limit--
@@ -131,7 +138,7 @@ func fetchEmails(c *imapclient.Client, search Search) ([]Email, error) {
 		fetchCmd := c.Fetch(seqSet, fetchOptions)
 		msg := fetchCmd.Next()
 		var bodySection imapclient.FetchItemDataBodySection
-		ok := false
+		var ok bool
 		for {
 			item := msg.Next()
 			if item == nil {
@@ -154,7 +161,7 @@ func fetchEmails(c *imapclient.Client, search Search) ([]Email, error) {
 		h := mr.Header
 		setEnvelope(&email, h)
 
-		if !includeMail(email, search) {
+		if !includeSearchCondition(email, search) {
 			if err := fetchCmd.Close(); err != nil {
 				return nil, err
 			}
@@ -171,6 +178,13 @@ func fetchEmails(c *imapclient.Client, search Search) ([]Email, error) {
 				b, _ := io.ReadAll(p.Body)
 				email.Message += string(b)
 			}
+		}
+
+		if !includeSearchMessage(email, search) {
+			if err := fetchCmd.Close(); err != nil {
+				return nil, err
+			}
+			continue
 		}
 
 		if err := fetchCmd.Close(); err != nil {
@@ -222,7 +236,7 @@ func setEnvelope(email *Email, h mail.Header) {
 	}
 }
 
-func includeMail(email Email, search Search) bool {
+func includeSearchCondition(email Email, search Search) bool {
 	if search.SearchSubjectText != "" {
 		if !strings.Contains(email.Subject, search.SearchSubjectText) {
 			return false
@@ -235,6 +249,20 @@ func includeMail(email Email, search Search) bool {
 	}
 	if search.SearchToEmail != "" {
 		if !strings.Contains(strings.Join(email.To, ","), search.SearchToEmail) {
+			return false
+		}
+	}
+	if search.Date != "" {
+		if !strings.Contains(email.Date, search.Date) {
+			return false
+		}
+	}
+	return true
+}
+
+func includeSearchMessage(email Email, search Search) bool {
+	if search.SearchEmailMessage != "" {
+		if !strings.Contains(email.Message, search.SearchEmailMessage) {
 			return false
 		}
 	}

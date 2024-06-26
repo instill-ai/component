@@ -1,414 +1,456 @@
 {
-    "$defs": {
-        "search-subject-text": {
-            "description": "Search for emails with a specific subject",
-            "instillAcceptFormats": [
-                "string"
-            ],
-            "instillUpstreamTypes": [
-                "value",
-                "reference",
-                "template"
-            ],
-            "instillUIOrder": 4,
-            "title": "Subject",
-            "type": "string"
-        },
-        "search-from-email": {
-            "description": "Search for emails from a specific email address",
-            "instillAcceptFormats": [
-                "string"
-            ],
-            "instillUpstreamTypes": [
-                "value",
-                "reference",
-                "template"
-            ],
-            "instillUIOrder": 2,
-            "title": "From",
-            "type": "string"
-        },
-        "search-to-email": {
-            "description": "Search for emails to a specific email address",
-            "instillAcceptFormats": [
-                "string"
-            ],
-            "instillUpstreamTypes": [
-                "value",
-                "reference",
-                "template"
-            ],
-            "instillUIOrder": 3,
-            "title": "To",
-            "type": "string"
-        },
+  "$defs": {
+    "search-subject-text": {
+      "description": "Search for emails with a specific subject",
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUpstreamTypes": [
+        "value",
+        "reference",
+        "template"
+      ],
+      "instillUIOrder": 4,
+      "title": "Search Subject",
+      "type": "string"
+    },
+    "search-from-email": {
+      "description": "Search for emails from a specific email address",
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUpstreamTypes": [
+        "value",
+        "reference",
+        "template"
+      ],
+      "instillUIOrder": 2,
+      "title": "Search From",
+      "type": "string"
+    },
+    "search-to-email": {
+      "description": "Search for emails to a specific email address",
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUpstreamTypes": [
+        "value",
+        "reference",
+        "template"
+      ],
+      "instillUIOrder": 3,
+      "title": "Search To",
+      "type": "string"
+    },
+    "server-address": {
+      "description": "The address of the email server",
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "instillUIOrder": 0,
+      "title": "Server Address",
+      "type": "string"
+    },
+    "server-port": {
+      "description": "The port of the email server",
+      "instillAcceptFormats": [
+        "integer"
+      ],
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "instillUIOrder": 1,
+      "title": "Server Port",
+      "type": "integer"
+    },
+    "limit": {
+      "description": "The maximum number of emails to search for",
+      "instillAcceptFormats": [
+        "integer"
+      ],
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "instillUIOrder": 5,
+      "title": "Limit",
+      "type": "integer"
+    },
+    "date": {
+      "description": "Search for emails with the date the email was sent",
+      "instillFormat": "string",
+      "title": "Search Date",
+      "type": "string"
+    },
+    "search-email-message": {
+      "description": "Search for emails with a specific message",
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUpstreamTypes": [
+        "value",
+        "reference",
+        "template"
+      ],
+      "instillUIOrder": 6,
+      "title": "Search Message",
+      "type": "string"
+    }
+  },
+  "TASK_SEND_EMAILS": {
+    "instillShortDescription": "Send an email to a recipient",
+    "input": {
+      "description": "Input",
+      "instillUIOrder": 0,
+      "properties": {
         "server-address": {
-            "description": "The address of the email server",
-            "instillAcceptFormats": [
-                "string"
-            ],
-            "instillUpstreamTypes": [
-                "value",
-                "reference"
-            ],
-            "instillUIOrder": 0,
-            "title": "Server Address",
-            "type": "string"
+          "$ref": "#/$defs/server-address"
         },
         "server-port": {
-            "description": "The port of the email server",
-            "instillAcceptFormats": [
-                "integer"
-            ],
-            "instillUpstreamTypes": [
-                "value",
-                "reference"
-            ],
-            "instillUIOrder": 1,
-            "title": "Server Port",
-            "type": "integer"
+          "$ref": "#/$defs/server-port"
         },
-        "limit": {
-            "description": "The maximum number of emails to search for",
-            "instillAcceptFormats": [
-                "integer"
-            ],
-            "instillUpstreamTypes": [
-                "value",
-                "reference"
-            ],
-            "instillUIOrder": 5,
-            "title": "Limit",
-            "type": "integer"
+        "recipients": {
+          "description": "The email addresses of the recipients",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "items": {
+            "instillUIMultiline": false,
+            "type": "string"
+          },
+          "instillUIOrder": 2,
+          "title": "Recipient",
+          "type": "array"
+        },
+        "cc": {
+          "description": "The email addresses for Carbon Copy",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "items": {
+            "instillUIMultiline": false,
+            "type": "string"
+          },
+          "instillUIOrder": 3,
+          "title": "Cc",
+          "type": "array"
+        },
+        "bcc": {
+          "description": "The email addresses for Blind Carbon Copy",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "items": {
+            "instillUIMultiline": false,
+            "type": "string"
+          },
+          "instillUIOrder": 4,
+          "title": "Bcc",
+          "type": "array"
+        },
+        "subject": {
+          "description": "The subject of the email",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillUIOrder": 5,
+          "title": "Subject",
+          "type": "string"
+        },
+        "message": {
+          "description": "The message to be sent",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 6,
+          "title": "Message",
+          "type": "string"
         }
+      },
+      "required": [
+        "server-address",
+        "server-port",
+        "recipients",
+        "message"
+      ],
+      "title": "Input",
+      "type": "object"
     },
-    "TASK_SEND_EMAILS": {
-        "instillShortDescription": "Send an email to a recipient",
-        "input": {
-            "description": "Input",
-            "instillUIOrder": 0,
-            "properties": {
+    "output": {
+      "description": "The result of sending the email",
+      "instillUIOrder": 0,
+      "properties": {
+        "result": {
+          "description": "The result of sending the email",
+          "instillFormat": "string",
+          "instillUIOrder": 0,
+          "title": "Result",
+          "type": "string"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_READ_EMAILS": {
+    "instillShortDescription": "Read emails from a mailbox",
+    "input": {
+      "description": "Input",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "search"
+      ],
+      "properties": {
+        "search": {
+          "description": "the search criteria for the emails",
+          "instillUIOrder": 0,
+          "oneOf": [
+            {
+              "properties": {
                 "server-address": {
-                    "$ref": "#/$defs/server-address"
+                  "$ref": "#/$defs/server-address"
                 },
                 "server-port": {
-                    "$ref": "#/$defs/server-port"
+                  "$ref": "#/$defs/server-port"
                 },
-                "recipients": {
-                    "description": "The email addresses of the recipients",
-                    "instillAcceptFormats": [
-                        "array:string"
-                    ],
-                    "instillUpstreamTypes": [
-                        "value",
-                        "reference"
-                    ],
-                    "items": {
-                        "instillUIMultiline": false,
-                        "type": "string"
-                    },
-                    "instillUIOrder": 2,
-                    "title": "Recipient",
-                    "type": "array"
+                "mailbox": {
+                  "const": "INBOX",
+                  "type": "string",
+                  "default": "INBOX"
                 },
-                "cc": {
-                    "description": "The email addresses for Carbon Copy",
-                    "instillAcceptFormats": [
-                        "array:string"
-                    ],
-                    "instillUpstreamTypes": [
-                        "value",
-                        "reference"
-                    ],
-                    "items": {
-                        "instillUIMultiline": false,
-                        "type": "string"
-                    },
-                    "instillUIOrder": 3,
-                    "title": "Cc",
-                    "type": "array"
+                "search-subject-text": {
+                  "$ref": "#/$defs/search-subject-text"
                 },
-                "bcc": {
-                    "description": "The email addresses for Blind Carbon Copy",
-                    "instillAcceptFormats": [
-                        "array:string"
-                    ],
-                    "instillUpstreamTypes": [
-                        "value",
-                        "reference"
-                    ],
-                    "items": {
-                        "instillUIMultiline": false,
-                        "type": "string"
-                    },
-                    "instillUIOrder": 4,
-                    "title": "Bcc",
-                    "type": "array"
+                "search-from-email": {
+                  "$ref": "#/$defs/search-from-email"
                 },
-                "subject": {
-                    "description": "The subject of the email",
-                    "instillAcceptFormats": [
-                        "string"
-                    ],
-                    "instillUpstreamTypes": [
-                        "value",
-                        "reference",
-                        "template"
-                      ],
-                    "instillUIOrder": 5,
-                    "title": "Subject",
-                    "type": "string"
+                "search-to-email": {
+                  "$ref": "#/$defs/search-to-email"
                 },
-                "message": {
-                    "description": "The message to be sent",
-                    "instillAcceptFormats": [
-                        "string"
-                    ],
-                    "instillUpstreamTypes": [
-                        "value",
-                        "reference",
-                        "template"
-                      ],
-                    "instillUIMultiline": true,
-                    "instillUIOrder": 6,
-                    "title": "Message",
-                    "type": "string"
+                "limit": {
+                  "$ref": "#/$defs/limit"
+                },
+                "date": {
+                  "$ref": "#/$defs/date"
+                },
+                "search-email-message": {
+                  "$ref": "#/$defs/search-email-message"
                 }
-            },
-            "required": [
+              },
+              "required": [
                 "server-address",
                 "server-port",
-                "recipients",
-                "message"
-            ],
-            "title": "Input",
-            "type": "object"
-        },
-        "output": {
-            "description": "The result of sending the email",
-            "instillUIOrder": 0,
-            "properties": {
-                "result": {
-                    "description": "The result of sending the email",
-                    "instillFormat": "string",
-                    "instillUIOrder": 0,
-                    "title": "Result",
-                    "type": "string"
-                }
+                "mailbox"
+              ],
+              "instillEditOnNodeFields": [
+                "server-address",
+                "server-port",
+                "mailbox",
+                "search-subject-text",
+                "search-from-email",
+                "search-to-email",
+                "limit",
+                "date",
+                "search-email-message"
+              ],
+              "type": "object"
             },
-            "required": [
-                "result"
-            ],
-            "title": "Output",
-            "type": "object"
-        }
-    },
-    "TASK_READ_EMAILS": {
-        "instillShortDescription": "Read emails from a mailbox",
-        "input": {
-            "description": "Input",
-            "instillUIOrder": 0,
-            "instillEditOnNodeFields": ["search"],
-            "properties": {
-                "search": {
-                    "description": "the search criteria for the emails",
-                    "instillUIOrder": 0,
-                    "oneOf": [
-                            {
-                                "properties": {
-                                    "server-address": {
-                                        "$ref": "#/$defs/server-address"
-                                    },
-                                    "server-port": {
-                                        "$ref": "#/$defs/server-port"
-                                    },
-                                    "mailbox": {
-                                        "const": "INBOX",
-                                        "type": "string",
-                                        "default": "INBOX"
-                                    },
-                                    
-                                    "search-subject-text": {
-                                        "$ref": "#/$defs/search-subject-text"
-                                    },
-                                    "search-from-email": {
-                                        "$ref": "#/$defs/search-from-email"
-                                    },
-                                    "search-to-email": {
-                                        "$ref": "#/$defs/search-to-email"
-                                    },
-                                    "limit": {
-                                        "$ref": "#/$defs/limit"
-                                    }
-                                },
-                                "required": [
-                                    "server-address",
-                                    "server-port",
-                                    "mailbox"
-                                ],
-                                "instillEditOnNodeFields": [
-                                    "server-address",
-                                    "server-port",
-                                    "mailbox",
-                                    "search-subject-text",
-                                    "search-from-email",
-                                    "search-to-email",
-                                    "limit"
-                                ],
-                                "type": "object"
-                            },
-                            {
-                                "properties": {
-                                    "server-address": {
-                                        "$ref": "#/$defs/server-address"
-                                    },
-                                    "server-port": {
-                                        "$ref": "#/$defs/server-port"
-                                    },
-                                    "mailbox": {
-                                        "const": "SENT",
-                                        "type": "string",
-                                        "default": "[Gmail]/Sent Mail"
-                                    },
-                                    "search-subject-text": {
-                                        "$ref": "#/$defs/search-subject-text"
-                                    },
-                                    "search-from-email": {
-                                        "$ref": "#/$defs/search-from-email"
-                                    },
-                                    "search-to-email": {
-                                        "$ref": "#/$defs/search-to-email"
-                                    },
-                                    "limit": {
-                                        "$ref": "#/$defs/limit"
-                                    }
-                                },
-                                "required": [
-                                    "server-address",
-                                    "server-port",
-                                    "mailbox"
-                                ],
-                                "instillEditOnNodeFields": [
-                                    "server-address",
-                                    "server-port",
-                                    "mailbox",
-                                    "search-subject-text",
-                                    "search-from-email",
-                                    "search-to-email",
-                                    "limit"
-                                ],
-                                "type": "object"
-                            },
-                            {
-                                "properties": {
-                                    "server-address": {
-                                        "$ref": "#/$defs/server-address"
-                                    },
-                                    "server-port": {
-                                        "$ref": "#/$defs/server-port"
-                                    },
-                                    "mailbox": {
-                                        "const": "DRAFTS",
-                                        "type": "string",
-                                        "default": "[Gmail]/Drafts"
-                                    },
-                                    "search-subject-text": {
-                                        "$ref": "#/$defs/search-subject-text"
-                                    },
-                                    "search-from-email": {
-                                        "$ref": "#/$defs/search-from-email"
-                                    },
-                                    "search-to-email": {
-                                        "$ref": "#/$defs/search-to-email"
-                                    },
-                                    "limit": {
-                                        "$ref": "#/$defs/limit"
-                                    }
-                                },
-                                "required": [
-                                    "server-address",
-                                    "server-port",
-                                    "mailbox"
-                                ],
-                                "instillEditOnNodeFields": [
-                                    "server-address",
-                                    "server-port",
-                                    "mailbox",
-                                    "search-subject-text",
-                                    "search-from-email",
-                                    "search-to-email",
-                                    "limit"
-                                ],
-                                "type": "object"
-                            }
-                    ],
-                    "title": "Search",
-                    "required": [],
-                    "type": "object"
+            {
+              "properties": {
+                "server-address": {
+                  "$ref": "#/$defs/server-address"
+                },
+                "server-port": {
+                  "$ref": "#/$defs/server-port"
+                },
+                "mailbox": {
+                  "const": "SENT",
+                  "type": "string",
+                  "default": "[Gmail]/Sent Mail"
+                },
+                "search-subject-text": {
+                  "$ref": "#/$defs/search-subject-text"
+                },
+                "search-from-email": {
+                  "$ref": "#/$defs/search-from-email"
+                },
+                "search-to-email": {
+                  "$ref": "#/$defs/search-to-email"
+                },
+                "limit": {
+                  "$ref": "#/$defs/limit"
+                },
+                "date": {
+                  "$ref": "#/$defs/date"
+                },
+                "search-email-message": {
+                  "$ref": "#/$defs/search-email-message"
                 }
+              },
+              "required": [
+                "server-address",
+                "server-port",
+                "mailbox"
+              ],
+              "instillEditOnNodeFields": [
+                "server-address",
+                "server-port",
+                "mailbox",
+                "search-subject-text",
+                "search-from-email",
+                "search-to-email",
+                "limit",
+                "date",
+                "search-email-message"
+              ],
+              "type": "object"
+            },
+            {
+              "properties": {
+                "server-address": {
+                  "$ref": "#/$defs/server-address"
+                },
+                "server-port": {
+                  "$ref": "#/$defs/server-port"
+                },
+                "mailbox": {
+                  "const": "DRAFTS",
+                  "type": "string",
+                  "default": "[Gmail]/Drafts"
+                },
+                "search-subject-text": {
+                  "$ref": "#/$defs/search-subject-text"
+                },
+                "search-from-email": {
+                  "$ref": "#/$defs/search-from-email"
+                },
+                "search-to-email": {
+                  "$ref": "#/$defs/search-to-email"
+                },
+                "limit": {
+                  "$ref": "#/$defs/limit"
+                },
+                "date": {
+                  "$ref": "#/$defs/date"
+                },
+                "search-email-message": {
+                  "$ref": "#/$defs/search-email-message"
+                }
+              },
+              "required": [
+                "server-address",
+                "server-port",
+                "mailbox"
+              ],
+              "instillEditOnNodeFields": [
+                "server-address",
+                "server-port",
+                "mailbox",
+                "search-subject-text",
+                "search-from-email",
+                "search-to-email",
+                "limit",
+                "date",
+                "search-email-message"
+              ],
+              "type": "object"
+            }
+          ],
+          "title": "Search",
+          "required": [],
+          "type": "object"
+        }
+      },
+      "required": [],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "The emails that match the search criteria",
+      "instillUIOrder": 0,
+      "properties": {
+        "emails": {
+          "description": "The emails that match the search criteria",
+          "items": {
+            "properties": {
+              "date": {
+                "description": "The date the email was sent",
+                "instillFormat": "string",
+                "title": "Date",
+                "type": "string"
+              },
+              "from": {
+                "description": "The email address of the sender",
+                "instillFormat": "string",
+                "title": "From",
+                "type": "string"
+              },
+              "to": {
+                "description": "The email addresses of the recipient",
+                "instillFormat": "array:string",
+                "items": {
+                  "description": "The email address of the recipient",
+                  "type": "string"
+                },
+                "title": "To",
+                "type": "array"
+              },
+              "subject": {
+                "description": "The subject of the email",
+                "instillFormat": "string",
+                "title": "Subject",
+                "type": "string"
+              },
+              "message": {
+                "description": "The message of the email",
+                "instillFormat": "string",
+                "title": "Message",
+                "type": "string"
+              }
             },
             "required": [],
-            "title": "Input",
             "type": "object"
-        },
-        "output":{
-            "description": "The emails that match the search criteria",
-            "instillUIOrder": 0,
-            "properties": {
-                "emails": {
-                    "description": "The emails that match the search criteria",
-                    "items": {
-                        "properties": {
-                            "date": {
-                                "description": "The date the email was sent",
-                                "instillFormat": "string",
-                                "title": "Date",
-                                "type": "string"
-                            },
-                            "from": {
-                                "description": "The email address of the sender",
-                                "instillFormat": "string",
-                                "title": "From",
-                                "type": "string"
-                            },
-                            "to": {
-                                "description": "The email addresses of the recipient",
-                                "instillFormat": "array:string",
-                                "items": {
-                                    "description": "The email address of the recipient",
-                                    "type": "string"
-                                },
-                                "title": "To",
-                                "type": "array"
-                            },
-                            "subject": {
-                                "description": "The subject of the email",
-                                "instillFormat": "string",
-                                "title": "Subject",
-                                "type": "string"
-                            },
-                            "message": {
-                                "description": "The message of the email",
-                                "instillFormat": "string",
-                                "title": "Message",
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "from",
-                            "message"
-                        ],
-                        "type": "object"
-                    },
-                    "title": "Emails",
-                    "type": "array"
-                }
-            },
-            "required": [
-                "emails"
-            ],
-            "title": "Output",
-            "type": "object"
+          },
+          "title": "Emails",
+          "type": "array"
         }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "Output",
+      "type": "object"
     }
+  }
 }
