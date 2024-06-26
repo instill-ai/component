@@ -1,4 +1,4 @@
-//go:generate compogen readme ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx --extraContents intro=.compogen/extra-intro.mdx --extraContents TASK_SEND_EMAILS=.compogen/extra-send-mails.mdx --extraContents TASK_READ_EMAILS=.compogen/extra-read-mails.mdx --extraContents setup=.compogen/extra-setup.mdx
 package email
 
 import (

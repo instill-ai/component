@@ -1,0 +1,38 @@
+For Search object
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Server Address (required) | `server-address` | string | The address of the email server |
+| Server Port (required) | `server-port` | integer | The port of the email server |
+| Mailbox (required) | `mailbox` | string | The mailbox you want to fetch from email server |
+| Search Subject Text | `search-subject-text` | string | The text you want to search in the subject of the email |
+| Search From Email | `search-from-email` | string | The email address you want to search in the from field of the email |
+| Search To Email | `search-to-email` | string | The email address you want to search in the to field of the email |
+| Search Date | `search-date` | string | The date you want to search in the email |
+| Search Email Message | `search-email-message` | string | The text you want to search in the email message |
+| Limit | `limit` | integer | The maximum number of emails to search for |
+
+
+For Emails object
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Date | `date` | string | The date of the email |
+| From | `from` | string | The email address of the sender |
+| To | `to` | array[string] | The email address of the recipient |
+| Subject | `subject` | string | The subject of the email |
+| Message | `message` | string | The message of the email |
+
+
+Supported Provider Samples
+
+| Provider | IMAP Server Address | Port |
+| --- | --- | --- |
+| Gmail | imap.gmail.com | 993 |
+| Outlook | imap-mail.outlook.com | 993 |
+| office365 | outlook.office365.com | 993 |
+| Yahoo | imap.mail.yahoo.com | 993 |
+| iCloud | imap.mail.me.com | 993 |
+
+Mailbox
+Currently, we only support INBOX, Sent, and Drafts mailbox.
