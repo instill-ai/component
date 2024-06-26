@@ -84,6 +84,15 @@
     "date": {
       "description": "Search for emails with the date the email was sent",
       "instillFormat": "string",
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUpstreamTypes": [
+        "value",
+        "reference",
+        "template"
+      ],
+      "instillUIOrder": 6,
       "title": "Search Date",
       "type": "string"
     },
@@ -97,7 +106,7 @@
         "reference",
         "template"
       ],
-      "instillUIOrder": 6,
+      "instillUIOrder": 7,
       "title": "Search Message",
       "type": "string"
     }
@@ -402,22 +411,26 @@
       "properties": {
         "emails": {
           "description": "The emails that match the search criteria",
+          "instillUIOrder": 0,
           "items": {
             "properties": {
               "date": {
                 "description": "The date the email was sent",
+                "instillUIOrder": 0,
                 "instillFormat": "string",
                 "title": "Date",
                 "type": "string"
               },
               "from": {
                 "description": "The email address of the sender",
+                "instillUIOrder": 1,
                 "instillFormat": "string",
                 "title": "From",
                 "type": "string"
               },
               "to": {
                 "description": "The email addresses of the recipient",
+                "instillUIOrder": 2,
                 "instillFormat": "array:string",
                 "items": {
                   "description": "The email address of the recipient",
@@ -428,12 +441,14 @@
               },
               "subject": {
                 "description": "The subject of the email",
+                "instillUIOrder": 3,
                 "instillFormat": "string",
                 "title": "Subject",
                 "type": "string"
               },
               "message": {
                 "description": "The message of the email",
+                "instillUIOrder": 4,
                 "instillFormat": "string",
                 "title": "Message",
                 "type": "string"
