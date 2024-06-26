@@ -1,0 +1,98 @@
+package email
+
+import (
+	"fmt"
+	"net/smtp"
+	"strconv"
+
+	"github.com/instill-ai/component/base"
+	"google.golang.org/protobuf/types/known/structpb"
+)
+
+type SendEmailsInput struct {
+	ServerAddress string   `json:"server-address"`
+	ServerPort    int      `json:"server-port"`
+	Recipients    []string `json:"recipients"`
+	Cc            []string `json:"cc,omitempty"`
+	Bcc           []string `json:"bcc,omitempty"`
+	Subject       string   `json:"subject"`
+	Message       string   `json:"message"`
+}
+
+type SendEmailsOutput struct {
+	Result string `json:"result"`
+}
+
+func (e *execution) sendEmails(input *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := SendEmailsInput{}
+
+	err := base.ConvertFromStructpb(input, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	smtpHost := inputStruct.ServerAddress
+	smtpPort := strconv.Itoa(inputStruct.ServerPort)
+	setup := e.GetSetup()
+	from := setup.GetFields()["email-address"].GetStringValue()
+	auth := smtp.PlainAuth(
+		"",
+		from,
+		setup.GetFields()["password"].GetStringValue(),
+		smtpHost,
+	)
+
+	recipients := inputStruct.Recipients
+	bcc := inputStruct.Bcc
+	message := buildMessage(from, recipients, inputStruct.Cc, inputStruct.Subject, inputStruct.Message)
+
+	// Fix bug 503 5.5.1 RCPT first
+	if len(bcc) == 0 {
+		bcc = append(bcc, from)
+	}
+
+	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, bcc, []byte(message))
+	if err != nil {
+		return nil, fmt.Errorf("failed to send email: %v", err)
+	}
+
+	outputStruct := SendEmailsOutput{
+		Result: "Email sent successfully",
+	}
+
+	return base.ConvertToStructpb(outputStruct)
+}
+
+func buildMessage(from string, to []string, cc []string, subject string, body string) string {
+	message := "From: " + from + "\n"
+
+	if len(to) > 0 {
+		message += "To: "
+	}
+
+	for i, recipient := range to {
+		message += recipient
+		if i != len(to)-1 {
+			message += ","
+		}
+	}
+
+	if len(cc) > 0 {
+		message += "\nCc: "
+	}
+
+	for i, ccRecipient := range cc {
+		message += ccRecipient
+
+		if i != len(cc)-1 {
+			message += ","
+		}
+	}
+	if subject != "" {
+		message += "\nSubject: " + subject
+	}
+	message += "\n\n" + body
+
+	return message
+
+}
