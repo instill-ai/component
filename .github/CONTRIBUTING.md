@@ -14,12 +14,12 @@ section](https://github.com/instill-ai/community#contributing) for more details.
 ## Concepts
 
 Before delving into the details to come up with your first PR, please
-familiarize yourself with the project structure of [Instill
-Core](https://github.com/instill-ai/community#instill-core).
+familiarize yourself with the project structure of 🔮 [**Instill
+Core**](https://github.com/instill-ai/community#instill-core).
 
 ### Pipeline
 
-In VDP, a **pipeline** is a DAG (Directed Acyclic Graph) consisting of multiple
+In **💧 Instill VDP**, a pipeline is a DAG (Directed Acyclic Graph) consisting of multiple
 **components**.
 
 
@@ -34,8 +34,8 @@ flowchart LR
 
 ### Component
 
-There are different types of component: **AI**, **Data**, **Application**,
-**Operator** and **Iterator**.
+There are different types of component: **Generic**, **AI**, **Data**,
+**Application**, and **Operator**.
 
 > **Note:**
 > - For **AI**, **Data**, **Application** components, they are used by the
@@ -46,6 +46,13 @@ There are different types of component: **AI**, **Data**, **Application**,
     **secret** (e.g. `${secrets.my-secret}`).
 >   - You can create secrets from the console settings or through an [API
     call](https://openapi.instill.tech/reference/pipelinepublicservice_createusersecret).
+
+#### Generic
+
+**Generic** components serve as the foundational elements that support other
+components within a pipeline to execute complex or combined tasks. For instance,
+an **Iterator** component processes each element of an array by applying an
+operation determined by a collection of nested components.
 
 #### AI
 
@@ -76,12 +83,6 @@ application services. They are defined and initialized in the
 
 **Operator** components perform data transformations inside the pipeline. They
   are defined and initialized in the [`operator`](../operator) package.
-
-#### Iterator
-
-**Iterator** takes an array and executes an operation (defined by a set of
-nested components) on each of its elements.
-
 
 ### Recipe
 
@@ -161,9 +162,9 @@ and returns a `"Hello, ${target}!"` string as the component output
 In order to add a new component, you need to:
 - Define the component configuration. This will determine the tasks that can be
   performed by the component and their input and output parameters. The
-  `console` frontend will use this configuration files to render the component
-  in the pipeline builder.
-- Implement the component interfaces so `pippeline-backend` can execute the
+  console frontend will use the configuration files to render the component
+  in the pipeline editor page.
+- Implement the component interfaces so `pipeline-backend` can execute the
   component without knowing its implementation details.
 - Initialize the component, i.e., include the implementation of the component
   interfaces as a dependency in the `pipeline-backend` execution.
@@ -179,21 +180,21 @@ $ git clone https://github.com/instill-ai/component
 Although all the development will be done in this repository, if you want to
 [see your component in action](#use-the-component-in-vdp), you'll need to build
 VDP locally. First, launch the latest version of
-[Core](https://github.com/instill-ai/instill-core). Then, build and launch
-[VDP](https://github.com/instill-ai/pipeline-backend) with your local changes.
+🔮 [**Instill Core**](https://github.com/instill-ai/instill-core) suite. Then, build and launch
+💧 [**Instill VDP**](https://github.com/instill-ai/pipeline-backend) backend with your local changes.
 
 If you want to know more, you can refer to the documentation in these
 repositories, which explains in detail how to set up the development
 environment. In short, here's what we'll need to do for this guide:
 
-#### Building Core
+#### Building 🔮 Instill Core suite
 
 ```sh
 $ git clone https://github.com/instill-ai/instill-core && cd instill-core
 $ make latest PROFILE=all
 ```
 
-#### Buidling VDP
+#### Building 💧 Instill VDP backend
 
 ```sh
 $ git clone https://github.com/instill-ai/pipeline-backend && cd pipeline-backend
@@ -227,7 +228,7 @@ dev:							## Run dev container
 ```
 
 2 processes must know about the new component: `main` and `worker`. You'll need
-to stop their Core version before running the local one.
+to stop their **🔮 Instill Core** version before running the local one.
 
 ```sh
 $ docker rm -f pipeline-backend pipeline-backend-worker
@@ -277,21 +278,20 @@ component.
 
 ```json
 {
+  "id": "hello",
+  "uid": "e05d3d71-779c-45f8-904d-e90a050ca3b2",
+  "title": "Hello",
+  "description": "'Hello, world' operator used as a template for adding components",
+  "spec": {},
   "availableTasks": [
     "TASK_GREET"
   ],
-  "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/operator/hello",
   "icon": "assets/hello.svg",
-  "id": "hello",
-  "public": true,
-  "spec": {},
-  "title": "Hello",
-  "uid": "e05d3d71-779c-45f8-904d-e90a050ca3b2",
   "version": "0.1.0",
   "sourceUrl": "https://github.com/instill-ai/component/blob/main/operator/hello/v0",
-  "description": "'Hello, world' operator used as a template for adding components",
-  "releaseStage": "RELEASE_STAGE_ALPHA"
+  "releaseStage": "RELEASE_STAGE_ALPHA",
+  "public": true
 }
 ```
 
@@ -311,7 +311,7 @@ This file defines the component properties:
     selected, i.e., a configured component can only execute one task.
   - Task configurations are defined in `tasks.json`.
 - **`documentationUrl`** points to the official documentation of the component.
-- **`icon`** is the local path to the icon that will be displayed in the Console
+- **`icon`** is the local path to the icon that will be displayed in the console
   when creating the component. If left blank, a placeholder icon will be shown.
 - **`version`** must be a [SemVer](https://semver.org/) string. It is encouraged
   to keep a [tidy version history](#sane-version-control).
@@ -320,11 +320,12 @@ This file defines the component properties:
   [component definition
   list](https://openapi.instill.tech/reference/pipelinepublicservice_listcomponentdefinitions)
   endpoint.
-- **`releaseStage`** describes the release stage of the component.
-  Unimplemented stages (`RELEASE_STAGE_COMING_SOON` or
-  `RELEASE_STAGE_OPEN_FOR_CONTRIBUTION`) will hide the component from the
-  console (i.e. they can't be used in pipelines) but they will appear in the
-  component definition list endpoint.
+- **`releaseStage`** describes the release stage of the component. Unimplemented
+  stages (`RELEASE_STAGE_COMING_SOON` or `RELEASE_STAGE_OPEN_FOR_CONTRIBUTION`)
+  will hide the component from the console (i.e. they can't be used in
+  pipelines) but they will appear in the component definition list endpoint.
+- **`public`** indicates whether the component is visible to the public.
+
 
 #### `tasks.json`
 
@@ -389,36 +390,39 @@ This file defines the input and output schema of each task:
 
 **Properties within a Task**
 
-- **`title`** is used by Console to provide the title of the task.
-- **`description`** and **`instillShortDescription`** are used by Console to
-  provide a description of the task. If `instillShortDescription` does not
-  exist, it will be the same as `description`.
-- **`input`** is a JSON schema that describes the input of the task.
-- **`output`** is a JSON schema that describes the output of the task.
+- **`title`** is used by the console to provide the title of the task in the
+  component.
+- **`description`** and **`instillShortDescription`** are used by the console to
+  provide a description of the task in the component. If
+  **`instillShortDescription`** does not exist, it will be the same as
+  **`description`**.
+- **`input`** is a JSON Schema that describes the input of the task.
+- **`output`** is a JSON Schema that describes the output of the task.
 
 **Properties within `input` and `output` Objects**
 
 - **`required`** indicates whether the property is required.
 - **`type`**: describes the JSON type of this field, which could be `integer`,
   `number`, `boolean`, `string`, `array`, or `object`.
-- **`title`** is used by the Console to provide the title of the property.
-- **`description`** is used by Console to provide information about this task.
+- **`title`** is used by the console to provide the title of the property in the component.
+- **`description`** is used by the console to provide information about this
+  task in the component.
 - **`instillShortDescription`**: is a concise version of `description`, used to
-  fit smaller spaces such as a component form field. If this value is empty,
-  the `description` value will be used.
+  fit smaller spaces such as a component form field. If this value is empty, the
+  `description` value will be used.
 - **`instillUIOrder`** defines the order in which the properties will be
-  rendered by Console.
-- **`instillUIMultiline`** indicates whether the text field on Console is
+  rendered in the component.
+- **`instillUIMultiline`** indicates whether the text field in the component is
   multiline.
 
 **Properties within `input` Objects**
 
-- **`instillEditOnNodeFields`** determines where this field will appear at the
-  forefront of the component node in the pipeline builder. Optional properties
-  can be set in the advanced configuration.
+- **`instillEditOnNodeFields`** determines whether this field will appear at the
+  forefront of the component. Optional properties can be set in the
+  advanced configuration.
 - **`instillAcceptFormats`** is an array indicating the data types of acceptable
-  input fields. It should be an array of [Instill
-  Format](https://www.instill.tech/docs/vdp/instill-format).
+  input fields. It should be an array of [**Instill
+  Format**](https://www.instill.tech/docs/vdp/instill-format).
 - **`instillUpstreamTypes`** defines how an input property can be set: as a
   direct value, a reference to another value in the pipeline, or a combination
   of both (e.g., `${variable.name}` or `my dear ${variable.name}`).
@@ -429,8 +433,8 @@ This file defines the input and output schema of each task:
 
 - **`instillFormat`** indicates the data type of the output field, which should
   be one of `number`, `integer`, `string`, `object`, `boolean`, or MIME type.
-  Please refer to [Instill
-  Format](https://www.instill.tech/docs/vdp/instill-format) for more details.
+  Please refer to [**Instill
+  Format**](https://www.instill.tech/docs/vdp/instill-format) for more details.
 
 See the [example recipe](#example-recipe) to understand how these fields map to
 the recipe of a pipeline when configured to use this operator.
@@ -463,14 +467,15 @@ Paste the following code into a `main.go` file in `operator/hello/v0`:
 package hello
 
 import (
-	_ "embed"
-	"fmt"
-	"sync"
+    "fmt"
+    "sync"
 
-	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/structpb"
+    _ "embed"
 
-	"github.com/instill-ai/component/base"
+    "go.uber.org/zap"
+    "google.golang.org/protobuf/types/known/structpb"
+
+    "github.com/instill-ai/component/base"
 )
 
 const (
@@ -589,7 +594,7 @@ func (e *execution) greet(in *structpb.Struct) (*structpb.Struct, error) {
 
 #### Unit tests
 
-Before initializing testing your component in VDP, we can unit test its
+Before initializing testing your component in **💧 Instill VDP**, we can unit test its
 behaviour. The following covers the newly added logic by replicating how the
 `pipeline-backend` workers execute the component logic:
 
@@ -597,11 +602,12 @@ behaviour. The following covers the newly added logic by replicating how the
 package hello
 
 import (
-	"testing"
+    "testing"
 
-	qt "github.com/frankban/quicktest"
-	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/structpb"
+    "go.uber.org/zap"
+    "google.golang.org/protobuf/types/known/structpb"
+
+    qt "github.com/frankban/quicktest"
 )
 
 func TestOperator_Execute(t *testing.T) {
@@ -645,7 +651,7 @@ func TestOperator_CreateExecution(t *testing.T) {
 
 ### Initialize the component
 
-The last step before being able to use the component in VDP is loading the
+The last step before being able to use the component in **💧 Instill VDP** is loading the
 `hello` operator. This is done in the `Init` function in
 [`component.go`](../component.go):
 
@@ -675,7 +681,7 @@ func Init(logger *zap.Logger) *Store {
 }
 ```
 
-### Use the component in VDP
+### Use the component in 💧 Instill VDP
 
 Re-run your local `pipeline-backend` build:
 
@@ -784,8 +790,8 @@ Semantic Versioning guidelines.
   - At this point, since there might be pipelines using the previous version, a
     new package MUST be created. E.g., `operator/json/v0` -> `operator/json/v1`.
 - Build and pre-release labels are discouraged, as components are shipped as
-  part of Instill VDP and they aren't likely to need such fine-grained version
-  control.
+  part of **💧 Instill VDP** and they aren't likely to need such fine-grained
+  version control.
 
 It is recommended to start a component at `v0.1.0`. A major version 0 is
 intended for rapid development.
@@ -854,7 +860,7 @@ This will trigger a bunch of `tests`
 running a thorough test suite on multiple platforms. After the tests are done
 and passed, you can now mark the PR `open` to notify the codebase owners to
 review. We appreciate your endeavour to pass the integration test for your PR to
-make sure the sanity with respect to the entire scope of **Instill Core**.
+make sure the sanity with respect to the entire scope of **🔮 Instill Core**.
 
 
 ## Last words
