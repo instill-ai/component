@@ -193,17 +193,17 @@ func fetchEmails(c *imapclient.Client, search Search) ([]Email, error) {
 
 func setEnvelope(email *Email, h mail.Header) {
 	if date, err := h.Date(); err != nil {
-		log.Fatalf("failed to get date: %v", err)
+		log.Println("Failed to get date")
 	} else {
 		email.Date = date.Format(time.DateTime)
 	}
 	if from, err := h.AddressList("From"); err != nil {
-		log.Fatalf("failed to get from: %v", err)
+		log.Println("Failed to get from")
 	} else {
 		email.From = from[0].String()
 	}
 	if to, err := h.AddressList("To"); err != nil {
-		log.Fatalf("failed to get to: %v", err)
+		log.Println("Failed to get to")
 	} else {
 		email.To = []string{}
 		for _, t := range to {
@@ -211,7 +211,7 @@ func setEnvelope(email *Email, h mail.Header) {
 		}
 	}
 	if subject, err := h.Text("Subject"); err != nil {
-		log.Fatalf("failed to get subject: %v", err)
+		log.Println("Failed to get subject")
 	} else {
 		email.Subject = subject
 	}
