@@ -87,7 +87,7 @@ func LoadConfig(e *execution) *Config {
 		DBHost:               getHost(e.Setup),
 		DBPort:               getPort(e.Setup),
 		Region:               getRegion(e.Setup),
-		DBAWSAccessKeyID:     getAWSAccessKeyId(e.Setup),
+		DBAWSAccessKeyID:     getAWSAccessKeyID(e.Setup),
 		DBAWSSecretAccessKey: getAWSSecretAccessKey(e.Setup),
 	}
 }
@@ -176,7 +176,7 @@ func getPort(setup *structpb.Struct) string {
 func getRegion(setup *structpb.Struct) string {
 	return setup.GetFields()["region"].GetStringValue()
 }
-func getAWSAccessKeyId(setup *structpb.Struct) string {
+func getAWSAccessKeyID(setup *structpb.Struct) string {
 	return setup.GetFields()["aws-access-key-id"].GetStringValue()
 }
 func getAWSSecretAccessKey(setup *structpb.Struct) string {
