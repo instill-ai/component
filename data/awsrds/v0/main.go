@@ -75,7 +75,7 @@ type Config struct {
 	DBHost               string
 	DBPort               string
 	Region               string
-	DBAWSAccessKeyId     string
+	DBAWSAccessKeyID     string
 	DBAWSSecretAccessKey string
 }
 
@@ -87,7 +87,7 @@ func LoadConfig(e *execution) *Config {
 		DBHost:               getHost(e.Setup),
 		DBPort:               getPort(e.Setup),
 		Region:               getRegion(e.Setup),
-		DBAWSAccessKeyId:     getAWSAccessKeyId(e.Setup),
+		DBAWSAccessKeyID:     getAWSAccessKeyId(e.Setup),
 		DBAWSSecretAccessKey: getAWSSecretAccessKey(e.Setup),
 	}
 }
@@ -123,7 +123,7 @@ func newClientIAM(e *execution) (*sqlx.DB, error) {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(cfg.Region),
 		Credentials: credentials.NewStaticCredentials(
-			cfg.DBAWSAccessKeyId, cfg.DBAWSSecretAccessKey, ""),
+			cfg.DBAWSAccessKeyID, cfg.DBAWSSecretAccessKey, ""),
 	})
 	if err != nil {
 		return nil, err
