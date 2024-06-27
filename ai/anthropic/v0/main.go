@@ -143,36 +143,22 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
-func retriveMessageContent(contentsPbValue *structpb.ListValue, waitGroupLock *sync.WaitGroup, contents *[]content) {
-	defer waitGroupLock.Done()
-	for _, contentPbValue := range contentsPbValue.GetValues() {
-		contentType := contentPbValue.GetStructValue().Fields["type"].GetStringValue()
-		// anthrothpic models does not support image urls
-		if contentType == "text" {
-			content := content{
-				Type: "text",
-				Text: contentPbValue.GetStructValue().Fields["text"].GetStringValue(),
-			}
-			*contents = append(*contents, content)
-		}
-	}
-
-}
-
 func retriveChatMessage(chatHistoryPbList *structpb.ListValue) []message {
-	groupLock := sync.WaitGroup{}
 	messages := []message{}
-	contents := make([][]content, len(chatHistoryPbList.GetValues()))
-	for idx, messagePbValue := range chatHistoryPbList.GetValues() {
-		// Increment the WaitGroup counter.
-		groupLock.Add(1)
-		go retriveMessageContent(messagePbValue.GetStructValue().Fields["content"].GetListValue(), &groupLock, &contents[idx])
-	}
-	// Wait for all messages to be processed.
-	groupLock.Wait()
-
-	for idx, messagePbValue := range chatHistoryPbList.GetValues() {
-		completeMessage := message{Role: messagePbValue.GetStructValue().Fields["role"].GetStringValue(), Content: contents[idx]}
+	for _, messagePbValue := range chatHistoryPbList.GetValues() {
+		contents := []content{}
+		for _, contentPbValue := range messagePbValue.GetStructValue().Fields["content"].GetListValue().GetValues() {
+			contentType := contentPbValue.GetStructValue().Fields["type"].GetStringValue()
+			// anthrothpic models does not support image urls
+			if contentType == "text" {
+				content := content{
+					Type: "text",
+					Text: contentPbValue.GetStructValue().Fields["text"].GetStringValue(),
+				}
+				contents = append(contents, content)
+			}
+		}
+		completeMessage := message{Role: messagePbValue.GetStructValue().Fields["role"].GetStringValue(), Content: contents}
 		messages = append(messages, completeMessage)
 	}
 	return messages
@@ -184,7 +170,7 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 
 	messages := []message{}
 
-	chatHistory := in.Fields["chatHistory"].GetListValue()
+	chatHistory := in.Fields["chat-history"].GetListValue()
 
 	if chatHistory != nil {
 		messages = retriveChatMessage(chatHistory)
@@ -197,7 +183,7 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 
 	if in.Fields["prompt-images"] != nil {
 		for _, image := range in.Fields["prompt-images"].GetListValue().GetValues() {
-			extension := base.GetBase64FileExtensionFast(image.GetStringValue())
+			extension := base.GetBase64FileExtension(image.GetStringValue())
 			// check if the image extension is supported
 			if !slices.Contains(supportedImageExtensions, extension) {
 				return nil, fmt.Errorf("unsupported image extension, expected one of: %v , got %s", supportedImageExtensions, extension)
