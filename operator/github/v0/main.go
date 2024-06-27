@@ -14,8 +14,9 @@ import (
 )
 
 const (
-	taskGetPRs = "TASK_GET_ALL_PULL_REQUESTS"
+	taskGetAllPRs = "TASK_GET_ALL_PULL_REQUESTS"
 	taskGetPR  = "TASK_GET_PULL_REQUEST"
+	taskGetReviewComments = "TASK_GET_REVIEW_COMMENTS"
 )
 
 var (
@@ -57,9 +58,6 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	ctx := context.Background()
 	client := newClient(ctx, setup)
 
-	fmt.Println("=============================")
-	fmt.Println("setup: ", setup.GetFields())
-	fmt.Println("=============================")
 	githubClient := GitHubClient{client: client}
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
@@ -67,10 +65,12 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	}
 
 	switch task {
-	case taskGetPRs:
+	case taskGetAllPRs:
 		e.execute = e.client.getAllPullRequests
 	case taskGetPR:
 		e.execute = e.client.getPullRequest
+	case taskGetReviewComments:
+		e.execute = e.client.getAllReviewComments
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),
