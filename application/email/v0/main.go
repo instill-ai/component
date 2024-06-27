@@ -14,7 +14,7 @@ import (
 
 const (
 	taskReadEmails = "TASK_READ_EMAILS"
-	taskSendEmails = "TASK_SEND_EMAILS"
+	taskSendEmails = "TASK_SEND_EMAIL"
 )
 
 var (

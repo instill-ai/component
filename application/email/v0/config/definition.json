@@ -1,6 +1,6 @@
 {
   "availableTasks": [
-    "TASK_SEND_EMAILS",
+    "TASK_SEND_EMAIL",
     "TASK_READ_EMAILS"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/email",

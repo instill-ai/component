@@ -85,7 +85,7 @@
       "type": "string"
     }
   },
-  "TASK_SEND_EMAILS": {
+  "TASK_SEND_EMAIL": {
     "instillShortDescription": "Send an email to a recipient",
     "input": {
       "description": "Input",
