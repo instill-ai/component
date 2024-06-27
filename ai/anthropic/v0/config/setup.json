@@ -10,7 +10,7 @@
         "instillAcceptFormats": [
           "string"
         ],
-        "instillSecret": false,
+        "instillSecret": true,
         "instillCredential": false,
         "instillUIOrder": 0,
         "title": "API Key",
