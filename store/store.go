@@ -9,6 +9,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 
+	"github.com/instill-ai/component/ai/anthropic/v0"
 	"github.com/instill-ai/component/ai/archetypeai/v0"
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
@@ -95,7 +96,7 @@ func Init(
 				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
 			compStore.Import(conn)
 		}
-
+		compStore.Import(anthropic.Init(baseComp))
 		compStore.Import(archetypeai.Init(baseComp))
 		compStore.Import(numbers.Init(baseComp))
 		compStore.Import(bigquery.Init(baseComp))

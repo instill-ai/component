@@ -1,0 +1,29 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": true,
+    "properties": {
+      "api-key": {
+        "description": "Fill your Anthropic API key. To find your keys, visit the Anthropic console page.",
+        "instillUpstreamTypes": [
+          "reference"
+        ],
+        "instillAcceptFormats": [
+          "string"
+        ],
+        "instillSecret": true,
+        "instillCredential": false,
+        "instillUIOrder": 0,
+        "title": "API Key",
+        "type": "string"
+      }
+    },
+    "required": [
+      "api-key"
+    ],
+    "instillEditOnNodeFields": [
+      "api-key"
+    ],
+    "title": "Anthropic Connection",
+    "type": "object"
+  }
+  
