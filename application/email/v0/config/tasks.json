@@ -86,7 +86,7 @@
     }
   },
   "TASK_SEND_EMAIL": {
-    "instillShortDescription": "Send an email to a recipient",
+    "instillShortDescription": "Send an email to recipients",
     "input": {
       "description": "Input",
       "instillUIOrder": 0,

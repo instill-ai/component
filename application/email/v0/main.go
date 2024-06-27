@@ -14,7 +14,7 @@ import (
 
 const (
 	taskReadEmails = "TASK_READ_EMAILS"
-	taskSendEmails = "TASK_SEND_EMAIL"
+	taskSendEmail  = "TASK_SEND_EMAIL"
 )
 
 var (
@@ -59,8 +59,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	switch task {
 	case taskReadEmails:
 		e.execute = e.readEmails
-	case taskSendEmails:
-		e.execute = e.sendEmails
+	case taskSendEmail:
+		e.execute = e.sendEmail
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),

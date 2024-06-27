@@ -8,7 +8,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-type SendEmailsInput struct {
+type SendEmailInput struct {
 	Recipients []string `json:"recipients"`
 	Cc         []string `json:"cc,omitempty"`
 	Bcc        []string `json:"bcc,omitempty"`
@@ -16,12 +16,12 @@ type SendEmailsInput struct {
 	Message    string   `json:"message"`
 }
 
-type SendEmailsOutput struct {
+type SendEmailOutput struct {
 	Result string `json:"result"`
 }
 
-func (e *execution) sendEmails(input *structpb.Struct) (*structpb.Struct, error) {
-	inputStruct := SendEmailsInput{}
+func (e *execution) sendEmail(input *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := SendEmailInput{}
 
 	err := base.ConvertFromStructpb(input, &inputStruct)
 	if err != nil {
@@ -55,7 +55,7 @@ func (e *execution) sendEmails(input *structpb.Struct) (*structpb.Struct, error)
 		return nil, fmt.Errorf("failed to send email: %v", err)
 	}
 
-	outputStruct := SendEmailsOutput{
+	outputStruct := SendEmailOutput{
 		Result: "Email sent successfully",
 	}
 
