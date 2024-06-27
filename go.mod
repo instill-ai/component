@@ -9,6 +9,7 @@ require (
 	code.sajari.com/docconv v1.3.8
 	github.com/JohannesKaufmann/html-to-markdown v1.5.0
 	github.com/PuerkitoBio/goquery v1.9.1
+	github.com/cohere-ai/cohere-go/v2 v2.8.2
 	github.com/fogleman/gg v1.3.0
 	github.com/frankban/quicktest v1.14.6
 	github.com/gabriel-vasile/mimetype v1.4.3
