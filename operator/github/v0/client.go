@@ -22,7 +22,6 @@ func newClient(ctx context.Context, setup *structpb.Struct) *github.Client {
 	return github.NewClient(oauth2Client)
 }
 
-// Need to confirm where the map is
 func getToken(setup *structpb.Struct) string {
 	return setup.GetFields()["token"].GetStringValue()
 }

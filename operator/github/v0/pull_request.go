@@ -3,8 +3,11 @@ package github
 import (
 	"context"
 
+	"fmt"
+
 	"github.com/google/go-github/v62/github"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/x/errmsg"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -92,6 +95,8 @@ func (githubClient *GitHubClient) getPullRequest(props *structpb.Struct) (*struc
 	if number > 0 {
 		pr, _, err := githubClient.client.PullRequests.Get(context.Background(), githubClient.owner, githubClient.repository, int(number))
 		if err != nil {
+			// err includes the rate limit, 404 not found, etc.
+			// if the connection is not authorized, it's easy to get rate limit error in large scale usage.
 			return nil, err
 		}
 		pullRequest = pr
@@ -104,9 +109,15 @@ func (githubClient *GitHubClient) getPullRequest(props *structpb.Struct) (*struc
 		}
 		prs, _, err := githubClient.client.PullRequests.List(context.Background(), githubClient.owner, githubClient.repository, opts)
 		if err != nil {
-			// err includes the rate limit, 404 not found, etc.
+			// err includes the rate limit.
 			// if the connection is not authorized, it's easy to get rate limit error in large scale usage.
 			return nil, err
+		}
+		if len(prs) == 0 {
+			return nil, errmsg.AddMessage(
+				fmt.Errorf("no pull request found"),
+				"No pull request found",
+			)
 		}
 		pullRequest = prs[0]
 	}

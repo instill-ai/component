@@ -94,6 +94,106 @@
         "title": "Repository",
         "type": "string"
       }
+    },
+    "review_comments": {
+      "description": "A review comment object.",
+      "properties": {
+        "id": {
+          "description": "id of the comment",
+          "instillFormat": "integer",
+          "instillUIOrder": 1,
+          "title": "Comment id",
+          "type": "integer"
+        },
+        "in_reply_to_id": {
+          "description": "id of the comment this comment is in reply to",
+          "instillFormat": "integer",
+          "instillUIOrder": 1,
+          "title": "In Reply To",
+          "type": "integer"
+        },
+        "body": {
+          "description": "body of the comment",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Comment body",
+          "type": "string"
+        },
+        "path": {
+          "description": "path of the file the comment is on",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Comment path",
+          "type": "string"
+        },
+        "line": {
+          "description": "line number the comment is on",
+          "instillFormat": "integer",
+          "instillUIOrder": 1,
+          "title": "Comment line",
+          "type": "integer"
+        },
+        "start_line": {
+          "description": "start line number of the comment",
+          "instillFormat": "integer",
+          "instillUIOrder": 1,
+          "title": "Comment start line",
+          "type": "integer"
+        },
+        "start_side": {
+          "description": "side of the start line",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Comment start side",
+          "type": "string"
+        },
+        "subject_type": {
+          "description": "Subject type of the comment, can be one of: LINE, FILE",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Comment type",
+          "type": "string"
+        },
+        "created_at": {
+          "description": "time the comment was created",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Comment created at",
+          "type": "string"
+        },
+        "updated_at": {
+          "description": "time the comment was updated",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Comment updated at",
+          "type": "string"
+        },
+        "user": {
+          "description": "User who created the comment",
+          "instillUIOrder": 1,
+          "title": "User",
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "id of the user",
+              "instillFormat": "integer",
+              "instillUIOrder": 1,
+              "title": "User id",
+              "type": "integer"
+            },
+            "url": {
+              "description": "url of the user",
+              "instillFormat": "string",
+              "instillUIOrder": 1,
+              "title": "User url",
+              "type": "string"
+            }
+          },
+          "required": []
+        }
+      },
+      "title": "Review Comment",
+      "type": "object"
     }
   },
   "TASK_GET_ALL_PULL_REQUESTS": {
@@ -209,6 +309,172 @@
   },
   "TASK_GET_PULL_REQUEST": {
     "instillShortDescription": "Get a pull request from a repository, given the PR number. Default is the latest PR",
+    "input": {
+      "description": "Please input the repository name and owner, and the PR number",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "owner",
+        "repository",
+        "pr_number"
+      ],
+      "properties": {
+        "$ref": "#/$defs/repository_info",
+        "pr_number": {
+          "default": 0,
+          "title": "PR Number",
+          "description": "Number of the PR. `0` for the latest PR",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 3,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "owner",
+        "repository"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "The specific pr in GitHub repository",
+      "instillUIOrder": 0,
+      "properties": {
+        "pull-request": {
+          "$ref": "#/$defs/pull_request",
+          "required": [],
+          "description": "A pull request in GitHub"
+        }
+      },
+      "required": [
+        "pull-request"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_REVIEW_COMMENTS": {
+    "instillShortDescription": "Get the review comments in a pull request",
+    "description": "Get the review comments in a pull request. The comments can be on a specific line or on the PR as a whole.",
+    "input": {
+      "description": "Please input the repository name and owner, and the PR number. Set PR number as`0` to get all comments on all PRs in the repository.",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "owner",
+        "repository",
+        "pr_number"
+      ],
+      "properties": {
+        "$ref": "#/$defs/repository_info",
+        "pr_number": {
+          "default": 0,
+          "title": "PR Number",
+          "description": "Number of the PR. Default is the latest PR",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 3,
+          "type": "integer"
+        },
+        "sort": {
+          "default": "created",
+          "title": "Sort",
+          "description": "Sort the comments by created, updated. Default: created",
+          "enum": [
+            "created",
+            "updated"
+          ],
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 11,
+          "type": "string"
+        },
+        "direction": {
+          "default": "desc",
+          "title": "Direction",
+          "description": "Direction of the sort, including asc or desc. Default: asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 12,
+          "type": "string"
+        },
+        "since": {
+          "default": "2021-01-01T00:00:00Z",
+          "title": "Since",
+          "description": "Only comments updated at or after this time are returned. Default: 2021-01-01T00:00:00Z",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 13,
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner",
+        "repository"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Comments in the PR",
+      "instillUIOrder": 0,
+      "properties": {
+        "comments": {
+          "description": "An array of comments",
+          "instillUIOrder": 0,
+          "instillFormat": "object",
+          "title": "Comments",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/review_comments",
+            "required": [],
+            "description": "Comments in the PR"
+          }
+        }
+      },
+      "required": [
+        "comments"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_REVIEW_COMMENT": {
+    "instillShortDescription": "Create a review comment in pull request.",
+    "description": "Create a review comment in a pull request. The comment can be a general comment or a review comment. The comment can be on a specific line or on the PR as a whole.",
     "input": {
       "description": "Please input the repository name and owner, and the PR number",
       "instillUIOrder": 0,
