@@ -15,7 +15,9 @@ import (
 	"github.com/instill-ai/component/ai/instill/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
+	"github.com/instill-ai/component/application/email/v0"
 	"github.com/instill-ai/component/application/googlesearch/v0"
+
 	"github.com/instill-ai/component/application/numbers/v0"
 	"github.com/instill-ai/component/application/restapi/v0"
 	"github.com/instill-ai/component/application/slack/v0"
@@ -107,6 +109,7 @@ func Init(
 		compStore.Import(restapi.Init(baseComp))
 		compStore.Import(website.Init(baseComp))
 		compStore.Import(slack.Init(baseComp))
+		compStore.Import(email.Init(baseComp))
 
 	})
 	return compStore
