@@ -187,7 +187,7 @@ func TestComponent_Generation(t *testing.T) {
 		wantResp: messagesOutput{Text: "Hi! My name is Claude."},
 	}
 
-	c.Run("nok - error", func(c *qt.C) {
+	c.Run("ok - generation", func(c *qt.C) {
 		setup, err := structpb.NewStruct(map[string]any{
 			"api-key": apiKey,
 		})
