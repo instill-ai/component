@@ -160,11 +160,13 @@ type MockAnthropicClient struct{}
 
 func (m *MockAnthropicClient) generateTextChat(request messagesReq) (messagesResp, error) {
 
+	messageCount := len(request.Messages)
+	message := fmt.Sprintf("Hi! My name is Claude. (messageCount: %d)", messageCount)
 	resp := messagesResp{
 		ID:         "msg_013Zva2CMHLNnXjNJJKqJ2EF",
 		Type:       "message",
 		Role:       "assistant",
-		Content:    []content{{Text: "Hi! My name is Claude.", Type: "text"}},
+		Content:    []content{{Text: message, Type: "text"}},
 		Model:      "claude-3-5-sonnet-20240620",
 		StopReason: "end_turn",
 		Usage:      usage{InputTokens: 10, OutputTokens: 25},
@@ -179,12 +181,17 @@ func TestComponent_Generation(t *testing.T) {
 	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
+	mockHistory := []message{
+		{Role: "user", Content: []content{{Type: "text", Text: "Answer the following question in traditional chinses"}}},
+		{Role: "assistant", Content: []content{{Type: "text", Text: "沒問題"}}},
+	}
+
 	tc := struct {
 		input    map[string]any
 		wantResp messagesOutput
 	}{
-		input:    map[string]any{"prompt": "Hi! What's your name?"},
-		wantResp: messagesOutput{Text: "Hi! My name is Claude."},
+		input:    map[string]any{"prompt": "Hi! What's your name?", "chat-history": mockHistory},
+		wantResp: messagesOutput{Text: "Hi! My name is Claude. (messageCount: 3)"},
 	}
 
 	c.Run("ok - generation", func(c *qt.C) {
