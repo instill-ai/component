@@ -11,6 +11,7 @@ import (
 
 	"github.com/instill-ai/component/ai/anthropic/v0"
 	"github.com/instill-ai/component/ai/archetypeai/v0"
+	"github.com/instill-ai/component/ai/cohere/v0"
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
@@ -105,7 +106,8 @@ func Init(
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
-
+		compStore.Import(cohere.Init(baseComp))
+		compStore.Import(anthropic.Init(baseComp))
 		compStore.Import(archetypeai.Init(baseComp))
 		compStore.Import(numbers.Init(baseComp))
 		compStore.Import(bigquery.Init(baseComp))
