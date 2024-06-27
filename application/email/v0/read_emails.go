@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 
@@ -23,12 +22,10 @@ type ReadEmailsInput struct {
 }
 
 type Search struct {
-	ServerAddress      string `json:"server-address"`
-	ServerPort         int    `json:"server-port"`
 	Mailbox            string `json:"mailbox"`
-	SearchSubjectText  string `json:"search-subject-text,omitempty"`
-	SearchFromEmail    string `json:"search-from-email,omitempty"`
-	SearchToEmail      string `json:"search-to-email,omitempty"`
+	SearchSubject      string `json:"search-subject,omitempty"`
+	SearchFrom         string `json:"search-from,omitempty"`
+	SearchTo           string `json:"search-to,omitempty"`
 	Limit              int    `json:"limit,omitempty"`
 	Date               string `json:"date,omitempty"`
 	SearchEmailMessage string `json:"search-email-message,omitempty"`
@@ -54,16 +51,16 @@ func (e *execution) readEmails(input *structpb.Struct) (*structpb.Struct, error)
 		return nil, err
 	}
 
+	setup := e.GetSetup()
 	client, err := initIMAPClient(
-		inputStruct.Search.ServerAddress,
-		inputStruct.Search.ServerPort,
+		setup.GetFields()["server-address"].GetStringValue(),
+		setup.GetFields()["server-port"].GetNumberValue(),
 	)
 	if err != nil {
 		return nil, err
 	}
 	defer client.Close()
 
-	setup := e.GetSetup()
 	err = client.Login(
 		setup.GetFields()["email-address"].GetStringValue(),
 		setup.GetFields()["password"].GetStringValue(),
@@ -93,9 +90,9 @@ func (e *execution) readEmails(input *structpb.Struct) (*structpb.Struct, error)
 	return output, nil
 }
 
-func initIMAPClient(serverAddress string, serverPort int) (*imapclient.Client, error) {
+func initIMAPClient(serverAddress string, serverPort float64) (*imapclient.Client, error) {
 
-	c, err := imapclient.DialTLS(serverAddress+":"+strconv.Itoa(serverPort), nil)
+	c, err := imapclient.DialTLS(fmt.Sprintf("%v:%v", serverAddress, serverPort), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -105,10 +102,7 @@ func initIMAPClient(serverAddress string, serverPort int) (*imapclient.Client, e
 
 func fetchEmails(c *imapclient.Client, search Search) ([]Email, error) {
 
-	mailbox := search.Mailbox
-	imapMailbox := convertMailboxString(mailbox)
-
-	selectedMbox, err := c.Select(imapMailbox, nil).Wait()
+	selectedMbox, err := c.Select(search.Mailbox, nil).Wait()
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +155,7 @@ func fetchEmails(c *imapclient.Client, search Search) ([]Email, error) {
 		h := mr.Header
 		setEnvelope(&email, h)
 
-		if !includeSearchCondition(email, search) {
+		if !checkEnvelopeCondition(email, search) {
 			if err := fetchCmd.Close(); err != nil {
 				return nil, err
 			}
@@ -180,7 +174,7 @@ func fetchEmails(c *imapclient.Client, search Search) ([]Email, error) {
 			}
 		}
 
-		if !includeSearchMessage(email, search) {
+		if !checkMessageCondition(email, search) {
 			if err := fetchCmd.Close(); err != nil {
 				return nil, err
 			}
@@ -195,19 +189,6 @@ func fetchEmails(c *imapclient.Client, search Search) ([]Email, error) {
 	}
 
 	return emails, nil
-}
-
-func convertMailboxString(mailbox string) string {
-	switch {
-	case mailbox == "INBOX":
-		return "INBOX"
-	case mailbox == "SENT":
-		return "[Gmail]/Sent Mail"
-	case mailbox == "DRAFTS":
-		return "[Gmail]/Drafts"
-	default:
-		return "INBOX"
-	}
 }
 
 func setEnvelope(email *Email, h mail.Header) {
@@ -236,19 +217,26 @@ func setEnvelope(email *Email, h mail.Header) {
 	}
 }
 
-func includeSearchCondition(email Email, search Search) bool {
-	if search.SearchSubjectText != "" {
-		if !strings.Contains(email.Subject, search.SearchSubjectText) {
+func checkEnvelopeCondition(email Email, search Search) bool {
+	if search.SearchSubject != "" {
+		if !strings.Contains(email.Subject, search.SearchSubject) {
 			return false
 		}
 	}
-	if search.SearchFromEmail != "" {
-		if !strings.Contains(email.From, search.SearchFromEmail) {
+	if search.SearchFrom != "" {
+		if !(email.From == search.SearchFrom) {
 			return false
 		}
 	}
-	if search.SearchToEmail != "" {
-		if !strings.Contains(strings.Join(email.To, ","), search.SearchToEmail) {
+	if search.SearchTo != "" {
+		var found bool
+		for _, t := range email.To {
+			if t == search.SearchTo {
+				found = true
+				break
+			}
+		}
+		if !found {
 			return false
 		}
 	}
@@ -260,7 +248,7 @@ func includeSearchCondition(email Email, search Search) bool {
 	return true
 }
 
-func includeSearchMessage(email Email, search Search) bool {
+func checkMessageCondition(email Email, search Search) bool {
 	if search.SearchEmailMessage != "" {
 		if !strings.Contains(email.Message, search.SearchEmailMessage) {
 			return false

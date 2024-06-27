@@ -9,39 +9,6 @@ import (
 	"github.com/frankban/quicktest"
 )
 
-func TestConvertMailboxString(t *testing.T) {
-	c := quicktest.New(t)
-
-	testCases := []struct {
-		name     string
-		input    string
-		expected string
-	}{
-		{
-			name:     "convert inbox",
-			input:    "INBOX",
-			expected: "INBOX",
-		},
-		{
-			name:     "convert sent",
-			input:    "SENT",
-			expected: "[Gmail]/Sent Mail",
-		},
-		{
-			name:     "convert drafts",
-			input:    "DRAFTS",
-			expected: "[Gmail]/Drafts",
-		},
-	}
-
-	for _, tc := range testCases {
-		c.Run(tc.name, func(c *quicktest.C) {
-			c.Assert(convertMailboxString(tc.input), quicktest.Equals, tc.expected)
-		})
-	}
-
-}
-
 func TestSetEnvelope(t *testing.T) {
 	c := quicktest.New(t)
 
@@ -96,7 +63,7 @@ func TestSetEnvelope(t *testing.T) {
 	}
 }
 
-func TestIncludeSearchCondition(t *testing.T) {
+func TestCheckEnvelopeCondition(t *testing.T) {
 	c := quicktest.New(t)
 
 	testCases := []struct {
@@ -111,13 +78,13 @@ func TestIncludeSearchCondition(t *testing.T) {
 				Date:    "2024-01-01 00:00:00",
 				From:    "<fakeFrom@gmail.com>",
 				Subject: "fake subject",
-				To:      []string{"fakeTo@gmail.com"},
+				To:      []string{"fakeTo@gmail.com", "fakeTo123@gmail.com"},
 			},
 			search: Search{
-				SearchSubjectText: "fake",
-				SearchFromEmail:   "fakeFrom",
-				SearchToEmail:     "fakeTo",
-				Date:              "2024-01-01",
+				SearchSubject: "fake",
+				SearchFrom:    "<fakeFrom@gmail.com>",
+				SearchTo:      "fakeTo@gmail.com",
+				Date:          "2024-01-01",
 			},
 			expected: true,
 		},
@@ -130,10 +97,10 @@ func TestIncludeSearchCondition(t *testing.T) {
 				To:      []string{"fakeTo@gmail.com"},
 			},
 			search: Search{
-				SearchSubjectText: "fake 1",
-				SearchFromEmail:   "fakeFrom",
-				SearchToEmail:     "fakeTo",
-				Date:              "2024-01-01",
+				SearchSubject: "fake 1",
+				SearchFrom:    "fakeFrom",
+				SearchTo:      "fakeTo",
+				Date:          "2024-01-01",
 			},
 			expected: false,
 		},
@@ -146,10 +113,10 @@ func TestIncludeSearchCondition(t *testing.T) {
 				To:      []string{"fakeTo@gmail.com"},
 			},
 			search: Search{
-				SearchSubjectText: "fake",
-				SearchFromEmail:   "fakeFrom1",
-				SearchToEmail:     "fakeTo",
-				Date:              "2024-01-01",
+				SearchSubject: "fake",
+				SearchFrom:    "fakeFrom1",
+				SearchTo:      "fakeTo",
+				Date:          "2024-01-01",
 			},
 			expected: false,
 		},
@@ -162,10 +129,10 @@ func TestIncludeSearchCondition(t *testing.T) {
 				To:      []string{"fakeTo@gmail.com"},
 			},
 			search: Search{
-				SearchSubjectText: "fake",
-				SearchFromEmail:   "fakeFrom",
-				SearchToEmail:     "fakeTo2",
-				Date:              "2024-01-01",
+				SearchSubject: "fake",
+				SearchFrom:    "fakeFrom",
+				SearchTo:      "fakeTo2",
+				Date:          "2024-01-01",
 			},
 			expected: false,
 		},
@@ -173,12 +140,12 @@ func TestIncludeSearchCondition(t *testing.T) {
 
 	for _, tc := range testCases {
 		c.Run(tc.name, func(c *quicktest.C) {
-			c.Assert(includeSearchCondition(tc.email, tc.search), quicktest.Equals, tc.expected)
+			c.Assert(checkEnvelopeCondition(tc.email, tc.search), quicktest.Equals, tc.expected)
 		})
 	}
 }
 
-func TestIncludeSearchMessage(t *testing.T) {
+func TestCheckMessageCondition(t *testing.T) {
 	c := quicktest.New(t)
 
 	testCases := []struct {
@@ -211,7 +178,7 @@ func TestIncludeSearchMessage(t *testing.T) {
 
 	for _, tc := range testCases {
 		c.Run(tc.name, func(c *quicktest.C) {
-			c.Assert(includeSearchMessage(tc.email, tc.search), quicktest.Equals, tc.expected)
+			c.Assert(checkMessageCondition(tc.email, tc.search), quicktest.Equals, tc.expected)
 		})
 	}
 }

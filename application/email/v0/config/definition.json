@@ -6,6 +6,7 @@
   "documentationUrl": "https://www.instill.tech/docs/component/application/email",
   "icon": "assets/email.svg",
   "id": "email",
+  "public": true,
   "title": "Email",
   "description": "Get and send emails from Mail Protocol",
   "tombstone": false,

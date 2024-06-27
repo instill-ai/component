@@ -3,20 +3,17 @@ package email
 import (
 	"fmt"
 	"net/smtp"
-	"strconv"
 
 	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type SendEmailsInput struct {
-	ServerAddress string   `json:"server-address"`
-	ServerPort    int      `json:"server-port"`
-	Recipients    []string `json:"recipients"`
-	Cc            []string `json:"cc,omitempty"`
-	Bcc           []string `json:"bcc,omitempty"`
-	Subject       string   `json:"subject"`
-	Message       string   `json:"message"`
+	Recipients []string `json:"recipients"`
+	Cc         []string `json:"cc,omitempty"`
+	Bcc        []string `json:"bcc,omitempty"`
+	Subject    string   `json:"subject"`
+	Message    string   `json:"message"`
 }
 
 type SendEmailsOutput struct {
@@ -31,14 +28,16 @@ func (e *execution) sendEmails(input *structpb.Struct) (*structpb.Struct, error)
 		return nil, err
 	}
 
-	smtpHost := inputStruct.ServerAddress
-	smtpPort := strconv.Itoa(inputStruct.ServerPort)
 	setup := e.GetSetup()
+	smtpHost := setup.GetFields()["server-address"].GetStringValue()
+	smtpPort := setup.GetFields()["server-port"].GetNumberValue()
 	from := setup.GetFields()["email-address"].GetStringValue()
+	password := setup.GetFields()["password"].GetStringValue()
+
 	auth := smtp.PlainAuth(
 		"",
 		from,
-		setup.GetFields()["password"].GetStringValue(),
+		password,
 		smtpHost,
 	)
 
@@ -51,7 +50,7 @@ func (e *execution) sendEmails(input *structpb.Struct) (*structpb.Struct, error)
 		bcc = append(bcc, from)
 	}
 
-	err = smtp.SendMail(smtpHost+":"+smtpPort, auth, from, bcc, []byte(message))
+	err = smtp.SendMail(fmt.Sprintf("%v:%v", smtpHost, smtpPort), auth, from, bcc, []byte(message))
 	if err != nil {
 		return nil, fmt.Errorf("failed to send email: %v", err)
 	}
