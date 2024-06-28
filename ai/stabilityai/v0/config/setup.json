@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "api-key": {
-      "description": "Fill your Stability AI API key. To find your keys, visit - https://platform.stability.ai/account/keys",
+      "description": "Fill in your Stability AI API key. To find your keys, visit - https://platform.stability.ai/account/keys",
       "instillUpstreamTypes": [
         "reference"
       ],

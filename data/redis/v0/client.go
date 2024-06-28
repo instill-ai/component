@@ -1,13 +1,16 @@
 package redis
 
 import (
-	"crypto/tls"
-	"crypto/x509"
 	"fmt"
 
-	"github.com/instill-ai/component/base"
-	goredis "github.com/redis/go-redis/v9"
+	"crypto/tls"
+	"crypto/x509"
+
 	"google.golang.org/protobuf/types/known/structpb"
+
+	goredis "github.com/redis/go-redis/v9"
+
+	"github.com/instill-ai/component/base"
 )
 
 // SSLMode is the type for SSL mode

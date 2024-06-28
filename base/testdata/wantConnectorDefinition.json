@@ -116,9 +116,9 @@
           "instillShortDescription": "",
           "properties": {
             "api-key": {
-              "description": "Fill your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
+              "description": "Fill in your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
               "instillSecret": true,
-              "instillShortDescription": "Fill your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
+              "instillShortDescription": "Fill in your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.",
               "instillUIOrder": 0,
               "title": "API Key",
               "type": "string"

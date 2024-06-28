@@ -206,11 +206,11 @@
       "instillUIOrder": 0,
       "properties": {
         "chat-history": {
-          "description": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
+          "description": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
           "instillAcceptFormats": [
             "structured/chat-messages"
           ],
-          "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
+          "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should be an ojbect adhere to the format: {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
           "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "value",

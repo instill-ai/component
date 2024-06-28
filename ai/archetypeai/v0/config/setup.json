@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "api-key": {
-      "description": "Fill your Archetype AI API key",
+      "description": "Fill in your Archetype AI API key",
       "instillUpstreamTypes": [
         "reference"
       ],

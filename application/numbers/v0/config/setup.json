@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "capture-token": {
-      "description": "Fill your Capture token in the Capture App. To access your tokens, you need a Capture App account and you can sign in with email or wallet to acquire the Capture Token.",
+      "description": "Fill in your Capture token in the Capture App. To access your tokens, you need a Capture App account and you can sign in with email or wallet to acquire the Capture Token.",
       "instillUpstreamTypes": [
         "reference"
       ],

@@ -1,0 +1,40 @@
+#### Search object
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Mailbox (required) | `mailbox` | string | The mailbox you want to fetch from email server |
+| Search Subject | `search-subject` | string | The text you want to search in the subject of the email |
+| Search From | `search-from` | string | The email address you want to search in the from field of the email |
+| Search To | `search-to` | string | The email address you want to search in the to field of the email |
+| Search Date | `search-date` | string | The date you want to search in the email |
+| Search Email Message | `search-email-message` | string | The text you want to search in the email message |
+| Limit | `limit` | integer | The maximum number of emails to search for |
+
+
+#### Mailbox
+
+You have to confirm what exactly the mailbox name is.
+Take Gmail as an example, the mailbox names are following.
+
+| Mailbox | Mailbox Name to input |
+| :--- | :--- |
+| Inbox | `INBOX` |
+| Sent | `[Gmail]/Sent Mail` |
+| Drafts | `[Gmail]/Drafts` |
+
+
+#### Search From and Search To
+You need to input the exact same email address with `<` as a prefix and `>` as a suffix as the email you want to search for.
+For example, if you want to search for the email from `email@example.com`, you need to input `<email@example.com>`.
+
+
+
+#### Emails object
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Date | `date` | string | The date of the email |
+| From | `from` | string | The email address of the sender |
+| To | `to` | array[string] | The email address of the recipient |
+| Subject | `subject` | string | The subject of the email |
+| Message | `message` | string | The message of the email |

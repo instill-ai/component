@@ -109,7 +109,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
           "title": "Meta"
         },
         "atem": {
-          "description": "Donec ac atem tempor orci dapibus ultrices in",
+          "description": "This object should comply witht he format {\"tortor\": \"something\", \"arcu\": \"something else\"}",
           "instillUIOrder": 1,
           "title": "Atem",
           "type": "object",
@@ -233,7 +233,7 @@ This task is dummier than `TASK_DUMMY`.
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Elementum | `elementum` | string | Tellus elementum sagittis vitae et |
-| Atem | `atem` | object | Donec ac atem tempor orci dapibus ultrices in |
+| Atem | `atem` | object | This object should comply witht he format \{"tortor": "something", "arcu": "something else"\} |
 | Nullam non | `nullam_non` | number | Id faucibus nisl tincidunt eget nullam non |
 | Errors (optional) | `errors` | array[string] | Error messages, if any, during the dummy process |
 | Meta (optional) | `context` | any | Free-form metadata |

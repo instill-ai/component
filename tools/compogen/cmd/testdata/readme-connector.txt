@@ -40,7 +40,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       "type": "string"
     },
     "api-key": {
-      "description": "Fill your Dummy API key",
+      "description": "Fill in your Dummy API key",
       "instillUIOrder": 0,
       "title": "API Key",
       "type": "string"
@@ -119,7 +119,7 @@ The component configuration is defined and maintained [here](https://github.com/
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill your Dummy API key |
+| API Key (required) | `api-key` | string | Fill in your Dummy API key |
 | Organization ID | `organization` | string | Specify which organization is used for the requests |
 
 This is some crucial information about setup: do it before execution.
