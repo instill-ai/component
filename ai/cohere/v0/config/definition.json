@@ -1,7 +1,8 @@
 {
   "availableTasks": [
     "TASK_TEXT_GENERATION_CHAT",
-    "TASK_TEXT_EMBEDDINGS"
+    "TASK_TEXT_EMBEDDINGS",
+    "TASK_TEXT_RERANKING"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/latest/vdp/ai-connectors/cohere",
