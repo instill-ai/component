@@ -102,6 +102,30 @@
       ],
       "title": "Input",
       "type": "object"
+    },
+    "usage": {
+      "properties": {
+        "input-tokens": {
+          "description": "The input tokens used by Anthropic",
+          "instillFormat": "number",
+          "instillUIOrder": 2,
+          "title": "Input Tokens",
+          "type": "number"
+        },
+        "output-tokens": {
+          "description": "The output tokens used by Anthropic",
+          "instillFormat": "number",
+          "instillUIOrder": 3,
+          "title": "Output Tokens",
+          "type": "number"
+        }
+      },
+      "required": [
+        "input-tokens",
+        "output-tokens"
+      ],
+      "title": "Usage",
+      "type": "object"
     }
   },
   "TASK_TEXT_GENERATION_CHAT": {
@@ -273,6 +297,9 @@
           "instillUIMultiline": true,
           "title": "Text",
           "type": "string"
+        },
+        "usage": {
+          "$ref": "#/$defs/usage"
         }
       },
       "required": [

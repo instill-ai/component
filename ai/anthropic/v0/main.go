@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	textGenerationTask = "TASK_TEXT_GENERATION_CHAT"
+	TextGenerationTask = "TASK_TEXT_GENERATION_CHAT"
 	cfgAPIKey          = "api-key"
 	host               = "https://api.anthropic.com"
 	messagesPath       = "/v1/messages"
@@ -70,7 +70,8 @@ type messagesReq struct {
 }
 
 type messagesOutput struct {
-	Text string `json:"text"`
+	Text  string `json:"text"`
+	Usage usage  `json:"usage"`
 }
 
 type message struct {
@@ -79,8 +80,8 @@ type message struct {
 }
 
 type usage struct {
-	InputTokens  int `json:"input_tokens"`
-	OutputTokens int `json:"output_tokens"`
+	InputTokens  int `json:"input-tokens"`
+	OutputTokens int `json:"output-tokens"`
 }
 
 // doesn't support anthropic tools at the moment
@@ -119,7 +120,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		client:             newClient(getAPIKey(setup), getBasePath(setup), c.GetLogger()),
 	}
 	switch task {
-	case textGenerationTask:
+	case TextGenerationTask:
 		e.execute = e.generateText
 	default:
 		return nil, fmt.Errorf("unsupported task")
@@ -215,6 +216,10 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 
 	outputStruct := messagesOutput{
 		Text: "",
+		Usage: usage{
+			InputTokens:  resp.Usage.InputTokens,
+			OutputTokens: resp.Usage.OutputTokens,
+		},
 	}
 	for _, c := range resp.Content {
 		outputStruct.Text += c.Text
