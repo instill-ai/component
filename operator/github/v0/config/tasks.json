@@ -118,7 +118,7 @@
         "comments_num": {
           "description": "number of comments on the PR",
           "instillFormat": "integer",
-          "instillUIOrder": 9,
+          "instillUIOrder": 10,
           "title": "Number of PR comments",
           "instillAcceptFormats": [
             "integer"
@@ -132,7 +132,7 @@
         "commits_num": {
           "description": "number of commits in the PR",
           "instillFormat": "integer",
-          "instillUIOrder": 10,
+          "instillUIOrder": 11,
           "title": "Number of PR commits",
           "instillAcceptFormats": [
             "string"
@@ -146,7 +146,7 @@
         "review_comments_num": {
           "description": "number of review comments in the PR",
           "instillFormat": "integer",
-          "instillUIOrder": 11,
+          "instillUIOrder": 12,
           "title": "Number of PR review comments",
           "instillAcceptFormats": [
             "string"
@@ -159,7 +159,7 @@
         },
         "commits": {
           "description": "commits in the PR",
-          "instillUIOrder": 12,
+          "instillUIOrder": 13,
           "title": "Commits",
           "type": "array",
           "items": {
@@ -226,7 +226,7 @@
     },
     "commitStats": {
       "description": "stats of changes",
-      "instillUIOrder": 3,
+      "instillUIOrder": 1,
       "instillUpstreamTypes": [
         "value",
         "reference"
@@ -308,7 +308,7 @@
         },
         "patch": {
           "description": "patch of the file",
-          "instillUIOrder": 5,
+          "instillUIOrder": 3,
           "title": "Patch",
           "instillFormat": "string",
           "instillAcceptFormats": [
@@ -384,7 +384,7 @@
         "in_reply_to_id": {
           "description": "id of the comment this comment is in reply to",
           "instillFormat": "integer",
-          "instillUIOrder": 1,
+          "instillUIOrder": 2,
           "title": "In Reply To",
           "instillAcceptFormats": [
             "integer"
@@ -398,7 +398,7 @@
         "commitId": {
           "description": "commit id (sha) of the comment",
           "instillFormat": "string",
-          "instillUIOrder": 1,
+          "instillUIOrder": 3,
           "title": "Commit id",
           "instillAcceptFormats": [
             "string"
@@ -412,7 +412,7 @@
         "body": {
           "description": "body of the comment",
           "instillFormat": "string",
-          "instillUIOrder": 1,
+          "instillUIOrder": 4,
           "title": "Comment body",
           "instillAcceptFormats": [
             "string"
@@ -426,7 +426,7 @@
         "path": {
           "description": "path of the file the comment is on",
           "instillFormat": "string",
-          "instillUIOrder": 1,
+          "instillUIOrder": 5,
           "title": "Comment path",
           "instillAcceptFormats": [
             "string"
@@ -440,7 +440,7 @@
         "line": {
           "instillShortDescription": "The last line of the range that your comment applies to. Your comment will be placed under this line.",
           "description": "The line of the blob in the pull request diff that the comment applies to. For a multi-line comment, the last line of the range that your comment applies to.",
-          "instillUIOrder": 1,
+          "instillUIOrder": 6,
           "title": "Comment end line",
           "instillFormat": "integer",
           "instillAcceptFormats": [
@@ -454,7 +454,7 @@
         },
         "start_line": {
           "description": "the first line in the pull request diff that your multi-line comment applies to",
-          "instillUIOrder": 1,
+          "instillUIOrder": 7,
           "title": "Comment start line",
           "instillFormat": "integer",
           "instillAcceptFormats": [
@@ -475,7 +475,7 @@
             "RIGHT",
             "side"
           ],
-          "instillUIOrder": 1,
+          "instillUIOrder": 8,
           "title": "Comment end side",
           "instillFormat": "string",
           "instillAcceptFormats": [
@@ -496,7 +496,7 @@
             "RIGHT",
             "side"
           ],
-          "instillUIOrder": 1,
+          "instillUIOrder": 9,
           "title": "Comment start side",
           "instillFormat": "string",
           "instillAcceptFormats": [
@@ -510,7 +510,7 @@
         },
         "subject_type": {
           "description": "Subject type of the comment, can be one of: LINE, FILE",
-          "instillUIOrder": 1,
+          "instillUIOrder": 10,
           "title": "Comment type",
           "instillFormat": "string",
           "default": "line",
@@ -529,7 +529,7 @@
         },
         "created_at": {
           "description": "time the comment was created",
-          "instillUIOrder": 1,
+          "instillUIOrder": 11,
           "title": "Comment created at",
           "instillFormat": "string",
           "instillAcceptFormats": [
@@ -543,7 +543,7 @@
         },
         "updated_at": {
           "description": "time the comment was updated",
-          "instillUIOrder": 1,
+          "instillUIOrder": 12,
           "title": "Comment updated at",
           "instillFormat": "string",
           "instillAcceptFormats": [
@@ -557,7 +557,7 @@
         },
         "user": {
           "description": "User who created the comment",
-          "instillUIOrder": 1,
+          "instillUIOrder": 13,
           "title": "User",
           "type": "object",
           "properties": {
@@ -577,7 +577,7 @@
             },
             "url": {
               "description": "url of the user",
-              "instillUIOrder": 1,
+              "instillUIOrder": 2,
               "title": "User url",
               "instillFormat": "string",
               "instillAcceptFormats": [
@@ -685,7 +685,7 @@
       "properties": {
         "pull-requests": {
           "description": "An array of PRs",
-          "instillUIOrder": 0,
+          "instillUIOrder": 1,
           "title": "Pull Requests",
           "type": "array",
           "items": {
@@ -726,7 +726,7 @@
             "value",
             "reference"
           ],
-          "instillUIOrder": 3,
+          "instillUIOrder": 4,
           "type": "integer"
         }
       },
@@ -744,6 +744,7 @@
         "pull-request": {
           "$ref": "#/$defs/pull_request",
           "required": [],
+          "instillUIOrder": 1,
           "description": "A pull request in GitHub"
         }
       },
@@ -779,7 +780,7 @@
             "value",
             "reference"
           ],
-          "instillUIOrder": 3,
+          "instillUIOrder": 4,
           "type": "integer"
         },
         "sort": {
@@ -856,6 +857,7 @@
           "items": {
             "$ref": "#/$defs/review_comments",
             "required": [],
+            "instillUIOrder": 1,
             "description": "Comments in the PR"
           }
         }
@@ -960,6 +962,7 @@
         "comment": {
           "$ref": "#/$defs/review_comments",
           "required": [],
+          "instillUIOrder": 1,
           "description": "The created comment"
         }
       },
@@ -1002,6 +1005,7 @@
         "commit": {
           "$ref": "#/$defs/commit",
           "required": [],
+          "instillUIOrder": 1,
           "description": "A commit in GitHub"
         }
       },
