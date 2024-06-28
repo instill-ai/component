@@ -8,76 +8,153 @@
           "instillFormat": "integer",
           "instillUIOrder": 1,
           "title": "PR id",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "integer"
         },
         "number": {
           "description": "number of the PR",
           "instillFormat": "integer",
-          "instillUIOrder": 1,
+          "instillUIOrder": 2,
           "title": "PR number",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "integer"
         },
         "state": {
           "description": "state of the PR",
           "instillFormat": "string",
-          "instillUIOrder": 1,
+          "instillUIOrder": 3,
           "title": "PR state",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "title": {
           "description": "title of the PR",
           "instillFormat": "string",
-          "instillUIOrder": 1,
+          "instillUIOrder": 4,
           "title": "PR Title",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "body": {
           "description": "body of the PR",
           "instillFormat": "string",
-          "instillUIOrder": 1,
+          "instillUIOrder": 5,
           "title": "PR body",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "diff_url": {
           "description": "url to the diff of the PR",
           "instillFormat": "string",
-          "instillUIOrder": 1,
+          "instillUIOrder": 6,
           "title": "PR diff url",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "head": {
           "description": "head commit of the PR (in SHA value)",
           "instillFormat": "string",
-          "instillUIOrder": 1,
+          "instillUIOrder": 7,
           "title": "PR head",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "base": {
           "description": "base commit of the PR (in SHA value)",
           "instillFormat": "string",
-          "instillUIOrder": 1,
+          "instillUIOrder": 8,
           "title": "PR base",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "comments": {
           "description": "number of comments on the PR",
           "instillFormat": "integer",
-          "instillUIOrder": 1,
-          "title": "PR comments",
+          "instillUIOrder": 9,
+          "title": "Number of PR comments",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "integer"
         },
         "commits": {
           "description": "number of commits in the PR",
           "instillFormat": "integer",
-          "instillUIOrder": 1,
-          "title": "PR commits",
+          "instillUIOrder": 10,
+          "title": "Number of PR commits",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "integer"
         },
         "review_comments": {
           "description": "number of review comments in the PR",
           "instillFormat": "integer",
-          "instillUIOrder": 1,
-          "title": "PR review comments",
+          "instillUIOrder": 11,
+          "title": "Number of PR review comments",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "integer"
         }
       },
@@ -121,9 +198,16 @@
       "properties": {
         "id": {
           "description": "id of the comment",
-          "instillFormat": "integer",
           "instillUIOrder": 1,
           "title": "Comment id",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "integer"
         },
         "in_reply_to_id": {
@@ -131,13 +215,27 @@
           "instillFormat": "integer",
           "instillUIOrder": 1,
           "title": "In Reply To",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "integer"
         },
         "commitId": {
-          "description": "commit id of the comment",
+          "description": "commit id (sha) of the comment",
           "instillFormat": "string",
           "instillUIOrder": 1,
           "title": "Commit id",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "body": {
@@ -145,6 +243,13 @@
           "instillFormat": "string",
           "instillUIOrder": 1,
           "title": "Comment body",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "path": {
@@ -152,56 +257,131 @@
           "instillFormat": "string",
           "instillUIOrder": 1,
           "title": "Comment path",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "line": {
-          "instillShortDescription": "The last line of the range that your comment applies to.",
+          "instillShortDescription": "The last line of the range that your comment applies to. Your comment will be placed under this line.",
           "description": "The line of the blob in the pull request diff that the comment applies to. For a multi-line comment, the last line of the range that your comment applies to.",
-          "instillFormat": "integer",
           "instillUIOrder": 1,
-          "title": "Comment line",
+          "title": "Comment end line",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "integer"
         },
         "start_line": {
           "description": "the first line in the pull request diff that your multi-line comment applies to",
-          "instillFormat": "integer",
           "instillUIOrder": 1,
           "title": "Comment start line",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "integer"
         },
         "side": {
-          "description": "side of the comment",
-          "instillFormat": "string",
+          "instillShortDescription": "side of the end line, can be one of: LEFT, RIGHT, side. Default: side",
+          "description": "side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default: side",
+          "default": "side",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "side"
+          ],
           "instillUIOrder": 1,
-          "title": "Comment side",
+          "title": "Comment end side",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "start_side": {
-          "description": "side of the start line",
-          "instillFormat": "string",
+          "instillShortDescription": "side of the start line, can be one of: LEFT, RIGHT, side. Default: side",
+          "description": "side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default: side",
+          "default": "side",
+          "enum": [
+            "LEFT",
+            "RIGHT",
+            "side"
+          ],
           "instillUIOrder": 1,
           "title": "Comment start side",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "subject_type": {
           "description": "Subject type of the comment, can be one of: LINE, FILE",
-          "instillFormat": "string",
           "instillUIOrder": 1,
           "title": "Comment type",
+          "instillFormat": "string",
+          "default": "line",
+          "enum": [
+            "line",
+            "file"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "created_at": {
           "description": "time the comment was created",
-          "instillFormat": "string",
           "instillUIOrder": 1,
           "title": "Comment created at",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "updated_at": {
           "description": "time the comment was updated",
-          "instillFormat": "string",
           "instillUIOrder": 1,
           "title": "Comment updated at",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "type": "string"
         },
         "user": {
@@ -212,16 +392,30 @@
           "properties": {
             "id": {
               "description": "id of the user",
-              "instillFormat": "integer",
               "instillUIOrder": 1,
               "title": "User id",
+              "instillFormat": "integer",
+              "instillAcceptFormats": [
+                "integer"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ],
               "type": "integer"
             },
             "url": {
               "description": "url of the user",
-              "instillFormat": "string",
               "instillUIOrder": 1,
               "title": "User url",
+              "instillFormat": "string",
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ],
               "type": "string"
             }
           },
@@ -538,75 +732,44 @@
           "type": "object",
           "properties": {
             "commit_id": {
-              "title": "Commit ID",
-              "description": "The commit id of the comment",
-              "instillFormat": "string",
-              "instillUIOrder": 0,
-              "type": "string"
+              "$ref": "#/$defs/review_comments/properties/commitId",
+              "instillUIOrder": 0
             },
             "body": {
-              "$ref": "#/$defs/review_comments/properties/body"
+              "$ref": "#/$defs/review_comments/properties/body",
+              "instillUIOrder": 1
             },
             "path": {
-              "$ref": "#/$defs/review_comments/properties/path"
+              "$ref": "#/$defs/review_comments/properties/path",
+              "instillUIOrder": 2
             },
             "line": {
-              "$ref": "#/$defs/review_comments/properties/line"
+              "$ref": "#/$defs/review_comments/properties/line",
+              "instillUIOrder": 3
             },
             "start_line": {
-              "$ref": "#/$defs/review_comments/properties/start_line"
+              "$ref": "#/$defs/review_comments/properties/start_line",
+              "instillUIOrder": 4
             },
             "side": {
               "$ref": "#/$defs/review_comments/properties/side",
-              "default": "RIGHT",
-              "enum": [
-                "LEFT",
-                "RIGHT",
-                "side"
-              ],
-              "instillAcceptFormats": [
-                "string"
-              ],
-              "instillUpstreamTypes": [
-                "value",
-                "reference"
-              ]
+              "instillUIOrder": 5
             },
             "start_side": {
               "$ref": "#/$defs/review_comments/properties/start_side",
-              "default": "RIGHT",
-              "enum": [
-                "LEFT",
-                "RIGHT",
-                "side"
-              ],
-              "instillAcceptFormats": [
-                "string"
-              ],
-              "instillUpstreamTypes": [
-                "value",
-                "reference"
-              ]
+              "instillUIOrder": 6
             },
             "subject_type": {
               "$ref": "#/$defs/review_comments/properties/subject_type",
-              "default": "line",
-              "enum": [
-                "line",
-                "file"
-              ],
-              "instillAcceptFormats": [
-                "string"
-              ],
-              "instillUpstreamTypes": [
-                "value",
-                "reference"
-              ]
+              "instillUIOrder": 7
             }
           },
           "required": [
             "body",
-            "path"
+            "path",
+            "commit_id",
+            "line",
+            "start_line"
           ]
         }
       },
