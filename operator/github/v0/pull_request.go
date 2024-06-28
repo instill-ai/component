@@ -12,20 +12,22 @@ import (
 )
 
 type PullRequest struct {
-	ID          int64           	`json:"id,omitempty"`
-	Number      int             	`json:"number,omitempty"`
-	State       string          	`json:"state,omitempty"`
-	Title	 	string 				`json:"title,omitempty"`
-	Body 		string 				`json:"body,omitempty"`
-	DiffURL 	string 				`json:"diff_url,omitempty"`
-	Head 		string 				`json:"head,omitempty"`
-	Base 		string 				`json:"base,omitempty"`
-	Comments 	int 				`json:"comments,omitempty"`
-	Commits 	int 				`json:"commits,omitempty"`
-	ReviewComments 	int 			`json:"review_comments,omitempty"`
+	ID          		int64           	`json:"id,omitempty"`
+	Number      		int             	`json:"number,omitempty"`
+	State       		string          	`json:"state,omitempty"`
+	Title	 			string 				`json:"title,omitempty"`
+	Body 				string 				`json:"body,omitempty"`
+	DiffURL 			string 				`json:"diff_url,omitempty"`
+	CommitsURL 			string 				`json:"commits_url,omitempty"`
+	Commits 			[]Commit 			`json:"commits,omitempty"`
+	Head 				string 				`json:"head,omitempty"`
+	Base 				string 				`json:"base,omitempty"`
+	CommentsNum 		int 				`json:"comments_num,omitempty"`
+	CommitsNum 			int 				`json:"commits_num,omitempty"`
+	ReviewCommentsNum 	int		 			`json:"review_comments_num,omitempty"`
 }
-func extractPullRequestInformation(originalPr *github.PullRequest) PullRequest {
-	return PullRequest{
+func (githubClient *GitHubClient) extractPullRequestInformation(originalPr *github.PullRequest) (PullRequest, error) {
+	resp := PullRequest{
 		ID: originalPr.GetID(),
 		Number: originalPr.GetNumber(),
 		State: originalPr.GetState(),
@@ -34,10 +36,24 @@ func extractPullRequestInformation(originalPr *github.PullRequest) PullRequest {
 		DiffURL: originalPr.GetDiffURL(),
 		Head: originalPr.GetHead().GetSHA(),
 		Base: originalPr.GetBase().GetSHA(),
-		Comments: originalPr.GetComments(),
-		Commits: originalPr.GetCommits(),
-		ReviewComments: originalPr.GetReviewComments(),
+		CommentsNum: originalPr.GetComments(),
+		CommitsNum: originalPr.GetCommits(),
+		ReviewCommentsNum: originalPr.GetReviewComments(),
 	}
+	if originalPr.GetCommitsURL() != "" {
+		commits, _, err := githubClient.client.PullRequests.ListCommits(context.Background(), githubClient.owner, githubClient.repository, resp.Number, nil)
+		if err != nil {
+			return PullRequest{}, err
+		}
+		resp.Commits = make([]Commit, len(commits))
+		for idx, commit := range commits {
+			resp.Commits[idx] = githubClient.extractCommitInformation(commit)
+		}
+		fmt.Println("=====================================")
+		fmt.Println("commits: ",resp.Commits)
+		fmt.Println("=====================================")
+	}
+	return resp, nil
 }
 
 type GetAllPullRequestsInput struct {
@@ -51,7 +67,7 @@ type GetAllPullRequestsResp struct {
 	PullRequests   []PullRequest `json:"pull-requests"`
 }
 
-func (githubClient *GitHubClient) getAllPullRequests(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *GitHubClient) getAllPullRequestsTask(props *structpb.Struct) (*structpb.Struct, error) {
 	err := githubClient.setTargetRepo(props)
 	if err != nil {
 		return nil, err
@@ -68,7 +84,10 @@ func (githubClient *GitHubClient) getAllPullRequests(props *structpb.Struct) (*s
 	}
 	PullRequests := make([]PullRequest, len(prs))
 	for idx, pr := range prs {
-		PullRequests[idx] = extractPullRequestInformation(pr)
+		PullRequests[idx], err = githubClient.extractPullRequestInformation(pr)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var prResp GetAllPullRequestsResp
@@ -90,7 +109,7 @@ type GetPullRequestResp struct {
 	PullRequest		PullRequest `json:"pull-request"`
 }
 
-func (githubClient *GitHubClient) getPullRequest(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *GitHubClient) getPullRequestTask(props *structpb.Struct) (*structpb.Struct, error) {
 	err := githubClient.setTargetRepo(props)
 	if err != nil {
 		return nil, err
@@ -129,9 +148,12 @@ func (githubClient *GitHubClient) getPullRequest(props *structpb.Struct) (*struc
 	}
 
 	var prResp GetPullRequestResp
-	prResp.PullRequest = extractPullRequestInformation(pullRequest)
+	prResp.PullRequest, err = githubClient.extractPullRequestInformation(pullRequest)
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println("===========================")
-	fmt.Println("prResp.PullRequest: ",prResp.PullRequest, pullRequest)
+	fmt.Println("prResp.PullRequest: ",prResp.PullRequest)
 	fmt.Println("===========================")
 	out, err := base.ConvertToStructpb(prResp)
 	if err != nil {

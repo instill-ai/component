@@ -16,6 +16,7 @@ import (
 const (
 	taskGetAllPRs = "TASK_GET_ALL_PULL_REQUESTS"
 	taskGetPR  = "TASK_GET_PULL_REQUEST"
+	taskGetCommit  = "TASK_GET_COMMIT"
 	taskGetReviewComments = "TASK_GET_REVIEW_COMMENTS"
 	taskCreateReviewComment = "TASK_CREATE_REVIEW_COMMENT"
 )
@@ -67,14 +68,17 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 
 	switch task {
 	case taskGetAllPRs:
-		e.execute = e.client.getAllPullRequests
+		e.execute = e.client.getAllPullRequestsTask
 	case taskGetPR:
-		e.execute = e.client.getPullRequest
+		e.execute = e.client.getPullRequestTask
 	case taskGetReviewComments:
-		e.execute = e.client.getAllReviewComments
+		e.execute = e.client.getAllReviewCommentsTask
 	case taskCreateReviewComment:
-		e.execute = e.client.createReviewComment
+		e.execute = e.client.createReviewCommentTask
 		// e.execute = e.client.getAllPullRequests
+	case taskGetCommit:
+		e.execute = e.client.getCommitTask
+
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),
