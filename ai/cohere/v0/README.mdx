@@ -1,0 +1,115 @@
+---
+title: "Cohere"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP Cohere component https://github.com/instill-ai/instill-core"
+---
+
+The Cohere component is an AI component that allows users to connect the AI models served on the Cohere Platform.
+It can carry out the following tasks:
+
+- [Text Generation Chat](#text-generation-chat)
+- [Text Embeddings](#text-embeddings)
+- [Text Reranking](#text-reranking)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/ai/cohere/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| API Key (required) | `api-key` | string | Fill your Cohere API key. To find your keys, visit the Cohere dashboard page. |
+
+
+
+
+## Supported Tasks
+
+### Text Generation Chat
+
+Provide text outputs in response to text inputs.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_GENERATION_CHAT` |
+| Model Name (required) | `model-name` | string | The Cohere command model to be used. |
+| Prompt (required) | `prompt` | string | The prompt text |
+| System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is using a generic message as "You are a helpful assistant." |
+| Documents | `documents` | array[string] | The documents to be used for the model, for optimal performance, the length of each document should be less than 300 words. |
+| Extra Parameters | `extra-params` | object | Extra Parameters |
+| Prompt Images | `prompt-images` | array[string] | The prompt images (Note: As for 2024-06-24 Cohere models are not multimodal, so images will be ignored.) |
+| Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Each message should adhere to the format: : \{"role": "The message role, i.e. 'USER' or 'CHATBOT'", "content": "message content"\}. |
+| Seed | `seed` | integer | The seed |
+| Temperature | `temperature` | number | The temperature for sampling |
+| Top K | `top-k` | integer | Top k for sampling |
+| Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Text | `text` | string | Model Output |
+| Citations (optional) | `citations` | array[object] | Citations |
+
+
+
+
+
+
+### Text Embeddings
+
+Turn text into numbers, unlocking use cases like search.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_EMBEDDINGS` |
+| Input Type (required) | `input-type` | string | Specifies the type of input passed to the model. |
+| Model Name (required) | `model-name` | string | The Cohere embed model to be used. |
+| Text (required) | `text` | string | The text |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Embedding | `embedding` | array[number] | Embedding of the input text |
+
+
+
+
+
+
+### Text Reranking
+
+Sort text inputs by semantic relevance to a specified query.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_RERANKING` |
+| Model Name (required) | `model-name` | string | The Cohere rerank model to be used. |
+| Query (required) | `query` | string | The query |
+| Documents (required) | `documents` | array[string] | The documents to be used for reranking. |
+| Top N | `top-n` | integer | The number of most relevant documents or indices to return, defaults to the length of the documents |
+| Maximum number of chunks per document | `max-chunks-per-doc` | integer | The maximum number of chunks to produce internally from a document |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Reranked documents | `ranking` | array[string] | Reranked documents |
