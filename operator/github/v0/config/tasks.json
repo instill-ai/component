@@ -90,7 +90,7 @@
         "head": {
           "description": "head commit of the PR (in SHA value)",
           "instillFormat": "string",
-          "instillUIOrder": 7,
+          "instillUIOrder": 8,
           "title": "PR head",
           "instillAcceptFormats": [
             "string"
@@ -104,7 +104,7 @@
         "base": {
           "description": "base commit of the PR (in SHA value)",
           "instillFormat": "string",
-          "instillUIOrder": 8,
+          "instillUIOrder": 9,
           "title": "PR base",
           "instillAcceptFormats": [
             "string"
@@ -115,7 +115,7 @@
           ],
           "type": "string"
         },
-        "comments": {
+        "comments_num": {
           "description": "number of comments on the PR",
           "instillFormat": "integer",
           "instillUIOrder": 9,
@@ -129,7 +129,7 @@
           ],
           "type": "integer"
         },
-        "commits": {
+        "commits_num": {
           "description": "number of commits in the PR",
           "instillFormat": "integer",
           "instillUIOrder": 10,
@@ -143,7 +143,7 @@
           ],
           "type": "integer"
         },
-        "review_comments": {
+        "review_comments_num": {
           "description": "number of review comments in the PR",
           "instillFormat": "integer",
           "instillUIOrder": 11,
@@ -156,10 +156,181 @@
             "reference"
           ],
           "type": "integer"
+        },
+        "commits": {
+          "description": "commits in the PR",
+          "instillUIOrder": 12,
+          "title": "Commits",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/commit",
+            "required": [],
+            "description": "A commit in the PR"
+          }
         }
       },
       "title": "Pull Request",
       "type": "object"
+    },
+    "commit": {
+      "description": "A commit object.",
+      "properties": {
+        "sha": {
+          "description": "sha of the commit",
+          "instillUIOrder": 1,
+          "title": "Commit SHA",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "message": {
+          "description": "message of the commit",
+          "instillUIOrder": 2,
+          "title": "Commit message",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "stats": {
+          "instillUIOrder": 3,
+          "$ref": "#/$defs/commitStats",
+          "required": []
+        },
+        "files": {
+          "description": "files in the commit",
+          "instillUIOrder": 4,
+          "title": "Files",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/commitFile",
+            "required": [],
+            "description": "A file in the commit"
+          }
+        }
+      },
+      "required": [],
+      "title": "Commit",
+      "type": "object"
+    },
+    "commitStats": {
+      "description": "stats of changes",
+      "instillUIOrder": 3,
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "object"
+      ],
+      "instillFormat": "object",
+      "title": "Commit stats",
+      "type": "object",
+      "properties": {
+        "additions": {
+          "description": "number of additions in the commit",
+          "instillUIOrder": 1,
+          "title": "Additions",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
+        },
+        "deletions": {
+          "description": "number of deletions in the commit",
+          "instillUIOrder": 2,
+          "title": "Deletions",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
+        },
+        "changes": {
+          "description": "total number of changes in the commit",
+          "instillUIOrder": 3,
+          "title": "Total changes",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
+        }
+      },
+      "required": []
+    },
+    "commitFile": {
+      "description": "A commit file object.",
+      "title": "Commit File",
+      "properties": {
+        "filename": {
+          "description": "name of the file",
+          "instillUIOrder": 1,
+          "title": "File name",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "stats": {
+          "instillUIOrder": 2,
+          "$ref": "#/$defs/commitStats",
+          "required": []
+        },
+        "patch": {
+          "description": "patch of the file",
+          "instillUIOrder": 5,
+          "title": "Patch",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [],
+      "type": "object",
+      "instillAcceptFormats": [
+        "object"
+      ],
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "instillFormat": "object"
     },
     "repository_info": {
       "owner": {
@@ -794,6 +965,48 @@
       },
       "required": [
         "comment"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_COMMIT": {
+    "instillShortDescription": "Get a commit from a repository, given the commit SHA",
+    "input": {
+      "description": "Please input the repository name and owner, and the commit SHA",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "owner",
+        "repository",
+        "sha"
+      ],
+      "properties": {
+        "$ref": "#/$defs/repository_info",
+        "sha": {
+          "$ref": "#/$defs/commit/properties/sha",
+          "instillUIOrder": 3
+        }
+      },
+      "required": [
+        "owner",
+        "repository",
+        "sha"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "The specific commit in GitHub repository",
+      "instillUIOrder": 0,
+      "properties": {
+        "commit": {
+          "$ref": "#/$defs/commit",
+          "required": [],
+          "description": "A commit in GitHub"
+        }
+      },
+      "required": [
+        "commit"
       ],
       "title": "Output",
       "type": "object"

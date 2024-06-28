@@ -37,7 +37,7 @@ type GetAllReviewCommentsResp struct {
 // Specifying a pull request number of 0 will return all comments on all pull requests for the repository.
 //
 // * This only works for public repositories.
-func (githubClient *GitHubClient) getAllReviewComments(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *GitHubClient) getAllReviewCommentsTask(props *structpb.Struct) (*structpb.Struct, error) {
 	err := githubClient.setTargetRepo(props)
 	if err != nil {
 		return nil, err
@@ -91,7 +91,7 @@ type CreateReviewCommentResp struct {
 // CreateReviewComment creates a review comment for a given pull request.
 //
 // * This only works for public repositories.
-func (githubClient *GitHubClient) createReviewComment(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *GitHubClient) createReviewCommentTask(props *structpb.Struct) (*structpb.Struct, error) {
 	err := githubClient.setTargetRepo(props)
 	if err != nil {
 		return nil, err
