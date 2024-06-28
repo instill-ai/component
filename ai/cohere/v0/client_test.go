@@ -55,54 +55,44 @@ func TestClient(t *testing.T) {
 	clt := newMockClient()
 
 	commandTc := struct {
-		ctx     context.Context
-		request *cohereSDK.ChatRequest
-		opts    []core.RequestOption
+		request cohereSDK.ChatRequest
 		want    string
 	}{
-		ctx:     context.TODO(),
-		request: &cohereSDK.ChatRequest{Message: "Hello World"},
-		opts:    []core.RequestOption{},
+		request: cohereSDK.ChatRequest{Message: "Hello World"},
 		want:    "HELLO WORLD",
 	}
 	c.Run("ok - task command", func(c *qt.C) {
-		resp, err := clt.sdkClient.Chat(commandTc.ctx, commandTc.request, commandTc.opts...)
+		resp, err := clt.generateTextChat(commandTc.request)
 		c.Check(err, qt.IsNil)
 		c.Check(resp.Text, qt.Equals, commandTc.want)
 
 	})
 
 	embedTc := struct {
-		ctx     context.Context
-		request *cohereSDK.EmbedRequest
-		opts    []core.RequestOption
+		request cohereSDK.EmbedRequest
 		want    [][]float64
 	}{
-		ctx:     context.TODO(),
-		request: &cohereSDK.EmbedRequest{Texts: []string{"abcde"}},
-		opts:    []core.RequestOption{},
+		request: cohereSDK.EmbedRequest{Texts: []string{"abcde"}},
 		want:    [][]float64{{0, 0, 0, 0, 0}},
 	}
 	c.Run("ok - task embed", func(c *qt.C) {
-		resp, err := clt.sdkClient.Embed(embedTc.ctx, embedTc.request, embedTc.opts...)
+		resp, err := clt.generateEmbedding(embedTc.request)
 		c.Check(err, qt.IsNil)
 		c.Check(len(resp.EmbeddingsFloats.Embeddings[0]), qt.Equals, len(embedTc.want[0]))
 
 	})
 
 	rerankTc := struct {
-		ctx     context.Context
-		request *cohereSDK.RerankRequest
-		opts    []core.RequestOption
+		request cohereSDK.RerankRequest
 		want    []string
 	}{
-		ctx:     context.TODO(),
-		request: &cohereSDK.RerankRequest{Documents: []*cohereSDK.RerankRequestDocumentsItem{{String: "a"}, {String: "b"}, {String: "c"}, {String: "d"}}},
-		opts:    []core.RequestOption{},
-		want:    []string{"d", "c", "b", "a"},
+
+		request: cohereSDK.RerankRequest{Documents: []*cohereSDK.RerankRequestDocumentsItem{{String: "a"}, {String: "b"}, {String: "c"}, {String: "d"}}},
+
+		want: []string{"d", "c", "b", "a"},
 	}
 	c.Run("ok - task rerank", func(c *qt.C) {
-		resp, err := clt.sdkClient.Rerank(rerankTc.ctx, rerankTc.request, rerankTc.opts...)
+		resp, err := clt.generateRerank(rerankTc.request)
 		c.Check(err, qt.IsNil)
 		c.Check(len(resp.Results), qt.Equals, len(rerankTc.want))
 		for i, r := range resp.Results {
