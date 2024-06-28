@@ -11,6 +11,14 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+type PullRequestService interface {
+	List(context.Context, string, string, *github.PullRequestListOptions) ([]*github.PullRequest, *github.Response, error)
+	Get(context.Context, string, string, int) (*github.PullRequest, *github.Response, error)
+	ListComments(context.Context, string, string, int, *github.PullRequestListCommentsOptions) ([]*github.PullRequestComment, *github.Response, error)
+	CreateComment(context.Context, string, string, int, *github.PullRequestComment) (*github.PullRequestComment, *github.Response, error)
+	ListCommits(context.Context, string, string, int, *github.ListOptions) ([]*github.RepositoryCommit, *github.Response, error)
+}
+
 type PullRequest struct {
 	ID          		int64           	`json:"id,omitempty"`
 	Number      		int             	`json:"number,omitempty"`
@@ -26,7 +34,7 @@ type PullRequest struct {
 	CommitsNum 			int 				`json:"commits_num,omitempty"`
 	ReviewCommentsNum 	int		 			`json:"review_comments_num,omitempty"`
 }
-func (githubClient *GitHubClient) extractPullRequestInformation(originalPr *github.PullRequest) (PullRequest, error) {
+func (githubClient *Client) extractPullRequestInformation(originalPr *github.PullRequest) (PullRequest, error) {
 	resp := PullRequest{
 		ID: originalPr.GetID(),
 		Number: originalPr.GetNumber(),
@@ -49,25 +57,23 @@ func (githubClient *GitHubClient) extractPullRequestInformation(originalPr *gith
 		for idx, commit := range commits {
 			resp.Commits[idx] = githubClient.extractCommitInformation(commit)
 		}
-		fmt.Println("=====================================")
-		fmt.Println("commits: ",resp.Commits)
-		fmt.Println("=====================================")
 	}
 	return resp, nil
 }
 
+// for testing
 type GetAllPullRequestsInput struct {
-	Owner string `json:"owner"`
-	Repository string `json:"repository"`
-	State string `json:"state"`
-	Sort string `json:"sort"`
-	Direction string `json:"direction"`
+	Owner		 	string 			`json:"owner"`
+	Repository		string 			`json:"repository"`
+	State		 	string 			`json:"state"`
+	Sort		 	string 			`json:"sort"`
+	Direction		string 			`json:"direction"`
 }
 type GetAllPullRequestsResp struct {
-	PullRequests   []PullRequest `json:"pull-requests"`
+	PullRequests   	[]PullRequest 	`json:"pull-requests"`
 }
 
-func (githubClient *GitHubClient) getAllPullRequestsTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) getAllPullRequestsTask(props *structpb.Struct) (*structpb.Struct, error) {
 	err := githubClient.setTargetRepo(props)
 	if err != nil {
 		return nil, err
@@ -109,7 +115,7 @@ type GetPullRequestResp struct {
 	PullRequest		PullRequest `json:"pull-request"`
 }
 
-func (githubClient *GitHubClient) getPullRequestTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structpb.Struct, error) {
 	err := githubClient.setTargetRepo(props)
 	if err != nil {
 		return nil, err
@@ -152,9 +158,6 @@ func (githubClient *GitHubClient) getPullRequestTask(props *structpb.Struct) (*s
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("===========================")
-	fmt.Println("prResp.PullRequest: ",prResp.PullRequest)
-	fmt.Println("===========================")
 	out, err := base.ConvertToStructpb(prResp)
 	if err != nil {
 		return nil, err

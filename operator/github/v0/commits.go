@@ -9,6 +9,10 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+type RepositoriesService interface {
+	GetCommit(context.Context, string, string, string, *github.ListOptions) (*github.RepositoryCommit, *github.Response, error)
+}
+
 type Commit struct {
 	SHA          	string         		`json:"sha,omitempty"`
 	Message 		string          	`json:"message,omitempty"`
@@ -25,7 +29,7 @@ type CommitFile struct {
 	Patch 			string 	`json:"patch,omitempty"`
 	CommitStats
 }
-func (githubClient *GitHubClient) extractCommitFile(file *github.CommitFile) CommitFile {
+func (githubClient *Client) extractCommitFile(file *github.CommitFile) CommitFile {
 	return CommitFile{
 		Filename: file.GetFilename(),
 		Patch: file.GetPatch(),
@@ -36,7 +40,7 @@ func (githubClient *GitHubClient) extractCommitFile(file *github.CommitFile) Com
 		},
 	}
 }
-func (githubClient *GitHubClient) extractCommitInformation(originalCommit *github.RepositoryCommit) Commit {
+func (githubClient *Client) extractCommitInformation(originalCommit *github.RepositoryCommit) Commit {
 	stats := originalCommit.GetStats()
 	commitFiles := originalCommit.Files
 
@@ -68,7 +72,7 @@ func (githubClient *GitHubClient) extractCommitInformation(originalCommit *githu
 }
 
 
-func (githubClient *GitHubClient) getCommit(owner string, repository string, sha string) (*github.RepositoryCommit, error) {
+func (githubClient *Client) getCommit(owner string, repository string, sha string) (*github.RepositoryCommit, error) {
 	commit, _, err := githubClient.client.Repositories.GetCommit(context.Background(), owner, repository, sha, nil)
 	return commit, err
 }
@@ -76,7 +80,7 @@ func (githubClient *GitHubClient) getCommit(owner string, repository string, sha
 type GetCommitResp struct {
 	Commit Commit `json:"commit"`
 }
-func  (githubClient *GitHubClient) getCommitTask(props *structpb.Struct) (*structpb.Struct, error) {
+func  (githubClient *Client) getCommitTask(props *structpb.Struct) (*structpb.Struct, error) {
 	err := githubClient.setTargetRepo(props)
 	if err != nil {
 		return nil, err
