@@ -52,6 +52,19 @@ func (cl *cohereClient) generateTextChat(request cohereSDK.ChatRequest) (cohereS
 	}
 	return resp, nil
 }
+func (cl *cohereClient) generateRerank(request cohereSDK.RerankRequest) (cohereSDK.RerankResponse, error) {
+	respPtr, err := cl.sdkClient.Rerank(
+		context.TODO(),
+		&request,
+	)
+	if err != nil {
+		panic(err)
+	}
+	resp := cohereSDK.RerankResponse{
+		Results: respPtr.Results,
+	}
+	return resp, nil
+}
 
 func getAPIKey(setup *structpb.Struct) string {
 	return setup.GetFields()[cfgAPIKey].GetStringValue()

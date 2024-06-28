@@ -18,6 +18,7 @@ import (
 const (
 	textGenerationTask = "TASK_TEXT_GENERATION_CHAT"
 	textEmbeddingTask  = "TASK_TEXT_EMBEDDINGS"
+	textRerankTask     = "TASK_TEXT_RERANKING"
 	cfgAPIKey          = "api-key"
 )
 
@@ -31,6 +32,19 @@ var (
 
 	once sync.Once
 	comp *component
+
+	mockDocuments = []map[string]string{
+		{"text": "Earth isn’t actually round."},
+		{"text": "Coral reefs are Earth’s largest living structure."},
+		{"text": "The Great Wall of China is not visible from space."},
+		{"text": "Humans have more than five senses."},
+		{"text": "Antarctica is home to the largest ice sheet on Earth."},
+		{"text": "The Moon is drifting away from Earth."},
+		{"text": "The Great Pyramid of Giza is not the tallest pyramid in the world."},
+		{"text": "The Earth’s core is as hot as the surface of the Sun."},
+		{"text": "The Earth’s magnetic poles are not fixed."},
+		{"text": "The Earth’s atmosphere is mostly nitrogen."},
+	}
 )
 
 type component struct {
@@ -40,6 +54,7 @@ type component struct {
 type CohereClient interface {
 	generateTextChat(request cohereSDK.ChatRequest) (cohereSDK.NonStreamedChatResponse, error)
 	generateEmbedding(request cohereSDK.EmbedRequest) (cohereSDK.EmbedResponse, error)
+	generateRerank(request cohereSDK.RerankRequest) (cohereSDK.RerankResponse, error)
 }
 
 // These structs are used to send the request /  parse the response from the API, this following their naming convension.
@@ -58,6 +73,10 @@ type commandOutput struct {
 
 type embedOutput struct {
 	Embedding []float64 `json:"embedding"`
+}
+
+type rerankOutput struct {
+	Ranking []string `json:"ranking"`
 }
 
 func Init(bc base.Component) *component {
@@ -84,9 +103,11 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	}
 	switch task {
 	case textGenerationTask:
-		e.execute = e.generateText
+		e.execute = e.taskCommand
 	case textEmbeddingTask:
-		e.execute = e.generateEmbedding
+		e.execute = e.taskEmbedding
+	case textRerankTask:
+		e.execute = e.taskRerank
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
@@ -108,7 +129,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
-func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) taskCommand(in *structpb.Struct) (*structpb.Struct, error) {
 
 	prompt := in.Fields["prompt"].GetStringValue()
 
@@ -139,18 +160,6 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 	seed := int(in.Fields["seed"].GetNumberValue())
 
 	// This is a mock data for the documents for testing purposes
-	mockDocuments := []map[string]string{
-		{"text": "Earth isn’t actually round."},
-		{"text": "Coral reefs are Earth’s largest living structure."},
-		{"text": "The Great Wall of China is not visible from space."},
-		{"text": "Humans have more than five senses."},
-		{"text": "Antarctica is home to the largest ice sheet on Earth."},
-		{"text": "The Moon is drifting away from Earth."},
-		{"text": "The Great Pyramid of Giza is not the tallest pyramid in the world."},
-		{"text": "The Earth’s core is as hot as the surface of the Sun."},
-		{"text": "The Earth’s magnetic poles are not fixed."},
-		{"text": "The Earth’s atmosphere is mostly nitrogen."},
-	}
 	documents = append(documents, mockDocuments...)
 
 	req := cohereSDK.ChatRequest{
@@ -198,7 +207,7 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 	return &output, nil
 }
 
-func (e *execution) generateEmbedding(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) taskEmbedding(in *structpb.Struct) (*structpb.Struct, error) {
 	text := in.Fields["text"].GetStringValue()
 	texts := []string{text}
 	modelName := in.Fields["model-name"].GetStringValue()
@@ -228,4 +237,48 @@ func (e *execution) generateEmbedding(in *structpb.Struct) (*structpb.Struct, er
 		return nil, err
 	}
 	return &output, nil
+}
+
+func (e *execution) taskRerank(in *structpb.Struct) (*structpb.Struct, error) {
+	query := in.Fields["query"].GetStringValue()
+	documents := []*cohereSDK.RerankRequestDocumentsItem{}
+	for _, doc := range in.Fields["documents"].GetListValue().Values {
+		document := cohereSDK.RerankRequestDocumentsItem{
+			String: doc.GetStringValue(),
+		}
+		documents = append(documents, &document)
+	}
+	modelName := in.Fields["model-name"].GetStringValue()
+	returnDocument := true
+	rankFields := []string{"text"}
+	req := cohereSDK.RerankRequest{
+		Model:           &modelName,
+		Query:           query,
+		Documents:       documents,
+		RankFields:      rankFields,
+		ReturnDocuments: &returnDocument,
+	}
+	resp, err := e.client.generateRerank(req)
+	if err != nil {
+		return nil, err
+	}
+	newRanking := []string{}
+	for _, rankResult := range resp.Results {
+		newRanking = append(newRanking, rankResult.Document.Text)
+	}
+	outputStruct := rerankOutput{
+		Ranking: newRanking,
+	}
+
+	outputJSON, err := json.Marshal(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	output := structpb.Struct{}
+	err = protojson.Unmarshal(outputJSON, &output)
+	if err != nil {
+		return nil, err
+	}
+	return &output, nil
+
 }
