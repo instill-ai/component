@@ -20,6 +20,9 @@ type PullRequest struct {
 	DiffURL 	string 				`json:"diff_url,omitempty"`
 	Head 		string 				`json:"head,omitempty"`
 	Base 		string 				`json:"base,omitempty"`
+	Comments 	int 				`json:"comments,omitempty"`
+	Commits 	int 				`json:"commits,omitempty"`
+	ReviewComments 	int 			`json:"review_comments,omitempty"`
 }
 func extractPullRequestInformation(originalPr *github.PullRequest) PullRequest {
 	return PullRequest{
@@ -31,6 +34,9 @@ func extractPullRequestInformation(originalPr *github.PullRequest) PullRequest {
 		DiffURL: originalPr.GetDiffURL(),
 		Head: originalPr.GetHead().GetSHA(),
 		Base: originalPr.GetBase().GetSHA(),
+		Comments: originalPr.GetComments(),
+		Commits: originalPr.GetCommits(),
+		ReviewComments: originalPr.GetReviewComments(),
 	}
 }
 
@@ -103,7 +109,7 @@ func (githubClient *GitHubClient) getPullRequest(props *structpb.Struct) (*struc
 	}else {
 		// Get the latest PR
 		opts := &github.PullRequestListOptions{
-			State: "open",
+			State: "all",
 			Sort: "created",
 			Direction: "desc",
 		}
@@ -124,6 +130,9 @@ func (githubClient *GitHubClient) getPullRequest(props *structpb.Struct) (*struc
 
 	var prResp GetPullRequestResp
 	prResp.PullRequest = extractPullRequestInformation(pullRequest)
+	fmt.Println("===========================")
+	fmt.Println("prResp.PullRequest: ",prResp.PullRequest, pullRequest)
+	fmt.Println("===========================")
 	out, err := base.ConvertToStructpb(prResp)
 	if err != nil {
 		return nil, err
