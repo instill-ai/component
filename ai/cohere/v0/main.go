@@ -37,14 +37,21 @@ type component struct {
 }
 
 type CohereClient interface {
-	generateTextChat(request cohereSDK.ChatRequest) (*cohereSDK.NonStreamedChatResponse, error)
+	generateTextChat(request cohereSDK.ChatRequest) (cohereSDK.NonStreamedChatResponse, error)
 }
 
 // These structs are used to send the request /  parse the response from the API, this following their naming convension.
 // reference: https://docs.anthropic.com/en/api/messages
 
+type ciatation struct {
+	Start int    `json:"start"`
+	End   int    `json:"end"`
+	Text  string `json:"text"`
+}
+
 type messagesOutput struct {
-	Text string `json:"text"`
+	Text       string      `json:"text"`
+	Ciatations []ciatation `json:"citations"`
 }
 
 func Init(bc base.Component) *component {
@@ -108,10 +115,35 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		messages = slices.Insert(messages, 0, &message)
 	}
 
+	documents := []map[string]string{}
+	if in.Fields["documents"] != nil {
+		for _, doc := range in.Fields["documents"].GetListValue().Values {
+			document := map[string]string{}
+			document["text"] = doc.GetStringValue()
+			documents = append(documents, document)
+		}
+	}
+
 	modelName := in.Fields["model-name"].GetStringValue()
 	maxTokens := int(in.Fields["max-new-tokens"].GetNumberValue())
 	temperature := float64(in.Fields["temperature"].GetNumberValue())
 	topK := int(in.Fields["top-k"].GetNumberValue())
+	seed := int(in.Fields["seed"].GetNumberValue())
+
+	// This is a mock data for the documents for testing purposes
+	mockDocuments := []map[string]string{
+		{"text": "Earth isn’t actually round."},
+		{"text": "Coral reefs are Earth’s largest living structure."},
+		{"text": "The Great Wall of China is not visible from space."},
+		{"text": "Humans have more than five senses."},
+		{"text": "Antarctica is home to the largest ice sheet on Earth."},
+		{"text": "The Moon is drifting away from Earth."},
+		{"text": "The Great Pyramid of Giza is not the tallest pyramid in the world."},
+		{"text": "The Earth’s core is as hot as the surface of the Sun."},
+		{"text": "The Earth’s magnetic poles are not fixed."},
+		{"text": "The Earth’s atmosphere is mostly nitrogen."},
+	}
+	documents = append(documents, mockDocuments...)
 
 	req := cohereSDK.ChatRequest{
 		Message:     prompt,
@@ -120,6 +152,8 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		MaxTokens:   &maxTokens,
 		Temperature: &temperature,
 		K:           &topK,
+		Seed:        &seed,
+		Documents:   documents,
 	}
 
 	resp, err := e.client.generateTextChat(req)
@@ -128,14 +162,31 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		return nil, err
 	}
 
+	citations := []ciatation{}
+
+	for _, c := range resp.Citations {
+		citation := ciatation{
+			Start: c.Start,
+			End:   c.End,
+			Text:  c.Text,
+		}
+		citations = append(citations, citation)
+	}
+
+	print("### Received text: ")
+	fmt.Printf("%s\n", resp.Text)
+
 	outputStruct := messagesOutput{
-		Text: resp.Text,
+		Text:       resp.Text,
+		Ciatations: citations,
 	}
 
 	outputJSON, err := json.Marshal(outputStruct)
 	if err != nil {
 		return nil, err
 	}
+	println("### Output JSON: ")
+	println(string(outputJSON))
 	output := structpb.Struct{}
 	err = protojson.Unmarshal(outputJSON, &output)
 	if err != nil {
