@@ -58,6 +58,27 @@
           "instillUIOrder": 1,
           "title": "PR base",
           "type": "string"
+        },
+        "comments": {
+          "description": "number of comments on the PR",
+          "instillFormat": "integer",
+          "instillUIOrder": 1,
+          "title": "PR comments",
+          "type": "integer"
+        },
+        "commits": {
+          "description": "number of commits in the PR",
+          "instillFormat": "integer",
+          "instillUIOrder": 1,
+          "title": "PR commits",
+          "type": "integer"
+        },
+        "review_comments": {
+          "description": "number of review comments in the PR",
+          "instillFormat": "integer",
+          "instillUIOrder": 1,
+          "title": "PR review comments",
+          "type": "integer"
         }
       },
       "title": "Pull Request",
@@ -112,6 +133,13 @@
           "title": "In Reply To",
           "type": "integer"
         },
+        "commitId": {
+          "description": "commit id of the comment",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Commit id",
+          "type": "string"
+        },
         "body": {
           "description": "body of the comment",
           "instillFormat": "string",
@@ -127,18 +155,26 @@
           "type": "string"
         },
         "line": {
-          "description": "line number the comment is on",
+          "instillShortDescription": "The last line of the range that your comment applies to.",
+          "description": "The line of the blob in the pull request diff that the comment applies to. For a multi-line comment, the last line of the range that your comment applies to.",
           "instillFormat": "integer",
           "instillUIOrder": 1,
           "title": "Comment line",
           "type": "integer"
         },
         "start_line": {
-          "description": "start line number of the comment",
+          "description": "the first line in the pull request diff that your multi-line comment applies to",
           "instillFormat": "integer",
           "instillUIOrder": 1,
           "title": "Comment start line",
           "type": "integer"
+        },
+        "side": {
+          "description": "side of the comment",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Comment side",
+          "type": "string"
         },
         "start_side": {
           "description": "side of the start line",
@@ -289,13 +325,7 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/pull_request",
-            "required": [
-              "id",
-              "number",
-              "state",
-              "title",
-              "body"
-            ],
+            "required": [],
             "description": "A pull request in GitHub"
           }
         }
@@ -499,34 +529,108 @@
           ],
           "instillUIOrder": 3,
           "type": "integer"
+        },
+        "comment": {
+          "title": "Comment",
+          "description": "The comment to be added",
+          "instillFormat": "object",
+          "instillUIOrder": 4,
+          "type": "object",
+          "properties": {
+            "commit_id": {
+              "title": "Commit ID",
+              "description": "The commit id of the comment",
+              "instillFormat": "string",
+              "instillUIOrder": 0,
+              "type": "string"
+            },
+            "body": {
+              "$ref": "#/$defs/review_comments/properties/body"
+            },
+            "path": {
+              "$ref": "#/$defs/review_comments/properties/path"
+            },
+            "line": {
+              "$ref": "#/$defs/review_comments/properties/line"
+            },
+            "start_line": {
+              "$ref": "#/$defs/review_comments/properties/start_line"
+            },
+            "side": {
+              "$ref": "#/$defs/review_comments/properties/side",
+              "default": "RIGHT",
+              "enum": [
+                "LEFT",
+                "RIGHT",
+                "side"
+              ],
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ]
+            },
+            "start_side": {
+              "$ref": "#/$defs/review_comments/properties/start_side",
+              "default": "RIGHT",
+              "enum": [
+                "LEFT",
+                "RIGHT",
+                "side"
+              ],
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ]
+            },
+            "subject_type": {
+              "$ref": "#/$defs/review_comments/properties/subject_type",
+              "default": "line",
+              "enum": [
+                "line",
+                "file"
+              ],
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ]
+            }
+          },
+          "required": [
+            "body",
+            "path"
+          ]
         }
       },
       "required": [
         "owner",
         "repository",
-        "pr_number"
+        "pr_number",
+        "comment"
       ],
       "title": "Input",
       "type": "object"
     },
     "output": {
-      "description": "The specific pr in GitHub repository",
+      "description": "The created comment",
       "instillUIOrder": 0,
       "properties": {
-        "pull-request": {
-          "$ref": "#/$defs/pull_request",
-          "required": [
-            "id",
-            "number",
-            "state",
-            "title",
-            "body"
-          ],
-          "description": "A pull request in GitHub"
+        "comment": {
+          "$ref": "#/$defs/review_comments",
+          "required": [],
+          "description": "The created comment"
         }
       },
       "required": [
-        "pull-request"
+        "comment"
       ],
       "title": "Output",
       "type": "object"
