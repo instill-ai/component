@@ -2,7 +2,8 @@
   "availableTasks": [
     "TASK_GET_ALL_PULL_REQUESTS",
     "TASK_GET_PULL_REQUEST",
-    "TASK_GET_REVIEW_COMMENTS"
+    "TASK_GET_REVIEW_COMMENTS",
+    "TASK_CREATE_REVIEW_COMMENT"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/application/github",
