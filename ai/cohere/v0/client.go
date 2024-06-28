@@ -23,6 +23,20 @@ func newClient(apiKey string, logger *zap.Logger) *cohereClient {
 	return &cohereClient{sdkClient: client, logger: logger, lock: sync.Mutex{}}
 }
 
+func (cl *cohereClient) generateEmbedding(request cohereSDK.EmbedRequest) (cohereSDK.EmbedResponse, error) {
+	respPtr, err := cl.sdkClient.Embed(
+		context.TODO(),
+		&request,
+	)
+	if err != nil {
+		panic(err)
+	}
+	resp := cohereSDK.EmbedResponse{
+		EmbeddingsFloats: respPtr.EmbeddingsFloats,
+	}
+	return resp, nil
+}
+
 func (cl *cohereClient) generateTextChat(request cohereSDK.ChatRequest) (cohereSDK.NonStreamedChatResponse, error) {
 	respPtr, err := cl.sdkClient.Chat(
 		context.TODO(),

@@ -17,6 +17,7 @@ import (
 
 const (
 	textGenerationTask = "TASK_TEXT_GENERATION_CHAT"
+	textEmbeddingTask  = "TASK_TEXT_EMBEDDINGS"
 	cfgAPIKey          = "api-key"
 )
 
@@ -38,6 +39,7 @@ type component struct {
 
 type CohereClient interface {
 	generateTextChat(request cohereSDK.ChatRequest) (cohereSDK.NonStreamedChatResponse, error)
+	generateEmbedding(request cohereSDK.EmbedRequest) (cohereSDK.EmbedResponse, error)
 }
 
 // These structs are used to send the request /  parse the response from the API, this following their naming convension.
@@ -49,9 +51,13 @@ type ciatation struct {
 	Text  string `json:"text"`
 }
 
-type messagesOutput struct {
+type commandOutput struct {
 	Text       string      `json:"text"`
 	Ciatations []ciatation `json:"citations"`
+}
+
+type embedOutput struct {
+	Embedding []float64 `json:"embedding"`
 }
 
 func Init(bc base.Component) *component {
@@ -79,6 +85,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	switch task {
 	case textGenerationTask:
 		e.execute = e.generateText
+	case textEmbeddingTask:
+		e.execute = e.generateEmbedding
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
@@ -173,10 +181,7 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		citations = append(citations, citation)
 	}
 
-	print("### Received text: ")
-	fmt.Printf("%s\n", resp.Text)
-
-	outputStruct := messagesOutput{
+	outputStruct := commandOutput{
 		Text:       resp.Text,
 		Ciatations: citations,
 	}
@@ -185,8 +190,38 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 	if err != nil {
 		return nil, err
 	}
-	println("### Output JSON: ")
-	println(string(outputJSON))
+	output := structpb.Struct{}
+	err = protojson.Unmarshal(outputJSON, &output)
+	if err != nil {
+		return nil, err
+	}
+	return &output, nil
+}
+
+func (e *execution) generateEmbedding(in *structpb.Struct) (*structpb.Struct, error) {
+	text := in.Fields["text"].GetStringValue()
+	texts := []string{text}
+	modelName := in.Fields["model-name"].GetStringValue()
+	inputType := in.Fields["input-type"].GetStringValue()
+	req := cohereSDK.EmbedRequest{
+		Texts:     texts,
+		Model:     &modelName,
+		InputType: (*cohereSDK.EmbedInputType)(&inputType),
+	}
+	resp, err := e.client.generateEmbedding(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := embedOutput{
+		Embedding: resp.EmbeddingsFloats.Embeddings[0],
+	}
+
+	outputJSON, err := json.Marshal(outputStruct)
+	if err != nil {
+		return nil, err
+	}
 	output := structpb.Struct{}
 	err = protojson.Unmarshal(outputJSON, &output)
 	if err != nil {
