@@ -1,56 +1,158 @@
 ---
-title: "Slack"
+title: "GitHub"
 lang: "en-US"
 draft: false
-description: "Learn about how to set up a VDP Slack component https://github.com/instill-ai/instill-core"
+description: "Learn about how to set up a VDP GitHub component https://github.com/instill-ai/instill-core"
 ---
 
-The Slack component is a application component that allows users to get and send message on Slack.
+The GitHub component is an operator component that allows users to do anything available on GitHub.
 It can carry out the following tasks:
 
-- [Read Message](#read-message)
-- [Send Message](#send-message)
+- [Get All Pull Requests](#get-all-pull-requests)
+- [Get Pull Request](#get-pull-request)
+- [Get Commit](#get-commit)
+- [Get Review Comments](#get-review-comments)
+- [Create Review Comment](#create-review-comment)
+
+
 
 ## Release Stage
 
 `Alpha`
 
+
+
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/application/slack/v0/config/definition.json).
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/application/github/v0/config/definition.json).
+
+
+
 
 ## Setup
 
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Token (required) | `token` | string | Fill in your Slack app access token. For more information about how to access to create app tokens, please refer to the Slack API documentation. |
+| Token | `token` | string | Fill in your GitHub access token for advanced usages. For more information about how to create tokens, please refer to the https://github.com/settings/tokens. |
+
+
+
 
 ## Supported Tasks
 
-### Read Message
+### Get All Pull Requests
 
-Get the latest message since specific date
+Get the list of all pull requests in a repository
 
-| Input | ID | Type | Description |
-| :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_READ_MESSAGE` |
-| Channel Name (required) | `channel-name` | string | A channel name display in Slack |
-| Start to read date | `start-to-read-date` | string | earliest date in all read messages |
-
-| Output | ID | Type | Description |
-| :--- | :--- | :--- | :--- |
-| Conversations | `conversations` | array[object] | An array of conversations with thread messages |
-
-### Send Message
-
-send message to a specific channel
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_WRITE_MESSAGE` |
-| Channel Name (required) | `channel-name` | string | A channel name display in Slack |
-| Message (required) | `message` | string | message to be sent to the target channel |
+| Task ID (required) | `task` | string | `TASK_GET_ALL_PULL_REQUESTS` |
+| Owner (required) | `owner` | string | owner of the repository |
+| Repository (required) | `repository` | string | repository name |
+| State (required) | `state` | string | State of the PRs, including open, closed, all. Default: open |
+| Sort (required) | `sort` | string | Sort the PRs by created, updated, popularity, or long-running. Default: created |
+| Direction (required) | `direction` | string | Direction of the sort, including asc or desc. Default: asc |
+
+
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Result | `result` | string | result for sending message |
+| Pull Requests | `pull-requests` | array[object] | An array of PRs |
+
+
+
+
+
+
+### Get Pull Request
+
+Get a pull request from a repository, given the PR number. Default is the latest PR
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_PULL_REQUEST` |
+| Owner (required) | `owner` | string | owner of the repository |
+| Repository (required) | `repository` | string | repository name |
+| PR Number | `pr_number` | integer | Number of the PR. `0` for the latest PR |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Pull Request | `pull-request` | object | A pull request in GitHub |
+
+
+
+
+
+
+### Get Commit
+
+Get a commit from a repository, given the commit SHA
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_COMMIT` |
+| Owner (required) | `owner` | string | owner of the repository |
+| Repository (required) | `repository` | string | repository name |
+| Commit SHA (required) | `sha` | string | sha of the commit |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Commit | `commit` | object | A commit in GitHub |
+
+
+
+
+
+
+### Get Review Comments
+
+Get the review comments in a pull request
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_REVIEW_COMMENTS` |
+| Owner (required) | `owner` | string | owner of the repository |
+| Repository (required) | `repository` | string | repository name |
+| PR Number | `pr_number` | integer | Number of the PR. Default is the latest PR |
+| Sort | `sort` | string | Sort the comments by created, updated. Default: created |
+| Direction | `direction` | string | Direction of the sort, including asc or desc. Default: asc |
+| Since | `since` | string | Only comments updated at or after this time are returned. Default: 2021-01-01T00:00:00Z |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Comments | `comments` | array[object] | An array of comments |
+
+
+
+
+
+
+### Create Review Comment
+
+Create a review comment in pull request.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CREATE_REVIEW_COMMENT` |
+| Owner (required) | `owner` | string | owner of the repository |
+| Repository (required) | `repository` | string | repository name |
+| PR Number (required) | `pr_number` | integer | Number of the PR. Default is the latest PR |
+| Comment (required) | `comment` | object | The comment to be added |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Review Comment | `comment` | object | The created comment |
