@@ -47,11 +47,11 @@ func readDataFromBigQuery(input ReadInput) (ReadOutput, error) {
 			break
 		}
 		data := map[string]any{}
-		
+
 		for i, schema := range it.Schema {
 			data[schema.Name] = values[i]
 		}
-		
+
 		result = append(result, data)
 	}
 
