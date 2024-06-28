@@ -104,6 +104,8 @@
       "type": "object"
     },
     "usage": {
+      "description": "Usage tokens in Anthropic",
+      "instillUIOrder": 1,
       "properties": {
         "input-tokens": {
           "description": "The input tokens used by Anthropic",
