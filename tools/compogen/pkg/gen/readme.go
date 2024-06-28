@@ -307,7 +307,7 @@ func parseResourceProperties(o *objectSchema) []resourceProperty {
 		}
 		prop.Description = strings.ReplaceAll(prop.Description, "\n", " ")
 		prop.Description = strings.ReplaceAll(prop.Description, "{", "\\{")
-		prop.Description = strings.ReplaceAll(prop.Description, "}", "\\{")
+		prop.Description = strings.ReplaceAll(prop.Description, "}", "\\}")
 
 		propMap[k] = prop
 	}
