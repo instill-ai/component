@@ -115,11 +115,52 @@
       "required": [],
       "title": "Extra Parameters",
       "type": "object"
+    },
+    "citation": {
+      "properties": {
+        "start": {
+          "description": "The start position of the citation",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "end": {
+          "description": "The end position of the citation",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 1,
+          "title": "End",
+          "type": "integer"
+        },
+        "text": {
+          "description": "The text body of the citation",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 2,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "text"
+      ],
+      "title": "Citation",
+      "type": "object"
     }
   },
   "TASK_TEXT_GENERATION_CHAT": {
     "instillShortDescription": "Provide text outputs in response to text inputs.",
-    "description": "Anthropic's text generation models (often called generative pre-trained transformers or large language models) have been trained to understand natural language, code, and images. The models provide text outputs in response to their inputs. The inputs to these models are also referred to as \"prompts\". Designing a prompt is essentially how you \u201cprogram\u201d a large language model model, usually by providing instructions or some examples of how to successfully complete a task.",
+    "description": "Cohere's text generation models (often called generative pre-trained transformers or large language models) have been trained to understand natural language, code, and images. The models provide text outputs in response to their inputs. The inputs to these models are also referred to as \"prompts\". Designing a prompt is essentially how you \u201cprogram\u201d a large language model model, usually by providing instructions or some examples of how to successfully complete a task.",
     "input": {
       "description": "Input",
       "instillEditOnNodeFields": [
@@ -213,7 +254,7 @@
           "type": "array"
         },
         "seed": {
-          "description": "The seed (Note: Not supported by Anthropic Models)",
+          "description": "The seed",
           "instillAcceptFormats": [
             "integer"
           ],
@@ -269,6 +310,21 @@
           ],
           "title": "Top K",
           "type": "integer"
+        },
+        "documents": {
+          "description": "The documents to be used for the model, for optimal performance, the length of each document should be less than 300 words.",
+          "instillAcceptFormats": [
+            "array:string/*"
+          ],
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "reference"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Documents",
+          "type": "array"
         }
       },
       "required": [
@@ -289,6 +345,18 @@
           "instillUIMultiline": true,
           "title": "Text",
           "type": "string"
+        },
+        "citations": {
+          "description": "Citations",
+          "instillUIOrder": 1,
+          "instillAcceptFormats": [
+            "structured/citations"
+          ],
+          "title": "Citations",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
         }
       },
       "required": [
