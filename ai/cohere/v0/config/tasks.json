@@ -210,7 +210,7 @@
             "command-light"
           ],
           "example": "command-r-plus",
-          "description": "The Cohere model to be used.",
+          "description": "The Cohere command model to be used.",
           "instillAcceptFormats": [
             "string"
           ],
@@ -361,6 +361,100 @@
       },
       "required": [
         "text"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_TEXT_EMBEDDINGS": {
+    "instillShortDescription": "Turn text into numbers, unlocking use cases like search.",
+    "description": "An embedding is a list of floating point numbers that captures semantic information about the text that it represents.",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "model-name": {
+          "enum": [
+            "embed-english-v3.0",
+            "embed-multilingual-v3.0",
+            "embed-english-light-v3.0",
+            "embed-multilingual-light-v3.0"
+          ],
+          "example": "embed-multilingual-v3.0",
+          "description": "The Cohere embed model to be used.",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Model Name",
+          "type": "string"
+        },
+        "text": {
+          "description": "The text",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Text",
+          "type": "string"
+        },
+        "input-type": {
+          "enum": [
+            "search_document",
+            "search_query",
+            "classification",
+            "clustering"
+          ],
+          "example": "embed-multilingual-v3.0",
+          "description": "Specifies the type of input passed to the model.",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Input Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "model-name",
+        "input-type"
+      ],
+      "instillEditOnNodeFields": [
+        "text",
+        "model-name",
+        "input-type"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "embedding": {
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/embedding",
+          "description": "Embedding of the input text",
+          "instillUIOrder": 0,
+          "title": "Embedding"
+        }
+      },
+      "required": [
+        "embedding"
       ],
       "title": "Output",
       "type": "object"
