@@ -32,19 +32,6 @@ var (
 
 	once sync.Once
 	comp *component
-
-	mockDocuments = []map[string]string{
-		{"text": "Earth isn’t actually round."},
-		{"text": "Coral reefs are Earth’s largest living structure."},
-		{"text": "The Great Wall of China is not visible from space."},
-		{"text": "Humans have more than five senses."},
-		{"text": "Antarctica is home to the largest ice sheet on Earth."},
-		{"text": "The Moon is drifting away from Earth."},
-		{"text": "The Great Pyramid of Giza is not the tallest pyramid in the world."},
-		{"text": "The Earth’s core is as hot as the surface of the Sun."},
-		{"text": "The Earth’s magnetic poles are not fixed."},
-		{"text": "The Earth’s atmosphere is mostly nitrogen."},
-	}
 )
 
 type component struct {
@@ -158,9 +145,6 @@ func (e *execution) taskCommand(in *structpb.Struct) (*structpb.Struct, error) {
 	temperature := float64(in.Fields["temperature"].GetNumberValue())
 	topK := int(in.Fields["top-k"].GetNumberValue())
 	seed := int(in.Fields["seed"].GetNumberValue())
-
-	// This is a mock data for the documents for testing purposes
-	documents = append(documents, mockDocuments...)
 
 	req := cohereSDK.ChatRequest{
 		Message:     prompt,
