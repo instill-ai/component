@@ -70,8 +70,13 @@ type messagesReq struct {
 }
 
 type messagesOutput struct {
-	Text  string `json:"text"`
-	Usage usage  `json:"usage"`
+	Text  string        `json:"text"`
+	Usage messagesUsage `json:"usage"`
+}
+
+type messagesUsage struct {
+	InputTokens  int `json:"input-tokens"`
+	OutputTokens int `json:"output-tokens"`
 }
 
 type message struct {
@@ -80,8 +85,8 @@ type message struct {
 }
 
 type usage struct {
-	InputTokens  int `json:"input-tokens"`
-	OutputTokens int `json:"output-tokens"`
+	InputTokens  int `json:"input_tokens"`
+	OutputTokens int `json:"output_tokens"`
 }
 
 // doesn't support anthropic tools at the moment
@@ -216,7 +221,7 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 
 	outputStruct := messagesOutput{
 		Text: "",
-		Usage: usage{
+		Usage: messagesUsage{
 			InputTokens:  resp.Usage.InputTokens,
 			OutputTokens: resp.Usage.OutputTokens,
 		},

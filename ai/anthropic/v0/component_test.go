@@ -193,7 +193,7 @@ func TestComponent_Generation(t *testing.T) {
 		input: map[string]any{"prompt": "Hi! What's your name?", "chat-history": mockHistory},
 		wantResp: messagesOutput{
 			Text: "Hi! My name is Claude. (messageCount: 3)",
-			Usage: usage{
+			Usage: messagesUsage{
 				InputTokens:  10,
 				OutputTokens: 25,
 			},
