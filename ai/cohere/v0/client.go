@@ -6,14 +6,21 @@ import (
 
 	cohereSDK "github.com/cohere-ai/cohere-go/v2"
 	cohereClientSDK "github.com/cohere-ai/cohere-go/v2/client"
+	"github.com/cohere-ai/cohere-go/v2/core"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type cohereClient struct {
-	sdkClient *cohereClientSDK.Client
+	sdkClient cohereClientInterface
 	logger    *zap.Logger
 	lock      sync.Mutex
+}
+
+type cohereClientInterface interface {
+	Chat(ctx context.Context, request *cohereSDK.ChatRequest, opts ...core.RequestOption) (*cohereSDK.NonStreamedChatResponse, error)
+	Embed(ctx context.Context, request *cohereSDK.EmbedRequest, opts ...core.RequestOption) (*cohereSDK.EmbedResponse, error)
+	Rerank(ctx context.Context, request *cohereSDK.RerankRequest, opts ...core.RequestOption) (*cohereSDK.RerankResponse, error)
 }
 
 func newClient(apiKey string, logger *zap.Logger) *cohereClient {
