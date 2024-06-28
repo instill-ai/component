@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/google/go-github/v62/github"
@@ -37,7 +36,7 @@ type GetAllReviewCommentsResp struct {
 // Specifying a pull request number of 0 will return all comments on all pull requests for the repository.
 //
 // * This only works for public repositories.
-func (githubClient *GitHubClient) getAllReviewCommentsTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*structpb.Struct, error) {
 	err := githubClient.setTargetRepo(props)
 	if err != nil {
 		return nil, err
@@ -65,9 +64,6 @@ func (githubClient *GitHubClient) getAllReviewCommentsTask(props *structpb.Struc
 	for i, comment := range comments {
 		reviewComments[i] = extractReviewCommentInformation(comment)
 	}
-	fmt.Println("===========================")
-	fmt.Println(reviewComments)
-	fmt.Println("===========================")
 	var reviewCommentsResp GetAllReviewCommentsResp
 	reviewCommentsResp.ReviewComments = reviewComments
 	out, err := base.ConvertToStructpb(reviewCommentsResp)
@@ -91,7 +87,7 @@ type CreateReviewCommentResp struct {
 // CreateReviewComment creates a review comment for a given pull request.
 //
 // * This only works for public repositories.
-func (githubClient *GitHubClient) createReviewCommentTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) createReviewCommentTask(props *structpb.Struct) (*structpb.Struct, error) {
 	err := githubClient.setTargetRepo(props)
 	if err != nil {
 		return nil, err
@@ -104,14 +100,10 @@ func (githubClient *GitHubClient) createReviewCommentTask(props *structpb.Struct
 	}
 	number := commentInput.PrNumber
 	commentReqs := &commentInput.Comment
-	fmt.Println("===========================")
-	fmt.Println(commentInput)
-	fmt.Println("commentReqs: ",commentReqs)
-	fmt.Println("===========================")
-	commentReqs.Position = commentReqs.Line
-	commentReqs.OriginalLine = commentReqs.Line
-	commentReqs.OriginalPosition = commentReqs.Position
-	commentReqs.OriginalStartLine = commentReqs.StartLine
+	commentReqs.Position = commentReqs.Line // Position is deprecated, use Line instead
+	// commentReqs.OriginalLine = commentReqs.Line
+	// commentReqs.OriginalPosition = commentReqs.Position
+	// commentReqs.OriginalStartLine = commentReqs.StartLine
 
 	comment, _, err := githubClient.client.PullRequests.CreateComment(context.Background(), githubClient.owner, githubClient.repository, number, commentReqs)
 	if err != nil {

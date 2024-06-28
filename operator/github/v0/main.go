@@ -40,7 +40,7 @@ type component struct {
 type execution struct {
 	base.ComponentExecution
 	execute func(*structpb.Struct) (*structpb.Struct, error)
-	client  GitHubClient
+	client  Client
 }
 
 // Init returns an implementation of IConnector that interacts with Slack.
@@ -58,9 +58,7 @@ func Init(bc base.Component) *component {
 
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	ctx := context.Background()
-	client := newClient(ctx, setup)
-
-	githubClient := GitHubClient{client: client}
+	githubClient := newClient(ctx, setup)
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 		client:             githubClient,

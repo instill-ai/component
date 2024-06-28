@@ -683,7 +683,7 @@
       "description": "All PRs in GitHub repository",
       "instillUIOrder": 0,
       "properties": {
-        "pull-requests": {
+        "pull_requests": {
           "description": "An array of PRs",
           "instillUIOrder": 1,
           "title": "Pull Requests",
