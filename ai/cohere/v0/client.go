@@ -2,7 +2,6 @@ package cohere
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	cohereSDK "github.com/cohere-ai/cohere-go/v2"
@@ -18,7 +17,6 @@ type cohereClient struct {
 }
 
 func newClient(apiKey string, logger *zap.Logger) *cohereClient {
-	fmt.Printf("### API key: %s\n", apiKey)
 	client := cohereClientSDK.NewClient(cohereClientSDK.WithToken(apiKey))
 	return &cohereClient{sdkClient: client, logger: logger, lock: sync.Mutex{}}
 }
