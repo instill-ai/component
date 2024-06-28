@@ -15,7 +15,7 @@ cmp stdout want-help
 cmp stderr want-usage
 
 -- want-version --
-compogen version 1.1.0
+compogen version 0.1.0
 -- want-usage --
 Error: unknown flag: --unknown
 Run 'compogen --help' for usage.
