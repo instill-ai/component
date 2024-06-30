@@ -1,0 +1,140 @@
+---
+title: "AWS RDS"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP AWS RDS component https://github.com/instill-ai/instill-core"
+---
+
+The AWS RDS component is a data component that allows users to amazon Web Service RDS SQL database.
+It can carry out the following tasks:
+
+- [Upsert](#upsert)
+- [Select](#select)
+- [Delete](#delete)
+- [Query](#query)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/awsrds/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| AWS Access Key ID | `aws-access-key-id` | string | Fill in your AWS RDS access key id. If a password is not provided, this field will be required for IAM role authentication. Otherwise, it will be optional. |
+| AWS Secret Access Key | `aws-secret-access-key` | string | Fill in your AWS RDS secret access key. If a password is not provided, this field will be required for IAM role authentication. Otherwise, it will be optional. |
+| Host (required) | `host` | string | Fill in your AWS RDS database host |
+| Database Name (required) | `name` | string | Fill in your AWS RDS database name |
+| Password | `password` | string | Fill in your master password. Notice that this field is required if you want to use a master username. |
+| Port (required) | `port` | number | Fill in your AWS RDS database port |
+| Region (required) | `region` | string | Fill in your database region (e.g. us-west-2) |
+| Username (required) | `user` | string | Fill in your AWS RDS username. If a password is provided, this field will serve as the master username. Otherwise, we will use the IAM role. |
+
+
+
+
+## Supported Tasks
+
+### Upsert
+
+Perform an upsert operation to update existing records or insert new ones based on specified criteria.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPSERT` |
+| Table Name (required) | `table-name` | string | The table name in the database to upsert data into |
+| Data (required) | `data` | any | The data to be upserted, JSON object |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Upsert status |
+
+
+
+
+
+
+### Select
+
+Perform a select operation to retrieve data from the database based on specified criteria.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_SELECT` |
+| Table Name (required) | `table-name` | string | The table name in the database to upsert data into |
+| Columns (required) | `columns` | array[string] | The columns to be selected, array of string |
+| From (required) | `from` | number | The starting row to be selected, if both from and to equals 0 then all rows will be selected |
+| To (required) | `to` | number | The ending row to be selected, if both from and to equals 0 then all rows will be selected |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Rows | `rows` | array | The rows returned from the query |
+| Status | `status` | string | Upsert status |
+
+
+
+
+
+
+### Delete
+
+Perform a delete operation to update existing records or insert new ones based on specified criteria.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DELETE` |
+| Table Name (required) | `table-name` | string | The table name in the database to upsert data into |
+| Criteria (required) | `criteria` | any | The data criteria to be deleted, JSON object |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Delete status |
+
+
+
+
+
+
+### Query
+
+Execute a query on the database based on specified criteria.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_QUERY` |
+| Query (required) | `query` | string | The query to execute on the database |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Query status |
+
+
+
+
+
+
+

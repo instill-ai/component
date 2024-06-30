@@ -1,0 +1,289 @@
+{
+  "TASK_UPSERT": {
+    "instillShortDescription": "Perform an upsert operation to update existing records or insert new ones based on specified criteria.",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "data": {
+          "description": "The data to be upserted, JSON object",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Data"
+        },
+        "table-name": {
+          "description": "The table name in the database to upsert data into",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Database Table Name",
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Table Name",
+          "type":"string"
+        }
+      },
+      "required": [
+        "data",
+        "table-name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Upsert status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_SELECT":{
+    "instillShortDescription": "Perform a select operation to retrieve data from the database based on specified criteria.",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "columns": {
+          "description": "The columns to be selected, array of string",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillShortDescription": "Array of string, e.g. ['column1', 'column2']",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Columns",
+          "type":"array",
+          "items": {
+            "title": "Column",
+            "instillFormat": "string",
+            "instillUIMultiline": true,
+            "type":"string"
+          }
+        },
+        "from": {
+          "description": "The starting row to be selected, if both from and to equals 0 then all rows will be selected",
+          "instillAcceptFormats": [
+            "number"
+          ],
+          "instillShortDescription": "Starting of rows",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "From",
+          "type":"number"
+        },
+        "to": {
+          "description": "The ending row to be selected, if both from and to equals 0 then all rows will be selected",
+          "instillAcceptFormats": [
+            "number"
+          ],
+          "instillShortDescription": "Ending of rows",
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "To",
+          "type":"number"
+        },
+        "table-name": {
+          "description": "The table name in the database to upsert data into",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Database Table Name",
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Table Name",
+          "type":"string"
+        }
+      },
+      "required": [
+        "table-name",
+        "columns",
+        "from",
+        "to"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillEditOnNodeFields": [
+        "json"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "rows": {
+          "description": "The rows returned from the query",
+          "instillEditOnNodeFields": [],
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Rows",
+          "type": "array",
+          "instillFormat": "array:semi-structured/json",
+          "items": {
+            "title": "Result",
+            "instillFormat": "semi-structured/json"
+          }
+        },
+        "status": {
+          "description": "Upsert status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "rows"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_DELETE": {
+    "instillShortDescription": "Perform a delete operation to update existing records or insert new ones based on specified criteria.",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "criteria": {
+          "description": "The data criteria to be deleted, JSON object",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Criteria"
+        },
+        "table-name": {
+          "description": "The table name in the database to upsert data into",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Database Table Name",
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Table Name",
+          "type":"string"
+        }
+      },
+      "required": [
+        "criteria",
+        "table-name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Delete status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_QUERY":{
+    "instillShortDescription": "Execute a query on the database based on specified criteria.",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "query": {
+          "description": "The query to execute on the database",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "SQL Query",
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillUIMultiline": true,
+          "title": "Query",
+          "type":"string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Query status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  }
+}
