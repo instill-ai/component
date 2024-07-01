@@ -7,7 +7,8 @@
     "TASK_CREATE_REVIEW_COMMENT",
     "TASK_GET_ALL_ISSUES",
     "TASK_GET_ISSUE",
-    "TASK_CREATE_ISSUE"
+    "TASK_CREATE_ISSUE",
+    "TASK_CREATE_WEBHOOK"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/application/github",
