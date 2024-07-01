@@ -1317,6 +1317,7 @@
           "description": "An issue in GitHub",
           "instillUIOrder": 1,
           "$ref": "#/$defs/issue",
+          "title": "Issue",
           "required": []
         }
       },
@@ -1366,6 +1367,7 @@
           "$ref": "#/$defs/issue",
           "required": [],
           "instillUIOrder": 1,
+          "title": "Issue",
           "description": "The created issue"
         }
       },
@@ -1488,6 +1490,7 @@
       "properties": {
         "hook": {
           "description": "The created webhook",
+          "title": "Webhook",
           "instillUIOrder": 1,
           "type": "object",
           "properties": {
