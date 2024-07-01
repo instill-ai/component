@@ -68,6 +68,6 @@
     "server-address",
     "server-port"
   ],
-  "title": "Gmail",
+  "title": "Email",
   "type": "object"
 }

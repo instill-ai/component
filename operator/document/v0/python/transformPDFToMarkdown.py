@@ -18,7 +18,7 @@ class PdfTransformer:
 		self.images = []
 		if display_image_tag:
 			self.process_image()
-	
+
 		for page in self.pages:
 			page_lines = page.extract_text_lines()
 			self.process_line(page_lines, page.page_number)

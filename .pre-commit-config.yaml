@@ -6,6 +6,8 @@ repos:
       - id: check-json
       - id: check-merge-conflict
       - id: end-of-file-fixer
+        exclude: tools/compogen/cmd/testdata
+        exclude_types: [svg,mdx]
       - id: trailing-whitespace
       - id: pretty-format-json
         args: [--autofix, --no-sort-keys]

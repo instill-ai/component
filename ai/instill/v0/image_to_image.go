@@ -49,10 +49,6 @@ func (e *execution) executeImageToImage(grpcClient modelPB.ModelPublicServiceCli
 			v := int32(input.GetFields()["seed"].GetNumberValue())
 			imageToImageInput.Seed = &v
 		}
-		if _, ok := input.GetFields()["extra-params"]; ok {
-			v := input.GetFields()["extra-params"].GetStructValue()
-			imageToImageInput.ExtraParams = v
-		}
 
 		taskInput := &modelPB.TaskInput_ImageToImage{
 			ImageToImage: imageToImageInput,
