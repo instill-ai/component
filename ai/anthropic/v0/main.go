@@ -38,6 +38,9 @@ var (
 
 type component struct {
 	base.Component
+
+	usageHandlerCreator base.UsageHandlerCreator
+	secretAPIKey        string
 }
 
 type AnthropicClient interface {
@@ -115,14 +118,44 @@ func Init(bc base.Component) *component {
 
 type execution struct {
 	base.ComponentExecution
-	execute func(*structpb.Struct) (*structpb.Struct, error)
-	client  AnthropicClient
+
+	execute    func(*structpb.Struct) (*structpb.Struct, error)
+	client     AnthropicClient
+	usesSecret bool
+}
+
+// WithSecrets loads secrets into the connector, which can be used to configure
+// it with globaly defined parameters.
+func (c *component) WithSecrets(s map[string]any) *component {
+	c.secretAPIKey = base.ReadFromSecrets(cfgAPIKey, s)
+	return c
+}
+
+// WithUsageHandlerCreator overrides the UsageHandlerCreator method.
+func (c *component) WithUsageHandlerCreator(newUH base.UsageHandlerCreator) *component {
+	c.usageHandlerCreator = newUH
+	return c
+}
+
+// UsageHandlerCreator returns a function to initialize a UsageHandler.
+func (c *component) UsageHandlerCreator() base.UsageHandlerCreator {
+	if c.usageHandlerCreator == nil {
+		return c.Component.UsageHandlerCreator()
+	}
+	return c.usageHandlerCreator
 }
 
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+
+	resolvedSetup, resolved, err := c.resolveSecrets(setup)
+	if err != nil {
+		return nil, err
+	}
+
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: setup},
-		client:             newClient(getAPIKey(setup), getBasePath(setup), c.GetLogger()),
+		client:             newClient(getAPIKey(resolvedSetup), getBasePath(resolvedSetup), c.GetLogger()),
+		usesSecret:         resolved,
 	}
 	switch task {
 	case TextGenerationTask:
@@ -131,6 +164,27 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		return nil, fmt.Errorf("unsupported task")
 	}
 	return &base.ExecutionWrapper{Execution: e}, nil
+}
+
+// resolveSecrets looks for references to a global secret in the setup
+// and replaces them by the global secret injected during initialization.
+func (c *component) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, bool, error) {
+
+	apiKey := conn.GetFields()[cfgAPIKey].GetStringValue()
+	if apiKey != base.SecretKeyword {
+		return conn, false, nil
+	}
+
+	if c.secretAPIKey == "" {
+		return nil, false, base.NewUnresolvedSecret(cfgAPIKey)
+	}
+
+	conn.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.secretAPIKey)
+	return conn, true, nil
+}
+
+func (e *execution) UsesSecret() bool {
+	return e.usesSecret
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
