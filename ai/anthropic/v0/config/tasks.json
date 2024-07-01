@@ -102,19 +102,6 @@
       ],
       "title": "Input",
       "type": "object"
-    },
-    "extra-params": {
-      "description": "Extra Parameters",
-      "instillAcceptFormats": [
-        "semi-structured/object"
-      ],
-      "instillUIOrder": 3,
-      "instillUpstreamTypes": [
-        "reference"
-      ],
-      "required": [],
-      "title": "Extra Parameters",
-      "type": "object"
     }
   },
   "TASK_TEXT_GENERATION_CHAT": {
@@ -143,9 +130,6 @@
           },
           "title": "Chat history",
           "type": "array"
-        },
-        "extra-params": {
-          "$ref": "#/$defs/extra-params"
         },
         "max-new-tokens": {
           "default": 50,
