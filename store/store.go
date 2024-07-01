@@ -98,7 +98,14 @@ func Init(
 				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
 			compStore.Import(conn)
 		}
-		compStore.Import(anthropic.Init(baseComp))
+		{
+			// Anthropic
+			conn := anthropic.Init(baseComp)
+			conn = conn.WithSecrets(secrets[conn.GetID()]).
+				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
+			compStore.Import(conn)
+		}
+
 		compStore.Import(archetypeai.Init(baseComp))
 		compStore.Import(numbers.Init(baseComp))
 		compStore.Import(bigquery.Init(baseComp))

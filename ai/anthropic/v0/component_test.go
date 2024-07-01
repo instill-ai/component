@@ -42,7 +42,7 @@ func TestComponent_Execute(t *testing.T) {
 	}{
 		{
 			name:        "text generation",
-			task:        textGenerationTask,
+			task:        TextGenerationTask,
 			path:        messagesPath,
 			contentType: httpclient.MIMETypeJSON,
 		},
@@ -190,8 +190,14 @@ func TestComponent_Generation(t *testing.T) {
 		input    map[string]any
 		wantResp messagesOutput
 	}{
-		input:    map[string]any{"prompt": "Hi! What's your name?", "chat-history": mockHistory},
-		wantResp: messagesOutput{Text: "Hi! My name is Claude. (messageCount: 3)"},
+		input: map[string]any{"prompt": "Hi! What's your name?", "chat-history": mockHistory},
+		wantResp: messagesOutput{
+			Text: "Hi! My name is Claude. (messageCount: 3)",
+			Usage: messagesUsage{
+				InputTokens:  10,
+				OutputTokens: 25,
+			},
+		},
 	}
 
 	c.Run("ok - generation", func(c *qt.C) {
@@ -201,7 +207,7 @@ func TestComponent_Generation(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: textGenerationTask},
+			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextGenerationTask},
 			client:             &MockAnthropicClient{},
 		}
 		e.execute = e.generateText
