@@ -61,48 +61,6 @@
       "title": "Chat Message",
       "type": "object"
     },
-    "common": {
-      "description": "Input",
-      "instillEditOnNodeFields": [
-        "image-base64",
-        "model-name"
-      ],
-      "instillUIOrder": 0,
-      "properties": {
-        "image-base64": {
-          "description": "Image base64",
-          "instillAcceptFormats": [
-            "image/*"
-          ],
-          "instillUIOrder": 2,
-          "instillUpstreamTypes": [
-            "reference"
-          ],
-          "title": "Image",
-          "type": "string"
-        },
-        "model-name": {
-          "description": "The Instill Model model to be used.",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 0,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "Model Name",
-          "type": "string"
-        }
-      },
-      "required": [
-        "image-base64",
-        "model-name"
-      ],
-      "title": "Input",
-      "type": "object"
-    },
     "usage": {
       "description": "Usage tokens in Anthropic",
       "instillUIOrder": 1,
@@ -189,6 +147,17 @@
             "reference",
             "template"
           ],
+          "instillCredentialMap": {
+            "values": [
+              "claude-3-5-sonnet-20240620",
+              "claude-3-opus-20240229",
+              "claude-3-sonnet-20240229",
+              "claude-3-haiku-20240307"
+            ],
+            "targets": [
+              "setup.api-key"
+            ]
+          },
           "title": "Model Name",
           "type": "string"
         },
