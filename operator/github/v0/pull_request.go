@@ -20,19 +20,19 @@ type PullRequestService interface {
 }
 
 type PullRequest struct {
-	ID          		int64           	`json:"id,omitempty"`
-	Number      		int             	`json:"number,omitempty"`
-	State       		string          	`json:"state,omitempty"`
-	Title	 			string 				`json:"title,omitempty"`
-	Body 				string 				`json:"body,omitempty"`
+	ID          		int64           	`json:"id"`
+	Number      		int             	`json:"number"`
+	State       		string          	`json:"state"`
+	Title	 			string 				`json:"title"`
+	Body 				string 				`json:"body"`
 	DiffURL 			string 				`json:"diff_url,omitempty"`
 	CommitsURL 			string 				`json:"commits_url,omitempty"`
-	Commits 			[]Commit 			`json:"commits,omitempty"`
-	Head 				string 				`json:"head,omitempty"`
-	Base 				string 				`json:"base,omitempty"`
-	CommentsNum 		int 				`json:"comments_num,omitempty"`
-	CommitsNum 			int 				`json:"commits_num,omitempty"`
-	ReviewCommentsNum 	int		 			`json:"review_comments_num,omitempty"`
+	Commits 			[]Commit 			`json:"commits"`
+	Head 				string 				`json:"head"`
+	Base 				string 				`json:"base"`
+	CommentsNum 		int 				`json:"comments_num"`
+	CommitsNum 			int 				`json:"commits_num"`
+	ReviewCommentsNum 	int		 			`json:"review_comments_num"`
 }
 func (githubClient *Client) extractPullRequestInformation(originalPr *github.PullRequest) (PullRequest, error) {
 	resp := PullRequest{

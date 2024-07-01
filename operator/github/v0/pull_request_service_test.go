@@ -12,21 +12,7 @@ type MockPullRequestService struct {
 	Client *github.Client
 }
 
-func middleWare(req string) int {
-	if req == "rate_limit" {
-		return 403
-	}
-	if req == "not_found" {
-		return 404
-	}
-	if req == "unprocessable_entity" {
-		return 422
-	}
-	if req == "no_pr" {
-		return 201
-	}
-	return 200
-}
+
 
 func (m *MockPullRequestService) List(ctx context.Context, owner, repo string, opts *github.PullRequestListOptions) ([]*github.PullRequest, *github.Response, error) {
 	switch middleWare(owner) {
@@ -45,8 +31,8 @@ func (m *MockPullRequestService) List(ctx context.Context, owner, repo string, o
 	prs = append(prs, &github.PullRequest{
 		ID: github.Int64(1),
 		Number: github.Int(1),
-		Title: github.String("This is a fake PR1"),
-		Body: github.String("PR1 Body"),
+		Title: github.String("This is a fake PR"),
+		Body: github.String("PR Body"),
 		DiffURL: github.String(diffURL),
 		Head: &github.PullRequestBranch{
 			SHA: github.String("headSHA"),
@@ -122,7 +108,7 @@ func (m *MockPullRequestService) CreateComment(ctx context.Context, owner, repo 
 	case 201:
 		return nil, nil, nil
 	}
-	if comment.Line == comment.StartLine {
+	if *comment.Line <= *comment.StartLine {
 		return nil, nil, fmt.Errorf("422 Unprocessable Entity")
 	}
 
@@ -151,8 +137,8 @@ func (m *MockPullRequestService) ListCommits(ctx context.Context, owner, repo st
 		},
 		Files: []*github.CommitFile{
 			{
-				Filename: github.String("file1"),
-				Patch: github.String("patch1"),
+				Filename: github.String("filename"),
+				Patch: github.String("patch"),
 				Additions: github.Int(1),
 				Deletions: github.Int(1),
 				Changes: github.Int(2),

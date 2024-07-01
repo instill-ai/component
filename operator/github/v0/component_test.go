@@ -3,9 +3,11 @@ package github
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	qt "github.com/frankban/quicktest"
+	"github.com/google/go-github/v62/github"
 	"github.com/instill-ai/component/base"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -20,23 +22,37 @@ var fakeHost = "https://fake-github.com"
 
 
 const (
-	apiKey = "testkey"
+	token = "testkey"
 )
+func middleWare(req string) int {
+	if req == "rate_limit" {
+		return 403
+	}
+	if req == "not_found" {
+		return 404
+	}
+	if req == "unprocessable_entity" {
+		return 422
+	}
+	if req == "no_pr" {
+		return 201
+	}
+	return 200
+}
 
+
+type TaskCase[inType any, outType any] struct {
+	_type 	 string
+	name     string
+	input    inType
+	wantResp outType
+	wantErr  string
+}
 func TestComponent_GetAllPullRequestsTask(t *testing.T) {
-	c := qt.New(t)
-	ctx := context.Background()
-	bc := base.Component{Logger: zap.NewNop()}
-	connector := Init(bc)
-
-	testcases := []struct {
-		name     string
-		input    GetAllPullRequestsInput
-		wantResp GetAllPullRequestsResp
-		wantErr  string
-	}{
+	testcases := []TaskCase[GetAllPullRequestsInput, GetAllPullRequestsResp]{
 		{
-			name: "ok to write",
+			_type: "ok",
+			name: "get all pull requests",
 			input: GetAllPullRequestsInput{
 				Owner: "test_owner",
 				Repository:  "test_repo",
@@ -44,36 +60,52 @@ func TestComponent_GetAllPullRequestsTask(t *testing.T) {
 				Direction: "asc",
 				Sort: "created",
 			},
+			// TODO: These are bullshit values. Need to replace them with real values.
 			wantResp: GetAllPullRequestsResp{
 				PullRequests: []PullRequest{
 					{
-						Base: "03a09068472b674749d1e8336679b84a31284e52",
-						Body: "hi",
-						CommentsNum: 1,
+						Base: "baseSHA",
+						Body: "PR Body",
 						Commits: []Commit{
 							{
-								Message: "This is a test to create comment",
-								SHA: "5e1fc1c381cc59ff2ed35335b58651e90b1ad4fb",
-								Stats: CommitStats{},
+								Message: "This is a fake commit",
+								SHA: "commitSHA",
+								Stats: CommitStats{
+									Additions: 1,
+									Deletions: 1,
+									Changes: 2,
+								},
+								Files: []CommitFile{
+									{
+										Filename: "filename",
+										Patch: "patch",
+										CommitStats: CommitStats{
+											Additions: 1,
+											Deletions: 1,
+											Changes: 2,
+										},
+									},
+								},
 							},
 						},
-						CommitsNum: 1,
-						CommitsURL: "https://api.github.com/repos/YCK1130/Github-API-test/pulls/1/commits",
-						DiffURL: "https://github.com/YCK1130/Github-API-test/pull/1.diff",
-						Head: "5e1fc1c381cc59ff2ed35335b58651e90b1ad4fb",
-						ID: 1943139364,
+						DiffURL: "https://fake-github.com/test_owner/test_repo/pull/1.diff",
+						Head: "headSHA",
+						ID: 1,
 						Number: 1,
-						ReviewCommentsNum: 6,
+						CommentsNum: 0,
+						CommitsNum: 1,
+						ReviewCommentsNum: 2,
 						State: "open",
-						Title: "This is a pr",
+						Title: "This is a fake PR",
 					},
 				},
 			},
 		},
 		{
-			name: "fail to write",
+			_type: "nok",
+			name: "403 API rate limit exceeded",
 			input: GetAllPullRequestsInput{
-				Owner: "test_owner",
+				Owner: "rate_limit",
 				Repository:  "test_repo",
 				State: "open",
 				Direction: "asc",
@@ -81,35 +113,375 @@ func TestComponent_GetAllPullRequestsTask(t *testing.T) {
 			},
 			wantErr: `403 API rate limit exceeded`,
 		},
+		{
+			_type: "nok",
+			name: "404 Not Found",
+			input: GetAllPullRequestsInput{
+				Owner: "not_found",
+				Repository:  "test_repo",
+				State: "open",
+				Direction: "asc",
+				Sort: "created",
+			},
+			wantErr: `404 Not Found`,
+		},
+		{
+			_type: "nok",
+			name: "no PRs found",
+			input: GetAllPullRequestsInput{
+				Owner: "no_pr",
+				Repository:  "test_repo",
+				State: "open",
+				Direction: "asc",
+				Sort: "created",
+			},
+			wantResp: GetAllPullRequestsResp{
+				PullRequests: []PullRequest{},
+			},
+		},
 	}
+	taskTesting(testcases, taskGetAllPRs, t)
+}
+
+func TestComponent_GetPullRequestTask(t *testing.T) {
+	testcases := []TaskCase[GetPullRequestInput, GetPullRequestResp]{
+		{
+			_type: "ok",
+			name: "get pull request",
+			input: GetPullRequestInput{
+				Owner: "test_owner",
+				Repository:  "test_repo",
+				PrNumber: 1,
+			},
+			wantResp: GetPullRequestResp{
+				PullRequest: PullRequest{
+					Base: "baseSHA",
+					Body: "PR Body",
+					Commits: []Commit{
+						{
+							Message: "This is a fake commit",
+							SHA: "commitSHA",
+							Stats: CommitStats{
+								Additions: 1,
+								Deletions: 1,
+								Changes: 2,
+							},
+							Files: []CommitFile{
+								{
+									Filename: "filename",
+									Patch: "patch",
+									CommitStats: CommitStats{
+										Additions: 1,
+										Deletions: 1,
+										Changes: 2,
+									},
+								},
+							},
+						},
+					},
+					DiffURL: "https://fake-github.com/test_owner/test_repo/pull/1.diff",
+					Head: "headSHA",
+					ID: 1,
+					Number: 1,
+					CommentsNum: 0,
+					CommitsNum: 1,
+					ReviewCommentsNum: 2,
+					State: "open",
+					Title: "This is a fake PR",
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name: "403 API rate limit exceeded",
+			input: GetPullRequestInput{
+				Owner: "rate_limit",
+				Repository:  "test_repo",
+				PrNumber: 1,
+			},
+			wantErr: `403 API rate limit exceeded`,
+		},
+		{
+			_type: "nok",
+			name: "404 Not Found",
+			input: GetPullRequestInput{
+				Owner: "not_found",
+				Repository:  "test_repo",
+				PrNumber: 1,
+			},
+			wantErr: `404 Not Found`,
+		},
+	}
+	taskTesting(testcases, taskGetPR, t)
+}
+
+func TestComponent_GetAllReviewCommentsTask(t *testing.T) {
+	testcases := []TaskCase[GetAllReviewCommentsInput, GetAllReviewCommentsResp]{
+		{
+			_type: "ok",
+			name: "get review comments",
+			input: GetAllReviewCommentsInput{
+				Owner: "test_owner",
+				Repository:  "test_repo",
+				PrNumber: 1,
+				Sort: "created",
+				Direction: "asc",
+				Since: "2021-01-01T00:00:00Z",
+			},
+			wantResp: GetAllReviewCommentsResp{
+				ReviewComments: []ReviewComment{
+					{
+						PullRequestComment: github.PullRequestComment{
+							Body: github.String("This is a fake comment"),
+							ID: github.Int64(1),
+						},
+					},
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name: "403 API rate limit exceeded",
+			input: GetAllReviewCommentsInput{
+				Owner: "rate_limit",
+				Repository:  "test_repo",
+				PrNumber: 1,
+				Sort: "created",
+				Direction: "asc",
+				Since: "2021-01-01T00:00:00Z",
+			},
+			wantErr: `403 API rate limit exceeded`,
+		},
+		{
+			_type: "nok",
+			name: "404 Not Found",
+			input: GetAllReviewCommentsInput{
+				Owner: "not_found",
+				Repository:  "test_repo",
+				PrNumber: 1,
+				Sort: "created",
+				Direction: "asc",
+				Since: "2021-01-01T00:00:00Z",
+			},
+			wantErr: `404 Not Found`,
+		},
+		{
+			_type: "nok",
+			name: "invalid time format",
+			input: GetAllReviewCommentsInput{
+				Owner: "not_found",
+				Repository:  "test_repo",
+				PrNumber: 1,
+				Sort: "created",
+				Direction: "asc",
+				Since: "2021-0100:00:00Z",
+			},
+			wantErr: `invalid time format`,
+		},
+	}
+	taskTesting(testcases, taskGetReviewComments, t)
+}
+
+func TestComponent_CreateReviewCommentTask(t *testing.T) {
+	testcases := []TaskCase[CreateReviewCommentInput, CreateReviewCommentResp]{
+		{
+			_type: "ok",
+			name: "create review comment",
+			input: CreateReviewCommentInput{
+				Owner: "test_owner",
+				Repository:  "test_repo",
+				PrNumber: 1,
+				Comment: github.PullRequestComment{
+					Body: github.String("This is a fake comment"),
+					Line: github.Int(2),
+					StartLine: github.Int(1),
+					Side: github.String("side"),
+					StartSide: github.String("side"),
+					SubjectType: github.String("line"),
+				},
+			},
+			wantResp: CreateReviewCommentResp{
+				ReviewComment: ReviewComment{
+					PullRequestComment: github.PullRequestComment{
+						Body: github.String("This is a fake comment"),
+						ID: github.Int64(1),
+						Line: github.Int(2),
+						Position: github.Int(2),
+						StartLine: github.Int(1),
+						Side: github.String("side"),
+						StartSide: github.String("side"),
+						SubjectType: github.String("line"),
+					},
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name: "403 API rate limit exceeded",
+			input: CreateReviewCommentInput{
+				Owner: "rate_limit",
+				Repository:  "test_repo",
+				PrNumber: 1,
+				Comment: github.PullRequestComment{
+					Body: github.String("This is a fake comment"),
+					Line: github.Int(2),
+					StartLine: github.Int(1),
+					Side: github.String("RIGHT"),
+					StartSide: github.String("RIGHT"),
+					SubjectType: github.String("line"),
+				},
+			},
+			wantErr: `403 API rate limit exceeded`,
+		},
+		{
+			_type: "nok",
+			name: "404 Not Found",
+			input: CreateReviewCommentInput{
+				Owner: "not_found",
+				Repository:  "test_repo",
+				PrNumber: 1,
+				Comment: github.PullRequestComment{
+					Body: github.String("This is a fake comment"),
+					Line: github.Int(2),
+					StartLine: github.Int(1),
+					Side: github.String("RIGHT"),
+					StartSide: github.String("RIGHT"),
+					SubjectType: github.String("line"),
+				},
+			},
+			wantErr: `404 Not Found`,
+		},
+		{
+			_type: "nok",
+			name: "422 Unprocessable Entity",
+			input: CreateReviewCommentInput{
+				Owner: "unprocessable_entity",
+				Repository:  "test_repo",
+				PrNumber: 1,
+				Comment: github.PullRequestComment{
+					Body: github.String("This is a fake comment"),
+					Line: github.Int(2),
+					StartLine: github.Int(1),
+					Side: github.String("RIGHT"),
+					StartSide: github.String("RIGHT"),
+					SubjectType: github.String("line"),
+				},
+			},
+			wantErr: `422 Unprocessable Entity`,
+		},
+		{
+			_type: "nok",
+			name: "422 Unprocessable Entity",
+			input: CreateReviewCommentInput{
+				Owner: "test_owner",
+				Repository:  "test_repo",
+				PrNumber: 1,
+				Comment: github.PullRequestComment{
+					Body: github.String("This is a fake comment"),
+					Line: github.Int(1),
+					StartLine: github.Int(1),
+					Side: github.String("RIGHT"),
+					StartSide: github.String("RIGHT"),
+					SubjectType: github.String("line"),
+				},
+			},
+			wantErr: `422 Unprocessable Entity`,
+		},
+	}
+	taskTesting(testcases, taskCreateReviewComment, t)
+}
+
+func TestComponent_GetCommitTask(t *testing.T){
+	testcases := []TaskCase[GetCommitInput, GetCommitResp]{
+		{
+			_type: "ok",
+			name: "get commit",
+			input: GetCommitInput{
+				Owner: "test_owner",
+				Repository:  "test_repo",
+				SHA: "commitSHA",
+			},
+			wantResp: GetCommitResp{
+				Commit: Commit{
+					Message: "This is a fake commit",
+					SHA: "commitSHA",
+					Stats: CommitStats{
+						Additions: 1,
+						Deletions: 1,
+						Changes: 2,
+					},
+					Files: []CommitFile{
+						{
+							Filename: "filename",
+							Patch: "patch",
+							CommitStats: CommitStats{
+								Additions: 1,
+								Deletions: 1,
+								Changes: 2,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name: "403 API rate limit exceeded",
+			input: GetCommitInput{
+				Owner: "rate_limit",
+				Repository:  "test_repo",
+				SHA: "commitSHA",
+			},
+			wantErr: `403 API rate limit exceeded`,
+		},
+	}
+	taskTesting(testcases, taskGetCommit, t)
+}
+
+
+func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType], task string, t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
 
 	for _, tc := range testcases {
-		c.Run(tc.name, func(c *qt.C) {
+		c.Run(tc._type + `-` + tc.name, func(c *qt.C) {
 
 			setup, err := structpb.NewStruct(map[string]any{
-				"api-key": apiKey,
+				"token": token,
 			})
 			c.Assert(err, qt.IsNil)
 
-			// It will increase the modification range if we change the input of CreateExecution.
-			// So, we replaced it with the code below to cover the test for taskFunctions.go
 			e := &execution{
-				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: taskGetAllPRs},
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: task},
 				client:             Client{client: MockGithubClient},
 			}
-			e.execute = e.client.getAllPullRequestsTask
+			switch task {
+			case taskGetAllPRs:
+				e.execute = e.client.getAllPullRequestsTask
+			case taskGetPR:
+				e.execute = e.client.getPullRequestTask
+			case taskGetReviewComments:
+				e.execute = e.client.getAllReviewCommentsTask
+			case taskCreateReviewComment:
+				e.execute = e.client.createReviewCommentTask
+			case taskGetCommit:
+				e.execute = e.client.getCommitTask
+			default:
+				c.Fatalf("not supported testing task: %s", task)
+			}
 			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
 			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
-
+			fmt.Println(got)
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
-
 			wantJSON, err := json.Marshal(tc.wantResp)
 			c.Assert(err, qt.IsNil)
 			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
