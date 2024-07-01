@@ -1,4 +1,3 @@
-
 {
   "$defs": {
     "bucket-name": {
@@ -338,7 +337,7 @@
           "title": "Text Objects",
           "type": "array",
           "items": {
-            "properties":{
+            "properties": {
               "data": {
                 "$ref": "#/$defs/data"
               },
@@ -346,7 +345,7 @@
                 "$ref": "#/$defs/attributes"
               }
             },
-            "required":[],
+            "required": [],
             "title": "Object",
             "type": "object"
           }
@@ -360,7 +359,7 @@
           "title": "Image Objects",
           "type": "array",
           "items": {
-            "properties":{
+            "properties": {
               "data": {
                 "$ref": "#/$defs/data"
               },
@@ -368,7 +367,7 @@
                 "$ref": "#/$defs/attributes"
               }
             },
-            "required":[],
+            "required": [],
             "title": "Object",
             "type": "object"
           }
@@ -382,7 +381,7 @@
           "title": "Document Objects",
           "type": "array",
           "items": {
-            "properties":{
+            "properties": {
               "data": {
                 "$ref": "#/$defs/data"
               },
@@ -390,7 +389,7 @@
                 "$ref": "#/$defs/attributes"
               }
             },
-            "required":[],
+            "required": [],
             "title": "Object",
             "type": "object"
           }
@@ -404,7 +403,7 @@
           "title": "Audio Objects",
           "type": "array",
           "items": {
-            "properties":{
+            "properties": {
               "data": {
                 "$ref": "#/$defs/data"
               },
@@ -412,7 +411,7 @@
                 "$ref": "#/$defs/attributes"
               }
             },
-            "required":[],
+            "required": [],
             "title": "Object",
             "type": "object"
           }
@@ -426,7 +425,7 @@
           "title": "Video Objects",
           "type": "array",
           "items": {
-            "properties":{
+            "properties": {
               "data": {
                 "$ref": "#/$defs/data"
               },
@@ -434,7 +433,7 @@
                 "$ref": "#/$defs/attributes"
               }
             },
-            "required":[],
+            "required": [],
             "title": "Object",
             "type": "object"
           }
@@ -450,7 +449,7 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-       "bucket-name": {
+        "bucket-name": {
           "$ref": "#/$defs/bucket-name"
         },
         "project-id": {

@@ -64,19 +64,6 @@
       ],
       "title": "Input",
       "type": "object"
-    },
-    "extra-params": {
-      "description": "Extra Parameters",
-      "instillAcceptFormats": [
-        "semi-structured/object"
-      ],
-      "instillUIOrder": 3,
-      "instillUpstreamTypes": [
-        "reference"
-      ],
-      "required": [],
-      "title": "Extra Parameters",
-      "type": "object"
     }
   },
   "TASK_CLASSIFICATION": {
@@ -131,9 +118,6 @@
           ],
           "title": "CFG Scale",
           "type": "number"
-        },
-        "extra-params": {
-          "$ref": "#/$defs/extra-params"
         },
         "image-base64": {
           "description": "The prompt image",
@@ -334,9 +318,6 @@
           "title": "Chat history",
           "type": "array"
         },
-        "extra-params": {
-          "$ref": "#/$defs/extra-params"
-        },
         "max-new-tokens": {
           "default": 50,
           "description": "The maximum number of tokens for model to generate",
@@ -512,9 +493,6 @@
           "title": "CFG Scale",
           "type": "number"
         },
-        "extra-params": {
-          "$ref": "#/$defs/extra-params"
-        },
         "model-name": {
           "description": "The Instill Model model to be used.",
           "instillAcceptFormats": [
@@ -644,9 +622,6 @@
           },
           "title": "Chat history",
           "type": "array"
-        },
-        "extra-params": {
-          "$ref": "#/$defs/extra-params"
         },
         "max-new-tokens": {
           "default": 50,
