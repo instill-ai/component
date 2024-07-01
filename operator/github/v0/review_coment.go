@@ -2,10 +2,12 @@ package github
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/go-github/v62/github"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/x/errmsg"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -47,7 +49,10 @@ func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*s
 	since:= props.GetFields()["since"].GetStringValue()
 	sinceTime, err := time.Parse(time.RFC3339, since)
 	if err != nil {
-		return nil, err
+		return nil, errmsg.AddMessage(
+			fmt.Errorf("invalid time format"),
+			fmt.Sprintf("Cannot parse time: %s, Please provide format like %s(see RFC3339)", since, time.RFC3339),
+		)
 	}
 	opts := &github.PullRequestListCommentsOptions{
 		Sort: props.GetFields()["sort"].GetStringValue(),

@@ -77,6 +77,12 @@ func (githubClient *Client) getCommit(owner string, repository string, sha strin
 	return commit, err
 }
 
+type GetCommitInput struct {
+	Owner string `json:"owner"`
+	Repository string `json:"repository"`
+	SHA string `json:"sha"`
+}
+
 type GetCommitResp struct {
 	Commit Commit `json:"commit"`
 }
