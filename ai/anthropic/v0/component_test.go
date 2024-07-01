@@ -188,10 +188,10 @@ func TestComponent_Generation(t *testing.T) {
 
 	tc := struct {
 		input    map[string]any
-		wantResp messagesOutput
+		wantResp MessagesOutput
 	}{
 		input: map[string]any{"prompt": "Hi! What's your name?", "chat-history": mockHistory},
-		wantResp: messagesOutput{
+		wantResp: MessagesOutput{
 			Text: "Hi! My name is Claude. (messageCount: 3)",
 			Usage: messagesUsage{
 				InputTokens:  10,

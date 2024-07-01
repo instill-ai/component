@@ -72,7 +72,19 @@ type messagesReq struct {
 	TopP          float32     `json:"top_p,omitempty"`
 }
 
-type messagesOutput struct {
+type MessagesInput struct {
+	ChatHistory  []message     `json:"chat-history"`
+	MaxNewTokens int           `json:"max-new-tokens"`
+	ModelName    string        `json:"model-name"`
+	Prompt       string        `json:"prompt"`
+	PromptImages []interface{} `json:"prompt-images"`
+	Seed         int           `json:"seed"`
+	SystemMsg    string        `json:"system-message"`
+	Temperature  float32       `json:"temperature"`
+	TopK         int           `json:"top-k"`
+}
+
+type MessagesOutput struct {
 	Text  string        `json:"text"`
 	Usage messagesUsage `json:"usage"`
 }
@@ -273,7 +285,7 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		return nil, err
 	}
 
-	outputStruct := messagesOutput{
+	outputStruct := MessagesOutput{
 		Text: "",
 		Usage: messagesUsage{
 			InputTokens:  resp.Usage.InputTokens,
