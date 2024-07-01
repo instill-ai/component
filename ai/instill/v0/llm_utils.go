@@ -122,10 +122,6 @@ func (e *execution) convertLLMInput(input *structpb.Struct) *LLMInput {
 		v := int32(input.GetFields()["seed"].GetNumberValue())
 		llmInput.Seed = &v
 	}
-	if _, ok := input.GetFields()["extra-params"]; ok {
-		v := input.GetFields()["extra-params"].GetStructValue()
-		llmInput.ExtraParams = v
-	}
 	return llmInput
 
 }
