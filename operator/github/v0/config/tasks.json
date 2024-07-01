@@ -1375,5 +1375,236 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_CREATE_WEBHOOK": {
+    "description": "Create a webhook for a repository",
+    "input": {
+      "description": "Please input the repository name and owner",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "owner",
+        "repository",
+        "hook_url",
+        "events"
+      ],
+      "properties": {
+        "$ref": "#/$defs/repository_info",
+        "hook_url": {
+          "title": "Webhook URL",
+          "description": "URL to send the payload to",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 3,
+          "type": "string"
+        },
+        "events": {
+          "title": "Events",
+          "description": "Events to trigger the webhook. Please see https://docs.github.com/en/webhooks/webhook-events-and-payloads for more information",
+          "instillFormat": "array",
+          "instillAcceptFormats": [
+            "array"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 4,
+          "type": "array",
+          "items": {
+            "instillFormat": "string",
+            "instillAcceptFormats": [
+              "string"
+            ],
+            "instillUpstreamTypes": [
+              "value",
+              "reference"
+            ],
+            "type": "string"
+          }
+        },
+        "active": {
+          "title": "Active",
+          "description": "Whether the webhook is active",
+          "instillFormat": "boolean",
+          "instillAcceptFormats": [
+            "boolean"
+          ],
+          "instillUpstreamTypes": [
+            "value"
+          ],
+          "instillUIOrder": 5,
+          "type": "boolean"
+        },
+        "content_type": {
+          "default": "json",
+          "title": "Content Type",
+          "description": "Content type of the webhook",
+          "enum": [
+            "json",
+            "form"
+          ],
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value"
+          ],
+          "instillUIOrder": 6,
+          "type": "string"
+        },
+        "hook_secret": {
+          "title": "Hook Secret",
+          "description": "If provided, the secret will be used as the key to generate the HMAC hex digest value for delivery signature headers. (see https://docs.github.com/en/webhooks/webhook-events-and-payloads#delivery-headers)",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value"
+          ],
+          "instillUIOrder": 7,
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner",
+        "repository",
+        "hook_url",
+        "events"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "The created webhook",
+      "instillUIOrder": 0,
+      "properties": {
+        "hook": {
+          "description": "The created webhook",
+          "instillUIOrder": 1,
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "id of the webhook",
+              "instillUIOrder": 1,
+              "title": "Webhook id",
+              "instillFormat": "integer",
+              "instillAcceptFormats": [
+                "integer"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ],
+              "type": "integer"
+            },
+            "url": {
+              "description": "url of the webhook",
+              "instillUIOrder": 2,
+              "title": "Webhook url",
+              "instillFormat": "string",
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ],
+              "type": "string"
+            },
+            "ping_url": {
+              "description": "url to ping the webhook",
+              "instillUIOrder": 3,
+              "title": "Ping url",
+              "instillFormat": "string",
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ],
+              "type": "string"
+            },
+            "test_url": {
+              "description": "url to test the webhook",
+              "instillUIOrder": 4,
+              "title": "Test url",
+              "instillFormat": "string",
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ],
+              "type": "string"
+            },
+            "config": {
+              "description": "Configuration of the webhook",
+              "instillUIOrder": 6,
+              "title": "Config",
+              "type": "object",
+              "properties": {
+                "url": {
+                  "description": "url of the webhook",
+                  "instillUIOrder": 1,
+                  "title": "Webhook url",
+                  "instillFormat": "string",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference"
+                  ],
+                  "type": "string"
+                },
+                "content_type": {
+                  "description": "Content type of the webhook",
+                  "instillUIOrder": 2,
+                  "title": "Content Type",
+                  "instillFormat": "string",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value"
+                  ],
+                  "type": "string"
+                },
+                "insecure_ssl": {
+                  "description": "Whether the webhook is insecure",
+                  "instillUIOrder": 3,
+                  "title": "Insecure SSL",
+                  "instillFormat": "string",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": []
+            }
+          },
+          "required": []
+        }
+      },
+      "required": [
+        "hook"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
   }
 }

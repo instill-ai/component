@@ -22,6 +22,7 @@ const (
 	taskGetAllIssues = "TASK_GET_ALL_ISSUES"
 	taskGetIssue = "TASK_GET_ISSUE"
 	taskCreateIssue = "TASK_CREATE_ISSUE"
+	taskCreateWebhook = "TASK_CREATE_WEBHOOK"
 )
 
 var (
@@ -84,6 +85,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.client.getIssueTask
 	case taskCreateIssue:
 		e.execute = e.client.createIssueTask
+	case taskCreateWebhook:
+		e.execute = e.client.createWebhookTask
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),

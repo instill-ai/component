@@ -592,6 +592,62 @@ func TestComponent_CreateIssueTask(t * testing.T){
 	taskTesting(testcases, taskCreateIssue, t)
 }
 
+func TestComponent_CreateWebHook(t * testing.T){
+	testcases := []TaskCase[CreateWebHookInput, CreateWebHookResp]{
+		{
+			_type: "ok",
+			name: "create webhook",
+			input: CreateWebHookInput{
+				Owner: "test_owner",
+				Repository:  "test_repo",
+				Events: []string{"push"},
+				Active: *github.Bool(true),
+				HookSecret: "hook_secret",
+				ContentType: "json",
+			},
+			wantResp: CreateWebHookResp{
+				Hook: HookInfo{
+					ID: 1,
+					URL: "hook_url",
+					PingURL: "ping_url",
+					TestURL: "test_url",
+					Config: HookConfig{
+						URL: "hook_url",
+						InsecureSSL: "0",
+						ContentType: "json",
+					},
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name: "403 API rate limit exceeded",
+			input: CreateWebHookInput{
+				Owner: "rate_limit",
+				Repository:  "test_repo",
+				Events: []string{"push"},
+				Active: *github.Bool(true),
+				HookSecret: "hook_secret",
+				ContentType: "json",
+			},
+			wantErr: `403 API rate limit exceeded`,
+		},
+		{
+			_type: "nok",
+			name: "404 Not Found",
+			input: CreateWebHookInput{
+				Owner: "not_found",
+				Repository:  "test_repo",
+				Events: []string{"push"},
+				Active: *github.Bool(true),
+				HookSecret: "hook_secret",
+				ContentType: "json",
+			},
+			wantErr: `404 Not Found`,
+		},
+	}
+	taskTesting(testcases, taskCreateWebhook, t)
+}
 
 
 func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType], task string, t *testing.T) {
@@ -629,6 +685,8 @@ func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType],
 				e.execute = e.client.getIssueTask
 			case taskCreateIssue:
 				e.execute = e.client.createIssueTask
+			case taskCreateWebhook:
+				e.execute = e.client.createWebhookTask
 			default:
 				c.Fatalf("not supported testing task: %s", task)
 			}

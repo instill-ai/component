@@ -10,22 +10,23 @@ import (
 
 type RepositoriesService interface {
 	GetCommit(context.Context, string, string, string, *github.ListOptions) (*github.RepositoryCommit, *github.Response, error)
+	CreateHook(context.Context, string, string, *github.Hook) (*github.Hook, *github.Response, error)
 }
 
 type Commit struct {
-	SHA          	string         		`json:"sha,omitempty"`
-	Message 		string          	`json:"message,omitempty"`
-	Stats        	CommitStats         `json:"stats,omitempty"`
-	Files 	  		[]CommitFile        `json:"files,omitempty"`
+	SHA          	string         		`json:"sha"`
+	Message 		string          	`json:"message"`
+	Stats        	CommitStats         `json:"stats"`
+	Files 	  		[]CommitFile        `json:"files"`
 }
 type CommitStats struct {
-	Additions 		int 	`json:"additions,omitempty"`
-	Deletions 		int 	`json:"deletions,omitempty"`
-	Changes 		int 	`json:"changes,omitempty"`
+	Additions 		int 				`json:"additions"`
+	Deletions 		int 				`json:"deletions"`
+	Changes 		int 				`json:"changes"`
 }
 type CommitFile struct {
-	Filename 		string 	`json:"filename,omitempty"`
-	Patch 			string 	`json:"patch,omitempty"`
+	Filename 		string 				`json:"filename"`
+	Patch 			string 				`json:"patch"`
 	CommitStats
 }
 func (githubClient *Client) extractCommitFile(file *github.CommitFile) CommitFile {
@@ -77,13 +78,13 @@ func (githubClient *Client) getCommit(owner string, repository string, sha strin
 }
 
 type GetCommitInput struct {
-	Owner string `json:"owner"`
-	Repository string `json:"repository"`
-	SHA string `json:"sha"`
+	Owner 			string 		`json:"owner"`
+	Repository 		string 		`json:"repository"`
+	SHA 			string 		`json:"sha"`
 }
 
 type GetCommitResp struct {
-	Commit Commit `json:"commit"`
+	Commit 			Commit 		`json:"commit"`
 }
 func  (githubClient *Client) getCommitTask(props *structpb.Struct) (*structpb.Struct, error) {
 	err := githubClient.setTargetRepo(props)
