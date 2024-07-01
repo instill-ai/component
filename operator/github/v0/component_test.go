@@ -25,22 +25,6 @@ var fakeHost = "https://fake-github.com"
 const (
 	token = "testkey"
 )
-func middleWare(req string) int {
-	if req == "rate_limit" {
-		return 403
-	}
-	if req == "not_found" {
-		return 404
-	}
-	if req == "unprocessable_entity" {
-		return 422
-	}
-	if req == "no_pr" {
-		return 201
-	}
-	return 200
-}
-
 
 type TaskCase[inType any, outType any] struct {
 	_type 	 string
@@ -439,6 +423,176 @@ func TestComponent_GetCommitTask(t *testing.T){
 	taskTesting(testcases, taskGetCommit, t)
 }
 
+func TestComponent_GetAllIssuesTask(t * testing.T){
+	testcases := []TaskCase[GetAllIssuesInput, GetAllIssuesResp]{
+		{
+			_type: "ok",
+			name: "get all issues",
+			input: GetAllIssuesInput{
+				Owner: "test_owner",
+				Repository:  "test_repo",
+				State: "open",
+				Direction: "asc",
+				Sort: "created",
+				Since: "2021-01-01T00:00:00Z",
+				NoPullRequest: true,
+			},
+			wantResp: GetAllIssuesResp{
+				Issues: []Issue{
+					{
+						Number: 1,
+						Title: "This is a fake Issue",
+						Body: "Issue Body",
+						State: "open",
+						Assignee: "assignee",
+						Assignees: []string{"assignee1", "assignee2"},
+						Labels: []string{"label1", "label2"},
+					},
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name: "403 API rate limit exceeded",
+			input: GetAllIssuesInput{
+				Owner: "rate_limit",
+				Repository:  "test_repo",
+				State: "open",
+				Direction: "asc",
+				Sort: "created",
+				Since: "2021-01-01T00:00:00Z",
+				NoPullRequest: true,
+			},
+			wantErr: `403 API rate limit exceeded`,
+		},
+		{
+			_type: "nok",
+			name: "404 Not Found",
+			input: GetAllIssuesInput{
+				Owner: "not_found",
+				Repository:  "test_repo",
+				State: "open",
+				Direction: "asc",
+				Sort: "created",
+				Since: "2021-01-01T00:00:00Z",
+				NoPullRequest: true,
+			},
+			wantErr: `404 Not Found`,
+		},
+		{
+			_type: "nok",
+			name: "invalid time format",
+			input: GetAllIssuesInput{
+				Owner: "not_found",
+				Repository:  "test_repo",
+				State: "open",
+				Direction: "asc",
+				Sort: "created",
+				Since: "2021-0Z",
+				NoPullRequest: true,
+			},
+			wantErr: `invalid time format`,
+		},
+	}
+	taskTesting(testcases, taskGetAllIssues, t)
+}
+func TestComponent_GetIssueTask(t * testing.T){
+	testcases := []TaskCase[GetIssueInput, GetIssueResp]{
+		{
+			_type: "ok",
+			name: "get all issues",
+			input: GetIssueInput{
+				Owner: "test_owner",
+				Repository:  "test_repo",
+				IssueNumber: 1,
+			},
+			wantResp: GetIssueResp{
+				Issue: Issue{
+					Number: 1,
+					Title: "This is a fake Issue",
+					Body: "Issue Body",
+					State: "open",
+					Assignee: "assignee",
+					Assignees: []string{"assignee1", "assignee2"},
+					Labels: []string{"label1", "label2"},
+					IsPullRequest: false,
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name: "403 API rate limit exceeded",
+			input: GetIssueInput{
+				Owner: "rate_limit",
+				Repository:  "test_repo",
+				IssueNumber: 1,
+			},
+			wantErr: `403 API rate limit exceeded`,
+		},
+		{
+			_type: "nok",
+			name: "404 Not Found",
+			input: GetIssueInput{
+				Owner: "not_found",
+				Repository:  "test_repo",
+				IssueNumber: 1,
+			},
+			wantErr: `404 Not Found`,
+		},
+	}
+	taskTesting(testcases, taskGetIssue, t)
+}
+func TestComponent_CreateIssueTask(t * testing.T){
+	testcases := []TaskCase[CreateIssueInput, CreateIssueResp]{
+		{
+			_type: "ok",
+			name: "get all issues",
+			input: CreateIssueInput{
+				Owner: "test_owner",
+				Repository:  "test_repo",
+				Title: "This is a fake Issue",
+				Body: "Issue Body",
+			},
+			wantResp: CreateIssueResp{
+				Issue: Issue{
+					Number: 1,
+					Title: "This is a fake Issue",
+					Body: "Issue Body",
+					State: "open",
+					IsPullRequest: false,
+					Assignees: []string{},
+					Labels: []string{},
+					Assignee: "",
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name: "403 API rate limit exceeded",
+			input: CreateIssueInput{
+				Owner: "rate_limit",
+				Repository:  "test_repo",
+				Title: "This is a fake Issue",
+				Body: "Issue Body",
+			},
+			wantErr: `403 API rate limit exceeded`,
+		},
+		{
+			_type: "nok",
+			name: "404 Not Found",
+			input: CreateIssueInput{
+				Owner: "not_found",
+				Repository:  "test_repo",
+				Title: "This is a fake Issue",
+				Body: "Issue Body",
+			},
+			wantErr: `404 Not Found`,
+		},
+	}
+	taskTesting(testcases, taskCreateIssue, t)
+}
+
+
 
 func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType], task string, t *testing.T) {
 	c := qt.New(t)
@@ -469,6 +623,12 @@ func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType],
 				e.execute = e.client.createReviewCommentTask
 			case taskGetCommit:
 				e.execute = e.client.getCommitTask
+			case taskGetAllIssues:
+				e.execute = e.client.getAllIssuesTask
+			case taskGetIssue:
+				e.execute = e.client.getIssueTask
+			case taskCreateIssue:
+				e.execute = e.client.createIssueTask
 			default:
 				c.Fatalf("not supported testing task: %s", task)
 			}
