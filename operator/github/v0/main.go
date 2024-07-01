@@ -101,8 +101,3 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 	return outputs, nil
 }
-
-func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
-
-	return nil
-}
