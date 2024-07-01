@@ -20,6 +20,7 @@ type GitHubClient struct {
 	*github.Client
 	Repositories RepositoriesService
 	PullRequests PullRequestService
+	Issues IssuesService
 }
 
 func newClient(ctx context.Context, setup *structpb.Struct) Client {
@@ -33,7 +34,14 @@ func newClient(ctx context.Context, setup *structpb.Struct) Client {
 		oauth2Client = oauth2.NewClient(ctx, tokenSource)
 	}
 	client := github.NewClient(oauth2Client)
-	githubClient := Client{client: GitHubClient{Client: client, Repositories: client.Repositories, PullRequests: client.PullRequests} }
+	githubClient := Client{
+		client: GitHubClient{
+			Client: client,
+			Repositories: client.Repositories,
+			PullRequests: client.PullRequests,
+			Issues: client.Issues,
+			},
+		}
 	return githubClient
 }
 

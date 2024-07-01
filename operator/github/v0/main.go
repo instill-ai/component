@@ -19,6 +19,9 @@ const (
 	taskGetCommit  = "TASK_GET_COMMIT"
 	taskGetReviewComments = "TASK_GET_REVIEW_COMMENTS"
 	taskCreateReviewComment = "TASK_CREATE_REVIEW_COMMENT"
+	taskGetAllIssues = "TASK_GET_ALL_ISSUES"
+	taskGetIssue = "TASK_GET_ISSUE"
+	taskCreateIssue = "TASK_CREATE_ISSUE"
 )
 
 var (
@@ -73,10 +76,14 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.client.getAllReviewCommentsTask
 	case taskCreateReviewComment:
 		e.execute = e.client.createReviewCommentTask
-		// e.execute = e.client.getAllPullRequests
 	case taskGetCommit:
 		e.execute = e.client.getCommitTask
-
+	case taskGetAllIssues:
+		e.execute = e.client.getAllIssuesTask
+	case taskGetIssue:
+		e.execute = e.client.getIssueTask
+	case taskCreateIssue:
+		e.execute = e.client.createIssueTask
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),

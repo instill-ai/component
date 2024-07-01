@@ -16,6 +16,7 @@ import (
 var MockGithubClient = GitHubClient{
 	Repositories: &MockRepositoriesService{},
 	PullRequests: &MockPullRequestService{},
+	Issues: &MockIssuesService{},
 }
 
 var fakeHost = "https://fake-github.com"

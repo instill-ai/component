@@ -595,6 +595,131 @@
       },
       "title": "Review Comment",
       "type": "object"
+    },
+    "issue": {
+      "description": "An issue object.",
+      "properties": {
+        "number": {
+          "description": "number of the issue",
+          "instillUIOrder": 2,
+          "title": "Issue number",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
+        },
+        "state": {
+          "description": "state of the issue",
+          "instillUIOrder": 3,
+          "title": "Issue state",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "title": {
+          "description": "title of the issue",
+          "instillUIOrder": 4,
+          "title": "Issue title",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "body": {
+          "description": "body of the issue",
+          "instillUIOrder": 5,
+          "title": "Issue body",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "assignee": {
+          "description": "assignee of the issue",
+          "instillUIOrder": 6,
+          "title": "Assignee",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "assignees": {
+          "description": "assignees of the issue",
+          "instillUIOrder": 7,
+          "title": "Assignees",
+          "type": "array",
+          "items": {
+            "instillFormat": "string",
+            "instillAcceptFormats": [
+              "string"
+            ],
+            "instillUpstreamTypes": [
+              "value",
+              "reference"
+            ],
+            "type": "string"
+          }
+        },
+        "labels": {
+          "description": "labels of the issue",
+          "instillUIOrder": 8,
+          "title": "Labels",
+          "type": "array",
+          "items": {
+            "instillFormat": "string",
+            "instillAcceptFormats": [
+              "string"
+            ],
+            "instillUpstreamTypes": [
+              "value",
+              "reference"
+            ],
+            "type": "string"
+          }
+        },
+        "is_pull_request": {
+          "description": "Whether the issue is a pull request",
+          "instillUIOrder": 9,
+          "title": "Is Pull Request",
+          "instillFormat": "boolean",
+          "instillAcceptFormats": [
+            "boolean"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "boolean"
+        }
+      },
+      "title": "Issue",
+      "type": "object"
     }
   },
   "TASK_GET_ALL_PULL_REQUESTS": {
@@ -1011,6 +1136,243 @@
       },
       "required": [
         "commit"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_ALL_ISSUES": {
+    "description": "Get the list of all issues in a repository,This can be a pull request or a general issue, and you can tell by the `is_pull_request` field.",
+    "instillShortDescription": "Get the list of all issues in a repository",
+    "input": {
+      "description": "Please input the repository name and owner",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "owner",
+        "repository"
+      ],
+      "properties": {
+        "$ref": "#/$defs/repository_info",
+        "state": {
+          "default": "open",
+          "title": "State",
+          "description": "State of the issues, including open, closed, all. Default: open",
+          "enum": [
+            "open",
+            "closed",
+            "all"
+          ],
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 10,
+          "type": "string"
+        },
+        "sort": {
+          "default": "created",
+          "title": "Sort",
+          "description": "Sort the issues by created, updated, popularity, or long-running. Default: created",
+          "enum": [
+            "created",
+            "updated",
+            "popularity",
+            "long-running"
+          ],
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 11,
+          "type": "string"
+        },
+        "direction": {
+          "default": "desc",
+          "title": "Direction",
+          "description": "Direction of the sort, including asc or desc. Default: asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 12,
+          "type": "string"
+        },
+        "since": {
+          "default": "2021-01-01T00:00:00Z",
+          "title": "Since",
+          "description": "Only issues updated at or after this time are returned. Default: 2021-01-01T00:00:00Z",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 13,
+          "type": "string"
+        },
+        "mentioned": {
+          "default": "none",
+          "title": "Mentioned",
+          "description": "Filter issues mentioned in the comment. Default: none",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 14,
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner",
+        "repository"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "All issues in GitHub repository",
+      "instillUIOrder": 0,
+      "properties": {
+        "issues": {
+          "description": "An array of issues",
+          "instillUIOrder": 1,
+          "title": "Issues",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/issue",
+            "required": [],
+            "description": "An issue in GitHub"
+          }
+        }
+      },
+      "required": [
+        "issues"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_ISSUE": {
+    "description": "Get an issue. This can be a pull request or a general issue, and you can tell by the `is_pull_request` field.",
+    "instillShortDescription": "Get an issue.",
+    "input": {
+      "description": "Please input the repository name and owner",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "owner",
+        "repository",
+        "issue_number"
+      ],
+      "properties": {
+        "$ref": "#/$defs/repository_info",
+        "issue_number": {
+          "default": 0,
+          "title": "Issue Number",
+          "description": "Number of the issue.",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 4,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "owner",
+        "repository",
+        "issue_number"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "The specific issue in GitHub repository",
+      "instillUIOrder": 0,
+      "properties": {
+        "issue": {
+          "description": "An issue in GitHub",
+          "instillUIOrder": 1,
+          "$ref": "#/$defs/issue",
+          "required": []
+        }
+      },
+      "required": [
+        "issue"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_ISSUE": {
+    "description": "Create an issue",
+    "input": {
+      "description": "Please input the repository name and owner",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "owner",
+        "repository",
+        "title",
+        "body"
+      ],
+      "properties": {
+        "$ref": "#/$defs/repository_info",
+        "title": {
+          "$ref": "#/$defs/issue/properties/title",
+          "instillUIOrder": 3
+        },
+        "body": {
+          "$ref": "#/$defs/issue/properties/body",
+          "instillUIOrder": 4
+        }
+      },
+      "required": [
+        "owner",
+        "repository",
+        "title",
+        "body"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "The created issue",
+      "instillUIOrder": 0,
+      "properties": {
+        "issue": {
+          "$ref": "#/$defs/issue",
+          "required": [],
+          "instillUIOrder": 1,
+          "description": "The created issue"
+        }
+      },
+      "required": [
+        "issue"
       ],
       "title": "Output",
       "type": "object"

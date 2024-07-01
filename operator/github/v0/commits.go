@@ -2,7 +2,6 @@ package github
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/go-github/v62/github"
 	"github.com/instill-ai/component/base"
@@ -98,9 +97,6 @@ func  (githubClient *Client) getCommitTask(props *structpb.Struct) (*structpb.St
 	}
 	var resp GetCommitResp
 	resp.Commit = githubClient.extractCommitInformation(commit)
-	fmt.Println("=====================================")
-	fmt.Println("commit: ",resp.Commit)
-	fmt.Println("=====================================")
 	out, err := base.ConvertToStructpb(resp)
 	if err != nil {
 		return nil, err
