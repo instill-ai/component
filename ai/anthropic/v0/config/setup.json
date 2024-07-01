@@ -3,7 +3,7 @@
   "additionalProperties": true,
   "properties": {
     "api-key": {
-      "description": "Fill your Anthropic API key. To find your keys, visit the Anthropic console page.",
+      "description": "Fill in your Anthropic API key. To find your keys, visit the Anthropic console page.",
       "instillUpstreamTypes": [
         "reference"
       ],
