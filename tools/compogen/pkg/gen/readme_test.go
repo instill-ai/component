@@ -35,7 +35,7 @@ func TestComponentType_IndefiniteArticle(t *testing.T) {
 	}{
 		{in: cstOperator, want: "an"},
 		{in: cstAI, want: "an"},
-		{in: cstApplication, want: "a"},
+		{in: cstApplication, want: "an"},
 		{in: cstData, want: "a"},
 	}
 

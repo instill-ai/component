@@ -1,7 +1,7 @@
 {
   "$defs": {
     "bucket-name": {
-      "description": "Name of the bucket to be used for object storage.",
+      "description": "Name of the bucket to be used for object storage",
       "instillUpstreamTypes": [
         "value",
         "reference"
