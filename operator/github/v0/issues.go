@@ -2,19 +2,16 @@ package github
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	"github.com/google/go-github/v62/github"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/x/errmsg"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 type IssuesService interface {
 	ListByRepo(context.Context, string, string, *github.IssueListByRepoOptions) ([]*github.Issue, *github.Response, error)
 	Get(context.Context, string, string, int) (*github.Issue, *github.Response, error)
 	Create(context.Context, string, string, *github.IssueRequest) (*github.Issue, *github.Response, error)
-	Edit(context.Context, string, string, int, *github.IssueRequest) (*github.Issue, *github.Response, error)
+	// Edit(context.Context, string, string, int, *github.IssueRequest) (*github.Issue, *github.Response, error)
 }
 
 type Issue struct {
@@ -65,6 +62,15 @@ func (githubClient *Client) getIssue(owner, repository string, issueNumber int) 
 	}
 	return issue, nil
 }
+func filterOutPullRequests(issues []Issue) []Issue {
+	filteredIssues := make([]Issue, 0)
+	for _, issue := range issues {
+		if !issue.IsPullRequest {
+			filteredIssues = append(filteredIssues, issue)
+		}
+	}
+	return filteredIssues
+}
 
 type GetAllIssuesInput struct {
 	Owner		 	string 			`json:"owner"`
@@ -73,7 +79,7 @@ type GetAllIssuesInput struct {
 	Sort		 	string 			`json:"sort"`
 	Direction		string 			`json:"direction"`
 	Since 		 	string 			`json:"since"`
-	Mentioned 		string 			`json:"mentioned"` // A user that's mentioned in the issue.
+	NoPullRequest 	bool 			`json:"no_pull_request"`
 }
 
 type GetAllIssuesResp struct {
@@ -85,20 +91,17 @@ func (githubClient *Client) getAllIssuesTask(props *structpb.Struct) (*structpb.
 	if err != nil {
 		return nil, err
 	}
-	since:= props.GetFields()["since"].GetStringValue()
-	sinceTime, err := time.Parse(time.RFC3339, since)
+
+	// from format like `2006-01-02T15:04:05Z07:00` to time.Time
+	sinceTime, err := parseTime(props.GetFields()["since"].GetStringValue())
 	if err != nil {
-		return nil, errmsg.AddMessage(
-			fmt.Errorf("invalid time format"),
-			fmt.Sprintf("Cannot parse time: %s, Please provide format like %s(see RFC3339)", since, time.RFC3339),
-		)
+		return nil, err
 	}
 	opts := &github.IssueListByRepoOptions{
 		State: props.GetFields()["state"].GetStringValue(),
 		Sort: props.GetFields()["sort"].GetStringValue(),
 		Direction: props.GetFields()["direction"].GetStringValue(),
-		Since: sinceTime,
-		Mentioned: props.GetFields()["mentioned"].GetStringValue(),
+		Since: *sinceTime,
 	}
 	if opts.Mentioned == "none"{
 		opts.Mentioned = ""
@@ -112,6 +115,11 @@ func (githubClient *Client) getAllIssuesTask(props *structpb.Struct) (*structpb.
 	issueList := make([]Issue, len(issues))
 	for idx, issue := range issues {
 		issueList[idx] = githubClient.extractIssue(issue)
+	}
+
+	// filter out pull requests if no_pull_request is true
+	if props.GetFields()["no_pull_request"].GetBoolValue() {
+		issueList = filterOutPullRequests(issueList)
 	}
 	var resp GetAllIssuesResp
 	resp.Issues = issueList

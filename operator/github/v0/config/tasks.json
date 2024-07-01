@@ -1228,20 +1228,18 @@
           "instillUIOrder": 13,
           "type": "string"
         },
-        "mentioned": {
-          "default": "none",
-          "title": "Mentioned",
-          "description": "Filter issues mentioned in the comment. Default: none",
-          "instillFormat": "string",
+        "no_pull_request": {
+          "title": "No Pull Request",
+          "description": "Whether to not include pull requests in the issues. Default: false",
+          "instillFormat": "boolean",
           "instillAcceptFormats": [
-            "string"
+            "boolean"
           ],
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "value"
           ],
           "instillUIOrder": 14,
-          "type": "string"
+          "type": "boolean"
         }
       },
       "required": [

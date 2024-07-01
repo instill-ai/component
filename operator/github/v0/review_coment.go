@@ -2,12 +2,9 @@ package github
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	"github.com/google/go-github/v62/github"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/x/errmsg"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -45,19 +42,14 @@ func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*s
 	}
 
 	// from format like `2006-01-02T15:04:05Z07:00` to time.Time
-	// TODO: Add a helper function to convert time string to time.Time. Need to handle generic time formats.
-	since:= props.GetFields()["since"].GetStringValue()
-	sinceTime, err := time.Parse(time.RFC3339, since)
+	sinceTime, err := parseTime(props.GetFields()["since"].GetStringValue())
 	if err != nil {
-		return nil, errmsg.AddMessage(
-			fmt.Errorf("invalid time format"),
-			fmt.Sprintf("Cannot parse time: %s, Please provide format like %s(see RFC3339)", since, time.RFC3339),
-		)
+		return nil, err
 	}
 	opts := &github.PullRequestListCommentsOptions{
 		Sort: props.GetFields()["sort"].GetStringValue(),
 		Direction: props.GetFields()["direction"].GetStringValue(),
-		Since: sinceTime,
+		Since: *sinceTime,
 	}
 	number := int(props.GetFields()["pr_number"].GetNumberValue())
 	comments, _, err := githubClient.client.PullRequests.ListComments(context.Background(), githubClient.owner, githubClient.repository, number, opts)
