@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "user": {
+      "description": "Fill in your AWS RDS username. If a password is provided, this field will serve as the master username. Otherwise, we will use the IAM role.",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 0,
+      "title": "Username",
+      "type": "string"
+    },
+    "password": {
+      "description": "Fill in your master password. Notice that this field is required if you want to use a master username.",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": true,
+      "instillUIOrder": 0,
+      "title": "Password",
+      "type": "string"
+    },
+    "name": {
+      "description": "Fill in your AWS RDS database name",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 0,
+      "title": "Database Name",
+      "type": "string"
+    },
+    "host": {
+      "description": "Fill in your AWS RDS database host",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 0,
+      "title": "Host",
+      "type": "string"
+    },
+    "port": {
+      "description": "Fill in your AWS RDS database port",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "number"
+      ],
+      "instillUIOrder": 0,
+      "title": "Port",
+      "type": "number"
+    },
+    "region": {
+      "description": "Fill in your database region (e.g. us-west-2)",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 0,
+      "title": "Region",
+      "type": "string"
+    },
+    "aws-access-key-id": {
+      "description": "Fill in your AWS RDS access key id. If a password is not provided, this field will be required for IAM role authentication. Otherwise, it will be optional.",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": true,
+      "instillUIOrder": 0,
+      "title": "AWS Access Key ID",
+      "type": "string"
+    },
+    "aws-secret-access-key": {
+      "description": "Fill in your AWS RDS secret access key. If a password is not provided, this field will be required for IAM role authentication. Otherwise, it will be optional.",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": true,
+      "instillUIOrder": 0,
+      "title": "AWS Secret Access Key",
+      "type": "string"
+    }
+  },
+  "required": [
+    "user",
+    "name",
+    "host",
+    "port",
+    "region"
+  ],
+  "instillEditOnNodeFields": [
+    "user",
+    "password",
+    "name",
+    "host",
+    "port",
+    "region",
+    "aws-access-key-id",
+    "aws-secret-access-key"
+  ],
+  "title": "AWS RDS Connection",
+  "type": "object"
+}
