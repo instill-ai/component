@@ -46,7 +46,7 @@
           "type": "string"
         },
         "title": {
-          "description": "title of the PR",
+          "description": "Title of the PR",
           "instillFormat": "string",
           "instillUIOrder": 4,
           "title": "PR Title",
@@ -60,7 +60,7 @@
           "type": "string"
         },
         "body": {
-          "description": "body of the PR",
+          "description": "Body of the PR",
           "instillFormat": "string",
           "instillUIOrder": 5,
           "title": "PR body",
@@ -176,7 +176,7 @@
       "description": "A commit object.",
       "properties": {
         "sha": {
-          "description": "sha of the commit",
+          "description": "SHA of the commit",
           "instillUIOrder": 1,
           "title": "Commit SHA",
           "instillFormat": "string",
@@ -334,7 +334,7 @@
     },
     "repository_info": {
       "owner": {
-        "description": "owner of the repository",
+        "description": "Owner of the repository",
         "instillAcceptFormats": [
           "string"
         ],
@@ -349,7 +349,7 @@
         "type": "string"
       },
       "repository": {
-        "description": "repository name",
+        "description": "Repository name",
         "instillAcceptFormats": [
           "string"
         ],
@@ -410,7 +410,7 @@
           "type": "string"
         },
         "body": {
-          "description": "body of the comment",
+          "description": "Body of the comment",
           "instillFormat": "string",
           "instillUIOrder": 4,
           "title": "Comment body",
@@ -467,8 +467,8 @@
           "type": "integer"
         },
         "side": {
-          "instillShortDescription": "side of the end line, can be one of: LEFT, RIGHT, side. Default: side",
-          "description": "side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default: side",
+          "instillShortDescription": "side of the end line, can be one of: LEFT, RIGHT, side. Default is side",
+          "description": "side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side",
           "default": "side",
           "enum": [
             "LEFT",
@@ -488,8 +488,8 @@
           "type": "string"
         },
         "start_side": {
-          "instillShortDescription": "side of the start line, can be one of: LEFT, RIGHT, side. Default: side",
-          "description": "side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default: side",
+          "instillShortDescription": "side of the start line, can be one of: LEFT, RIGHT, side. Default is side",
+          "description": "side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side",
           "default": "side",
           "enum": [
             "LEFT",
@@ -509,7 +509,7 @@
           "type": "string"
         },
         "subject_type": {
-          "description": "Subject type of the comment, can be one of: LINE, FILE",
+          "description": "Subject type of the comment, can be one of: line, file. Default is line",
           "instillUIOrder": 10,
           "title": "Comment type",
           "instillFormat": "string",
@@ -628,7 +628,7 @@
           "type": "string"
         },
         "title": {
-          "description": "title of the issue",
+          "description": "Title of the issue",
           "instillUIOrder": 4,
           "title": "Issue title",
           "instillFormat": "string",
@@ -642,7 +642,7 @@
           "type": "string"
         },
         "body": {
-          "description": "body of the issue",
+          "description": "Body of the issue",
           "instillUIOrder": 5,
           "title": "Issue body",
           "instillFormat": "string",
@@ -736,7 +736,7 @@
         "state": {
           "default": "open",
           "title": "State",
-          "description": "State of the PRs, including open, closed, all. Default: open",
+          "description": "State of the PRs, including open, closed, all. Default is open",
           "enum": [
             "open",
             "closed",
@@ -756,7 +756,7 @@
         "sort": {
           "default": "created",
           "title": "Sort",
-          "description": "Sort the PRs by created, updated, popularity, or long-running. Default: created",
+          "description": "Sort the PRs by created, updated, popularity, or long-running. Default is created",
           "enum": [
             "created",
             "updated",
@@ -777,7 +777,7 @@
         "direction": {
           "default": "desc",
           "title": "Direction",
-          "description": "Direction of the sort, including asc or desc. Default: asc",
+          "description": "Direction of the sort, including asc or desc. Default is asc",
           "enum": [
             "asc",
             "desc"
@@ -796,10 +796,7 @@
       },
       "required": [
         "owner",
-        "repository",
-        "state",
-        "sort",
-        "direction"
+        "repository"
       ],
       "title": "Input",
       "type": "object"
@@ -828,7 +825,7 @@
     }
   },
   "TASK_GET_PULL_REQUEST": {
-    "instillShortDescription": "Get a pull request from a repository, given the PR number. Default is the latest PR",
+    "instillShortDescription": "Get a pull request from a repository, given the PR number. This will default to the latest PR if no PR number is provided",
     "input": {
       "description": "Please input the repository name and owner, and the PR number",
       "instillUIOrder": 0,
@@ -911,7 +908,7 @@
         "sort": {
           "default": "created",
           "title": "Sort",
-          "description": "Sort the comments by created, updated. Default: created",
+          "description": "Sort the comments by created, updated. Default is created",
           "enum": [
             "created",
             "updated"
@@ -930,7 +927,7 @@
         "direction": {
           "default": "desc",
           "title": "Direction",
-          "description": "Direction of the sort, including asc or desc. Default: asc",
+          "description": "Direction of the sort, including asc or desc. Default is asc",
           "enum": [
             "asc",
             "desc"
@@ -949,7 +946,7 @@
         "since": {
           "default": "2021-01-01T00:00:00Z",
           "title": "Since",
-          "description": "Only comments updated at or after this time are returned. Default: 2021-01-01T00:00:00Z",
+          "description": "Only comments updated at or after this time are returned. Default is 2021-01-01T00:00:00Z",
           "instillFormat": "string",
           "instillAcceptFormats": [
             "string"
@@ -1156,7 +1153,7 @@
         "state": {
           "default": "open",
           "title": "State",
-          "description": "State of the issues, including open, closed, all. Default: open",
+          "description": "State of the issues, including open, closed, all. Default is open",
           "enum": [
             "open",
             "closed",
@@ -1176,7 +1173,7 @@
         "sort": {
           "default": "created",
           "title": "Sort",
-          "description": "Sort the issues by created, updated, popularity, or long-running. Default: created",
+          "description": "Sort the issues by created, updated, popularity, or long-running. Default is created",
           "enum": [
             "created",
             "updated",
@@ -1197,7 +1194,7 @@
         "direction": {
           "default": "desc",
           "title": "Direction",
-          "description": "Direction of the sort, including asc or desc. Default: asc",
+          "description": "Direction of the sort, including asc or desc. Default is asc",
           "enum": [
             "asc",
             "desc"
@@ -1216,7 +1213,7 @@
         "since": {
           "default": "2021-01-01T00:00:00Z",
           "title": "Since",
-          "description": "Only issues updated at or after this time are returned. Default: 2021-01-01T00:00:00Z",
+          "description": "Only issues updated at or after this time are returned. Default is 2021-01-01T00:00:00Z",
           "instillFormat": "string",
           "instillAcceptFormats": [
             "string"
@@ -1230,7 +1227,7 @@
         },
         "no_pull_request": {
           "title": "No Pull Request",
-          "description": "Whether to not include pull requests in the issues. Default: false",
+          "description": "Whether to not include pull requests in the issues. Default is false",
           "instillFormat": "boolean",
           "instillAcceptFormats": [
             "boolean"
@@ -1288,7 +1285,7 @@
         "issue_number": {
           "default": 0,
           "title": "Issue Number",
-          "description": "Number of the issue.",
+          "description": "Number of the issue",
           "instillFormat": "integer",
           "instillAcceptFormats": [
             "integer"
@@ -1432,7 +1429,8 @@
         },
         "active": {
           "title": "Active",
-          "description": "Whether the webhook is active",
+          "default": false,
+          "description": "Whether the webhook is active. Default is false",
           "instillFormat": "boolean",
           "instillAcceptFormats": [
             "boolean"
@@ -1446,7 +1444,7 @@
         "content_type": {
           "default": "json",
           "title": "Content Type",
-          "description": "Content type of the webhook",
+          "description": "Content type of the webhook, can be one of: json, form. Default is json",
           "enum": [
             "json",
             "form"
