@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.21.0-beta](https://github.com/instill-ai/component/compare/v0.20.2-beta...v0.21.0-beta) (2024-07-02)
+
+
+### Features
+
+* add mail component ([#178](https://github.com/instill-ai/component/issues/178)) ([04b19d0](https://github.com/instill-ai/component/commit/04b19d0537e8870b1207de6910eb362c517a2eed))
+* add read task for gcs ([#155](https://github.com/instill-ai/component/issues/155)) ([77fe2fc](https://github.com/instill-ai/component/commit/77fe2fc60f22bc5121d5835947954af3ba4f7400))
+* add read task in bigquery component ([#156](https://github.com/instill-ai/component/issues/156)) ([4d2e7ec](https://github.com/instill-ai/component/commit/4d2e7ecc10904a93ffa32dd4600856dccbba68b7))
+* **anthropic:** add Anthropic component ([#176](https://github.com/instill-ai/component/issues/176)) ([030881d](https://github.com/instill-ai/component/commit/030881dac345759cf00c1f33880b9c1398b8f3a9))
+* **anthropic:** add UsageHandler functions in anthropic ([#186](https://github.com/instill-ai/component/issues/186)) ([ebaa61f](https://github.com/instill-ai/component/commit/ebaa61f66e1996540fa6b0c4f425408bec70b290))
+* **compogen:** add extra section with --extraContents flag' ([#171](https://github.com/instill-ai/component/issues/171)) ([391bb98](https://github.com/instill-ai/component/commit/391bb9850aa6dca207c2c5157beb0f5d6fa011cb))
+* **instill:** remove extra-params field ([#188](https://github.com/instill-ai/component/issues/188)) ([b17ff73](https://github.com/instill-ai/component/commit/b17ff73fe350d3785031ec154c37e2f83a352978))
+* **redis:** simplify the TLS configuration ([#194](https://github.com/instill-ai/component/issues/194)) ([0a8baf7](https://github.com/instill-ai/component/commit/0a8baf73440e0fef5d2601701f0bcfccd8e5e363))
+
+
+### Bug Fixes
+
+* **all:** fix typos ([#174](https://github.com/instill-ai/component/issues/174)) ([cb3c2fb](https://github.com/instill-ai/component/commit/cb3c2fbbb7362885c3f763fc5f690e0526b19bc5))
+* **compogen:** wrong bracket direction in substitution ([#184](https://github.com/instill-ai/component/issues/184)) ([dfe8306](https://github.com/instill-ai/component/commit/dfe83060f2b5024c72e28340246498d1a553497a))
+* expose input and output for anthropic for instill credit ([#190](https://github.com/instill-ai/component/issues/190)) ([a36e876](https://github.com/instill-ai/component/commit/a36e876869b3c2812736b66f56fa4ebe0a9f4985))
+* update doc ([#185](https://github.com/instill-ai/component/issues/185)) ([6e6639a](https://github.com/instill-ai/component/commit/6e6639aa59ab0bc8c78c24a596e1393be9cd7db5))
+
 ## [0.20.2-beta](https://github.com/instill-ai/component/compare/v0.20.1-beta...v0.20.2-beta) (2024-06-21)
 
 
