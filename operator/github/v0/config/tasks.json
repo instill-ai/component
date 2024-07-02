@@ -368,7 +368,7 @@
       "description": "A review comment object.",
       "properties": {
         "id": {
-          "description": "id of the comment",
+          "description": "ID of the comment",
           "instillUIOrder": 1,
           "title": "Comment id",
           "instillFormat": "integer",
@@ -382,7 +382,7 @@
           "type": "integer"
         },
         "in_reply_to_id": {
-          "description": "id of the comment this comment is in reply to",
+          "description": "ID of the comment this comment is in reply to",
           "instillFormat": "integer",
           "instillUIOrder": 2,
           "title": "In Reply To",
@@ -396,7 +396,7 @@
           "type": "integer"
         },
         "commitId": {
-          "description": "commit id (sha) of the comment",
+          "description": "Commit id (sha) of the comment",
           "instillFormat": "string",
           "instillUIOrder": 3,
           "title": "Commit id",
@@ -424,7 +424,7 @@
           "type": "string"
         },
         "path": {
-          "description": "path of the file the comment is on",
+          "description": "Path of the file the comment is on",
           "instillFormat": "string",
           "instillUIOrder": 5,
           "title": "Comment path",
@@ -453,7 +453,7 @@
           "type": "integer"
         },
         "start_line": {
-          "description": "the first line in the pull request diff that your multi-line comment applies to",
+          "description": "The first line in the pull request diff that your multi-line comment applies to",
           "instillUIOrder": 7,
           "title": "Comment start line",
           "instillFormat": "integer",
@@ -467,8 +467,8 @@
           "type": "integer"
         },
         "side": {
-          "instillShortDescription": "side of the end line, can be one of: LEFT, RIGHT, side. Default is side",
-          "description": "side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side",
+          "instillShortDescription": "Side of the end line, can be one of: LEFT, RIGHT, side. Default is side",
+          "description": "Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side",
           "default": "side",
           "enum": [
             "LEFT",
@@ -488,8 +488,8 @@
           "type": "string"
         },
         "start_side": {
-          "instillShortDescription": "side of the start line, can be one of: LEFT, RIGHT, side. Default is side",
-          "description": "side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side",
+          "instillShortDescription": "Side of the start line, can be one of: LEFT, RIGHT, side. Default is side",
+          "description": "Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side",
           "default": "side",
           "enum": [
             "LEFT",
@@ -528,7 +528,7 @@
           "type": "string"
         },
         "created_at": {
-          "description": "time the comment was created",
+          "description": "Time the comment was created",
           "instillUIOrder": 11,
           "title": "Comment created at",
           "instillFormat": "string",
@@ -542,7 +542,7 @@
           "type": "string"
         },
         "updated_at": {
-          "description": "time the comment was updated",
+          "description": "Time the comment was updated",
           "instillUIOrder": 12,
           "title": "Comment updated at",
           "instillFormat": "string",
@@ -562,7 +562,7 @@
           "type": "object",
           "properties": {
             "id": {
-              "description": "id of the user",
+              "description": "ID of the user",
               "instillUIOrder": 1,
               "title": "User id",
               "instillFormat": "integer",
@@ -576,9 +576,9 @@
               "type": "integer"
             },
             "url": {
-              "description": "url of the user",
+              "description": "URL of the user",
               "instillUIOrder": 2,
-              "title": "User url",
+              "title": "User URL",
               "instillFormat": "string",
               "instillAcceptFormats": [
                 "string"
@@ -600,7 +600,7 @@
       "description": "An issue object.",
       "properties": {
         "number": {
-          "description": "number of the issue",
+          "description": "Number of the issue",
           "instillUIOrder": 2,
           "title": "Issue number",
           "instillFormat": "integer",
@@ -614,7 +614,7 @@
           "type": "integer"
         },
         "state": {
-          "description": "state of the issue",
+          "description": "State of the issue",
           "instillUIOrder": 3,
           "title": "Issue state",
           "instillFormat": "string",
@@ -656,7 +656,7 @@
           "type": "string"
         },
         "assignee": {
-          "description": "assignee of the issue",
+          "description": "Assignee of the issue",
           "instillUIOrder": 6,
           "title": "Assignee",
           "instillFormat": "string",
@@ -670,7 +670,7 @@
           "type": "string"
         },
         "assignees": {
-          "description": "assignees of the issue",
+          "description": "Assignees of the issue",
           "instillUIOrder": 7,
           "title": "Assignees",
           "type": "array",
@@ -687,7 +687,7 @@
           }
         },
         "labels": {
-          "description": "labels of the issue",
+          "description": "Labels of the issue",
           "instillUIOrder": 8,
           "title": "Labels",
           "type": "array",
@@ -818,7 +818,7 @@
         }
       },
       "required": [
-        "pull-requests"
+        "pull_requests"
       ],
       "title": "Output",
       "type": "object"
@@ -863,7 +863,7 @@
       "description": "The specific pr in GitHub repository",
       "instillUIOrder": 0,
       "properties": {
-        "pull-request": {
+        "pull_request": {
           "$ref": "#/$defs/pull_request",
           "required": [],
           "instillUIOrder": 1,
@@ -871,7 +871,7 @@
         }
       },
       "required": [
-        "pull-request"
+        "pull_request"
       ],
       "title": "Output",
       "type": "object"
@@ -893,7 +893,7 @@
         "pr_number": {
           "default": 0,
           "title": "PR Number",
-          "description": "Number of the PR. Default is the latest PR",
+          "description": "Number of the PR. Default `0` is the latest PR",
           "instillFormat": "integer",
           "instillAcceptFormats": [
             "integer"
@@ -1005,9 +1005,8 @@
       "properties": {
         "$ref": "#/$defs/repository_info",
         "pr_number": {
-          "default": 0,
           "title": "PR Number",
-          "description": "Number of the PR. Default is the latest PR",
+          "description": "Number of the PR",
           "instillFormat": "integer",
           "instillAcceptFormats": [
             "integer"
@@ -1038,20 +1037,20 @@
               "$ref": "#/$defs/review_comments/properties/path",
               "instillUIOrder": 2
             },
-            "line": {
-              "$ref": "#/$defs/review_comments/properties/line",
-              "instillUIOrder": 3
-            },
             "start_line": {
               "$ref": "#/$defs/review_comments/properties/start_line",
-              "instillUIOrder": 4
+              "instillUIOrder": 3
             },
-            "side": {
-              "$ref": "#/$defs/review_comments/properties/side",
-              "instillUIOrder": 5
+            "line": {
+              "$ref": "#/$defs/review_comments/properties/line",
+              "instillUIOrder": 4
             },
             "start_side": {
               "$ref": "#/$defs/review_comments/properties/start_side",
+              "instillUIOrder": 5
+            },
+            "side": {
+              "$ref": "#/$defs/review_comments/properties/side",
               "instillUIOrder": 6
             },
             "subject_type": {
@@ -1153,7 +1152,7 @@
         "state": {
           "default": "open",
           "title": "State",
-          "description": "State of the issues, including open, closed, all. Default is open",
+          "description": "State of the issues, can be one of: open, closed, all. Default is open",
           "enum": [
             "open",
             "closed",
@@ -1194,7 +1193,7 @@
         "direction": {
           "default": "desc",
           "title": "Direction",
-          "description": "Direction of the sort, including asc or desc. Default is asc",
+          "description": "Direction of the sort, can be one of: asc, desc. Default is asc",
           "enum": [
             "asc",
             "desc"
@@ -1410,7 +1409,6 @@
             "array"
           ],
           "instillUpstreamTypes": [
-            "value",
             "reference"
           ],
           "instillUIOrder": 4,
@@ -1493,9 +1491,9 @@
           "type": "object",
           "properties": {
             "id": {
-              "description": "id of the webhook",
+              "description": "ID of the webhook",
               "instillUIOrder": 1,
-              "title": "Webhook id",
+              "title": "Webhook ID",
               "instillFormat": "integer",
               "instillAcceptFormats": [
                 "integer"
@@ -1507,9 +1505,9 @@
               "type": "integer"
             },
             "url": {
-              "description": "url of the webhook",
+              "description": "URL of the webhook",
               "instillUIOrder": 2,
-              "title": "Webhook url",
+              "title": "Webhook URL",
               "instillFormat": "string",
               "instillAcceptFormats": [
                 "string"
@@ -1521,9 +1519,9 @@
               "type": "string"
             },
             "ping_url": {
-              "description": "url to ping the webhook",
+              "description": "URL to ping the webhook",
               "instillUIOrder": 3,
-              "title": "Ping url",
+              "title": "Ping URL",
               "instillFormat": "string",
               "instillAcceptFormats": [
                 "string"
@@ -1535,9 +1533,9 @@
               "type": "string"
             },
             "test_url": {
-              "description": "url to test the webhook",
+              "description": "URL to test the webhook",
               "instillUIOrder": 4,
-              "title": "Test url",
+              "title": "Test URL",
               "instillFormat": "string",
               "instillAcceptFormats": [
                 "string"
@@ -1555,9 +1553,9 @@
               "type": "object",
               "properties": {
                 "url": {
-                  "description": "url of the webhook",
+                  "description": "URL of the webhook",
                   "instillUIOrder": 1,
-                  "title": "Webhook url",
+                  "title": "Webhook URL",
                   "instillFormat": "string",
                   "instillAcceptFormats": [
                     "string"

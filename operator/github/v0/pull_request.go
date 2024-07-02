@@ -70,7 +70,7 @@ type GetAllPullRequestsInput struct {
 	Direction		string 			`json:"direction"`
 }
 type GetAllPullRequestsResp struct {
-	PullRequests   	[]PullRequest 	`json:"pull-requests"`
+	PullRequests   	[]PullRequest 	`json:"pull_requests"`
 }
 
 func (githubClient *Client) getAllPullRequestsTask(props *structpb.Struct) (*structpb.Struct, error) {
@@ -112,7 +112,7 @@ type GetPullRequestInput struct {
 	PrNumber float64 `json:"pr_number"`
 }
 type GetPullRequestResp struct {
-	PullRequest		PullRequest `json:"pull-request"`
+	PullRequest		PullRequest `json:"pull_request"`
 }
 
 func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structpb.Struct, error) {
