@@ -23,8 +23,9 @@ var toComponentType = map[string]ComponentType{
 }
 
 var modifiesArticle = map[ComponentType]bool{
-	cstOperator: true,
-	cstAI:       true,
+	cstOperator:    true,
+	cstAI:          true,
+	cstApplication: true,
 }
 
 // IndefiniteArticle returns the correct indefinite article (in English) for a

@@ -43,7 +43,7 @@
       "properties": {
         "filtering": {
           "instillShortDescription": "The filter to be applied to the data",
-          "description": "The filter to be applied to the data, please start with where clause",
+          "description": "The filter to be applied to the data with SQL syntax, which starts with WHERE clause",
           "instillUIOrder": 0,
           "required": [],
           "title": "Filtering",

@@ -208,7 +208,7 @@
       ],
       "properties": {
         "search": {
-          "description": "the search criteria for the emails",
+          "description": "The search criteria for the emails",
           "instillUIOrder": 0,
           "properties": {
             "mailbox": {
