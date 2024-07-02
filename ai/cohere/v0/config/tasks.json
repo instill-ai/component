@@ -104,7 +104,7 @@
       "type": "object"
     },
     "extra-params": {
-      "description": "Extra Parameters",
+      "description": "Extra parameters",
       "instillAcceptFormats": [
         "semi-structured/object"
       ],
@@ -190,7 +190,7 @@
         },
         "max-new-tokens": {
           "default": 50,
-          "description": "The maximum number of tokens for model to generate",
+          "description": "The maximum number of tokens for model to generate (default=50)",
           "instillAcceptFormats": [
             "integer"
           ],
@@ -210,7 +210,7 @@
             "command-light"
           ],
           "example": "command-r-plus",
-          "description": "The Cohere command model to be used.",
+          "description": "The Cohere command model to be used",
           "instillAcceptFormats": [
             "string"
           ],
@@ -285,7 +285,7 @@
         },
         "temperature": {
           "default": 0.7,
-          "description": "The temperature for sampling",
+          "description": "The temperature for sampling (default=0.7)",
           "instillAcceptFormats": [
             "number"
           ],
@@ -299,7 +299,7 @@
         },
         "top-k": {
           "default": 10,
-          "description": "Top k for sampling",
+          "description": "Top k for sampling (default=10)",
           "instillAcceptFormats": [
             "integer"
           ],
@@ -367,7 +367,7 @@
     }
   },
   "TASK_TEXT_EMBEDDINGS": {
-    "instillShortDescription": "Turn text into numbers, unlocking use cases like search.",
+    "instillShortDescription": "Turn text into a vector of numbers that capture its meaning, unlocking use cases like semantic search.",
     "description": "An embedding is a list of floating point numbers that captures semantic information about the text that it represents.",
     "input": {
       "instillUIOrder": 0,
@@ -380,7 +380,7 @@
             "embed-multilingual-light-v3.0"
           ],
           "example": "embed-multilingual-v3.0",
-          "description": "The Cohere embed model to be used.",
+          "description": "The Cohere embed model to be used",
           "instillAcceptFormats": [
             "string"
           ],
@@ -416,7 +416,7 @@
             "clustering"
           ],
           "example": "embed-multilingual-v3.0",
-          "description": "Specifies the type of input passed to the model.",
+          "description": "Specifies the type of input passed to the model",
           "instillAcceptFormats": [
             "string"
           ],
@@ -478,7 +478,7 @@
             "rerank-multilingual-v3.0"
           ],
           "example": "rerank-multilingual-v3.0",
-          "description": "The Cohere rerank model to be used.",
+          "description": "The Cohere rerank model to be used",
           "instillAcceptFormats": [
             "string"
           ],
@@ -507,7 +507,7 @@
           "type": "string"
         },
         "documents": {
-          "description": "The documents to be used for reranking.",
+          "description": "The documents to be used for reranking",
           "instillAcceptFormats": [
             "array:string"
           ],
@@ -523,7 +523,7 @@
         },
         "top-n": {
           "default": 3,
-          "description": "The number of most relevant documents or indices to return, defaults to the length of the documents",
+          "description": "The number of most relevant documents or indices to return. Defaults to the length of the documents (default=3)",
           "instillAcceptFormats": [
             "integer"
           ],
@@ -537,7 +537,7 @@
         },
         "max-chunks-per-doc": {
           "default": 10,
-          "description": "The maximum number of chunks to produce internally from a document",
+          "description": "The maximum number of chunks to produce internally from a document (default=10)",
           "instillAcceptFormats": [
             "integer"
           ],

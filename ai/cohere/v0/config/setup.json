@@ -3,7 +3,7 @@
   "additionalProperties": true,
   "properties": {
     "api-key": {
-      "description": "Fill your Cohere API key. To find your keys, visit the Cohere dashboard page.",
+      "description": "Fill in your Cohere API key. To find your keys, visit the Cohere dashboard page.",
       "instillUpstreamTypes": [
         "reference"
       ],
