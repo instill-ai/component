@@ -63,7 +63,7 @@ Get the list of all pull requests in a repository
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Pull Requests (optional) | `pull_requests` | array[object] | An array of PRs |
+| Pull Requests | `pull_requests` | array[object] | An array of PRs |
 
 
 
@@ -86,7 +86,7 @@ Get a pull request from a repository, given the PR number. This will default to 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Pull Request | `pull-request` | object | A pull request in GitHub |
+| Pull Request | `pull_request` | object | A pull request in GitHub |
 
 
 
@@ -126,7 +126,7 @@ Get the review comments in a pull request
 | Task ID (required) | `task` | string | `TASK_GET_REVIEW_COMMENTS` |
 | Owner (required) | `owner` | string | Owner of the repository |
 | Repository (required) | `repository` | string | Repository name |
-| PR Number | `pr_number` | integer | Number of the PR. Default is the latest PR |
+| PR Number | `pr_number` | integer | Number of the PR. Default `0` is the latest PR |
 | Sort | `sort` | string | Sort the comments by created, updated. Default is created |
 | Direction | `direction` | string | Direction of the sort, including asc or desc. Default is asc |
 | Since | `since` | string | Only comments updated at or after this time are returned. Default is 2021-01-01T00:00:00Z |
@@ -152,7 +152,7 @@ Create a review comment in pull request.
 | Task ID (required) | `task` | string | `TASK_CREATE_REVIEW_COMMENT` |
 | Owner (required) | `owner` | string | Owner of the repository |
 | Repository (required) | `repository` | string | Repository name |
-| PR Number (required) | `pr_number` | integer | Number of the PR. Default is the latest PR |
+| PR Number (required) | `pr_number` | integer | Number of the PR |
 | Comment (required) | `comment` | object | The comment to be added |
 
 
