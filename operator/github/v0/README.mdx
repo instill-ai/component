@@ -53,11 +53,11 @@ Get the list of all pull requests in a repository
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_ALL_PULL_REQUESTS` |
-| Owner (required) | `owner` | string | owner of the repository |
-| Repository (required) | `repository` | string | repository name |
-| State (required) | `state` | string | State of the PRs, including open, closed, all. Default: open |
-| Sort (required) | `sort` | string | Sort the PRs by created, updated, popularity, or long-running. Default: created |
-| Direction (required) | `direction` | string | Direction of the sort, including asc or desc. Default: asc |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| State | `state` | string | State of the PRs, including open, closed, all. Default is open |
+| Sort | `sort` | string | Sort the PRs by created, updated, popularity, or long-running. Default is created |
+| Direction | `direction` | string | Direction of the sort, including asc or desc. Default is asc |
 
 
 
@@ -72,14 +72,14 @@ Get the list of all pull requests in a repository
 
 ### Get Pull Request
 
-Get a pull request from a repository, given the PR number. Default is the latest PR
+Get a pull request from a repository, given the PR number. This will default to the latest PR if no PR number is provided
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_PULL_REQUEST` |
-| Owner (required) | `owner` | string | owner of the repository |
-| Repository (required) | `repository` | string | repository name |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
 | PR Number | `pr_number` | integer | Number of the PR. `0` for the latest PR |
 
 
@@ -101,9 +101,9 @@ Get a commit from a repository, given the commit SHA
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_COMMIT` |
-| Owner (required) | `owner` | string | owner of the repository |
-| Repository (required) | `repository` | string | repository name |
-| Commit SHA (required) | `sha` | string | sha of the commit |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| Commit SHA (required) | `sha` | string | SHA of the commit |
 
 
 
@@ -124,12 +124,12 @@ Get the review comments in a pull request
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_REVIEW_COMMENTS` |
-| Owner (required) | `owner` | string | owner of the repository |
-| Repository (required) | `repository` | string | repository name |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
 | PR Number | `pr_number` | integer | Number of the PR. Default is the latest PR |
-| Sort | `sort` | string | Sort the comments by created, updated. Default: created |
-| Direction | `direction` | string | Direction of the sort, including asc or desc. Default: asc |
-| Since | `since` | string | Only comments updated at or after this time are returned. Default: 2021-01-01T00:00:00Z |
+| Sort | `sort` | string | Sort the comments by created, updated. Default is created |
+| Direction | `direction` | string | Direction of the sort, including asc or desc. Default is asc |
+| Since | `since` | string | Only comments updated at or after this time are returned. Default is 2021-01-01T00:00:00Z |
 
 
 
@@ -150,8 +150,8 @@ Create a review comment in pull request.
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_REVIEW_COMMENT` |
-| Owner (required) | `owner` | string | owner of the repository |
-| Repository (required) | `repository` | string | repository name |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
 | PR Number (required) | `pr_number` | integer | Number of the PR. Default is the latest PR |
 | Comment (required) | `comment` | object | The comment to be added |
 
@@ -174,13 +174,13 @@ Get the list of all issues in a repository
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_ALL_ISSUES` |
-| Owner (required) | `owner` | string | owner of the repository |
-| Repository (required) | `repository` | string | repository name |
-| State | `state` | string | State of the issues, including open, closed, all. Default: open |
-| Sort | `sort` | string | Sort the issues by created, updated, popularity, or long-running. Default: created |
-| Direction | `direction` | string | Direction of the sort, including asc or desc. Default: asc |
-| Since | `since` | string | Only issues updated at or after this time are returned. Default: 2021-01-01T00:00:00Z |
-| No Pull Request | `no_pull_request` | boolean | Whether to not include pull requests in the issues. Default: false |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| State | `state` | string | State of the issues, including open, closed, all. Default is open |
+| Sort | `sort` | string | Sort the issues by created, updated, popularity, or long-running. Default is created |
+| Direction | `direction` | string | Direction of the sort, including asc or desc. Default is asc |
+| Since | `since` | string | Only issues updated at or after this time are returned. Default is 2021-01-01T00:00:00Z |
+| No Pull Request | `no_pull_request` | boolean | Whether to not include pull requests in the issues. Default is false |
 
 
 
@@ -201,9 +201,9 @@ Get an issue.
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_ISSUE` |
-| Owner (required) | `owner` | string | owner of the repository |
-| Repository (required) | `repository` | string | repository name |
-| Issue Number (required) | `issue_number` | integer | Number of the issue. |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| Issue Number (required) | `issue_number` | integer | Number of the issue |
 
 
 
@@ -222,10 +222,10 @@ Get an issue.
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_ISSUE` |
-| Owner (required) | `owner` | string | owner of the repository |
-| Repository (required) | `repository` | string | repository name |
-| Issue title (required) | `title` | string | title of the issue |
-| Issue body (required) | `body` | string | body of the issue |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| Issue title (required) | `title` | string | Title of the issue |
+| Issue body (required) | `body` | string | Body of the issue |
 
 
 
@@ -244,12 +244,12 @@ Get an issue.
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_WEBHOOK` |
-| Owner (required) | `owner` | string | owner of the repository |
-| Repository (required) | `repository` | string | repository name |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
 | Webhook URL (required) | `hook_url` | string | URL to send the payload to |
 | Events (required) | `events` | array[string] | Events to trigger the webhook. Please see https://docs.github.com/en/webhooks/webhook-events-and-payloads for more information |
-| Active | `active` | boolean | Whether the webhook is active |
-| Content Type | `content_type` | string | Content type of the webhook |
+| Active | `active` | boolean | Whether the webhook is active. Default is false |
+| Content Type | `content_type` | string | Content type of the webhook, can be one of: json, form. Default is json |
 | Hook Secret | `hook_secret` | string | If provided, the secret will be used as the key to generate the HMAC hex digest value for delivery signature headers. (see https://docs.github.com/en/webhooks/webhook-events-and-payloads#delivery-headers) |
 
 
