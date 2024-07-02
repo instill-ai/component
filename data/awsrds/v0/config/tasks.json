@@ -1,11 +1,11 @@
 {
   "TASK_UPSERT": {
-    "instillShortDescription": "Perform an upsert operation to update existing records or insert new ones based on specified criteria.",
+    "instillShortDescription": "Perform an upsert operation to update existing records or insert new ones based on specified criteria",
     "input": {
       "instillUIOrder": 0,
       "properties": {
         "data": {
-          "description": "The data to be upserted, JSON object",
+          "description": "The data to be upserted",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object","array"
           ],
@@ -65,12 +65,12 @@
     }
   },
   "TASK_SELECT":{
-    "instillShortDescription": "Perform a select operation to retrieve data from the database based on specified criteria.",
+    "instillShortDescription": "Perform a select operation to retrieve data from the database based on specified criteria",
     "input": {
       "instillUIOrder": 0,
       "properties": {
         "columns": {
-          "description": "The columns to be selected, array of string",
+          "description": "The columns to be selected",
           "instillAcceptFormats": [
             "array:string"
           ],
@@ -182,12 +182,12 @@
     }
   },
   "TASK_DELETE": {
-    "instillShortDescription": "Perform a delete operation to update existing records or insert new ones based on specified criteria.",
+    "instillShortDescription": "Perform a delete operation to update existing records based on specified criteria",
     "input": {
       "instillUIOrder": 0,
       "properties": {
         "criteria": {
-          "description": "The data criteria to be deleted, JSON object",
+          "description": "The data criteria to be deleted",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
@@ -243,7 +243,7 @@
     }
   },
   "TASK_QUERY":{
-    "instillShortDescription": "Execute a query on the database based on specified criteria.",
+    "instillShortDescription": "Execute a query on the database based on specified criteria",
     "input": {
       "instillUIOrder": 0,
       "properties": {

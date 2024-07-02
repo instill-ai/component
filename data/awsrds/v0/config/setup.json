@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "user": {
-      "description": "Fill in your AWS RDS username. If a password is provided, this field will serve as the master username. Otherwise, we will use the IAM role.",
+      "description": "Fill in your AWS RDS username. If a password is provided, this field will serve as the master username. Otherwise, the IAM role will be used",
       "instillUpstreamTypes": [
         "value","reference"
       ],
@@ -15,7 +15,7 @@
       "type": "string"
     },
     "password": {
-      "description": "Fill in your master password. Notice that this field is required if you want to use a master username.",
+      "description": "Fill in your master password. Notice that this field is required if you want to use a master username",
       "instillUpstreamTypes": [
         "reference"
       ],
@@ -76,7 +76,7 @@
       "type": "string"
     },
     "aws-access-key-id": {
-      "description": "Fill in your AWS RDS access key id. If a password is not provided, this field will be required for IAM role authentication. Otherwise, it will be optional.",
+      "description": "Fill in your AWS RDS access key id. If a password is not provided, this field will be required for IAM role authentication. Otherwise, it will be optional",
       "instillUpstreamTypes": [
         "reference"
       ],
@@ -89,7 +89,7 @@
       "type": "string"
     },
     "aws-secret-access-key": {
-      "description": "Fill in your AWS RDS secret access key. If a password is not provided, this field will be required for IAM role authentication. Otherwise, it will be optional.",
+      "description": "Fill in your AWS RDS secret access key. If a password is not provided, this field will be required for IAM role authentication. Otherwise, it will be optional",
       "instillUpstreamTypes": [
         "reference"
       ],
