@@ -4,6 +4,7 @@ package github
 import (
 	"context"
 	_ "embed"
+	"encoding/json"
 	"fmt"
 	"sync"
 
@@ -97,10 +98,74 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
+func (e *execution) fillInDefaultValues(input *structpb.Struct) (*structpb.Struct, error) {
+	task := e.Task
+	taskSpec, ok := e.Component.GetTaskInputSchemas()[task]
+	if !ok {
+		return nil, errmsg.AddMessage(
+			fmt.Errorf("task %s not found", task),
+			fmt.Sprintf("Task %s not found", task),
+		)
+	}
+	// Unmarshal the taskSpec into a map
+	var taskSpecMap map[string]interface{}
+	err := json.Unmarshal([]byte(taskSpec), &taskSpecMap)
+	if err != nil {
+		return nil, errmsg.AddMessage(
+			err,
+			"Failed to unmarshal input",
+		)
+	}
+	inputMap := taskSpecMap["properties"].(map[string]interface{})
+	// iterate over the inputMap and fill in the default values
+	for key, value := range inputMap {
+		valueMap, ok := value.(map[string]interface{})
+		if !ok {
+			// fmt.Println("value is not a map", key)
+			continue
+		}
+		if _, ok := valueMap["default"]; !ok {
+			// fmt.Println("default value not found", key)
+			continue
+		}
+		if _, ok := input.GetFields()[key]; ok {
+			// fmt.Println("key already exists", key)
+			continue
+		}
+		defaultValue := valueMap["default"]
+		typeValue := valueMap["type"]
+		switch typeValue {
+		case "string":
+			input.GetFields()[key] = &structpb.Value{
+				Kind: &structpb.Value_StringValue{
+					StringValue: fmt.Sprintf("%v", defaultValue),
+				},
+			}
+		case "integer", "number":
+			input.GetFields()[key] = &structpb.Value{
+				Kind: &structpb.Value_NumberValue{
+					NumberValue: defaultValue.(float64),
+				},
+			}
+		case "boolean":
+			input.GetFields()[key] = &structpb.Value{
+				Kind: &structpb.Value_BoolValue{
+					BoolValue: defaultValue.(bool),
+				},
+			}
+		}
+	}
+	return input, nil
+}
+
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	for i, input := range inputs {
+		input, err := e.fillInDefaultValues(input)
+		if err != nil {
+			return nil, err
+		}
 		output, err := e.execute(input)
 		if err != nil {
 			return nil, err
