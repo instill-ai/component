@@ -3,7 +3,6 @@ package github
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"testing"
 
 	qt "github.com/frankban/quicktest"
@@ -364,7 +363,7 @@ func TestComponent_CreateReviewCommentTask(t *testing.T) {
 				Comment: github.PullRequestComment{
 					Body: github.String("This is a fake comment"),
 					Line: github.Int(1),
-					StartLine: github.Int(1),
+					StartLine: github.Int(2),
 					Side: github.String("RIGHT"),
 					StartSide: github.String("RIGHT"),
 					SubjectType: github.String("line"),
@@ -696,7 +695,6 @@ func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType],
 			c.Assert(err, qt.IsNil)
 
 			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
-			fmt.Println(got)
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
