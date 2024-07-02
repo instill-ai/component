@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": true,
+  "properties": {
+    "project-id": {
+      "description": "The project ID of the GCP project with the Vertex AI enabled. To find your project ID, visit the GCP console page.",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": false,
+      "instillCredential": false,
+      "instillUIOrder": 0,
+      "title": "Project ID",
+      "type": "string"
+    },
+    "google-credential": {
+      "description": "The Google Cloud Platform credential JSON. To generate your credential, visit the GCP console page.",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "semi-structured/json"
+      ],
+      "instillSecret": false,
+      "instillCredential": false,
+      "instillUIOrder": 1,
+      "title": "Google Credential JSON",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project-id"
+  ],
+  "instillEditOnNodeFields": [
+    "project-id",
+    "google-credential"
+  ],
+  "title": "Vertex AI Connection",
+  "type": "object"
+}

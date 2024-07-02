@@ -28,7 +28,7 @@ func initModelPublicServiceClient(serverURL string) (modelPB.ModelPublicServiceC
 	}
 
 	serverURL = stripProtocolFromURL(serverURL)
-	clientConn, err := grpc.Dial(serverURL, clientDialOpts, grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(maxPayloadSize), grpc.MaxCallSendMsgSize(maxPayloadSize)))
+	clientConn, err := grpc.NewClient(serverURL, clientDialOpts, grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(maxPayloadSize), grpc.MaxCallSendMsgSize(maxPayloadSize)))
 	if err != nil {
 		return nil, nil
 	}
@@ -46,7 +46,8 @@ func initMgmtPublicServiceClient(serverURL string) (mgmtPB.MgmtPublicServiceClie
 	}
 
 	serverURL = stripProtocolFromURL(serverURL)
-	clientConn, err := grpc.Dial(serverURL, clientDialOpts)
+
+	clientConn, err := grpc.NewClient(serverURL, clientDialOpts)
 	if err != nil {
 		return nil, nil
 	}
