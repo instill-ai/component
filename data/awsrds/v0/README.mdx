@@ -56,7 +56,11 @@ Perform an upsert operation to update existing records or insert new ones based 
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UPSERT` |
 | Table Name (required) | `table-name` | string | The table name in the database to upsert data into |
+<<<<<<< HEAD
 | Data (required) | `data` | any | The data to be upserted, JSON object |
+=======
+| Data (required) | `data` | object/array[object] | The data to be upserted |
+>>>>>>> f2b06ea (docs: update README.mdx)
 
 
 
@@ -103,7 +107,11 @@ Perform a delete operation to update existing records or insert new ones based o
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Table Name (required) | `table-name` | string | The table name in the database to upsert data into |
+<<<<<<< HEAD
 | Criteria (required) | `criteria` | any | The data criteria to be deleted |
+=======
+| Criteria (required) | `criteria` | object | The data criteria to be deleted |
+>>>>>>> f2b06ea (docs: update README.mdx)
 
 
 
