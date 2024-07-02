@@ -181,6 +181,7 @@ func TestComponent_Generation(t *testing.T) {
 	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
+
 	mockHistory := []message{
 		{Role: "user", Content: []content{{Type: "text", Text: "Answer the following question in traditional chinses"}}},
 		{Role: "assistant", Content: []content{{Type: "text", Text: "沒問題"}}},

@@ -11,6 +11,7 @@ import (
 
 	"github.com/instill-ai/component/ai/anthropic/v0"
 	"github.com/instill-ai/component/ai/archetypeai/v0"
+	"github.com/instill-ai/component/ai/cohere/v0"
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
@@ -98,6 +99,7 @@ func Init(
 				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
 			compStore.Import(conn)
 		}
+		compStore.Import(cohere.Init(baseComp))
 		{
 			// Anthropic
 			conn := anthropic.Init(baseComp)
@@ -105,7 +107,6 @@ func Init(
 				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
 			compStore.Import(conn)
 		}
-
 		compStore.Import(archetypeai.Init(baseComp))
 		compStore.Import(numbers.Init(baseComp))
 		compStore.Import(bigquery.Init(baseComp))
