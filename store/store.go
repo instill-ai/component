@@ -16,6 +16,7 @@ import (
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
 	"github.com/instill-ai/component/application/email/v0"
+	"github.com/instill-ai/component/application/github/v0"
 	"github.com/instill-ai/component/application/googlesearch/v0"
 
 	"github.com/instill-ai/component/application/numbers/v0"
@@ -29,7 +30,6 @@ import (
 	"github.com/instill-ai/component/data/redis/v0"
 	"github.com/instill-ai/component/operator/base64/v0"
 	"github.com/instill-ai/component/operator/document/v0"
-	"github.com/instill-ai/component/operator/github/v0"
 	"github.com/instill-ai/component/operator/image/v0"
 	"github.com/instill-ai/component/operator/json/v0"
 	"github.com/instill-ai/component/operator/text/v0"
