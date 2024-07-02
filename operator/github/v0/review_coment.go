@@ -2,9 +2,11 @@ package github
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/go-github/v62/github"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/x/errmsg"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -54,6 +56,17 @@ func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*s
 	number := int(props.GetFields()["pr_number"].GetNumberValue())
 	comments, _, err := githubClient.client.PullRequests.ListComments(context.Background(), githubClient.owner, githubClient.repository, number, opts)
 	if err != nil {
+		errMessage := strings.Split(err.Error(), ": ")
+		if len(errMessage) < 2 {
+			return nil, err
+		}
+		errType := strings.TrimSpace(errMessage[1])
+		if strings.Contains(errType, "404 Not Found") {
+			return nil, errmsg.AddMessage(
+				err,
+				"Pull request not found. Ensure the pull request number is correct, the repository is public, and fill in the correct GitHub token.",
+			)
+		}
 		return nil, err
 	}
 
@@ -98,12 +111,29 @@ func (githubClient *Client) createReviewCommentTask(props *structpb.Struct) (*st
 	number := commentInput.PrNumber
 	commentReqs := &commentInput.Comment
 	commentReqs.Position = commentReqs.Line // Position is deprecated, use Line instead
-	// commentReqs.OriginalLine = commentReqs.Line
-	// commentReqs.OriginalPosition = commentReqs.Position
-	// commentReqs.OriginalStartLine = commentReqs.StartLine
 
+	if *commentReqs.Line == *commentReqs.StartLine {
+		commentReqs.StartLine = nil // If it's a one line comment, don't send start_line
+	}
 	comment, _, err := githubClient.client.PullRequests.CreateComment(context.Background(), githubClient.owner, githubClient.repository, number, commentReqs)
 	if err != nil {
+		errMessage := strings.Split(err.Error(), ": ")
+		if len(errMessage) < 2 {
+			return nil, err
+		}
+		errType := strings.TrimSpace(errMessage[1])
+		if strings.Contains(errType, "404 Not Found") {
+			return nil, errmsg.AddMessage(
+				err,
+				"Pull request not found. Ensure the pull request number is correct, the repository is public, and fill in the correct GitHub token.",
+			)
+		}
+		if strings.Contains(errType, "422 Validation Failed"){
+			return nil, errmsg.AddMessage(
+				err,
+				"Invalid comment. Ensure the comment is not empty and the line numbers and sides are correct." ,
+			)
+		}
 		return nil, err
 	}
 
