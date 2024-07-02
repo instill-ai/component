@@ -9,7 +9,7 @@
       "instillUIOrder": 0,
       "properties": {
         "pdf": {
-          "description": "PDF file",
+          "description": "Base64 encoded PDF to be converted to Markdown",
           "instillAcceptFormats": [
             "*/*"
           ],
