@@ -313,7 +313,7 @@ func TestNewClient(t *testing.T) {
 			c.Assert(db, qt.Not(qt.IsNil))
 
 			// Verify sqlx.Open was called with the correct DSN
-			mock.ExpectationsWereMet()
+			c.Assert(mock.ExpectationsWereMet(), qt.IsNil)
 		})
 	}
 }
@@ -359,7 +359,7 @@ func TestNewClientIAM(t *testing.T) {
 			c.Assert(db, qt.Not(qt.IsNil))
 
 			// Verify sqlx.Open was called with the correct DSN
-			mock.ExpectationsWereMet()
+			c.Assert(mock.ExpectationsWereMet(), qt.IsNil)
 		})
 	}
 }
