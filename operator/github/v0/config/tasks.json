@@ -1061,9 +1061,7 @@
           "required": [
             "body",
             "path",
-            "commit_id",
-            "line",
-            "start_line"
+            "commit_id"
           ]
         }
       },
