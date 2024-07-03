@@ -24,7 +24,7 @@ func TestComponent_Execute(t *testing.T) {
 	connector := Init(bc)
 
 	c.Run("ok - supported task", func(c *qt.C) {
-		task := textGenerationTask
+		task := TextGenerationTask
 
 		_, err := connector.CreateExecution(nil, nil, task)
 		c.Check(err, qt.IsNil)
@@ -48,10 +48,10 @@ func TestComponent_Generation(t *testing.T) {
 
 	commandTc := struct {
 		input    map[string]any
-		wantResp commandOutput
+		wantResp textGenerationOutput
 	}{
 		input:    map[string]any{"model-name": "command-r-plus"},
-		wantResp: commandOutput{Text: "Hi! My name is command-r-plus.", Ciatations: []ciatation{}},
+		wantResp: textGenerationOutput{Text: "Hi! My name is command-r-plus.", Ciatations: []ciatation{}},
 	}
 
 	c.Run("ok - task command", func(c *qt.C) {
@@ -60,10 +60,10 @@ func TestComponent_Generation(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: textGenerationTask},
+			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextGenerationTask},
 			client:             &MockCohereClient{},
 		}
-		e.execute = e.taskCommand
+		e.execute = e.taskTextGeneration
 		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(commandTc.input)
@@ -80,10 +80,10 @@ func TestComponent_Generation(t *testing.T) {
 
 	embedTc := struct {
 		input    map[string]any
-		wantResp embedOutput
+		wantResp embeddingOutput
 	}{
 		input:    map[string]any{"text": "abcde"},
-		wantResp: embedOutput{Embedding: []float64{0.1, 0.2, 0.3, 0.4, 0.5}},
+		wantResp: embeddingOutput{Embedding: []float64{0.1, 0.2, 0.3, 0.4, 0.5}},
 	}
 
 	c.Run("ok - task embed", func(c *qt.C) {
@@ -92,7 +92,7 @@ func TestComponent_Generation(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: textEmbeddingTask},
+			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
 			client:             &MockCohereClient{},
 		}
 		e.execute = e.taskEmbedding
@@ -122,7 +122,7 @@ func TestComponent_Generation(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: textRerankTask},
+			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextRerankTask},
 			client:             &MockCohereClient{},
 		}
 		e.execute = e.taskRerank
