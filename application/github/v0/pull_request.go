@@ -151,6 +151,14 @@ func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structp
 			)
 		}
 		pullRequest = prs[0]
+		// Some fields are not included in the list API, so we need to get the PR again.
+		pr, _, err := githubClient.client.PullRequests.Get(context.Background(), githubClient.owner, githubClient.repository, *pullRequest.Number)
+		if err != nil {
+			// err includes the rate limit, 404 not found, etc.
+			// if the connection is not authorized, it's easy to get rate limit error in large scale usage.
+			return nil, err
+		}
+		pullRequest = pr
 	}
 
 	var prResp GetPullRequestResp
