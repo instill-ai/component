@@ -87,7 +87,8 @@ type IComponent interface {
 
 // Component implements the common component methods.
 type Component struct {
-	Logger *zap.Logger
+	Logger          *zap.Logger
+	NewUsageHandler UsageHandlerCreator
 
 	taskInputSchemas  map[string]string
 	taskOutputSchemas map[string]string
@@ -584,7 +585,13 @@ func (c *Component) GetUID() uuid.UUID {
 	return uuid.FromStringOrNil(c.definition.Uid)
 }
 
+// GetLogger returns the component's logger. If it hasn't been initialized, a
+// no-op logger is returned.
 func (c *Component) GetLogger() *zap.Logger {
+	if c.Logger == nil {
+		return zap.NewNop()
+	}
+
 	return c.Logger
 }
 func (c *Component) GetDefinition(sysVars map[string]any, compConfig *ComponentConfig) (*pb.ComponentDefinition, error) {
@@ -798,9 +805,15 @@ func (c *Component) traverseSecretField(input *structpb.Value, prefix string, se
 	return secretFields
 }
 
-// UsageHandlerCreator returns a function to initialize a UsageHandler.
+// UsageHandlerCreator returns a function to initialize a UsageHandler. If the
+// component doesn't have such function initialized, a no-op usage handler
+// creator is returned.
 func (c *Component) UsageHandlerCreator() UsageHandlerCreator {
-	return NewNoopUsageHandler
+	if c.NewUsageHandler == nil {
+		return NewNoopUsageHandler
+	}
+
+	return c.NewUsageHandler
 }
 
 func (c *Component) Test(sysVars map[string]any, setup *structpb.Struct) error {
@@ -835,11 +848,6 @@ func (e *ComponentExecution) GetTaskOutputSchema() string {
 // global secrets. Components should override this method when they have the
 // ability to be executed with global secrets.
 func (e *ComponentExecution) UsesSecret() bool { return false }
-
-// UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (e *ComponentExecution) UsageHandlerCreator() UsageHandlerCreator {
-	return e.Component.UsageHandlerCreator()
-}
 
 // ReadFromSecrets reads a component secret from a secret map that comes from
 // environment variable configuration.

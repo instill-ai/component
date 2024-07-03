@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
@@ -47,7 +46,7 @@ func TestComponent_ExecuteImageFromText(t *testing.T) {
 	text := "a cat and a dog"
 	engine := "engine"
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -142,7 +141,7 @@ func TestComponent_ExecuteImageFromImage(t *testing.T) {
 	text := "a cat and a dog"
 	engine := "engine"
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -232,7 +231,7 @@ func TestComponent_ExecuteImageFromImage(t *testing.T) {
 func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {

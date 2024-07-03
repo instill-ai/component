@@ -6,7 +6,6 @@ import (
 
 	_ "embed"
 
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	qt "github.com/frankban/quicktest"
@@ -14,9 +13,8 @@ import (
 
 func TestComponentExecution_GetComponent(t *testing.T) {
 	c := qt.New(t)
-	logger := zap.NewNop()
 
-	cmp := &testComp{Component{Logger: logger}}
+	cmp := &testComp{Component{}}
 	err := cmp.LoadDefinition(
 		connectorDefJSON,
 		connectorConfigJSON,

@@ -8,13 +8,11 @@ import (
 	"sync"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
-	"github.com/gojuno/minimock/v3"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
+	qt "github.com/frankban/quicktest"
+
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 )
@@ -34,7 +32,7 @@ func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -133,7 +131,7 @@ func TestComponent_Execute(t *testing.T) {
 func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {
@@ -207,91 +205,17 @@ func TestComponent_Test(t *testing.T) {
 func TestComponent_WithConfig(t *testing.T) {
 	c := qt.New(t)
 	cleanupConn := func() { once = sync.Once{} }
-	ctx := context.Background()
-
-	want := TextCompletionOutput{
-		Texts: []string{"hello!"},
-		Usage: usage{TotalTokens: 25},
-	}
-	resp := `{"usage": {"total_tokens": 25}, "choices": [{"message": {"content": "hello!"}}]}`
-
-	pbIn, err := base.ConvertToStructpb(TextCompletionInput{
-		Model:  "gpt-3.5-turbo",
-		Prompt: "what instrument did Yusef Lateef play?",
-		Images: []string{},
-	})
-	c.Assert(err, qt.IsNil)
-	inputs := []*structpb.Struct{pbIn}
-	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer "+apiKey)
-
-		w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
-		fmt.Fprintln(w, resp)
-	})
-
-	pbOut, err := base.ConvertToStructpb(want)
-	c.Assert(err, qt.IsNil)
-	outputs := []*structpb.Struct{pbOut}
-
-	openAIServer := httptest.NewServer(h)
-	c.Cleanup(openAIServer.Close)
 
 	task := TextGenerationTask
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 
-	c.Run("nok - usage handler check error", func(c *qt.C) {
+	c.Run("ok - without secret", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
 
-		uh := mock.NewUsageHandlerMock(c)
-		uh.CheckMock.When(minimock.AnyContext, inputs).Then(fmt.Errorf("check error"))
-		creator := usageHandlerCreator{uh}
-		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
-
-		setup, err := structpb.NewStruct(map[string]any{})
-		c.Assert(err, qt.IsNil)
-
-		exec, err := connector.CreateExecution(nil, setup, task)
-		c.Assert(err, qt.IsNil)
-
-		_, err = exec.Execute(ctx, inputs)
-		c.Check(err, qt.IsNotNil)
-		c.Check(err, qt.ErrorMatches, "check error")
-	})
-
-	c.Run("nok - usage handler collect error", func(c *qt.C) {
-		c.Cleanup(cleanupConn)
-
-		uh := mock.NewUsageHandlerMock(c)
-		uh.CheckMock.When(minimock.AnyContext, inputs).Then(nil)
-		uh.CollectMock.When(minimock.AnyContext, inputs, outputs).Then(fmt.Errorf("collect error"))
-		creator := usageHandlerCreator{uh}
-		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
+		connector := Init(bc)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base-path": openAIServer.URL,
-			"api-key":   apiKey,
-		})
-		c.Assert(err, qt.IsNil)
-
-		exec, err := connector.CreateExecution(nil, setup, task)
-		c.Assert(err, qt.IsNil)
-
-		_, err = exec.Execute(ctx, inputs)
-		c.Check(err, qt.IsNotNil)
-		c.Check(err, qt.ErrorMatches, "collect error")
-	})
-
-	c.Run("ok - with usage handler", func(c *qt.C) {
-		c.Cleanup(cleanupConn)
-
-		uh := mock.NewUsageHandlerMock(c)
-		uh.CheckMock.When(minimock.AnyContext, inputs).Then(nil)
-		uh.CollectMock.When(minimock.AnyContext, inputs, outputs).Then(nil)
-		creator := usageHandlerCreator{uh}
-		connector := Init(bc).WithUsageHandlerCreator(creator.newUH)
-
-		setup, err := structpb.NewStruct(map[string]any{
-			"base-path": openAIServer.URL,
+			"base-path": "foo/bar",
 			"api-key":   apiKey,
 		})
 		c.Assert(err, qt.IsNil)
@@ -299,39 +223,23 @@ func TestComponent_WithConfig(t *testing.T) {
 		exec, err := connector.CreateExecution(nil, setup, task)
 		c.Assert(err, qt.IsNil)
 		c.Check(exec.Execution.UsesSecret(), qt.IsFalse)
-
-		got, err := exec.Execute(ctx, inputs)
-		c.Check(err, qt.IsNil)
-		c.Assert(got, qt.HasLen, 1)
-
-		gotJSON, err := got[0].MarshalJSON()
-		c.Assert(err, qt.IsNil)
-		c.Check(gotJSON, qt.JSONEquals, want)
 	})
 
-	c.Run("ok - with secrets & usage handler", func(c *qt.C) {
+	c.Run("ok - with secret", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
 
 		secrets := map[string]any{"apikey": apiKey}
 		connector := Init(bc).WithSecrets(secrets)
 
 		setup, err := structpb.NewStruct(map[string]any{
-			"base-path": openAIServer.URL,
-			"api-key":   "__INSTILL_SECRET", // will be replaced by secrets.apikey
+			"base-path": "foo/bar",
+			"api-key":   "__INSTILL_SECRET",
 		})
 		c.Assert(err, qt.IsNil)
 
 		exec, err := connector.CreateExecution(nil, setup, task)
 		c.Assert(err, qt.IsNil)
 		c.Check(exec.Execution.UsesSecret(), qt.IsTrue)
-
-		got, err := exec.Execute(ctx, inputs)
-		c.Check(err, qt.IsNil)
-		c.Assert(got, qt.HasLen, 1)
-
-		gotJSON, err := got[0].MarshalJSON()
-		c.Assert(err, qt.IsNil)
-		c.Check(gotJSON, qt.JSONEquals, want)
 	})
 
 	c.Run("nok - secret not injected", func(c *qt.C) {
@@ -348,12 +256,4 @@ func TestComponent_WithConfig(t *testing.T) {
 		c.Check(err, qt.ErrorMatches, "unresolved global secret")
 		c.Check(errmsg.Message(err), qt.Equals, "The configuration field api-key can't reference a global secret.")
 	})
-}
-
-type usageHandlerCreator struct {
-	uh base.UsageHandler
-}
-
-func (c usageHandlerCreator) newUH(base.IExecution) (base.UsageHandler, error) {
-	return c.uh, nil
 }

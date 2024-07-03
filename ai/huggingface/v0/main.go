@@ -568,7 +568,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
-	req := newClient(setup, c.Logger).R()
+	req := newClient(setup, c.GetLogger()).R()
 	resp, err := req.Get("")
 	if err != nil {
 		return err

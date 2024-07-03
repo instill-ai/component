@@ -39,8 +39,7 @@ var (
 type component struct {
 	base.Component
 
-	usageHandlerCreator base.UsageHandlerCreator
-	secretAPIKey        string
+	secretAPIKey string
 }
 
 // Init returns an initialized StabilityAI connector.
@@ -62,20 +61,6 @@ func (c *component) WithSecrets(s map[string]any) *component {
 	c.secretAPIKey = base.ReadFromSecrets(cfgAPIKey, s)
 
 	return c
-}
-
-// WithUsageHandlerCreator overrides the UsageHandlerCreator method.
-func (c *component) WithUsageHandlerCreator(newUH base.UsageHandlerCreator) *component {
-	c.usageHandlerCreator = newUH
-	return c
-}
-
-// UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (c *component) UsageHandlerCreator() base.UsageHandlerCreator {
-	if c.usageHandlerCreator == nil {
-		return c.Component.UsageHandlerCreator()
-	}
-	return c.usageHandlerCreator
 }
 
 // resolveSecrets looks for references to a global secret in the setup
@@ -185,7 +170,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 // Test checks the connector state.
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 	var engines []Engine
-	req := newClient(setup, c.Logger).R().SetResult(&engines)
+	req := newClient(setup, c.GetLogger()).R().SetResult(&engines)
 
 	if _, err := req.Get(listEnginesPath); err != nil {
 		return err

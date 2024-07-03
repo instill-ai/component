@@ -31,7 +31,6 @@ type IExecution interface {
 	GetComponent() IComponent
 
 	UsesSecret() bool
-	UsageHandlerCreator() UsageHandlerCreator
 
 	Execute(context.Context, []*structpb.Struct) ([]*structpb.Struct, error)
 }
@@ -124,7 +123,7 @@ func (e *ExecutionWrapper) Execute(ctx context.Context, inputs []*structpb.Struc
 		return nil, err
 	}
 
-	newUH := e.Execution.UsageHandlerCreator()
+	newUH := e.Execution.GetComponent().UsageHandlerCreator()
 	h, err := newUH(e.Execution)
 	if err != nil {
 		return nil, err

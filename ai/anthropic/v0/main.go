@@ -37,8 +37,7 @@ var (
 type component struct {
 	base.Component
 
-	usageHandlerCreator base.UsageHandlerCreator
-	secretAPIKey        string
+	secretAPIKey string
 }
 
 type AnthropicClient interface {
@@ -156,20 +155,6 @@ func (c *component) WithSecrets(s map[string]any) *component {
 	return c
 }
 
-// WithUsageHandlerCreator overrides the UsageHandlerCreator method.
-func (c *component) WithUsageHandlerCreator(newUH base.UsageHandlerCreator) *component {
-	c.usageHandlerCreator = newUH
-	return c
-}
-
-// UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (c *component) UsageHandlerCreator() base.UsageHandlerCreator {
-	if c.usageHandlerCreator == nil {
-		return c.Component.UsageHandlerCreator()
-	}
-	return c.usageHandlerCreator
-}
-
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 
 	resolvedSetup, resolved, err := c.resolveSecrets(setup)
@@ -248,7 +233,6 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		messages = append(messages, message)
 	}
 
-
 	finalMessage := message{
 		Role:    "user",
 		Content: []content{{Type: "text", Text: prompt}},
@@ -267,7 +251,6 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		}
 		finalMessage.Content = append(finalMessage.Content, image)
 	}
-
 
 	messages = append(messages, finalMessage)
 

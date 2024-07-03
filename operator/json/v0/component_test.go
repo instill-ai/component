@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
@@ -116,7 +115,7 @@ func TestOperator_Execute(t *testing.T) {
 		},
 	}
 
-	bo := base.Component{Logger: zap.NewNop()}
+	bo := base.Component{}
 	operator := Init(bo)
 
 	for _, tc := range testcases {
@@ -153,7 +152,7 @@ func TestOperator_Execute(t *testing.T) {
 func TestOperator_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	operator := Init(bc)
 
 	c.Run("nok - unsupported task", func(c *qt.C) {

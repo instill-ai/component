@@ -1,13 +1,14 @@
 package base
 
 import (
-	_ "embed"
 	"encoding/json"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
-	"go.uber.org/zap"
+	_ "embed"
+
 	"google.golang.org/protobuf/encoding/protojson"
+
+	qt "github.com/frankban/quicktest"
 )
 
 var (
@@ -25,12 +26,8 @@ var (
 
 func TestComponent_ListConnectorDefinitions(t *testing.T) {
 	c := qt.New(t)
-	logger := zap.NewNop()
 
-	conn := Component{
-		Logger: logger,
-	}
-
+	conn := new(Component)
 	err := conn.LoadDefinition(
 		connectorDefJSON,
 		connectorConfigJSON,

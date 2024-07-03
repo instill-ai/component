@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
@@ -221,7 +220,7 @@ func TestComponent_ExecuteSpeechRecognition(t *testing.T) {
 }
 
 func testTask(c *qt.C, p taskParams) {
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 	ctx := context.Background()
 

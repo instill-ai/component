@@ -63,9 +63,12 @@ type ComponentSecrets map[string]map[string]any
 func Init(
 	logger *zap.Logger,
 	secrets ComponentSecrets,
-	usageHandlerCreators map[string]base.UsageHandlerCreator,
+	usageHandlerCreator base.UsageHandlerCreator,
 ) *Store {
-	baseComp := base.Component{Logger: logger}
+	baseComp := base.Component{
+		Logger:          logger,
+		NewUsageHandler: usageHandlerCreator,
+	}
 
 	once.Do(func() {
 		compStore = &Store{
@@ -83,8 +86,7 @@ func Init(
 			conn := stabilityai.Init(baseComp)
 
 			// Secret doesn't allow hyphens
-			conn = conn.WithSecrets(secrets["stabilityai"]).
-				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
+			conn = conn.WithSecrets(secrets["stabilityai"])
 			compStore.Import(conn)
 		}
 
@@ -94,15 +96,13 @@ func Init(
 		{
 			// OpenAI
 			conn := openai.Init(baseComp)
-			conn = conn.WithSecrets(secrets[conn.GetID()]).
-				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
+			conn = conn.WithSecrets(secrets[conn.GetID()])
 			compStore.Import(conn)
 		}
 		{
 			// Anthropic
 			conn := anthropic.Init(baseComp)
-			conn = conn.WithSecrets(secrets[conn.GetID()]).
-				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
+			conn = conn.WithSecrets(secrets[conn.GetID()])
 			compStore.Import(conn)
 		}
 
