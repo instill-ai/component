@@ -28,8 +28,7 @@ var (
 	setupJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
-	// This is a temporary location for the credential file. This will be moved to a more secure location.
-	//go:embed tmp/cred.json
+	//go:embed config/cred.json
 	credJSON []byte
 
 	once sync.Once
@@ -104,22 +103,25 @@ func concateResponse(resp *genai.GenerateContentResponse) string {
 func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) {
 	prompt := in.Fields["prompt"].GetStringValue()
 	modelName := "gemini-1.5-flash-001"
-	projectID := in.Fields["project-id"].GetStringValue()
-	location := "us-central1" // London, check: https://cloud.google.com/vertex-ai/docs/general/locations#europe
+	projectID := "prj-c-connector-879a"
+	location := "us-central1"
 
 	ctx := context.Background()
 	// Temporary way to get the credential. It should be migrated to a more secure implementation.
 	client, err := genai.NewClient(ctx, projectID, location, option.WithCredentialsJSON(credJSON))
+
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error creating client: %w", err)
 	}
+
 	defer client.Close()
 
 	model := client.GenerativeModel(modelName)
 	model.SetTemperature(0.9)
-	resp, err := model.GenerateContent(ctx, genai.Text(prompt))
+	promptPart := genai.Text(prompt)
+	resp, err := model.GenerateContent(ctx, promptPart)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error generating content: %w", err)
 	}
 
 	outputStruct := messagesOutput{
