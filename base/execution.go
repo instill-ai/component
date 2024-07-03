@@ -28,6 +28,8 @@ type IExecution interface {
 	GetTaskOutputSchema() string
 	GetSystemVariables() map[string]any
 
+	GetComponent() IComponent
+
 	UsesSecret() bool
 	UsageHandlerCreator() UsageHandlerCreator
 

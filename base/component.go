@@ -816,19 +816,14 @@ type ComponentExecution struct {
 	Task            string
 }
 
-func (e *ComponentExecution) GetTask() string {
-	return e.Task
-}
+// GetComponent returns the component interface that is triggering the execution.
+func (e *ComponentExecution) GetComponent() IComponent { return e.Component }
 
-func (e *ComponentExecution) GetSetup() *structpb.Struct {
-	return e.Setup
-}
-func (e *ComponentExecution) GetSystemVariables() map[string]any {
-	return e.SystemVariables
-}
-func (e *ComponentExecution) GetLogger() *zap.Logger {
-	return e.Component.GetLogger()
-}
+func (e *ComponentExecution) GetTask() string                    { return e.Task }
+func (e *ComponentExecution) GetSetup() *structpb.Struct         { return e.Setup }
+func (e *ComponentExecution) GetSystemVariables() map[string]any { return e.SystemVariables }
+func (e *ComponentExecution) GetLogger() *zap.Logger             { return e.Component.GetLogger() }
+
 func (e *ComponentExecution) GetTaskInputSchema() string {
 	return e.Component.GetTaskInputSchemas()[e.Task]
 }
@@ -839,9 +834,7 @@ func (e *ComponentExecution) GetTaskOutputSchema() string {
 // UsesSecret indicates wether the connector execution is configured with
 // global secrets. Components should override this method when they have the
 // ability to be executed with global secrets.
-func (e *ComponentExecution) UsesSecret() bool {
-	return false
-}
+func (e *ComponentExecution) UsesSecret() bool { return false }
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler.
 func (e *ComponentExecution) UsageHandlerCreator() UsageHandlerCreator {
