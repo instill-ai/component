@@ -48,7 +48,7 @@ var (
 type component struct {
 	base.Component
 
-	secretAPIKey string
+	instillAPIKey string
 }
 
 // Init returns an initialized OpenAI connector.
@@ -64,18 +64,18 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-// WithSecrets loads secrets into the connector, which can be used to configure
-// it with globaly defined parameters.
-func (c *component) WithSecrets(s map[string]any) *component {
-	c.secretAPIKey = base.ReadFromSecrets(cfgAPIKey, s)
-
+// WithInstillCredentials loads Instill credentials into the component, which
+// can be used to configure it with globally defined parameters instead of with
+// user-defined credential values.
+func (c *component) WithInstillCredentials(s map[string]any) *component {
+	c.instillAPIKey = base.ReadFromGlobalConfig(cfgAPIKey, s)
 	return c
 }
 
 // CreateExecution initializes a connector executor that can be used in a
 // pipeline trigger.
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	resolvedSetup, resolved, err := c.resolveSecrets(setup)
+	resolvedSetup, resolved, err := c.resolveSetup(setup)
 	if err != nil {
 		return nil, err
 	}
@@ -87,33 +87,34 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 			Setup:           resolvedSetup,
 			Task:            task,
 		},
-		usesSecret: resolved,
+		usesInstillCredentials: resolved,
 	}}, nil
 }
 
-// resolveSecrets looks for references to a global secret in the setup
-// and replaces them by the global secret injected during initialization.
-func (c *component) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, bool, error) {
-	apiKey := conn.GetFields()[cfgAPIKey].GetStringValue()
-	if apiKey != base.SecretKeyword {
-		return conn, false, nil
+// resolveSetup checks whether the component is configured to use the Instill
+// credentials injected during initialization and, if so, returns a new setup
+// with the secret credential values.
+func (c *component) resolveSetup(setup *structpb.Struct) (*structpb.Struct, bool, error) {
+	apiKey := setup.GetFields()[cfgAPIKey].GetStringValue()
+	if apiKey != base.SecretKeyword { // TODO use empty instead of secret keyword
+		return setup, false, nil
 	}
 
-	if c.secretAPIKey == "" {
-		return nil, false, base.NewUnresolvedSecret(cfgAPIKey)
+	if c.instillAPIKey == "" {
+		return nil, false, base.NewUnresolvedCredential(cfgAPIKey)
 	}
 
-	conn.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.secretAPIKey)
-	return conn, true, nil
+	setup.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.instillAPIKey)
+	return setup, true, nil
 }
 
 type execution struct {
 	base.ComponentExecution
-	usesSecret bool
+	usesInstillCredentials bool
 }
 
-func (e *execution) UsesSecret() bool {
-	return e.usesSecret
+func (e *execution) UsesInstillCredentials() bool {
+	return e.usesInstillCredentials
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {

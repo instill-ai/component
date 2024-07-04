@@ -86,7 +86,7 @@ func Init(
 			conn := stabilityai.Init(baseComp)
 
 			// Secret doesn't allow hyphens
-			conn = conn.WithSecrets(secrets["stabilityai"])
+			conn = conn.WithInstillCredentials(secrets["stabilityai"])
 			compStore.Import(conn)
 		}
 
@@ -96,13 +96,13 @@ func Init(
 		{
 			// OpenAI
 			conn := openai.Init(baseComp)
-			conn = conn.WithSecrets(secrets[conn.GetID()])
+			conn = conn.WithInstillCredentials(secrets[conn.GetID()])
 			compStore.Import(conn)
 		}
 		{
 			// Anthropic
 			conn := anthropic.Init(baseComp)
-			conn = conn.WithSecrets(secrets[conn.GetID()])
+			conn = conn.WithInstillCredentials(secrets[conn.GetID()])
 			compStore.Import(conn)
 		}
 

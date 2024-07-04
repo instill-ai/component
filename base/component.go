@@ -844,19 +844,21 @@ func (e *ComponentExecution) GetTaskOutputSchema() string {
 	return e.Component.GetTaskOutputSchemas()[e.Task]
 }
 
-// UsesSecret indicates wether the connector execution is configured with
-// global secrets. Components should override this method when they have the
-// ability to be executed with global secrets.
-func (e *ComponentExecution) UsesSecret() bool { return false }
+// UsesInstillCredentials indicates wether the component setup includes the use
+// of global secrets (as opposed to a bring-your-own-key configuration) to
+// connect to external services. Components should override this method when
+// they have the ability to read global secrets and be executed without
+// explicit credentials.
+func (e *ComponentExecution) UsesInstillCredentials() bool { return false }
 
-// ReadFromSecrets reads a component secret from a secret map that comes from
-// environment variable configuration.
+// ReadFromGlobalConfig looks up a component credential field from a secret map
+// that comes from the environment variable configuration.
 //
 // Config parameters are defined with snake_case, but the
 // environment variable configuration loader replaces underscores by dots,
 // so we can't use the parameter key directly.
 // TODO using camelCase in configuration fields would fix this issue.
-func ReadFromSecrets(key string, secrets map[string]any) string {
+func ReadFromGlobalConfig(key string, secrets map[string]any) string {
 	sanitized := strings.ReplaceAll(key, "-", "")
 	if v, ok := secrets[sanitized].(string); ok {
 		return v

@@ -222,14 +222,14 @@ func TestComponent_WithConfig(t *testing.T) {
 
 		exec, err := connector.CreateExecution(nil, setup, task)
 		c.Assert(err, qt.IsNil)
-		c.Check(exec.Execution.UsesSecret(), qt.IsFalse)
+		c.Check(exec.Execution.UsesInstillCredentials(), qt.IsFalse)
 	})
 
 	c.Run("ok - with secret", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
 
 		secrets := map[string]any{"apikey": apiKey}
-		connector := Init(bc).WithSecrets(secrets)
+		connector := Init(bc).WithInstillCredentials(secrets)
 
 		setup, err := structpb.NewStruct(map[string]any{
 			"base-path": "foo/bar",
@@ -239,7 +239,7 @@ func TestComponent_WithConfig(t *testing.T) {
 
 		exec, err := connector.CreateExecution(nil, setup, task)
 		c.Assert(err, qt.IsNil)
-		c.Check(exec.Execution.UsesSecret(), qt.IsTrue)
+		c.Check(exec.Execution.UsesInstillCredentials(), qt.IsTrue)
 	})
 
 	c.Run("nok - secret not injected", func(c *qt.C) {
@@ -253,7 +253,7 @@ func TestComponent_WithConfig(t *testing.T) {
 
 		_, err = connector.CreateExecution(nil, setup, task)
 		c.Check(err, qt.IsNotNil)
-		c.Check(err, qt.ErrorMatches, "unresolved global secret")
-		c.Check(errmsg.Message(err), qt.Equals, "The configuration field api-key can't reference a global secret.")
+		c.Check(err, qt.ErrorMatches, "unresolved global credential")
+		c.Check(errmsg.Message(err), qt.Matches, "The configuration field api-key references a global secret but.*")
 	})
 }
