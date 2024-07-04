@@ -17,8 +17,9 @@ type rerankInput struct {
 }
 
 type rerankOutput struct {
-	Ranking []string    `json:"ranking"`
-	Usage   rerankUsage `json:"usage"`
+	Ranking   []string    `json:"ranking"`
+	Usage     rerankUsage `json:"usage"`
+	Relevance []float64   `json:"relevance"`
 }
 
 type rerankUsage struct {
@@ -40,6 +41,7 @@ func (e *execution) taskRerank(in *structpb.Struct) (*structpb.Struct, error) {
 		}
 		documents = append(documents, &document)
 	}
+
 	returnDocument := true
 	rankFields := []string{"text"}
 	req := cohereSDK.RerankRequest{
@@ -54,7 +56,9 @@ func (e *execution) taskRerank(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 	newRanking := []string{}
+	relevance := []float64{}
 	for _, rankResult := range resp.Results {
+		relevance = append(relevance, rankResult.RelevanceScore)
 		newRanking = append(newRanking, rankResult.Document.Text)
 	}
 
@@ -67,8 +71,9 @@ func (e *execution) taskRerank(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	outputStruct := rerankOutput{
-		Ranking: newRanking,
-		Usage:   rerankUsage{Search: int(*bills.SearchUnits)},
+		Ranking:   newRanking,
+		Usage:     rerankUsage{Search: int(*bills.SearchUnits)},
+		Relevance: relevance,
 	}
 
 	outputJSON, err := json.Marshal(outputStruct)
