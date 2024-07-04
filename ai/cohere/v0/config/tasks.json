@@ -253,7 +253,9 @@
             "command-r-plus",
             "command-r",
             "command",
-            "command-light"
+            "command-nightly",
+            "command-light",
+            "command-light-nightly"
           ],
           "example": "command-r-plus",
           "description": "The Cohere command model to be used",
@@ -464,7 +466,7 @@
             "classification",
             "clustering"
           ],
-          "example": "embed-multilingual-v3.0",
+          "example": "search_document",
           "description": "Specifies the type of input passed to the model",
           "instillAcceptFormats": [
             "string"
