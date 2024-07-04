@@ -55,14 +55,12 @@ type textGenerationOutput struct {
 }
 
 func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, error) {
-	fmt.Println("### taskTextGeneration start ###")
 
 	inputStruct := textGenerationInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, fmt.Errorf("error generating input struct: %v", err)
 	}
-	fmt.Println("### convert input struct completed ###")
 	messages := []*cohereSDK.Message{}
 
 	if inputStruct.SystemMsg != "" {
@@ -88,7 +86,6 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 		}
 		messages = append(messages, &message)
 	}
-	fmt.Println("### gather messagess completed ###")
 
 	documents := []map[string]string{}
 	for _, doc := range inputStruct.Documents {
@@ -96,7 +93,6 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 		document["text"] = doc
 		documents = append(documents, document)
 	}
-	fmt.Println("### gather documents completed ###")
 
 	req := cohereSDK.ChatRequest{
 		Message:     inputStruct.Prompt,
