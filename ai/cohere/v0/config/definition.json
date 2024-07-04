@@ -5,7 +5,7 @@
     "TASK_TEXT_RERANKING"
   ],
   "documentationUrl": "https://www.instill.tech/docs/latest/vdp/ai/cohere",
-  "icon": "assets/cohere.svg",
+  "icon": "assets/Cohere.svg",
   "id": "cohere",
   "public": true,
   "title": "Cohere",
