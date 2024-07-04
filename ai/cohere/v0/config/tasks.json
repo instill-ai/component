@@ -398,7 +398,7 @@
           "description": "Citations",
           "instillUIOrder": 1,
           "instillAcceptFormats": [
-            "structured/citations"
+            "array:object"
           ],
           "title": "Citations",
           "type": "array",
