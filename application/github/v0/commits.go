@@ -77,9 +77,8 @@ func (githubClient *Client) getCommit(owner string, repository string, sha strin
 }
 
 type GetCommitInput struct {
-	Owner      string `json:"owner"`
-	Repository string `json:"repository"`
-	SHA        string `json:"sha"`
+	RepoInfo
+	SHA string `json:"sha"`
 }
 
 type GetCommitResp struct {
@@ -87,16 +86,15 @@ type GetCommitResp struct {
 }
 
 func (githubClient *Client) getCommitTask(props *structpb.Struct) (*structpb.Struct, error) {
-	err := githubClient.setTargetRepo(props)
-	if err != nil {
-		return nil, err
-	}
 	var inputStruct GetCommitInput
-	err = base.ConvertFromStructpb(props, &inputStruct)
+	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
 		return nil, err
 	}
-
+	err = githubClient.setTargetRepo(inputStruct)
+	if err != nil {
+		return nil, err
+	}
 	sha := inputStruct.SHA
 	commit, err := githubClient.getCommit(githubClient.owner, githubClient.repository, sha)
 	if err != nil {

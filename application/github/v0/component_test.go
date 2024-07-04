@@ -38,11 +38,13 @@ func TestComponent_GetAllPullRequestsTask(t *testing.T) {
 			_type: "ok",
 			name:  "get all pull requests",
 			input: GetAllPullRequestsInput{
-				Owner:      "test_owner",
-				Repository: "test_repo",
-				State:      "open",
-				Direction:  "asc",
-				Sort:       "created",
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
+				State:     "open",
+				Direction: "asc",
+				Sort:      "created",
 			},
 			wantResp: GetAllPullRequestsResp{
 				PullRequests: []PullRequest{
@@ -88,11 +90,13 @@ func TestComponent_GetAllPullRequestsTask(t *testing.T) {
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
 			input: GetAllPullRequestsInput{
-				Owner:      "rate_limit",
-				Repository: "test_repo",
-				State:      "open",
-				Direction:  "asc",
-				Sort:       "created",
+				RepoInfo: RepoInfo{
+					Owner:      "rate_limit",
+					Repository: "test_repo",
+				},
+				State:     "open",
+				Direction: "asc",
+				Sort:      "created",
 			},
 			wantErr: `403 API rate limit exceeded`,
 		},
@@ -100,11 +104,13 @@ func TestComponent_GetAllPullRequestsTask(t *testing.T) {
 			_type: "nok",
 			name:  "404 Not Found",
 			input: GetAllPullRequestsInput{
-				Owner:      "not_found",
-				Repository: "test_repo",
-				State:      "open",
-				Direction:  "asc",
-				Sort:       "created",
+				RepoInfo: RepoInfo{
+					Owner:      "not_found",
+					Repository: "test_repo",
+				},
+				State:     "open",
+				Direction: "asc",
+				Sort:      "created",
 			},
 			wantErr: `404 Not Found`,
 		},
@@ -112,11 +118,13 @@ func TestComponent_GetAllPullRequestsTask(t *testing.T) {
 			_type: "nok",
 			name:  "no PRs found",
 			input: GetAllPullRequestsInput{
-				Owner:      "no_pr",
-				Repository: "test_repo",
-				State:      "open",
-				Direction:  "asc",
-				Sort:       "created",
+				RepoInfo: RepoInfo{
+					Owner:      "no_pr",
+					Repository: "test_repo",
+				},
+				State:     "open",
+				Direction: "asc",
+				Sort:      "created",
 			},
 			wantResp: GetAllPullRequestsResp{
 				PullRequests: []PullRequest{},
@@ -132,9 +140,11 @@ func TestComponent_GetPullRequestTask(t *testing.T) {
 			_type: "ok",
 			name:  "get pull request",
 			input: GetPullRequestInput{
-				Owner:      "test_owner",
-				Repository: "test_repo",
-				PrNumber:   1,
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
+				PrNumber: 1,
 			},
 			wantResp: GetPullRequestResp{
 				PullRequest: PullRequest{
@@ -178,9 +188,11 @@ func TestComponent_GetPullRequestTask(t *testing.T) {
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
 			input: GetPullRequestInput{
-				Owner:      "rate_limit",
-				Repository: "test_repo",
-				PrNumber:   1,
+				RepoInfo: RepoInfo{
+					Owner:      "rate_limit",
+					Repository: "test_repo",
+				},
+				PrNumber: 1,
 			},
 			wantErr: `403 API rate limit exceeded`,
 		},
@@ -188,9 +200,11 @@ func TestComponent_GetPullRequestTask(t *testing.T) {
 			_type: "nok",
 			name:  "404 Not Found",
 			input: GetPullRequestInput{
-				Owner:      "not_found",
-				Repository: "test_repo",
-				PrNumber:   1,
+				RepoInfo: RepoInfo{
+					Owner:      "not_found",
+					Repository: "test_repo",
+				},
+				PrNumber: 1,
 			},
 			wantErr: `404 Not Found`,
 		},
@@ -204,12 +218,14 @@ func TestComponent_GetAllReviewCommentsTask(t *testing.T) {
 			_type: "ok",
 			name:  "get review comments",
 			input: GetAllReviewCommentsInput{
-				Owner:      "test_owner",
-				Repository: "test_repo",
-				PrNumber:   1,
-				Sort:       "created",
-				Direction:  "asc",
-				Since:      "2021-01-01T00:00:00Z",
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
+				PrNumber:  1,
+				Sort:      "created",
+				Direction: "asc",
+				Since:     "2021-01-01T00:00:00Z",
 			},
 			wantResp: GetAllReviewCommentsResp{
 				ReviewComments: []ReviewComment{
@@ -226,12 +242,14 @@ func TestComponent_GetAllReviewCommentsTask(t *testing.T) {
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
 			input: GetAllReviewCommentsInput{
-				Owner:      "rate_limit",
-				Repository: "test_repo",
-				PrNumber:   1,
-				Sort:       "created",
-				Direction:  "asc",
-				Since:      "2021-01-01T00:00:00Z",
+				RepoInfo: RepoInfo{
+					Owner:      "rate_limit",
+					Repository: "test_repo",
+				},
+				PrNumber:  1,
+				Sort:      "created",
+				Direction: "asc",
+				Since:     "2021-01-01T00:00:00Z",
 			},
 			wantErr: `403 API rate limit exceeded`,
 		},
@@ -239,12 +257,14 @@ func TestComponent_GetAllReviewCommentsTask(t *testing.T) {
 			_type: "nok",
 			name:  "404 Not Found",
 			input: GetAllReviewCommentsInput{
-				Owner:      "not_found",
-				Repository: "test_repo",
-				PrNumber:   1,
-				Sort:       "created",
-				Direction:  "asc",
-				Since:      "2021-01-01T00:00:00Z",
+				RepoInfo: RepoInfo{
+					Owner:      "not_found",
+					Repository: "test_repo",
+				},
+				PrNumber:  1,
+				Sort:      "created",
+				Direction: "asc",
+				Since:     "2021-01-01T00:00:00Z",
 			},
 			wantErr: `404 Not Found`,
 		},
@@ -252,12 +272,14 @@ func TestComponent_GetAllReviewCommentsTask(t *testing.T) {
 			_type: "nok",
 			name:  "invalid time format",
 			input: GetAllReviewCommentsInput{
-				Owner:      "not_found",
-				Repository: "test_repo",
-				PrNumber:   1,
-				Sort:       "created",
-				Direction:  "asc",
-				Since:      "2021-0100:00:00Z",
+				RepoInfo: RepoInfo{
+					Owner:      "not_found",
+					Repository: "test_repo",
+				},
+				PrNumber:  1,
+				Sort:      "created",
+				Direction: "asc",
+				Since:     "2021-0100:00:00Z",
 			},
 			wantErr: `invalid time format`,
 		},
@@ -271,9 +293,11 @@ func TestComponent_CreateReviewCommentTask(t *testing.T) {
 			_type: "ok",
 			name:  "create review comment",
 			input: CreateReviewCommentInput{
-				Owner:      "test_owner",
-				Repository: "test_repo",
-				PrNumber:   1,
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
+				PrNumber: 1,
 				Comment: github.PullRequestComment{
 					Body:        github.String("This is a fake comment"),
 					Line:        github.Int(2),
@@ -302,9 +326,11 @@ func TestComponent_CreateReviewCommentTask(t *testing.T) {
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
 			input: CreateReviewCommentInput{
-				Owner:      "rate_limit",
-				Repository: "test_repo",
-				PrNumber:   1,
+				RepoInfo: RepoInfo{
+					Owner:      "rate_limit",
+					Repository: "test_repo",
+				},
+				PrNumber: 1,
 				Comment: github.PullRequestComment{
 					Body:        github.String("This is a fake comment"),
 					Line:        github.Int(2),
@@ -320,9 +346,11 @@ func TestComponent_CreateReviewCommentTask(t *testing.T) {
 			_type: "nok",
 			name:  "404 Not Found",
 			input: CreateReviewCommentInput{
-				Owner:      "not_found",
-				Repository: "test_repo",
-				PrNumber:   1,
+				RepoInfo: RepoInfo{
+					Owner:      "not_found",
+					Repository: "test_repo",
+				},
+				PrNumber: 1,
 				Comment: github.PullRequestComment{
 					Body:        github.String("This is a fake comment"),
 					Line:        github.Int(2),
@@ -338,9 +366,11 @@ func TestComponent_CreateReviewCommentTask(t *testing.T) {
 			_type: "nok",
 			name:  "422 Unprocessable Entity",
 			input: CreateReviewCommentInput{
-				Owner:      "unprocessable_entity",
-				Repository: "test_repo",
-				PrNumber:   1,
+				RepoInfo: RepoInfo{
+					Owner:      "unprocessable_entity",
+					Repository: "test_repo",
+				},
+				PrNumber: 1,
 				Comment: github.PullRequestComment{
 					Body:        github.String("This is a fake comment"),
 					Line:        github.Int(2),
@@ -356,9 +386,11 @@ func TestComponent_CreateReviewCommentTask(t *testing.T) {
 			_type: "nok",
 			name:  "422 Unprocessable Entity",
 			input: CreateReviewCommentInput{
-				Owner:      "test_owner",
-				Repository: "test_repo",
-				PrNumber:   1,
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
+				PrNumber: 1,
 				Comment: github.PullRequestComment{
 					Body:        github.String("This is a fake comment"),
 					Line:        github.Int(1),
@@ -380,9 +412,11 @@ func TestComponent_GetCommitTask(t *testing.T) {
 			_type: "ok",
 			name:  "get commit",
 			input: GetCommitInput{
-				Owner:      "test_owner",
-				Repository: "test_repo",
-				SHA:        "commitSHA",
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
+				SHA: "commitSHA",
 			},
 			wantResp: GetCommitResp{
 				Commit: Commit{
@@ -411,9 +445,11 @@ func TestComponent_GetCommitTask(t *testing.T) {
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
 			input: GetCommitInput{
-				Owner:      "rate_limit",
-				Repository: "test_repo",
-				SHA:        "commitSHA",
+				RepoInfo: RepoInfo{
+					Owner:      "rate_limit",
+					Repository: "test_repo",
+				},
+				SHA: "commitSHA",
 			},
 			wantErr: `403 API rate limit exceeded`,
 		},
@@ -427,8 +463,10 @@ func TestComponent_GetAllIssuesTask(t *testing.T) {
 			_type: "ok",
 			name:  "get all issues",
 			input: GetAllIssuesInput{
-				Owner:         "test_owner",
-				Repository:    "test_repo",
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
 				State:         "open",
 				Direction:     "asc",
 				Sort:          "created",
@@ -453,8 +491,10 @@ func TestComponent_GetAllIssuesTask(t *testing.T) {
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
 			input: GetAllIssuesInput{
-				Owner:         "rate_limit",
-				Repository:    "test_repo",
+				RepoInfo: RepoInfo{
+					Owner:      "rate_limit",
+					Repository: "test_repo",
+				},
 				State:         "open",
 				Direction:     "asc",
 				Sort:          "created",
@@ -467,8 +507,10 @@ func TestComponent_GetAllIssuesTask(t *testing.T) {
 			_type: "nok",
 			name:  "404 Not Found",
 			input: GetAllIssuesInput{
-				Owner:         "not_found",
-				Repository:    "test_repo",
+				RepoInfo: RepoInfo{
+					Owner:      "not_found",
+					Repository: "test_repo",
+				},
 				State:         "open",
 				Direction:     "asc",
 				Sort:          "created",
@@ -481,8 +523,10 @@ func TestComponent_GetAllIssuesTask(t *testing.T) {
 			_type: "nok",
 			name:  "invalid time format",
 			input: GetAllIssuesInput{
-				Owner:         "not_found",
-				Repository:    "test_repo",
+				RepoInfo: RepoInfo{
+					Owner:      "not_found",
+					Repository: "test_repo",
+				},
 				State:         "open",
 				Direction:     "asc",
 				Sort:          "created",
@@ -500,8 +544,10 @@ func TestComponent_GetIssueTask(t *testing.T) {
 			_type: "ok",
 			name:  "get all issues",
 			input: GetIssueInput{
-				Owner:       "test_owner",
-				Repository:  "test_repo",
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
 				IssueNumber: 1,
 			},
 			wantResp: GetIssueResp{
@@ -521,8 +567,10 @@ func TestComponent_GetIssueTask(t *testing.T) {
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
 			input: GetIssueInput{
-				Owner:       "rate_limit",
-				Repository:  "test_repo",
+				RepoInfo: RepoInfo{
+					Owner:      "rate_limit",
+					Repository: "test_repo",
+				},
 				IssueNumber: 1,
 			},
 			wantErr: `403 API rate limit exceeded`,
@@ -531,8 +579,10 @@ func TestComponent_GetIssueTask(t *testing.T) {
 			_type: "nok",
 			name:  "404 Not Found",
 			input: GetIssueInput{
-				Owner:       "not_found",
-				Repository:  "test_repo",
+				RepoInfo: RepoInfo{
+					Owner:      "not_found",
+					Repository: "test_repo",
+				},
 				IssueNumber: 1,
 			},
 			wantErr: `404 Not Found`,
@@ -546,10 +596,12 @@ func TestComponent_CreateIssueTask(t *testing.T) {
 			_type: "ok",
 			name:  "get all issues",
 			input: CreateIssueInput{
-				Owner:      "test_owner",
-				Repository: "test_repo",
-				Title:      "This is a fake Issue",
-				Body:       "Issue Body",
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
+				Title: "This is a fake Issue",
+				Body:  "Issue Body",
 			},
 			wantResp: CreateIssueResp{
 				Issue: Issue{
@@ -568,10 +620,12 @@ func TestComponent_CreateIssueTask(t *testing.T) {
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
 			input: CreateIssueInput{
-				Owner:      "rate_limit",
-				Repository: "test_repo",
-				Title:      "This is a fake Issue",
-				Body:       "Issue Body",
+				RepoInfo: RepoInfo{
+					Owner:      "rate_limit",
+					Repository: "test_repo",
+				},
+				Title: "This is a fake Issue",
+				Body:  "Issue Body",
 			},
 			wantErr: `403 API rate limit exceeded`,
 		},
@@ -579,10 +633,12 @@ func TestComponent_CreateIssueTask(t *testing.T) {
 			_type: "nok",
 			name:  "404 Not Found",
 			input: CreateIssueInput{
-				Owner:      "not_found",
-				Repository: "test_repo",
-				Title:      "This is a fake Issue",
-				Body:       "Issue Body",
+				RepoInfo: RepoInfo{
+					Owner:      "not_found",
+					Repository: "test_repo",
+				},
+				Title: "This is a fake Issue",
+				Body:  "Issue Body",
 			},
 			wantErr: `404 Not Found`,
 		},
@@ -596,8 +652,10 @@ func TestComponent_CreateWebHook(t *testing.T) {
 			_type: "ok",
 			name:  "create webhook",
 			input: CreateWebHookInput{
-				Owner:       "test_owner",
-				Repository:  "test_repo",
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
 				Events:      []string{"push"},
 				Active:      *github.Bool(true),
 				HookSecret:  "hook_secret",
@@ -621,8 +679,10 @@ func TestComponent_CreateWebHook(t *testing.T) {
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
 			input: CreateWebHookInput{
-				Owner:       "rate_limit",
-				Repository:  "test_repo",
+				RepoInfo: RepoInfo{
+					Owner:      "rate_limit",
+					Repository: "test_repo",
+				},
 				Events:      []string{"push"},
 				Active:      *github.Bool(true),
 				HookSecret:  "hook_secret",
@@ -634,8 +694,10 @@ func TestComponent_CreateWebHook(t *testing.T) {
 			_type: "nok",
 			name:  "404 Not Found",
 			input: CreateWebHookInput{
-				Owner:       "not_found",
-				Repository:  "test_repo",
+				RepoInfo: RepoInfo{
+					Owner:      "not_found",
+					Repository: "test_repo",
+				},
 				Events:      []string{"push"},
 				Active:      *github.Bool(true),
 				HookSecret:  "hook_secret",

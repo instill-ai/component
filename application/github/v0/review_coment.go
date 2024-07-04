@@ -21,12 +21,11 @@ func extractReviewCommentInformation(originalComment *github.PullRequestComment)
 }
 
 type GetAllReviewCommentsInput struct {
-	Owner      string `json:"owner"`
-	Repository string `json:"repository"`
-	PrNumber   int    `json:"pr_number"`
-	Sort       string `json:"sort"`
-	Direction  string `json:"direction"`
-	Since      string `json:"since"`
+	RepoInfo
+	PrNumber  int    `json:"pr_number"`
+	Sort      string `json:"sort"`
+	Direction string `json:"direction"`
+	Since     string `json:"since"`
 }
 
 type GetAllReviewCommentsResp struct {
@@ -38,16 +37,16 @@ type GetAllReviewCommentsResp struct {
 //
 // * This only works for public repositories.
 func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*structpb.Struct, error) {
-	err := githubClient.setTargetRepo(props)
-	if err != nil {
-		return nil, err
-	}
 	var inputStruct GetAllReviewCommentsInput
-	err = base.ConvertFromStructpb(props, &inputStruct)
+	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
 		return nil, err
 	}
 
+	err = githubClient.setTargetRepo(inputStruct)
+	if err != nil {
+		return nil, err
+	}
 	// from format like `2006-01-02T15:04:05Z07:00` to time.Time
 	sinceTime, err := parseTime(inputStruct.Since)
 	if err != nil {
@@ -89,10 +88,9 @@ func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*s
 }
 
 type CreateReviewCommentInput struct {
-	Owner      string                    `json:"owner"`
-	Repository string                    `json:"repository"`
-	PrNumber   int                       `json:"pr_number"`
-	Comment    github.PullRequestComment `json:"comment"`
+	RepoInfo
+	PrNumber int                       `json:"pr_number"`
+	Comment  github.PullRequestComment `json:"comment"`
 }
 
 type CreateReviewCommentResp struct {
@@ -103,13 +101,13 @@ type CreateReviewCommentResp struct {
 //
 // * This only works for public repositories.
 func (githubClient *Client) createReviewCommentTask(props *structpb.Struct) (*structpb.Struct, error) {
-	err := githubClient.setTargetRepo(props)
+	var commentInput CreateReviewCommentInput
+	err := base.ConvertFromStructpb(props, &commentInput)
 	if err != nil {
 		return nil, err
 	}
 
-	var commentInput CreateReviewCommentInput
-	err = base.ConvertFromStructpb(props, &commentInput)
+	err = githubClient.setTargetRepo(commentInput)
 	if err != nil {
 		return nil, err
 	}

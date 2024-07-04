@@ -73,8 +73,7 @@ func filterOutPullRequests(issues []Issue) []Issue {
 }
 
 type GetAllIssuesInput struct {
-	Owner         string `json:"owner"`
-	Repository    string `json:"repository"`
+	RepoInfo
 	State         string `json:"state"`
 	Sort          string `json:"sort"`
 	Direction     string `json:"direction"`
@@ -87,16 +86,15 @@ type GetAllIssuesResp struct {
 }
 
 func (githubClient *Client) getAllIssuesTask(props *structpb.Struct) (*structpb.Struct, error) {
-	err := githubClient.setTargetRepo(props)
-	if err != nil {
-		return nil, err
-	}
 	var inputStruct GetAllIssuesInput
-	err = base.ConvertFromStructpb(props, &inputStruct)
+	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
 		return nil, err
 	}
-
+	err = githubClient.setTargetRepo(inputStruct)
+	if err != nil {
+		return nil, err
+	}
 	// from format like `2006-01-02T15:04:05Z07:00` to time.Time
 	sinceTime, err := parseTime(inputStruct.Since)
 	if err != nil {
@@ -136,9 +134,8 @@ func (githubClient *Client) getAllIssuesTask(props *structpb.Struct) (*structpb.
 }
 
 type GetIssueInput struct {
-	Owner       string `json:"owner"`
-	Repository  string `json:"repository"`
-	IssueNumber int    `json:"issue_number"`
+	RepoInfo
+	IssueNumber int `json:"issue_number"`
 }
 
 type GetIssueResp struct {
@@ -146,12 +143,12 @@ type GetIssueResp struct {
 }
 
 func (githubClient *Client) getIssueTask(props *structpb.Struct) (*structpb.Struct, error) {
-	err := githubClient.setTargetRepo(props)
+	var inputStruct GetIssueInput
+	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
 		return nil, err
 	}
-	var inputStruct GetIssueInput
-	err = base.ConvertFromStructpb(props, &inputStruct)
+	err = githubClient.setTargetRepo(inputStruct)
 	if err != nil {
 		return nil, err
 	}
@@ -173,10 +170,9 @@ func (githubClient *Client) getIssueTask(props *structpb.Struct) (*structpb.Stru
 }
 
 type CreateIssueInput struct {
-	Owner      string `json:"owner"`
-	Repository string `json:"repository"`
-	Title      string `json:"title"`
-	Body       string `json:"body"`
+	RepoInfo
+	Title string `json:"title"`
+	Body  string `json:"body"`
 }
 
 type CreateIssueResp struct {
@@ -184,12 +180,12 @@ type CreateIssueResp struct {
 }
 
 func (githubClient *Client) createIssueTask(props *structpb.Struct) (*structpb.Struct, error) {
-	err := githubClient.setTargetRepo(props)
+	var inputStruct CreateIssueInput
+	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
 		return nil, err
 	}
-	var inputStruct CreateIssueInput
-	err = base.ConvertFromStructpb(props, &inputStruct)
+	err = githubClient.setTargetRepo(inputStruct)
 	if err != nil {
 		return nil, err
 	}

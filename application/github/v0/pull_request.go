@@ -63,24 +63,23 @@ func (githubClient *Client) extractPullRequestInformation(originalPr *github.Pul
 }
 
 type GetAllPullRequestsInput struct {
-	Owner      string `json:"owner"`
-	Repository string `json:"repository"`
-	State      string `json:"state"`
-	Sort       string `json:"sort"`
-	Direction  string `json:"direction"`
+	RepoInfo
+	State     string `json:"state"`
+	Sort      string `json:"sort"`
+	Direction string `json:"direction"`
 }
 type GetAllPullRequestsResp struct {
 	PullRequests []PullRequest `json:"pull_requests"`
 }
 
 func (githubClient *Client) getAllPullRequestsTask(props *structpb.Struct) (*structpb.Struct, error) {
-	err := githubClient.setTargetRepo(props)
+
+	var inputStruct GetAllPullRequestsInput
+	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
 		return nil, err
 	}
-
-	var inputStruct GetAllPullRequestsInput
-	err = base.ConvertFromStructpb(props, &inputStruct)
+	err = githubClient.setTargetRepo(inputStruct)
 	if err != nil {
 		return nil, err
 	}
@@ -112,22 +111,21 @@ func (githubClient *Client) getAllPullRequestsTask(props *structpb.Struct) (*str
 }
 
 type GetPullRequestInput struct {
-	Owner      string  `json:"owner"`
-	Repository string  `json:"repository"`
-	PrNumber   float64 `json:"pr_number"`
+	RepoInfo
+	PrNumber float64 `json:"pr_number"`
 }
 type GetPullRequestResp struct {
 	PullRequest PullRequest `json:"pull_request"`
 }
 
 func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structpb.Struct, error) {
-	err := githubClient.setTargetRepo(props)
+
+	var inputStruct GetPullRequestInput
+	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
 		return nil, err
 	}
-
-	var inputStruct GetPullRequestInput
-	err = base.ConvertFromStructpb(props, &inputStruct)
+	err = githubClient.setTargetRepo(inputStruct)
 	if err != nil {
 		return nil, err
 	}

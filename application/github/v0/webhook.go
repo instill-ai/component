@@ -9,8 +9,7 @@ import (
 )
 
 type CreateWebHookInput struct {
-	Owner       string   `json:"owner"`
-	Repository  string   `json:"repository"`
+	RepoInfo
 	HookURL     string   `json:"hook_url"`
 	HookSecret  string   `json:"hook_secret"`
 	Events      []string `json:"events"`
@@ -37,16 +36,16 @@ type CreateWebHookResp struct {
 }
 
 func (githubClient *Client) createWebhookTask(props *structpb.Struct) (*structpb.Struct, error) {
-	err := githubClient.setTargetRepo(props)
-	if err != nil {
-		return nil, err
-	}
 	var inputStruct CreateWebHookInput
-	err = base.ConvertFromStructpb(props, &inputStruct)
+	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
 		return nil, err
 	}
 
+	err = githubClient.setTargetRepo(inputStruct)
+	if err != nil {
+		return nil, err
+	}
 	hookURL := inputStruct.HookURL
 	hookSecret := inputStruct.HookSecret
 	originalEvents := inputStruct.Events

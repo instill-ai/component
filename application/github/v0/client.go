@@ -11,6 +11,23 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+type RepoInfoInterface interface {
+	getOwner() string
+	getRepository() string
+}
+
+type RepoInfo struct {
+	Owner      string `json:"owner"`
+	Repository string `json:"repository"`
+}
+
+func (info RepoInfo) getOwner() string {
+	return info.Owner
+}
+func (info RepoInfo) getRepository() string {
+	return info.Repository
+}
+
 type Client struct {
 	client     GitHubClient
 	owner      string
@@ -45,9 +62,9 @@ func newClient(ctx context.Context, setup *structpb.Struct) Client {
 	return githubClient
 }
 
-func (githubClient *Client) setTargetRepo(setup *structpb.Struct) error {
-	githubClient.owner = setup.GetFields()["owner"].GetStringValue()
-	githubClient.repository = setup.GetFields()["repository"].GetStringValue()
+func (githubClient *Client) setTargetRepo(info RepoInfoInterface) error {
+	githubClient.owner = info.getOwner()
+	githubClient.repository = info.getRepository()
 
 	if githubClient.owner == "" || githubClient.repository == "" {
 		return errmsg.AddMessage(
