@@ -10,10 +10,8 @@
     "TASK_CREATE_ISSUE",
     "TASK_CREATE_WEBHOOK"
   ],
-  "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/application/github",
   "icon": "assets/Github.svg",
-  "iconUrl": "",
   "id": "github",
   "public": true,
   "title": "GitHub",

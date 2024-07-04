@@ -9,29 +9,28 @@ import (
 )
 
 type CreateWebHookInput struct {
-	Owner 			string			`json:"owner"`
-	Repository 		string			`json:"repository"`
-	HookURL 		string			`json:"hook_url"`
-	HookSecret 		string			`json:"hook_secret"`
-	Events 			[]string		`json:"events"`
-	Active 			bool			`json:"active"`
-	ContentType 	string			`json:"content_type"` // including `json`, `form`
+	Owner       string   `json:"owner"`
+	Repository  string   `json:"repository"`
+	HookURL     string   `json:"hook_url"`
+	HookSecret  string   `json:"hook_secret"`
+	Events      []string `json:"events"`
+	Active      bool     `json:"active"`
+	ContentType string   `json:"content_type"` // including `json`, `form`
 }
 
 type HookConfig struct {
-	URL 		string			`json:"url"`
-	InsecureSSL string			`json:"insecure_ssl"`
-	Secret 		string			`json:"secret,omitempty"`
-	ContentType string			`json:"content_type"`
+	URL         string `json:"url"`
+	InsecureSSL string `json:"insecure_ssl"`
+	Secret      string `json:"secret,omitempty"`
+	ContentType string `json:"content_type"`
 }
 
 type HookInfo struct {
-	ID 		 	int64			`json:"id"`
-	URL 		string			`json:"url"`
-	PingURL 	string			`json:"ping_url"`
-	TestURL 	string			`json:"test_url"`
-	Config 		HookConfig		`json:"config"`
-
+	ID      int64      `json:"id"`
+	URL     string     `json:"url"`
+	PingURL string     `json:"ping_url"`
+	TestURL string     `json:"test_url"`
+	Config  HookConfig `json:"config"`
 }
 type CreateWebHookResp struct {
 	Hook HookInfo `json:"hook"`
@@ -42,30 +41,30 @@ func (githubClient *Client) createWebhookTask(props *structpb.Struct) (*structpb
 	if err != nil {
 		return nil, err
 	}
-
-	hookURL := props.GetFields()["hook_url"].GetStringValue()
-	hookSecret := props.GetFields()["hook_secret"].GetStringValue()
-	originalEvents := props.GetFields()["events"].GetListValue().GetValues()
-	active := props.GetFields()["active"].GetBoolValue()
-	contentType := props.GetFields()["content_type"].GetStringValue()
-	if contentType != "json" && contentType != "form"{
-		contentType = "json"
+	var inputStruct CreateWebHookInput
+	err = base.ConvertFromStructpb(props, &inputStruct)
+	if err != nil {
+		return nil, err
 	}
 
-	events := make([]string, len(originalEvents))
-	for idx, event := range originalEvents {
-		events[idx] = event.GetStringValue()
+	hookURL := inputStruct.HookURL
+	hookSecret := inputStruct.HookSecret
+	originalEvents := inputStruct.Events
+	active := inputStruct.Active
+	contentType := inputStruct.ContentType
+	if contentType != "json" && contentType != "form" {
+		contentType = "json"
 	}
 
 	hook := &github.Hook{
 		Name: github.String("web"), // only webhooks are supported
 		Config: &github.HookConfig{
 			InsecureSSL: github.String("0"), // SSL verification is required
-			URL: &hookURL,
-			Secret: &hookSecret,
+			URL:         &hookURL,
+			Secret:      &hookSecret,
 			ContentType: &contentType,
 		},
-		Events: events,
+		Events: originalEvents,
 		Active: &active,
 	}
 

@@ -7,6 +7,7 @@ import (
 	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
 )
+
 type IssuesService interface {
 	ListByRepo(context.Context, string, string, *github.IssueListByRepoOptions) ([]*github.Issue, *github.Response, error)
 	Get(context.Context, string, string, int) (*github.Issue, *github.Response, error)
@@ -15,26 +16,25 @@ type IssuesService interface {
 }
 
 type Issue struct {
-	Number        int    `json:"number"`
-	Title         string `json:"title"`
-	State         string `json:"state"`
-	Body          string `json:"body"`
-	Assignee      string `json:"assignee"`
+	Number        int      `json:"number"`
+	Title         string   `json:"title"`
+	State         string   `json:"state"`
+	Body          string   `json:"body"`
+	Assignee      string   `json:"assignee"`
 	Assignees     []string `json:"assignees"`
 	Labels        []string `json:"labels"`
-	IsPullRequest bool   `json:"is_pull_request"`
+	IsPullRequest bool     `json:"is_pull_request"`
 }
-
 
 func (githubClient *Client) extractIssue(originalIssue *github.Issue) Issue {
 	return Issue{
-		Number: originalIssue.GetNumber(),
-		Title: originalIssue.GetTitle(),
-		State: originalIssue.GetState(),
-		Body: originalIssue.GetBody(),
-		Assignee: originalIssue.GetAssignee().GetName(),
-		Assignees: extractAssignees(originalIssue.Assignees),
-		Labels: extractLabels(originalIssue.Labels),
+		Number:        originalIssue.GetNumber(),
+		Title:         originalIssue.GetTitle(),
+		State:         originalIssue.GetState(),
+		Body:          originalIssue.GetBody(),
+		Assignee:      originalIssue.GetAssignee().GetName(),
+		Assignees:     extractAssignees(originalIssue.Assignees),
+		Labels:        extractLabels(originalIssue.Labels),
 		IsPullRequest: originalIssue.IsPullRequest(),
 	}
 }
@@ -73,13 +73,13 @@ func filterOutPullRequests(issues []Issue) []Issue {
 }
 
 type GetAllIssuesInput struct {
-	Owner		 	string 			`json:"owner"`
-	Repository		string 			`json:"repository"`
-	State		 	string 			`json:"state"`
-	Sort		 	string 			`json:"sort"`
-	Direction		string 			`json:"direction"`
-	Since 		 	string 			`json:"since"`
-	NoPullRequest 	bool 			`json:"no_pull_request"`
+	Owner         string `json:"owner"`
+	Repository    string `json:"repository"`
+	State         string `json:"state"`
+	Sort          string `json:"sort"`
+	Direction     string `json:"direction"`
+	Since         string `json:"since"`
+	NoPullRequest bool   `json:"no_pull_request"`
 }
 
 type GetAllIssuesResp struct {
@@ -91,19 +91,24 @@ func (githubClient *Client) getAllIssuesTask(props *structpb.Struct) (*structpb.
 	if err != nil {
 		return nil, err
 	}
+	var inputStruct GetAllIssuesInput
+	err = base.ConvertFromStructpb(props, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
 
 	// from format like `2006-01-02T15:04:05Z07:00` to time.Time
-	sinceTime, err := parseTime(props.GetFields()["since"].GetStringValue())
+	sinceTime, err := parseTime(inputStruct.Since)
 	if err != nil {
 		return nil, err
 	}
 	opts := &github.IssueListByRepoOptions{
-		State: props.GetFields()["state"].GetStringValue(),
-		Sort: props.GetFields()["sort"].GetStringValue(),
-		Direction: props.GetFields()["direction"].GetStringValue(),
-		Since: *sinceTime,
+		State:     inputStruct.State,
+		Sort:      inputStruct.Sort,
+		Direction: inputStruct.Direction,
+		Since:     *sinceTime,
 	}
-	if opts.Mentioned == "none"{
+	if opts.Mentioned == "none" {
 		opts.Mentioned = ""
 	}
 
@@ -118,7 +123,7 @@ func (githubClient *Client) getAllIssuesTask(props *structpb.Struct) (*structpb.
 	}
 
 	// filter out pull requests if no_pull_request is true
-	if props.GetFields()["no_pull_request"].GetBoolValue() {
+	if inputStruct.NoPullRequest {
 		issueList = filterOutPullRequests(issueList)
 	}
 	var resp GetAllIssuesResp
@@ -131,9 +136,9 @@ func (githubClient *Client) getAllIssuesTask(props *structpb.Struct) (*structpb.
 }
 
 type GetIssueInput struct {
-	Owner		 	string 			`json:"owner"`
-	Repository		string 			`json:"repository"`
-	IssueNumber 	int 			`json:"issue_number"`
+	Owner       string `json:"owner"`
+	Repository  string `json:"repository"`
+	IssueNumber int    `json:"issue_number"`
 }
 
 type GetIssueResp struct {
@@ -145,8 +150,13 @@ func (githubClient *Client) getIssueTask(props *structpb.Struct) (*structpb.Stru
 	if err != nil {
 		return nil, err
 	}
+	var inputStruct GetIssueInput
+	err = base.ConvertFromStructpb(props, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
 
-	issueNumber := int(props.GetFields()["issue_number"].GetNumberValue())
+	issueNumber := inputStruct.IssueNumber
 	issue, err := githubClient.getIssue(githubClient.owner, githubClient.repository, issueNumber)
 	if err != nil {
 		return nil, err
@@ -163,10 +173,10 @@ func (githubClient *Client) getIssueTask(props *structpb.Struct) (*structpb.Stru
 }
 
 type CreateIssueInput struct {
-	Owner      	string 		`json:"owner"`
-	Repository 	string 		`json:"repository"`
-	Title      	string 		`json:"title"`
-	Body       	string 		`json:"body"`
+	Owner      string `json:"owner"`
+	Repository string `json:"repository"`
+	Title      string `json:"title"`
+	Body       string `json:"body"`
 }
 
 type CreateIssueResp struct {
@@ -178,12 +188,14 @@ func (githubClient *Client) createIssueTask(props *structpb.Struct) (*structpb.S
 	if err != nil {
 		return nil, err
 	}
-
-	title := props.GetFields()["title"].GetStringValue()
-	body := props.GetFields()["body"].GetStringValue()
+	var inputStruct CreateIssueInput
+	err = base.ConvertFromStructpb(props, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
 	issueRequest := &github.IssueRequest{
-		Title: &title,
-		Body: &body,
+		Title: &inputStruct.Title,
+		Body:  &inputStruct.Body,
 	}
 	issue, _, err := githubClient.client.Issues.Create(context.Background(), githubClient.owner, githubClient.repository, issueRequest)
 	if err != nil {

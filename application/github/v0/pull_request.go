@@ -20,32 +20,33 @@ type PullRequestService interface {
 }
 
 type PullRequest struct {
-	ID          		int64           	`json:"id"`
-	Number      		int             	`json:"number"`
-	State       		string          	`json:"state"`
-	Title	 			string 				`json:"title"`
-	Body 				string 				`json:"body"`
-	DiffURL 			string 				`json:"diff_url,omitempty"`
-	CommitsURL 			string 				`json:"commits_url,omitempty"`
-	Commits 			[]Commit 			`json:"commits"`
-	Head 				string 				`json:"head"`
-	Base 				string 				`json:"base"`
-	CommentsNum 		int 				`json:"comments_num"`
-	CommitsNum 			int 				`json:"commits_num"`
-	ReviewCommentsNum 	int		 			`json:"review_comments_num"`
+	ID                int64    `json:"id"`
+	Number            int      `json:"number"`
+	State             string   `json:"state"`
+	Title             string   `json:"title"`
+	Body              string   `json:"body"`
+	DiffURL           string   `json:"diff_url,omitempty"`
+	CommitsURL        string   `json:"commits_url,omitempty"`
+	Commits           []Commit `json:"commits"`
+	Head              string   `json:"head"`
+	Base              string   `json:"base"`
+	CommentsNum       int      `json:"comments_num"`
+	CommitsNum        int      `json:"commits_num"`
+	ReviewCommentsNum int      `json:"review_comments_num"`
 }
+
 func (githubClient *Client) extractPullRequestInformation(originalPr *github.PullRequest) (PullRequest, error) {
 	resp := PullRequest{
-		ID: originalPr.GetID(),
-		Number: originalPr.GetNumber(),
-		State: originalPr.GetState(),
-		Title: originalPr.GetTitle(),
-		Body: originalPr.GetBody(),
-		DiffURL: originalPr.GetDiffURL(),
-		Head: originalPr.GetHead().GetSHA(),
-		Base: originalPr.GetBase().GetSHA(),
-		CommentsNum: originalPr.GetComments(),
-		CommitsNum: originalPr.GetCommits(),
+		ID:                originalPr.GetID(),
+		Number:            originalPr.GetNumber(),
+		State:             originalPr.GetState(),
+		Title:             originalPr.GetTitle(),
+		Body:              originalPr.GetBody(),
+		DiffURL:           originalPr.GetDiffURL(),
+		Head:              originalPr.GetHead().GetSHA(),
+		Base:              originalPr.GetBase().GetSHA(),
+		CommentsNum:       originalPr.GetComments(),
+		CommitsNum:        originalPr.GetCommits(),
 		ReviewCommentsNum: originalPr.GetReviewComments(),
 	}
 	if originalPr.GetCommitsURL() != "" {
@@ -61,16 +62,15 @@ func (githubClient *Client) extractPullRequestInformation(originalPr *github.Pul
 	return resp, nil
 }
 
-// for testing
 type GetAllPullRequestsInput struct {
-	Owner		 	string 			`json:"owner"`
-	Repository		string 			`json:"repository"`
-	State		 	string 			`json:"state"`
-	Sort		 	string 			`json:"sort"`
-	Direction		string 			`json:"direction"`
+	Owner      string `json:"owner"`
+	Repository string `json:"repository"`
+	State      string `json:"state"`
+	Sort       string `json:"sort"`
+	Direction  string `json:"direction"`
 }
 type GetAllPullRequestsResp struct {
-	PullRequests   	[]PullRequest 	`json:"pull_requests"`
+	PullRequests []PullRequest `json:"pull_requests"`
 }
 
 func (githubClient *Client) getAllPullRequestsTask(props *structpb.Struct) (*structpb.Struct, error) {
@@ -79,10 +79,16 @@ func (githubClient *Client) getAllPullRequestsTask(props *structpb.Struct) (*str
 		return nil, err
 	}
 
+	var inputStruct GetAllPullRequestsInput
+	err = base.ConvertFromStructpb(props, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
 	opts := &github.PullRequestListOptions{
-		State: props.GetFields()["state"].GetStringValue(),
-		Sort: props.GetFields()["sort"].GetStringValue(),
-		Direction: props.GetFields()["direction"].GetStringValue(),
+		State:     inputStruct.State,
+		Sort:      inputStruct.Sort,
+		Direction: inputStruct.Direction,
 	}
 	prs, _, err := githubClient.client.PullRequests.List(context.Background(), githubClient.owner, githubClient.repository, opts)
 	if err != nil {
@@ -105,14 +111,13 @@ func (githubClient *Client) getAllPullRequestsTask(props *structpb.Struct) (*str
 	return out, nil
 }
 
-
 type GetPullRequestInput struct {
-	Owner string `json:"owner"`
-	Repository string `json:"repository"`
-	PrNumber float64 `json:"pr_number"`
+	Owner      string  `json:"owner"`
+	Repository string  `json:"repository"`
+	PrNumber   float64 `json:"pr_number"`
 }
 type GetPullRequestResp struct {
-	PullRequest		PullRequest `json:"pull_request"`
+	PullRequest PullRequest `json:"pull_request"`
 }
 
 func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structpb.Struct, error) {
@@ -121,7 +126,12 @@ func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structp
 		return nil, err
 	}
 
-	number := props.GetFields()["pr_number"].GetNumberValue()
+	var inputStruct GetPullRequestInput
+	err = base.ConvertFromStructpb(props, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+	number := inputStruct.PrNumber
 	var pullRequest *github.PullRequest
 	if number > 0 {
 		pr, _, err := githubClient.client.PullRequests.Get(context.Background(), githubClient.owner, githubClient.repository, int(number))
@@ -131,11 +141,11 @@ func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structp
 			return nil, err
 		}
 		pullRequest = pr
-	}else {
+	} else {
 		// Get the latest PR
 		opts := &github.PullRequestListOptions{
-			State: "all",
-			Sort: "created",
+			State:     "all",
+			Sort:      "created",
 			Direction: "desc",
 		}
 		prs, _, err := githubClient.client.PullRequests.List(context.Background(), githubClient.owner, githubClient.repository, opts)

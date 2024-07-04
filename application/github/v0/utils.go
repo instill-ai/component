@@ -23,7 +23,7 @@ func middleWare(req string) int {
 	return 200
 }
 
-func parseTime(since string) (*time.Time, error ){
+func parseTime(since string) (*time.Time, error) {
 	sinceTime, err := time.Parse(time.RFC3339, since)
 	if err != nil {
 		return nil, errmsg.AddMessage(

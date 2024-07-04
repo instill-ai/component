@@ -14,29 +14,30 @@ type RepositoriesService interface {
 }
 
 type Commit struct {
-	SHA          	string         		`json:"sha"`
-	Message 		string          	`json:"message"`
-	Stats        	CommitStats         `json:"stats"`
-	Files 	  		[]CommitFile        `json:"files"`
+	SHA     string       `json:"sha"`
+	Message string       `json:"message"`
+	Stats   CommitStats  `json:"stats"`
+	Files   []CommitFile `json:"files"`
 }
 type CommitStats struct {
-	Additions 		int 				`json:"additions"`
-	Deletions 		int 				`json:"deletions"`
-	Changes 		int 				`json:"changes"`
+	Additions int `json:"additions"`
+	Deletions int `json:"deletions"`
+	Changes   int `json:"changes"`
 }
 type CommitFile struct {
-	Filename 		string 				`json:"filename"`
-	Patch 			string 				`json:"patch"`
+	Filename string `json:"filename"`
+	Patch    string `json:"patch"`
 	CommitStats
 }
+
 func (githubClient *Client) extractCommitFile(file *github.CommitFile) CommitFile {
 	return CommitFile{
 		Filename: file.GetFilename(),
-		Patch: file.GetPatch(),
+		Patch:    file.GetPatch(),
 		CommitStats: CommitStats{
 			Additions: file.GetAdditions(),
 			Deletions: file.GetDeletions(),
-			Changes: file.GetChanges(),
+			Changes:   file.GetChanges(),
 		},
 	}
 }
@@ -44,9 +45,8 @@ func (githubClient *Client) extractCommitInformation(originalCommit *github.Repo
 	stats := originalCommit.GetStats()
 	commitFiles := originalCommit.Files
 
-	if stats == nil || commitFiles == nil{
-		// fmt.Println("Getting stats for commit: ", originalCommit.GetSHA())
-		commit, err := githubClient.getCommit(githubClient.owner, githubClient.repository ,originalCommit.GetSHA())
+	if stats == nil || commitFiles == nil {
+		commit, err := githubClient.getCommit(githubClient.owner, githubClient.repository, originalCommit.GetSHA())
 		if err == nil {
 			// only update stats and files if there is no error
 			// otherwise, we will maintain the original commit information
@@ -60,17 +60,16 @@ func (githubClient *Client) extractCommitInformation(originalCommit *github.Repo
 	}
 
 	return Commit{
-		SHA: originalCommit.GetSHA(),
+		SHA:     originalCommit.GetSHA(),
 		Message: originalCommit.GetCommit().GetMessage(),
 		Stats: CommitStats{
 			Additions: stats.GetAdditions(),
 			Deletions: stats.GetDeletions(),
-			Changes: stats.GetTotal(),
+			Changes:   stats.GetTotal(),
 		},
 		Files: files,
 	}
 }
-
 
 func (githubClient *Client) getCommit(owner string, repository string, sha string) (*github.RepositoryCommit, error) {
 	commit, _, err := githubClient.client.Repositories.GetCommit(context.Background(), owner, repository, sha, nil)
@@ -78,20 +77,27 @@ func (githubClient *Client) getCommit(owner string, repository string, sha strin
 }
 
 type GetCommitInput struct {
-	Owner 			string 		`json:"owner"`
-	Repository 		string 		`json:"repository"`
-	SHA 			string 		`json:"sha"`
+	Owner      string `json:"owner"`
+	Repository string `json:"repository"`
+	SHA        string `json:"sha"`
 }
 
 type GetCommitResp struct {
-	Commit 			Commit 		`json:"commit"`
+	Commit Commit `json:"commit"`
 }
-func  (githubClient *Client) getCommitTask(props *structpb.Struct) (*structpb.Struct, error) {
+
+func (githubClient *Client) getCommitTask(props *structpb.Struct) (*structpb.Struct, error) {
 	err := githubClient.setTargetRepo(props)
 	if err != nil {
 		return nil, err
 	}
-	sha := props.GetFields()["sha"].GetStringValue()
+	var inputStruct GetCommitInput
+	err = base.ConvertFromStructpb(props, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	sha := inputStruct.SHA
 	commit, err := githubClient.getCommit(githubClient.owner, githubClient.repository, sha)
 	if err != nil {
 		return nil, err

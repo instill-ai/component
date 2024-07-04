@@ -15,15 +15,15 @@ import (
 )
 
 const (
-	taskGetAllPRs = "TASK_GET_ALL_PULL_REQUESTS"
-	taskGetPR  = "TASK_GET_PULL_REQUEST"
-	taskGetCommit  = "TASK_GET_COMMIT"
-	taskGetReviewComments = "TASK_GET_REVIEW_COMMENTS"
+	taskGetAllPRs           = "TASK_GET_ALL_PULL_REQUESTS"
+	taskGetPR               = "TASK_GET_PULL_REQUEST"
+	taskGetCommit           = "TASK_GET_COMMIT"
+	taskGetReviewComments   = "TASK_GET_REVIEW_COMMENTS"
 	taskCreateReviewComment = "TASK_CREATE_REVIEW_COMMENT"
-	taskGetAllIssues = "TASK_GET_ALL_ISSUES"
-	taskGetIssue = "TASK_GET_ISSUE"
-	taskCreateIssue = "TASK_CREATE_ISSUE"
-	taskCreateWebhook = "TASK_CREATE_WEBHOOK"
+	taskGetAllIssues        = "TASK_GET_ALL_ISSUES"
+	taskGetIssue            = "TASK_GET_ISSUE"
+	taskCreateIssue         = "TASK_CREATE_ISSUE"
+	taskCreateWebhook       = "TASK_CREATE_WEBHOOK"
 )
 
 var (
@@ -100,6 +100,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 
 func (e *execution) fillInDefaultValues(input *structpb.Struct) (*structpb.Struct, error) {
 	task := e.Task
+	// Fill in the default values for missing input
 	taskSpec, ok := e.Component.GetTaskInputSchemas()[task]
 	if !ok {
 		return nil, errmsg.AddMessage(

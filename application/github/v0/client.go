@@ -12,15 +12,15 @@ import (
 )
 
 type Client struct {
-	client    		GitHubClient
-	owner 			string
-	repository 		string
+	client     GitHubClient
+	owner      string
+	repository string
 }
 type GitHubClient struct {
 	*github.Client
-	Repositories 	RepositoriesService
-	PullRequests 	PullRequestService
-	Issues 			IssuesService
+	Repositories RepositoriesService
+	PullRequests PullRequestService
+	Issues       IssuesService
 }
 
 func newClient(ctx context.Context, setup *structpb.Struct) Client {
@@ -36,12 +36,12 @@ func newClient(ctx context.Context, setup *structpb.Struct) Client {
 	client := github.NewClient(oauth2Client)
 	githubClient := Client{
 		client: GitHubClient{
-			Client: client,
+			Client:       client,
 			Repositories: client.Repositories,
 			PullRequests: client.PullRequests,
-			Issues: client.Issues,
-			},
-		}
+			Issues:       client.Issues,
+		},
+	}
 	return githubClient
 }
 

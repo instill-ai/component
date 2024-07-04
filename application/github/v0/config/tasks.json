@@ -777,7 +777,7 @@
         "direction": {
           "default": "desc",
           "title": "Direction",
-          "description": "Direction of the sort, including asc or desc. Default is asc",
+          "description": "Direction of the sort, including asc or desc. Default is desc",
           "enum": [
             "asc",
             "desc"
@@ -927,7 +927,7 @@
         "direction": {
           "default": "desc",
           "title": "Direction",
-          "description": "Direction of the sort, including asc or desc. Default is asc",
+          "description": "Direction of the sort, including asc or desc. Default is desc",
           "enum": [
             "asc",
             "desc"
@@ -1191,7 +1191,7 @@
         "direction": {
           "default": "desc",
           "title": "Direction",
-          "description": "Direction of the sort, can be one of: asc, desc. Default is asc",
+          "description": "Direction of the sort, can be one of: asc, desc. Default is desc",
           "enum": [
             "asc",
             "desc"

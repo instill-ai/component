@@ -7,9 +7,9 @@ import (
 	"github.com/google/go-github/v62/github"
 )
 
-type MockIssuesService struct {}
+type MockIssuesService struct{}
 
-func (m *MockIssuesService)ListByRepo(ctx context.Context, owner, repo string, opt *github.IssueListByRepoOptions) ([]*github.Issue, *github.Response, error) {
+func (m *MockIssuesService) ListByRepo(ctx context.Context, owner, repo string, opt *github.IssueListByRepoOptions) ([]*github.Issue, *github.Response, error) {
 	switch middleWare(owner) {
 	case 403:
 		return nil, nil, fmt.Errorf("403 API rate limit exceeded")
@@ -22,11 +22,11 @@ func (m *MockIssuesService)ListByRepo(ctx context.Context, owner, repo string, o
 	resp := &github.Response{}
 	issues := []*github.Issue{}
 	issues = append(issues, &github.Issue{
-		ID: github.Int64(1),
+		ID:     github.Int64(1),
 		Number: github.Int(1),
-		Title: github.String("This is a fake Issue"),
-		Body: github.String("Issue Body"),
-		State: github.String("open"),
+		Title:  github.String("This is a fake Issue"),
+		Body:   github.String("Issue Body"),
+		State:  github.String("open"),
 		Assignee: &github.User{
 			Name: github.String("assignee"),
 		},
@@ -50,7 +50,7 @@ func (m *MockIssuesService)ListByRepo(ctx context.Context, owner, repo string, o
 	})
 	return issues, resp, nil
 }
-func (m *MockIssuesService)Get(ctx context.Context, owner, repo string, number int) (*github.Issue, *github.Response, error) {
+func (m *MockIssuesService) Get(ctx context.Context, owner, repo string, number int) (*github.Issue, *github.Response, error) {
 	switch middleWare(owner) {
 	case 403:
 		return nil, nil, fmt.Errorf("403 API rate limit exceeded")
@@ -61,11 +61,11 @@ func (m *MockIssuesService)Get(ctx context.Context, owner, repo string, number i
 	}
 	resp := &github.Response{}
 	issue := &github.Issue{
-		ID: github.Int64(1),
+		ID:     github.Int64(1),
 		Number: github.Int(1),
-		Title: github.String("This is a fake Issue"),
-		Body: github.String("Issue Body"),
-		State: github.String("open"),
+		Title:  github.String("This is a fake Issue"),
+		Body:   github.String("Issue Body"),
+		State:  github.String("open"),
 		Assignee: &github.User{
 			Name: github.String("assignee"),
 		},
@@ -89,7 +89,7 @@ func (m *MockIssuesService)Get(ctx context.Context, owner, repo string, number i
 	}
 	return issue, resp, nil
 }
-func (m *MockIssuesService)Create(ctx context.Context, owner, repo string, issue *github.IssueRequest) (*github.Issue, *github.Response, error) {
+func (m *MockIssuesService) Create(ctx context.Context, owner, repo string, issue *github.IssueRequest) (*github.Issue, *github.Response, error) {
 	switch middleWare(owner) {
 	case 403:
 		return nil, nil, fmt.Errorf("403 API rate limit exceeded")
@@ -101,11 +101,11 @@ func (m *MockIssuesService)Create(ctx context.Context, owner, repo string, issue
 	resp := &github.Response{}
 
 	newIssue := &github.Issue{
-		ID: github.Int64(1),
-		Number: github.Int(1),
-		Title: issue.Title,
-		Body: issue.Body,
-		State: github.String("open"),
+		ID:               github.Int64(1),
+		Number:           github.Int(1),
+		Title:            issue.Title,
+		Body:             issue.Body,
+		State:            github.String("open"),
 		PullRequestLinks: nil,
 	}
 	return newIssue, resp, nil

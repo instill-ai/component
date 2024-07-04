@@ -21,12 +21,12 @@ func extractReviewCommentInformation(originalComment *github.PullRequestComment)
 }
 
 type GetAllReviewCommentsInput struct {
-	Owner      	string 		`json:"owner"`
-	Repository 	string 		`json:"repository"`
-	PrNumber    int    		`json:"pr_number"`
-	Sort 		string 		`json:"sort"`
-	Direction 	string 		`json:"direction"`
-	Since 		string 		`json:"since"`
+	Owner      string `json:"owner"`
+	Repository string `json:"repository"`
+	PrNumber   int    `json:"pr_number"`
+	Sort       string `json:"sort"`
+	Direction  string `json:"direction"`
+	Since      string `json:"since"`
 }
 
 type GetAllReviewCommentsResp struct {
@@ -42,18 +42,23 @@ func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*s
 	if err != nil {
 		return nil, err
 	}
+	var inputStruct GetAllReviewCommentsInput
+	err = base.ConvertFromStructpb(props, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
 
 	// from format like `2006-01-02T15:04:05Z07:00` to time.Time
-	sinceTime, err := parseTime(props.GetFields()["since"].GetStringValue())
+	sinceTime, err := parseTime(inputStruct.Since)
 	if err != nil {
 		return nil, err
 	}
 	opts := &github.PullRequestListCommentsOptions{
-		Sort: props.GetFields()["sort"].GetStringValue(),
-		Direction: props.GetFields()["direction"].GetStringValue(),
-		Since: *sinceTime,
+		Sort:      inputStruct.Sort,
+		Direction: inputStruct.Direction,
+		Since:     *sinceTime,
 	}
-	number := int(props.GetFields()["pr_number"].GetNumberValue())
+	number := inputStruct.PrNumber
 	comments, _, err := githubClient.client.PullRequests.ListComments(context.Background(), githubClient.owner, githubClient.repository, number, opts)
 	if err != nil {
 		errMessage := strings.Split(err.Error(), ": ")
@@ -84,10 +89,10 @@ func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*s
 }
 
 type CreateReviewCommentInput struct {
-	Owner      	string 		`json:"owner"`
-	Repository 	string 		`json:"repository"`
-	PrNumber    int    		`json:"pr_number"`
-	Comment 	github.PullRequestComment 		`json:"comment"`
+	Owner      string                    `json:"owner"`
+	Repository string                    `json:"repository"`
+	PrNumber   int                       `json:"pr_number"`
+	Comment    github.PullRequestComment `json:"comment"`
 }
 
 type CreateReviewCommentResp struct {
@@ -128,10 +133,10 @@ func (githubClient *Client) createReviewCommentTask(props *structpb.Struct) (*st
 				"Pull request not found. Ensure the pull request number is correct, the repository is public, and fill in the correct GitHub token.",
 			)
 		}
-		if strings.Contains(errType, "422 Validation Failed"){
+		if strings.Contains(errType, "422 Validation Failed") {
 			return nil, errmsg.AddMessage(
 				err,
-				"Invalid comment. Ensure the comment is not empty and the line numbers and sides are correct." ,
+				"Invalid comment. Ensure the comment is not empty and the line numbers and sides are correct.",
 			)
 		}
 		return nil, err
