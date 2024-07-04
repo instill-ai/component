@@ -22,21 +22,44 @@
         "reference"
       ],
       "instillAcceptFormats": [
-        "semi-structured/json"
+        "string"
       ],
       "instillSecret": false,
       "instillCredential": false,
       "instillUIOrder": 1,
       "title": "Google Credential JSON",
       "type": "string"
+    },
+    "location": {
+      "enum": [
+        "us-central1",
+        "europe-west4",
+        "asia-southeast1"
+      ],
+      "example": "us-central1",
+      "description": "The location of the Vertex AI resources. For more information, check: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations",
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 2,
+      "instillUpstreamTypes": [
+        "value",
+        "reference",
+        "template"
+      ],
+      "title": "Location",
+      "type": "string"
     }
   },
   "required": [
-    "project-id"
+    "project-id",
+    "google-credential",
+    "location"
   ],
   "instillEditOnNodeFields": [
     "project-id",
-    "google-credential"
+    "google-credential",
+    "location"
   ],
   "title": "Vertex AI Connection",
   "type": "object"

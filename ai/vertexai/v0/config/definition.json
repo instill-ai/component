@@ -1,6 +1,9 @@
 {
   "availableTasks": [
-    "TASK_TEXT_GENERATION_CHAT"
+    "TASK_TEXT_GENERATION_CHAT",
+    "TASK_TEXT_TO_IMAGE",
+    "TASK_IMAGE_TO_IMAGE",
+    "TASK_SPEECH_RECOGNITION"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/ai/vertexai",
