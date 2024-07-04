@@ -39,7 +39,7 @@ func TestComponent_Execute(t *testing.T) {
 
 }
 
-func TestComponent_Generation(t *testing.T) {
+func TestComponent_Tasks(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
