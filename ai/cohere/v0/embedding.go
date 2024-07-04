@@ -2,6 +2,7 @@ package cohere
 
 import (
 	"encoding/json"
+	"fmt"
 
 	cohereSDK "github.com/cohere-ai/cohere-go/v2"
 	"github.com/instill-ai/component/base"
@@ -16,15 +17,19 @@ type embeddingInput struct {
 }
 
 type embeddingOutput struct {
-	Embedding []float64   `json:"embedding"`
-	Usage     cohereUsage `json:"usage"`
+	Embedding []float64  `json:"embedding"`
+	Usage     embedUsage `json:"usage"`
+}
+
+type embedUsage struct {
+	Tokens int `json:"tokens"`
 }
 
 func (e *execution) taskEmbedding(in *structpb.Struct) (*structpb.Struct, error) {
 	inputStruct := embeddingInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error generating input struct: %v", err)
 	}
 	req := cohereSDK.EmbedRequest{
 		Texts:     []string{inputStruct.Text},
@@ -37,11 +42,18 @@ func (e *execution) taskEmbedding(in *structpb.Struct) (*structpb.Struct, error)
 		return nil, err
 	}
 
+	if resp.EmbeddingsFloats.Meta == nil {
+		return nil, fmt.Errorf("meta is nil")
+	}
+	bills := resp.EmbeddingsFloats.Meta.BilledUnits
+	if bills == nil || bills.InputTokens == nil {
+		return nil, fmt.Errorf("billed units is nil")
+	}
+
 	outputStruct := embeddingOutput{
 		Embedding: resp.EmbeddingsFloats.Embeddings[0],
-		Usage: cohereUsage{
-			InputTokens:  int(*resp.EmbeddingsFloats.Meta.BilledUnits.InputTokens),
-			OutputTokens: int(*resp.EmbeddingsFloats.Meta.BilledUnits.OutputTokens),
+		Usage: embedUsage{
+			Tokens: int(*bills.InputTokens),
 		},
 	}
 

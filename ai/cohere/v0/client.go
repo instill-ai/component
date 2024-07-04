@@ -54,6 +54,7 @@ func (cl *cohereClient) generateTextChat(request cohereSDK.ChatRequest) (cohereS
 		Text:         respPtr.Text,
 		GenerationId: respPtr.GenerationId,
 		Citations:    respPtr.Citations,
+		Meta:         respPtr.Meta,
 	}
 	return resp, nil
 }
@@ -67,6 +68,7 @@ func (cl *cohereClient) generateRerank(request cohereSDK.RerankRequest) (cohereS
 	}
 	resp := cohereSDK.RerankResponse{
 		Results: respPtr.Results,
+		Meta:    respPtr.Meta,
 	}
 	return resp, nil
 }

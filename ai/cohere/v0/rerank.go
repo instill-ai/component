@@ -2,6 +2,7 @@ package cohere
 
 import (
 	"encoding/json"
+	"fmt"
 
 	cohereSDK "github.com/cohere-ai/cohere-go/v2"
 	"github.com/instill-ai/component/base"
@@ -17,7 +18,11 @@ type rerankInput struct {
 
 type rerankOutput struct {
 	Ranking []string    `json:"ranking"`
-	Usage   cohereUsage `json:"usage"`
+	Usage   rerankUsage `json:"usage"`
+}
+
+type rerankUsage struct {
+	Search int `json:"search-counts"`
 }
 
 func (e *execution) taskRerank(in *structpb.Struct) (*structpb.Struct, error) {
@@ -25,7 +30,7 @@ func (e *execution) taskRerank(in *structpb.Struct) (*structpb.Struct, error) {
 	inputStruct := rerankInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error generating input struct: %v", err)
 	}
 
 	documents := []*cohereSDK.RerankRequestDocumentsItem{}
@@ -52,12 +57,18 @@ func (e *execution) taskRerank(in *structpb.Struct) (*structpb.Struct, error) {
 	for _, rankResult := range resp.Results {
 		newRanking = append(newRanking, rankResult.Document.Text)
 	}
+
+	if resp.Meta == nil {
+		return nil, fmt.Errorf("meta is nil")
+	}
+	bills := resp.Meta.BilledUnits
+	if bills == nil || bills.SearchUnits == nil {
+		return nil, fmt.Errorf("billed units is nil")
+	}
+
 	outputStruct := rerankOutput{
 		Ranking: newRanking,
-		Usage: cohereUsage{
-			InputTokens:  int(*resp.Meta.BilledUnits.InputTokens),
-			OutputTokens: int(*resp.Meta.BilledUnits.OutputTokens),
-		},
+		Usage:   rerankUsage{Search: int(*bills.SearchUnits)},
 	}
 
 	outputJSON, err := json.Marshal(outputStruct)

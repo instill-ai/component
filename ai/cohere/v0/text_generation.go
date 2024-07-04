@@ -2,6 +2,7 @@ package cohere
 
 import (
 	"encoding/json"
+	"fmt"
 
 	cohereSDK "github.com/cohere-ai/cohere-go/v2"
 	"github.com/instill-ai/component/base"
@@ -42,20 +43,26 @@ type ciatation struct {
 	Text  string `json:"text"`
 }
 
+type commandUsage struct {
+	InputTokens  int `json:"input-tokens"`
+	OutputTokens int `json:"output-tokens"`
+}
+
 type textGenerationOutput struct {
-	Text       string      `json:"text"`
-	Ciatations []ciatation `json:"citations"`
-	Usage      cohereUsage `json:"usage"`
+	Text       string       `json:"text"`
+	Ciatations []ciatation  `json:"citations"`
+	Usage      commandUsage `json:"usage"`
 }
 
 func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, error) {
+	fmt.Println("### taskTextGeneration start ###")
 
 	inputStruct := textGenerationInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error generating input struct: %v", err)
 	}
-
+	fmt.Println("### convert input struct completed ###")
 	messages := []*cohereSDK.Message{}
 
 	if inputStruct.SystemMsg != "" {
@@ -81,6 +88,7 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 		}
 		messages = append(messages, &message)
 	}
+	fmt.Println("### gather messagess completed ###")
 
 	documents := []map[string]string{}
 	for _, doc := range inputStruct.Documents {
@@ -88,6 +96,7 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 		document["text"] = doc
 		documents = append(documents, document)
 	}
+	fmt.Println("### gather documents completed ###")
 
 	req := cohereSDK.ChatRequest{
 		Message:     inputStruct.Prompt,
@@ -105,6 +114,7 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("### call Cohere API completed ###")
 
 	citations := []ciatation{}
 
@@ -116,15 +126,29 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 		}
 		citations = append(citations, citation)
 	}
+	if resp.Meta == nil {
+		return nil, fmt.Errorf("meta is nil")
+	}
+	bills := resp.Meta.BilledUnits
+	if bills == nil || bills.InputTokens == nil || bills.OutputTokens == nil {
+		return nil, fmt.Errorf("billed units is nil")
+	}
+
+	inputTokens := *bills.InputTokens
+	outputTokens := *bills.OutputTokens
+
+	fmt.Printf("inputTokens: %f, outputTokens: %f\n", inputTokens, outputTokens)
 
 	outputStruct := textGenerationOutput{
 		Text:       resp.Text,
 		Ciatations: citations,
-		Usage: cohereUsage{
-			InputTokens:  int(*resp.Meta.BilledUnits.InputTokens),
-			OutputTokens: int(*resp.Meta.BilledUnits.OutputTokens),
+		Usage: commandUsage{
+			InputTokens:  int(inputTokens),
+			OutputTokens: int(outputTokens),
 		},
 	}
+
+	fmt.Println("### generate output completed ###")
 
 	outputJSON, err := json.Marshal(outputStruct)
 	if err != nil {

@@ -41,14 +41,6 @@ type CohereClient interface {
 	generateRerank(request cohereSDK.RerankRequest) (cohereSDK.RerankResponse, error)
 }
 
-type cohereUsage struct {
-	InputTokens  int `json:"input-tokens"`
-	OutputTokens int `json:"output-tokens"`
-}
-
-// These structs are used to send the request /  parse the response from the API, this following their naming convension.
-// reference: https://docs.anthropic.com/en/api/messages
-
 func Init(bc base.Component) *component {
 	once.Do(func() {
 		comp = &component{Component: bc}

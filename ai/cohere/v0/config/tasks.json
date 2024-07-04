@@ -144,8 +144,8 @@
       "title": "Citation",
       "type": "object"
     },
-    "usage": {
-      "description": "Token Usage on the Cohere Platform",
+    "command-usage": {
+      "description": "Token Usage on the Cohere Platform Command Models",
       "instillUIOrder": 1,
       "properties": {
         "input-tokens": {
@@ -166,6 +166,42 @@
       "required": [
         "input-tokens",
         "output-tokens"
+      ],
+      "title": "Usage",
+      "type": "object"
+    },
+    "rerank-usage": {
+      "description": "Search Usage on the Cohere Platform Rerank Models",
+      "instillUIOrder": 1,
+      "properties": {
+        "search-counts": {
+          "description": "The search count used by Cohere Models",
+          "instillFormat": "number",
+          "instillUIOrder": 1,
+          "title": "Search Counts",
+          "type": "number"
+        }
+      },
+      "required": [
+        "search-counts"
+      ],
+      "title": "Usage",
+      "type": "object"
+    },
+    "embed-usage": {
+      "description": "Token usage on the Cohere platform embed models",
+      "instillUIOrder": 1,
+      "properties": {
+        "tokens": {
+          "description": "The token count used by Cohere Models",
+          "instillFormat": "number",
+          "instillUIOrder": 1,
+          "title": "Token Count",
+          "type": "number"
+        }
+      },
+      "required": [
+        "tokens"
       ],
       "title": "Usage",
       "type": "object"
@@ -369,7 +405,7 @@
           }
         },
         "usage": {
-          "$ref": "#/$defs/usage"
+          "$ref": "#/$defs/command-usage"
         }
       },
       "required": [
@@ -472,7 +508,7 @@
           "title": "Embedding"
         },
         "usage": {
-          "$ref": "#/$defs/usage"
+          "$ref": "#/$defs/embed-usage"
         }
       },
       "required": [
@@ -595,7 +631,7 @@
           "title": "Reranked documents"
         },
         "usage": {
-          "$ref": "#/$defs/usage"
+          "$ref": "#/$defs/rerank-usage"
         }
       },
       "required": [
