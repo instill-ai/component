@@ -24,7 +24,7 @@ func TestComponentExecution_GetComponent(t *testing.T) {
 
 	x, _ := cmp.CreateExecution(nil, nil, "TASK_TEXT_EMBEDDINGS")
 	got := x.Execution.GetComponent()
-	c.Check(got.GetID(), qt.Equals, "openai")
+	c.Check(got.GetDefinitionID(), qt.Equals, "openai")
 }
 
 type testExec struct{ ComponentExecution }

@@ -96,13 +96,13 @@ func Init(
 		{
 			// OpenAI
 			conn := openai.Init(baseComp)
-			conn = conn.WithInstillCredentials(secrets[conn.GetID()])
+			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
 		{
 			// Anthropic
 			conn := anthropic.Init(baseComp)
-			conn = conn.WithInstillCredentials(secrets[conn.GetID()])
+			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
 
@@ -125,9 +125,9 @@ func Init(
 // Import loads the component definitions into memory.
 func (s *Store) Import(comp base.IComponent) {
 	c := &component{comp: comp}
-	s.componentUIDMap[comp.GetUID()] = c
-	s.componentIDMap[comp.GetID()] = c
-	s.componentUIDs = append(s.componentUIDs, comp.GetUID())
+	s.componentUIDMap[comp.GetDefinitionUID()] = c
+	s.componentIDMap[comp.GetDefinitionID()] = c
+	s.componentUIDs = append(s.componentUIDs, comp.GetDefinitionUID())
 }
 
 // CreateExecution initializes the execution of a component given its UID.

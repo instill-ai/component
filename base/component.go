@@ -65,8 +65,8 @@ func init() {
 // IComponent is the interface that wraps the basic component methods.
 // All component need to implement this interface.
 type IComponent interface {
-	GetID() string
-	GetUID() uuid.UUID
+	GetDefinitionID() string
+	GetDefinitionUID() uuid.UUID
 	GetLogger() *zap.Logger
 	GetTaskInputSchemas() map[string]string
 	GetTaskOutputSchemas() map[string]string
@@ -577,11 +577,13 @@ func checkFreeForm(compSpec *structpb.Struct) bool {
 	return false
 }
 
-func (c *Component) GetID() string {
+// GetDefinitionID returns the component definition ID.
+func (c *Component) GetDefinitionID() string {
 	return c.definition.Id
 }
 
-func (c *Component) GetUID() uuid.UUID {
+// GetDefinitionUID returns the component definition UID.
+func (c *Component) GetDefinitionUID() uuid.UUID {
 	return uuid.FromStringOrNil(c.definition.Uid)
 }
 
