@@ -111,7 +111,6 @@
       "type": "string"
     },
     "threadUserInformation":{
-      "title": "Contact's information",
       "type": "object",
       "properties": {
         "name": {
@@ -613,6 +612,7 @@
                 "title": "Senders",
                 "type": "array",
                 "items": {
+                  "title": "Sender's information",
                   "$ref": "#/$defs/threadUserInformation"
                 }
               },
@@ -623,6 +623,7 @@
                 "title": "Recipients",
                 "type": "array",
                 "items": {
+                  "title": "Recipient's information",
                   "$ref": "#/$defs/threadUserInformation"
                 }
               },
