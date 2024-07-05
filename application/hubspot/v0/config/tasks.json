@@ -1,0 +1,740 @@
+{
+  "$defs":{
+    "ownerId": {
+      "description": "Owner ID",
+      "instillUIOrder": 0,
+      "title": "Owner ID",
+      "type": "string"
+    },
+    "contactIdOrEmail": {
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIMultiline": true,
+      "instillUIOrder": 0,
+      "instillUpstreamTypes": [
+        "value",
+        "reference",
+        "template"
+      ],
+      "title": "Contact ID or Email",
+      "type": "string"
+    },
+    "email": {
+      "description": "Email address",
+      "instillUIOrder": 1,
+      "title": "Email Address",
+      "type": "string"
+    },
+    "firstName": {
+      "description": "First name",
+      "instillUIOrder": 2,
+      "title": "First Name",
+      "type": "string"
+    },
+    "lastName": {
+      "description": "Last name",
+      "instillUIOrder": 3,
+      "title": "Last Name",
+      "type": "string"
+    },
+    "phoneNumber": {
+      "description": "Phone number. Preferably, format is in country code + phone number. Example: +886xxxxxxxxx ",
+      "instillUIOrder": 4,
+      "title": "Phone Number",
+      "type": "string"
+    },
+    "company": {
+      "description": "Company",
+      "instillUIOrder": 5,
+      "title": "Company",
+      "type": "string"
+    },
+    "jobTitle": {
+      "description": "Job title",
+      "instillUIOrder": 6,
+      "title": "Job Title",
+      "type": "string"
+    },
+    "lifecycleStage": {
+      "description": "Lifecycle stage. Default format is in small letters, all words are combined. Example: salesqualifiedlead. However, remember to check internal value for custom fields.",
+      "instillUIOrder": 7,
+      "title": "Lifecycle Stage",
+      "type": "string"
+    },
+    "leadStatus": {
+      "description": "Lead status. Default format is in capital letters, with _ as space. Example: IN_PROGRESS. However, remember to check internal value for custom fields." ,
+      "instillUIOrder": 8,
+      "title": "Lead Status",
+      "type": "string"
+    },
+    "dealName": {
+      "description": "Deal name",
+      "instillUIOrder": 1,
+      "title": "Deal Name",
+      "type": "string"
+    },
+    "pipeline": {
+      "description": "Pipeline. HubSpot uses interval value rather than the name displayed in the view",
+      "instillUIOrder": 2,
+      "title": "Pipeline",
+      "type": "string"
+    },
+    "dealStage": {
+      "description": "Deal stage. Default format is in small letters, all words are combined. Example: qualifiedtobuy. However, remember to check internal value for custom fields.",
+      "instillUIOrder": 3,
+      "title": "Deal Stage",
+      "type": "string"
+    },
+    "amount": {
+      "description": "Amount",
+      "instillUIOrder": 4,
+      "title": "Amount",
+      "type": "string"
+    },
+    "dealType": {
+      "description": "Deal type. Default format is in small letters, all words are combined. Example: newbusiness. However, remember to check internal value for custom fields.",
+      "instillUIOrder": 5,
+      "title": "Deal Type",
+      "type": "string"
+    },
+    "closeDate": {
+      "description": "Close date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z",
+      "instillUIOrder": 6,
+      "title": "Close Date",
+      "type": "string"
+    },
+    "createDate": {
+      "description": "Create date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z",
+      "instillUIOrder": 7,
+      "title": "Create Date",
+      "type": "string"
+    },
+    "threadUserInformation":{
+      "title": "Contact's information",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The name of the contact",
+          "instillFormat": "string",
+          "instillUIOrder": 0,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "description": "Specify the category of contact information",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "description": "Contains the actual contact information (e.g.: email address)",
+          "instillFormat": "string",
+          "instillUIOrder": 2,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+      ]
+    }
+  },
+  "TASK_GET_CONTACT": {
+    "instillShortDescription": "Get contact information using contact ID or Email",
+    "input": {
+      "description": "Input contact ID or email",
+      "instillUIOrder": 0,
+      "properties": {
+        "contactIdOrEmail": {
+          "description": "Input contact ID or email. If the input has @, it will search the contact using email",
+          "$ref": "#/$defs/contactIdOrEmail"
+        }
+      },
+      "required": [
+        "contactIdOrEmail"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Contact information",
+      "instillUIOrder": 0,
+      "properties": {
+        "email": {
+          "$ref": "#/$defs/email",
+          "instillFormat": "string",
+          "required": []
+        },
+        "firstName": {
+          "$ref": "#/$defs/firstName",
+          "instillFormat": "string",
+          "required": []
+        },
+        "lastName": {
+          "$ref": "#/$defs/lastName",
+          "instillFormat": "string",
+          "required": []
+        },
+        "phoneNumber": {
+          "$ref": "#/$defs/phoneNumber",
+          "instillFormat": "string",
+          "required": []
+        },
+        "company": {
+          "$ref": "#/$defs/company",
+          "instillFormat": "string",
+          "required": []
+        },
+        "ownerId": {
+          "$ref": "#/$defs/ownerId",
+          "instillFormat": "string",
+          "required": []
+        },
+        "jobTitle": {
+          "$ref": "#/$defs/jobTitle",
+          "instillFormat": "string",
+          "required": []
+        },
+        "lifecycleStage": {
+          "$ref": "#/$defs/lifecycleStage",
+          "instillFormat": "string",
+          "required": []
+        },
+        "leadStatus": {
+          "$ref": "#/$defs/leadStatus",
+          "instillFormat": "string",
+          "required": []
+        },
+        "contactId": {
+          "description": "Contact ID",
+          "instillUIOrder": 9,
+          "required": [],
+          "title": "Contact ID",
+          "type": "string",
+          "instillFormat": "string"
+        }
+      },
+      "required": [
+        "contactId"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_CONTACT": {
+    "instillShortDescription": "Create new contact",
+    "input": {
+      "description": "Contact information",
+      "instillUIOrder": 0,
+      "properties": {
+        "email": {
+          "$ref": "#/$defs/email",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "firstName": {
+          "$ref": "#/$defs/firstName",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "lastName": {
+          "$ref": "#/$defs/lastName",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "phoneNumber": {
+          "$ref": "#/$defs/phoneNumber",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "company": {
+          "$ref": "#/$defs/company",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "ownerId": {
+          "$ref": "#/$defs/ownerId",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "jobTitle": {
+          "$ref": "#/$defs/jobTitle",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "lifecycleStage": {
+          "$ref": "#/$defs/lifecycleStage",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "leadStatus": {
+          "$ref": "#/$defs/leadStatus",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Obtain contact ID",
+      "instillUIOrder": 0,
+      "properties": {
+        "contactId": {
+          "description": "Contact ID",
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Contact ID",
+          "type": "string",
+          "instillFormat": "string"
+        }
+      },
+      "required": [
+        "contactId"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_DEAL": {
+    "instillShortDescription": "Get deal information using deal ID",
+    "input": {
+      "description": "Input deal ID",
+      "instillUIOrder": 0,
+      "properties": {
+        "dealId": {
+          "description": "Input deal ID",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Deal ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dealId"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Contact information",
+      "instillUIOrder": 0,
+      "properties": {
+        "ownerId": {
+          "$ref": "#/$defs/ownerId",
+          "instillFormat": "string",
+          "required": []
+        },
+        "dealName": {
+          "$ref": "#/$defs/dealName",
+          "instillFormat": "string",
+          "required": []
+        },
+        "pipeline": {
+          "$ref": "#/$defs/pipeline",
+          "instillFormat": "string",
+          "required": []
+        },
+        "dealStage": {
+          "$ref": "#/$defs/dealStage",
+          "instillFormat": "string",
+          "required": []
+        },
+        "amount": {
+          "$ref": "#/$defs/amount",
+          "instillFormat": "string",
+          "required": []
+        },
+        "dealType": {
+          "$ref": "#/$defs/dealType",
+          "instillFormat": "string",
+          "required": []
+        },
+        "createDate": {
+          "$ref": "#/$defs/createDate",
+          "instillFormat": "string",
+          "required": []
+        },
+        "closeDate": {
+          "$ref": "#/$defs/closeDate",
+          "instillFormat": "string",
+          "required": []
+        }
+      },
+      "required": [
+        "dealName",
+        "pipeline",
+        "dealStage"
+
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_DEAL": {
+    "instillShortDescription": "Create new contact",
+    "input": {
+      "description": "Contact information",
+      "instillUIOrder": 0,
+      "properties": {
+        "contactIdOrEmail": {
+          "description": "Use to associate contact with deal. If the input has @, it will use email, otherwise, it will use contact id.",
+          "$ref": "#/$defs/contactIdOrEmail"
+        },
+        "dealName": {
+          "$ref": "#/$defs/dealName",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "pipeline": {
+          "$ref": "#/$defs/pipeline",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "dealStage": {
+          "$ref": "#/$defs/dealStage",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/amount",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "dealType": {
+          "$ref": "#/$defs/dealType",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        },
+        "closeDate": {
+          "$ref": "#/$defs/closeDate",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
+        }
+      },
+      "required": [
+        "dealName",
+        "pipeline",
+        "dealStage"
+
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Obtain deal ID",
+      "instillUIOrder": 0,
+      "properties": {
+        "dealId": {
+          "description": "Deal ID",
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Deal ID",
+          "type": "string",
+          "instillFormat": "string"
+        }
+      },
+      "required": [
+        "dealId"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_THREAD": {
+    "instillShortDescription": "Retrieve all the messages inside a thread (conversation inbox)",
+    "input": {
+      "description": "Input thread ID",
+      "instillUIOrder": 0,
+      "properties": {
+        "threadId": {
+          "description": "Input thread ID",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Thread ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "threadId"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "All messages in the thread",
+      "instillUIOrder": 0,
+      "properties": {
+        "results": {
+          "description": "An array of messages",
+          "instillUIOrder": 0,
+          "title": "Messages",
+          "type": "array",
+          "items": {
+            "title": "Messages Details",
+            "type": "object",
+            "properties": {
+              "createdAt": {
+                "description": "message to start a conversation",
+                "instillFormat": "string",
+                "instillUIOrder": 0,
+                "title": "Start Conversation Message",
+                "type": "string"
+              },
+              "senders": {
+                "description": "Senders",
+                "instillFormat": "array",
+                "instillUIOrder": 1,
+                "title": "Senders",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/threadUserInformation"
+                }
+              },
+              "recipients": {
+                "description": "Recipients",
+                "instillFormat": "array",
+                "instillUIOrder": 2,
+                "title": "Recipients",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/threadUserInformation"
+                }
+              },
+              "text": {
+                "description": "when a conversation starts",
+                "instillFormat": "string",
+                "instillUIOrder": 3,
+                "required": [],
+                "title": "Start Date",
+                "type": "string"
+              },
+              "subject": {
+                "description": "Date of the last message",
+                "instillFormat": "string",
+                "instillUIOrder": 4,
+                "required": [],
+                "title": "Last Date",
+                "type": "string"
+              }
+            },
+            "required": [
+              "createdAt",
+              "text",
+              "subject"
+            ]
+          }
+        }
+      },
+      "required": [
+        "results"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_RETRIEVE_ASSOCIATION":{
+    "instillShortDescription": "Get all the object IDs associated with contact ID",
+    "input": {
+      "description": "Contact ID and object type (CRM objects or Thread)",
+      "instillUIOrder": 0,
+      "properties": {
+        "contactId": {
+          "description": "Input contact ID",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "objectType": {
+          "description": "Input object type (CRM objects or 'Threads'). Note: CRM objects include 'Deals', 'Companies', 'Tickets', etc",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Object Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contactId",
+        "objectType"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "All object IDs",
+      "instillUIOrder": 0,
+      "properties": {
+        "results": {
+          "description": "An array of object ID",
+          "instillUIOrder": 0,
+          "title": "Object ID Array ",
+          "type": "array",
+          "items": {
+            "title": "Object ID",
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "Object ID",
+                "instillFormat": "string",
+                "instillUIOrder": 0,
+                "title": "Object ID",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        }
+      },
+      "required": [
+        "results"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  }
+
+}
