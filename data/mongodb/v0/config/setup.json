@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "description": "Fill in your MongoDB database name",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 0,
+      "title": "Database Name",
+      "type": "string"
+    },
+    "collection-name": {
+      "description": "The name of the collection in the MongoDB database",
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillShortDescription": "Collection Name",
+      "instillUIOrder": 1,
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "title": "Collection Name",
+      "type": "string"
+    },
+    "uri": {
+      "description": "Fill in your MongoDB URI",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": true,
+      "instillUIOrder": 2,
+      "title": "URI",
+      "type": "string"
+    }
+  },
+  "required": [
+    "uri",
+    "name",
+    "collection-name"
+  ],
+  "instillEditOnNodeFields": [
+    "uri",
+    "name",
+    "collection-name"
+  ],
+  "title": "MongoDB Connection",
+  "type": "object"
+}

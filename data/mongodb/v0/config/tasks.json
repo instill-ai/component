@@ -1,0 +1,211 @@
+{
+  "TASK_INSERT": {
+    "instillShortDescription": "Perform an insert operation",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "data": {
+          "description": "The data to be inserted",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Data"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Insert status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_FIND": {
+    "instillShortDescription": "Perform a find operation",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "criteria": {
+          "description": "The criteria to find documents, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any criteria, if JSON is empty e.g {}, then all fields will be selected",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "criteria"
+        }
+      },
+      "required": [
+        "criteria"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Find status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        },
+        "documents": {
+          "description": "The documents returned from the find operation",
+          "instillEditOnNodeFields": [],
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Documents",
+          "type": "array",
+          "instillFormat": "array:semi-structured/json",
+          "items": {
+            "title": "Result",
+            "instillFormat": "semi-structured/json"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "documents"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_UPDATE": {
+    "instillShortDescription": "Perform an update operation",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "criteria": {
+          "description": "The criteria to update documents",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "criteria"
+        },
+        "update": {
+          "description": "The updated data to be applied to the documents",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Update"
+        }
+      },
+      "required": [
+        "criteria",
+        "update"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Update status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_DELETE": {
+    "instillShortDescription": "Perform a delete operation",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "criteria": {
+          "description": "The criteria to delete documents",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "criteria"
+        }
+      },
+      "required": [
+        "criteria"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Delete status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  }
+}

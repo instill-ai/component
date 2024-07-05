@@ -1,0 +1,131 @@
+---
+title: "MongoDB"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP MongoDB component https://github.com/instill-ai/instill-core"
+---
+
+The MongoDB component is a data component that allows users to access the MongoDB NoSQL database.
+It can carry out the following tasks:
+
+- [Insert](#insert)
+- [Find](#find)
+- [Update](#update)
+- [Delete](#delete)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/mongodb/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Database Name (required) | `name` | string | Fill in your MongoDB database name |
+| Collection Name (required) | `collection-name` | string | The name of the collection in the MongoDB database |
+| URI (required) | `uri` | string | Fill in your MongoDB URI |
+
+
+
+
+## Supported Tasks
+
+### Insert
+
+Perform an insert operation
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_INSERT` |
+| Data (required) | `data` | semi-structured/json | The data to be inserted |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Insert status |
+
+
+
+
+
+
+### Find
+
+Perform a find operation
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_FIND` |
+| criteria (required) | `criteria` | semi-structured/json | The criteria to find documents, if JSON value of a key is null e.g \{'name':null\}, then name field will be selected without any criteria, if JSON is empty e.g \{\}, then all fields will be selected |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Documents | `documents` | array | The documents returned from the find operation |
+| Status | `status` | string | Find status |
+
+
+
+
+
+
+### Update
+
+Perform an update operation
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPDATE` |
+| criteria (required) | `criteria` | semi-structured/json | The criteria to update documents |
+| Update (required) | `update` | semi-structured/json | The updated data to be applied to the documents |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Update status |
+
+
+
+
+
+
+### Delete
+
+Perform a delete operation
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DELETE` |
+| criteria (required) | `criteria` | semi-structured/json | The criteria to delete documents |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Delete status |
+
+
+
+
+
+
+
