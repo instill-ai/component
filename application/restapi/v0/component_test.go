@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
@@ -31,7 +30,7 @@ func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 	reqBody := map[string]any{
 		"title": "Be the wheel",
@@ -157,7 +156,7 @@ func TestComponent_Execute(t *testing.T) {
 func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 
 	c.Run("ok - connected (even with non-2xx status", func(c *qt.C) {

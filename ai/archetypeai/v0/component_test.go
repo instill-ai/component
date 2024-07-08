@@ -13,7 +13,6 @@ import (
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -228,7 +227,7 @@ func TestComponent_Execute(t *testing.T) {
 		},
 	}
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	component := Init(bc)
 
 	for _, tc := range testcases {
@@ -288,7 +287,7 @@ func TestComponent_Execute(t *testing.T) {
 func TestComponent_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	component := Init(bc)
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
@@ -304,7 +303,7 @@ func TestComponent_CreateExecution(t *testing.T) {
 func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	component := Init(bc)
 
 	c.Run("ok - connected", func(c *qt.C) {

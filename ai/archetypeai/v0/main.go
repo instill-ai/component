@@ -63,7 +63,7 @@ func Init(bc base.Component) *component {
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
-		client:             newClient(setup, c.Logger),
+		client:             newClient(setup, c.GetLogger()),
 	}
 
 	switch task {

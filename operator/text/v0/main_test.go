@@ -10,7 +10,6 @@ import (
 	"code.sajari.com/docconv"
 	"github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -67,7 +66,7 @@ func TestOperator(t *testing.T) {
 			input: structpb.Struct{},
 		},
 	}
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	ctx := context.Background()
 	for i := range testcases {
 		tc := &testcases[i]

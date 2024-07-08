@@ -65,8 +65,8 @@ func init() {
 // IComponent is the interface that wraps the basic component methods.
 // All component need to implement this interface.
 type IComponent interface {
-	GetID() string
-	GetUID() uuid.UUID
+	GetDefinitionID() string
+	GetDefinitionUID() uuid.UUID
 	GetLogger() *zap.Logger
 	GetTaskInputSchemas() map[string]string
 	GetTaskOutputSchemas() map[string]string
@@ -87,7 +87,8 @@ type IComponent interface {
 
 // Component implements the common component methods.
 type Component struct {
-	Logger *zap.Logger
+	Logger          *zap.Logger
+	NewUsageHandler UsageHandlerCreator
 
 	taskInputSchemas  map[string]string
 	taskOutputSchemas map[string]string
@@ -576,15 +577,23 @@ func checkFreeForm(compSpec *structpb.Struct) bool {
 	return false
 }
 
-func (c *Component) GetID() string {
+// GetDefinitionID returns the component definition ID.
+func (c *Component) GetDefinitionID() string {
 	return c.definition.Id
 }
 
-func (c *Component) GetUID() uuid.UUID {
+// GetDefinitionUID returns the component definition UID.
+func (c *Component) GetDefinitionUID() uuid.UUID {
 	return uuid.FromStringOrNil(c.definition.Uid)
 }
 
+// GetLogger returns the component's logger. If it hasn't been initialized, a
+// no-op logger is returned.
 func (c *Component) GetLogger() *zap.Logger {
+	if c.Logger == nil {
+		return zap.NewNop()
+	}
+
 	return c.Logger
 }
 func (c *Component) GetDefinition(sysVars map[string]any, compConfig *ComponentConfig) (*pb.ComponentDefinition, error) {
@@ -798,9 +807,15 @@ func (c *Component) traverseSecretField(input *structpb.Value, prefix string, se
 	return secretFields
 }
 
-// UsageHandlerCreator returns a function to initialize a UsageHandler.
+// UsageHandlerCreator returns a function to initialize a UsageHandler. If the
+// component doesn't have such function initialized, a no-op usage handler
+// creator is returned.
 func (c *Component) UsageHandlerCreator() UsageHandlerCreator {
-	return NewNoopUsageHandler
+	if c.NewUsageHandler == nil {
+		return NewNoopUsageHandler
+	}
+
+	return c.NewUsageHandler
 }
 
 func (c *Component) Test(sysVars map[string]any, setup *structpb.Struct) error {
@@ -816,19 +831,14 @@ type ComponentExecution struct {
 	Task            string
 }
 
-func (e *ComponentExecution) GetTask() string {
-	return e.Task
-}
+// GetComponent returns the component interface that is triggering the execution.
+func (e *ComponentExecution) GetComponent() IComponent { return e.Component }
 
-func (e *ComponentExecution) GetSetup() *structpb.Struct {
-	return e.Setup
-}
-func (e *ComponentExecution) GetSystemVariables() map[string]any {
-	return e.SystemVariables
-}
-func (e *ComponentExecution) GetLogger() *zap.Logger {
-	return e.Component.GetLogger()
-}
+func (e *ComponentExecution) GetTask() string                    { return e.Task }
+func (e *ComponentExecution) GetSetup() *structpb.Struct         { return e.Setup }
+func (e *ComponentExecution) GetSystemVariables() map[string]any { return e.SystemVariables }
+func (e *ComponentExecution) GetLogger() *zap.Logger             { return e.Component.GetLogger() }
+
 func (e *ComponentExecution) GetTaskInputSchema() string {
 	return e.Component.GetTaskInputSchemas()[e.Task]
 }
@@ -836,26 +846,21 @@ func (e *ComponentExecution) GetTaskOutputSchema() string {
 	return e.Component.GetTaskOutputSchemas()[e.Task]
 }
 
-// UsesSecret indicates wether the connector execution is configured with
-// global secrets. Components should override this method when they have the
-// ability to be executed with global secrets.
-func (e *ComponentExecution) UsesSecret() bool {
-	return false
-}
+// UsesInstillCredentials indicates wether the component setup includes the use
+// of global secrets (as opposed to a bring-your-own-key configuration) to
+// connect to external services. Components should override this method when
+// they have the ability to read global secrets and be executed without
+// explicit credentials.
+func (e *ComponentExecution) UsesInstillCredentials() bool { return false }
 
-// UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (e *ComponentExecution) UsageHandlerCreator() UsageHandlerCreator {
-	return e.Component.UsageHandlerCreator()
-}
-
-// ReadFromSecrets reads a component secret from a secret map that comes from
-// environment variable configuration.
+// ReadFromGlobalConfig looks up a component credential field from a secret map
+// that comes from the environment variable configuration.
 //
 // Config parameters are defined with snake_case, but the
 // environment variable configuration loader replaces underscores by dots,
 // so we can't use the parameter key directly.
 // TODO using camelCase in configuration fields would fix this issue.
-func ReadFromSecrets(key string, secrets map[string]any) string {
+func ReadFromGlobalConfig(key string, secrets map[string]any) string {
 	sanitized := strings.ReplaceAll(key, "-", "")
 	if v, ok := secrets[sanitized].(string); ok {
 		return v

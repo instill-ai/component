@@ -28,8 +28,9 @@ type IExecution interface {
 	GetTaskOutputSchema() string
 	GetSystemVariables() map[string]any
 
-	UsesSecret() bool
-	UsageHandlerCreator() UsageHandlerCreator
+	GetComponent() IComponent
+
+	UsesInstillCredentials() bool
 
 	Execute(context.Context, []*structpb.Struct) ([]*structpb.Struct, error)
 }
@@ -122,7 +123,7 @@ func (e *ExecutionWrapper) Execute(ctx context.Context, inputs []*structpb.Struc
 		return nil, err
 	}
 
-	newUH := e.Execution.UsageHandlerCreator()
+	newUH := e.Execution.GetComponent().UsageHandlerCreator()
 	h, err := newUH(e.Execution)
 	if err != nil {
 		return nil, err
@@ -154,12 +155,13 @@ func (e *ExecutionWrapper) Execute(ctx context.Context, inputs []*structpb.Struc
 // initialization.
 const SecretKeyword = "__INSTILL_SECRET"
 
-// NewUnresolvedSecret returns an end-user error signaling that the component
-// configuration references a global secret that wasn't injected into the
-// component.
-func NewUnresolvedSecret(key string) error {
+// NewUnresolvedCredential returns an end-user error signaling that the
+// component setup contains credentials that reference a global secret that
+// wasn't injected into the component.
+func NewUnresolvedCredential(key string) error {
 	return errmsg.AddMessage(
-		fmt.Errorf("unresolved global secret"),
-		fmt.Sprintf("The configuration field %s can't reference a global secret.", key),
+		fmt.Errorf("unresolved global credential"),
+		fmt.Sprintf("The configuration field %s references a global secret "+
+			"but it doesn't support Instill Credentials.", key),
 	)
 }

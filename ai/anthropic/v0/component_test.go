@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
@@ -31,7 +30,7 @@ func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -97,7 +96,7 @@ func TestComponent_Execute(t *testing.T) {
 func TestComponent_Connection(t *testing.T) {
 	c := qt.New(t)
 
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {
@@ -178,7 +177,7 @@ func (m *MockAnthropicClient) generateTextChat(request messagesReq) (messagesRes
 func TestComponent_Generation(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 
 	mockHistory := []message{
