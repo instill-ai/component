@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "engine": {
+      "description": "Choose the engine of your database",
+      "instillUpstreamTypes": [
+        "value",
+        "reference",
+        "template"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 0,
+      "title": "Engine",
+      "enum": [
+        "MySQL",
+        "PostgreSQL",
+        "SQL Server",
+        "Oracle",
+        "MariaDB",
+        "Firebird"
+      ],
+      "type": "string",
+      "x-oaiTypeLabel": "string"
+    },
+    "user": {
+      "description": "Fill in your account username",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 1,
+      "title": "Username",
+      "type": "string"
+    },
+    "password": {
+      "description": "Fill in your account password",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": true,
+      "instillUIOrder": 2,
+      "title": "Password",
+      "type": "string"
+    },
+    "name": {
+      "description": "Fill in your database name",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 3,
+      "title": "Database Name",
+      "type": "string"
+    },
+    "host": {
+      "description": "Fill in your database host",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 4,
+      "title": "Host",
+      "type": "string"
+    },
+    "port": {
+      "description": "Fill in your database port",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "number"
+      ],
+      "instillUIOrder": 5,
+      "title": "Port",
+      "type": "number"
+    }
+  },
+  "required": [
+    "engine",
+    "user",
+    "name",
+    "host",
+    "port"
+  ],
+  "instillEditOnNodeFields": [
+    "engine",
+    "user",
+    "password",
+    "name",
+    "host",
+    "port"
+  ],
+  "title": "SQL Connection",
+  "type": "object"
+}

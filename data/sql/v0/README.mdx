@@ -1,0 +1,140 @@
+---
+title: "SQL"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP SQL component https://github.com/instill-ai/instill-core"
+---
+
+The SQL component is a data component that allows users to access the SQL database of your choice.
+It can carry out the following tasks:
+
+- [Insert](#insert)
+- [Update](#update)
+- [Select](#select)
+- [Delete](#delete)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/sql/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Engine (required) | `engine` | string | Choose the engine of your database |
+| Username (required) | `user` | string | Fill in your account username |
+| Password | `password` | string | Fill in your account password |
+| Database Name (required) | `name` | string | Fill in your database name |
+| Host (required) | `host` | string | Fill in your database host |
+| Port (required) | `port` | number | Fill in your database port |
+
+
+
+
+## Supported Tasks
+
+### Insert
+
+Perform an insert operation based on specified criteria
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_INSERT` |
+| Table Name (required) | `table-name` | string | The table name in the database to insert data into |
+| Data (required) | `data` | semi-structured/json | The data to be inserted |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Insert status |
+
+
+
+
+
+
+### Update
+
+Perform an update operation based on specified criteria
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPDATE` |
+| Table Name (required) | `table-name` | string | The table name in the database to update data into |
+| Criteria (required) | `criteria` | semi-structured/json | The data criteria to be updated |
+| Update (required) | `update` | semi-structured/json | The new data to be updated to |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Update status |
+
+
+
+
+
+
+### Select
+
+Perform a select operation based on specified criteria
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_SELECT` |
+| Table Name (required) | `table-name` | string | The table name in the database to be selected |
+| Criteria (required) | `criteria` | semi-structured/json | The data criteria to be selected, if JSON value of a key is null e.g \{'name':null\}, then name column will be selected without any criteria, if JSON is empty e.g \{\}, then all columns will be selected |
+| From (required) | `from` | number | The starting row to be selected, if both 'from' and 'to' equals 0 then all rows will be selected |
+| To (required) | `to` | number | The starting row to be selected, if both 'from' and 'to' equals 0 then all rows will be selected |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Rows | `rows` | array | The rows returned from the select operation |
+| Status | `status` | string | Select status |
+
+
+
+
+
+
+### Delete
+
+Perform a delete operation based on specified criteria
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DELETE` |
+| Table Name (required) | `table-name` | string | The table name in the database to be deleted |
+| Criteria (required) | `criteria` | semi-structured/json | The data criteria to be deleted |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Delete status |
+
+
+
+
+
+
+

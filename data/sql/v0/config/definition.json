@@ -1,0 +1,20 @@
+{
+  "availableTasks": [
+    "TASK_INSERT",
+    "TASK_UPDATE",
+    "TASK_SELECT",
+    "TASK_DELETE"
+  ],
+  "documentationUrl": "https://www.instill.tech/docs/component/data/sql",
+  "icon": "assets/sql.svg",
+  "id": "sql",
+  "public": true,
+  "title": "SQL",
+  "description": "Access the SQL database of your choice",
+  "tombstone": false,
+  "type": "COMPONENT_TYPE_DATA",
+  "uid": "f12d6db7-45be-4f76-96aa-497bd7c0e1d6",
+  "version": "0.1.0",
+  "sourceUrl": "https://github.com/instill-ai/component/blob/main/data/sql/v0",
+  "releaseStage": "RELEASE_STAGE_ALPHA"
+}
