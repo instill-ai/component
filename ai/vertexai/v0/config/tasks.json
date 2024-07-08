@@ -104,7 +104,7 @@
           "instillAcceptFormats": [
             "structured/chat-messages"
           ],
-          "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. (Note: Vertex Generative AI Models only support reading data from within GCP, thus 'image-url' fields should be populated with GCP URIs.)",
+          "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. The Gemini family of models supports diverse input data types, including text, images, videos and audio. The model can generate text, images, videos and audio.",
           "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "reference"
