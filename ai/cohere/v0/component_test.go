@@ -63,7 +63,7 @@ func TestComponent_Tasks(t *testing.T) {
 		wantResp textGenerationOutput
 	}{
 		input:    map[string]any{"model-name": "command-r-plus"},
-		wantResp: textGenerationOutput{Text: "Hi! My name is command-r-plus.", Ciatations: []ciatation{}, Usage: commandUsage{InputTokens: 20, OutputTokens: 30}},
+		wantResp: textGenerationOutput{Text: "Hi! My name is command-r-plus.", Citations: []citation{}, Usage: commandUsage{InputTokens: 20, OutputTokens: 30}},
 	}
 
 	c.Run("ok - task command", func(c *qt.C) {

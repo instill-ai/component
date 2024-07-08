@@ -35,7 +35,7 @@ type textGenerationInput struct {
 	Documents    []string      `json:"documents"`
 }
 
-type ciatation struct {
+type citation struct {
 	Start int    `json:"start"`
 	End   int    `json:"end"`
 	Text  string `json:"text"`
@@ -47,9 +47,9 @@ type commandUsage struct {
 }
 
 type textGenerationOutput struct {
-	Text       string       `json:"text"`
-	Ciatations []ciatation  `json:"citations"`
-	Usage      commandUsage `json:"usage"`
+	Text      string       `json:"text"`
+	Citations []citation   `json:"citations"`
+	Usage     commandUsage `json:"usage"`
 }
 
 func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, error) {
@@ -109,10 +109,10 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 		return nil, err
 	}
 
-	citations := []ciatation{}
+	citations := []citation{}
 
 	for _, c := range resp.Citations {
-		citation := ciatation{
+		citation := citation{
 			Start: c.Start,
 			End:   c.End,
 			Text:  c.Text,
@@ -124,8 +124,8 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 	outputTokens := *bills.OutputTokens
 
 	outputStruct := textGenerationOutput{
-		Text:       resp.Text,
-		Ciatations: citations,
+		Text:      resp.Text,
+		Citations: citations,
 		Usage: commandUsage{
 			InputTokens:  int(inputTokens),
 			OutputTokens: int(outputTokens),
