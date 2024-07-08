@@ -107,7 +107,6 @@ func Init(
 			compStore.Import(conn)
 		}
 		compStore.Import(cohere.Init(baseComp))
-		compStore.Import(anthropic.Init(baseComp))
 		compStore.Import(archetypeai.Init(baseComp))
 		compStore.Import(numbers.Init(baseComp))
 		compStore.Import(bigquery.Init(baseComp))
