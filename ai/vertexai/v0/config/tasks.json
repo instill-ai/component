@@ -558,9 +558,15 @@
             "string"
           ],
           "enum": [
-            "Chirp"
+            "chirp_2",
+            "chirp_telephony",
+            "chirp",
+            "medical_conversation",
+            "medical_dictation",
+            "long",
+            "short"
           ],
-          "example": "Chrip",
+          "example": "chirp_2",
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "value",
@@ -586,7 +592,7 @@
         },
         "language-code": {
           "description": "The language code of the audio file, check: https://cloud.google.com/speech-to-text/docs/speech-to-text-supported-languages",
-          "default": "en-US",
+          "default": "auto",
           "instillAcceptFormats": [
             "string"
           ],

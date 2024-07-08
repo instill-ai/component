@@ -60,8 +60,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	case TextGenerationTask:
 		e.execute = e.generateText
 	case TextToImageTask, ImageToImageTask:
-		return nil, fmt.Errorf("image generation is curently under approval process, contact support for more information")
-	case SpeechRecognitionTask:
+		e.execute = e.generateImage
 		e.execute = e.speechRecognition
 	default:
 		return nil, fmt.Errorf("unsupported task")

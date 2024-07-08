@@ -5,8 +5,8 @@ import (
 	_ "embed"
 	"fmt"
 
-	speech "cloud.google.com/go/speech/apiv1"
-	"cloud.google.com/go/speech/apiv1/speechpb"
+	speech "cloud.google.com/go/speech/apiv2"
+	"cloud.google.com/go/speech/apiv2/speechpb"
 	"github.com/instill-ai/component/base"
 	"google.golang.org/api/option"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -35,26 +35,31 @@ func (e *execution) speechRecognition(in *structpb.Struct) (*structpb.Struct, er
 		return nil, err
 	}
 
+	fmt.Printf("### Audio File Size: %d\n", len(inputStruct.Audio))
+
 	ctx := context.Background()
 	credJSON := []byte(setupStruct.Cred)
-	client, err := speech.NewClient(ctx, option.WithCredentialsJSON(credJSON))
+	client, err := speech.NewClient(ctx, option.WithCredentialsJSON(credJSON), option.WithEndpoint("https://speech.googleapis.com"))
 	if err != nil {
 		return nil, fmt.Errorf("error creating client: %w", err)
 	}
+
 	defer client.Close()
 
+	config := &speechpb.RecognitionConfig{
+		DecodingConfig: &speechpb.RecognitionConfig_AutoDecodingConfig{},
+		LanguageCodes:  []string{inputStruct.Language},
+		Model:          inputStruct.ModelName,
+	}
+
 	resp, err := client.Recognize(ctx, &speechpb.RecognizeRequest{
-		Config: &speechpb.RecognitionConfig{
-			Encoding:        speechpb.RecognitionConfig_LINEAR16,
-			SampleRateHertz: int32(inputStruct.SampleRate),
-			LanguageCode:    inputStruct.Language,
-		},
-		Audio: &speechpb.RecognitionAudio{
-			AudioSource: &speechpb.RecognitionAudio_Content{
-				Content: []byte(inputStruct.Audio),
-			},
+		Recognizer: fmt.Sprintf("projects/%s/locations/%s/recognizers/_", setupStruct.ProjectID, setupStruct.Location),
+		Config:     config,
+		AudioSource: &speechpb.RecognizeRequest_Content{
+			Content: []byte(inputStruct.Audio),
 		},
 	})
+
 	if err != nil {
 		return nil, fmt.Errorf("error recognizing speech: %w", err)
 	}
