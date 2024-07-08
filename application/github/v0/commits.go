@@ -72,7 +72,7 @@ func (githubClient *Client) extractCommitInformation(originalCommit *github.Repo
 }
 
 func (githubClient *Client) getCommit(owner string, repository string, sha string) (*github.RepositoryCommit, error) {
-	commit, _, err := githubClient.client.Repositories.GetCommit(context.Background(), owner, repository, sha, nil)
+	commit, _, err := githubClient.Repositories.GetCommit(context.Background(), owner, repository, sha, nil)
 	return commit, err
 }
 
@@ -91,12 +91,12 @@ func (githubClient *Client) getCommitTask(props *structpb.Struct) (*structpb.Str
 	if err != nil {
 		return nil, err
 	}
-	err = githubClient.setTargetRepo(inputStruct)
+	owner, repository, err := parseTargetRepo(inputStruct)
 	if err != nil {
 		return nil, err
 	}
 	sha := inputStruct.SHA
-	commit, err := githubClient.getCommit(githubClient.owner, githubClient.repository, sha)
+	commit, err := githubClient.getCommit(owner, repository, sha)
 	if err != nil {
 		return nil, err
 	}

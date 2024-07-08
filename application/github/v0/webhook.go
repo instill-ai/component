@@ -42,7 +42,7 @@ func (githubClient *Client) createWebhookTask(props *structpb.Struct) (*structpb
 		return nil, err
 	}
 
-	err = githubClient.setTargetRepo(inputStruct)
+	owner, repository, err := parseTargetRepo(inputStruct)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (githubClient *Client) createWebhookTask(props *structpb.Struct) (*structpb
 		Active: &active,
 	}
 
-	hook, _, err = githubClient.client.Repositories.CreateHook(context.Background(), githubClient.owner, githubClient.repository, hook)
+	hook, _, err = githubClient.Repositories.CreateHook(context.Background(), owner, repository, hook)
 	if err != nil {
 		return nil, err
 	}

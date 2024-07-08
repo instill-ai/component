@@ -43,7 +43,7 @@ func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*s
 		return nil, err
 	}
 
-	err = githubClient.setTargetRepo(inputStruct)
+	owner, repository, err := parseTargetRepo(inputStruct)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*s
 		Since:     *sinceTime,
 	}
 	number := inputStruct.PrNumber
-	comments, _, err := githubClient.client.PullRequests.ListComments(context.Background(), githubClient.owner, githubClient.repository, number, opts)
+	comments, _, err := githubClient.PullRequests.ListComments(context.Background(), owner, repository, number, opts)
 	if err != nil {
 		errMessage := strings.Split(err.Error(), ": ")
 		if len(errMessage) < 2 {
@@ -107,7 +107,7 @@ func (githubClient *Client) createReviewCommentTask(props *structpb.Struct) (*st
 		return nil, err
 	}
 
-	err = githubClient.setTargetRepo(commentInput)
+	owner, repository, err := parseTargetRepo(commentInput)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func (githubClient *Client) createReviewCommentTask(props *structpb.Struct) (*st
 	if *commentReqs.Line == *commentReqs.StartLine {
 		commentReqs.StartLine = nil // If it's a one line comment, don't send start_line
 	}
-	comment, _, err := githubClient.client.PullRequests.CreateComment(context.Background(), githubClient.owner, githubClient.repository, number, commentReqs)
+	comment, _, err := githubClient.PullRequests.CreateComment(context.Background(), owner, repository, number, commentReqs)
 	if err != nil {
 		errMessage := strings.Split(err.Error(), ": ")
 		if len(errMessage) < 2 {

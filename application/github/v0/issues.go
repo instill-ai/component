@@ -56,7 +56,7 @@ func extractLabels(labels []*github.Label) []string {
 }
 
 func (githubClient *Client) getIssue(owner, repository string, issueNumber int) (*github.Issue, error) {
-	issue, _, err := githubClient.client.Issues.Get(context.Background(), owner, repository, issueNumber)
+	issue, _, err := githubClient.Issues.Get(context.Background(), owner, repository, issueNumber)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func (githubClient *Client) getAllIssuesTask(props *structpb.Struct) (*structpb.
 	if err != nil {
 		return nil, err
 	}
-	err = githubClient.setTargetRepo(inputStruct)
+	owner, repository, err := parseTargetRepo(inputStruct)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ func (githubClient *Client) getAllIssuesTask(props *structpb.Struct) (*structpb.
 		opts.Mentioned = ""
 	}
 
-	issues, _, err := githubClient.client.Issues.ListByRepo(context.Background(), githubClient.owner, githubClient.repository, opts)
+	issues, _, err := githubClient.Issues.ListByRepo(context.Background(), owner, repository, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -148,13 +148,13 @@ func (githubClient *Client) getIssueTask(props *structpb.Struct) (*structpb.Stru
 	if err != nil {
 		return nil, err
 	}
-	err = githubClient.setTargetRepo(inputStruct)
+	owner, repository, err := parseTargetRepo(inputStruct)
 	if err != nil {
 		return nil, err
 	}
 
 	issueNumber := inputStruct.IssueNumber
-	issue, err := githubClient.getIssue(githubClient.owner, githubClient.repository, issueNumber)
+	issue, err := githubClient.getIssue(owner, repository, issueNumber)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +185,7 @@ func (githubClient *Client) createIssueTask(props *structpb.Struct) (*structpb.S
 	if err != nil {
 		return nil, err
 	}
-	err = githubClient.setTargetRepo(inputStruct)
+	owner, repository, err := parseTargetRepo(inputStruct)
 	if err != nil {
 		return nil, err
 	}
@@ -193,7 +193,7 @@ func (githubClient *Client) createIssueTask(props *structpb.Struct) (*structpb.S
 		Title: &inputStruct.Title,
 		Body:  &inputStruct.Body,
 	}
-	issue, _, err := githubClient.client.Issues.Create(context.Background(), githubClient.owner, githubClient.repository, issueRequest)
+	issue, _, err := githubClient.Issues.Create(context.Background(), owner, repository, issueRequest)
 	if err != nil {
 		return nil, err
 	}

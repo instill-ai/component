@@ -12,8 +12,8 @@ import (
 )
 
 type RepoInfoInterface interface {
-	getOwner() string
-	getRepository() string
+	getOwner() (string, error)
+	getRepository() (string, error)
 }
 
 type RepoInfo struct {
@@ -21,23 +21,32 @@ type RepoInfo struct {
 	Repository string `json:"repository"`
 }
 
-func (info RepoInfo) getOwner() string {
-	return info.Owner
+func (info RepoInfo) getOwner() (string, error) {
+	if info.Owner == "" {
+		return "", errmsg.AddMessage(
+			fmt.Errorf("owner not provided"),
+			"owner not provided",
+		)
+	}
+	return info.Owner, nil
 }
-func (info RepoInfo) getRepository() string {
-	return info.Repository
+func (info RepoInfo) getRepository() (string, error) {
+	if info.Repository == "" {
+		return "", errmsg.AddMessage(
+			fmt.Errorf("repository not provided"),
+			"repository not provided",
+		)
+	}
+	return info.Repository, nil
 }
 
 type Client struct {
-	client     GitHubClient
-	owner      string
-	repository string
-}
-type GitHubClient struct {
 	*github.Client
 	Repositories RepositoriesService
 	PullRequests PullRequestService
 	Issues       IssuesService
+	owner        string
+	repository   string
 }
 
 func newClient(ctx context.Context, setup *structpb.Struct) Client {
@@ -52,27 +61,30 @@ func newClient(ctx context.Context, setup *structpb.Struct) Client {
 	}
 	client := github.NewClient(oauth2Client)
 	githubClient := Client{
-		client: GitHubClient{
-			Client:       client,
-			Repositories: client.Repositories,
-			PullRequests: client.PullRequests,
-			Issues:       client.Issues,
-		},
+		Client:       client,
+		Repositories: client.Repositories,
+		PullRequests: client.PullRequests,
+		Issues:       client.Issues,
 	}
 	return githubClient
 }
 
-func (githubClient *Client) setTargetRepo(info RepoInfoInterface) error {
-	githubClient.owner = info.getOwner()
-	githubClient.repository = info.getRepository()
-
-	if githubClient.owner == "" || githubClient.repository == "" {
-		return errmsg.AddMessage(
-			fmt.Errorf("owner or repository not provided"),
-			"owner or repository not provided",
+func parseTargetRepo(info RepoInfoInterface) (string, string, error) {
+	owner, ownerErr := info.getOwner()
+	repository, RepoErr := info.getRepository()
+	if ownerErr != nil && RepoErr != nil {
+		return "", "", errmsg.AddMessage(
+			fmt.Errorf("owner and repository not provided"),
+			"owner and repository not provided",
 		)
 	}
-	return nil
+	if ownerErr != nil {
+		return "", "", ownerErr
+	}
+	if RepoErr != nil {
+		return "", "", RepoErr
+	}
+	return owner, repository, nil
 }
 
 func getToken(setup *structpb.Struct) string {

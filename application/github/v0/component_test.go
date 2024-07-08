@@ -12,7 +12,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-var MockGithubClient = GitHubClient{
+var MockGithubClient = &Client{
 	Repositories: &MockRepositoriesService{},
 	PullRequests: &MockPullRequestService{},
 	Issues:       &MockIssuesService{},
@@ -725,7 +725,7 @@ func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType],
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: task},
-				client:             Client{client: MockGithubClient},
+				client:             *MockGithubClient,
 			}
 			switch task {
 			case taskGetAllPRs:
