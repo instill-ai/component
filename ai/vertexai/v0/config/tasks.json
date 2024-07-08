@@ -133,8 +133,7 @@
           "enum": [
             "gemini-1.5-pro",
             "gemini-1.5-flash",
-            "gemini-1.0-pro",
-            "gemma-7b-it"
+            "gemini-1.0-pro"
           ],
           "example": "gemini-1.5-pro",
           "description": "The Vertex Generative AI model to be used.",

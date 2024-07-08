@@ -59,7 +59,6 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 	}
 
 	ctx := context.Background()
-	// Temporary way to get the credential. It should be migrated to a more secure implementation.
 	credJSON := []byte(setupStruct.Cred)
 	client, err := genai.NewClient(ctx, setupStruct.ProjectID, setupStruct.Location, option.WithCredentialsJSON(credJSON))
 
