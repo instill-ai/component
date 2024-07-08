@@ -39,15 +39,7 @@ func (e *execution) taskEmbedding(in *structpb.Struct) (*structpb.Struct, error)
 	if err != nil {
 		return nil, err
 	}
-
-	if resp.EmbeddingsFloats.Meta == nil {
-		return nil, fmt.Errorf("meta is nil")
-	}
 	bills := resp.EmbeddingsFloats.Meta.BilledUnits
-	if bills == nil || bills.InputTokens == nil {
-		return nil, fmt.Errorf("billed units is nil")
-	}
-
 	outputStruct := embeddingOutput{
 		Embedding: resp.EmbeddingsFloats.Embeddings[0],
 		Usage: embedUsage{

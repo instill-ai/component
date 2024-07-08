@@ -119,14 +119,7 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 		}
 		citations = append(citations, citation)
 	}
-	if resp.Meta == nil {
-		return nil, fmt.Errorf("meta is nil")
-	}
 	bills := resp.Meta.BilledUnits
-	if bills == nil || bills.InputTokens == nil || bills.OutputTokens == nil {
-		return nil, fmt.Errorf("billed units is nil")
-	}
-
 	inputTokens := *bills.InputTokens
 	outputTokens := *bills.OutputTokens
 

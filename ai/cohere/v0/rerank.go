@@ -59,14 +59,7 @@ func (e *execution) taskRerank(in *structpb.Struct) (*structpb.Struct, error) {
 		relevance = append(relevance, rankResult.RelevanceScore)
 		newRanking = append(newRanking, rankResult.Document.Text)
 	}
-
-	if resp.Meta == nil {
-		return nil, fmt.Errorf("meta is nil")
-	}
 	bills := resp.Meta.BilledUnits
-	if bills == nil || bills.SearchUnits == nil {
-		return nil, fmt.Errorf("billed units is nil")
-	}
 
 	outputStruct := rerankOutput{
 		Ranking:   newRanking,
