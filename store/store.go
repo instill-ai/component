@@ -63,9 +63,12 @@ type ComponentSecrets map[string]map[string]any
 func Init(
 	logger *zap.Logger,
 	secrets ComponentSecrets,
-	usageHandlerCreators map[string]base.UsageHandlerCreator,
+	usageHandlerCreator base.UsageHandlerCreator,
 ) *Store {
-	baseComp := base.Component{Logger: logger}
+	baseComp := base.Component{
+		Logger:          logger,
+		NewUsageHandler: usageHandlerCreator,
+	}
 
 	once.Do(func() {
 		compStore = &Store{
@@ -83,8 +86,7 @@ func Init(
 			conn := stabilityai.Init(baseComp)
 
 			// Secret doesn't allow hyphens
-			conn = conn.WithSecrets(secrets["stabilityai"]).
-				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
+			conn = conn.WithInstillCredentials(secrets["stabilityai"])
 			compStore.Import(conn)
 		}
 
@@ -94,15 +96,13 @@ func Init(
 		{
 			// OpenAI
 			conn := openai.Init(baseComp)
-			conn = conn.WithSecrets(secrets[conn.GetID()]).
-				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
+			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
 		{
 			// Anthropic
 			conn := anthropic.Init(baseComp)
-			conn = conn.WithSecrets(secrets[conn.GetID()]).
-				WithUsageHandlerCreator(usageHandlerCreators[conn.GetID()])
+			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
 
@@ -125,9 +125,9 @@ func Init(
 // Import loads the component definitions into memory.
 func (s *Store) Import(comp base.IComponent) {
 	c := &component{comp: comp}
-	s.componentUIDMap[comp.GetUID()] = c
-	s.componentIDMap[comp.GetID()] = c
-	s.componentUIDs = append(s.componentUIDs, comp.GetUID())
+	s.componentUIDMap[comp.GetDefinitionUID()] = c
+	s.componentIDMap[comp.GetDefinitionID()] = c
+	s.componentUIDs = append(s.componentUIDs, comp.GetDefinitionUID())
 }
 
 // CreateExecution initializes the execution of a component given its UID.

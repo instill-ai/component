@@ -9,7 +9,6 @@ import (
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
 	"github.com/slack-go/slack"
-	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -103,7 +102,7 @@ const (
 func TestComponent_ExecuteWriteTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 
 	testcases := []struct {
@@ -170,7 +169,7 @@ func TestComponent_ExecuteReadTask(t *testing.T) {
 
 	c := qt.New(t)
 	ctx := context.Background()
-	bc := base.Component{Logger: zap.NewNop()}
+	bc := base.Component{}
 	connector := Init(bc)
 
 	mockDateTime, _ := transformTSToDate("1715159449.399879", time.RFC3339)

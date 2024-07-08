@@ -18,10 +18,8 @@ type UsageHandlerCreator func(IExecution) (UsageHandler, error)
 
 type noopUsageHandler struct{}
 
-func (h *noopUsageHandler) Check(context.Context, []*structpb.Struct) error { return nil }
-func (h *noopUsageHandler) Collect(_ context.Context, _, _ []*structpb.Struct) error {
-	return nil
-}
+func (h *noopUsageHandler) Check(context.Context, []*structpb.Struct) error          { return nil }
+func (h *noopUsageHandler) Collect(_ context.Context, _, _ []*structpb.Struct) error { return nil }
 
 // NewNoopUsageHandler is a no-op usage handler initializer.
 func NewNoopUsageHandler(IExecution) (UsageHandler, error) {

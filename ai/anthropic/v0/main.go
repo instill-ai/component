@@ -37,8 +37,7 @@ var (
 type component struct {
 	base.Component
 
-	usageHandlerCreator base.UsageHandlerCreator
-	secretAPIKey        string
+	instillAPIKey string
 }
 
 type AnthropicClient interface {
@@ -144,43 +143,29 @@ func Init(bc base.Component) *component {
 type execution struct {
 	base.ComponentExecution
 
-	execute    func(*structpb.Struct) (*structpb.Struct, error)
-	client     AnthropicClient
-	usesSecret bool
+	execute                func(*structpb.Struct) (*structpb.Struct, error)
+	client                 AnthropicClient
+	usesInstillCredentials bool
 }
 
-// WithSecrets loads secrets into the connector, which can be used to configure
-// it with globaly defined parameters.
-func (c *component) WithSecrets(s map[string]any) *component {
-	c.secretAPIKey = base.ReadFromSecrets(cfgAPIKey, s)
+// WithInstillCredentials loads Instill credentials into the component, which
+// can be used to configure it with globally defined parameters instead of with
+// user-defined credential values.
+func (c *component) WithInstillCredentials(s map[string]any) *component {
+	c.instillAPIKey = base.ReadFromGlobalConfig(cfgAPIKey, s)
 	return c
-}
-
-// WithUsageHandlerCreator overrides the UsageHandlerCreator method.
-func (c *component) WithUsageHandlerCreator(newUH base.UsageHandlerCreator) *component {
-	c.usageHandlerCreator = newUH
-	return c
-}
-
-// UsageHandlerCreator returns a function to initialize a UsageHandler.
-func (c *component) UsageHandlerCreator() base.UsageHandlerCreator {
-	if c.usageHandlerCreator == nil {
-		return c.Component.UsageHandlerCreator()
-	}
-	return c.usageHandlerCreator
 }
 
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-
-	resolvedSetup, resolved, err := c.resolveSecrets(setup)
+	resolvedSetup, resolved, err := c.resolveSetup(setup)
 	if err != nil {
 		return nil, err
 	}
 
 	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: setup},
-		client:             newClient(getAPIKey(resolvedSetup), getBasePath(resolvedSetup), c.GetLogger()),
-		usesSecret:         resolved,
+		ComponentExecution:     base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: resolvedSetup},
+		client:                 newClient(getAPIKey(resolvedSetup), getBasePath(resolvedSetup), c.GetLogger()),
+		usesInstillCredentials: resolved,
 	}
 	switch task {
 	case TextGenerationTask:
@@ -191,25 +176,25 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
-// resolveSecrets looks for references to a global secret in the setup
-// and replaces them by the global secret injected during initialization.
-func (c *component) resolveSecrets(conn *structpb.Struct) (*structpb.Struct, bool, error) {
-
-	apiKey := conn.GetFields()[cfgAPIKey].GetStringValue()
+// resolveSetup checks whether the component is configured to use the Instill
+// credentials injected during initialization and, if so, returns a new setup
+// with the secret credential values.
+func (c *component) resolveSetup(setup *structpb.Struct) (*structpb.Struct, bool, error) {
+	apiKey := setup.GetFields()[cfgAPIKey].GetStringValue()
 	if apiKey != base.SecretKeyword {
-		return conn, false, nil
+		return setup, false, nil
 	}
 
-	if c.secretAPIKey == "" {
-		return nil, false, base.NewUnresolvedSecret(cfgAPIKey)
+	if c.instillAPIKey == "" {
+		return nil, false, base.NewUnresolvedCredential(cfgAPIKey)
 	}
 
-	conn.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.secretAPIKey)
-	return conn, true, nil
+	setup.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.instillAPIKey)
+	return setup, true, nil
 }
 
-func (e *execution) UsesSecret() bool {
-	return e.usesSecret
+func (e *execution) UsesInstillCredentials() bool {
+	return e.usesInstillCredentials
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
@@ -248,7 +233,6 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		messages = append(messages, message)
 	}
 
-
 	finalMessage := message{
 		Role:    "user",
 		Content: []content{{Type: "text", Text: prompt}},
@@ -267,7 +251,6 @@ func (e *execution) generateText(in *structpb.Struct) (*structpb.Struct, error) 
 		}
 		finalMessage.Content = append(finalMessage.Content, image)
 	}
-
 
 	messages = append(messages, finalMessage)
 
