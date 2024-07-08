@@ -396,10 +396,10 @@
           "type": "integer"
         },
         "commitId": {
-          "description": "Commit id (sha) of the comment",
+          "description": "SHA of the commit on which you want to comment",
           "instillFormat": "string",
           "instillUIOrder": 3,
-          "title": "Commit id",
+          "title": "Commit SHA",
           "instillAcceptFormats": [
             "string"
           ],
@@ -453,7 +453,7 @@
           "type": "integer"
         },
         "start_line": {
-          "description": "The first line in the pull request diff that your multi-line comment applies to",
+          "description": "The first line in the pull request diff that your multi-line comment applies to. Only multi-line comment needs to fill this field.",
           "instillUIOrder": 7,
           "title": "Comment start line",
           "instillFormat": "integer",
