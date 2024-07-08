@@ -36,7 +36,7 @@ type GetAllReviewCommentsResp struct {
 // Specifying a pull request number of 0 will return all comments on all pull requests for the repository.
 //
 // * This only works for public repositories.
-func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) getAllReviewCommentsTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct GetAllReviewCommentsInput
 	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
@@ -58,7 +58,7 @@ func (githubClient *Client) getAllReviewCommentsTask(props *structpb.Struct) (*s
 		Since:     *sinceTime,
 	}
 	number := inputStruct.PrNumber
-	comments, _, err := githubClient.PullRequests.ListComments(context.Background(), owner, repository, number, opts)
+	comments, _, err := githubClient.PullRequests.ListComments(ctx, owner, repository, number, opts)
 	if err != nil {
 		errMessage := strings.Split(err.Error(), ": ")
 		if len(errMessage) < 2 {
@@ -100,7 +100,7 @@ type CreateReviewCommentResp struct {
 // CreateReviewComment creates a review comment for a given pull request.
 //
 // * This only works for public repositories.
-func (githubClient *Client) createReviewCommentTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) createReviewCommentTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var commentInput CreateReviewCommentInput
 	err := base.ConvertFromStructpb(props, &commentInput)
 	if err != nil {
@@ -118,7 +118,7 @@ func (githubClient *Client) createReviewCommentTask(props *structpb.Struct) (*st
 	if *commentReqs.Line == *commentReqs.StartLine {
 		commentReqs.StartLine = nil // If it's a one line comment, don't send start_line
 	}
-	comment, _, err := githubClient.PullRequests.CreateComment(context.Background(), owner, repository, number, commentReqs)
+	comment, _, err := githubClient.PullRequests.CreateComment(ctx, owner, repository, number, commentReqs)
 	if err != nil {
 		errMessage := strings.Split(err.Error(), ": ")
 		if len(errMessage) < 2 {

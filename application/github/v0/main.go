@@ -44,7 +44,7 @@ type component struct {
 
 type execution struct {
 	base.ComponentExecution
-	execute func(*structpb.Struct) (*structpb.Struct, error)
+	execute func(context.Context, *structpb.Struct) (*structpb.Struct, error)
 	client  Client
 }
 
@@ -68,7 +68,6 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 		client:             githubClient,
 	}
-
 	switch task {
 	case taskGetAllPRs:
 		e.execute = e.client.getAllPullRequestsTask
@@ -153,7 +152,7 @@ func (e *execution) fillInDefaultValues(input *structpb.Struct) (*structpb.Struc
 	return input, nil
 }
 
-func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	for i, input := range inputs {
@@ -161,7 +160,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 		if err != nil {
 			return nil, err
 		}
-		output, err := e.execute(input)
+		output, err := e.execute(ctx, input)
 		if err != nil {
 			return nil, err
 		}

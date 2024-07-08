@@ -35,7 +35,7 @@ type PullRequest struct {
 	ReviewCommentsNum int      `json:"review_comments_num"`
 }
 
-func (githubClient *Client) extractPullRequestInformation(owner string, repository string, originalPr *github.PullRequest) (PullRequest, error) {
+func (githubClient *Client) extractPullRequestInformation(ctx context.Context, owner string, repository string, originalPr *github.PullRequest) (PullRequest, error) {
 	resp := PullRequest{
 		ID:                originalPr.GetID(),
 		Number:            originalPr.GetNumber(),
@@ -50,13 +50,13 @@ func (githubClient *Client) extractPullRequestInformation(owner string, reposito
 		ReviewCommentsNum: originalPr.GetReviewComments(),
 	}
 	if originalPr.GetCommitsURL() != "" {
-		commits, _, err := githubClient.PullRequests.ListCommits(context.Background(), owner, repository, resp.Number, nil)
+		commits, _, err := githubClient.PullRequests.ListCommits(ctx, owner, repository, resp.Number, nil)
 		if err != nil {
 			return PullRequest{}, err
 		}
 		resp.Commits = make([]Commit, len(commits))
 		for idx, commit := range commits {
-			resp.Commits[idx] = githubClient.extractCommitInformation(commit)
+			resp.Commits[idx] = githubClient.extractCommitInformation(ctx, commit)
 		}
 	}
 	return resp, nil
@@ -72,7 +72,7 @@ type GetAllPullRequestsResp struct {
 	PullRequests []PullRequest `json:"pull_requests"`
 }
 
-func (githubClient *Client) getAllPullRequestsTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) getAllPullRequestsTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 
 	var inputStruct GetAllPullRequestsInput
 	err := base.ConvertFromStructpb(props, &inputStruct)
@@ -89,13 +89,13 @@ func (githubClient *Client) getAllPullRequestsTask(props *structpb.Struct) (*str
 		Sort:      inputStruct.Sort,
 		Direction: inputStruct.Direction,
 	}
-	prs, _, err := githubClient.PullRequests.List(context.Background(), owner, repository, opts)
+	prs, _, err := githubClient.PullRequests.List(ctx, owner, repository, opts)
 	if err != nil {
 		return nil, err
 	}
 	PullRequests := make([]PullRequest, len(prs))
 	for idx, pr := range prs {
-		PullRequests[idx], err = githubClient.extractPullRequestInformation(owner, repository, pr)
+		PullRequests[idx], err = githubClient.extractPullRequestInformation(ctx, owner, repository, pr)
 		if err != nil {
 			return nil, err
 		}
@@ -118,7 +118,7 @@ type GetPullRequestResp struct {
 	PullRequest PullRequest `json:"pull_request"`
 }
 
-func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) getPullRequestTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 
 	var inputStruct GetPullRequestInput
 	err := base.ConvertFromStructpb(props, &inputStruct)
@@ -132,7 +132,7 @@ func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structp
 	number := inputStruct.PrNumber
 	var pullRequest *github.PullRequest
 	if number > 0 {
-		pr, _, err := githubClient.PullRequests.Get(context.Background(), owner, repository, int(number))
+		pr, _, err := githubClient.PullRequests.Get(ctx, owner, repository, int(number))
 		if err != nil {
 			// err includes the rate limit, 404 not found, etc.
 			// if the connection is not authorized, it's easy to get rate limit error in large scale usage.
@@ -146,7 +146,7 @@ func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structp
 			Sort:      "created",
 			Direction: "desc",
 		}
-		prs, _, err := githubClient.PullRequests.List(context.Background(), githubClient.owner, githubClient.repository, opts)
+		prs, _, err := githubClient.PullRequests.List(ctx, githubClient.owner, githubClient.repository, opts)
 		if err != nil {
 			// err includes the rate limit.
 			// if the connection is not authorized, it's easy to get rate limit error in large scale usage.
@@ -160,7 +160,7 @@ func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structp
 		}
 		pullRequest = prs[0]
 		// Some fields are not included in the list API, so we need to get the PR again.
-		pr, _, err := githubClient.PullRequests.Get(context.Background(), githubClient.owner, githubClient.repository, *pullRequest.Number)
+		pr, _, err := githubClient.PullRequests.Get(ctx, githubClient.owner, githubClient.repository, *pullRequest.Number)
 		if err != nil {
 			// err includes the rate limit, 404 not found, etc.
 			// if the connection is not authorized, it's easy to get rate limit error in large scale usage.
@@ -170,7 +170,7 @@ func (githubClient *Client) getPullRequestTask(props *structpb.Struct) (*structp
 	}
 
 	var prResp GetPullRequestResp
-	prResp.PullRequest, err = githubClient.extractPullRequestInformation(owner, repository, pullRequest)
+	prResp.PullRequest, err = githubClient.extractPullRequestInformation(ctx, owner, repository, pullRequest)
 	if err != nil {
 		return nil, err
 	}

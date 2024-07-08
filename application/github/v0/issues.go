@@ -55,8 +55,8 @@ func extractLabels(labels []*github.Label) []string {
 	return labelList
 }
 
-func (githubClient *Client) getIssue(owner, repository string, issueNumber int) (*github.Issue, error) {
-	issue, _, err := githubClient.Issues.Get(context.Background(), owner, repository, issueNumber)
+func (githubClient *Client) getIssue(ctx context.Context, owner, repository string, issueNumber int) (*github.Issue, error) {
+	issue, _, err := githubClient.Issues.Get(ctx, owner, repository, issueNumber)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ type GetAllIssuesResp struct {
 	Issues []Issue `json:"issues"`
 }
 
-func (githubClient *Client) getAllIssuesTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) getAllIssuesTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct GetAllIssuesInput
 	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
@@ -110,7 +110,7 @@ func (githubClient *Client) getAllIssuesTask(props *structpb.Struct) (*structpb.
 		opts.Mentioned = ""
 	}
 
-	issues, _, err := githubClient.Issues.ListByRepo(context.Background(), owner, repository, opts)
+	issues, _, err := githubClient.Issues.ListByRepo(ctx, owner, repository, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +142,7 @@ type GetIssueResp struct {
 	Issue Issue `json:"issue"`
 }
 
-func (githubClient *Client) getIssueTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) getIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct GetIssueInput
 	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
@@ -154,7 +154,7 @@ func (githubClient *Client) getIssueTask(props *structpb.Struct) (*structpb.Stru
 	}
 
 	issueNumber := inputStruct.IssueNumber
-	issue, err := githubClient.getIssue(owner, repository, issueNumber)
+	issue, err := githubClient.getIssue(ctx, owner, repository, issueNumber)
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +179,7 @@ type CreateIssueResp struct {
 	Issue Issue `json:"issue"`
 }
 
-func (githubClient *Client) createIssueTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) createIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct CreateIssueInput
 	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
@@ -193,7 +193,7 @@ func (githubClient *Client) createIssueTask(props *structpb.Struct) (*structpb.S
 		Title: &inputStruct.Title,
 		Body:  &inputStruct.Body,
 	}
-	issue, _, err := githubClient.Issues.Create(context.Background(), owner, repository, issueRequest)
+	issue, _, err := githubClient.Issues.Create(ctx, owner, repository, issueRequest)
 	if err != nil {
 		return nil, err
 	}

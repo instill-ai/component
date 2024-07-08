@@ -35,7 +35,7 @@ type CreateWebHookResp struct {
 	Hook HookInfo `json:"hook"`
 }
 
-func (githubClient *Client) createWebhookTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) createWebhookTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct CreateWebHookInput
 	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
@@ -67,7 +67,7 @@ func (githubClient *Client) createWebhookTask(props *structpb.Struct) (*structpb
 		Active: &active,
 	}
 
-	hook, _, err = githubClient.Repositories.CreateHook(context.Background(), owner, repository, hook)
+	hook, _, err = githubClient.Repositories.CreateHook(ctx, owner, repository, hook)
 	if err != nil {
 		return nil, err
 	}

@@ -41,12 +41,12 @@ func (githubClient *Client) extractCommitFile(file *github.CommitFile) CommitFil
 		},
 	}
 }
-func (githubClient *Client) extractCommitInformation(originalCommit *github.RepositoryCommit) Commit {
+func (githubClient *Client) extractCommitInformation(ctx context.Context, originalCommit *github.RepositoryCommit) Commit {
 	stats := originalCommit.GetStats()
 	commitFiles := originalCommit.Files
 
 	if stats == nil || commitFiles == nil {
-		commit, err := githubClient.getCommit(githubClient.owner, githubClient.repository, originalCommit.GetSHA())
+		commit, err := githubClient.getCommit(ctx, githubClient.owner, githubClient.repository, originalCommit.GetSHA())
 		if err == nil {
 			// only update stats and files if there is no error
 			// otherwise, we will maintain the original commit information
@@ -71,8 +71,8 @@ func (githubClient *Client) extractCommitInformation(originalCommit *github.Repo
 	}
 }
 
-func (githubClient *Client) getCommit(owner string, repository string, sha string) (*github.RepositoryCommit, error) {
-	commit, _, err := githubClient.Repositories.GetCommit(context.Background(), owner, repository, sha, nil)
+func (githubClient *Client) getCommit(ctx context.Context, owner string, repository string, sha string) (*github.RepositoryCommit, error) {
+	commit, _, err := githubClient.Repositories.GetCommit(ctx, owner, repository, sha, nil)
 	return commit, err
 }
 
@@ -85,7 +85,7 @@ type GetCommitResp struct {
 	Commit Commit `json:"commit"`
 }
 
-func (githubClient *Client) getCommitTask(props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) getCommitTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct GetCommitInput
 	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
@@ -96,12 +96,12 @@ func (githubClient *Client) getCommitTask(props *structpb.Struct) (*structpb.Str
 		return nil, err
 	}
 	sha := inputStruct.SHA
-	commit, err := githubClient.getCommit(owner, repository, sha)
+	commit, err := githubClient.getCommit(ctx, owner, repository, sha)
 	if err != nil {
 		return nil, err
 	}
 	var resp GetCommitResp
-	resp.Commit = githubClient.extractCommitInformation(commit)
+	resp.Commit = githubClient.extractCommitInformation(ctx, commit)
 	out, err := base.ConvertToStructpb(resp)
 	if err != nil {
 		return nil, err
