@@ -68,6 +68,10 @@ func getInstillUserUID(vars map[string]any) string {
 	return vars["__PIPELINE_USER_UID"].(string)
 }
 
+func getInstillRequesterUID(vars map[string]any) string {
+	return vars["__PIPELINE_REQUESTER_UID"].(string)
+}
+
 func getModelServerURL(vars map[string]any) string {
 	if v, ok := vars["__MODEL_BACKEND"]; ok {
 		return v.(string)
@@ -83,11 +87,17 @@ func getMgmtServerURL(vars map[string]any) string {
 }
 
 func getRequestMetadata(vars map[string]any) metadata.MD {
-	return metadata.Pairs(
+	md := metadata.Pairs(
 		"Authorization", getHeaderAuthorization(vars),
 		"Instill-User-Uid", getInstillUserUID(vars),
 		"Instill-Auth-Type", "user",
 	)
+
+	if requester := getInstillRequesterUID(vars); requester != "" {
+		md.Set("Instill-Requester-Uid", requester)
+	}
+
+	return md
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {

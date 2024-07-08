@@ -5,8 +5,9 @@ const (
 )
 
 type TextEmbeddingsInput struct {
-	Text  string `json:"text"`
-	Model string `json:"model"`
+	Text       string `json:"text"`
+	Model      string `json:"model"`
+	Dimensions int    `json:"dimensions"`
 }
 
 type TextEmbeddingsOutput struct {
@@ -14,8 +15,9 @@ type TextEmbeddingsOutput struct {
 }
 
 type TextEmbeddingsReq struct {
-	Model string   `json:"model"`
-	Input []string `json:"input"`
+	Model      string   `json:"model"`
+	Dimensions int      `json:"dimensions,omitempty"`
+	Input      []string `json:"input"`
 }
 
 type TextEmbeddingsResp struct {
