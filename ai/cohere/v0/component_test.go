@@ -29,6 +29,18 @@ func TestComponent_Execute(t *testing.T) {
 		_, err := connector.CreateExecution(nil, nil, task)
 		c.Check(err, qt.IsNil)
 	})
+	c.Run("ok - supported task", func(c *qt.C) {
+		task := TextEmbeddingTask
+
+		_, err := connector.CreateExecution(nil, nil, task)
+		c.Check(err, qt.IsNil)
+	})
+	c.Run("ok - supported task", func(c *qt.C) {
+		task := TextRerankTask
+
+		_, err := connector.CreateExecution(nil, nil, task)
+		c.Check(err, qt.IsNil)
+	})
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
@@ -78,15 +90,15 @@ func TestComponent_Tasks(t *testing.T) {
 
 	})
 
-	embedTc := struct {
+	embedFloatTc := struct {
 		input    map[string]any
-		wantResp embeddingOutput
+		wantResp embeddingFloatOutput
 	}{
 		input:    map[string]any{"text": "abcde"},
-		wantResp: embeddingOutput{Embedding: []float64{0.1, 0.2, 0.3, 0.4, 0.5}, Usage: embedUsage{Tokens: 20}},
+		wantResp: embeddingFloatOutput{Embedding: []float64{0.1, 0.2, 0.3, 0.4, 0.5}, Usage: embedUsage{Tokens: 20}},
 	}
 
-	c.Run("ok - task embed", func(c *qt.C) {
+	c.Run("ok - task float embed", func(c *qt.C) {
 		setup, err := structpb.NewStruct(map[string]any{
 			"api-key": apiKey,
 		})
@@ -98,13 +110,44 @@ func TestComponent_Tasks(t *testing.T) {
 		e.execute = e.taskEmbedding
 		exec := &base.ExecutionWrapper{Execution: e}
 
-		pbIn, err := base.ConvertToStructpb(embedTc.input)
+		pbIn, err := base.ConvertToStructpb(embedFloatTc.input)
 		c.Assert(err, qt.IsNil)
 
 		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(embedTc.wantResp)
+		wantJSON, err := json.Marshal(embedFloatTc.wantResp)
+		c.Assert(err, qt.IsNil)
+		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+	})
+
+	embedIntTc := struct {
+		input    map[string]any
+		wantResp embeddingIntOutput
+	}{
+		input:    map[string]any{"text": "abcde", "embedding-type": "int8"},
+		wantResp: embeddingIntOutput{Embedding: []int{1, 2, 3, 4, 5}, Usage: embedUsage{Tokens: 20}},
+	}
+
+	c.Run("ok - task int embed", func(c *qt.C) {
+		setup, err := structpb.NewStruct(map[string]any{
+			"api-key": apiKey,
+		})
+		c.Assert(err, qt.IsNil)
+		e := &execution{
+			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
+			client:             &MockCohereClient{},
+		}
+		e.execute = e.taskEmbedding
+		exec := &base.ExecutionWrapper{Execution: e}
+
+		pbIn, err := base.ConvertToStructpb(embedIntTc.input)
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		c.Assert(err, qt.IsNil)
+
+		wantJSON, err := json.Marshal(embedIntTc.wantResp)
 		c.Assert(err, qt.IsNil)
 		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
@@ -161,13 +204,59 @@ func (m *MockCohereClient) generateEmbedding(request cohereSDK.EmbedRequest) (co
 	inputToken := float64(20)
 	bill := cohereSDK.ApiMetaBilledUnits{InputTokens: &inputToken}
 	meta := cohereSDK.ApiMeta{BilledUnits: &bill}
-	embedding := cohereSDK.EmbedFloatsResponse{
-		Embeddings: [][]float64{{0.1, 0.2, 0.3, 0.4, 0.5}},
-		Meta:       &meta,
+	if len(request.EmbeddingTypes) != 0 {
+		tp := request.EmbeddingTypes[0]
+		embedding := cohereSDK.EmbedByTypeResponse{}
+		switch tp {
+		case cohereSDK.EmbeddingTypeFloat:
+			embedding = cohereSDK.EmbedByTypeResponse{
+				Embeddings: &cohereSDK.EmbedByTypeResponseEmbeddings{
+					Float: [][]float64{{0.1, 0.2, 0.3, 0.4, 0.5}},
+				},
+				Meta: &meta,
+			}
+		case cohereSDK.EmbeddingTypeInt8:
+			embedding = cohereSDK.EmbedByTypeResponse{
+				Embeddings: &cohereSDK.EmbedByTypeResponseEmbeddings{
+					Int8: [][]int{{1, 2, 3, 4, 5}},
+				},
+				Meta: &meta,
+			}
+		case cohereSDK.EmbeddingTypeUint8:
+			embedding = cohereSDK.EmbedByTypeResponse{
+				Embeddings: &cohereSDK.EmbedByTypeResponseEmbeddings{
+					Uint8: [][]int{{1, 2, 3, 4, 5}},
+				},
+				Meta: &meta,
+			}
+		case cohereSDK.EmbeddingTypeBinary:
+			embedding = cohereSDK.EmbedByTypeResponse{
+				Embeddings: &cohereSDK.EmbedByTypeResponseEmbeddings{
+					Binary: [][]int{{1, 2, 3, 4, 5}},
+				},
+				Meta: &meta,
+			}
+		case cohereSDK.EmbeddingTypeUbinary:
+			embedding = cohereSDK.EmbedByTypeResponse{
+				Embeddings: &cohereSDK.EmbedByTypeResponseEmbeddings{
+					Ubinary: [][]int{{1, 2, 3, 4, 5}},
+				},
+				Meta: &meta,
+			}
+		}
+
+		return cohereSDK.EmbedResponse{
+			EmbeddingsByType: &embedding,
+		}, nil
+	} else {
+		embedding := cohereSDK.EmbedFloatsResponse{
+			Embeddings: [][]float64{{0.1, 0.2, 0.3, 0.4, 0.5}},
+			Meta:       &meta,
+		}
+		return cohereSDK.EmbedResponse{
+			EmbeddingsFloats: &embedding,
+		}, nil
 	}
-	return cohereSDK.EmbedResponse{
-		EmbeddingsFloats: &embedding,
-	}, nil
 }
 
 func (m *MockCohereClient) generateRerank(request cohereSDK.RerankRequest) (cohereSDK.RerankResponse, error) {

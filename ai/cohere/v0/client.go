@@ -38,6 +38,7 @@ func (cl *cohereClient) generateEmbedding(request cohereSDK.EmbedRequest) (coher
 	}
 	resp := cohereSDK.EmbedResponse{
 		EmbeddingsFloats: respPtr.EmbeddingsFloats,
+		EmbeddingsByType: respPtr.EmbeddingsByType,
 	}
 	return resp, nil
 }
