@@ -15,12 +15,12 @@ import (
 )
 
 const (
-	taskListPRs           = "TASK_LIST_PULL_REQUESTS"
+	taskListPRs             = "TASK_LIST_PULL_REQUESTS"
 	taskGetPR               = "TASK_GET_PULL_REQUEST"
 	taskGetCommit           = "TASK_GET_COMMIT"
 	taskGetReviewComments   = "TASK_LIST_REVIEW_COMMENTS"
 	taskCreateReviewComment = "TASK_CREATE_REVIEW_COMMENT"
-	taskListIssues        = "TASK_LIST_ISSUES"
+	taskListIssues          = "TASK_LIST_ISSUES"
 	taskGetIssue            = "TASK_GET_ISSUE"
 	taskCreateIssue         = "TASK_CREATE_ISSUE"
 	taskCreateWebhook       = "TASK_CREATE_WEBHOOK"

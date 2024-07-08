@@ -146,7 +146,7 @@ func (githubClient *Client) getPullRequestTask(ctx context.Context, props *struc
 			Sort:      "created",
 			Direction: "desc",
 		}
-		prs, _, err := githubClient.PullRequests.List(ctx, githubClient.owner, githubClient.repository, opts)
+		prs, _, err := githubClient.PullRequests.List(ctx, owner, repository, opts)
 		if err != nil {
 			// err includes the rate limit.
 			// if the connection is not authorized, it's easy to get rate limit error in large scale usage.
@@ -160,7 +160,7 @@ func (githubClient *Client) getPullRequestTask(ctx context.Context, props *struc
 		}
 		pullRequest = prs[0]
 		// Some fields are not included in the list API, so we need to get the PR again.
-		pr, _, err := githubClient.PullRequests.Get(ctx, githubClient.owner, githubClient.repository, *pullRequest.Number)
+		pr, _, err := githubClient.PullRequests.Get(ctx, owner, repository, *pullRequest.Number)
 		if err != nil {
 			// err includes the rate limit, 404 not found, etc.
 			// if the connection is not authorized, it's easy to get rate limit error in large scale usage.

@@ -105,7 +105,7 @@ func (m *MockPullRequestService) CreateComment(ctx context.Context, owner, repo 
 	case 201:
 		return nil, nil, nil
 	}
-	if *comment.Line <= *comment.StartLine {
+	if comment.StartLine != nil && *comment.Line <= *comment.StartLine {
 		return nil, nil, fmt.Errorf("422 Unprocessable Entity")
 	}
 

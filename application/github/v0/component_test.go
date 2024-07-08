@@ -185,6 +185,54 @@ func TestComponent_GetPullRequestTask(t *testing.T) {
 			},
 		},
 		{
+			_type: "ok",
+			name:  "get latest pull request",
+			input: GetPullRequestInput{
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
+				PrNumber: 0,
+			},
+			wantResp: GetPullRequestResp{
+				PullRequest: PullRequest{
+					Base: "baseSHA",
+					Body: "PR Body",
+					Commits: []Commit{
+						{
+							Message: "This is a fake commit",
+							SHA:     "commitSHA",
+							Stats: CommitStats{
+								Additions: 1,
+								Deletions: 1,
+								Changes:   2,
+							},
+							Files: []CommitFile{
+								{
+									Filename: "filename",
+									Patch:    "patch",
+									CommitStats: CommitStats{
+										Additions: 1,
+										Deletions: 1,
+										Changes:   2,
+									},
+								},
+							},
+						},
+					},
+					DiffURL:           "https://fake-github.com/test_owner/test_repo/pull/1.diff",
+					Head:              "headSHA",
+					ID:                1,
+					Number:            1,
+					CommentsNum:       0,
+					CommitsNum:        1,
+					ReviewCommentsNum: 2,
+					State:             "open",
+					Title:             "This is a fake PR",
+				},
+			},
+		},
+		{
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
 			input: GetPullRequestInput{
@@ -315,6 +363,38 @@ func TestComponent_CreateReviewCommentTask(t *testing.T) {
 						Line:        github.Int(2),
 						Position:    github.Int(2),
 						StartLine:   github.Int(1),
+						Side:        github.String("side"),
+						StartSide:   github.String("side"),
+						SubjectType: github.String("line"),
+					},
+				},
+			},
+		},
+		{
+			_type: "ok",
+			name:  "create oneline review comment",
+			input: CreateReviewCommentInput{
+				RepoInfo: RepoInfo{
+					Owner:      "test_owner",
+					Repository: "test_repo",
+				},
+				PrNumber: 1,
+				Comment: github.PullRequestComment{
+					Body:        github.String("This is a fake comment"),
+					Line:        github.Int(1),
+					StartLine:   github.Int(1),
+					Side:        github.String("side"),
+					StartSide:   github.String("side"),
+					SubjectType: github.String("line"),
+				},
+			},
+			wantResp: CreateReviewCommentResp{
+				ReviewComment: ReviewComment{
+					PullRequestComment: github.PullRequestComment{
+						Body:        github.String("This is a fake comment"),
+						ID:          github.Int64(1),
+						Line:        github.Int(1),
+						Position:    github.Int(1),
 						Side:        github.String("side"),
 						StartSide:   github.String("side"),
 						SubjectType: github.String("line"),
