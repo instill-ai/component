@@ -489,7 +489,7 @@
             "ubinary"
           ],
           "example": "float",
-          "description": "Specifies the return type of embedding",
+          "description": "Specifies the return type of embedding, Note that 'binary'/'ubinary' options means the component will return packed unsigned binary embeddings. The length of each binary embedding is 1/8 the length of the float embeddings of the provided model.",
           "instillAcceptFormats": [
             "string"
           ],

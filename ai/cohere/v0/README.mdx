@@ -79,6 +79,7 @@ Turn text into a vector of numbers that capture its meaning, unlocking use cases
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_TEXT_EMBEDDINGS` |
+| Embedding Type (required) | `embedding-type` | string | Specifies the return type of embedding, Note that 'binary'/'ubinary' options means the component will return packed unsigned binary embeddings. The length of each binary embedding is 1/8 the length of the float embeddings of the provided model. |
 | Input Type (required) | `input-type` | string | Specifies the type of input passed to the model |
 | Model Name (required) | `model-name` | string | The Cohere embed model to be used |
 | Text (required) | `text` | string | The text |
