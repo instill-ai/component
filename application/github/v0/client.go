@@ -45,8 +45,6 @@ type Client struct {
 	Repositories RepositoriesService
 	PullRequests PullRequestService
 	Issues       IssuesService
-	owner        string
-	repository   string
 }
 
 func newClient(ctx context.Context, setup *structpb.Struct) Client {

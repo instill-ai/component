@@ -563,7 +563,7 @@
           "properties": {
             "id": {
               "description": "ID of the user",
-              "instillUIOrder": 1,
+              "instillUIOrder": 14,
               "title": "User id",
               "instillFormat": "integer",
               "instillAcceptFormats": [
@@ -577,7 +577,7 @@
             },
             "url": {
               "description": "URL of the user",
-              "instillUIOrder": 2,
+              "instillUIOrder": 15,
               "title": "User URL",
               "instillFormat": "string",
               "instillAcceptFormats": [
@@ -724,6 +724,7 @@
   },
   "TASK_LIST_PULL_REQUESTS": {
     "instillShortDescription": "Get the list of all pull requests in a repository",
+    "description": "Get the list of all pull requests in a repository. Detailed information about each commit in a PR is omitted, please use the `Get Commit` task or the `Get Pull Request` task to get the details of a commit.",
     "input": {
       "description": "Please input the repository name and owner",
       "instillUIOrder": 0,

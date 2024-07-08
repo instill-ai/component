@@ -55,22 +55,6 @@ func TestComponent_ListPullRequestsTask(t *testing.T) {
 							{
 								Message: "This is a fake commit",
 								SHA:     "commitSHA",
-								Stats: CommitStats{
-									Additions: 1,
-									Deletions: 1,
-									Changes:   2,
-								},
-								Files: []CommitFile{
-									{
-										Filename: "filename",
-										Patch:    "patch",
-										CommitStats: CommitStats{
-											Additions: 1,
-											Deletions: 1,
-											Changes:   2,
-										},
-									},
-								},
 							},
 						},
 						DiffURL:           "https://fake-github.com/test_owner/test_repo/pull/1.diff",
@@ -154,7 +138,7 @@ func TestComponent_GetPullRequestTask(t *testing.T) {
 						{
 							Message: "This is a fake commit",
 							SHA:     "commitSHA",
-							Stats: CommitStats{
+							Stats: &CommitStats{
 								Additions: 1,
 								Deletions: 1,
 								Changes:   2,
@@ -202,7 +186,7 @@ func TestComponent_GetPullRequestTask(t *testing.T) {
 						{
 							Message: "This is a fake commit",
 							SHA:     "commitSHA",
-							Stats: CommitStats{
+							Stats: &CommitStats{
 								Additions: 1,
 								Deletions: 1,
 								Changes:   2,
@@ -502,7 +486,7 @@ func TestComponent_GetCommitTask(t *testing.T) {
 				Commit: Commit{
 					Message: "This is a fake commit",
 					SHA:     "commitSHA",
-					Stats: CommitStats{
+					Stats: &CommitStats{
 						Additions: 1,
 						Deletions: 1,
 						Changes:   2,

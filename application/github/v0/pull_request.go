@@ -35,7 +35,7 @@ type PullRequest struct {
 	ReviewCommentsNum int      `json:"review_comments_num"`
 }
 
-func (githubClient *Client) extractPullRequestInformation(ctx context.Context, owner string, repository string, originalPr *github.PullRequest) (PullRequest, error) {
+func (githubClient *Client) extractPullRequestInformation(ctx context.Context, owner string, repository string, originalPr *github.PullRequest, needCommitDetails bool) (PullRequest, error) {
 	resp := PullRequest{
 		ID:                originalPr.GetID(),
 		Number:            originalPr.GetNumber(),
@@ -56,7 +56,7 @@ func (githubClient *Client) extractPullRequestInformation(ctx context.Context, o
 		}
 		resp.Commits = make([]Commit, len(commits))
 		for idx, commit := range commits {
-			resp.Commits[idx] = githubClient.extractCommitInformation(ctx, commit)
+			resp.Commits[idx] = githubClient.extractCommitInformation(ctx, owner, repository, commit, needCommitDetails)
 		}
 	}
 	return resp, nil
@@ -95,7 +95,7 @@ func (githubClient *Client) listPullRequestsTask(ctx context.Context, props *str
 	}
 	PullRequests := make([]PullRequest, len(prs))
 	for idx, pr := range prs {
-		PullRequests[idx], err = githubClient.extractPullRequestInformation(ctx, owner, repository, pr)
+		PullRequests[idx], err = githubClient.extractPullRequestInformation(ctx, owner, repository, pr, false)
 		if err != nil {
 			return nil, err
 		}
@@ -170,7 +170,7 @@ func (githubClient *Client) getPullRequestTask(ctx context.Context, props *struc
 	}
 
 	var prResp GetPullRequestResp
-	prResp.PullRequest, err = githubClient.extractPullRequestInformation(ctx, owner, repository, pullRequest)
+	prResp.PullRequest, err = githubClient.extractPullRequestInformation(ctx, owner, repository, pullRequest, true)
 	if err != nil {
 		return nil, err
 	}
