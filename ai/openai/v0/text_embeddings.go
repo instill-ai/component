@@ -16,7 +16,7 @@ type TextEmbeddingsOutput struct {
 
 type TextEmbeddingsReq struct {
 	Model      string   `json:"model"`
-	Dimensions int      `json:"dimensions"`
+	Dimensions int      `json:"dimensions,omitempty"`
 	Input      []string `json:"input"`
 }
 
