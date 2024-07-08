@@ -15,12 +15,12 @@ import (
 )
 
 const (
-	taskGetAllPRs           = "TASK_LIST_PULL_REQUESTS"
+	taskListPRs           = "TASK_LIST_PULL_REQUESTS"
 	taskGetPR               = "TASK_GET_PULL_REQUEST"
 	taskGetCommit           = "TASK_GET_COMMIT"
-	taskGetReviewComments   = "TASK_GET_REVIEW_COMMENTS"
+	taskGetReviewComments   = "TASK_LIST_REVIEW_COMMENTS"
 	taskCreateReviewComment = "TASK_CREATE_REVIEW_COMMENT"
-	taskGetAllIssues        = "TASK_LIST_ISSUES"
+	taskListIssues        = "TASK_LIST_ISSUES"
 	taskGetIssue            = "TASK_GET_ISSUE"
 	taskCreateIssue         = "TASK_CREATE_ISSUE"
 	taskCreateWebhook       = "TASK_CREATE_WEBHOOK"
@@ -69,18 +69,18 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		client:             githubClient,
 	}
 	switch task {
-	case taskGetAllPRs:
-		e.execute = e.client.getAllPullRequestsTask
+	case taskListPRs:
+		e.execute = e.client.listPullRequestsTask
 	case taskGetPR:
 		e.execute = e.client.getPullRequestTask
 	case taskGetReviewComments:
-		e.execute = e.client.getAllReviewCommentsTask
+		e.execute = e.client.listReviewCommentsTask
 	case taskCreateReviewComment:
 		e.execute = e.client.createReviewCommentTask
 	case taskGetCommit:
 		e.execute = e.client.getCommitTask
-	case taskGetAllIssues:
-		e.execute = e.client.getAllIssuesTask
+	case taskListIssues:
+		e.execute = e.client.listIssuesTask
 	case taskGetIssue:
 		e.execute = e.client.getIssueTask
 	case taskCreateIssue:

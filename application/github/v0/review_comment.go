@@ -20,7 +20,7 @@ func extractReviewCommentInformation(originalComment *github.PullRequestComment)
 	}
 }
 
-type GetAllReviewCommentsInput struct {
+type ListReviewCommentsInput struct {
 	RepoInfo
 	PrNumber  int    `json:"pr_number"`
 	Sort      string `json:"sort"`
@@ -28,16 +28,16 @@ type GetAllReviewCommentsInput struct {
 	Since     string `json:"since"`
 }
 
-type GetAllReviewCommentsResp struct {
+type ListReviewCommentsResp struct {
 	ReviewComments []ReviewComment `json:"comments"`
 }
 
-// GetAllReviewComments retrieves all review comments for a given pull request.
+// ListReviewComments retrieves all review comments for a given pull request.
 // Specifying a pull request number of 0 will return all comments on all pull requests for the repository.
 //
 // * This only works for public repositories.
-func (githubClient *Client) getAllReviewCommentsTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var inputStruct GetAllReviewCommentsInput
+func (githubClient *Client) listReviewCommentsTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct ListReviewCommentsInput
 	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
 		return nil, err
@@ -78,7 +78,7 @@ func (githubClient *Client) getAllReviewCommentsTask(ctx context.Context, props 
 	for i, comment := range comments {
 		reviewComments[i] = extractReviewCommentInformation(comment)
 	}
-	var reviewCommentsResp GetAllReviewCommentsResp
+	var reviewCommentsResp ListReviewCommentsResp
 	reviewCommentsResp.ReviewComments = reviewComments
 	out, err := base.ConvertToStructpb(reviewCommentsResp)
 	if err != nil {

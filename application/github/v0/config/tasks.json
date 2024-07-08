@@ -877,7 +877,7 @@
       "type": "object"
     }
   },
-  "TASK_GET_REVIEW_COMMENTS": {
+  "TASK_LIST_REVIEW_COMMENTS": {
     "instillShortDescription": "Get the review comments in a pull request",
     "description": "Get the review comments in a pull request. The comments can be on a specific line or on the PR as a whole.",
     "input": {
@@ -1224,7 +1224,7 @@
         },
         "no_pull_request": {
           "title": "No Pull Request",
-          "description": "Whether to not include pull requests in the issues. Default is false",
+          "description": "Whether to `not` include pull requests in the response. Since issue and pr use the same indexing system in GitHub, the API returns all relevant objects (issues and pr). Default is false",
           "instillFormat": "boolean",
           "instillAcceptFormats": [
             "boolean"

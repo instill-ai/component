@@ -62,19 +62,19 @@ func (githubClient *Client) extractPullRequestInformation(ctx context.Context, o
 	return resp, nil
 }
 
-type GetAllPullRequestsInput struct {
+type ListPullRequestsInput struct {
 	RepoInfo
 	State     string `json:"state"`
 	Sort      string `json:"sort"`
 	Direction string `json:"direction"`
 }
-type GetAllPullRequestsResp struct {
+type ListPullRequestsResp struct {
 	PullRequests []PullRequest `json:"pull_requests"`
 }
 
-func (githubClient *Client) getAllPullRequestsTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+func (githubClient *Client) listPullRequestsTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 
-	var inputStruct GetAllPullRequestsInput
+	var inputStruct ListPullRequestsInput
 	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
 		return nil, err
@@ -101,7 +101,7 @@ func (githubClient *Client) getAllPullRequestsTask(ctx context.Context, props *s
 		}
 	}
 
-	var prResp GetAllPullRequestsResp
+	var prResp ListPullRequestsResp
 	prResp.PullRequests = PullRequests
 	out, err := base.ConvertToStructpb(prResp)
 	if err != nil {

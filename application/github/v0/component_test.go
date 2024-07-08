@@ -32,12 +32,12 @@ type TaskCase[inType any, outType any] struct {
 	wantErr  string
 }
 
-func TestComponent_GetAllPullRequestsTask(t *testing.T) {
-	testcases := []TaskCase[GetAllPullRequestsInput, GetAllPullRequestsResp]{
+func TestComponent_ListPullRequestsTask(t *testing.T) {
+	testcases := []TaskCase[ListPullRequestsInput, ListPullRequestsResp]{
 		{
 			_type: "ok",
 			name:  "get all pull requests",
-			input: GetAllPullRequestsInput{
+			input: ListPullRequestsInput{
 				RepoInfo: RepoInfo{
 					Owner:      "test_owner",
 					Repository: "test_repo",
@@ -46,7 +46,7 @@ func TestComponent_GetAllPullRequestsTask(t *testing.T) {
 				Direction: "asc",
 				Sort:      "created",
 			},
-			wantResp: GetAllPullRequestsResp{
+			wantResp: ListPullRequestsResp{
 				PullRequests: []PullRequest{
 					{
 						Base: "baseSHA",
@@ -89,7 +89,7 @@ func TestComponent_GetAllPullRequestsTask(t *testing.T) {
 		{
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
-			input: GetAllPullRequestsInput{
+			input: ListPullRequestsInput{
 				RepoInfo: RepoInfo{
 					Owner:      "rate_limit",
 					Repository: "test_repo",
@@ -103,7 +103,7 @@ func TestComponent_GetAllPullRequestsTask(t *testing.T) {
 		{
 			_type: "nok",
 			name:  "404 Not Found",
-			input: GetAllPullRequestsInput{
+			input: ListPullRequestsInput{
 				RepoInfo: RepoInfo{
 					Owner:      "not_found",
 					Repository: "test_repo",
@@ -117,7 +117,7 @@ func TestComponent_GetAllPullRequestsTask(t *testing.T) {
 		{
 			_type: "nok",
 			name:  "no PRs found",
-			input: GetAllPullRequestsInput{
+			input: ListPullRequestsInput{
 				RepoInfo: RepoInfo{
 					Owner:      "no_pr",
 					Repository: "test_repo",
@@ -126,12 +126,12 @@ func TestComponent_GetAllPullRequestsTask(t *testing.T) {
 				Direction: "asc",
 				Sort:      "created",
 			},
-			wantResp: GetAllPullRequestsResp{
+			wantResp: ListPullRequestsResp{
 				PullRequests: []PullRequest{},
 			},
 		},
 	}
-	taskTesting(testcases, taskGetAllPRs, t)
+	taskTesting(testcases, taskListPRs, t)
 }
 
 func TestComponent_GetPullRequestTask(t *testing.T) {
@@ -212,12 +212,12 @@ func TestComponent_GetPullRequestTask(t *testing.T) {
 	taskTesting(testcases, taskGetPR, t)
 }
 
-func TestComponent_GetAllReviewCommentsTask(t *testing.T) {
-	testcases := []TaskCase[GetAllReviewCommentsInput, GetAllReviewCommentsResp]{
+func TestComponent_ListReviewCommentsTask(t *testing.T) {
+	testcases := []TaskCase[ListReviewCommentsInput, ListReviewCommentsResp]{
 		{
 			_type: "ok",
 			name:  "get review comments",
-			input: GetAllReviewCommentsInput{
+			input: ListReviewCommentsInput{
 				RepoInfo: RepoInfo{
 					Owner:      "test_owner",
 					Repository: "test_repo",
@@ -227,7 +227,7 @@ func TestComponent_GetAllReviewCommentsTask(t *testing.T) {
 				Direction: "asc",
 				Since:     "2021-01-01T00:00:00Z",
 			},
-			wantResp: GetAllReviewCommentsResp{
+			wantResp: ListReviewCommentsResp{
 				ReviewComments: []ReviewComment{
 					{
 						PullRequestComment: github.PullRequestComment{
@@ -241,7 +241,7 @@ func TestComponent_GetAllReviewCommentsTask(t *testing.T) {
 		{
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
-			input: GetAllReviewCommentsInput{
+			input: ListReviewCommentsInput{
 				RepoInfo: RepoInfo{
 					Owner:      "rate_limit",
 					Repository: "test_repo",
@@ -256,7 +256,7 @@ func TestComponent_GetAllReviewCommentsTask(t *testing.T) {
 		{
 			_type: "nok",
 			name:  "404 Not Found",
-			input: GetAllReviewCommentsInput{
+			input: ListReviewCommentsInput{
 				RepoInfo: RepoInfo{
 					Owner:      "not_found",
 					Repository: "test_repo",
@@ -271,7 +271,7 @@ func TestComponent_GetAllReviewCommentsTask(t *testing.T) {
 		{
 			_type: "nok",
 			name:  "invalid time format",
-			input: GetAllReviewCommentsInput{
+			input: ListReviewCommentsInput{
 				RepoInfo: RepoInfo{
 					Owner:      "not_found",
 					Repository: "test_repo",
@@ -457,12 +457,12 @@ func TestComponent_GetCommitTask(t *testing.T) {
 	taskTesting(testcases, taskGetCommit, t)
 }
 
-func TestComponent_GetAllIssuesTask(t *testing.T) {
-	testcases := []TaskCase[GetAllIssuesInput, GetAllIssuesResp]{
+func TestComponent_ListIssuesTask(t *testing.T) {
+	testcases := []TaskCase[ListIssuesInput, ListIssuesResp]{
 		{
 			_type: "ok",
 			name:  "get all issues",
-			input: GetAllIssuesInput{
+			input: ListIssuesInput{
 				RepoInfo: RepoInfo{
 					Owner:      "test_owner",
 					Repository: "test_repo",
@@ -473,7 +473,7 @@ func TestComponent_GetAllIssuesTask(t *testing.T) {
 				Since:         "2021-01-01T00:00:00Z",
 				NoPullRequest: true,
 			},
-			wantResp: GetAllIssuesResp{
+			wantResp: ListIssuesResp{
 				Issues: []Issue{
 					{
 						Number:    1,
@@ -490,7 +490,7 @@ func TestComponent_GetAllIssuesTask(t *testing.T) {
 		{
 			_type: "nok",
 			name:  "403 API rate limit exceeded",
-			input: GetAllIssuesInput{
+			input: ListIssuesInput{
 				RepoInfo: RepoInfo{
 					Owner:      "rate_limit",
 					Repository: "test_repo",
@@ -506,7 +506,7 @@ func TestComponent_GetAllIssuesTask(t *testing.T) {
 		{
 			_type: "nok",
 			name:  "404 Not Found",
-			input: GetAllIssuesInput{
+			input: ListIssuesInput{
 				RepoInfo: RepoInfo{
 					Owner:      "not_found",
 					Repository: "test_repo",
@@ -522,7 +522,7 @@ func TestComponent_GetAllIssuesTask(t *testing.T) {
 		{
 			_type: "nok",
 			name:  "invalid time format",
-			input: GetAllIssuesInput{
+			input: ListIssuesInput{
 				RepoInfo: RepoInfo{
 					Owner:      "not_found",
 					Repository: "test_repo",
@@ -536,7 +536,7 @@ func TestComponent_GetAllIssuesTask(t *testing.T) {
 			wantErr: `invalid time format`,
 		},
 	}
-	taskTesting(testcases, taskGetAllIssues, t)
+	taskTesting(testcases, taskListIssues, t)
 }
 func TestComponent_GetIssueTask(t *testing.T) {
 	testcases := []TaskCase[GetIssueInput, GetIssueResp]{
@@ -728,18 +728,18 @@ func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType],
 				client:             *MockGithubClient,
 			}
 			switch task {
-			case taskGetAllPRs:
-				e.execute = e.client.getAllPullRequestsTask
+			case taskListPRs:
+				e.execute = e.client.listPullRequestsTask
 			case taskGetPR:
 				e.execute = e.client.getPullRequestTask
 			case taskGetReviewComments:
-				e.execute = e.client.getAllReviewCommentsTask
+				e.execute = e.client.listReviewCommentsTask
 			case taskCreateReviewComment:
 				e.execute = e.client.createReviewCommentTask
 			case taskGetCommit:
 				e.execute = e.client.getCommitTask
-			case taskGetAllIssues:
-				e.execute = e.client.getAllIssuesTask
+			case taskListIssues:
+				e.execute = e.client.listIssuesTask
 			case taskGetIssue:
 				e.execute = e.client.getIssueTask
 			case taskCreateIssue:

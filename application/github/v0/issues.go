@@ -72,7 +72,7 @@ func filterOutPullRequests(issues []Issue) []Issue {
 	return filteredIssues
 }
 
-type GetAllIssuesInput struct {
+type ListIssuesInput struct {
 	RepoInfo
 	State         string `json:"state"`
 	Sort          string `json:"sort"`
@@ -81,12 +81,12 @@ type GetAllIssuesInput struct {
 	NoPullRequest bool   `json:"no_pull_request"`
 }
 
-type GetAllIssuesResp struct {
+type ListIssuesResp struct {
 	Issues []Issue `json:"issues"`
 }
 
-func (githubClient *Client) getAllIssuesTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var inputStruct GetAllIssuesInput
+func (githubClient *Client) listIssuesTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct ListIssuesInput
 	err := base.ConvertFromStructpb(props, &inputStruct)
 	if err != nil {
 		return nil, err
@@ -124,7 +124,7 @@ func (githubClient *Client) getAllIssuesTask(ctx context.Context, props *structp
 	if inputStruct.NoPullRequest {
 		issueList = filterOutPullRequests(issueList)
 	}
-	var resp GetAllIssuesResp
+	var resp ListIssuesResp
 	resp.Issues = issueList
 	out, err := base.ConvertToStructpb(resp)
 	if err != nil {
