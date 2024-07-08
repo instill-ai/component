@@ -13,10 +13,10 @@ import (
 )
 
 const (
-	TextGenerationTask = "TASK_TEXT_GENERATION_CHAT"
-	TextToImageTask    = "TASK_TEXT_TO_IMAGE"
-	ImageToImageTask   = "TASK_IMAGE_TO_IMAGE"
-	cfgAPIKey          = "api-key"
+	TextGenerationTask    = "TASK_TEXT_GENERATION_CHAT"
+	TextToImageTask       = "TASK_TEXT_TO_IMAGE"
+	ImageToImageTask      = "TASK_IMAGE_TO_IMAGE"
+	SpeechRecognitionTask = "TASK_SPEECH_RECOGNITION"
 )
 
 var (
@@ -61,6 +61,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.generateText
 	case TextToImageTask, ImageToImageTask:
 		return nil, fmt.Errorf("image generation is curently under approval process, contact support for more information")
+	case SpeechRecognitionTask:
+		e.execute = e.speechRecognition
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
