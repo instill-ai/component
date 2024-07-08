@@ -53,7 +53,7 @@ Provide text outputs in response to text inputs.
 | Documents | `documents` | array[string] | The documents to be used for the model, for optimal performance, the length of each document should be less than 300 words. |
 | Prompt Images | `prompt-images` | array[string] | The prompt images (Note: As for 2024-06-24 Cohere models are not multimodal, so images will be ignored.) |
 | Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Each message should adhere to the format: : \{"role": "The message role, i.e. 'USER' or 'CHATBOT'", "content": "message content"\}. |
-| Seed | `seed` | integer | The seed |
+| Seed | `seed` | integer | The seed (default=42) |
 | Temperature | `temperature` | number | The temperature for sampling (default=0.7) |
 | Top K | `top-k` | integer | Top k for sampling (default=10) |
 | Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate (default=50) |

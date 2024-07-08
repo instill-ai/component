@@ -302,7 +302,8 @@
           "type": "array"
         },
         "seed": {
-          "description": "The seed",
+          "default": 42,
+          "description": "The seed (default=42)",
           "instillAcceptFormats": [
             "integer"
           ],
