@@ -19,6 +19,7 @@ import (
 	"github.com/instill-ai/component/application/email/v0"
 	"github.com/instill-ai/component/application/github/v0"
 	"github.com/instill-ai/component/application/googlesearch/v0"
+	"github.com/instill-ai/component/application/jira/v0"
 
 	"github.com/instill-ai/component/application/numbers/v0"
 	"github.com/instill-ai/component/application/restapi/v0"
@@ -132,7 +133,7 @@ func Init(
 		compStore.Import(website.Init(baseComp))
 		compStore.Import(slack.Init(baseComp))
 		compStore.Import(email.Init(baseComp))
-
+		compStore.Import(jira.Init(baseComp))
 	})
 	return compStore
 }

@@ -1,0 +1,105 @@
+{
+  "$defs": {},
+  "TASK_LIST_BOARDS": {
+    "instillShortDescription": "List all boards in Jira",
+    "input": {
+      "description": "List all boards in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "owner",
+        "repository"
+      ],
+      "properties": {
+        "$ref": "#/$defs/repository_info",
+        "state": {
+          "default": "open",
+          "title": "State",
+          "description": "State of the PRs, including open, closed, all. Default is open",
+          "enum": [
+            "open",
+            "closed",
+            "all"
+          ],
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 10,
+          "type": "string"
+        },
+        "sort": {
+          "default": "created",
+          "title": "Sort",
+          "description": "Sort the PRs by created, updated, popularity, or long-running. Default is created",
+          "enum": [
+            "created",
+            "updated",
+            "popularity",
+            "long-running"
+          ],
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 11,
+          "type": "string"
+        },
+        "direction": {
+          "default": "desc",
+          "title": "Direction",
+          "description": "Direction of the sort, including asc or desc. Default is asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIOrder": 12,
+          "type": "string"
+        }
+      },
+      "required": [
+        "owner",
+        "repository"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "All PRs in GitHub repository",
+      "instillUIOrder": 0,
+      "properties": {
+        "pull_requests": {
+          "description": "An array of PRs",
+          "instillUIOrder": 1,
+          "title": "Pull Requests",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/pull_request",
+            "required": [],
+            "description": "A pull request in GitHub"
+          }
+        }
+      },
+      "required": [
+        "pull_requests"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  }
+}
