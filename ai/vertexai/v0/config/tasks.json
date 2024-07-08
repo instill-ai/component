@@ -536,7 +536,8 @@
     "input": {
       "instillEditOnNodeFields": [
         "audio",
-        "model-name"
+        "model-name",
+        "language-code"
       ],
       "instillUIOrder": 0,
       "properties": {
@@ -569,11 +570,40 @@
           ],
           "title": "Model Name",
           "type": "string"
+        },
+        "sample-rate": {
+          "description": "The sample rate of the audio file",
+          "default": 16000,
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Sample Rate",
+          "type": "integer"
+        },
+        "language-code": {
+          "description": "The language code of the audio file, check: https://cloud.google.com/speech-to-text/docs/speech-to-text-supported-languages",
+          "default": "en-US",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Language Code",
+          "type": "string"
         }
       },
       "required": [
         "audio",
-        "model-name"
+        "model-name",
+        "language-code"
       ],
       "title": "Input",
       "type": "object"
