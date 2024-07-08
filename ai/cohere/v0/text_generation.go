@@ -1,12 +1,10 @@
 package cohere
 
 import (
-	"encoding/json"
 	"fmt"
 
 	cohereSDK "github.com/cohere-ai/cohere-go/v2"
 	"github.com/instill-ai/component/base"
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -110,7 +108,6 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("### call Cohere API completed ###")
 
 	citations := []ciatation{}
 
@@ -133,8 +130,6 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 	inputTokens := *bills.InputTokens
 	outputTokens := *bills.OutputTokens
 
-	fmt.Printf("inputTokens: %f, outputTokens: %f\n", inputTokens, outputTokens)
-
 	outputStruct := textGenerationOutput{
 		Text:       resp.Text,
 		Ciatations: citations,
@@ -144,16 +139,9 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 		},
 	}
 
-	fmt.Println("### generate output completed ###")
-
-	outputJSON, err := json.Marshal(outputStruct)
+	output, err := base.ConvertToStructpb(outputStruct)
 	if err != nil {
 		return nil, err
 	}
-	output := structpb.Struct{}
-	err = protojson.Unmarshal(outputJSON, &output)
-	if err != nil {
-		return nil, err
-	}
-	return &output, nil
+	return output, nil
 }
