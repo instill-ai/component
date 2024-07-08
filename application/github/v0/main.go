@@ -15,12 +15,12 @@ import (
 )
 
 const (
-	taskGetAllPRs           = "TASK_GET_ALL_PULL_REQUESTS"
+	taskGetAllPRs           = "TASK_LIST_PULL_REQUESTS"
 	taskGetPR               = "TASK_GET_PULL_REQUEST"
 	taskGetCommit           = "TASK_GET_COMMIT"
 	taskGetReviewComments   = "TASK_GET_REVIEW_COMMENTS"
 	taskCreateReviewComment = "TASK_CREATE_REVIEW_COMMENT"
-	taskGetAllIssues        = "TASK_GET_ALL_ISSUES"
+	taskGetAllIssues        = "TASK_LIST_ISSUES"
 	taskGetIssue            = "TASK_GET_ISSUE"
 	taskCreateIssue         = "TASK_CREATE_ISSUE"
 	taskCreateWebhook       = "TASK_CREATE_WEBHOOK"
@@ -100,7 +100,6 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 
 func (e *execution) fillInDefaultValues(input *structpb.Struct) (*structpb.Struct, error) {
 	task := e.Task
-	// Fill in the default values for missing input
 	taskSpec, ok := e.Component.GetTaskInputSchemas()[task]
 	if !ok {
 		return nil, errmsg.AddMessage(
@@ -108,7 +107,6 @@ func (e *execution) fillInDefaultValues(input *structpb.Struct) (*structpb.Struc
 			fmt.Sprintf("Task %s not found", task),
 		)
 	}
-	// Unmarshal the taskSpec into a map
 	var taskSpecMap map[string]interface{}
 	err := json.Unmarshal([]byte(taskSpec), &taskSpecMap)
 	if err != nil {
@@ -118,19 +116,15 @@ func (e *execution) fillInDefaultValues(input *structpb.Struct) (*structpb.Struc
 		)
 	}
 	inputMap := taskSpecMap["properties"].(map[string]interface{})
-	// iterate over the inputMap and fill in the default values
 	for key, value := range inputMap {
 		valueMap, ok := value.(map[string]interface{})
 		if !ok {
-			// fmt.Println("value is not a map", key)
 			continue
 		}
 		if _, ok := valueMap["default"]; !ok {
-			// fmt.Println("default value not found", key)
 			continue
 		}
 		if _, ok := input.GetFields()[key]; ok {
-			// fmt.Println("key already exists", key)
 			continue
 		}
 		defaultValue := valueMap["default"]

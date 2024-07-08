@@ -722,7 +722,7 @@
       "type": "object"
     }
   },
-  "TASK_GET_ALL_PULL_REQUESTS": {
+  "TASK_LIST_PULL_REQUESTS": {
     "instillShortDescription": "Get the list of all pull requests in a repository",
     "input": {
       "description": "Please input the repository name and owner",
@@ -1135,7 +1135,7 @@
       "type": "object"
     }
   },
-  "TASK_GET_ALL_ISSUES": {
+  "TASK_LIST_ISSUES": {
     "description": "Get the list of all issues in a repository,This can be a pull request or a general issue, and you can tell by the `is_pull_request` field.",
     "instillShortDescription": "Get the list of all issues in a repository",
     "input": {
