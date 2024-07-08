@@ -11,7 +11,7 @@
         "string"
       ],
       "instillSecret": true,
-      "instillCredential": false,
+      "instillCredential": true,
       "instillUIOrder": 0,
       "title": "API Key",
       "type": "string"
