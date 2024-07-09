@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	baseURL        = "https://jira.atlassian.com"
+	apiBaseURL     = "https://api.atlassian.com"
 	taskListBoards = "TASK_LIST_BOARDS"
 )
 
@@ -64,7 +64,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 		client:             *jiraClient,
 	}
-
+	// docs: https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/#about
 	switch task {
 	case taskListBoards:
 		e.execute = e.client.listBoardsTask
@@ -87,7 +87,6 @@ func (e *execution) fillInDefaultValues(input *structpb.Struct) (*structpb.Struc
 			fmt.Sprintf("Task %s not found", task),
 		)
 	}
-	// Unmarshal the taskSpec into a map
 	var taskSpecMap map[string]interface{}
 	err := json.Unmarshal([]byte(taskSpec), &taskSpecMap)
 	if err != nil {
@@ -97,19 +96,15 @@ func (e *execution) fillInDefaultValues(input *structpb.Struct) (*structpb.Struc
 		)
 	}
 	inputMap := taskSpecMap["properties"].(map[string]interface{})
-	// iterate over the inputMap and fill in the default values
 	for key, value := range inputMap {
 		valueMap, ok := value.(map[string]interface{})
 		if !ok {
-			// fmt.Println("value is not a map", key)
 			continue
 		}
 		if _, ok := valueMap["default"]; !ok {
-			// fmt.Println("default value not found", key)
 			continue
 		}
 		if _, ok := input.GetFields()[key]; ok {
-			// fmt.Println("key already exists", key)
 			continue
 		}
 		defaultValue := valueMap["default"]

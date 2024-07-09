@@ -1,102 +1,189 @@
 {
-  "$defs": {},
+  "$defs": {
+    "common_query_params": {
+      "start_at": {
+        "default": 0,
+        "description": "The starting index of the returned boards. Base index: 0. Default is 0",
+        "instillUIOrder": 3,
+        "title": "Start At",
+        "instillFormat": "integer",
+        "instillAcceptFormats": [
+          "integer"
+        ],
+        "instillUpstreamTypes": [
+          "value",
+          "reference",
+          "template"
+        ],
+        "type": "integer"
+      },
+      "max_results": {
+        "default": 50,
+        "description": "The maximum number of boards to return. Default is 50",
+        "instillUIOrder": 4,
+        "title": "Max Results",
+        "instillFormat": "integer",
+        "instillAcceptFormats": [
+          "integer"
+        ],
+        "instillUpstreamTypes": [
+          "value",
+          "reference",
+          "template"
+        ],
+        "type": "integer"
+      }
+    }
+  },
   "TASK_LIST_BOARDS": {
     "instillShortDescription": "List all boards in Jira",
     "input": {
       "description": "List all boards in Jira",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": [
-        "owner",
-        "repository"
-      ],
+      "instillEditOnNodeFields": [],
       "properties": {
-        "$ref": "#/$defs/repository_info",
-        "state": {
-          "default": "open",
-          "title": "State",
-          "description": "State of the PRs, including open, closed, all. Default is open",
-          "enum": [
-            "open",
-            "closed",
-            "all"
-          ],
+        "project_key_or_id": {
+          "default": "",
+          "title": "Project Key or ID",
+          "description": "This filters results to boards that are relevant to a project. Relevance meaning that the JQL filter defined in board contains a reference to a project.",
+          "instillShortDescription": "The project key or ID. Default is empty",
+          "instillUIOrder": 0,
           "instillFormat": "string",
           "instillAcceptFormats": [
             "string"
           ],
           "instillUpstreamTypes": [
             "value",
-            "reference"
+            "reference",
+            "template"
           ],
-          "instillUIOrder": 10,
           "type": "string"
         },
-        "sort": {
-          "default": "created",
-          "title": "Sort",
-          "description": "Sort the PRs by created, updated, popularity, or long-running. Default is created",
+        "board_type": {
+          "default": "scrum",
+          "description": "The type of board, can be: scrum, kanban. Default is scrum",
+          "instillUIOrder": 1,
           "enum": [
-            "created",
-            "updated",
-            "popularity",
-            "long-running"
+            "scrum",
+            "kanban",
+            "simple"
           ],
+          "title": "Board Type",
           "instillFormat": "string",
           "instillAcceptFormats": [
             "string"
           ],
           "instillUpstreamTypes": [
             "value",
-            "reference"
+            "reference",
+            "template"
           ],
-          "instillUIOrder": 11,
           "type": "string"
         },
-        "direction": {
-          "default": "desc",
-          "title": "Direction",
-          "description": "Direction of the sort, including asc or desc. Default is asc",
-          "enum": [
-            "asc",
-            "desc"
-          ],
+        "name": {
+          "default": "",
+          "description": "Name filters results to boards that match or partially match the specified name. Default is empty",
+          "instillUIOrder": 2,
+          "title": "Name",
           "instillFormat": "string",
           "instillAcceptFormats": [
             "string"
           ],
           "instillUpstreamTypes": [
             "value",
-            "reference"
+            "reference",
+            "template"
           ],
-          "instillUIOrder": 12,
           "type": "string"
+        },
+        "start_at": {
+          "$ref": "#/$defs/common_query_params/start_at",
+          "instillUIOrder": 3
+        },
+        "max_results": {
+          "$ref": "#/$defs/common_query_params/max_results",
+          "instillUIOrder": 4
         }
       },
-      "required": [
-        "owner",
-        "repository"
-      ],
+      "required": [],
       "title": "Input",
       "type": "object"
     },
     "output": {
-      "description": "All PRs in GitHub repository",
+      "description": "List all boards in Jira",
       "instillUIOrder": 0,
       "properties": {
-        "pull_requests": {
-          "description": "An array of PRs",
+        "boards": {
+          "description": "A array of boards in Jira",
           "instillUIOrder": 1,
-          "title": "Pull Requests",
+          "title": "Boards",
           "type": "array",
           "items": {
-            "$ref": "#/$defs/pull_request",
-            "required": [],
-            "description": "A pull request in GitHub"
+            "properties": {
+              "id": {
+                "description": "The ID of the board",
+                "instillUIOrder": 0,
+                "title": "ID",
+                "type": "integer"
+              },
+              "name": {
+                "description": "The name of the board",
+                "instillUIOrder": 1,
+                "title": "Name",
+                "type": "string"
+              },
+              "type": {
+                "description": "The type of the board",
+                "instillUIOrder": 2,
+                "title": "Type",
+                "type": "string"
+              },
+              "self": {
+                "description": "The URL of the board",
+                "instillUIOrder": 3,
+                "title": "Self",
+                "type": "string"
+              }
+            },
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "type",
+              "self"
+            ]
           }
+        },
+        "start_at": {
+          "description": "The starting index of the returned boards. Base index: 0",
+          "instillUIOrder": 2,
+          "title": "Start At",
+          "type": "integer"
+        },
+        "max_results": {
+          "description": "The maximum number of boards",
+          "instillUIOrder": 3,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "total": {
+          "description": "The total number of boards",
+          "instillUIOrder": 4,
+          "title": "Total",
+          "type": "integer"
+        },
+        "is_last": {
+          "description": "Whether the last board is reached",
+          "instillUIOrder": 5,
+          "title": "Is Last",
+          "type": "boolean"
         }
       },
       "required": [
-        "pull_requests"
+        "start_at",
+        "max_results",
+        "total",
+        "is_last"
       ],
       "title": "Output",
       "type": "object"

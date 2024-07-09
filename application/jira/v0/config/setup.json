@@ -14,12 +14,44 @@
       "instillUIOrder": 0,
       "title": "Token",
       "type": "string"
+    },
+    "email": {
+      "description": "Fill in your Jira email address.",
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 1,
+      "title": "Email",
+      "type": "string"
+    },
+    "base_url": {
+      "description": "Fill in your Jira base URL. For example, if your Jira URL is https://mycompany.atlassian.net, then your base URL is https://mycompany.atlassian.net.",
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 1,
+      "title": "Base URL",
+      "type": "string"
     }
   },
   "required": [
-    "token"
+    "token",
+    "email",
+    "base_url"
   ],
-  "instillEditOnNodeFields": [],
+  "instillEditOnNodeFields": [
+    "token",
+    "email",
+    "base_url"
+  ],
   "title": "Jira Connection",
   "type": "object"
 }
