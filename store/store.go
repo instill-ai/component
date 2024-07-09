@@ -14,6 +14,7 @@ import (
 	"github.com/instill-ai/component/ai/cohere/v0"
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
+	"github.com/instill-ai/component/ai/mistral/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
 	"github.com/instill-ai/component/application/email/v0"
@@ -109,6 +110,13 @@ func Init(
 			compStore.Import(conn)
 		}
 		compStore.Import(cohere.Init(baseComp))
+		{
+			// Mistral
+			conn := mistral.Init(baseComp)
+			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			compStore.Import(conn)
+		}
+
 		compStore.Import(archetypeai.Init(baseComp))
 		compStore.Import(numbers.Init(baseComp))
 		compStore.Import(bigquery.Init(baseComp))

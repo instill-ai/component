@@ -239,7 +239,7 @@
         },
         "top-k": {
           "default": 10,
-          "description": "Top k for sampling",
+          "description": "Integer to define the top tokens considered within the sample operation to create new text. (Note: The Mistral models does not support top-k sampling)",
           "instillAcceptFormats": [
             "integer"
           ],
@@ -250,6 +250,35 @@
           ],
           "title": "Top K",
           "type": "integer"
+        },
+        "top-p": {
+          "default": 0.5,
+          "description": "Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p. (default=0.5)",
+          "instillAcceptFormats": [
+            "number",
+            "integer"
+          ],
+          "instillShortDescription": "Float to define the tokens that are within the sample operation of text generation.",
+          "instillUIOrder": 6,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Top P",
+          "type": "number"
+        },
+        "safe": {
+          "description": "Safe generation mode",
+          "instillAcceptFormats": [
+            "boolean"
+          ],
+          "instillUIOrder": 7,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Safe",
+          "type": "boolean"
         }
       },
       "required": [
