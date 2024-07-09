@@ -5,16 +5,9 @@
       "properties": {
         "id": {
           "description": "id of the PR",
-          "instillFormat": "integer",
           "instillUIOrder": 1,
           "title": "PR id",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
+          "instillFormat": "integer",
           "type": "integer"
         },
         "number": {
@@ -22,13 +15,6 @@
           "instillFormat": "integer",
           "instillUIOrder": 2,
           "title": "PR number",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "state": {
@@ -36,13 +22,6 @@
           "instillFormat": "string",
           "instillUIOrder": 3,
           "title": "PR state",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "title": {
@@ -50,13 +29,6 @@
           "instillFormat": "string",
           "instillUIOrder": 4,
           "title": "PR Title",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "body": {
@@ -64,13 +36,6 @@
           "instillFormat": "string",
           "instillUIOrder": 5,
           "title": "PR body",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "diff_url": {
@@ -78,13 +43,6 @@
           "instillFormat": "string",
           "instillUIOrder": 6,
           "title": "PR diff url",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "head": {
@@ -92,13 +50,6 @@
           "instillFormat": "string",
           "instillUIOrder": 8,
           "title": "PR head",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "base": {
@@ -106,13 +57,6 @@
           "instillFormat": "string",
           "instillUIOrder": 9,
           "title": "PR base",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "comments_num": {
@@ -120,13 +64,6 @@
           "instillFormat": "integer",
           "instillUIOrder": 10,
           "title": "Number of PR comments",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "commits_num": {
@@ -134,13 +71,6 @@
           "instillFormat": "integer",
           "instillUIOrder": 11,
           "title": "Number of PR commits",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "review_comments_num": {
@@ -148,19 +78,13 @@
           "instillFormat": "integer",
           "instillUIOrder": 12,
           "title": "Number of PR review comments",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "commits": {
           "description": "commits in the PR",
           "instillUIOrder": 13,
           "title": "Commits",
+          "instillFormat": "array:object",
           "type": "array",
           "items": {
             "$ref": "#/$defs/commit",
@@ -169,6 +93,7 @@
           }
         }
       },
+      "required": [],
       "title": "Pull Request",
       "type": "object"
     },
@@ -180,13 +105,6 @@
           "instillUIOrder": 1,
           "title": "Commit SHA",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "message": {
@@ -194,13 +112,6 @@
           "instillUIOrder": 2,
           "title": "Commit message",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "stats": {
@@ -212,6 +123,7 @@
           "description": "files in the commit",
           "instillUIOrder": 4,
           "title": "Files",
+          "instillFormat": "array:object",
           "type": "array",
           "items": {
             "$ref": "#/$defs/commitFile",
@@ -227,29 +139,12 @@
     "commitStats": {
       "description": "stats of changes",
       "instillUIOrder": 1,
-      "instillUpstreamTypes": [
-        "value",
-        "reference"
-      ],
-      "instillAcceptFormats": [
-        "object"
-      ],
-      "instillFormat": "object",
-      "title": "Commit stats",
-      "type": "object",
       "properties": {
         "additions": {
           "description": "number of additions in the commit",
           "instillUIOrder": 1,
           "title": "Additions",
           "instillFormat": "integer",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "deletions": {
@@ -257,13 +152,6 @@
           "instillUIOrder": 2,
           "title": "Deletions",
           "instillFormat": "integer",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "changes": {
@@ -271,95 +159,66 @@
           "instillUIOrder": 3,
           "title": "Total changes",
           "instillFormat": "integer",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         }
       },
-      "required": []
+      "required": [],
+      "title": "Commit stats",
+      "type": "object"
     },
     "commitFile": {
       "description": "A commit file object.",
-      "title": "Commit File",
       "properties": {
         "filename": {
           "description": "name of the file",
           "instillUIOrder": 1,
           "title": "File name",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
-        "stats": {
-          "instillUIOrder": 2,
-          "$ref": "#/$defs/commitStats",
-          "required": []
-        },
+        "$ref": "#/$defs/commitStats/properties",
         "patch": {
           "description": "patch of the file",
           "instillUIOrder": 3,
           "title": "Patch",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         }
       },
       "required": [],
-      "type": "object",
-      "instillAcceptFormats": [
-        "object"
-      ],
-      "instillUpstreamTypes": [
-        "value",
-        "reference"
-      ],
-      "instillFormat": "object"
+      "title": "Commit File",
+      "type": "object"
     },
     "repository_info": {
       "owner": {
         "description": "Owner of the repository",
+        "instillUIMultiline": false,
+        "instillUIOrder": 0,
         "instillAcceptFormats": [
           "string"
         ],
-        "instillUIMultiline": false,
-        "instillUIOrder": 0,
         "instillUpstreamTypes": [
           "value",
           "reference",
           "template"
         ],
+        "instillFormat": "string",
         "title": "Owner",
         "type": "string"
       },
       "repository": {
         "description": "Repository name",
+        "instillUIMultiline": false,
+        "instillUIOrder": 1,
         "instillAcceptFormats": [
           "string"
         ],
-        "instillUIMultiline": false,
-        "instillUIOrder": 1,
         "instillUpstreamTypes": [
           "value",
           "reference",
           "template"
         ],
+        "instillFormat": "string",
         "title": "Repository",
         "type": "string"
       }
@@ -372,13 +231,6 @@
           "instillUIOrder": 1,
           "title": "Comment id",
           "instillFormat": "integer",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "in_reply_to_id": {
@@ -386,13 +238,6 @@
           "instillFormat": "integer",
           "instillUIOrder": 2,
           "title": "In Reply To",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "commitId": {
@@ -400,13 +245,6 @@
           "instillFormat": "string",
           "instillUIOrder": 3,
           "title": "Commit SHA",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "body": {
@@ -414,13 +252,6 @@
           "instillFormat": "string",
           "instillUIOrder": 4,
           "title": "Comment body",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "path": {
@@ -428,13 +259,6 @@
           "instillFormat": "string",
           "instillUIOrder": 5,
           "title": "Comment path",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "line": {
@@ -443,13 +267,6 @@
           "instillUIOrder": 6,
           "title": "Comment end line",
           "instillFormat": "integer",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "start_line": {
@@ -457,13 +274,6 @@
           "instillUIOrder": 7,
           "title": "Comment start line",
           "instillFormat": "integer",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "side": {
@@ -478,13 +288,6 @@
           "instillUIOrder": 8,
           "title": "Comment end side",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "start_side": {
@@ -499,13 +302,6 @@
           "instillUIOrder": 9,
           "title": "Comment start side",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "subject_type": {
@@ -518,13 +314,6 @@
             "line",
             "file"
           ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "created_at": {
@@ -532,13 +321,6 @@
           "instillUIOrder": 11,
           "title": "Comment created at",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "updated_at": {
@@ -546,19 +328,13 @@
           "instillUIOrder": 12,
           "title": "Comment updated at",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "user": {
           "description": "User who created the comment",
           "instillUIOrder": 13,
           "title": "User",
+          "instillFormat": "object",
           "type": "object",
           "properties": {
             "id": {
@@ -566,13 +342,6 @@
               "instillUIOrder": 14,
               "title": "User id",
               "instillFormat": "integer",
-              "instillAcceptFormats": [
-                "integer"
-              ],
-              "instillUpstreamTypes": [
-                "value",
-                "reference"
-              ],
               "type": "integer"
             },
             "url": {
@@ -580,13 +349,6 @@
               "instillUIOrder": 15,
               "title": "User URL",
               "instillFormat": "string",
-              "instillAcceptFormats": [
-                "string"
-              ],
-              "instillUpstreamTypes": [
-                "value",
-                "reference"
-              ],
               "type": "string"
             }
           },
@@ -604,13 +366,6 @@
           "instillUIOrder": 2,
           "title": "Issue number",
           "instillFormat": "integer",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "state": {
@@ -618,13 +373,6 @@
           "instillUIOrder": 3,
           "title": "Issue state",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "title": {
@@ -632,13 +380,6 @@
           "instillUIOrder": 4,
           "title": "Issue title",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "body": {
@@ -646,13 +387,6 @@
           "instillUIOrder": 5,
           "title": "Issue body",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "assignee": {
@@ -660,29 +394,16 @@
           "instillUIOrder": 6,
           "title": "Assignee",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "assignees": {
           "description": "Assignees of the issue",
           "instillUIOrder": 7,
           "title": "Assignees",
+          "instillFormat": "array:string",
           "type": "array",
           "items": {
             "instillFormat": "string",
-            "instillAcceptFormats": [
-              "string"
-            ],
-            "instillUpstreamTypes": [
-              "value",
-              "reference"
-            ],
             "type": "string"
           }
         },
@@ -690,16 +411,10 @@
           "description": "Labels of the issue",
           "instillUIOrder": 8,
           "title": "Labels",
+          "instillFormat": "array:string",
           "type": "array",
           "items": {
             "instillFormat": "string",
-            "instillAcceptFormats": [
-              "string"
-            ],
-            "instillUpstreamTypes": [
-              "value",
-              "reference"
-            ],
             "type": "string"
           }
         },
@@ -708,13 +423,6 @@
           "instillUIOrder": 9,
           "title": "Is Pull Request",
           "instillFormat": "boolean",
-          "instillAcceptFormats": [
-            "boolean"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "boolean"
         }
       },
@@ -800,6 +508,7 @@
         "repository"
       ],
       "title": "Input",
+      "instillFormat": "object",
       "type": "object"
     },
     "output": {
@@ -808,8 +517,9 @@
       "properties": {
         "pull_requests": {
           "description": "An array of PRs",
-          "instillUIOrder": 1,
           "title": "Pull Requests",
+          "instillUIOrder": 1,
+          "instillFormat": "array:object",
           "type": "array",
           "items": {
             "$ref": "#/$defs/pull_request",
@@ -822,6 +532,7 @@
         "pull_requests"
       ],
       "title": "Output",
+      "instillFormat": "object",
       "type": "object"
     }
   },
@@ -858,6 +569,7 @@
         "repository"
       ],
       "title": "Input",
+      "instillFormat": "object",
       "type": "object"
     },
     "output": {
@@ -875,6 +587,7 @@
         "pull_request"
       ],
       "title": "Output",
+      "instillFormat": "object",
       "type": "object"
     }
   },
@@ -965,6 +678,7 @@
         "repository"
       ],
       "title": "Input",
+      "instillFormat": "object",
       "type": "object"
     },
     "output": {
@@ -974,8 +688,8 @@
         "comments": {
           "description": "An array of comments",
           "instillUIOrder": 0,
-          "instillFormat": "object",
           "title": "Comments",
+          "instillFormat": "array:object",
           "type": "array",
           "items": {
             "$ref": "#/$defs/review_comments",
@@ -989,6 +703,7 @@
         "comments"
       ],
       "title": "Output",
+      "instillFormat": "object",
       "type": "object"
     }
   },
@@ -1073,6 +788,7 @@
         "comment"
       ],
       "title": "Input",
+      "instillFormat": "object",
       "type": "object"
     },
     "output": {
@@ -1090,6 +806,7 @@
         "comment"
       ],
       "title": "Output",
+      "instillFormat": "object",
       "type": "object"
     }
   },
@@ -1116,6 +833,7 @@
         "sha"
       ],
       "title": "Input",
+      "instillFormat": "object",
       "type": "object"
     },
     "output": {
@@ -1133,6 +851,7 @@
         "commit"
       ],
       "title": "Output",
+      "instillFormat": "object",
       "type": "object"
     }
   },
@@ -1242,6 +961,7 @@
         "repository"
       ],
       "title": "Input",
+      "instillFormat": "object",
       "type": "object"
     },
     "output": {
@@ -1252,6 +972,7 @@
           "description": "An array of issues",
           "instillUIOrder": 1,
           "title": "Issues",
+          "instillFormat": "array:object",
           "type": "array",
           "items": {
             "$ref": "#/$defs/issue",
@@ -1264,6 +985,7 @@
         "issues"
       ],
       "title": "Output",
+      "instillFormat": "object",
       "type": "object"
     }
   },
@@ -1302,6 +1024,7 @@
         "issue_number"
       ],
       "title": "Input",
+      "instillFormat": "object",
       "type": "object"
     },
     "output": {
@@ -1320,6 +1043,7 @@
         "issue"
       ],
       "title": "Output",
+      "instillFormat": "object",
       "type": "object"
     }
   },
@@ -1352,6 +1076,7 @@
         "body"
       ],
       "title": "Input",
+      "instillFormat": "object",
       "type": "object"
     },
     "output": {
@@ -1370,6 +1095,7 @@
         "issue"
       ],
       "title": "Output",
+      "instillFormat": "object",
       "type": "object"
     }
   },
@@ -1403,7 +1129,7 @@
         "events": {
           "title": "Events",
           "description": "Events to trigger the webhook. Please see https://docs.github.com/en/webhooks/webhook-events-and-payloads for more information",
-          "instillFormat": "array",
+          "instillFormat": "array:string",
           "instillAcceptFormats": [
             "array"
           ],
@@ -1451,7 +1177,8 @@
             "string"
           ],
           "instillUpstreamTypes": [
-            "value"
+            "value",
+            "reference"
           ],
           "instillUIOrder": 6,
           "type": "string"
@@ -1459,12 +1186,13 @@
         "hook_secret": {
           "title": "Hook Secret",
           "description": "If provided, the secret will be used as the key to generate the HMAC hex digest value for delivery signature headers. (see https://docs.github.com/en/webhooks/webhook-events-and-payloads#delivery-headers)",
+          "instillSecret": true,
           "instillFormat": "string",
           "instillAcceptFormats": [
             "string"
           ],
           "instillUpstreamTypes": [
-            "value"
+            "reference"
           ],
           "instillUIOrder": 7,
           "type": "string"
@@ -1477,6 +1205,7 @@
         "events"
       ],
       "title": "Input",
+      "instillFormat": "object",
       "type": "object"
     },
     "output": {
@@ -1487,6 +1216,7 @@
           "description": "The created webhook",
           "title": "Webhook",
           "instillUIOrder": 1,
+          "instillFormat": "object",
           "type": "object",
           "properties": {
             "id": {
@@ -1549,6 +1279,7 @@
               "description": "Configuration of the webhook",
               "instillUIOrder": 6,
               "title": "Config",
+              "instillFormat": "object",
               "type": "object",
               "properties": {
                 "url": {
@@ -1556,13 +1287,6 @@
                   "instillUIOrder": 1,
                   "title": "Webhook URL",
                   "instillFormat": "string",
-                  "instillAcceptFormats": [
-                    "string"
-                  ],
-                  "instillUpstreamTypes": [
-                    "value",
-                    "reference"
-                  ],
                   "type": "string"
                 },
                 "content_type": {
@@ -1570,12 +1294,6 @@
                   "instillUIOrder": 2,
                   "title": "Content Type",
                   "instillFormat": "string",
-                  "instillAcceptFormats": [
-                    "string"
-                  ],
-                  "instillUpstreamTypes": [
-                    "value"
-                  ],
                   "type": "string"
                 },
                 "insecure_ssl": {
@@ -1583,12 +1301,6 @@
                   "instillUIOrder": 3,
                   "title": "Insecure SSL",
                   "instillFormat": "string",
-                  "instillAcceptFormats": [
-                    "string"
-                  ],
-                  "instillUpstreamTypes": [
-                    "value"
-                  ],
                   "type": "string"
                 }
               },
@@ -1602,6 +1314,7 @@
         "hook"
       ],
       "title": "Output",
+      "instillFormat": "object",
       "type": "object"
     }
   }
