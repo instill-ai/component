@@ -32,6 +32,19 @@
           "template"
         ],
         "type": "integer"
+      },
+      "update_history": {
+        "description": "Whether the project in which the issue is created is added to the user's Recently viewed project list, as shown under Projects in Jira.",
+        "title": "Update History",
+        "instillUIOrder": 5,
+        "instillFormat": "boolean",
+        "instillAcceptFormats": [
+          "boolean"
+        ],
+        "instillUpstreamTypes": [
+          "value"
+        ],
+        "type": "boolean"
       }
     }
   },
@@ -184,6 +197,83 @@
         "max_results",
         "total",
         "is_last"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_ISSUE": {
+    "description": "Get an issue in Jira",
+    "instillShortDescription": "Get an issue in Jira",
+    "input": {
+      "description": "Get an issue in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "issue_id_or_key"
+      ],
+      "properties": {
+        "issue_id_or_key": {
+          "title": "Issue ID or Key",
+          "description": "The ID or key of the issue",
+          "instillShortDescription": "The ID or key of the issue",
+          "instillUIOrder": 0,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "update_history": {
+          "$ref": "#/$defs/common_query_params/update_history",
+          "instillUIOrder": 1
+        }
+      },
+      "required": [
+        "issue_id_or_key"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Get an issue in Jira",
+      "instillUIOrder": 0,
+      "properties": {
+        "id": {
+          "description": "The ID of the issue",
+          "instillUIOrder": 0,
+          "title": "ID",
+          "type": "string"
+        },
+        "key": {
+          "description": "The key of the issue",
+          "instillUIOrder": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "self": {
+          "description": "The URL of the issue",
+          "instillUIOrder": 2,
+          "title": "Self",
+          "type": "string"
+        },
+        "fields": {
+          "description": "The fields of the issue. By default, all navigable and Agile fields are returned",
+          "instillUIOrder": 3,
+          "title": "Fields",
+          "type": "object",
+          "required": []
+        }
+      },
+      "required": [
+        "id",
+        "key",
+        "self",
+        "fields"
       ],
       "title": "Output",
       "type": "object"

@@ -17,14 +17,14 @@ type Board struct {
 	BoardType string `json:"type"`
 }
 
-type GetBoardsInput struct {
+type ListBoardsInput struct {
 	ProjectKeyOrID string `json:"project_key_or_id,omitempty" struct:"projectKeyOrID"`
 	BoardType      string `json:"board_type,omitempty" struct:"boardType"`
 	Name           string `json:"name,omitempty" struct:"name"`
 	StartAt        int    `json:"start_at,omitempty" struct:"startAt"`
 	MaxResults     int    `json:"max_results,omitempty" struct:"maxResults"`
 }
-type GetBoardsResp struct {
+type ListBoardsResp struct {
 	Values     []Board `json:"values"`
 	StartAt    int     `json:"startAt"`
 	MaxResults int     `json:"maxResults"`
@@ -32,7 +32,7 @@ type GetBoardsResp struct {
 	IsLast     bool    `json:"isLast"`
 }
 
-type GetBoardsOutput struct {
+type ListBoardsOutput struct {
 	Boards     []Board `json:"boards"`
 	StartAt    int     `json:"start_at"`
 	MaxResults int     `json:"max_results"`
@@ -41,7 +41,7 @@ type GetBoardsOutput struct {
 }
 
 func (jiraClient *Client) listBoardsTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var opt GetBoardsInput
+	var opt ListBoardsInput
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (jiraClient *Client) listBoardsTask(ctx context.Context, props *structpb.St
 	if err != nil {
 		return nil, err
 	}
-	var output GetBoardsOutput
+	var output ListBoardsOutput
 	output.Boards = append(output.Boards, boards.Values...)
 	if output.Boards == nil {
 		output.Boards = []Board{}
@@ -62,15 +62,26 @@ func (jiraClient *Client) listBoardsTask(ctx context.Context, props *structpb.St
 	return base.ConvertToStructpb(output)
 }
 
-func (jiraClient *Client) listBoards(_ context.Context, opt *GetBoardsInput) (*GetBoardsResp, error) {
+func (jiraClient *Client) listBoards(_ context.Context, opt *ListBoardsInput) (*ListBoardsResp, error) {
+	var debug DebugSession
+	debug.SessionStart("listBoards", StaticVerboseLevel)
+	defer debug.SessionEnd()
+
 	apiEndpoint := "rest/agile/1.0/board"
 
-	req := jiraClient.Client.R().SetResult(&GetBoardsResp{})
+	req := jiraClient.Client.R().SetResult(&ListBoardsResp{})
+	debug.AddMapMessage("opt", *opt)
 	err := addQueryOptions(req, *opt)
 	if err != nil {
 		return nil, err
 	}
 	resp, err := req.Get(apiEndpoint)
+
+	debug.AddMessage("GET", apiEndpoint)
+	debug.AddMapMessage("QueryParam", resp.Request.QueryParam)
+	debug.AddMessage("Status", resp.Status())
+	debug.AddMapMessage("Error", resp.Error())
+
 	if resp.StatusCode() == 404 {
 		return nil, fmt.Errorf(
 			err.Error(),
@@ -82,6 +93,6 @@ func (jiraClient *Client) listBoards(_ context.Context, opt *GetBoardsInput) (*G
 			err.Error(), errmsg.Message(err),
 		)
 	}
-	boards := resp.Result().(*GetBoardsResp)
+	boards := resp.Result().(*ListBoardsResp)
 	return boards, err
 }

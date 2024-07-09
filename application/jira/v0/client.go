@@ -60,9 +60,10 @@ func newClient(_ context.Context, setup *structpb.Struct) (*Client, error) {
 		baseURL,
 		httpclient.WithEndUserError(new(errBody)),
 	)
-	jiraClient.SetHeader("Accept", "application/json").
-		SetHeader("Content-Type", "application/json")
-	jiraClient.SetBasicAuth(email, token)
+	jiraClient.
+		SetHeader("Accept", "application/json").
+		SetHeader("Content-Type", "application/json").
+		SetBasicAuth(email, token)
 	client := &Client{
 		Client:     jiraClient,
 		APIBaseURL: apiBaseURL,
@@ -93,21 +94,39 @@ func (e errBody) Message() string {
 }
 
 func addQueryOptions(req *resty.Request, opt interface{}) error {
+	var debug DebugSession
+	debug.SessionStart("addQueryOptions", StaticVerboseLevel)
+	defer debug.SessionEnd()
+
 	v := reflect.ValueOf(opt)
 	if v.Kind() == reflect.Ptr && v.IsNil() {
 		return nil
 	}
 	typeOfS := v.Type()
 	for i := 0; i < v.NumField(); i++ {
-		stringVal, ok := v.Field(i).Interface().(string)
-		if !ok {
-			intVal, ok := v.Field(i).Interface().(int)
-			if !ok {
+		if !v.Field(i).IsValid() || !v.Field(i).CanInterface(){
+			debug.AddMessage(typeOfS.Field(i).Name,"Not a valid field")
+			continue
+		}
+		val := v.Field(i).Interface()
+		var stringVal string
+		switch val := val.(type) {
+		case string:
+			if val == "" {
 				continue
 			}
-			stringVal = fmt.Sprintf("%d", intVal)
-		}
-		if stringVal == "" {
+			stringVal = val
+		case int:
+			if val == 0 {
+				continue
+			}
+			stringVal = fmt.Sprintf("%d", val)
+		case bool:
+			if !val {
+				continue
+			}
+			stringVal = fmt.Sprintf("%t", val)
+		default:
 			continue
 		}
 		paramName := typeOfS.Field(i).Tag.Get("struct")
