@@ -5,8 +5,8 @@ import (
 )
 
 type RetrieveAssociationInput struct {
-	ContactId  string `json:"contactId"`
-	ObjectType string `json:"objectType"`
+	ContactId  string `json:"contact-id"`
+	ObjectType string `json:"object-type"`
 }
 
 type RetrieveAssociationService interface {

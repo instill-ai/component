@@ -90,7 +90,8 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 		switch e.Task {
 		case taskGetContact:
-			uniqueKey := input.Fields["contactIdOrEmail"].GetStringValue()
+
+			uniqueKey := input.Fields["contact-id-or-email"].GetStringValue()
 
 			// If user enter email instead of contact ID
 			if strings.Contains(uniqueKey, "@") {
@@ -134,14 +135,14 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 			output := new(structpb.Struct)
 			output.Fields = map[string]*structpb.Value{
-				"contactId": structpb.NewStringValue(res.Properties.(*ContactInfoHSFormat).ContactId),
+				"contact-id": structpb.NewStringValue(res.Properties.(*ContactInfoHSFormat).ContactId),
 			}
 
 			outputs = append(outputs, output)
 
 		case taskGetDeal:
 
-			uniqueKey := input.Fields["dealId"].GetStringValue()
+			uniqueKey := input.Fields["deal-id"].GetStringValue()
 
 			res, err := e.client.CRM.Deal.Get(uniqueKey, &DealInfoHSFormat{}, nil)
 
@@ -181,11 +182,11 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 			output := new(structpb.Struct)
 			output.Fields = map[string]*structpb.Value{
-				"dealId": structpb.NewStringValue(dealId),
+				"deal-id": structpb.NewStringValue(dealId),
 			}
 
 			// this section of the code is used to associate contact with deal if there is any
-			uniqueKey := input.Fields["contactIdOrEmail"].GetStringValue()
+			uniqueKey := input.Fields["contact-id-or-email"].GetStringValue()
 
 			if uniqueKey != "" {
 				if strings.Contains(uniqueKey, "@") {
@@ -212,7 +213,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			outputs = append(outputs, output)
 
 		case taskGetThread:
-			uniqueKey := input.Fields["threadId"].GetStringValue()
+			uniqueKey := input.Fields["thread-id"].GetStringValue()
 
 			res, err := e.client.Thread.Get(uniqueKey)
 
