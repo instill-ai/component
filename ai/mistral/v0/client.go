@@ -7,8 +7,13 @@ import (
 )
 
 type MistralClient struct {
-	sdkClient *mistralSDK.MistralClient
+	sdkClient mistralClientInterface
 	logger    *zap.Logger
+}
+
+type mistralClientInterface interface {
+	Embeddings(model string, input []string) (*mistralSDK.EmbeddingResponse, error)
+	Chat(model string, messages []mistralSDK.ChatMessage, params *mistralSDK.ChatRequestParams) (*mistralSDK.ChatCompletionResponse, error)
 }
 
 func newClient(apiKey string, logger *zap.Logger) MistralClient {
