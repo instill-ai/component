@@ -5,8 +5,7 @@ import (
 )
 
 type ThreadService interface {
-	Get(threadId string) (*ThreadResponse, error)
-	ConvertToTaskFormat(res *ThreadResponse) *ThreadResponseTaskFormat
+	Get(threadId string) (*ThreadResponseHSFormat, error)
 }
 
 type ThreadServiceOp struct {
@@ -22,27 +21,27 @@ type ThreadDeliveryIdentifier struct {
 	Value string `json:"value,omitempty"`
 }
 
-type ThreadUser struct {
+type ThreadUserHSFormat struct {
 	Name               string                   `json:"name,omitempty"`
 	DeliveryIdentifier ThreadDeliveryIdentifier `json:"deliveryIdentifier,omitempty"`
 }
 
-type ThreadClient struct {
+type ThreadClientHSFormat struct {
 	ClientType string `json:"clientType,omitempty"`
 }
 
-type ThreadResult struct {
-	CreatedAt  string       `json:"createdAt"`
-	Client     ThreadClient `json:"client,omitempty"`
-	Senders    []ThreadUser `json:"senders,omitempty"`
-	Recipients []ThreadUser `json:"recipients,omitempty"`
-	Text       string       `json:"text,omitempty"`
-	Subject    string       `json:"subject,omitempty"`
+type ThreadResultHSFormat struct {
+	CreatedAt  string               `json:"createdAt"`
+	Client     ThreadClientHSFormat `json:"client,omitempty"`
+	Senders    []ThreadUserHSFormat `json:"senders,omitempty"`
+	Recipients []ThreadUserHSFormat `json:"recipients,omitempty"`
+	Text       string               `json:"text,omitempty"`
+	Subject    string               `json:"subject,omitempty"`
 }
 
 // The response received from HubSpot when requesting thread.
-type ThreadResponse struct {
-	Results []ThreadResult `json:"results"`
+type ThreadResponseHSFormat struct {
+	Results []ThreadResultHSFormat `json:"results"`
 }
 
 // Structs used for task format
@@ -66,8 +65,8 @@ type ThreadResponseTaskFormat struct {
 }
 
 // Used to do http request and get thread
-func (s *ThreadServiceOp) Get(threadId string) (*ThreadResponse, error) {
-	resource := &ThreadResponse{}
+func (s *ThreadServiceOp) Get(threadId string) (*ThreadResponseHSFormat, error) {
+	resource := &ThreadResponseHSFormat{}
 	if err := s.client.Get(s.threadPath+"/"+threadId+"/messages", resource, nil); err != nil {
 		return nil, err
 	}
@@ -75,7 +74,7 @@ func (s *ThreadServiceOp) Get(threadId string) (*ThreadResponse, error) {
 }
 
 // Used to convert struct response to struct for task. Also used to collapse ThreadDeliveryIdentifier and ThreadUser into one struct.
-func (s *ThreadServiceOp) ConvertToTaskFormat(res *ThreadResponse) *ThreadResponseTaskFormat {
+func ThreadConvertToTaskFormat(res *ThreadResponseHSFormat) *ThreadResponseTaskFormat {
 	responseOutput := ThreadResponseTaskFormat{}
 
 	for _, value1 := range res.Results {

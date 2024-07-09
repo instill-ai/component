@@ -11,7 +11,7 @@ type RetrieveAssociationInput struct {
 
 type RetrieveAssociationService interface {
 	GetThreadId(contactId string) (*RetrieveThreadIdResponse, error)
-	GetCrmId(contactId string, objectType string) (*RetrieveCrmIdResponse, error)
+	GetCrmId(contactId string, objectType string) (*RetrieveCrmIdResponseHSFormat, error)
 }
 
 type RetrieveAssociationServiceOp struct {
@@ -23,7 +23,7 @@ type RetrieveAssociationServiceOp struct {
 // structs for receiving threads ID
 
 type RetrieveThreadIdResult struct {
-	ID string `json:"id"`
+	Id string `json:"id"`
 }
 
 type RetrieveThreadIdResponse struct {
@@ -40,6 +40,7 @@ func (s *RetrieveAssociationServiceOp) GetThreadId(contactId string) (*RetrieveT
 }
 
 // struct for POST request in order to obtain CRM objects ID
+
 type id struct {
 	ContactId string `json:"id"`
 }
@@ -50,25 +51,26 @@ type RequestQueryCrmId struct {
 
 // structs for receiving CRM IDs
 
+type RetrieveCrmIdResultHSFormat struct {
+	IdArray []RetrieveCrmId `json:"to"`
+}
+
+type RetrieveCrmIdResponseHSFormat struct {
+	Results []RetrieveCrmIdResultHSFormat `json:"results"`
+}
+
 type RetrieveCrmId struct {
 	Id string `json:"id"`
 }
 
-type RetrieveCrmIdResult struct {
-	IdArray []RetrieveCrmId `json:"to"`
-}
+// struct used for output (to convert to structpb)
 
-type RetrieveCrmIdResponse struct {
-	Results []RetrieveCrmIdResult `json:"results"`
-}
-
-// structs used for CRM IDs task format (to utilize base.ConvertToStructpb)
 type RetrieveCrmIdResultTaskFormat struct {
 	IdArray []RetrieveCrmId `json:"results"`
 }
 
-func (s *RetrieveAssociationServiceOp) GetCrmId(contactId string, objectType string) (*RetrieveCrmIdResponse, error) {
-	resource := &RetrieveCrmIdResponse{}
+func (s *RetrieveAssociationServiceOp) GetCrmId(contactId string, objectType string) (*RetrieveCrmIdResponseHSFormat, error) {
+	resource := &RetrieveCrmIdResponseHSFormat{}
 
 	contactIdInput := id{ContactId: contactId}
 

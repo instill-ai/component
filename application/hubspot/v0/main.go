@@ -203,11 +203,15 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 				}
 
-				e.client.CRM.Contact.AssociateAnotherObj(uniqueKey, &hubspot.AssociationConfig{
+				_, err := e.client.CRM.Contact.AssociateAnotherObj(uniqueKey, &hubspot.AssociationConfig{
 					ToObject:   hubspot.ObjectTypeDeal,
 					ToObjectID: dealId,
 					Type:       hubspot.AssociationTypeContactToDeal,
 				})
+
+				if err != nil {
+					return nil, err
+				}
 			}
 
 			outputs = append(outputs, output)
@@ -221,7 +225,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				return nil, err
 			}
 
-			outputTaskFormat := e.client.Thread.ConvertToTaskFormat(res)
+			outputTaskFormat := ThreadConvertToTaskFormat(res)
 
 			output, err := base.ConvertToStructpb(outputTaskFormat)
 			if err != nil {
