@@ -1,12 +1,12 @@
 {
   "$defs":{
-    "ownerId": {
+    "owner-id": {
       "description": "Owner ID",
       "instillUIOrder": 0,
       "title": "Owner ID",
       "type": "string"
     },
-    "contactIdOrEmail": {
+    "contact-id-or-email": {
       "instillAcceptFormats": [
         "string"
       ],
@@ -26,19 +26,19 @@
       "title": "Email Address",
       "type": "string"
     },
-    "firstName": {
+    "first-name": {
       "description": "First name",
       "instillUIOrder": 2,
       "title": "First Name",
       "type": "string"
     },
-    "lastName": {
+    "last-name": {
       "description": "Last name",
       "instillUIOrder": 3,
       "title": "Last Name",
       "type": "string"
     },
-    "phoneNumber": {
+    "phone-number": {
       "description": "Phone number. Preferably, format is in country code + phone number. Example: +886xxxxxxxxx ",
       "instillUIOrder": 4,
       "title": "Phone Number",
@@ -50,25 +50,25 @@
       "title": "Company",
       "type": "string"
     },
-    "jobTitle": {
+    "job-title": {
       "description": "Job title",
       "instillUIOrder": 6,
       "title": "Job Title",
       "type": "string"
     },
-    "lifecycleStage": {
+    "lifecycle-stage": {
       "description": "Lifecycle stage. Default format is in small letters, all words are combined. Example: salesqualifiedlead. However, remember to check internal value for custom fields.",
       "instillUIOrder": 7,
       "title": "Lifecycle Stage",
       "type": "string"
     },
-    "leadStatus": {
+    "lead-status": {
       "description": "Lead status. Default format is in capital letters, with _ as space. Example: IN_PROGRESS. However, remember to check internal value for custom fields." ,
       "instillUIOrder": 8,
       "title": "Lead Status",
       "type": "string"
     },
-    "dealName": {
+    "deal-name": {
       "description": "Deal name",
       "instillUIOrder": 1,
       "title": "Deal Name",
@@ -80,7 +80,7 @@
       "title": "Pipeline",
       "type": "string"
     },
-    "dealStage": {
+    "deal-stage": {
       "description": "Deal stage. Default format is in small letters, all words are combined. Example: qualifiedtobuy. However, remember to check internal value for custom fields.",
       "instillUIOrder": 3,
       "title": "Deal Stage",
@@ -92,25 +92,25 @@
       "title": "Amount",
       "type": "string"
     },
-    "dealType": {
+    "deal-type": {
       "description": "Deal type. Default format is in small letters, all words are combined. Example: newbusiness. However, remember to check internal value for custom fields.",
       "instillUIOrder": 5,
       "title": "Deal Type",
       "type": "string"
     },
-    "closeDate": {
+    "close-date": {
       "description": "Close date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z",
       "instillUIOrder": 6,
       "title": "Close Date",
       "type": "string"
     },
-    "createDate": {
+    "create-date": {
       "description": "Create date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z",
       "instillUIOrder": 7,
       "title": "Create Date",
       "type": "string"
     },
-    "threadUserInformation":{
+    "thread-user-information":{
       "type": "object",
       "properties": {
         "name": {
@@ -145,13 +145,13 @@
       "description": "Input contact ID or email",
       "instillUIOrder": 0,
       "properties": {
-        "contactIdOrEmail": {
+        "contact-id-or-email": {
           "description": "Input contact ID or email. If the input has @, it will search the contact using email",
-          "$ref": "#/$defs/contactIdOrEmail"
+          "$ref": "#/$defs/contact-id-or-email"
         }
       },
       "required": [
-        "contactIdOrEmail"
+        "contact-id-or-email"
       ],
       "title": "Input",
       "type": "object"
@@ -165,18 +165,18 @@
           "instillFormat": "string",
           "required": []
         },
-        "firstName": {
-          "$ref": "#/$defs/firstName",
+        "first-name": {
+          "$ref": "#/$defs/first-name",
           "instillFormat": "string",
           "required": []
         },
-        "lastName": {
-          "$ref": "#/$defs/lastName",
+        "last-name": {
+          "$ref": "#/$defs/last-name",
           "instillFormat": "string",
           "required": []
         },
-        "phoneNumber": {
-          "$ref": "#/$defs/phoneNumber",
+        "phone-number": {
+          "$ref": "#/$defs/phone-number",
           "instillFormat": "string",
           "required": []
         },
@@ -185,27 +185,27 @@
           "instillFormat": "string",
           "required": []
         },
-        "ownerId": {
-          "$ref": "#/$defs/ownerId",
+        "owner-id": {
+          "$ref": "#/$defs/owner-id",
           "instillFormat": "string",
           "required": []
         },
-        "jobTitle": {
-          "$ref": "#/$defs/jobTitle",
+        "job-title": {
+          "$ref": "#/$defs/job-title",
           "instillFormat": "string",
           "required": []
         },
-        "lifecycleStage": {
-          "$ref": "#/$defs/lifecycleStage",
+        "lifecycle-stage": {
+          "$ref": "#/$defs/lifecycle-stage",
           "instillFormat": "string",
           "required": []
         },
-        "leadStatus": {
-          "$ref": "#/$defs/leadStatus",
+        "lead-status": {
+          "$ref": "#/$defs/lead-status",
           "instillFormat": "string",
           "required": []
         },
-        "contactId": {
+        "contact-id": {
           "description": "Contact ID",
           "instillUIOrder": 9,
           "required": [],
@@ -215,7 +215,7 @@
         }
       },
       "required": [
-        "contactId"
+        "contact-id"
       ],
       "title": "Output",
       "type": "object"
@@ -239,8 +239,8 @@
             "template"
           ]
         },
-        "firstName": {
-          "$ref": "#/$defs/firstName",
+        "first-name": {
+          "$ref": "#/$defs/first-name",
           "instillAcceptFormats": [
             "string"
           ],
@@ -251,8 +251,8 @@
             "template"
           ]
         },
-        "lastName": {
-          "$ref": "#/$defs/lastName",
+        "last-name": {
+          "$ref": "#/$defs/last-name",
           "instillAcceptFormats": [
             "string"
           ],
@@ -263,8 +263,8 @@
             "template"
           ]
         },
-        "phoneNumber": {
-          "$ref": "#/$defs/phoneNumber",
+        "phone-number": {
+          "$ref": "#/$defs/phone-number",
           "instillAcceptFormats": [
             "string"
           ],
@@ -287,8 +287,8 @@
             "template"
           ]
         },
-        "ownerId": {
-          "$ref": "#/$defs/ownerId",
+        "owner-id": {
+          "$ref": "#/$defs/owner-id",
           "instillAcceptFormats": [
             "string"
           ],
@@ -299,8 +299,8 @@
             "template"
           ]
         },
-        "jobTitle": {
-          "$ref": "#/$defs/jobTitle",
+        "job-title": {
+          "$ref": "#/$defs/job-title",
           "instillAcceptFormats": [
             "string"
           ],
@@ -311,8 +311,8 @@
             "template"
           ]
         },
-        "lifecycleStage": {
-          "$ref": "#/$defs/lifecycleStage",
+        "lifecycle-stage": {
+          "$ref": "#/$defs/lifecycle-stage",
           "instillAcceptFormats": [
             "string"
           ],
@@ -323,8 +323,8 @@
             "template"
           ]
         },
-        "leadStatus": {
-          "$ref": "#/$defs/leadStatus",
+        "lead-status": {
+          "$ref": "#/$defs/lead-status",
           "instillAcceptFormats": [
             "string"
           ],
@@ -346,7 +346,7 @@
       "description": "Obtain contact ID",
       "instillUIOrder": 0,
       "properties": {
-        "contactId": {
+        "contact-id": {
           "description": "Contact ID",
           "instillUIOrder": 0,
           "required": [],
@@ -356,7 +356,7 @@
         }
       },
       "required": [
-        "contactId"
+        "contact-id"
       ],
       "title": "Output",
       "type": "object"
@@ -368,7 +368,7 @@
       "description": "Input deal ID",
       "instillUIOrder": 0,
       "properties": {
-        "dealId": {
+        "deal-id": {
           "description": "Input deal ID",
           "instillAcceptFormats": [
             "string"
@@ -385,7 +385,7 @@
         }
       },
       "required": [
-        "dealId"
+        "deal-id"
       ],
       "title": "Input",
       "type": "object"
@@ -394,13 +394,13 @@
       "description": "Contact information",
       "instillUIOrder": 0,
       "properties": {
-        "ownerId": {
-          "$ref": "#/$defs/ownerId",
+        "owner-id": {
+          "$ref": "#/$defs/owner-id",
           "instillFormat": "string",
           "required": []
         },
-        "dealName": {
-          "$ref": "#/$defs/dealName",
+        "deal-name": {
+          "$ref": "#/$defs/deal-name",
           "instillFormat": "string",
           "required": []
         },
@@ -409,8 +409,8 @@
           "instillFormat": "string",
           "required": []
         },
-        "dealStage": {
-          "$ref": "#/$defs/dealStage",
+        "deal-stage": {
+          "$ref": "#/$defs/deal-stage",
           "instillFormat": "string",
           "required": []
         },
@@ -419,26 +419,26 @@
           "instillFormat": "string",
           "required": []
         },
-        "dealType": {
-          "$ref": "#/$defs/dealType",
+        "deal-type": {
+          "$ref": "#/$defs/deal-type",
           "instillFormat": "string",
           "required": []
         },
-        "createDate": {
-          "$ref": "#/$defs/createDate",
+        "create-date": {
+          "$ref": "#/$defs/create-date",
           "instillFormat": "string",
           "required": []
         },
-        "closeDate": {
-          "$ref": "#/$defs/closeDate",
+        "close-date": {
+          "$ref": "#/$defs/close-date",
           "instillFormat": "string",
           "required": []
         }
       },
       "required": [
-        "dealName",
+        "deal-name",
         "pipeline",
-        "dealStage"
+        "deal-stage"
 
       ],
       "title": "Output",
@@ -451,12 +451,12 @@
       "description": "Contact information",
       "instillUIOrder": 0,
       "properties": {
-        "contactIdOrEmail": {
+        "contact-id-or-email": {
           "description": "Use to associate contact with deal. If the input has @, it will use email, otherwise, it will use contact id.",
-          "$ref": "#/$defs/contactIdOrEmail"
+          "$ref": "#/$defs/contact-id-or-email"
         },
-        "dealName": {
-          "$ref": "#/$defs/dealName",
+        "deal-name": {
+          "$ref": "#/$defs/deal-name",
           "instillAcceptFormats": [
             "string"
           ],
@@ -479,8 +479,8 @@
             "template"
           ]
         },
-        "dealStage": {
-          "$ref": "#/$defs/dealStage",
+        "deal-stage": {
+          "$ref": "#/$defs/deal-stage",
           "instillAcceptFormats": [
             "string"
           ],
@@ -503,8 +503,8 @@
             "template"
           ]
         },
-        "dealType": {
-          "$ref": "#/$defs/dealType",
+        "deal-type": {
+          "$ref": "#/$defs/deal-type",
           "instillAcceptFormats": [
             "string"
           ],
@@ -515,8 +515,8 @@
             "template"
           ]
         },
-        "closeDate": {
-          "$ref": "#/$defs/closeDate",
+        "close-date": {
+          "$ref": "#/$defs/close-date",
           "instillAcceptFormats": [
             "string"
           ],
@@ -529,9 +529,9 @@
         }
       },
       "required": [
-        "dealName",
+        "deal-name",
         "pipeline",
-        "dealStage"
+        "deal-stage"
 
       ],
       "title": "Input",
@@ -541,7 +541,7 @@
       "description": "Obtain deal ID",
       "instillUIOrder": 0,
       "properties": {
-        "dealId": {
+        "deal-id": {
           "description": "Deal ID",
           "instillUIOrder": 0,
           "required": [],
@@ -551,7 +551,7 @@
         }
       },
       "required": [
-        "dealId"
+        "deal-id"
       ],
       "title": "Output",
       "type": "object"
@@ -563,7 +563,7 @@
       "description": "Input thread ID",
       "instillUIOrder": 0,
       "properties": {
-        "threadId": {
+        "thread-id": {
           "description": "Input thread ID",
           "instillAcceptFormats": [
             "string"
@@ -580,7 +580,7 @@
         }
       },
       "required": [
-        "threadId"
+        "thread-id"
       ],
       "title": "Input",
       "type": "object"
@@ -598,7 +598,7 @@
             "title": "Messages Details",
             "type": "object",
             "properties": {
-              "createdAt": {
+              "created-at": {
                 "description": "message to start a conversation",
                 "instillFormat": "string",
                 "instillUIOrder": 0,
@@ -613,7 +613,7 @@
                 "type": "array",
                 "items": {
                   "title": "Sender's information",
-                  "$ref": "#/$defs/threadUserInformation"
+                  "$ref": "#/$defs/thread-user-information"
                 }
               },
               "recipients": {
@@ -624,7 +624,7 @@
                 "type": "array",
                 "items": {
                   "title": "Recipient's information",
-                  "$ref": "#/$defs/threadUserInformation"
+                  "$ref": "#/$defs/thread-user-information"
                 }
               },
               "text": {
@@ -645,7 +645,7 @@
               }
             },
             "required": [
-              "createdAt",
+              "created-at",
               "text",
               "subject"
             ]
@@ -665,7 +665,7 @@
       "description": "Contact ID and object type (CRM objects or Thread)",
       "instillUIOrder": 0,
       "properties": {
-        "contactId": {
+        "contact-id": {
           "description": "Input contact ID",
           "instillAcceptFormats": [
             "string"
@@ -680,7 +680,7 @@
           "title": "Contact ID",
           "type": "string"
         },
-        "objectType": {
+        "object-type": {
           "description": "Input object type (CRM objects or 'Threads'). Note: CRM objects include 'Deals', 'Companies', 'Tickets', etc",
           "instillAcceptFormats": [
             "string"
@@ -697,8 +697,8 @@
         }
       },
       "required": [
-        "contactId",
-        "objectType"
+        "contact-id",
+        "object-type"
       ],
       "title": "Input",
       "type": "object"

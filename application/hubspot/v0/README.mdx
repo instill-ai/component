@@ -50,22 +50,22 @@ Get contact information using contact ID or Email
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_CONTACT` |
-| Contact ID or Email (required) | `contactIdOrEmail` | string | Input contact ID or email. If the input has @, it will search the contact using email |
+| Contact ID or Email (required) | `contact-id-or-email` | string | Input contact ID or email. If the input has @, it will search the contact using email |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Owner ID (optional) | `ownerId` | string | Owner ID |
+| Owner ID (optional) | `owner-id` | string | Owner ID |
 | Email Address (optional) | `email` | string | Email address |
-| First Name (optional) | `firstName` | string | First name |
-| Last Name (optional) | `lastName` | string | Last name |
-| Phone Number (optional) | `phoneNumber` | string | Phone number. Preferably, format is in country code + phone number. Example: +886xxxxxxxxx  |
+| First Name (optional) | `first-name` | string | First name |
+| Last Name (optional) | `last-name` | string | Last name |
+| Phone Number (optional) | `phone-number` | string | Phone number. Preferably, format is in country code + phone number. Example: +886xxxxxxxxx  |
 | Company (optional) | `company` | string | Company |
-| Job Title (optional) | `jobTitle` | string | Job title |
-| Lifecycle Stage (optional) | `lifecycleStage` | string | Lifecycle stage. Default format is in small letters, all words are combined. Example: salesqualifiedlead. However, remember to check internal value for custom fields. |
-| Lead Status (optional) | `leadStatus` | string | Lead status. Default format is in capital letters, with _ as space. Example: IN_PROGRESS. However, remember to check internal value for custom fields. |
-| Contact ID | `contactId` | string | Contact ID |
+| Job Title (optional) | `job-title` | string | Job title |
+| Lifecycle Stage (optional) | `lifecycle-stage` | string | Lifecycle stage. Default format is in small letters, all words are combined. Example: salesqualifiedlead. However, remember to check internal value for custom fields. |
+| Lead Status (optional) | `lead-status` | string | Lead status. Default format is in capital letters, with _ as space. Example: IN_PROGRESS. However, remember to check internal value for custom fields. |
+| Contact ID | `contact-id` | string | Contact ID |
 
 
 
@@ -80,21 +80,21 @@ Create new contact
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_CONTACT` |
-| Owner ID | `ownerId` | string | Owner ID |
+| Owner ID | `owner-id` | string | Owner ID |
 | Email Address (required) | `email` | string | Email address |
-| First Name | `firstName` | string | First name |
-| Last Name | `lastName` | string | Last name |
-| Phone Number | `phoneNumber` | string | Phone number. Preferably, format is in country code + phone number. Example: +886xxxxxxxxx  |
+| First Name | `first-name` | string | First name |
+| Last Name | `last-name` | string | Last name |
+| Phone Number | `phone-number` | string | Phone number. Preferably, format is in country code + phone number. Example: +886xxxxxxxxx  |
 | Company | `company` | string | Company |
-| Job Title | `jobTitle` | string | Job title |
-| Lifecycle Stage | `lifecycleStage` | string | Lifecycle stage. Default format is in small letters, all words are combined. Example: salesqualifiedlead. However, remember to check internal value for custom fields. |
-| Lead Status | `leadStatus` | string | Lead status. Default format is in capital letters, with _ as space. Example: IN_PROGRESS. However, remember to check internal value for custom fields. |
+| Job Title | `job-title` | string | Job title |
+| Lifecycle Stage | `lifecycle-stage` | string | Lifecycle stage. Default format is in small letters, all words are combined. Example: salesqualifiedlead. However, remember to check internal value for custom fields. |
+| Lead Status | `lead-status` | string | Lead status. Default format is in capital letters, with _ as space. Example: IN_PROGRESS. However, remember to check internal value for custom fields. |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Contact ID | `contactId` | string | Contact ID |
+| Contact ID | `contact-id` | string | Contact ID |
 
 
 
@@ -109,20 +109,20 @@ Get deal information using deal ID
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_DEAL` |
-| Deal ID (required) | `dealId` | string | Input deal ID |
+| Deal ID (required) | `deal-id` | string | Input deal ID |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Owner ID (optional) | `ownerId` | string | Owner ID |
-| Deal Name | `dealName` | string | Deal name |
+| Owner ID (optional) | `owner-id` | string | Owner ID |
+| Deal Name | `deal-name` | string | Deal name |
 | Pipeline | `pipeline` | string | Pipeline. HubSpot uses interval value rather than the name displayed in the view |
-| Deal Stage | `dealStage` | string | Deal stage. Default format is in small letters, all words are combined. Example: qualifiedtobuy. However, remember to check internal value for custom fields. |
+| Deal Stage | `deal-stage` | string | Deal stage. Default format is in small letters, all words are combined. Example: qualifiedtobuy. However, remember to check internal value for custom fields. |
 | Amount (optional) | `amount` | string | Amount |
-| Deal Type (optional) | `dealType` | string | Deal type. Default format is in small letters, all words are combined. Example: newbusiness. However, remember to check internal value for custom fields. |
-| Close Date (optional) | `closeDate` | string | Close date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z |
-| Create Date (optional) | `createDate` | string | Create date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z |
+| Deal Type (optional) | `deal-type` | string | Deal type. Default format is in small letters, all words are combined. Example: newbusiness. However, remember to check internal value for custom fields. |
+| Close Date (optional) | `close-date` | string | Close date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z |
+| Create Date (optional) | `create-date` | string | Create date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z |
 
 
 
@@ -137,19 +137,19 @@ Create new contact
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_DEAL` |
-| Contact ID or Email | `contactIdOrEmail` | string | Use to associate contact with deal. If the input has @, it will use email, otherwise, it will use contact id. |
-| Deal Name (required) | `dealName` | string | Deal name |
+| Contact ID or Email | `contact-id-or-email` | string | Use to associate contact with deal. If the input has @, it will use email, otherwise, it will use contact id. |
+| Deal Name (required) | `deal-name` | string | Deal name |
 | Pipeline (required) | `pipeline` | string | Pipeline. HubSpot uses interval value rather than the name displayed in the view |
-| Deal Stage (required) | `dealStage` | string | Deal stage. Default format is in small letters, all words are combined. Example: qualifiedtobuy. However, remember to check internal value for custom fields. |
+| Deal Stage (required) | `deal-stage` | string | Deal stage. Default format is in small letters, all words are combined. Example: qualifiedtobuy. However, remember to check internal value for custom fields. |
 | Amount | `amount` | string | Amount |
-| Deal Type | `dealType` | string | Deal type. Default format is in small letters, all words are combined. Example: newbusiness. However, remember to check internal value for custom fields. |
-| Close Date | `closeDate` | string | Close date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z |
+| Deal Type | `deal-type` | string | Deal type. Default format is in small letters, all words are combined. Example: newbusiness. However, remember to check internal value for custom fields. |
+| Close Date | `close-date` | string | Close date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Deal ID | `dealId` | string | Deal ID |
+| Deal ID | `deal-id` | string | Deal ID |
 
 
 
@@ -164,7 +164,7 @@ Retrieve all the messages inside a thread (conversation inbox)
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_THREAD` |
-| Thread ID (required) | `threadId` | string | Input thread ID |
+| Thread ID (required) | `thread-id` | string | Input thread ID |
 
 
 
@@ -185,8 +185,8 @@ Get all the object IDs associated with contact ID
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_RETRIEVE_ASSOCIATION` |
-| Contact ID (required) | `contactId` | string | Input contact ID |
-| Object Type (required) | `objectType` | string | Input object type (CRM objects or 'Threads'). Note: CRM objects include 'Deals', 'Companies', 'Tickets', etc |
+| Contact ID (required) | `contact-id` | string | Input contact ID |
+| Object Type (required) | `object-type` | string | Input object type (CRM objects or 'Threads'). Note: CRM objects include 'Deals', 'Companies', 'Tickets', etc |
 
 
 

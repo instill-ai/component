@@ -14,16 +14,16 @@ type ContactInfoHSFormat struct {
 }
 
 type ContactInfoTaskFormat struct {
-	FirstName      string `json:"firstName,omitempty"`
-	LastName       string `json:"lastName,omitempty"`
+	FirstName      string `json:"first-name,omitempty"`
+	LastName       string `json:"last-name,omitempty"`
 	Email          string `json:"email,omitempty"`
-	PhoneNumber    string `json:"phoneNumber,omitempty"`
+	PhoneNumber    string `json:"phone-number,omitempty"`
 	Company        string `json:"company,omitempty"`
-	OwnerId        string `json:"ownerId,omitempty"`
-	JobTitle       string `json:"jobTitle,omitempty"`
-	LifecycleStage string `json:"lifecycleStage,omitempty"`
-	LeadStatus     string `json:"leadStatus,omitempty"`
-	ContactId      string `json:"contactId"`
+	OwnerId        string `json:"owner-id,omitempty"`
+	JobTitle       string `json:"job-title,omitempty"`
+	LifecycleStage string `json:"lifecycle-stage,omitempty"`
+	LeadStatus     string `json:"lead-status,omitempty"`
+	ContactId      string `json:"contact-id"`
 }
 
 // use to get contact ID from email

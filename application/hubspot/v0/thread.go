@@ -47,22 +47,22 @@ type ThreadResponse struct {
 
 // Structs used for task format
 
-type ThreadResponseTaskFormat struct {
-	Results []ThreadResultTaskFormat `json:"results"`
+type ThreadUserTaskFormat struct {
+	Name  string `json:"name,omitempty"`
+	Type  string `json:"type,omitempty"`
+	Value string `json:"value,omitempty"`
 }
 
 type ThreadResultTaskFormat struct {
-	CreatedAt  string                 `json:"createdAt"`
+	CreatedAt  string                 `json:"created-at"`
 	Senders    []ThreadUserTaskFormat `json:"senders,omitempty"`
 	Recipients []ThreadUserTaskFormat `json:"recipients,omitempty"`
 	Text       string                 `json:"text"`
 	Subject    string                 `json:"subject"`
 }
 
-type ThreadUserTaskFormat struct {
-	Name  string `json:"name,omitempty"`
-	Type  string `json:"type,omitempty"`
-	Value string `json:"value,omitempty"`
+type ThreadResponseTaskFormat struct {
+	Results []ThreadResultTaskFormat `json:"results"`
 }
 
 // Used to do http request and get thread
@@ -74,7 +74,7 @@ func (s *ThreadServiceOp) Get(threadId string) (*ThreadResponse, error) {
 	return resource, nil
 }
 
-// Used to convert struct response to struct for task. To be more exact, collapse ThreadDeliveryIdentifier and ThreadUser into one struct.
+// Used to convert struct response to struct for task. Also used to collapse ThreadDeliveryIdentifier and ThreadUser into one struct.
 func (s *ThreadServiceOp) ConvertToTaskFormat(res *ThreadResponse) *ThreadResponseTaskFormat {
 	responseOutput := ThreadResponseTaskFormat{}
 

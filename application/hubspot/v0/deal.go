@@ -13,13 +13,13 @@ type DealInfoHSFormat struct {
 }
 
 type DealInfoTaskFormat struct {
-	OwnerId    string `json:"ownerId,omitempty"`
-	DealName   string `json:"dealName"`
+	OwnerId    string `json:"owner-id,omitempty"`
+	DealName   string `json:"deal-name"`
 	Pipeline   string `json:"pipeline"`
-	DealStage  string `json:"dealStage"`
+	DealStage  string `json:"deal-stage"`
 	Amount     string `json:"amount,omitempty"`
-	DealType   string `json:"dealType,omitempty"`
-	CloseDate  string `json:"closeDate,omitempty"`
-	CreateDate string `json:"createDate"`
-	DealId     string `json:"dealId"`
+	DealType   string `json:"deal-type,omitempty"`
+	CloseDate  string `json:"close-date,omitempty"`
+	CreateDate string `json:"create-date"`
+	DealId     string `json:"deal-id"`
 }
