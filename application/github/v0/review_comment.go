@@ -94,7 +94,7 @@ type CreateReviewCommentInput struct {
 }
 
 type CreateReviewCommentResp struct {
-	ReviewComment ReviewComment `json:"comment"`
+	ReviewComment
 }
 
 // CreateReviewComment creates a review comment for a given pull request.

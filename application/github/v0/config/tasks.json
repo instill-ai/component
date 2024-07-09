@@ -575,17 +575,8 @@
     "output": {
       "description": "The specific pr in GitHub repository",
       "instillUIOrder": 0,
-      "properties": {
-        "pull_request": {
-          "$ref": "#/$defs/pull_request",
-          "required": [],
-          "instillUIOrder": 1,
-          "description": "A pull request in GitHub"
-        }
-      },
-      "required": [
-        "pull_request"
-      ],
+      "$ref": "#/$defs/pull_request",
+      "required": [],
       "title": "Output",
       "instillFormat": "object",
       "type": "object"
@@ -795,16 +786,9 @@
       "description": "The created comment",
       "instillUIOrder": 0,
       "properties": {
-        "comment": {
-          "$ref": "#/$defs/review_comments",
-          "required": [],
-          "instillUIOrder": 1,
-          "description": "The created comment"
-        }
+        "$ref": "#/$defs/review_comments/properties"
       },
-      "required": [
-        "comment"
-      ],
+      "required": [],
       "title": "Output",
       "instillFormat": "object",
       "type": "object"
@@ -840,16 +824,9 @@
       "description": "The specific commit in GitHub repository",
       "instillUIOrder": 0,
       "properties": {
-        "commit": {
-          "$ref": "#/$defs/commit",
-          "required": [],
-          "instillUIOrder": 1,
-          "description": "A commit in GitHub"
-        }
+        "$ref": "#/$defs/commit/properties"
       },
-      "required": [
-        "commit"
-      ],
+      "required": [],
       "title": "Output",
       "instillFormat": "object",
       "type": "object"
@@ -1031,17 +1008,9 @@
       "description": "The specific issue in GitHub repository",
       "instillUIOrder": 0,
       "properties": {
-        "issue": {
-          "description": "An issue in GitHub",
-          "instillUIOrder": 1,
-          "$ref": "#/$defs/issue",
-          "title": "Issue",
-          "required": []
-        }
+        "$ref": "#/$defs/issue/properties"
       },
-      "required": [
-        "issue"
-      ],
+      "required": [],
       "title": "Output",
       "instillFormat": "object",
       "type": "object"
@@ -1083,17 +1052,9 @@
       "description": "The created issue",
       "instillUIOrder": 0,
       "properties": {
-        "issue": {
-          "$ref": "#/$defs/issue",
-          "required": [],
-          "instillUIOrder": 1,
-          "title": "Issue",
-          "description": "The created issue"
-        }
+        "$ref": "#/$defs/issue/properties"
       },
-      "required": [
-        "issue"
-      ],
+      "required": [],
       "title": "Output",
       "instillFormat": "object",
       "type": "object"
@@ -1212,107 +1173,95 @@
       "description": "The created webhook",
       "instillUIOrder": 0,
       "properties": {
-        "hook": {
-          "description": "The created webhook",
-          "title": "Webhook",
+        "id": {
+          "description": "ID of the webhook",
           "instillUIOrder": 1,
+          "title": "Webhook ID",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
+        },
+        "url": {
+          "description": "URL of the webhook",
+          "instillUIOrder": 2,
+          "title": "Webhook URL",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "ping_url": {
+          "description": "URL to ping the webhook",
+          "instillUIOrder": 3,
+          "title": "Ping URL",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "test_url": {
+          "description": "URL to test the webhook",
+          "instillUIOrder": 4,
+          "title": "Test URL",
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "config": {
+          "description": "Configuration of the webhook",
+          "instillUIOrder": 6,
+          "title": "Config",
           "instillFormat": "object",
           "type": "object",
           "properties": {
-            "id": {
-              "description": "ID of the webhook",
-              "instillUIOrder": 1,
-              "title": "Webhook ID",
-              "instillFormat": "integer",
-              "instillAcceptFormats": [
-                "integer"
-              ],
-              "instillUpstreamTypes": [
-                "value",
-                "reference"
-              ],
-              "type": "integer"
-            },
             "url": {
               "description": "URL of the webhook",
-              "instillUIOrder": 2,
+              "instillUIOrder": 1,
               "title": "Webhook URL",
               "instillFormat": "string",
-              "instillAcceptFormats": [
-                "string"
-              ],
-              "instillUpstreamTypes": [
-                "value",
-                "reference"
-              ],
               "type": "string"
             },
-            "ping_url": {
-              "description": "URL to ping the webhook",
+            "content_type": {
+              "description": "Content type of the webhook",
+              "instillUIOrder": 2,
+              "title": "Content Type",
+              "instillFormat": "string",
+              "type": "string"
+            },
+            "insecure_ssl": {
+              "description": "Whether the webhook is insecure",
               "instillUIOrder": 3,
-              "title": "Ping URL",
+              "title": "Insecure SSL",
               "instillFormat": "string",
-              "instillAcceptFormats": [
-                "string"
-              ],
-              "instillUpstreamTypes": [
-                "value",
-                "reference"
-              ],
               "type": "string"
-            },
-            "test_url": {
-              "description": "URL to test the webhook",
-              "instillUIOrder": 4,
-              "title": "Test URL",
-              "instillFormat": "string",
-              "instillAcceptFormats": [
-                "string"
-              ],
-              "instillUpstreamTypes": [
-                "value",
-                "reference"
-              ],
-              "type": "string"
-            },
-            "config": {
-              "description": "Configuration of the webhook",
-              "instillUIOrder": 6,
-              "title": "Config",
-              "instillFormat": "object",
-              "type": "object",
-              "properties": {
-                "url": {
-                  "description": "URL of the webhook",
-                  "instillUIOrder": 1,
-                  "title": "Webhook URL",
-                  "instillFormat": "string",
-                  "type": "string"
-                },
-                "content_type": {
-                  "description": "Content type of the webhook",
-                  "instillUIOrder": 2,
-                  "title": "Content Type",
-                  "instillFormat": "string",
-                  "type": "string"
-                },
-                "insecure_ssl": {
-                  "description": "Whether the webhook is insecure",
-                  "instillUIOrder": 3,
-                  "title": "Insecure SSL",
-                  "instillFormat": "string",
-                  "type": "string"
-                }
-              },
-              "required": []
             }
           },
           "required": []
         }
       },
-      "required": [
-        "hook"
-      ],
+      "required": [],
       "title": "Output",
       "instillFormat": "object",
       "type": "object"

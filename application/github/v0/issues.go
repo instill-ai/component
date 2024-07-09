@@ -139,7 +139,7 @@ type GetIssueInput struct {
 }
 
 type GetIssueResp struct {
-	Issue Issue `json:"issue"`
+	Issue
 }
 
 func (githubClient *Client) getIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -176,7 +176,7 @@ type CreateIssueInput struct {
 }
 
 type CreateIssueResp struct {
-	Issue Issue `json:"issue"`
+	Issue
 }
 
 func (githubClient *Client) createIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {

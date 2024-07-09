@@ -726,7 +726,7 @@ func TestComponent_CreateWebHook(t *testing.T) {
 				ContentType: "json",
 			},
 			wantResp: CreateWebHookResp{
-				Hook: HookInfo{
+				HookInfo: HookInfo{
 					ID:      1,
 					URL:     "hook_url",
 					PingURL: "ping_url",

@@ -32,7 +32,7 @@ type HookInfo struct {
 	Config  HookConfig `json:"config"`
 }
 type CreateWebHookResp struct {
-	Hook HookInfo `json:"hook"`
+	HookInfo
 }
 
 func (githubClient *Client) createWebhookTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -82,7 +82,7 @@ func (githubClient *Client) createWebhookTask(ctx context.Context, props *struct
 	if err != nil {
 		return nil, err
 	}
-	resp.Hook = hookInfo
+	resp.HookInfo = hookInfo
 	out, err := base.ConvertToStructpb(resp)
 	if err != nil {
 		return nil, err

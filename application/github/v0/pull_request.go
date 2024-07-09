@@ -115,7 +115,7 @@ type GetPullRequestInput struct {
 	PrNumber float64 `json:"pr_number"`
 }
 type GetPullRequestResp struct {
-	PullRequest PullRequest `json:"pull_request"`
+	PullRequest
 }
 
 func (githubClient *Client) getPullRequestTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
