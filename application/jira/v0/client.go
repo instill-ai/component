@@ -104,8 +104,8 @@ func addQueryOptions(req *resty.Request, opt interface{}) error {
 	}
 	typeOfS := v.Type()
 	for i := 0; i < v.NumField(); i++ {
-		if !v.Field(i).IsValid() || !v.Field(i).CanInterface(){
-			debug.AddMessage(typeOfS.Field(i).Name,"Not a valid field")
+		if !v.Field(i).IsValid() || !v.Field(i).CanInterface() {
+			debug.AddMessage(typeOfS.Field(i).Name, "Not a valid field")
 			continue
 		}
 		val := v.Field(i).Interface()

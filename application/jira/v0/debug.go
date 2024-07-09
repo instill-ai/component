@@ -7,21 +7,20 @@ import (
 )
 
 const (
-	Verbose = 1
+	Verbose             = 1
 	DefaultVerboseLevel = 1
 	DevelopVerboseLevel = 1
-	StaticVerboseLevel = 2
-
+	StaticVerboseLevel  = 2
 )
 
 type DebugSession struct {
-	SessionID   string   `json:"session_id"`
-	Title       string   `json:"title"`
-	Messages    []string `json:"messages"`
+	SessionID     string   `json:"session_id"`
+	Title         string   `json:"title"`
+	Messages      []string `json:"messages"`
 	halfBannerLen int
-	indentLevel int
-	maxDepth    int
-	verboseLevel int
+	indentLevel   int
+	maxDepth      int
+	verboseLevel  int
 }
 
 // Session Logger is only verbose when package verbose is greater than the verbose level specified here
@@ -75,14 +74,14 @@ func (d *DebugSession) AddMapMessage(name string, m interface{}) {
 	mapVal := make(map[string]interface{})
 	if v.Kind() == reflect.Map {
 		for _, key := range v.MapKeys() {
-			if v.MapIndex(key).IsValid() && v.MapIndex(key).CanInterface(){
+			if v.MapIndex(key).IsValid() && v.MapIndex(key).CanInterface() {
 				mapVal[fmt.Sprintf("%v", key)] = v.MapIndex(key).Interface()
 			}
 		}
 	} else if v.Kind() == reflect.Struct {
 		typeOfS := v.Type()
 		for i := 0; i < v.NumField(); i++ {
-			if !v.Field(i).IsValid() || !v.Field(i).CanInterface(){
+			if !v.Field(i).IsValid() || !v.Field(i).CanInterface() {
 				continue
 			}
 
@@ -154,7 +153,7 @@ func (d *DebugSession) SessionEnd() {
 	defer func() {
 		d.indentLevel = 0
 	}()
-	endHalfBanner := strings.Repeat("=", d.halfBannerLen - 2)
+	endHalfBanner := strings.Repeat("=", d.halfBannerLen-2)
 	endBanner := fmt.Sprintf("%s %s end %s", endHalfBanner, d.SessionID, endHalfBanner)
 	d.Messages = append(d.Messages, endBanner)
 }

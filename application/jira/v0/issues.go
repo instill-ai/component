@@ -62,12 +62,7 @@ func (jiraClient *Client) getIssue(_ context.Context, opt *GetIssueInput) (*GetI
 	}
 	resp, err := req.Get(apiEndpoint)
 
-	debug.AddMessage("GET", apiEndpoint)
-	debug.AddMapMessage("QueryParam", resp.Request.QueryParam)
-	debug.AddMessage("Status", resp.Status())
-	debug.AddMapMessage("Error", resp.Error())
-
-	if resp.StatusCode() == 404 {
+	if resp != nil && resp.StatusCode() == 404 {
 		return nil, fmt.Errorf(
 			err.Error(),
 			errmsg.Message(err)+"Please check you have the correct permissions to access this resource.",
@@ -78,6 +73,9 @@ func (jiraClient *Client) getIssue(_ context.Context, opt *GetIssueInput) (*GetI
 			err.Error(), errmsg.Message(err),
 		)
 	}
+	debug.AddMessage("GET", apiEndpoint)
+	debug.AddMapMessage("QueryParam", resp.Request.QueryParam)
+	debug.AddMessage("Status", resp.Status())
 
 	boards := resp.Result().(*GetIssueOutput)
 	return boards, err
