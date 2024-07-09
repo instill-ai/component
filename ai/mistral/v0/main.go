@@ -73,6 +73,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	switch task {
 	case TextGenerationTask:
 		e.execute = e.taskTextGeneration
+	case TextEmbeddingTask:
+		e.execute = e.taskTextEmbedding
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}

@@ -46,6 +46,21 @@ type textGenerationOutput struct {
 	Usage chatUsage `json:"usage"`
 }
 
+type textEmbeddingInput struct {
+	Text          string `json:"text"`
+	ModelName     string `json:"model-name"`
+	EmbeddingType string `json:"embedding-type"`
+}
+
+type textEmbeddingUsage struct {
+	Tokens int `json:"tokens"`
+}
+
+type textEmbeddingOutput struct {
+	Embedding []float64          `json:"embedding"`
+	Usage     textEmbeddingUsage `json:"usage"`
+}
+
 func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, error) {
 
 	inputStruct := textGenerationInput{}
@@ -115,4 +130,29 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 		return nil, err
 	}
 	return output, nil
+}
+
+func (e *execution) taskTextEmbedding(in *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := textEmbeddingInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, fmt.Errorf("error generating input struct: %v", err)
+	}
+
+	resp, err := e.client.sdkClient.Embeddings(inputStruct.ModelName, []string{inputStruct.Text})
+	if err != nil {
+		return nil, fmt.Errorf("error calling Embeddings: %v", err)
+	}
+	outputStruct := textEmbeddingOutput{
+		Embedding: resp.Data[0].Embedding,
+		Usage: textEmbeddingUsage{
+			Tokens: resp.Usage.TotalTokens,
+		},
+	}
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+
 }
