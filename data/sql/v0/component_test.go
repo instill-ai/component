@@ -103,7 +103,7 @@ func TestInsertUser(t *testing.T) {
 				TableName: "users",
 			},
 			wantResp: InsertOutput{
-				Status: "Successfully inserted document",
+				Status: "Successfully inserted rows",
 			},
 		},
 	}
@@ -172,7 +172,7 @@ func TestUpdateUser(t *testing.T) {
 				TableName: "users",
 			},
 			wantResp: UpdateOutput{
-				Status: "Successfully updated document",
+				Status: "Successfully updated rows",
 			},
 		},
 	}
@@ -240,7 +240,7 @@ func TestSelectUser(t *testing.T) {
 				To:        1,
 			},
 			wantResp: SelectOutput{
-				Status: "Successfully selected document",
+				Status: "Successfully selected rows",
 				Rows: []map[string]any{
 					{"id": "1", "name": "john", "email": "john@example.com"},
 				},
@@ -308,7 +308,7 @@ func TestDeleteUser(t *testing.T) {
 				TableName: "users",
 			},
 			wantResp: DeleteOutput{
-				Status: "Successfully deleted document",
+				Status: "Successfully deleted rows",
 			},
 		},
 	}

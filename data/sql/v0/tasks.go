@@ -184,7 +184,7 @@ func (e *execution) insert(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	outputStruct := InsertOutput{
-		Status: "Successfully inserted document",
+		Status: "Successfully inserted rows",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -211,7 +211,7 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	outputStruct := UpdateOutput{
-		Status: "Successfully updated document",
+		Status: "Successfully updated rows",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -266,7 +266,7 @@ func (e *execution) selects(in *structpb.Struct) (*structpb.Struct, error) {
 
 	outputStruct := SelectOutput{
 		Rows:   result,
-		Status: "Successfully selected document",
+		Status: "Successfully selected rows",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -293,7 +293,7 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	outputStruct := DeleteOutput{
-		Status: "Successfully deleted document",
+		Status: "Successfully deleted rows",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
