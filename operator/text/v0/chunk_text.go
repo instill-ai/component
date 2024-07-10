@@ -2,6 +2,7 @@ package text
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/pkoukk/tiktoken-go"
 	"github.com/tmc/langchaingo/textsplitter"
@@ -77,9 +78,11 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	setting.SetDefault()
 
 	var output ChunkTextOutput
+	var positionCalculator ChunkPositionCalculator
+
 	switch setting.ChunkMethod {
 	case "Token":
-
+		positionCalculator = PositionCalculator{}
 		if setting.ChunkOverlap >= setting.ChunkSize {
 			err := fmt.Errorf("ChunkOverlap must be less than ChunkSize when using Token method")
 			return output, err
@@ -101,6 +104,7 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
 		output.TokenCount = len(token)
 	case "Markdown":
+		positionCalculator = MarkdownPositionCalculator{}
 		split = textsplitter.NewMarkdownTextSplitter(
 			textsplitter.WithChunkSize(setting.ChunkSize),
 			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
@@ -108,6 +112,7 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 			textsplitter.WithReferenceLinks(setting.ReferenceLinks),
 		)
 	case "Recursive":
+		positionCalculator = PositionCalculator{}
 		split = textsplitter.NewRecursiveCharacter(
 			textsplitter.WithSeparators(setting.Separators),
 			textsplitter.WithChunkSize(setting.ChunkSize),
@@ -122,15 +127,73 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	}
 	output.ChunkNum = len(chunks)
 
-	startPosition := 1
-	for _, c := range chunks {
+	startScanPosition := 0
+	rawRunes := []rune(input.Text)
+	for _, chunk := range chunks {
+		chunkRunes := []rune(chunk)
+
+		startPosition, endPosition := positionCalculator.getChunkPositions(rawRunes, chunkRunes, startScanPosition)
+
 		output.TextChunks = append(output.TextChunks, TextChunk{
-			Text:          c,
+			Text:          chunk,
 			StartPosition: startPosition,
-			EndPosition:   startPosition + len(c) - 1,
+			EndPosition:   endPosition,
 		})
-		startPosition += len(c)
+		startScanPosition = startPosition + 1
 	}
 
 	return output, nil
+}
+
+type ChunkPositionCalculator interface {
+	getChunkPositions(rawText, chunk []rune, startScanPosition int) (startPosition int, endPosition int)
+}
+
+type PositionCalculator struct{}
+
+func (PositionCalculator) getChunkPositions(rawText, chunk []rune, startScanPosition int) (startPosition int, endPosition int) {
+
+	for i := startScanPosition; i < len(rawText); i++ {
+		if rawText[i] == chunk[0] {
+			if reflect.DeepEqual(rawText[i:i+len(chunk)], chunk) {
+				startPosition = i
+				endPosition = len(chunk) + i - 1
+				break
+			}
+		}
+	}
+	return startPosition, endPosition
+}
+
+type MarkdownPositionCalculator struct{}
+
+func (MarkdownPositionCalculator) getChunkPositions(rawText, chunk []rune, startScanPosition int) (startPosition int, endPosition int) {
+
+	skipHeaderIndex := getSkipHeaderIndex(chunk)
+
+	for i := startScanPosition; i < len(rawText); i++ {
+
+		if rawText[i] == chunk[skipHeaderIndex] {
+			if reflect.DeepEqual(rawText[i:(i+len(chunk)-skipHeaderIndex)], chunk[skipHeaderIndex:]) {
+				startPosition = i
+				endPosition = len(chunk) + i - 1 - skipHeaderIndex
+				break
+			}
+		}
+	}
+	return startPosition, endPosition
+}
+
+func getSkipHeaderIndex(chunk []rune) int {
+	hashtagCount := 0
+	for i := 0; i < len(chunk); i++ {
+		if chunk[i] == '#' {
+			hashtagCount++
+		}
+
+		if hashtagCount >= 1 && chunk[i] == '\n' {
+			return i + 1
+		}
+	}
+	return 0
 }
