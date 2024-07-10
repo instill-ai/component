@@ -226,9 +226,10 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(sysVars))
 
 	pageToken := ""
+	pageSize := int32(100)
 	models := []*modelPB.Model{}
 	for {
-		resp, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{PageToken: &pageToken})
+		resp, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{PageToken: &pageToken, PageSize: &pageSize})
 		if err != nil {
 
 			return def, nil
@@ -248,14 +249,14 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 		go func(m *modelPB.Model) {
 			var versions []*modelPB.ModelVersion
 			if strings.HasPrefix(m.Name, "organizations") {
-				resp, err := gRPCCLient.ListOrganizationModelVersions(ctx, &modelPB.ListOrganizationModelVersionsRequest{Name: m.Name})
+				resp, err := gRPCCLient.ListOrganizationModelVersions(ctx, &modelPB.ListOrganizationModelVersionsRequest{Name: m.Name, PageSize: &pageSize})
 				if err != nil {
 					ch <- nil
 					return
 				}
 				versions = resp.Versions
 			} else {
-				resp, err := gRPCCLient.ListUserModelVersions(ctx, &modelPB.ListUserModelVersionsRequest{Name: m.Name})
+				resp, err := gRPCCLient.ListUserModelVersions(ctx, &modelPB.ListUserModelVersionsRequest{Name: m.Name, PageSize: &pageSize})
 				if err != nil {
 					ch <- nil
 					return
