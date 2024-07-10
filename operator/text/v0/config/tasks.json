@@ -17,7 +17,7 @@
     },
     "chunk-size": {
       "default": 512,
-      "description": "Specifies the maximum size of each chunk in terms of the number of tokens.",
+      "description": "Specifies the maximum size of each chunk in terms of the number of tokens",
       "instillAcceptFormats": [
         "integer"
       ],
@@ -32,7 +32,7 @@
     },
     "chunk-overlap": {
       "default": 100,
-      "description": "Determines the number of tokens that overlap between consecutive chunks.",
+      "description": "Determines the number of tokens that overlap between consecutive chunks",
       "instillAcceptFormats": [
         "integer"
       ],
@@ -183,7 +183,7 @@
     }
   },
   "TASK_CHUNK_TEXT": {
-    "instillShortDescription": "Chunk text with different strategies.",
+    "instillShortDescription": "Chunk text with different strategies",
     "input": {
       "description": "Input",
       "instillEditOnNodeFields": [
@@ -224,7 +224,7 @@
                     },
                     "allowed-special": {
                       "default": [],
-                      "description": "A list of special tokens that are allowed within chunks. ",
+                      "description": "A list of special tokens that are allowed within chunks.",
                       "instillAcceptFormats": [
                         "array:string"
                       ],
@@ -313,7 +313,7 @@
                       "type": "array"
                     },
                     "keep-separator": {
-                      "description": "A flag indicating whether to keep the separator characters at the beginning or end of chunks.",
+                      "description": "A flag indicating whether to keep the separator characters at the beginning or end of chunks",
                       "instillAcceptFormats": [
                         "boolean"
                       ],
@@ -360,7 +360,7 @@
                       "$ref": "#/$defs/model-name"
                     },
                     "code-blocks": {
-                      "description": "A flag indicating whether code blocks should be treated as a single unit.",
+                      "description": "A flag indicating whether code blocks should be treated as a single unit",
                       "instillAcceptFormats": [
                         "boolean"
                       ],
@@ -374,7 +374,7 @@
                       "type": "boolean"
                     },
                     "reference-links": {
-                      "description": "A flag indicating whether reference links should be kept intact.",
+                      "description": "A flag indicating whether reference links should be kept intact",
                       "instillAcceptFormats": [
                         "boolean"
                       ],
