@@ -3,7 +3,7 @@
   "additionalProperties": true,
   "properties": {
     "api-key": {
-      "description": "Fill in your Mistral API key. To find your keys, visit the Mistral platform page.",
+      "description": "Fill in your Mistral API key. To find your keys, visit the Mistral AI platform page.",
       "instillUpstreamTypes": [
         "reference"
       ],
@@ -23,6 +23,6 @@
   "instillEditOnNodeFields": [
     "api-key"
   ],
-  "title": "Mistral Connection",
+  "title": "Mistral AI Connection",
   "type": "object"
 }

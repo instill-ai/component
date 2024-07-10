@@ -1,4 +1,4 @@
-package mistral
+package mistralai
 
 import (
 	mistralSDK "github.com/gage-technologies/mistral-go"

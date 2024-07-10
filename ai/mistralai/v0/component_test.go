@@ -1,4 +1,4 @@
-package mistral
+package mistralai
 
 import (
 	"context"
