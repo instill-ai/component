@@ -92,6 +92,20 @@
       ],
       "title": "Model",
       "type": "string"
+    },
+    "show-token-count": {
+      "description": "Response the token count in the output or not",
+      "default": true,
+      "instillAcceptFormats": [
+        "boolean"
+      ],
+      "instillUIOrder": 3,
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "title": "Show Token Count",
+      "type": "boolean"
     }
   },
   "TASK_CONVERT_TO_TEXT": {
@@ -350,26 +364,6 @@
                     "model-name": {
                       "$ref": "#/$defs/model-name"
                     },
-                    "encoding-name": {
-                      "description": "The name of the encoding used to convert text into tokens.",
-                      "enum": [
-                        "cl100k_base",
-                        "p50k_base",
-                        "r50k_base",
-                        "p50k_edit"
-                      ],
-                      "instillAcceptFormats": [
-                        "string"
-                      ],
-                      "instillUIOrder": 3,
-                      "instillUpstreamTypes": [
-                        "value",
-                        "reference",
-                        "template"
-                      ],
-                      "title": "Encoding Name",
-                      "type": "string"
-                    },
                     "allowed-special": {
                       "default": [],
                       "description": "A list of special tokens that are allowed within chunks. ",
@@ -407,6 +401,9 @@
                       ],
                       "title": "Disallowed Special Tokens",
                       "type": "array"
+                    },
+                    "show-token-count": {
+                      "$ref": "#/$defs/show-token-count"
                     }
                   },
                   "required": [
@@ -417,7 +414,6 @@
                     "chunk-size",
                     "chunk-overlap",
                     "model-name",
-                    "encoding-name",
                     "allowed-special",
                     "disallowed-special"
                   ],
@@ -434,6 +430,9 @@
                     },
                     "chunk-overlap": {
                       "$ref": "#/$defs/chunk-overlap"
+                    },
+                    "model-name": {
+                      "$ref": "#/$defs/model-name"
                     },
                     "separators": {
                       "default": [],
@@ -467,6 +466,9 @@
                       ],
                       "title": "Keep Separator",
                       "type": "boolean"
+                    },
+                    "show-token-count": {
+                      "$ref": "#/$defs/show-token-count"
                     }
                   },
                   "required": [
@@ -476,6 +478,7 @@
                     "chunk-method",
                     "chunk-size",
                     "chunk-overlap",
+                    "model-name",
                     "separators",
                     "keep-separator"
                   ],
@@ -492,6 +495,9 @@
                     },
                     "chunk-overlap": {
                       "$ref": "#/$defs/chunk-overlap"
+                    },
+                    "model-name": {
+                      "$ref": "#/$defs/model-name"
                     },
                     "code-blocks": {
                       "description": "A flag indicating whether code blocks should be treated as a single unit.",
@@ -520,6 +526,9 @@
                       ],
                       "title": "Reference Links",
                       "type": "boolean"
+                    },
+                    "show-token-count": {
+                      "$ref": "#/$defs/show-token-count"
                     }
                   },
                   "required": [
@@ -529,6 +538,7 @@
                     "chunk-method",
                     "chunk-size",
                     "chunk-overlap",
+                    "model-name",
                     "code-blocks",
                     "reference-links"
                   ],

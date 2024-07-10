@@ -22,13 +22,13 @@ type Setting struct {
 	ChunkSize         int      `json:"chunk-size,omitempty"`
 	ChunkOverlap      int      `json:"chunk-overlap,omitempty"`
 	ModelName         string   `json:"model-name,omitempty"`
-	EncodingName      string   `json:"encoding-name,omitempty"`
 	AllowedSpecial    []string `json:"allowed-special,omitempty"`
 	DisallowedSpecial []string `json:"disallowed-special,omitempty"`
 	Separators        []string `json:"separators,omitempty"`
 	KeepSeparator     bool     `json:"keep-separator,omitempty"`
 	CodeBlocks        bool     `json:"code-blocks,omitempty"`
 	ReferenceLinks    bool     `json:"reference-links,omitempty"`
+	ShowTokenCount    bool     `json:"show-token-count"`
 	// TODO: Add SecondSplitter, which is to set the details about how to chunk the paragraphs in Markdown format.
 	// https://pkg.go.dev/github.com/tmc/langchaingo@v0.1.10/textsplitter#MarkdownTextSplitter
 	// secondSplitter textsplitter.TextSplitter
@@ -55,9 +55,6 @@ func (s *Setting) SetDefault() {
 	}
 	if s.ModelName == "" {
 		s.ModelName = "gpt-3.5-turbo"
-	}
-	if s.EncodingName == "" {
-		s.EncodingName = "cl100k_base"
 	}
 	if s.AllowedSpecial == nil {
 		s.AllowedSpecial = []string{}
@@ -92,17 +89,9 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 			textsplitter.WithChunkSize(setting.ChunkSize),
 			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
 			textsplitter.WithModelName(setting.ModelName),
-			textsplitter.WithEncodingName(setting.EncodingName),
 			textsplitter.WithAllowedSpecial(setting.AllowedSpecial),
 			textsplitter.WithDisallowedSpecial(setting.DisallowedSpecial),
 		)
-
-		tkm, err := tiktoken.EncodingForModel(setting.ModelName)
-		if err != nil {
-			return output, err
-		}
-		token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
-		output.TokenCount = len(token)
 	case "Markdown":
 		positionCalculator = MarkdownPositionCalculator{}
 		split = textsplitter.NewMarkdownTextSplitter(
@@ -119,6 +108,15 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
 			textsplitter.WithKeepSeparator(setting.KeepSeparator),
 		)
+	}
+
+	if setting.ShowTokenCount {
+		tkm, err := tiktoken.EncodingForModel(setting.ModelName)
+		if err != nil {
+			return output, err
+		}
+		token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
+		output.TokenCount = len(token)
 	}
 
 	chunks, err := split.SplitText(input.Text)

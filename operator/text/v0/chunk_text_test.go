@@ -22,9 +22,10 @@ func TestChunkText(t *testing.T) {
 				Text: "Hello world.",
 				Strategy: Strategy{
 					Setting: Setting{
-						ChunkMethod: "Token",
-						ChunkSize:   512,
-						ModelName:   "gpt-3.5-turbo",
+						ChunkMethod:    "Token",
+						ChunkSize:      512,
+						ModelName:      "gpt-3.5-turbo",
+						ShowTokenCount: true,
 					},
 				},
 			},
@@ -46,8 +47,10 @@ func TestChunkText(t *testing.T) {
 				Text: "Hello world.",
 				Strategy: Strategy{
 					Setting: Setting{
-						ChunkMethod: "Markdown",
-						ChunkSize:   5,
+						ChunkMethod:    "Markdown",
+						ModelName:      "gpt-3.5-turbo",
+						ChunkSize:      5,
+						ShowTokenCount: true,
 					},
 				},
 			},
@@ -59,7 +62,8 @@ func TestChunkText(t *testing.T) {
 						EndPosition:   11,
 					},
 				},
-				ChunkNum: 1,
+				ChunkNum:   1,
+				TokenCount: 3,
 			},
 		},
 		{
@@ -68,9 +72,11 @@ func TestChunkText(t *testing.T) {
 				Text: "Hello world.",
 				Strategy: Strategy{
 					Setting: Setting{
-						ChunkMethod: "Recursive",
-						ChunkSize:   5,
-						Separators:  []string{" ", "."},
+						ChunkMethod:    "Recursive",
+						ModelName:      "gpt-3.5-turbo",
+						ChunkSize:      5,
+						Separators:     []string{" ", "."},
+						ShowTokenCount: true,
 					},
 				},
 			},
@@ -87,7 +93,8 @@ func TestChunkText(t *testing.T) {
 						EndPosition:   10,
 					},
 				},
-				ChunkNum: 2,
+				ChunkNum:   2,
+				TokenCount: 3,
 			},
 		},
 	}
