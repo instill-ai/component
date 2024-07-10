@@ -42,8 +42,8 @@ type ChunkTextOutput struct {
 
 type TextChunk struct {
 	Text          string `json:"text"`
-	StartPosition int    `json:"start-position,omitempty"`
-	EndPosition   int    `json:"end-position,omitempty"`
+	StartPosition int    `json:"start-position"`
+	EndPosition   int    `json:"end-position"`
 }
 
 func (s *Setting) SetDefault() {
@@ -131,7 +131,6 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		chunkRunes := []rune(chunk)
 
 		startPosition, endPosition := positionCalculator.getChunkPositions(rawRunes, chunkRunes, startScanPosition)
-
 		output.TextChunks = append(output.TextChunks, TextChunk{
 			Text:          chunk,
 			StartPosition: startPosition,

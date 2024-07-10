@@ -95,7 +95,6 @@
     },
     "show-token-count": {
       "description": "Response the token count in the output or not",
-      "default": true,
       "instillAcceptFormats": [
         "boolean"
       ],
@@ -274,7 +273,8 @@
                     "chunk-overlap",
                     "model-name",
                     "allowed-special",
-                    "disallowed-special"
+                    "disallowed-special",
+                    "show-token-count"
                   ],
                   "type": "object"
                 },
@@ -339,7 +339,8 @@
                     "chunk-overlap",
                     "model-name",
                     "separators",
-                    "keep-separator"
+                    "keep-separator",
+                    "show-token-count"
                   ],
                   "type": "object"
                 },
@@ -399,7 +400,8 @@
                     "chunk-overlap",
                     "model-name",
                     "code-blocks",
-                    "reference-links"
+                    "reference-links",
+                    "show-token-count"
                   ],
                   "type": "object"
                 }
@@ -459,9 +461,7 @@
               }
             },
             "required": [
-              "text",
-              "start-position",
-              "end-position"
+              "text"
             ],
             "instillUIMultiline": true,
             "type": "object"

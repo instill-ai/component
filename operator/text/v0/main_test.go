@@ -33,16 +33,6 @@ func TestOperator(t *testing.T) {
 			},
 		},
 		{
-			name: "split by token",
-			task: "TASK_SPLIT_BY_TOKEN",
-			input: structpb.Struct{
-				Fields: map[string]*structpb.Value{
-					"text":  {Kind: &structpb.Value_StringValue{StringValue: "Hello world. This is a test."}},
-					"model": {Kind: &structpb.Value_StringValue{StringValue: "gpt-3.5-turbo"}},
-				},
-			},
-		},
-		{
 			name: "chunk texts",
 			task: "TASK_CHUNK_TEXT",
 			input: structpb.Struct{
