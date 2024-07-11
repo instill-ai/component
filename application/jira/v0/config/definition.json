@@ -1,7 +1,8 @@
 {
   "availableTasks": [
     "TASK_LIST_BOARDS",
-    "TASK_GET_ISSUE"
+    "TASK_GET_ISSUE",
+    "TASK_GET_SPRINT"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/application/jira",

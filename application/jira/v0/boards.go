@@ -18,11 +18,11 @@ type Board struct {
 }
 
 type ListBoardsInput struct {
-	ProjectKeyOrID string `json:"project_key_or_id,omitempty" struct:"projectKeyOrID"`
-	BoardType      string `json:"board_type,omitempty" struct:"boardType"`
+	ProjectKeyOrID string `json:"project-key-or-id,omitempty" struct:"projectKeyOrID"`
+	BoardType      string `json:"board-type,omitempty" struct:"boardType"`
 	Name           string `json:"name,omitempty" struct:"name"`
-	StartAt        int    `json:"start_at,omitempty" struct:"startAt"`
-	MaxResults     int    `json:"max_results,omitempty" struct:"maxResults"`
+	StartAt        int    `json:"start-at,omitempty" struct:"startAt"`
+	MaxResults     int    `json:"max-results,omitempty" struct:"maxResults"`
 }
 type ListBoardsResp struct {
 	Values     []Board `json:"values"`
@@ -34,10 +34,10 @@ type ListBoardsResp struct {
 
 type ListBoardsOutput struct {
 	Boards     []Board `json:"boards"`
-	StartAt    int     `json:"start_at"`
-	MaxResults int     `json:"max_results"`
+	StartAt    int     `json:"start-at"`
+	MaxResults int     `json:"max-results"`
 	Total      int     `json:"total"`
-	IsLast     bool    `json:"is_last"`
+	IsLast     bool    `json:"is-last"`
 }
 
 func (jiraClient *Client) listBoardsTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {

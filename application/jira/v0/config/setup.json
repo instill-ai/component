@@ -28,7 +28,7 @@
       "title": "Email",
       "type": "string"
     },
-    "base_url": {
+    "base-url": {
       "description": "Fill in your Jira base URL. For example, if your Jira URL is https://mycompany.atlassian.net, then your base URL is https://mycompany.atlassian.net.",
       "instillUpstreamTypes": [
         "value",
@@ -45,12 +45,12 @@
   "required": [
     "token",
     "email",
-    "base_url"
+    "base-url"
   ],
   "instillEditOnNodeFields": [
     "token",
     "email",
-    "base_url"
+    "base-url"
   ],
   "title": "Jira Connection",
   "type": "object"

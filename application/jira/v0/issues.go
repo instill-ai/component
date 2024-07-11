@@ -14,13 +14,16 @@ type Issue struct {
 	ID          string                 `json:"id"`
 	Key         string                 `json:"key"`
 	Description string                 `json:"description"`
+	Summary     string                 `json:"summary"`
 	Fields      map[string]interface{} `json:"fields"`
 	Self        string                 `json:"self"`
+	IssueType   string                 `json:"issue-type"`
+	Status      string                 `json:"status"`
 }
 
 type GetIssueInput struct {
-	IssueKeyOrID  string `json:"issue_id_or_key,omitempty" struct:"issueIdOrKey"`
-	UpdateHistory bool   `json:"update_history,omitempty" struct:"updateHistory"`
+	IssueKeyOrID  string `json:"issue-id-or-key,omitempty" struct:"issueIdOrKey"`
+	UpdateHistory bool   `json:"update-history,omitempty" struct:"updateHistory"`
 }
 type GetIssueOutput struct {
 	Issue
@@ -36,27 +39,12 @@ func (jiraClient *Client) getIssueTask(ctx context.Context, props *structpb.Stru
 		return nil, err
 	}
 	debug.AddMessage(fmt.Sprintf("GetIssueInput: %+v", opt))
-	debug.AddMapMessage("opt", opt)
-	issue, err := jiraClient.getIssue(ctx, &opt)
-	if err != nil {
-		return nil, err
-	}
-	return base.ConvertToStructpb(issue)
-}
-
-func (jiraClient *Client) getIssue(_ context.Context, opt *GetIssueInput) (*GetIssueOutput, error) {
-	var debug DebugSession
-	debug.SessionStart("getIssue", StaticVerboseLevel)
-	defer debug.SessionEnd()
 
 	apiEndpoint := fmt.Sprintf("rest/agile/1.0/issue/%s", opt.IssueKeyOrID)
-
 	req := jiraClient.Client.R().SetResult(&GetIssueOutput{})
 
-	debug.AddMapMessage("opt", *opt)
-
 	opt.IssueKeyOrID = "" // Remove from query params
-	err := addQueryOptions(req, *opt)
+	err := addQueryOptions(req, opt)
 	if err != nil {
 		return nil, err
 	}
@@ -77,6 +65,37 @@ func (jiraClient *Client) getIssue(_ context.Context, opt *GetIssueInput) (*GetI
 	debug.AddMapMessage("QueryParam", resp.Request.QueryParam)
 	debug.AddMessage("Status", resp.Status())
 
-	boards := resp.Result().(*GetIssueOutput)
-	return boards, err
+	issue, ok := resp.Result().(*GetIssueOutput)
+	if !ok {
+		return nil, errmsg.AddMessage(
+			fmt.Errorf("failed to convert response to `Get Issue` Output"),
+			fmt.Sprintf("failed to convert %v to `Get Issue` Output", resp.Result()),
+		)
+	}
+
+	if issue.Description == "" && issue.Fields["description"] != nil {
+		if issue.Description, ok = issue.Fields["description"].(string); !ok {
+			issue.Description = ""
+		}
+	}
+	if issue.Summary == "" && issue.Fields["summary"] != nil {
+		if issue.Summary, ok = issue.Fields["summary"].(string); !ok {
+			issue.Summary = ""
+		}
+	}
+	if issue.IssueType == "" && issue.Fields["issuetype"] != nil {
+		if issueType, ok := issue.Fields["issuetype"]; ok {
+			if issue.IssueType, ok = issueType.(map[string]interface{})["name"].(string); !ok {
+				issue.IssueType = ""
+			}
+		}
+	}
+	if issue.Status == "" && issue.Fields["status"] != nil {
+		if status, ok := issue.Fields["status"]; ok {
+			if issue.Status, ok = status.(map[string]interface{})["name"].(string); !ok {
+				issue.Status = ""
+			}
+		}
+	}
+	return base.ConvertToStructpb(issue)
 }

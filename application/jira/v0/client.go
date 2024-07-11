@@ -14,9 +14,9 @@ import (
 
 type Client struct {
 	*httpclient.Client
-	APIBaseURL string `json:"api_base_url"`
+	APIBaseURL string `json:"api-base-url"`
 	Domain     string `json:"domain"`
-	CloudID    string `json:"cloud_id"`
+	CloudID    string `json:"cloud-id"`
 }
 
 type CloudID struct {
@@ -26,7 +26,7 @@ type CloudID struct {
 type AuthConfig struct {
 	Email   string `json:"email"`
 	Token   string `json:"token"`
-	BaseURL string `json:"base_url"`
+	BaseURL string `json:"base-url"`
 }
 
 func newClient(_ context.Context, setup *structpb.Struct) (*Client, error) {

@@ -17,7 +17,8 @@ import (
 const (
 	apiBaseURL     = "https://api.atlassian.com"
 	taskListBoards = "TASK_LIST_BOARDS"
-	taskListIssues = "TASK_GET_ISSUE"
+	taskGetIssue   = "TASK_GET_ISSUE"
+	taskGetSprint  = "TASK_GET_SPRINT"
 )
 
 var (
@@ -69,8 +70,10 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	switch task {
 	case taskListBoards:
 		e.execute = e.client.listBoardsTask
-	case taskListIssues:
+	case taskGetIssue:
 		e.execute = e.client.getIssueTask
+	case taskGetSprint:
+		e.execute = e.client.getSprintTask
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),
