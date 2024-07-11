@@ -67,6 +67,7 @@ type ListPullRequestsInput struct {
 	State     string `json:"state"`
 	Sort      string `json:"sort"`
 	Direction string `json:"direction"`
+	PageOptions
 }
 type ListPullRequestsResp struct {
 	PullRequests []PullRequest `json:"pull-requests"`
@@ -88,6 +89,10 @@ func (githubClient *Client) listPullRequestsTask(ctx context.Context, props *str
 		State:     inputStruct.State,
 		Sort:      inputStruct.Sort,
 		Direction: inputStruct.Direction,
+		ListOptions: github.ListOptions{
+			Page:    inputStruct.Page,
+			PerPage: min(inputStruct.PerPage, 100), // GitHub API only allows 100 per page
+		},
 	}
 	prs, _, err := githubClient.PullRequests.List(ctx, owner, repository, opts)
 	if err != nil {
@@ -145,6 +150,10 @@ func (githubClient *Client) getPullRequestTask(ctx context.Context, props *struc
 			State:     "all",
 			Sort:      "created",
 			Direction: "desc",
+			ListOptions: github.ListOptions{
+				Page:    1,
+				PerPage: 1,
+			},
 		}
 		prs, _, err := githubClient.PullRequests.List(ctx, owner, repository, opts)
 		if err != nil {
