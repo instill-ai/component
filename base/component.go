@@ -18,6 +18,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 
 	"github.com/instill-ai/component/internal/jsonref"
+	"github.com/instill-ai/x/errmsg"
 
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -852,6 +853,62 @@ func (e *ComponentExecution) GetTaskOutputSchema() string {
 // they have the ability to read global secrets and be executed without
 // explicit credentials.
 func (e *ComponentExecution) UsesInstillCredentials() bool { return false }
+
+// Fills input fields of the task with default values in place.
+func (e *ComponentExecution) FillInDefaultValues(input *structpb.Struct) error {
+	task := e.Task
+	taskSpec, ok := e.Component.GetTaskInputSchemas()[task]
+	if !ok {
+		return errmsg.AddMessage(
+			fmt.Errorf("task %s not found", task),
+			fmt.Sprintf("Task %s not found", task),
+		)
+	}
+	var taskSpecMap map[string]interface{}
+	if err := json.Unmarshal([]byte(taskSpec), &taskSpecMap); err != nil {
+		return errmsg.AddMessage(
+			err,
+			"Failed to unmarshal input",
+		)
+	}
+	inputMap := taskSpecMap["properties"].(map[string]interface{})
+	for key, value := range inputMap {
+		valueMap, ok := value.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := valueMap["default"]; !ok {
+			continue
+		}
+		if _, ok := input.GetFields()[key]; ok {
+			continue
+		}
+		// TODO: We can add logger or warning here to notify that the default value is used.
+		defaultValue := valueMap["default"]
+		typeValue := valueMap["type"]
+		switch typeValue {
+		case "string":
+			input.GetFields()[key] = &structpb.Value{
+				Kind: &structpb.Value_StringValue{
+					StringValue: fmt.Sprintf("%v", defaultValue),
+				},
+			}
+		case "integer", "number":
+			input.GetFields()[key] = &structpb.Value{
+				Kind: &structpb.Value_NumberValue{
+					NumberValue: defaultValue.(float64),
+				},
+			}
+		case "boolean":
+			input.GetFields()[key] = &structpb.Value{
+				Kind: &structpb.Value_BoolValue{
+					BoolValue: defaultValue.(bool),
+				},
+			}
+		}
+	}
+	return nil
+}
 
 // ReadFromGlobalConfig looks up a component credential field from a secret map
 // that comes from the environment variable configuration.
