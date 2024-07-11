@@ -115,8 +115,9 @@
       "instillUIOrder": 0,
       "properties": {
         "jsonInput": {
-          "instillUIOrder": 0,
-          "description": "JSON string to be processed",
+          "instillUIOrder": 2,
+          "description": "(DEPRECATED, use 'JSON value' instead) JSON string to be processed. This field allows templated inputs, but the data might preprocessing (marshalling). This field will be used in absence of 'JSON value' for backwards compatibility reasons.",
+          "instillShortDescription": "(DEPRECATED) JSON string to be processed",
           "instillAcceptFormats": [
             "string"
           ],
@@ -126,8 +127,23 @@
             "template"
           ],
           "instillUIMultiline": true,
-          "title": "JSON input",
+          "title": "(DEPRECATED) JSON input",
           "type": "string"
+        },
+        "json-value": {
+          "instillUIOrder": 0,
+          "description": "JSON value (e.g. string, number, object, array...) to be processed by the filter",
+          "instillAcceptFormats": [
+            "object",
+            "structured/*",
+            "semi-structured/*"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIMultiline": true,
+          "title": "JSON value"
         },
         "jqFilter": {
           "instillUIOrder": 1,
@@ -146,7 +162,10 @@
         }
       },
       "required": [
-        "jsonInput",
+        "jqFilter"
+      ],
+      "instillEditOnNodeFields": [
+        "json-value",
         "jqFilter"
       ],
       "title": "Input",
