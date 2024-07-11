@@ -119,7 +119,7 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 
 	outputStruct := textGenerationOutput{}
 
-	outputStruct.Text = resp.Choices[len(resp.Choices)-1].Message.Content
+	outputStruct.Text = resp.Choices[0].Message.Content
 	outputStruct.Usage = chatUsage{
 		InputTokens:  resp.Usage.PromptTokens,
 		OutputTokens: resp.Usage.CompletionTokens,
