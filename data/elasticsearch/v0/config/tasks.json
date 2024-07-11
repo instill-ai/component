@@ -1,0 +1,327 @@
+{
+  "TASK_INDEX": {
+    "instillShortDescription": "Index a document into Elasticsearch",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "index-name": {
+          "description": "Name of the Elasticsearch index",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Index Name",
+          "type": "string"
+        },
+        "data": {
+          "description": "Data to be indexed",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Data"
+        }
+      },
+      "required": [
+        "index-name",
+        "data"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Index operation status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_UPDATE": {
+    "instillShortDescription": "Update a document in Elasticsearch",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "index-name": {
+          "description": "Name of the Elasticsearch index",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Index Name",
+          "type": "string"
+        },
+        "query": {
+          "description": "Query to be used for update, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type":"string",
+          "title": "Query"
+        },
+        "criteria": {
+          "description": "Criteria for selecting documents to update, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Criteria"
+        },
+        "update": {
+          "description": "Update data",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Update"
+        }
+      },
+      "required": [
+        "index-name",
+        "update"
+      ],
+      "instillEditOnNodeFields": [
+        "index-name",
+        "query",
+        "criteria",
+        "update"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Update operation status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_SEARCH": {
+    "instillShortDescription": "Search for documents in Elasticsearch",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "index-name": {
+          "description": "Name of the Elasticsearch index",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Index Name",
+          "type": "string"
+        },
+        "query": {
+          "description": "Query to be used for search, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type":"string",
+          "title": "Query"
+        },
+        "criteria": {
+          "description": "Criteria for selecting documents to search, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Criteria"
+        }
+      },
+      "required": [
+        "index-name"
+      ],
+      "instillEditOnNodeFields": [
+        "index-name",
+        "query",
+        "criteria"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "documents": {
+          "description": "Search result documents",
+          "instillUIOrder": 0,
+          "title": "Documents",
+          "type": "array",
+          "instillFormat": "array:semi-structured/json",
+          "items": {
+            "title": "Document",
+            "instillFormat": "semi-structured/json"
+          }
+        },
+        "status": {
+          "description": "Search operation status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "documents",
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_DELETE": {
+    "instillShortDescription": "Delete documents from Elasticsearch",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "index-name": {
+          "description": "Name of the Elasticsearch index",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Index Name",
+          "type": "string"
+        },
+        "query": {
+          "description": "Query to be used for delete, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type":"string",
+          "title": "Query"
+        },
+        "criteria": {
+          "description": "Criteria for selecting documents to delete, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Criteria"
+        }
+      },
+      "required": [
+        "index-name"
+      ],
+      "instillEditOnNodeFields": [
+        "index-name",
+        "query",
+        "criteria"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Delete operation status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  }
+}
