@@ -659,6 +659,18 @@
         },
         "usage": {
           "$ref": "#/$defs/rerank-usage"
+        },
+        "relevance": {
+          "instillFormat": "array:number",
+          "items": {
+            "instillFormat": "number",
+            "title": "Relevance",
+            "type": "number"
+          },
+          "type": "array",
+          "description": "The relevance scores of the reranked documents",
+          "instillUIOrder": 0,
+          "title": "Reranked documents relevance"
         }
       },
       "required": [
