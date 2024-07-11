@@ -1,0 +1,266 @@
+---
+title: "GitHub"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP GitHub component https://github.com/instill-ai/instill-core"
+---
+
+The GitHub component is an application component that allows users to do anything available on GitHub.
+It can carry out the following tasks:
+
+- [List Pull Requests](#list-pull-requests)
+- [Get Pull Request](#get-pull-request)
+- [Get Commit](#get-commit)
+- [Get Review Comments](#get-review-comments)
+- [Create Review Comment](#create-review-comment)
+- [List Issues](#list-issues)
+- [Get Issue](#get-issue)
+- [Create Issue](#create-issue)
+- [Create Webhook](#create-webhook)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/application/github/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Token | `token` | string | Fill in your GitHub access token for advanced usages. For more information about how to create tokens, please refer to the https://github.com/settings/tokens. |
+
+
+
+
+## Supported Tasks
+
+### List Pull Requests
+
+Get the list of all pull requests in a repository
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_LIST_PULL_REQUESTS` |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| State | `state` | string | State of the PRs, including open, closed, all. Default is open |
+| Sort | `sort` | string | Sort the PRs by created, updated, popularity, or long-running. Default is created |
+| Direction | `direction` | string | Direction of the sort, including asc or desc. Default is desc |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Pull Requests | `pull_requests` | array[object] | An array of PRs |
+
+
+
+
+
+
+### Get Pull Request
+
+Get a pull request from a repository, given the PR number. This will default to the latest PR if no PR number is provided
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_PULL_REQUEST` |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| PR Number | `pr_number` | integer | Number of the PR. `0` for the latest PR |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Pull Request | `pull_request` | object | A pull request in GitHub |
+
+
+
+
+
+
+### Get Commit
+
+Get a commit from a repository, given the commit SHA
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_COMMIT` |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| Commit SHA (required) | `sha` | string | SHA of the commit |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Commit | `commit` | object | A commit in GitHub |
+
+
+
+
+
+
+### Get Review Comments
+
+Get the review comments in a pull request
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_REVIEW_COMMENTS` |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| PR Number | `pr_number` | integer | Number of the PR. Default `0` is the latest PR |
+| Sort | `sort` | string | Sort the comments by created, updated. Default is created |
+| Direction | `direction` | string | Direction of the sort, including asc or desc. Default is desc |
+| Since | `since` | string | Only comments updated at or after this time are returned. Default is 2021-01-01T00:00:00Z |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Comments | `comments` | array[object] | An array of comments |
+
+
+
+
+
+
+### Create Review Comment
+
+Create a review comment in pull request.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CREATE_REVIEW_COMMENT` |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| PR Number (required) | `pr_number` | integer | Number of the PR |
+| Comment (required) | `comment` | object | The comment to be added |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Review Comment | `comment` | object | The created comment |
+
+
+
+
+
+
+### List Issues
+
+Get the list of all issues in a repository
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_LIST_ISSUES` |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| State | `state` | string | State of the issues, can be one of: open, closed, all. Default is open |
+| Sort | `sort` | string | Sort the issues by created, updated, popularity, or long-running. Default is created |
+| Direction | `direction` | string | Direction of the sort, can be one of: asc, desc. Default is desc |
+| Since | `since` | string | Only issues updated at or after this time are returned. Default is 2021-01-01T00:00:00Z |
+| No Pull Request | `no_pull_request` | boolean | Whether to not include pull requests in the issues. Default is false |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Issues | `issues` | array[object] | An array of issues |
+
+
+
+
+
+
+### Get Issue
+
+Get an issue.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_ISSUE` |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| Issue Number (required) | `issue_number` | integer | Number of the issue |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Issue | `issue` | object | An issue in GitHub |
+
+
+
+
+
+
+### Create Issue
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CREATE_ISSUE` |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| Issue title (required) | `title` | string | Title of the issue |
+| Issue body (required) | `body` | string | Body of the issue |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Issue | `issue` | object | The created issue |
+
+
+
+
+
+
+### Create Webhook
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CREATE_WEBHOOK` |
+| Owner (required) | `owner` | string | Owner of the repository |
+| Repository (required) | `repository` | string | Repository name |
+| Webhook URL (required) | `hook_url` | string | URL to send the payload to |
+| Events (required) | `events` | array[string] | Events to trigger the webhook. Please see https://docs.github.com/en/webhooks/webhook-events-and-payloads for more information |
+| Active | `active` | boolean | Whether the webhook is active. Default is false |
+| Content Type | `content_type` | string | Content type of the webhook, can be one of: json, form. Default is json |
+| Hook Secret | `hook_secret` | string | If provided, the secret will be used as the key to generate the HMAC hex digest value for delivery signature headers. (see https://docs.github.com/en/webhooks/webhook-events-and-payloads#delivery-headers) |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Webhook | `hook` | object | The created webhook |
+
+
+
+
+
+
+
