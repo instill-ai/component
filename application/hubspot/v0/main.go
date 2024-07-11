@@ -19,6 +19,8 @@ const (
 	taskCreateContact       = "TASK_CREATE_CONTACT"
 	taskGetDeal             = "TASK_GET_DEAL"
 	taskCreateDeal          = "TASK_CREATE_DEAL"
+	taskGetTicket           = "TASK_GET_TICKET"
+	taskCreateTicket        = "TASK_CREATE_TICKET"
 	taskGetThread           = "TASK_GET_THREAD"
 	taskRetrieveAssociation = "TASK_RETRIEVE_ASSOCIATION"
 )
@@ -144,7 +146,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 			uniqueKey := input.Fields["deal-id"].GetStringValue()
 
-			res, err := e.client.CRM.Deal.Get(uniqueKey, &DealInfoHSFormat{}, nil)
+			res, err := e.client.CRM.Deal.Get(uniqueKey, &DealInfoHSFormat{}, &hubspot.RequestQueryOption{Associations: []string{"contacts"}})
 
 			if err != nil {
 				return nil, err
@@ -159,6 +161,17 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			if err != nil {
 				return nil, err
 			}
+
+			// handling contacts associated with deal
+			dealInfoAssociation := res.Associations
+
+			if dealInfoAssociation != nil {
+				associationList := ConvertAssociatedResultToListValue(&res.Associations.Contacts.Results)
+
+				// add associated contact to output struct pb
+				output.Fields["associated-contact-id"] = structpb.NewListValue(associationList)
+			}
+
 			outputs = append(outputs, output)
 
 		case taskCreateDeal:
@@ -189,29 +202,70 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			uniqueKey := input.Fields["contact-id-or-email"].GetStringValue()
 
 			if uniqueKey != "" {
-				if strings.Contains(uniqueKey, "@") {
-					uniqueKey += "?idProperty=email"
+				associateContactToObject(uniqueKey, "Deals", dealId, e)
+			}
 
-					//get contact id first using email
-					res, err := e.client.CRM.Contact.Get(uniqueKey, &ContactIDHSFormat{}, nil)
+			outputs = append(outputs, output)
 
-					if err != nil {
-						return nil, err
-					}
+		case taskGetTicket:
+			uniqueKey := input.Fields["ticket-id"].GetStringValue()
 
-					uniqueKey = res.Properties.(*ContactIDHSFormat).ContactId
+			res, err := e.client.Ticket.Get(uniqueKey)
+			if err != nil {
+				return nil, err
+			}
 
-				}
+			ticketInfo := res.Properties.(*TicketInfoHSFormat)
 
-				_, err := e.client.CRM.Contact.AssociateAnotherObj(uniqueKey, &hubspot.AssociationConfig{
-					ToObject:   hubspot.ObjectTypeDeal,
-					ToObjectID: dealId,
-					Type:       hubspot.AssociationTypeContactToDeal,
-				})
+			// convert to another struct in order to utilize base.ConvertToStructpb
+			ticketInfoOutput := TicketConvertToTaskFormat(ticketInfo)
 
-				if err != nil {
-					return nil, err
-				}
+			output, err := base.ConvertToStructpb(ticketInfoOutput)
+			if err != nil {
+				return nil, err
+			}
+
+			// handling contacts associated with ticket
+			ticketInfoAssociation := res.Associations
+
+			if ticketInfoAssociation != nil {
+				associationList := ConvertAssociatedResultToListValue(&res.Associations.Contacts.Results)
+
+				// add associated contact to output struct pb
+				output.Fields["associated-contact-id"] = structpb.NewListValue(associationList)
+			}
+			outputs = append(outputs, output)
+
+		case taskCreateTicket:
+
+			ticketInfoInput := TicketInfoTaskFormat{}
+			err := base.ConvertFromStructpb(input, &ticketInfoInput)
+
+			if err != nil {
+				return nil, err
+			}
+
+			ticketInfoReq := TicketConvertToHSFormat(&ticketInfoInput)
+
+			res, err := e.client.Ticket.Create(ticketInfoReq)
+
+			if err != nil {
+				return nil, err
+			}
+
+			// get ticket Id
+			ticketId := res.Properties.(*TicketInfoHSFormat).TicketId
+
+			output := new(structpb.Struct)
+			output.Fields = map[string]*structpb.Value{
+				"ticket-id": structpb.NewStringValue(ticketId),
+			}
+
+			// this section of the code is used to associate contact with ticket if there is any
+			uniqueKey := input.Fields["contact-id-or-email"].GetStringValue()
+
+			if uniqueKey != "" {
+				associateContactToObject(uniqueKey, "Tickets", ticketId, e)
 			}
 
 			outputs = append(outputs, output)
@@ -241,6 +295,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 			var output *structpb.Struct
 
+			// API calls to retrieve association for Threads and CRM objects are different
 			switch retrieveInput.ObjectType {
 			case "Threads":
 				// To handle Threads
@@ -295,4 +350,54 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	}
 
 	return outputs, nil
+}
+
+func associateContactToObject(uniqueKey string, objectType string, objectId string, e *execution) error {
+	if strings.Contains(uniqueKey, "@") {
+		uniqueKey += "?idProperty=email"
+
+		//get contact id first using email
+		res, err := e.client.CRM.Contact.Get(uniqueKey, &ContactIDHSFormat{}, nil)
+
+		if err != nil {
+			return err
+		}
+
+		uniqueKey = res.Properties.(*ContactIDHSFormat).ContactId
+
+	}
+
+	var associationType hubspot.AssociationType
+	switch objectType {
+	case "Deals":
+		associationType = hubspot.AssociationTypeContactToDeal
+	case "Tickets":
+		associationType = hubspot.AssociationTypeContactToTicket
+	case "Companies":
+		associationType = hubspot.AssociationTypeContactToCompany
+	}
+
+	_, err := e.client.CRM.Contact.AssociateAnotherObj(uniqueKey, &hubspot.AssociationConfig{
+		ToObject:   hubspot.ObjectTypeDeal,
+		ToObjectID: objectId,
+		Type:       associationType,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func ConvertAssociatedResultToListValue(contactId *[]hubspot.AssociationResult) *structpb.ListValue {
+
+	ids := make([]*structpb.Value, len(*contactId))
+	for index, value := range *contactId {
+		ids[index] = structpb.NewStringValue(value.ID)
+	}
+
+	ret := &structpb.ListValue{Values: ids}
+
+	return ret
 }

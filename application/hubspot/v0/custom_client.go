@@ -5,11 +5,12 @@ import (
 )
 
 // need to create CustomClient because the go-hubspot sdk we are using does not support threads (conversation inbox)
-// future functionalities that go-huspot sdk doesn't support will go here.
+// future functionalities that go-huspot sdk doesn't support will go here or need to be modified will go here.
 type CustomClient struct {
 	*hubspot.Client
 	Thread              ThreadService
 	RetrieveAssociation RetrieveAssociationService
+	Ticket              TicketService
 }
 
 func NewCustomClient(setAuthMethod hubspot.AuthMethod, opts ...hubspot.Option) (*CustomClient, error) {
@@ -31,6 +32,10 @@ func NewCustomClient(setAuthMethod hubspot.AuthMethod, opts ...hubspot.Option) (
 			retrieveCrmIdPath:    "crm/v3/associations/Contacts",
 			retrieveThreadIdPath: "conversations/v3/conversations/threads?associatedContactId=",
 			client:               c,
+		},
+		Ticket: &TicketServiceOp{
+			ticketPath: "crm/v3/objects/tickets",
+			client:     c,
 		},
 	}
 
