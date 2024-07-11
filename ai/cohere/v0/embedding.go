@@ -83,6 +83,19 @@ func (e *execution) taskEmbedding(in *structpb.Struct) (*structpb.Struct, error)
 			return nil, err
 		}
 		return output, nil
+	case "float":
+		bills := resp.EmbeddingsByType.Meta.BilledUnits
+		outputStruct := embeddingFloatOutput{
+			Usage: embedUsage{
+				Tokens: int(*bills.InputTokens),
+			},
+			Embedding: resp.EmbeddingsByType.Embeddings.Float[0],
+		}
+		output, err := base.ConvertToStructpb(outputStruct)
+		if err != nil {
+			return nil, err
+		}
+		return output, nil
 	default:
 		bills := resp.EmbeddingsFloats.Meta.BilledUnits
 		outputStruct := embeddingFloatOutput{
