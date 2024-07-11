@@ -9,7 +9,7 @@ import (
 func newClient(setup *structpb.Struct) (*esapi.Search, *esapi.Index, *esapi.UpdateByQuery, *esapi.DeleteByQuery) {
 	cfg := elasticsearch.Config{
 		CloudID: getCloudID(setup),
-		APIKey:  getApiKey(setup),
+		APIKey:  getAPIKey(setup),
 	}
 
 	es, _ := elasticsearch.NewClient(cfg)
@@ -17,7 +17,7 @@ func newClient(setup *structpb.Struct) (*esapi.Search, *esapi.Index, *esapi.Upda
 }
 
 // Need to confirm where the map is
-func getApiKey(setup *structpb.Struct) string {
+func getAPIKey(setup *structpb.Struct) string {
 	return setup.GetFields()["api-key"].GetStringValue()
 }
 
