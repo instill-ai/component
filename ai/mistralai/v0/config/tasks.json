@@ -377,35 +377,15 @@
           ],
           "title": "Text",
           "type": "string"
-        },
-        "embedding-type": {
-          "enum": [
-            "float"
-          ],
-          "example": "float",
-          "description": "Specifies the return type of embedding.",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 0,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "Embedding Type",
-          "type": "string"
         }
       },
       "required": [
         "text",
-        "model-name",
-        "embedding-type"
+        "model-name"
       ],
       "instillEditOnNodeFields": [
         "text",
-        "model-name",
-        "embedding-type"
+        "model-name"
       ],
       "title": "Input",
       "type": "object"

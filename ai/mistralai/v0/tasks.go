@@ -47,9 +47,8 @@ type textGenerationOutput struct {
 }
 
 type textEmbeddingInput struct {
-	Text          string `json:"text"`
-	ModelName     string `json:"model-name"`
-	EmbeddingType string `json:"embedding-type"`
+	Text      string `json:"text"`
+	ModelName string `json:"model-name"`
 }
 
 type textEmbeddingUsage struct {
