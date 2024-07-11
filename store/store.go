@@ -17,6 +17,7 @@ import (
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
 	"github.com/instill-ai/component/application/email/v0"
+	"github.com/instill-ai/component/application/github/v0"
 	"github.com/instill-ai/component/application/googlesearch/v0"
 
 	"github.com/instill-ai/component/application/numbers/v0"
@@ -82,6 +83,7 @@ func Init(
 		compStore.Import(text.Init(baseComp))
 		compStore.Import(document.Init(baseComp))
 
+		compStore.Import(github.Init(baseComp))
 		{
 			// StabilityAI
 			conn := stabilityai.Init(baseComp)
