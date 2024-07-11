@@ -14,7 +14,6 @@ Language models have a token limit. You should not exceed the token limit. When 
 | `model-name`         | string           | The name of the model used for tokenization                                                                                                                                                                  |
 | `allowed-special`    | array of strings | A list of special tokens that are allowed within chunks                                                                                                                                                      |
 | `disallowed-special` | array of strings | A list of special tokens that should not appear within chunks                                                                                                                                                |
-| `show-token-count`   | boolean          | When it is set to True, the number of tokens in each chunk is included in the resulting split text. When it is set to False, the number of tokens in each chunk is not included in the resulting split text. |
 
 #### Recursive
 This text splitter is the recommended one for generic text. It is parameterized by a list of characters. It tries to split on them in order until the chunks are small enough. The default list is ["\n\n", "\n", " ", ""]. This has the effect of trying to keep all paragraphs (and then sentences, and then words) together as long as possible, as those would generically seem to be the strongest semantically related pieces of text.
@@ -26,7 +25,6 @@ This text splitter is the recommended one for generic text. It is parameterized 
 | `model-name`       | string           | The name of the model used for tokenization                                                                                                                                                                  |
 | `separators`       | array of strings | A list of strings representing the separators used to split the text                                                                                                                                         |
 | `keep-separator`   | boolean          | A flag indicating whether to keep the separator characters at the beginning or end of chunks                                                                                                                 |
-| `show-token-count` | boolean          | When it is set to True, the number of tokens in each chunk is included in the resulting split text. When it is set to False, the number of tokens in each chunk is not included in the resulting split text. |
 
 
 #### Markdown
@@ -39,7 +37,6 @@ This text splitter is specially designed for Markdown format.
 | `model-name`       | string   | The name of the model used for tokenization                                                                                                                                                                  |
 | `code-blocks`      | boolean  | A flag indicating whether code blocks should be treated as a single unit                                                                                                                                     |
 | `reference-links`  | boolean  | A flag indicating whether reference links should be kept intact                                                                                                                                              |
-| `show-token-count` | boolean  | When it is set to True, the number of tokens in each chunk is included in the resulting split text. When it is set to False, the number of tokens in each chunk is not included in the resulting split text. |
 
 ### Text Chunks in Output
 | **Parameter**    | **Type** | **Description**                                              |

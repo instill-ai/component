@@ -92,19 +92,6 @@
       ],
       "title": "Model",
       "type": "string"
-    },
-    "show-token-count": {
-      "description": "Response the token count in the output or not",
-      "instillAcceptFormats": [
-        "boolean"
-      ],
-      "instillUIOrder": 3,
-      "instillUpstreamTypes": [
-        "value",
-        "reference"
-      ],
-      "title": "Show Token Count",
-      "type": "boolean"
     }
   },
   "TASK_CONVERT_TO_TEXT": {
@@ -259,9 +246,6 @@
                       ],
                       "title": "Disallowed Special Tokens",
                       "type": "array"
-                    },
-                    "show-token-count": {
-                      "$ref": "#/$defs/show-token-count"
                     }
                   },
                   "required": [
@@ -273,8 +257,7 @@
                     "chunk-overlap",
                     "model-name",
                     "allowed-special",
-                    "disallowed-special",
-                    "show-token-count"
+                    "disallowed-special"
                   ],
                   "type": "object"
                 },
@@ -325,9 +308,6 @@
                       ],
                       "title": "Keep Separator",
                       "type": "boolean"
-                    },
-                    "show-token-count": {
-                      "$ref": "#/$defs/show-token-count"
                     }
                   },
                   "required": [
@@ -339,8 +319,7 @@
                     "chunk-overlap",
                     "model-name",
                     "separators",
-                    "keep-separator",
-                    "show-token-count"
+                    "keep-separator"
                   ],
                   "type": "object"
                 },
@@ -386,9 +365,6 @@
                       ],
                       "title": "Reference Links",
                       "type": "boolean"
-                    },
-                    "show-token-count": {
-                      "$ref": "#/$defs/show-token-count"
                     }
                   },
                   "required": [
@@ -400,8 +376,7 @@
                     "chunk-overlap",
                     "model-name",
                     "code-blocks",
-                    "reference-links",
-                    "show-token-count"
+                    "reference-links"
                   ],
                   "type": "object"
                 }

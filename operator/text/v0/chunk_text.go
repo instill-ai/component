@@ -28,7 +28,6 @@ type Setting struct {
 	KeepSeparator     bool     `json:"keep-separator,omitempty"`
 	CodeBlocks        bool     `json:"code-blocks,omitempty"`
 	ReferenceLinks    bool     `json:"reference-links,omitempty"`
-	ShowTokenCount    bool     `json:"show-token-count"`
 	// TODO: Add SecondSplitter, which is to set the details about how to chunk the paragraphs in Markdown format.
 	// https://pkg.go.dev/github.com/tmc/langchaingo@v0.1.10/textsplitter#MarkdownTextSplitter
 	// secondSplitter textsplitter.TextSplitter
@@ -110,14 +109,12 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		)
 	}
 
-	if setting.ShowTokenCount {
-		tkm, err := tiktoken.EncodingForModel(setting.ModelName)
-		if err != nil {
-			return output, err
-		}
-		token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
-		output.TokenCount = len(token)
+	tkm, err := tiktoken.EncodingForModel(setting.ModelName)
+	if err != nil {
+		return output, err
 	}
+	token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
+	output.TokenCount = len(token)
 
 	chunks, err := split.SplitText(input.Text)
 	if err != nil {
