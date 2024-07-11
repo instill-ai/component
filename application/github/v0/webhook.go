@@ -34,6 +34,7 @@ type HookInfo struct {
 type CreateWebHookResp struct {
 	HookInfo
 }
+
 func (githubClient *Client) extractHook(originalHook *github.Hook) HookInfo {
 	return HookInfo{
 		ID:      originalHook.GetID(),
