@@ -153,7 +153,8 @@
             "open-mixtral-8x7b",
             "open-mistral-7b",
             "mistral-large-latest",
-            "mistral-small-latest"
+            "mistral-small-latest",
+            "codestral-latest"
           ],
           "example": "open-mixtral-8x22b",
           "description": "The Mistral model to be used",
@@ -172,7 +173,8 @@
               "open-mixtral-8x7b",
               "open-mistral-7b",
               "mistral-large-latest",
-              "mistral-small-latest"
+              "mistral-small-latest",
+              "codestral-latest"
             ],
             "targets": [
               "setup.api-key"
@@ -351,7 +353,15 @@
             "template"
           ],
           "title": "Model Name",
-          "type": "string"
+          "type": "string",
+          "instillCredentialMap": {
+            "values": [
+              "mistral-embed"
+            ],
+            "targets": [
+              "setup.api-key"
+            ]
+          }
         },
         "text": {
           "description": "The text",
