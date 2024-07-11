@@ -10,29 +10,43 @@ import (
 
 type CreateWebHookInput struct {
 	RepoInfo
-	HookURL     string   `json:"hook_url"`
-	HookSecret  string   `json:"hook_secret"`
+	HookURL     string   `json:"hook-url"`
+	HookSecret  string   `json:"hook-secret"`
 	Events      []string `json:"events"`
 	Active      bool     `json:"active"`
-	ContentType string   `json:"content_type"` // including `json`, `form`
+	ContentType string   `json:"content-type"` // including `json`, `form`
 }
 
 type HookConfig struct {
 	URL         string `json:"url"`
-	InsecureSSL string `json:"insecure_ssl"`
+	InsecureSSL string `json:"insecure-ssl"`
 	Secret      string `json:"secret,omitempty"`
-	ContentType string `json:"content_type"`
+	ContentType string `json:"content-type"`
 }
 
 type HookInfo struct {
 	ID      int64      `json:"id"`
 	URL     string     `json:"url"`
-	PingURL string     `json:"ping_url"`
-	TestURL string     `json:"test_url"`
+	PingURL string     `json:"ping-url"`
+	TestURL string     `json:"test-url"`
 	Config  HookConfig `json:"config"`
 }
 type CreateWebHookResp struct {
 	HookInfo
+}
+func (githubClient *Client) extractHook(originalHook *github.Hook) HookInfo {
+	return HookInfo{
+		ID:      originalHook.GetID(),
+		URL:     originalHook.GetURL(),
+		PingURL: originalHook.GetPingURL(),
+		TestURL: originalHook.GetTestURL(),
+		Config: HookConfig{
+			URL:         originalHook.GetConfig().GetURL(),
+			InsecureSSL: originalHook.GetConfig().GetInsecureSSL(),
+			Secret:      originalHook.GetConfig().GetSecret(),
+			ContentType: originalHook.GetConfig().GetContentType(),
+		},
+	}
 }
 
 func (githubClient *Client) createWebhookTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -73,15 +87,7 @@ func (githubClient *Client) createWebhookTask(ctx context.Context, props *struct
 	}
 
 	var resp CreateWebHookResp
-	hookStruct, err := base.ConvertToStructpb(hook)
-	if err != nil {
-		return nil, err
-	}
-	var hookInfo HookInfo
-	err = base.ConvertFromStructpb(hookStruct, &hookInfo)
-	if err != nil {
-		return nil, err
-	}
+	hookInfo := githubClient.extractHook(hook)
 	resp.HookInfo = hookInfo
 	out, err := base.ConvertToStructpb(resp)
 	if err != nil {

@@ -23,7 +23,7 @@ type Issue struct {
 	Assignee      string   `json:"assignee"`
 	Assignees     []string `json:"assignees"`
 	Labels        []string `json:"labels"`
-	IsPullRequest bool     `json:"is_pull_request"`
+	IsPullRequest bool     `json:"is-pull-request"`
 }
 
 func (githubClient *Client) extractIssue(originalIssue *github.Issue) Issue {
@@ -78,7 +78,7 @@ type ListIssuesInput struct {
 	Sort          string `json:"sort"`
 	Direction     string `json:"direction"`
 	Since         string `json:"since"`
-	NoPullRequest bool   `json:"no_pull_request"`
+	NoPullRequest bool   `json:"no-pull-request"`
 }
 
 type ListIssuesResp struct {
@@ -120,7 +120,7 @@ func (githubClient *Client) listIssuesTask(ctx context.Context, props *structpb.
 		issueList[idx] = githubClient.extractIssue(issue)
 	}
 
-	// filter out pull requests if no_pull_request is true
+	// filter out pull requests if no-pull-request is true
 	if inputStruct.NoPullRequest {
 		issueList = filterOutPullRequests(issueList)
 	}
@@ -135,7 +135,7 @@ func (githubClient *Client) listIssuesTask(ctx context.Context, props *structpb.
 
 type GetIssueInput struct {
 	RepoInfo
-	IssueNumber int `json:"issue_number"`
+	IssueNumber int `json:"issue-number"`
 }
 
 type GetIssueResp struct {

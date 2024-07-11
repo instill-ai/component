@@ -1,6 +1,6 @@
 {
   "$defs": {
-    "pull_request": {
+    "pull-request": {
       "description": "A pull request object.",
       "properties": {
         "id": {
@@ -38,7 +38,7 @@
           "title": "PR body",
           "type": "string"
         },
-        "diff_url": {
+        "diff-url": {
           "description": "url to the diff of the PR",
           "instillFormat": "string",
           "instillUIOrder": 6,
@@ -59,21 +59,21 @@
           "title": "PR base",
           "type": "string"
         },
-        "comments_num": {
+        "comments-num": {
           "description": "number of comments on the PR",
           "instillFormat": "integer",
           "instillUIOrder": 10,
           "title": "Number of PR comments",
           "type": "integer"
         },
-        "commits_num": {
+        "commits-num": {
           "description": "number of commits in the PR",
           "instillFormat": "integer",
           "instillUIOrder": 11,
           "title": "Number of PR commits",
           "type": "integer"
         },
-        "review_comments_num": {
+        "review-comments-num": {
           "description": "number of review comments in the PR",
           "instillFormat": "integer",
           "instillUIOrder": 12,
@@ -189,7 +189,7 @@
       "title": "Commit File",
       "type": "object"
     },
-    "repository_info": {
+    "repository-info": {
       "owner": {
         "description": "Owner of the repository",
         "instillUIMultiline": false,
@@ -223,7 +223,7 @@
         "type": "string"
       }
     },
-    "review_comments": {
+    "review-comments": {
       "description": "A review comment object.",
       "properties": {
         "id": {
@@ -233,7 +233,7 @@
           "instillFormat": "integer",
           "type": "integer"
         },
-        "in_reply_to_id": {
+        "in-reply-to-id": {
           "description": "ID of the comment this comment is in reply to",
           "instillFormat": "integer",
           "instillUIOrder": 2,
@@ -269,7 +269,7 @@
           "instillFormat": "integer",
           "type": "integer"
         },
-        "start_line": {
+        "start-line": {
           "description": "The first line in the pull request diff that your multi-line comment applies to. Only multi-line comment needs to fill this field.",
           "instillUIOrder": 7,
           "title": "Comment start line",
@@ -290,7 +290,7 @@
           "instillFormat": "string",
           "type": "string"
         },
-        "start_side": {
+        "start-side": {
           "instillShortDescription": "Side of the start line, can be one of: LEFT, RIGHT, side. Default is side",
           "description": "Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side",
           "default": "side",
@@ -304,7 +304,7 @@
           "instillFormat": "string",
           "type": "string"
         },
-        "subject_type": {
+        "subject-type": {
           "description": "Subject type of the comment, can be one of: line, file. Default is line",
           "instillUIOrder": 10,
           "title": "Comment type",
@@ -316,14 +316,14 @@
           ],
           "type": "string"
         },
-        "created_at": {
+        "created-at": {
           "description": "Time the comment was created",
           "instillUIOrder": 11,
           "title": "Comment created at",
           "instillFormat": "string",
           "type": "string"
         },
-        "updated_at": {
+        "updated-at": {
           "description": "Time the comment was updated",
           "instillUIOrder": 12,
           "title": "Comment updated at",
@@ -418,7 +418,7 @@
             "type": "string"
           }
         },
-        "is_pull_request": {
+        "is-pull-request": {
           "description": "Whether the issue is a pull request",
           "instillUIOrder": 9,
           "title": "Is Pull Request",
@@ -441,7 +441,7 @@
         "repository"
       ],
       "properties": {
-        "$ref": "#/$defs/repository_info",
+        "$ref": "#/$defs/repository-info",
         "state": {
           "default": "open",
           "title": "State",
@@ -515,21 +515,21 @@
       "description": "All PRs in GitHub repository",
       "instillUIOrder": 0,
       "properties": {
-        "pull_requests": {
+        "pull-requests": {
           "description": "An array of PRs",
           "title": "Pull Requests",
           "instillUIOrder": 1,
           "instillFormat": "array:object",
           "type": "array",
           "items": {
-            "$ref": "#/$defs/pull_request",
+            "$ref": "#/$defs/pull-request",
             "required": [],
             "description": "A pull request in GitHub"
           }
         }
       },
       "required": [
-        "pull_requests"
+        "pull-requests"
       ],
       "title": "Output",
       "instillFormat": "object",
@@ -544,11 +544,11 @@
       "instillEditOnNodeFields": [
         "owner",
         "repository",
-        "pr_number"
+        "pr-number"
       ],
       "properties": {
-        "$ref": "#/$defs/repository_info",
-        "pr_number": {
+        "$ref": "#/$defs/repository-info",
+        "pr-number": {
           "default": 0,
           "title": "PR Number",
           "description": "Number of the PR. `0` for the latest PR",
@@ -575,7 +575,7 @@
     "output": {
       "description": "The specific pr in GitHub repository",
       "instillUIOrder": 0,
-      "$ref": "#/$defs/pull_request",
+      "$ref": "#/$defs/pull-request",
       "required": [],
       "title": "Output",
       "instillFormat": "object",
@@ -591,11 +591,11 @@
       "instillEditOnNodeFields": [
         "owner",
         "repository",
-        "pr_number"
+        "pr-number"
       ],
       "properties": {
-        "$ref": "#/$defs/repository_info",
-        "pr_number": {
+        "$ref": "#/$defs/repository-info",
+        "pr-number": {
           "default": 0,
           "title": "PR Number",
           "description": "Number of the PR. Default `0` is the latest PR",
@@ -683,7 +683,7 @@
           "instillFormat": "array:object",
           "type": "array",
           "items": {
-            "$ref": "#/$defs/review_comments",
+            "$ref": "#/$defs/review-comments",
             "required": [],
             "instillUIOrder": 1,
             "description": "Comments in the PR"
@@ -707,11 +707,11 @@
       "instillEditOnNodeFields": [
         "owner",
         "repository",
-        "pr_number"
+        "pr-number"
       ],
       "properties": {
-        "$ref": "#/$defs/repository_info",
-        "pr_number": {
+        "$ref": "#/$defs/repository-info",
+        "pr-number": {
           "title": "PR Number",
           "description": "Number of the PR",
           "instillFormat": "integer",
@@ -732,50 +732,50 @@
           "instillUIOrder": 4,
           "type": "object",
           "properties": {
-            "commit_id": {
-              "$ref": "#/$defs/review_comments/properties/commitId",
+            "commit-id": {
+              "$ref": "#/$defs/review-comments/properties/commitId",
               "instillUIOrder": 0
             },
             "body": {
-              "$ref": "#/$defs/review_comments/properties/body",
+              "$ref": "#/$defs/review-comments/properties/body",
               "instillUIOrder": 1
             },
             "path": {
-              "$ref": "#/$defs/review_comments/properties/path",
+              "$ref": "#/$defs/review-comments/properties/path",
               "instillUIOrder": 2
             },
-            "start_line": {
-              "$ref": "#/$defs/review_comments/properties/start_line",
+            "start-line": {
+              "$ref": "#/$defs/review-comments/properties/start-line",
               "instillUIOrder": 3
             },
             "line": {
-              "$ref": "#/$defs/review_comments/properties/line",
+              "$ref": "#/$defs/review-comments/properties/line",
               "instillUIOrder": 4
             },
-            "start_side": {
-              "$ref": "#/$defs/review_comments/properties/start_side",
+            "start-side": {
+              "$ref": "#/$defs/review-comments/properties/start-side",
               "instillUIOrder": 5
             },
             "side": {
-              "$ref": "#/$defs/review_comments/properties/side",
+              "$ref": "#/$defs/review-comments/properties/side",
               "instillUIOrder": 6
             },
-            "subject_type": {
-              "$ref": "#/$defs/review_comments/properties/subject_type",
+            "subject-type": {
+              "$ref": "#/$defs/review-comments/properties/subject-type",
               "instillUIOrder": 7
             }
           },
           "required": [
             "body",
             "path",
-            "commit_id"
+            "commit-id"
           ]
         }
       },
       "required": [
         "owner",
         "repository",
-        "pr_number",
+        "pr-number",
         "comment"
       ],
       "title": "Input",
@@ -786,7 +786,7 @@
       "description": "The created comment",
       "instillUIOrder": 0,
       "properties": {
-        "$ref": "#/$defs/review_comments/properties"
+        "$ref": "#/$defs/review-comments/properties"
       },
       "required": [],
       "title": "Output",
@@ -805,7 +805,7 @@
         "sha"
       ],
       "properties": {
-        "$ref": "#/$defs/repository_info",
+        "$ref": "#/$defs/repository-info",
         "sha": {
           "$ref": "#/$defs/commit/properties/sha",
           "instillUIOrder": 3
@@ -833,7 +833,7 @@
     }
   },
   "TASK_LIST_ISSUES": {
-    "description": "Get the list of all issues in a repository,This can be a pull request or a general issue, and you can tell by the `is_pull_request` field.",
+    "description": "Get the list of all issues in a repository,This can be a pull request or a general issue, and you can tell by the `is-pull-request` field.",
     "instillShortDescription": "Get the list of all issues in a repository",
     "input": {
       "description": "Please input the repository name and owner",
@@ -843,7 +843,7 @@
         "repository"
       ],
       "properties": {
-        "$ref": "#/$defs/repository_info",
+        "$ref": "#/$defs/repository-info",
         "state": {
           "default": "open",
           "title": "State",
@@ -919,7 +919,7 @@
           "instillUIOrder": 13,
           "type": "string"
         },
-        "no_pull_request": {
+        "no-pull-request": {
           "title": "No Pull Request",
           "description": "Whether to `not` include pull requests in the response. Since issue and pr use the same indexing system in GitHub, the API returns all relevant objects (issues and pr). Default is false",
           "instillFormat": "boolean",
@@ -967,7 +967,7 @@
     }
   },
   "TASK_GET_ISSUE": {
-    "description": "Get an issue. This can be a pull request or a general issue, and you can tell by the `is_pull_request` field.",
+    "description": "Get an issue. This can be a pull request or a general issue, and you can tell by the `is-pull-request` field.",
     "instillShortDescription": "Get an issue.",
     "input": {
       "description": "Please input the repository name and owner",
@@ -975,11 +975,11 @@
       "instillEditOnNodeFields": [
         "owner",
         "repository",
-        "issue_number"
+        "issue-number"
       ],
       "properties": {
-        "$ref": "#/$defs/repository_info",
-        "issue_number": {
+        "$ref": "#/$defs/repository-info",
+        "issue-number": {
           "default": 0,
           "title": "Issue Number",
           "description": "Number of the issue",
@@ -998,7 +998,7 @@
       "required": [
         "owner",
         "repository",
-        "issue_number"
+        "issue-number"
       ],
       "title": "Input",
       "instillFormat": "object",
@@ -1028,7 +1028,7 @@
         "body"
       ],
       "properties": {
-        "$ref": "#/$defs/repository_info",
+        "$ref": "#/$defs/repository-info",
         "title": {
           "$ref": "#/$defs/issue/properties/title",
           "instillUIOrder": 3
@@ -1068,12 +1068,12 @@
       "instillEditOnNodeFields": [
         "owner",
         "repository",
-        "hook_url",
+        "hook-url",
         "events"
       ],
       "properties": {
-        "$ref": "#/$defs/repository_info",
-        "hook_url": {
+        "$ref": "#/$defs/repository-info",
+        "hook-url": {
           "title": "Webhook URL",
           "description": "URL to send the payload to",
           "instillFormat": "string",
@@ -1125,7 +1125,7 @@
           "instillUIOrder": 5,
           "type": "boolean"
         },
-        "content_type": {
+        "content-type": {
           "default": "json",
           "title": "Content Type",
           "description": "Content type of the webhook, can be one of: json, form. Default is json",
@@ -1144,7 +1144,7 @@
           "instillUIOrder": 6,
           "type": "string"
         },
-        "hook_secret": {
+        "hook-secret": {
           "title": "Hook Secret",
           "description": "If provided, the secret will be used as the key to generate the HMAC hex digest value for delivery signature headers. (see https://docs.github.com/en/webhooks/webhook-events-and-payloads#delivery-headers)",
           "instillSecret": true,
@@ -1162,7 +1162,7 @@
       "required": [
         "owner",
         "repository",
-        "hook_url",
+        "hook-url",
         "events"
       ],
       "title": "Input",
@@ -1201,7 +1201,7 @@
           ],
           "type": "string"
         },
-        "ping_url": {
+        "ping-url": {
           "description": "URL to ping the webhook",
           "instillUIOrder": 3,
           "title": "Ping URL",
@@ -1215,7 +1215,7 @@
           ],
           "type": "string"
         },
-        "test_url": {
+        "test-url": {
           "description": "URL to test the webhook",
           "instillUIOrder": 4,
           "title": "Test URL",
@@ -1243,14 +1243,14 @@
               "instillFormat": "string",
               "type": "string"
             },
-            "content_type": {
+            "content-type": {
               "description": "Content type of the webhook",
               "instillUIOrder": 2,
               "title": "Content Type",
               "instillFormat": "string",
               "type": "string"
             },
-            "insecure_ssl": {
+            "insecure-ssl": {
               "description": "Whether the webhook is insecure",
               "instillUIOrder": 3,
               "title": "Insecure SSL",

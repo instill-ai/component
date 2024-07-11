@@ -25,14 +25,14 @@ type PullRequest struct {
 	State             string   `json:"state"`
 	Title             string   `json:"title"`
 	Body              string   `json:"body"`
-	DiffURL           string   `json:"diff_url,omitempty"`
-	CommitsURL        string   `json:"commits_url,omitempty"`
+	DiffURL           string   `json:"diff-url,omitempty"`
+	CommitsURL        string   `json:"commits-url,omitempty"`
 	Commits           []Commit `json:"commits"`
 	Head              string   `json:"head"`
 	Base              string   `json:"base"`
-	CommentsNum       int      `json:"comments_num"`
-	CommitsNum        int      `json:"commits_num"`
-	ReviewCommentsNum int      `json:"review_comments_num"`
+	CommentsNum       int      `json:"comments-num"`
+	CommitsNum        int      `json:"commits-num"`
+	ReviewCommentsNum int      `json:"review-comments-num"`
 }
 
 func (githubClient *Client) extractPullRequestInformation(ctx context.Context, owner string, repository string, originalPr *github.PullRequest, needCommitDetails bool) (PullRequest, error) {
@@ -69,7 +69,7 @@ type ListPullRequestsInput struct {
 	Direction string `json:"direction"`
 }
 type ListPullRequestsResp struct {
-	PullRequests []PullRequest `json:"pull_requests"`
+	PullRequests []PullRequest `json:"pull-requests"`
 }
 
 func (githubClient *Client) listPullRequestsTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -112,7 +112,7 @@ func (githubClient *Client) listPullRequestsTask(ctx context.Context, props *str
 
 type GetPullRequestInput struct {
 	RepoInfo
-	PrNumber float64 `json:"pr_number"`
+	PrNumber float64 `json:"pr-number"`
 }
 type GetPullRequestResp struct {
 	PullRequest

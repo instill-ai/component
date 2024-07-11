@@ -22,7 +22,7 @@ func extractReviewCommentInformation(originalComment *github.PullRequestComment)
 
 type ListReviewCommentsInput struct {
 	RepoInfo
-	PrNumber  int    `json:"pr_number"`
+	PrNumber  int    `json:"pr-number"`
 	Sort      string `json:"sort"`
 	Direction string `json:"direction"`
 	Since     string `json:"since"`
@@ -89,7 +89,7 @@ func (githubClient *Client) listReviewCommentsTask(ctx context.Context, props *s
 
 type CreateReviewCommentInput struct {
 	RepoInfo
-	PrNumber int                       `json:"pr_number"`
+	PrNumber int                       `json:"pr-number"`
 	Comment  github.PullRequestComment `json:"comment"`
 }
 
@@ -116,7 +116,7 @@ func (githubClient *Client) createReviewCommentTask(ctx context.Context, props *
 	commentReqs.Position = commentReqs.Line // Position is deprecated, use Line instead
 
 	if *commentReqs.Line == *commentReqs.StartLine {
-		commentReqs.StartLine = nil // If it's a one line comment, don't send start_line
+		commentReqs.StartLine = nil // If it's a one line comment, don't send start-line
 	}
 	comment, _, err := githubClient.PullRequests.CreateComment(ctx, owner, repository, number, commentReqs)
 	if err != nil {
