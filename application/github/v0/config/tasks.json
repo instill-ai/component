@@ -598,7 +598,7 @@
         "pr-number": {
           "default": 0,
           "title": "PR Number",
-          "description": "Number of the PR. Default `0` is the latest PR",
+          "description": "Number of the PR. Default is `0`, which retrieves all comments on all PRs in the repository",
           "instillFormat": "integer",
           "instillAcceptFormats": [
             "integer"
