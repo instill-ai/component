@@ -123,10 +123,10 @@ func TestComponent_Tasks(t *testing.T) {
 
 	embedIntTc := struct {
 		input    map[string]any
-		wantResp embeddingIntOutput
+		wantResp EmbeddingIntOutput
 	}{
 		input:    map[string]any{"text": "abcde", "embedding-type": "int8"},
-		wantResp: embeddingIntOutput{Embedding: []int{1, 2, 3, 4, 5}, Usage: embedUsage{Tokens: 20}},
+		wantResp: EmbeddingIntOutput{Embedding: []int{1, 2, 3, 4, 5}, Usage: embedUsage{Tokens: 20}},
 	}
 
 	c.Run("ok - task int embed", func(c *qt.C) {

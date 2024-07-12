@@ -20,7 +20,7 @@ type EmbeddingFloatOutput struct {
 	Embedding []float64  `json:"embedding"`
 }
 
-type embeddingIntOutput struct {
+type EmbeddingIntOutput struct {
 	Usage     embedUsage `json:"usage"`
 	Embedding []int      `json:"embedding"`
 }
@@ -63,7 +63,7 @@ func (e *execution) taskEmbedding(in *structpb.Struct) (*structpb.Struct, error)
 	switch inputStruct.EmbeddingType {
 	case "int8", "uint8", "binary", "ubinary":
 		bills := resp.EmbeddingsByType.Meta.BilledUnits
-		outputStruct := embeddingIntOutput{
+		outputStruct := EmbeddingIntOutput{
 			Usage: embedUsage{
 				Tokens: int(*bills.InputTokens),
 			},
