@@ -112,21 +112,17 @@ func addQueryOptions(req *resty.Request, opt interface{}) error {
 		var stringVal string
 		switch val := val.(type) {
 		case string:
-			if val == "" {
-				continue
-			}
 			stringVal = val
 		case int:
-			if val == 0 {
-				continue
-			}
 			stringVal = fmt.Sprintf("%d", val)
 		case bool:
-			if !val {
-				continue
-			}
 			stringVal = fmt.Sprintf("%t", val)
 		default:
+			continue
+		}
+
+		if stringVal == fmt.Sprintf("%v", reflect.Zero(reflect.TypeOf(val))) {
+			debug.AddMessage(typeOfS.Field(i).Name, "Default value is not set. Skipping.")
 			continue
 		}
 		paramName := typeOfS.Field(i).Tag.Get("struct")

@@ -23,7 +23,7 @@ type Sprint struct {
 }
 
 type GetSprintInput struct {
-	SprintID int `json:"sprint-id,omitempty" struct:"sprintId"`
+	SprintID int `json:"sprint-id"`
 }
 type GetSprintOutput struct {
 	ID            int    `json:"id"`
