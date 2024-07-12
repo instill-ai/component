@@ -1,4 +1,4 @@
-//go:generate compogen readme ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx --extraContents TASK_CHUNK_TEXT=.compogen/extra-chunk-text.mdx
 package text
 
 import (
@@ -15,7 +15,6 @@ import (
 
 const (
 	taskConvertToText string = "TASK_CONVERT_TO_TEXT"
-	taskSplitByToken  string = "TASK_SPLIT_BY_TOKEN"
 	taskChunkText     string = "TASK_CHUNK_TEXT"
 )
 
@@ -69,21 +68,6 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				return nil, err
 			}
 			outputStruct, err := convertToText(inputStruct)
-			if err != nil {
-				return nil, err
-			}
-			output, err := base.ConvertToStructpb(outputStruct)
-			if err != nil {
-				return nil, err
-			}
-			outputs = append(outputs, output)
-		case taskSplitByToken:
-			inputStruct := SplitByTokenInput{}
-			err := base.ConvertFromStructpb(input, &inputStruct)
-			if err != nil {
-				return nil, err
-			}
-			outputStruct, err := splitTextIntoChunks(inputStruct)
 			if err != nil {
 				return nil, err
 			}
