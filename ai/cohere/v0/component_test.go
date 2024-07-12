@@ -60,10 +60,10 @@ func TestComponent_Tasks(t *testing.T) {
 
 	commandTc := struct {
 		input    map[string]any
-		wantResp textGenerationOutput
+		wantResp TextGenerationOutput
 	}{
 		input:    map[string]any{"model-name": "command-r-plus"},
-		wantResp: textGenerationOutput{Text: "Hi! My name is command-r-plus.", Citations: []citation{}, Usage: commandUsage{InputTokens: 20, OutputTokens: 30}},
+		wantResp: TextGenerationOutput{Text: "Hi! My name is command-r-plus.", Citations: []citation{}, Usage: commandUsage{InputTokens: 20, OutputTokens: 30}},
 	}
 
 	c.Run("ok - task command", func(c *qt.C) {
