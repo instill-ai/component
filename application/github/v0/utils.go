@@ -7,6 +7,11 @@ import (
 	"github.com/instill-ai/x/errmsg"
 )
 
+type PageOptions struct {
+	Page    int `json:"page"`
+	PerPage int `json:"per-page"`
+}
+
 func middleWare(req string) int {
 	if req == "rate_limit" {
 		return 403
