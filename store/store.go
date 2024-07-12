@@ -5,10 +5,8 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/structpb"
 
+	"github.com/instill-ai/component/ai/ai21labs/v0"
 	"github.com/instill-ai/component/ai/anthropic/v0"
 	"github.com/instill-ai/component/ai/cohere/v0"
 	"github.com/instill-ai/component/ai/fireworksai/v0"
@@ -25,7 +23,10 @@ import (
 	"github.com/instill-ai/component/application/github/v0"
 	"github.com/instill-ai/component/application/googlesearch/v0"
 	"github.com/instill-ai/component/application/hubspot/v0"
-	"github.com/instill-ai/component/application/jira/v0"
+	"github.com/instill-ai/component/application/jira/v0"	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/structpb"
+
 	"github.com/instill-ai/component/application/numbers/v0"
 	"github.com/instill-ai/component/application/slack/v0"
 	"github.com/instill-ai/component/application/whatsapp/v0"
@@ -125,6 +126,13 @@ func Init(
 		{
 			// Anthropic
 			conn := anthropic.Init(baseComp)
+			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			compStore.Import(conn)
+		}
+
+		{
+			// AI21labs
+			conn := ai21labs.Init(baseComp)
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
