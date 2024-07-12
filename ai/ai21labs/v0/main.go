@@ -13,7 +13,7 @@ import (
 
 const (
 	cfgAPIKey = "api-key"
-	baseURL   = "https://api.ai21.com"
+	baseURL   = "https://api.ai21.com/"
 )
 
 type ExecuteFunction func(*structpb.Struct) (*structpb.Struct, error)

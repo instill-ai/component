@@ -10,7 +10,7 @@ import (
 
 type TaskTextGenerationChatInput struct {
 	base.TemplateTextGenerationInput
-	TopP float64 `json:"top_p"`
+	TopP float64 `json:"top-p"`
 	N    int     `json:"n"`
 }
 
@@ -26,6 +26,11 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 
 	messages := []ChatMessage{}
 
+	messages = append(messages, ChatMessage{
+		Role:    "system",
+		Content: input.SystemMsg,
+	})
+
 	for _, message := range input.ChatHistory {
 		contents := ""
 		for _, content := range message.Content {
@@ -38,13 +43,18 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 			Content: contents,
 		})
 	}
+
+	messages = append(messages, ChatMessage{
+		Role:    "user",
+		Content: input.Prompt,
+	})
+
 	req := ChatRequest{
 		Model:       input.ModelName,
 		Messages:    messages,
 		MaxTokens:   input.MaxNewTokens,
 		Temperature: float32(input.Temperature),
 		TopP:        float32(input.TopP),
-		Stop:        []string{""},
 		N:           input.N,
 	}
 
@@ -54,7 +64,7 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 	}
 
 	outputStruct := base.TemplateTextGenerationOutput{
-		Text: "",
+		Text: resp.Choices[0].Message.Content,
 		Usage: base.GenerativeTextModelUsage{
 			InputTokens:  resp.Usage.PromptTokens,
 			OutputTokens: resp.Usage.CompletionTokens,
@@ -69,9 +79,8 @@ type TaskContextualAnsweringInput struct {
 }
 
 type TaskContextualAnsweringOutput struct {
-	ContextualAnswersResponse
-	// fix naming convention
-	AnswerInContext bool `json:"answer-in-context"`
+	Answer          string `json:"answer"`
+	AnswerInContext bool   `json:"answer-in-context"`
 }
 
 func (e *execution) TaskContextualAnswering(in *structpb.Struct) (*structpb.Struct, error) {
@@ -86,8 +95,8 @@ func (e *execution) TaskContextualAnswering(in *structpb.Struct) (*structpb.Stru
 	}
 
 	output := TaskContextualAnsweringOutput{
-		ContextualAnswersResponse: resp,
-		AnswerInContext:           resp.AnswerInContext,
+		Answer:          resp.Answer,
+		AnswerInContext: resp.AnswerInContext,
 	}
 
 	return base.ConvertToStructpb(output)

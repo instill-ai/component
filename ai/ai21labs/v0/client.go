@@ -25,6 +25,7 @@ type AI21labsClientInterface interface {
 func newClient(apiKey string, baseURL string, logger *zap.Logger) *AI21labsClient {
 	c := httpclient.New("AI21labs", baseURL,
 		httpclient.WithLogger(logger),
+		httpclient.WithEndUserError(new(errBody)),
 	)
 	c.SetAuthToken(apiKey)
 
@@ -33,6 +34,16 @@ func newClient(apiKey string, baseURL string, logger *zap.Logger) *AI21labsClien
 
 func (c *AI21labsClient) BaseURL() string {
 	return c.httpClient.BaseURL
+}
+
+type errBody struct {
+	Error struct {
+		Message string `json:"message"`
+	} `json:"error"`
+}
+
+func (e errBody) Message() string {
+	return e.Error.Message
 }
 
 // common types
