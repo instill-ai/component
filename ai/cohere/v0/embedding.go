@@ -143,9 +143,7 @@ func getFloatEmbedding(resp cohereSDK.EmbedResponse, embeddingType string) []flo
 }
 
 func getBillingTokens(resp cohereSDK.EmbedResponse, embeddingType string) int {
-	if IsEmbeddingOutputInt(embeddingType) {
-		return int(*resp.EmbeddingsByType.Meta.BilledUnits.InputTokens)
-	} else if embeddingType == "float" {
+	if IsEmbeddingOutputInt(embeddingType) || embeddingType == "float" {
 		return int(*resp.EmbeddingsByType.Meta.BilledUnits.InputTokens)
 	} else {
 		return int(*resp.EmbeddingsFloats.Meta.BilledUnits.InputTokens)
