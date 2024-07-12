@@ -8,14 +8,14 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-type embeddingInput struct {
+type EmbeddingInput struct {
 	Text          string `json:"text"`
 	ModelName     string `json:"model-name"`
 	InputType     string `json:"input-type"`
 	EmbeddingType string `json:"embedding-type"`
 }
 
-type embeddingFloatOutput struct {
+type EmbeddingFloatOutput struct {
 	Usage     embedUsage `json:"usage"`
 	Embedding []float64  `json:"embedding"`
 }
@@ -30,7 +30,7 @@ type embedUsage struct {
 }
 
 func (e *execution) taskEmbedding(in *structpb.Struct) (*structpb.Struct, error) {
-	inputStruct := embeddingInput{}
+	inputStruct := EmbeddingInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, fmt.Errorf("error generating input struct: %v", err)
@@ -85,7 +85,7 @@ func (e *execution) taskEmbedding(in *structpb.Struct) (*structpb.Struct, error)
 		return output, nil
 	case "float":
 		bills := resp.EmbeddingsByType.Meta.BilledUnits
-		outputStruct := embeddingFloatOutput{
+		outputStruct := EmbeddingFloatOutput{
 			Usage: embedUsage{
 				Tokens: int(*bills.InputTokens),
 			},
@@ -98,7 +98,7 @@ func (e *execution) taskEmbedding(in *structpb.Struct) (*structpb.Struct, error)
 		return output, nil
 	default:
 		bills := resp.EmbeddingsFloats.Meta.BilledUnits
-		outputStruct := embeddingFloatOutput{
+		outputStruct := EmbeddingFloatOutput{
 			Usage: embedUsage{
 				Tokens: int(*bills.InputTokens),
 			},

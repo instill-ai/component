@@ -92,10 +92,10 @@ func TestComponent_Tasks(t *testing.T) {
 
 	embedFloatTc := struct {
 		input    map[string]any
-		wantResp embeddingFloatOutput
+		wantResp EmbeddingFloatOutput
 	}{
 		input:    map[string]any{"text": "abcde"},
-		wantResp: embeddingFloatOutput{Embedding: []float64{0.1, 0.2, 0.3, 0.4, 0.5}, Usage: embedUsage{Tokens: 20}},
+		wantResp: EmbeddingFloatOutput{Embedding: []float64{0.1, 0.2, 0.3, 0.4, 0.5}, Usage: embedUsage{Tokens: 20}},
 	}
 
 	c.Run("ok - task float embed", func(c *qt.C) {
@@ -154,10 +154,10 @@ func TestComponent_Tasks(t *testing.T) {
 
 	rerankTc := struct {
 		input    map[string]any
-		wantResp rerankOutput
+		wantResp RerankOutput
 	}{
 		input:    map[string]any{"documents": []string{"a", "b", "c", "d"}},
-		wantResp: rerankOutput{Ranking: []string{"d", "c", "b", "a"}, Usage: rerankUsage{Search: 5}, Relevance: []float64{10, 9, 8, 7}},
+		wantResp: RerankOutput{Ranking: []string{"d", "c", "b", "a"}, Usage: rerankUsage{Search: 5}, Relevance: []float64{10, 9, 8, 7}},
 	}
 	c.Run("ok - task rerank", func(c *qt.C) {
 		setup, err := structpb.NewStruct(map[string]any{
