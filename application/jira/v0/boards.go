@@ -94,3 +94,24 @@ func (jiraClient *Client) listBoards(_ context.Context, opt *ListBoardsInput) (*
 	boards := resp.Result().(*ListBoardsResp)
 	return boards, err
 }
+
+func (jiraClient *Client) getBoard(_ context.Context, boardID int) (*Board, error) {
+	var debug DebugSession
+	debug.SessionStart("getBoard", DevelopVerboseLevel)
+	defer debug.SessionEnd()
+
+	apiEndpoint := fmt.Sprintf("rest/agile/1.0/board/%v", boardID)
+	req := jiraClient.Client.R().SetResult(&Board{})
+	resp, err := req.Get(apiEndpoint)
+
+	if err != nil {
+		return nil, fmt.Errorf(
+			err.Error(), errmsg.Message(err),
+		)
+	}
+	debug.AddMessage("GET", apiEndpoint)
+	debug.AddMapMessage("QueryParam", resp.Request.QueryParam)
+	debug.AddMessage("Status", resp.Status())
+	board := resp.Result().(*Board)
+	return board, err
+}

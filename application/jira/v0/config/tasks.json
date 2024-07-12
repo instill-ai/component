@@ -46,6 +46,75 @@
         ],
         "type": "boolean"
       }
+    },
+    "issue": {
+      "properties": {
+        "id": {
+          "description": "The ID of the issue",
+          "instillUIOrder": 0,
+          "title": "ID",
+          "instillFormat": "string",
+          "type": "string"
+        },
+        "key": {
+          "description": "The key of the issue",
+          "instillUIOrder": 1,
+          "instillFormat": "string",
+          "title": "Key",
+          "type": "string"
+        },
+        "self": {
+          "description": "The URL of the issue",
+          "instillUIOrder": 2,
+          "instillFormat": "string",
+          "title": "Self",
+          "type": "string"
+        },
+        "fields": {
+          "description": "The fields of the issue. All navigable and Agile fields are returned",
+          "instillUIOrder": 3,
+          "instillFormat": "object",
+          "title": "Fields",
+          "type": "object",
+          "required": []
+        },
+        "issue-type": {
+          "description": "The type of the issue, can be: `Task`, `Epic`",
+          "instillUIOrder": 4,
+          "instillFormat": "string",
+          "title": "Issue Type",
+          "type": "string"
+        },
+        "summary": {
+          "description": "The summary of the issue",
+          "instillUIOrder": 5,
+          "instillFormat": "string",
+          "title": "Summary",
+          "type": "string"
+        },
+        "description": {
+          "description": "The description of the issue",
+          "instillUIOrder": 6,
+          "instillFormat": "string",
+          "title": "Description",
+          "type": "string"
+        },
+        "status": {
+          "description": "The status of the issue, can be: `To Do`, `In Progress`, `Done`",
+          "instillUIOrder": 7,
+          "instillFormat": "string",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "key",
+        "self",
+        "fields"
+      ],
+      "title": "Issue",
+      "type": "object"
     }
   },
   "TASK_LIST_BOARDS": {
@@ -137,24 +206,28 @@
                 "description": "The ID of the board",
                 "instillUIOrder": 0,
                 "title": "ID",
+                "instillFormat": "integer",
                 "type": "integer"
               },
               "name": {
                 "description": "The name of the board",
                 "instillUIOrder": 1,
                 "title": "Name",
+                "instillFormat": "string",
                 "type": "string"
               },
               "type": {
                 "description": "The type of the board",
                 "instillUIOrder": 2,
                 "title": "Type",
+                "instillFormat": "string",
                 "type": "string"
               },
               "self": {
                 "description": "The URL of the board",
                 "instillUIOrder": 3,
                 "title": "Self",
+                "instillFormat": "string",
                 "type": "string"
               }
             },
@@ -171,24 +244,28 @@
           "description": "The starting index of the returned boards. Base index: 0",
           "instillUIOrder": 2,
           "title": "Start At",
+          "instillFormat": "integer",
           "type": "integer"
         },
         "max-results": {
           "description": "The maximum number of boards",
           "instillUIOrder": 3,
           "title": "Max Results",
+          "instillFormat": "integer",
           "type": "integer"
         },
         "total": {
           "description": "The total number of boards",
           "instillUIOrder": 4,
           "title": "Total",
+          "instillFormat": "integer",
           "type": "integer"
         },
         "is-last": {
           "description": "Whether the last board is reached",
           "instillUIOrder": 5,
           "title": "Is Last",
+          "instillFormat": "boolean",
           "type": "boolean"
         }
       },
@@ -197,6 +274,253 @@
         "max-results",
         "total",
         "is-last"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_LIST_ISSUES": {
+    "description": "List issues in Jira",
+    "instillShortDescription": "List issues in Jira",
+    "input": {
+      "description": "List issues in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "board-id",
+        "range"
+      ],
+      "properties": {
+        "board-id": {
+          "title": "Board ID",
+          "description": "The ID of the board",
+          "instillShortDescription": "The ID of the board",
+          "instillUIOrder": 0,
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "integer"
+        },
+        "range": {
+          "title": "Range",
+          "description": "Choose the range of issues to return. Default is `all`",
+          "instillUIOrder": 1,
+          "additionalProperties": true,
+          "instillFormat": "object",
+          "type": "object",
+          "required": [
+            "range"
+          ],
+          "oneOf": [
+            {
+              "properties": {
+                "range": {
+                  "const": "All",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "range"
+              ],
+              "instillEditOnNodeFields": [
+                "range"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            },
+            {
+              "properties": {
+                "range": {
+                  "const": "Epics only",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "range"
+              ],
+              "instillEditOnNodeFields": [
+                "range"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            },
+            {
+              "properties": {
+                "range": {
+                  "const": "Sprints only",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "range"
+              ],
+              "instillEditOnNodeFields": [
+                "range"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            },
+            {
+              "properties": {
+                "range": {
+                  "const": "Issues of an epic",
+                  "type": "string"
+                },
+                "epic-key": {
+                  "title": "Epic Key",
+                  "description": "The Key of the epic",
+                  "instillShortDescription": "The Key of the epic",
+                  "instillUIOrder": 0,
+                  "instillFormat": "string",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "range",
+                "epic-key"
+              ],
+              "instillEditOnNodeFields": [
+                "range",
+                "epic-key"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            },
+            {
+              "properties": {
+                "range": {
+                  "const": "Issues of an sprint",
+                  "type": "string"
+                },
+                "sprint-key": {
+                  "title": "Sprint Key",
+                  "description": "The Key of the sprint",
+                  "instillShortDescription": "The Key of the sprint",
+                  "instillUIOrder": 0,
+                  "instillFormat": "string",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "range",
+                "sprint-key"
+              ],
+              "instillEditOnNodeFields": [
+                "range",
+                "sprint-key"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            },
+            {
+              "properties": {
+                "range": {
+                  "const": "In backlog only",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "range"
+              ],
+              "instillEditOnNodeFields": [
+                "range"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            },
+            {
+              "properties": {
+                "range": {
+                  "const": "Issues without epic assigned",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "range"
+              ],
+              "instillEditOnNodeFields": [
+                "range"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            }
+          ]
+        },
+        "start-at": {
+          "$ref": "#/$defs/common-query-params/start-at",
+          "instillUIOrder": 3
+        },
+        "max-results": {
+          "$ref": "#/$defs/common-query-params/max-results",
+          "instillUIOrder": 4
+        }
+      },
+      "required": [
+        "board-id"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Get an issue in Jira",
+      "instillUIOrder": 0,
+      "properties": {
+        "issues": {
+          "description": "A array of issues in Jira",
+          "instillUIOrder": 1,
+          "title": "Issues",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/issue"
+          }
+        },
+        "start-at": {
+          "description": "The starting index of the returned boards. Base index: 0",
+          "instillUIOrder": 2,
+          "title": "Start At",
+          "instillFormat": "integer",
+          "type": "integer"
+        },
+        "max-results": {
+          "description": "The maximum number of boards",
+          "instillUIOrder": 3,
+          "title": "Max Results",
+          "instillFormat": "integer",
+          "type": "integer"
+        },
+        "total": {
+          "description": "The total number of boards",
+          "instillUIOrder": 4,
+          "title": "Total",
+          "instillFormat": "integer",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start-at",
+        "max-results",
+        "total"
       ],
       "title": "Output",
       "type": "object"

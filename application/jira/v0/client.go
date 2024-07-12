@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/instill-ai/component/base"
@@ -85,12 +86,13 @@ func getCloudID(baseURL string) (string, error) {
 }
 
 type errBody struct {
-	Msg    string `json:"message"`
-	Status int    `json:"status"`
+	Body struct {
+		Msg []string `json:"errorMessages"`
+	} `json:"body"`
 }
 
 func (e errBody) Message() string {
-	return fmt.Sprintf("%d %s", e.Status, e.Msg)
+	return strings.Join(e.Body.Msg, " ")
 }
 
 func addQueryOptions(req *resty.Request, opt interface{}) error {
@@ -102,34 +104,58 @@ func addQueryOptions(req *resty.Request, opt interface{}) error {
 	if v.Kind() == reflect.Ptr && v.IsNil() {
 		return nil
 	}
-	typeOfS := v.Type()
-	for i := 0; i < v.NumField(); i++ {
-		if !v.Field(i).IsValid() || !v.Field(i).CanInterface() {
-			debug.AddMessage(typeOfS.Field(i).Name, "Not a valid field")
-			continue
+	if v.Kind() == reflect.Map {
+		for _, key := range v.MapKeys() {
+			if v.MapIndex(key).IsValid() && v.MapIndex(key).CanInterface() {
+				val := v.MapIndex(key).Interface()
+				var stringVal string
+				switch val := val.(type) {
+				case string:
+					stringVal = val
+				case int:
+					stringVal = fmt.Sprintf("%d", val)
+				case bool:
+					stringVal = fmt.Sprintf("%t", val)
+				default:
+					continue
+				}
+				if stringVal == fmt.Sprintf("%v", reflect.Zero(reflect.TypeOf(val))) {
+					debug.AddMessage(key.String(), "Default value is not set. Skipping.")
+					continue
+				}
+				paramName := key.String()
+				req.SetQueryParam(paramName, stringVal)
+			}
 		}
-		val := v.Field(i).Interface()
-		var stringVal string
-		switch val := val.(type) {
-		case string:
-			stringVal = val
-		case int:
-			stringVal = fmt.Sprintf("%d", val)
-		case bool:
-			stringVal = fmt.Sprintf("%t", val)
-		default:
-			continue
+	} else if v.Kind() == reflect.Struct {
+		typeOfS := v.Type()
+		for i := 0; i < v.NumField(); i++ {
+			if !v.Field(i).IsValid() || !v.Field(i).CanInterface() {
+				debug.AddMessage(typeOfS.Field(i).Name, "Not a valid field")
+				continue
+			}
+			val := v.Field(i).Interface()
+			var stringVal string
+			switch val := val.(type) {
+			case string:
+				stringVal = val
+			case int:
+				stringVal = fmt.Sprintf("%d", val)
+			case bool:
+				stringVal = fmt.Sprintf("%t", val)
+			default:
+				continue
+			}
+			if stringVal == fmt.Sprintf("%v", reflect.Zero(reflect.TypeOf(val))) {
+				debug.AddMessage(typeOfS.Field(i).Name, "Default value is not set. Skipping.")
+				continue
+			}
+			paramName := typeOfS.Field(i).Tag.Get("struct")
+			if paramName == "" {
+				paramName = typeOfS.Field(i).Name
+			}
+			req.SetQueryParam(paramName, stringVal)
 		}
-
-		if stringVal == fmt.Sprintf("%v", reflect.Zero(reflect.TypeOf(val))) {
-			debug.AddMessage(typeOfS.Field(i).Name, "Default value is not set. Skipping.")
-			continue
-		}
-		paramName := typeOfS.Field(i).Tag.Get("struct")
-		if paramName == "" {
-			paramName = typeOfS.Field(i).Name
-		}
-		req.SetQueryParam(paramName, stringVal)
 	}
 	return nil
 }
