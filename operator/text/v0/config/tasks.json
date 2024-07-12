@@ -17,7 +17,7 @@
     },
     "chunk-size": {
       "default": 512,
-      "description": "Specifies the maximum size of each chunk in terms of the number of tokens.",
+      "description": "Specifies the maximum size of each chunk in terms of the number of tokens",
       "instillAcceptFormats": [
         "integer"
       ],
@@ -32,7 +32,7 @@
     },
     "chunk-overlap": {
       "default": 100,
-      "description": "Determines the number of tokens that overlap between consecutive chunks.",
+      "description": "Determines the number of tokens that overlap between consecutive chunks",
       "instillAcceptFormats": [
         "integer"
       ],
@@ -169,149 +169,8 @@
       "type": "object"
     }
   },
-  "TASK_SPLIT_BY_TOKEN": {
-    "instillShortDescription": "Split text by token. It will be decprecated soon. Please use Chunk Text task instead.",
-    "input": {
-      "description": "Input",
-      "instillEditOnNodeFields": [
-        "text",
-        "model"
-      ],
-      "instillUIOrder": 0,
-      "properties": {
-        "chunk-token-size": {
-          "default": 500,
-          "description": "Number of tokens per text chunk",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUIOrder": 2,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "minimum": 1,
-          "title": "Chunk Token Size",
-          "type": "integer"
-        },
-        "model": {
-          "description": "ID of the model to use for tokenization",
-          "enum": [
-            "gpt-4",
-            "gpt-3.5-turbo",
-            "text-davinci-003",
-            "text-davinci-002",
-            "text-davinci-001",
-            "text-curie-001",
-            "text-babbage-001",
-            "text-ada-001",
-            "davinci",
-            "curie",
-            "babbage",
-            "ada",
-            "code-davinci-002",
-            "code-davinci-001",
-            "code-cushman-002",
-            "code-cushman-001",
-            "davinci-codex",
-            "cushman-codex",
-            "text-davinci-edit-001",
-            "code-davinci-edit-001",
-            "text-embedding-ada-002",
-            "text-similarity-davinci-001",
-            "text-similarity-curie-001",
-            "text-similarity-babbage-001",
-            "text-similarity-ada-001",
-            "text-search-davinci-doc-001",
-            "text-search-curie-doc-001",
-            "text-search-babbage-doc-001",
-            "text-search-ada-doc-001",
-            "code-search-babbage-code-001",
-            "code-search-ada-code-001",
-            "gpt2"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 1,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "Model",
-          "type": "string"
-        },
-        "text": {
-          "description": "Text to be split",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIMultiline": true,
-          "instillUIOrder": 0,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "Text",
-          "type": "string"
-        }
-      },
-      "required": [
-        "text",
-        "model"
-      ],
-      "title": "Input",
-      "type": "object"
-    },
-    "output": {
-      "description": "Output",
-      "instillEditOnNodeFields": [
-        "texts"
-      ],
-      "instillUIOrder": 0,
-      "properties": {
-        "chunk-num": {
-          "description": "Total number of output text chunks",
-          "instillUIOrder": 2,
-          "instillFormat": "integer",
-          "title": "Number of Text Chunks",
-          "type": "integer"
-        },
-        "text-chunks": {
-          "description": "Text chunks after splitting",
-          "instillUIOrder": 1,
-          "instillFormat": "array:string",
-          "items": {
-            "title": "Text Chunk",
-            "description": "Text chunk after splitting",
-            "instillFormat": "string",
-            "instillUIMultiline": true,
-            "type": "string"
-          },
-          "title": "Text Chunks",
-          "type": "array"
-        },
-        "token-count": {
-          "description": "Total count of tokens in the input text",
-          "instillUIOrder": 0,
-          "instillFormat": "integer",
-          "title": "Token Count",
-          "type": "integer"
-        }
-      },
-      "required": [
-        "token-count",
-        "text-chunks",
-        "chunk-num"
-      ],
-      "title": "Output",
-      "type": "object"
-    }
-  },
   "TASK_CHUNK_TEXT": {
-    "instillShortDescription": "Chunk text with different strategies.",
+    "instillShortDescription": "Chunk text with different strategies",
     "input": {
       "description": "Input",
       "instillEditOnNodeFields": [
@@ -350,29 +209,9 @@
                     "model-name": {
                       "$ref": "#/$defs/model-name"
                     },
-                    "encoding-name": {
-                      "description": "The name of the encoding used to convert text into tokens.",
-                      "enum": [
-                        "cl100k_base",
-                        "p50k_base",
-                        "r50k_base",
-                        "p50k_edit"
-                      ],
-                      "instillAcceptFormats": [
-                        "string"
-                      ],
-                      "instillUIOrder": 3,
-                      "instillUpstreamTypes": [
-                        "value",
-                        "reference",
-                        "template"
-                      ],
-                      "title": "Encoding Name",
-                      "type": "string"
-                    },
                     "allowed-special": {
                       "default": [],
-                      "description": "A list of special tokens that are allowed within chunks. ",
+                      "description": "A list of special tokens that are allowed within chunks.",
                       "instillAcceptFormats": [
                         "array:string"
                       ],
@@ -417,7 +256,6 @@
                     "chunk-size",
                     "chunk-overlap",
                     "model-name",
-                    "encoding-name",
                     "allowed-special",
                     "disallowed-special"
                   ],
@@ -434,6 +272,9 @@
                     },
                     "chunk-overlap": {
                       "$ref": "#/$defs/chunk-overlap"
+                    },
+                    "model-name": {
+                      "$ref": "#/$defs/model-name"
                     },
                     "separators": {
                       "default": [],
@@ -455,7 +296,7 @@
                       "type": "array"
                     },
                     "keep-separator": {
-                      "description": "A flag indicating whether to keep the separator characters at the beginning or end of chunks.",
+                      "description": "A flag indicating whether to keep the separator characters at the beginning or end of chunks",
                       "instillAcceptFormats": [
                         "boolean"
                       ],
@@ -476,6 +317,7 @@
                     "chunk-method",
                     "chunk-size",
                     "chunk-overlap",
+                    "model-name",
                     "separators",
                     "keep-separator"
                   ],
@@ -493,8 +335,11 @@
                     "chunk-overlap": {
                       "$ref": "#/$defs/chunk-overlap"
                     },
+                    "model-name": {
+                      "$ref": "#/$defs/model-name"
+                    },
                     "code-blocks": {
-                      "description": "A flag indicating whether code blocks should be treated as a single unit.",
+                      "description": "A flag indicating whether code blocks should be treated as a single unit",
                       "instillAcceptFormats": [
                         "boolean"
                       ],
@@ -508,7 +353,7 @@
                       "type": "boolean"
                     },
                     "reference-links": {
-                      "description": "A flag indicating whether reference links should be kept intact.",
+                      "description": "A flag indicating whether reference links should be kept intact",
                       "instillAcceptFormats": [
                         "boolean"
                       ],
@@ -529,6 +374,7 @@
                     "chunk-method",
                     "chunk-size",
                     "chunk-overlap",
+                    "model-name",
                     "code-blocks",
                     "reference-links"
                   ],
@@ -590,9 +436,7 @@
               }
             },
             "required": [
-              "text",
-              "start-position",
-              "end-position"
+              "text"
             ],
             "instillUIMultiline": true,
             "type": "object"

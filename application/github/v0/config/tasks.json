@@ -428,6 +428,43 @@
       },
       "title": "Issue",
       "type": "object"
+    },
+    "page-options": {
+      "title": "Page Options",
+      "description": "Options for listing pages",
+      "instillFormat": "object",
+      "type": "object",
+      "required": [],
+      "page": {
+        "default": 1,
+        "description": "Page number of the results to fetch. Default is 1",
+        "instillUIOrder": 100,
+        "title": "Page",
+        "instillFormat": "integer",
+        "instillAcceptFormats": [
+          "integer"
+        ],
+        "instillUpstreamTypes": [
+          "value",
+          "reference"
+        ],
+        "type": "integer"
+      },
+      "per-page": {
+        "default": 30,
+        "description": "Number of results to fetch per page. Default is 30",
+        "instillUIOrder": 101,
+        "title": "Per Page",
+        "instillFormat": "integer",
+        "instillAcceptFormats": [
+          "integer"
+        ],
+        "instillUpstreamTypes": [
+          "value",
+          "reference"
+        ],
+        "type": "integer"
+      }
     }
   },
   "TASK_LIST_PULL_REQUESTS": {
@@ -501,6 +538,36 @@
           ],
           "instillUIOrder": 12,
           "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number of the results to fetch. Default is 1",
+          "instillUIOrder": 100,
+          "title": "Page",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
+        },
+        "per-page": {
+          "default": 30,
+          "description": "Number of results to fetch per page. Default is 30",
+          "instillUIOrder": 101,
+          "title": "Per Page",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
         }
       },
       "required": [
@@ -662,6 +729,36 @@
           ],
           "instillUIOrder": 13,
           "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number of the results to fetch. Default is 1",
+          "instillUIOrder": 100,
+          "title": "Page",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
+        },
+        "per-page": {
+          "default": 30,
+          "description": "Number of results to fetch per page. Default is 30",
+          "instillUIOrder": 101,
+          "title": "Per Page",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
         }
       },
       "required": [
@@ -931,6 +1028,36 @@
           ],
           "instillUIOrder": 14,
           "type": "boolean"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number of the results to fetch. Default is 1",
+          "instillUIOrder": 100,
+          "title": "Page",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
+        },
+        "per-page": {
+          "default": 30,
+          "description": "Number of results to fetch per page. Default is 30",
+          "instillUIOrder": 101,
+          "title": "Per Page",
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
         }
       },
       "required": [
