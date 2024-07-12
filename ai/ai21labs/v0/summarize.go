@@ -7,7 +7,7 @@ const summarizeBySegmentEndpoint = "/studio/v1/summarize-by-segment"
 type SummarizeRequest struct {
 	Source     string     `json:"source"`
 	SourceType SourceType `json:"sourceType"`
-	Focus      string     `json:"focus"`
+	Focus      string     `json:"focus,omitempty"`
 }
 
 type SummarizeResponse struct {

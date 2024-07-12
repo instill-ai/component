@@ -131,18 +131,16 @@
         },
         "model-name": {
           "enum": [
-            "jamba-instruct-preview"
+            "jamba-instruct"
           ],
-          "example": "jamba-instruct-preview",
+          "example": "jamba-instruct",
           "description": "The AI21labs model to be used",
           "instillAcceptFormats": [
             "string"
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
+            "value"
           ],
           "instillCredentialMap": {
             "values": [
@@ -297,6 +295,168 @@
       },
       "required": [
         "text"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CONTEXTUAL_ANSWERING": {
+    "instillShortDescription": "Contextual answers based on information passed into the prompt",
+    "description": "Given a prompt containing information, ask a question about that information. The response will be limited to what the model can learn based on the provided information; information gained during model training outside the prompt will not be used in the answer.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "context",
+        "question"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "context": {
+          "description": "The context text",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Context",
+          "type": "string"
+        },
+        "question": {
+          "description": "The question text",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Question",
+          "type": "string"
+        }
+      },
+      "required": [
+        "context",
+        "question"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillUIOrder": 0,
+      "properties": {
+        "answer": {
+          "description": "Model Output",
+          "instillUIOrder": 0,
+          "instillFormat": "string",
+          "title": "Answer",
+          "type": "string"
+        },
+        "answer-in-context": {
+          "description": "Whether the answer is in context",
+          "instillUIOrder": 1,
+          "instillFormat": "boolean",
+          "title": "Answer in Context",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "answer"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_TEXT_SUMMARIZATION": {
+    "instillShortDescription": "Summarize text content",
+    "description": "AI21 Studio's summarize models offer access to our world-class summarization engine. They have been specifically developed for providing a faithful summary of documents, meeting and call transcripts, chat correspondences, and more.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "text",
+        "source"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "text": {
+          "description": "The text content to be summarized",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Text",
+          "type": "string"
+        },
+        "focus": {
+          "description": "The focus of the summary",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "default": "Give me a concise summary of the text.",
+          "instillUIMultiline": true,
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Focus",
+          "type": "string"
+        },
+        "source": {
+          "description": "Whether the text is plain text or from a URL",
+          "enum": [
+            "TEXT",
+            "URL"
+          ],
+          "example": "TEXT",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "value"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "source"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillUIOrder": 0,
+      "properties": {
+        "summary": {
+          "description": "Model Output",
+          "instillUIOrder": 0,
+          "instillFormat": "string",
+          "instillUIMultiline": true,
+          "title": "Summary",
+          "type": "string"
+        }
+      },
+      "required": [
+        "summary"
       ],
       "title": "Output",
       "type": "object"

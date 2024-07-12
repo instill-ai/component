@@ -2,13 +2,7 @@
   "availableTasks": [
     "TASK_TEXT_GENERATION_CHAT",
     "TASK_CONTEXTUAL_ANSWERING",
-    "TASK_SUMMARIZATION",
-    "TASK_SUMMARIZATION_SEGMENT",
-    "TASK_PARAPHRASING",
-    "TASK_GRAMMAR_CHECK",
-    "TASK_TEXT_IMPROVEMENT",
-    "TASK_TEXT_SEGMENTATION",
-    "TASK_TEXT_EMBEDDINGS"
+    "TASK_TEXT_SUMMARIZATION"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/ai/ai21labs",

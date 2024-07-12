@@ -16,9 +16,9 @@ type ChatRequest struct {
 	MaxTokens   int           `json:"max_tokens"`
 	Temperature float32       `json:"temperature"`
 	TopP        float32       `json:"top_p"`
-	Stop        []string      `json:"stop"`
 	N           int           `json:"n"`
 	// not supported
+	// Stop   []string `json:"stop"` will trigger 500 internal server error
 	Stream bool `json:"stream"`
 }
 

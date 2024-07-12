@@ -2,7 +2,7 @@ package ai21labs
 
 //source https://docs.ai21.com/reference/contextual-answers-ref on 2024-07-21
 
-const contextualAnswersEndpoint = "/studio/v1/contextual-answers"
+const contextualAnswersEndpoint = "/studio/v1/answer"
 
 type ContextualAnswersRequest struct {
 	Context  string `json:"context"`
