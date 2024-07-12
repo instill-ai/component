@@ -461,5 +461,131 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_TEXT_SUMMARIZATION_SEGMENT": {
+    "instillShortDescription": "Summarize text content by segments",
+    "description": "AI21 Studio's summarize models offer access to our world-class summarization engine. They have been specifically developed for providing a faithful summary of documents, meeting and call transcripts, chat correspondences, and more.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "text",
+        "source"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "text": {
+          "description": "The text content to be summarized",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Text",
+          "type": "string"
+        },
+        "focus": {
+          "description": "The focus of the summary",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Focus",
+          "type": "string"
+        },
+        "source": {
+          "description": "Whether the text is plain text or from a URL",
+          "enum": [
+            "TEXT",
+            "URL"
+          ],
+          "example": "TEXT",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "value"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "source"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillUIOrder": 0,
+      "properties": {
+        "summerizations": {
+          "instillFormat": "array:string",
+          "items": {
+            "instillFormat": "string",
+            "title": "Summary",
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Summeries for each segment of the input text",
+          "instillUIOrder": 0,
+          "title": "Summaries"
+        },
+        "segments": {
+          "instillFormat": "array:string",
+          "items": {
+            "instillFormat": "string",
+            "title": "Segemnt Text",
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Origanl text for each segment of the input text",
+          "instillUIOrder": 0,
+          "title": "Segment Text"
+        },
+        "segment-htmls": {
+          "instillFormat": "array:string",
+          "items": {
+            "instillFormat": "string",
+            "title": "Segment HTML",
+            "type": "string"
+          },
+          "type": "array",
+          "description": "HTML for each segment of the input text",
+          "instillUIOrder": 0,
+          "title": "Segment HTML"
+        },
+        "types": {
+          "instillFormat": "array:string",
+          "items": {
+            "instillFormat": "string",
+            "title": "Segment Type",
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Type of each segment of the input text",
+          "instillUIOrder": 0,
+          "title": "Segment Type"
+        }
+      },
+      "required": [
+        "summerizations"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
   }
 }

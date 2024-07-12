@@ -72,16 +72,6 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		usesInstillCredentials: resolved,
 	}
 	switch task {
-	/**
-	  "TASK_CONTEXTUAL_ANSWERING",
-	  "TASK_SUMMARIZATION",
-	  "TASK_SUMMARIZATION_SEGMENT",
-	  "TASK_PARAPHRASING",
-	  "TASK_GRAMMAR_CHECK",
-	  "TASK_TEXT_IMPROVEMENT",
-	  "TASK_TEXT_SEGMENTATION",
-	  "TASK_TEXT_EMBEDDINGS"
-	*/
 	case "TASK_TEXT_GENERATION_CHAT":
 		e.execute = e.TaskTextGenerationChat
 	case "TASK_CONTEXTUAL_ANSWERING":
