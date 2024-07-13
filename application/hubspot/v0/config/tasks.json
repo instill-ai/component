@@ -98,10 +98,10 @@
         "type": "string"
       },
       "amount": {
-        "description": "Amount",
+        "description": "The total amount of the deal",
         "instillUIOrder": 5,
         "title": "Amount",
-        "type": "string"
+        "type": "number"
       },
       "deal-type": {
         "description": "Deal type. Default format is in small letters, all words are combined. Example: newbusiness. However, remember to check internal value for custom fields.",
@@ -119,6 +119,92 @@
         "description": "Create date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z",
         "instillUIOrder": 8,
         "title": "Create Date",
+        "type": "string"
+      }
+    },
+    "company": {
+      "company-name": {
+        "description": "Company name",
+        "instillUIOrder": 2,
+        "title": "Company Name",
+        "type": "string"
+      },
+      "company-domain": {
+        "description": "The domain name of the company",
+        "instillUIOrder": 3,
+        "title": "Company Domain",
+        "type": "string"
+      },
+      "description": {
+        "description": "Description of the company",
+        "instillUIOrder": 4,
+        "title": "Description",
+        "type": "string"
+      },
+      "phone-number": {
+        "description": "Description of the company",
+        "instillUIOrder": 5,
+        "title": "Description",
+        "type": "string"
+      },
+      "industry": {
+        "description": "The industry the company belongs to. Default format is in capital letters, with _ as space. Example: BROADCAST_MEDIA",
+        "instillUIOrder": 6,
+        "title": "Industry",
+        "type": "string"
+      },
+      "company-type": {
+        "description": "Type of company. Default format is capital letter. Example: RESELLER",
+        "instillUIOrder": 7,
+        "title": "Company Type",
+        "type": "string"
+      },
+      "city": {
+        "description": "City",
+        "instillUIOrder": 8,
+        "title": "City",
+        "type": "string"
+      },
+      "state": {
+        "description": "State",
+        "instillUIOrder": 9,
+        "title": "State",
+        "type": "string"
+      },
+      "country": {
+        "description": "Country",
+        "instillUIOrder": 10,
+        "title": "Country",
+        "type": "string"
+      },
+      "postal-code": {
+        "description": "Postal code",
+        "instillUIOrder": 11,
+        "title": "Postal Code",
+        "type": "string"
+      },
+      "time-zone": {
+        "description": "Time zone",
+        "instillUIOrder": 12,
+        "title": "Time Zone",
+        "type": "string"
+      },
+      "annual-revenue": {
+        "description": "Annual revenue",
+        "instillUIOrder": 13,
+        "title": "Annual Revenue",
+        "type": "number"
+      },
+      "total-revenue": {
+        "description": "Total revenue. Calculated automatically by HubSpot",
+        "instillUIOrder": 14,
+        "title": "Total Revenue",
+        "type": "number"
+      },
+      "linkedin-page": {
+        "description": "Linkedin page of the company",
+        "instillUIOrder": 15,
+        "title": "Linkedin Page",
         "type": "string"
       }
     },
@@ -415,7 +501,7 @@
         },
         "amount": {
           "$ref": "#/$defs/deal/amount",
-          "instillFormat": "string",
+          "instillFormat": "number",
           "required": []
         },
         "deal-type": {
@@ -480,7 +566,7 @@
         },
         "amount": {
           "$ref": "#/$defs/deal/amount",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": ["number"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "reference", "template"]
         },
@@ -515,6 +601,233 @@
         }
       },
       "required": ["deal-id"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_COMPANY": {
+    "instillShortDescription": "Get company information using company ID",
+    "input": {
+      "description": "Input company ID",
+      "instillUIOrder": 0,
+      "properties": {
+        "company-id": {
+          "description": "Input company ID",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Company ID",
+          "type": "string"
+        }
+      },
+      "required": ["company-id"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Company information",
+      "instillUIOrder": 0,
+      "properties": {
+        "owner-id": {
+          "$ref": "#/$defs/common/owner-id",
+          "instillFormat": "string",
+          "required": []
+        },
+        "company-name": {
+          "$ref": "#/$defs/company/company-name",
+          "instillFormat": "string",
+          "required": []
+        },
+        "company-domain": {
+          "$ref": "#/$defs/company/company-domain",
+          "instillFormat": "string",
+          "required": []
+        },
+        "description": {
+          "$ref": "#/$defs/company/description",
+          "instillFormat": "string",
+          "required": []
+        },
+        "phone-number": {
+          "$ref": "#/$defs/company/phone-number",
+          "instillFormat": "string",
+          "required": []
+        },
+        "industry": {
+          "$ref": "#/$defs/company/industry",
+          "instillFormat": "string",
+          "required": []
+        },
+        "company-type": {
+          "$ref": "#/$defs/company/company-type",
+          "instillFormat": "string",
+          "required": []
+        },
+        "city": {
+          "$ref": "#/$defs/company/city",
+          "instillFormat": "string",
+          "required": []
+        },
+        "state": {
+          "$ref": "#/$defs/company/state",
+          "instillFormat": "string",
+          "required": []
+        },
+        "country": {
+          "$ref": "#/$defs/company/country",
+          "instillFormat": "string",
+          "required": []
+        },
+        "postal-code,": {
+          "$ref": "#/$defs/company/postal-code",
+          "instillFormat": "string",
+          "required": []
+        },
+        "time-zone": {
+          "$ref": "#/$defs/company/time-zone",
+          "instillFormat": "string",
+          "required": []
+        },
+        "annual-revenue": {
+          "$ref": "#/$defs/company/annual-revenue",
+          "instillFormat": "number",
+          "required": []
+        },
+        "total-revenue": {
+          "$ref": "#/$defs/company/total-revenue",
+          "instillFormat": "number",
+          "required": []
+        },
+        "linkedin-page": {
+          "$ref": "#/$defs/company/linkedin-page",
+          "instillFormat": "string",
+          "required": []
+        },
+        "associated-contact-id": {
+          "$ref": "#/$defs/common/associated-contact-id",
+          "instillUIorder": 16
+        }
+        
+      },
+      "required": [],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_COMPANY": {
+    "instillShortDescription": "Create new company",
+    "input": {
+      "description": "Company information",
+      "instillUIOrder": 0,
+      "properties": {
+        "contact-id-or-email": {
+          "description": "Use to associate contact with company. If the input has @, it will use email, otherwise, it will use contact id.",
+          "$ref": "#/$defs/common/contact-id-or-email"
+        },
+        "owner-id": {
+          "$ref": "#/$defs/common/owner-id",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "company-name": {
+          "$ref": "#/$defs/company/company-name",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "company-domain": {
+          "$ref": "#/$defs/company/company-domain",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "description": {
+          "$ref": "#/$defs/company/description",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "phone-number": {
+          "$ref": "#/$defs/company/phone-number",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "industry": {
+          "$ref": "#/$defs/company/industry",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "company-type": {
+          "$ref": "#/$defs/company/company-type",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "city": {
+          "$ref": "#/$defs/company/city",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "state": {
+          "$ref": "#/$defs/company/state",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "country": {
+          "$ref": "#/$defs/company/country",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "postal-code,": {
+          "$ref": "#/$defs/company/postal-code",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "time-zone": {
+          "$ref": "#/$defs/company/time-zone",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "annual-revenue": {
+          "$ref": "#/$defs/company/annual-revenue",
+          "instillAcceptFormats": ["number"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "linkedin-page": {
+          "$ref": "#/$defs/company/linkedin-page",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "reference", "template"]
+        }
+      },
+      "required": ["company-domain"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Obtain company ID",
+      "instillUIOrder": 0,
+      "properties": {
+        "company-id": {
+          "description": "Company ID",
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Company ID",
+          "type": "string",
+          "instillFormat": "string"
+        }
+      },
+      "required": ["company-id"],
       "title": "Output",
       "type": "object"
     }

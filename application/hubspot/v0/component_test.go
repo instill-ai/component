@@ -326,7 +326,6 @@ func TestComponent_ExecuteGetDealTask(t *testing.T) {
 			Pipeline:   "default",
 			DealStage:  "qualifiedtobuy",
 			CreateDate: "2024-07-09T02:22:06.140Z",
-			DealId:     "20620806729",
 		},
 	}
 
@@ -376,6 +375,7 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 			DealName:  "Test Creating Deal",
 			Pipeline:  "default",
 			DealStage: "contractsent",
+			Amount:    900,
 		},
 		inputContactId: "32027696539",
 		wantResp:       "12345678900",

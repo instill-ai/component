@@ -19,6 +19,8 @@ const (
 	taskCreateContact       = "TASK_CREATE_CONTACT"
 	taskGetDeal             = "TASK_GET_DEAL"
 	taskCreateDeal          = "TASK_CREATE_DEAL"
+	taskGetCompany          = "TASK_GET_COMPANY"
+	taskCreateCompany       = "TASK_CREATE_COMPANY"
 	taskGetTicket           = "TASK_GET_TICKET"
 	taskCreateTicket        = "TASK_CREATE_TICKET"
 	taskGetThread           = "TASK_GET_THREAD"
@@ -155,7 +157,11 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			dealInfo := res.Properties.(*DealInfoHSFormat)
 
 			// convert to another struct in order to utilize base.ConvertToStructpb
-			dealInfoOutput := DealInfoTaskFormat(*dealInfo)
+			dealInfoOutput, err := DealConvertToTaskFormat(dealInfo)
+
+			if err != nil {
+				return nil, err
+			}
 
 			output, err := base.ConvertToStructpb(dealInfoOutput)
 			if err != nil {
@@ -182,9 +188,9 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			if err != nil {
 				return nil, err
 			}
-			dealInfoReq := DealInfoHSFormat(dealInfoInput)
+			dealInfoReq := DealConvertToHSFormat(&dealInfoInput)
 
-			res, err := e.client.CRM.Deal.Create(&dealInfoReq)
+			res, err := e.client.CRM.Deal.Create(dealInfoReq)
 
 			if err != nil {
 				return nil, err
@@ -202,7 +208,76 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			uniqueKey := input.Fields["contact-id-or-email"].GetStringValue()
 
 			if uniqueKey != "" {
-				associateContactToObject(uniqueKey, "Deals", dealId, e)
+				AssociateContactToObject(uniqueKey, "Deals", dealId, e)
+			}
+
+			outputs = append(outputs, output)
+
+		case taskGetCompany:
+
+			uniqueKey := input.Fields["company-id"].GetStringValue()
+
+			res, err := e.client.CRM.Company.Get(uniqueKey, &CompanyInfoHSFormat{}, &hubspot.RequestQueryOption{Associations: []string{"contacts"}})
+
+			if err != nil {
+				return nil, err
+			}
+
+			companyInfo := res.Properties.(*CompanyInfoHSFormat)
+
+			// convert to another struct in order to utilize base.ConvertToStructpb
+			companyInfoOutput, err := CompanyConvertToTaskFormat(companyInfo)
+
+			if err != nil {
+				return nil, err
+			}
+
+			output, err := base.ConvertToStructpb(companyInfoOutput)
+			if err != nil {
+				return nil, err
+			}
+
+			// handling contacts associated with the company
+			companyInfoAssociation := res.Associations
+
+			if companyInfoAssociation != nil {
+				associationList := ConvertAssociatedResultToListValue(&res.Associations.Contacts.Results)
+
+				// add associated contact to output struct pb
+				output.Fields["associated-contact-id"] = structpb.NewListValue(associationList)
+			}
+
+			outputs = append(outputs, output)
+
+		case taskCreateCompany:
+
+			companyInfoInput := CompanyInfoTaskFormat{}
+			err := base.ConvertFromStructpb(input, &companyInfoInput)
+
+			if err != nil {
+				return nil, err
+			}
+			companyInfoReq := CompanyConvertToHSFormat(&companyInfoInput)
+
+			res, err := e.client.CRM.Company.Create(companyInfoReq)
+
+			if err != nil {
+				return nil, err
+			}
+
+			// get company Id
+			companyId := res.Properties.(*CompanyInfoHSFormat).CompanyId
+
+			output := new(structpb.Struct)
+			output.Fields = map[string]*structpb.Value{
+				"company-id": structpb.NewStringValue(companyId),
+			}
+
+			// this section of the code is used to associate contact with company if there is any
+			uniqueKey := input.Fields["contact-id-or-email"].GetStringValue()
+
+			if uniqueKey != "" {
+				AssociateContactToObject(uniqueKey, "Companies", companyId, e)
 			}
 
 			outputs = append(outputs, output)
@@ -265,7 +340,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			uniqueKey := input.Fields["contact-id-or-email"].GetStringValue()
 
 			if uniqueKey != "" {
-				associateContactToObject(uniqueKey, "Tickets", ticketId, e)
+				AssociateContactToObject(uniqueKey, "Tickets", ticketId, e)
 			}
 
 			outputs = append(outputs, output)
@@ -352,7 +427,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
-func associateContactToObject(uniqueKey string, objectType string, objectId string, e *execution) error {
+func AssociateContactToObject(uniqueKey string, objectType string, objectId string, e *execution) error {
 	if strings.Contains(uniqueKey, "@") {
 		uniqueKey += "?idProperty=email"
 

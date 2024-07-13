@@ -107,17 +107,14 @@ func TicketConvertToHSFormat(res *TicketInfoTaskFormat) *TicketInfoHSFormat {
 	combinedCategoryValues := strings.Join(res.Category, ";")
 
 	ret := &TicketInfoHSFormat{
-		OwnerId:          res.OwnerId,
-		TicketName:       res.TicketName,
-		TicketStatus:     res.TicketStatus,
-		Pipeline:         res.Pipeline,
-		Priority:         res.Priority,
-		Category:         combinedCategoryValues,
-		Source:           res.Source,
-		RecordSource:     res.RecordSource,
-		CreateDate:       res.CreateDate,
-		LastModifiedDate: res.LastModifiedDate,
-		TicketId:         res.TicketId,
+		TicketName:   res.TicketName,
+		TicketStatus: res.TicketStatus,
+		Pipeline:     res.Pipeline,
+		Priority:     res.Priority,
+		Category:     combinedCategoryValues,
+		Source:       res.Source,
+		RecordSource: res.RecordSource,
+		CreateDate:   res.CreateDate,
 	}
 
 	return ret
