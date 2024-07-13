@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/belong-inc/go-hubspot"
+	hubspot "github.com/belong-inc/go-hubspot"
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
 	"go.uber.org/zap"
@@ -12,9 +12,32 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+// This file is for testing CRM objects: Contacts, Deals, Companies, Tickets
+// notcrm_test.go is for Threads and Retrieve Association
+
 const (
 	bearerToken = "123"
 )
+
+func createMockClient() *CustomClient {
+
+	mockCRM := &hubspot.CRM{
+		Contact: &MockContact{},
+		Deal:    &MockDeal{},
+		Company: &MockCompany{},
+	}
+
+	mockClient := &CustomClient{
+		Client: &hubspot.Client{
+			CRM: mockCRM,
+		},
+		Thread:              &MockThread{},
+		RetrieveAssociation: &MockRetrieveAssociation{},
+		Ticket:              &MockTicket{},
+	}
+
+	return mockClient
+}
 
 // Mock Contact struct and its functions
 type MockContact struct{}
@@ -57,6 +80,7 @@ func (s *MockContact) Create(contact interface{}) (*hubspot.ResponseResource, er
 
 	return ret, nil
 }
+
 func (s *MockContact) Update(contactID string, contact interface{}) (*hubspot.ResponseResource, error) {
 	return nil, nil
 }
@@ -107,104 +131,89 @@ func (s *MockDeal) Create(deal interface{}) (*hubspot.ResponseResource, error) {
 func (s *MockDeal) Update(dealID string, deal interface{}) (*hubspot.ResponseResource, error) {
 	return nil, nil
 }
-
 func (s *MockDeal) AssociateAnotherObj(dealID string, conf *hubspot.AssociationConfig) (*hubspot.ResponseResource, error) {
 	return nil, nil
 }
 
-// Mock Thread struct and its functions
-type MockThread struct{}
+// Mock Company struct and its functions
+type MockCompany struct{}
 
-func (s *MockThread) Get(threadId string) (*ThreadResponseHSFormat, error) {
+func (s *MockCompany) Get(companyID string, company interface{}, option *hubspot.RequestQueryOption) (*hubspot.ResponseResource, error) {
 
-	var fakeThread ThreadResponseHSFormat
-	if threadId == "7509711154" {
-		fakeThread = ThreadResponseHSFormat{
-			Results: []ThreadResultHSFormat{
-				{
-					CreatedAt: "2024-07-02T10:42:15Z",
-					Senders: []ThreadUserHSFormat{
-						{
-							Name: "Brian Halligan (Sample Contact)",
-							DeliveryIdentifier: ThreadDeliveryIdentifier{
-								Type:  "HS_EMAIL_ADDRESS",
-								Value: "bh@hubspot.com",
-							},
-						},
-					},
-					Recipients: []ThreadUserHSFormat{
-						{
-							DeliveryIdentifier: ThreadDeliveryIdentifier{
-								Type:  "HS_EMAIL_ADDRESS",
-								Value: "fake_email@gmail.com",
-							},
-						},
-					},
-					Text:    "Just random content inside",
-					Subject: "A fake message",
-				},
-			},
+	var fakeCompany CompanyInfoHSFormat
+	if companyID == "20620806729" {
+		fakeCompany = CompanyInfoHSFormat{
+			CompanyName:   "HubSpot",
+			CompanyDomain: "hubspot.com",
+			Description:   "HubSpot offers a comprehensive cloud-based marketing and sales platform with integrated applications for attracting, converting, and delighting customers through inbound marketing strategies.",
+			PhoneNumber:   "+1 888-482-7768",
+			Industry:      "COMPUTER_SOFTWARE",
+			AnnualRevenue: "10000000000",
 		}
 	}
 
-	return &fakeThread, nil
+	ret := &hubspot.ResponseResource{
+		Properties: &fakeCompany,
+	}
+
+	return ret, nil
 }
 
-// Mock Retrieve Association struct and its functions
+func (s *MockCompany) Create(company interface{}) (*hubspot.ResponseResource, error) {
+	arbitraryCompanyId := "99999999999"
 
-type MockRetrieveAssociation struct{}
+	fakeCompanyInfo := company.(*CompanyInfoHSFormat)
 
-func (s *MockRetrieveAssociation) GetThreadId(contactId string) (*RetrieveThreadIdResponse, error) {
+	fakeCompanyInfo.CompanyId = arbitraryCompanyId
 
-	var fakeThreadId RetrieveThreadIdResponse
-	if contactId == "32027696539" {
-		fakeThreadId = RetrieveThreadIdResponse{
-			Results: []RetrieveThreadIdResult{
-				{
-					Id: "7509711154",
-				},
-			},
+	ret := &hubspot.ResponseResource{
+		Properties: fakeCompanyInfo,
+	}
+
+	return ret, nil
+}
+func (s *MockCompany) Update(companyID string, company interface{}) (*hubspot.ResponseResource, error) {
+	return nil, nil
+}
+func (s *MockCompany) Delete(companyID string) error {
+	return nil
+}
+func (s *MockCompany) AssociateAnotherObj(companyID string, conf *hubspot.AssociationConfig) (*hubspot.ResponseResource, error) {
+	return nil, nil
+}
+
+// Mock Ticket struct and its functions
+type MockTicket struct{}
+
+func (s *MockTicket) Get(ticketId string) (*hubspot.ResponseResource, error) {
+	var fakeTicket TicketInfoHSFormat
+	if ticketId == "2865646368" {
+		fakeTicket = TicketInfoHSFormat{
+			TicketName:   "HubSpot - New Query (Sample Query)",
+			TicketStatus: "1",
+			Pipeline:     "0",
+			Category:     "PRODUCT_ISSUE;BILLING_ISSUE",
 		}
 	}
-	return &fakeThreadId, nil
+
+	ret := &hubspot.ResponseResource{
+		Properties: &fakeTicket,
+	}
+
+	return ret, nil
 }
+func (s *MockTicket) Create(ticket *TicketInfoHSFormat) (*hubspot.ResponseResource, error) {
+	arbitraryTicketId := "99987654321"
 
-func (s *MockRetrieveAssociation) GetCrmId(contactId string, objectType string) (*RetrieveCrmIdResponseHSFormat, error) {
+	fakeTicketInfo := ticket
 
-	var fakeCrmId RetrieveCrmIdResponseHSFormat
-	if contactId == "32027696539" {
-		fakeCrmId = RetrieveCrmIdResponseHSFormat{
-			Results: []RetrieveCrmIdResultHSFormat{
-				{
-					IdArray: []RetrieveCrmId{
-						{
-							Id: "12345678900",
-						},
-					},
-				},
-			},
-		}
-	}
-	return &fakeCrmId, nil
+	fakeTicketInfo.TicketId = arbitraryTicketId
 
-}
-
-func createMockClient() *CustomClient {
-
-	mockCRM := &hubspot.CRM{
-		Contact: &MockContact{},
-		Deal:    &MockDeal{},
+	ret := &hubspot.ResponseResource{
+		Properties: fakeTicketInfo,
 	}
 
-	mockClient := &CustomClient{
-		Client: &hubspot.Client{
-			CRM: mockCRM,
-		},
-		Thread:              &MockThread{},
-		RetrieveAssociation: &MockRetrieveAssociation{},
-	}
-
-	return mockClient
+	return ret, nil
 }
 
 // Testing functions
@@ -375,7 +384,6 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 			DealName:  "Test Creating Deal",
 			Pipeline:  "default",
 			DealStage: "contractsent",
-			Amount:    900,
 		},
 		inputContactId: "32027696539",
 		wantResp:       "12345678900",
@@ -408,7 +416,7 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 	})
 }
 
-func TestComponent_ExecuteGetThreadTask(t *testing.T) {
+func TestComponent_ExecuteGetCompanyTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
@@ -417,31 +425,17 @@ func TestComponent_ExecuteGetThreadTask(t *testing.T) {
 	tc := struct {
 		name     string
 		input    string
-		wantResp ThreadResponseTaskFormat
+		wantResp CompanyInfoTaskFormat
 	}{
-		name:  "ok - get thread",
-		input: "7509711154",
-		wantResp: ThreadResponseTaskFormat{
-			Results: []ThreadResultTaskFormat{
-				{
-					CreatedAt: "2024-07-02T10:42:15Z",
-					Senders: []ThreadUserTaskFormat{
-						{
-							Name:  "Brian Halligan (Sample Contact)",
-							Type:  "HS_EMAIL_ADDRESS",
-							Value: "bh@hubspot.com",
-						},
-					},
-					Recipients: []ThreadUserTaskFormat{
-						{
-							Type:  "HS_EMAIL_ADDRESS",
-							Value: "fake_email@gmail.com",
-						},
-					},
-					Text:    "Just random content inside",
-					Subject: "A fake message",
-				},
-			},
+		name:  "ok - get company",
+		input: "20620806729",
+		wantResp: CompanyInfoTaskFormat{
+			CompanyName:   "HubSpot",
+			CompanyDomain: "hubspot.com",
+			Description:   "HubSpot offers a comprehensive cloud-based marketing and sales platform with integrated applications for attracting, converting, and delighting customers through inbound marketing strategies.",
+			PhoneNumber:   "+1 888-482-7768",
+			Industry:      "COMPUTER_SOFTWARE",
+			AnnualRevenue: 10000000000,
 		},
 	}
 
@@ -452,18 +446,19 @@ func TestComponent_ExecuteGetThreadTask(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: taskGetThread},
+			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: taskGetCompany},
 			client:             createMockClient(),
 		}
 		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbInput, err := structpb.NewStruct(map[string]any{
-			"thread-id": tc.input,
+			"company-id": tc.input,
 		})
 
 		c.Assert(err, qt.IsNil)
 
 		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+
 		c.Assert(err, qt.IsNil)
 
 		resJSON, err := protojson.Marshal(res[0])
@@ -474,73 +469,152 @@ func TestComponent_ExecuteGetThreadTask(t *testing.T) {
 	})
 }
 
-func TestComponent_ExecuteRetrieveAssociationTask(t *testing.T) {
+func TestComponent_ExecuteCreateCompanyTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
-	testcases := []struct {
-		name     string
-		input    RetrieveAssociationInput
-		wantResp interface{}
+	tc := struct {
+		name           string
+		inputCompany   CompanyInfoTaskFormat
+		inputContactId string //used to associate contact with company
+		wantResp       string
 	}{
-		{
-			name: "ok - retrieve association: thread ID",
-			input: RetrieveAssociationInput{
-				ContactId:  "32027696539",
-				ObjectType: "Threads",
-			},
-			wantResp: RetrieveThreadIdResponse{
-				Results: []RetrieveThreadIdResult{
-					{
-						Id: "7509711154",
-					},
-				},
-			},
+		name: "ok - create company",
+		inputCompany: CompanyInfoTaskFormat{
+			CompanyName:   "Fake Company",
+			CompanyDomain: "fakecompany.com",
+			AnnualRevenue: 5000000,
 		},
-		{
-			name: "ok - retrieve association: deal ID",
-			input: RetrieveAssociationInput{
-				ContactId:  "32027696539",
-				ObjectType: "Deals",
-			},
-			wantResp: RetrieveCrmIdResultTaskFormat{
-				IdArray: []RetrieveCrmId{
-					{
-						Id: "12345678900",
-					},
-				},
-			},
-		},
+		inputContactId: "32027696539",
+		wantResp:       "99999999999",
 	}
 
-	for _, tc := range testcases {
-		c.Run(tc.name, func(c *qt.C) {
-			setup, err := structpb.NewStruct(map[string]any{
-				"token": bearerToken,
-			})
-			c.Assert(err, qt.IsNil)
-
-			e := &execution{
-				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: taskRetrieveAssociation},
-				client:             createMockClient(),
-			}
-			exec := &base.ExecutionWrapper{Execution: e}
-
-			pbInput, err := base.ConvertToStructpb(tc.input)
-
-			c.Assert(err, qt.IsNil)
-
-			res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
-			c.Assert(err, qt.IsNil)
-
-			resJSON, err := protojson.Marshal(res[0])
-			c.Assert(err, qt.IsNil)
-
-			c.Check(resJSON, qt.JSONEquals, tc.wantResp)
-
+	c.Run(tc.name, func(c *qt.C) {
+		setup, err := structpb.NewStruct(map[string]any{
+			"token": bearerToken,
 		})
+		c.Assert(err, qt.IsNil)
+
+		e := &execution{
+			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: taskCreateCompany},
+			client:             createMockClient(),
+		}
+		exec := &base.ExecutionWrapper{Execution: e}
+
+		pbInput, err := base.ConvertToStructpb(tc.inputCompany)
+		pbInput.Fields["contact-id-or-email"] = structpb.NewStringValue(tc.inputContactId)
+
+		c.Assert(err, qt.IsNil)
+
+		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+		c.Assert(err, qt.IsNil)
+
+		resString := res[0].Fields["company-id"].GetStringValue()
+
+		c.Check(resString, qt.Equals, tc.wantResp)
+
+	})
+}
+
+func TestComponent_ExecuteGetTicketTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	tc := struct {
+		name     string
+		input    string
+		wantResp TicketInfoTaskFormat
+	}{
+		name:  "ok - get ticket",
+		input: "2865646368",
+		wantResp: TicketInfoTaskFormat{
+			TicketName:   "HubSpot - New Query (Sample Query)",
+			TicketStatus: "1",
+			Pipeline:     "0",
+			Category:     []string{"PRODUCT_ISSUE", "BILLING_ISSUE"},
+		},
 	}
 
+	c.Run(tc.name, func(c *qt.C) {
+		setup, err := structpb.NewStruct(map[string]any{
+			"token": bearerToken,
+		})
+		c.Assert(err, qt.IsNil)
+
+		e := &execution{
+			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: taskGetTicket},
+			client:             createMockClient(),
+		}
+		exec := &base.ExecutionWrapper{Execution: e}
+
+		pbInput, err := structpb.NewStruct(map[string]any{
+			"ticket-id": tc.input,
+		})
+
+		c.Assert(err, qt.IsNil)
+
+		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+
+		c.Assert(err, qt.IsNil)
+
+		resJSON, err := protojson.Marshal(res[0])
+		c.Assert(err, qt.IsNil)
+
+		c.Check(resJSON, qt.JSONEquals, tc.wantResp)
+
+	})
+}
+
+func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	tc := struct {
+		name           string
+		inputTicket    TicketInfoTaskFormat
+		inputContactId string //used to associate contact with ticket
+		wantResp       string
+	}{
+		name: "ok - create ticket",
+		inputTicket: TicketInfoTaskFormat{
+			TicketName:   "Fake Ticket",
+			TicketStatus: "2",
+			Pipeline:     "0",
+			Category:     []string{"FEATURE_REQUEST", "GENERAL_INQUIRY"},
+		},
+		inputContactId: "32027696539",
+		wantResp:       "99987654321",
+	}
+
+	c.Run(tc.name, func(c *qt.C) {
+		setup, err := structpb.NewStruct(map[string]any{
+			"token": bearerToken,
+		})
+		c.Assert(err, qt.IsNil)
+
+		e := &execution{
+			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: taskCreateTicket},
+			client:             createMockClient(),
+		}
+		exec := &base.ExecutionWrapper{Execution: e}
+
+		pbInput, err := base.ConvertToStructpb(tc.inputTicket)
+		pbInput.Fields["contact-id-or-email"] = structpb.NewStringValue(tc.inputContactId)
+
+		c.Assert(err, qt.IsNil)
+
+		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+		c.Assert(err, qt.IsNil)
+
+		resString := res[0].Fields["ticket-id"].GetStringValue()
+
+		c.Check(resString, qt.Equals, tc.wantResp)
+
+	})
 }

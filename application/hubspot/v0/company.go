@@ -62,6 +62,7 @@ func CompanyConvertToTaskFormat(company *CompanyInfoHSFormat) (*CompanyInfoTaskF
 	}
 
 	ret := &CompanyInfoTaskFormat{
+		OwnerId:       company.OwnerId,
 		CompanyName:   company.CompanyName,
 		CompanyDomain: company.CompanyDomain,
 		Description:   company.Description,

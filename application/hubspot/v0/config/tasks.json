@@ -142,9 +142,9 @@
         "type": "string"
       },
       "phone-number": {
-        "description": "Description of the company",
+        "description": "Phone number of the company",
         "instillUIOrder": 5,
-        "title": "Description",
+        "title": "Phone Number",
         "type": "string"
       },
       "industry": {

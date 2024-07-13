@@ -42,6 +42,7 @@ func DealConvertToTaskFormat(deal *DealInfoHSFormat) (*DealInfoTaskFormat, error
 	}
 
 	ret := &DealInfoTaskFormat{
+		OwnerId:    deal.OwnerId,
 		DealName:   deal.DealName,
 		Pipeline:   deal.Pipeline,
 		DealStage:  deal.DealStage,
