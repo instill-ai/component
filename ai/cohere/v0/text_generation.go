@@ -22,7 +22,7 @@ type MultiModalContent struct {
 	Type     string `json:"type"`
 }
 
-type textGenerationInput struct {
+type TextGenerationInput struct {
 	ChatHistory  []ChatMessage `json:"chat-history"`
 	MaxNewTokens int           `json:"max-new-tokens"`
 	ModelName    string        `json:"model-name"`
@@ -46,7 +46,7 @@ type commandUsage struct {
 	OutputTokens int `json:"output-tokens"`
 }
 
-type textGenerationOutput struct {
+type TextGenerationOutput struct {
 	Text      string       `json:"text"`
 	Citations []citation   `json:"citations"`
 	Usage     commandUsage `json:"usage"`
@@ -54,7 +54,7 @@ type textGenerationOutput struct {
 
 func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, error) {
 
-	inputStruct := textGenerationInput{}
+	inputStruct := TextGenerationInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, fmt.Errorf("error generating input struct: %v", err)
@@ -123,7 +123,7 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 	inputTokens := *bills.InputTokens
 	outputTokens := *bills.OutputTokens
 
-	outputStruct := textGenerationOutput{
+	outputStruct := TextGenerationOutput{
 		Text:      resp.Text,
 		Citations: citations,
 		Usage: commandUsage{
