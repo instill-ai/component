@@ -262,6 +262,17 @@
           "instillAcceptFormats": [
             "string"
           ],
+          "instillCredentialMap": {
+            "values": [
+              "command-r-plus",
+              "command-r",
+              "command",
+              "command-light"
+            ],
+            "targets": [
+              "setup.api-key"
+            ]
+          },
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "value",
@@ -436,6 +447,17 @@
           "instillAcceptFormats": [
             "string"
           ],
+          "instillCredentialMap": {
+            "values": [
+              "embed-english-v3.0",
+              "embed-multilingual-v3.0",
+              "embed-english-light-v3.0",
+              "embed-multilingual-light-v3.0"
+            ],
+            "targets": [
+              "setup.api-key"
+            ]
+          },
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "value",
@@ -561,6 +583,15 @@
           "instillAcceptFormats": [
             "string"
           ],
+          "instillCredentialMap": {
+            "values": [
+              "rerank-english-v3.0",
+              "rerank-multilingual-v3.0"
+            ],
+            "targets": [
+              "setup.api-key"
+            ]
+          },
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "value",
