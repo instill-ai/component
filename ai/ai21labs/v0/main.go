@@ -74,6 +74,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	switch task {
 	case "TASK_TEXT_GENERATION_CHAT":
 		e.execute = e.TaskTextGenerationChat
+	case "TASK_TEXT_EMBEDDINGS":
+		e.execute = e.TaskTextEmbeddings
 	case "TASK_CONTEXTUAL_ANSWERING":
 		e.execute = e.TaskContextualAnswering
 	case "TASK_TEXT_SUMMARIZATION":
@@ -83,13 +85,11 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	case "TASK_TEXT_PARAPHRASING":
 		e.execute = e.TaskTextParaphrasing
 	case "TASK_GRAMMAR_CHECK":
-		e.execute = e.TaskGrammerCheck
+		e.execute = e.TaskGrammarCheck
 	case "TASK_TEXT_IMPROVEMENT":
 		e.execute = e.TaskTextImprovement
 	case "TASK_TEXT_SEGMENTATION":
 		e.execute = e.TaskTextSegmentation
-	case "TASK_TEXT_EMBEDDINGS":
-		e.execute = e.TaskTextEmbeddings
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}

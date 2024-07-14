@@ -61,8 +61,8 @@
       "title": "Chat Message",
       "type": "object"
     },
-    "usage": {
-      "description": "Usage tokens in AI21labs",
+    "chat-usage": {
+      "description": "Usage tokens in AI21labs chat models",
       "instillUIOrder": 1,
       "properties": {
         "input-tokens": {
@@ -290,11 +290,101 @@
           "type": "string"
         },
         "usage": {
-          "$ref": "#/$defs/usage"
+          "$ref": "#/$defs/chat-usage"
         }
       },
       "required": [
         "text"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_TEXT_EMBEDDINGS": {
+    "instillShortDescription": "Provide a vector representation of the provided text",
+    "description": "Embedding vectors encode semantic information about the given text. This can be used as a basis for various use cases including custom RAG engine implementations, semantic search, clustering, and classification.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "text",
+        "style"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "text": {
+          "description": "The text content to be embedded",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Text",
+          "type": "string"
+        },
+        "style": {
+          "description": "The style of the text",
+          "enum": [
+            "segment",
+            "query"
+          ],
+          "example": "segment",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value"
+          ],
+          "title": "Style",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillUIOrder": 0,
+      "properties": {
+        "embedding": {
+          "description": "Model Output",
+          "instillUIOrder": 0,
+          "instillFormat": "array:number",
+          "title": "Embedding",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "usage": {
+          "description": "Usage tokens in AI21labs embedding models",
+          "instillUIOrder": 1,
+          "properties": {
+            "tokens": {
+              "description": "The input tokens read by AI21labs embedding model",
+              "instillFormat": "number",
+              "instillUIOrder": 2,
+              "title": "Tokens",
+              "type": "number"
+            }
+          },
+          "required": [
+            "tokens"
+          ],
+          "title": "Usage",
+          "type": "object"
+        }
+      },
+      "required": [
+        "embedding"
       ],
       "title": "Output",
       "type": "object"
@@ -583,6 +673,109 @@
       },
       "required": [
         "summerizations"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_TEXT_PARAPHRASING": {
+    "instillShortDescription": "Paraphrase text content",
+    "description": "The model returns 10 possibilities for the requested text. AI21 Studio's Paraphrase API offers access to our state-of-the-art paraphrasing engine. It has been fine-tuned specifically for paraphrasing. As a result, it's easier to integrate into your systems, and since it's optimized for this purpose, it's also more efficient (and therefore cheaper) than building it from scratch. This is also the engine behind Wordtune - so you know it's pretty awesome.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "text",
+        "style"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "text": {
+          "description": "The text content to be paraphrased",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Text",
+          "type": "string"
+        },
+        "style": {
+          "description": "The style of the text",
+          "enum": [
+            "general",
+            "casual",
+            "formal",
+            "long",
+            "short"
+          ],
+          "example": "general",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value"
+          ],
+          "title": "Style",
+          "type": "string"
+        },
+        "start-index": {
+          "description": "The start index of the text to be paraphrased",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "end-index": {
+          "description": "The end index of the text to be paraphrased",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "End Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "text",
+        "style"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillUIOrder": 0,
+      "properties": {
+        "suggestions": {
+          "description": "Model Output",
+          "instillUIOrder": 0,
+          "instillFormat": "array:string",
+          "instillUIMultiline": true,
+          "title": "Suggestions",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "suggestions"
       ],
       "title": "Output",
       "type": "object"

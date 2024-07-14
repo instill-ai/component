@@ -108,9 +108,8 @@ type TaskTextEmbeddingsInput struct {
 }
 
 type TaskTextEmbeddingsOutput struct {
-	ID         string    `json:"id"`
-	Embeddings []float32 `json:"embeddings"`
-	Usage      base.EmbeddingTextModelUsage
+	Embedding []float32                    `json:"embedding"`
+	Usage     base.EmbeddingTextModelUsage `json:"usage"`
 }
 
 func (e *execution) TaskTextEmbeddings(in *structpb.Struct) (*structpb.Struct, error) {
@@ -130,8 +129,7 @@ func (e *execution) TaskTextEmbeddings(in *structpb.Struct) (*structpb.Struct, e
 	}
 
 	output := TaskTextEmbeddingsOutput{
-		ID:         resp.ID,
-		Embeddings: resp.Results[0],
+		Embedding: resp.Results[0].Embedding,
 		Usage: base.EmbeddingTextModelUsage{
 			Tokens: len(input.Text) / 2, // IMPORTANT: this is a rough estimate, but the embedding API does not return token counts for now (2024-07-21)
 		},
@@ -346,7 +344,7 @@ type TaskGrammarCheckOutput struct {
 	Types       []string `json:"types"`
 }
 
-func (e *execution) TaskGrammerCheck(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) TaskGrammarCheck(in *structpb.Struct) (*structpb.Struct, error) {
 	input := TaskGrammarCheckInput{}
 	if err := base.ConvertFromStructpb(in, &input); err != nil {
 		return nil, err

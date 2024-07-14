@@ -2,14 +2,14 @@ package ai21labs
 
 // Source https://docs.ai21.com/reference/paraphrase-ref on 2024-07-21
 
-const paraphraseEndpoint = "v1/paraphrase"
+const paraphraseEndpoint = "/studio/v1/paraphrase"
 
 type ParaphraseRequest struct {
 	Text  string          `json:"text"`
 	Style ParaphraseStyle `json:"style"`
 	// note: conflicting name convention
-	StartIndex int `json:"startIndex"`
-	EndIndex   int `json:"endIndex"`
+	StartIndex int `json:"startIndex,omitempty"`
+	EndIndex   int `json:"endIndex,omitempty"`
 }
 
 type ParaphraseStyle string

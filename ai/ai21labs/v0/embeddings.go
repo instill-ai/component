@@ -16,9 +16,13 @@ const (
 	Query   EmbeddingsType = "query"
 )
 
+type EmbeddingResult struct {
+	Embedding []float32 `json:"embedding"`
+}
+
 type EmbeddingsResponse struct {
-	ID      string      `json:"id"`
-	Results [][]float32 `json:"results"`
+	ID      string            `json:"id"`
+	Results []EmbeddingResult `json:"results"`
 }
 
 func (c *AI21labsClient) Embeddings(req EmbeddingsRequest) (EmbeddingsResponse, error) {
