@@ -75,7 +75,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	}
 	e := &execution{
 		ComponentExecution:     base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: resolvedSetup},
-		client:                 newClient(getAPIKey(setup), c.GetLogger()),
+		client:                 newClient(getAPIKey(resolvedSetup), c.GetLogger()),
 		usesInstillCredentials: resolved,
 	}
 	switch task {

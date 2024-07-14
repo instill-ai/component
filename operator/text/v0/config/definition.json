@@ -1,7 +1,6 @@
 {
   "availableTasks": [
     "TASK_CONVERT_TO_TEXT",
-    "TASK_SPLIT_BY_TOKEN",
     "TASK_CHUNK_TEXT"
   ],
   "custom": false,

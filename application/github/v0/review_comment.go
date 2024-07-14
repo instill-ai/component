@@ -26,6 +26,7 @@ type ListReviewCommentsInput struct {
 	Sort      string `json:"sort"`
 	Direction string `json:"direction"`
 	Since     string `json:"since"`
+	PageOptions
 }
 
 type ListReviewCommentsResp struct {
@@ -56,6 +57,10 @@ func (githubClient *Client) listReviewCommentsTask(ctx context.Context, props *s
 		Sort:      inputStruct.Sort,
 		Direction: inputStruct.Direction,
 		Since:     *sinceTime,
+		ListOptions: github.ListOptions{
+			Page:    inputStruct.Page,
+			PerPage: min(inputStruct.PerPage, 100), // GitHub API only allows 100 per page
+		},
 	}
 	number := inputStruct.PrNumber
 	comments, _, err := githubClient.PullRequests.ListComments(ctx, owner, repository, number, opts)

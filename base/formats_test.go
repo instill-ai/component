@@ -3,7 +3,6 @@ package base
 import (
 	"bufio"
 	"encoding/base64"
-	"fmt"
 	"io"
 	"os"
 	"testing"
@@ -25,7 +24,6 @@ func TestUtil_GetFileExtension(t *testing.T) {
 
 	fileBase64 := base64.StdEncoding.EncodeToString(content)
 	fileBase64 = "data:image/png;base64," + fileBase64
-	fmt.Println(fileBase64)
 	gotFileExtension := GetBase64FileExtension(fileBase64)
 	c.Check(gotFileExtension, qt.Equals, wantFileExtension)
 }
