@@ -323,5 +323,95 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_CREATE_INDEX":{
+    "instillShortDescription": "Create an index in Elasticsearch",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "index-name": {
+          "description": "Name of the Elasticsearch index",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Index Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index-name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Create index operation status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_DELETE_INDEX":{
+    "instillShortDescription": "Delete an index in Elasticsearch",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "index-name": {
+          "description": "Name of the Elasticsearch index",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Index Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index-name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Delete index operation status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
   }
 }

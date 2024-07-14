@@ -87,6 +87,26 @@ func MockESDelete(wantResp DeleteOutput) *esapi.Response {
 	}
 }
 
+func MockESCreateIndex(wantResp CreateIndexOutput) *esapi.Response {
+	resp := map[string]string{"status": wantResp.Status}
+	b, _ := json.Marshal(resp)
+	return &esapi.Response{
+		StatusCode: 200,
+		Body:       io.NopCloser(bytes.NewReader(b)),
+		Header:     make(map[string][]string),
+	}
+}
+
+func MockESDeleteIndex(wantResp DeleteIndexOutput) *esapi.Response {
+	resp := map[string]string{"status": wantResp.Status}
+	b, _ := json.Marshal(resp)
+	return &esapi.Response{
+		StatusCode: 200,
+		Body:       io.NopCloser(bytes.NewReader(b)),
+		Header:     make(map[string][]string),
+	}
+}
+
 func TestComponent_ExecuteSearchTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
@@ -320,6 +340,122 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 			}
 
 			e.execute = e.delete
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestComponent_ExecuteCreateIndexTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    CreateIndexInput
+		wantResp CreateIndexOutput
+		wantErr  string
+	}{
+		{
+			name: "ok to create index",
+			input: CreateIndexInput{
+				IndexName: "index_name",
+			},
+			wantResp: CreateIndexOutput{
+				Status: "Successfully created index",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"api-key":  "mock-api-key",
+				"cloud-id": "mock-cloud-id",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskCreateIndex},
+				createIndexClient: func(index string, o ...func(*esapi.IndicesCreateRequest)) (*esapi.Response, error) {
+					return MockESCreateIndex(tc.wantResp), nil
+				},
+			}
+
+			e.execute = e.createIndex
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestComponent_ExecuteDeleteIndexTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    DeleteIndexInput
+		wantResp DeleteIndexOutput
+		wantErr  string
+	}{
+		{
+			name: "ok to delete index",
+			input: DeleteIndexInput{
+				IndexName: "index_name",
+			},
+			wantResp: DeleteIndexOutput{
+				Status: "Successfully deleted index",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"api-key":  "mock-api-key",
+				"cloud-id": "mock-cloud-id",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDeleteIndex},
+				deleteIndexClient: func(index []string, o ...func(*esapi.IndicesDeleteRequest)) (*esapi.Response, error) {
+					return MockESDeleteIndex(tc.wantResp), nil
+				},
+			}
+
+			e.execute = e.deleteIndex
 			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)

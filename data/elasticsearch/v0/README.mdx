@@ -1,0 +1,181 @@
+---
+title: "Elasticsearch"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP Elasticsearch component https://github.com/instill-ai/instill-core"
+---
+
+The Elasticsearch component is a data component that allows users to access the Elasticsearch database.
+It can carry out the following tasks:
+
+- [Search](#search)
+- [Index](#index)
+- [Update](#update)
+- [Delete](#delete)
+- [Create Index](#create-index)
+- [Delete Index](#delete-index)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/application/elasticsearch/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| API Key (required) | `api-key` | string | Fill in the API key for the Elasticsearch instance |
+| Cloud ID (required) | `cloud-id` | string | Fill in the Cloud ID for the Elasticsearch instance |
+
+
+
+
+## Supported Tasks
+
+### Search
+
+Search for documents in Elasticsearch
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_SEARCH` |
+| Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
+| Query | `query` | string | Query to be used for search, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected |
+| Criteria | `criteria` | semi-structured/json | Criteria for selecting documents to search, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Documents | `documents` | array | Search result documents |
+| Status | `status` | string | Search operation status |
+
+
+
+
+
+
+### Index
+
+Index a document into Elasticsearch
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_INDEX` |
+| Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
+| Data (required) | `data` | semi-structured/json | Data to be indexed |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Index operation status |
+
+
+
+
+
+
+### Update
+
+Update a document in Elasticsearch
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPDATE` |
+| Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
+| Query | `query` | string | Query to be used for update, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected |
+| Criteria | `criteria` | semi-structured/json | Criteria for selecting documents to update, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected |
+| Update (required) | `update` | semi-structured/json | Update data |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Update operation status |
+
+
+
+
+
+
+### Delete
+
+Delete documents from Elasticsearch
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DELETE` |
+| Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
+| Query | `query` | string | Query to be used for delete, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected |
+| Criteria | `criteria` | semi-structured/json | Criteria for selecting documents to delete, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Delete operation status |
+
+
+
+
+
+
+### Create Index
+
+Create an index in Elasticsearch
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CREATE_INDEX` |
+| Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Create index operation status |
+
+
+
+
+
+
+### Delete Index
+
+Delete an index in Elasticsearch
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DELETE_INDEX` |
+| Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Delete index operation status |
+
+
+
+
+
+
+

@@ -16,10 +16,12 @@ import (
 )
 
 const (
-	TaskSearch = "TASK_SEARCH"
-	TaskIndex  = "TASK_INDEX"
-	TaskUpdate = "TASK_UPDATE"
-	TaskDelete = "TASK_DELETE"
+	TaskSearch      = "TASK_SEARCH"
+	TaskIndex       = "TASK_INDEX"
+	TaskUpdate      = "TASK_UPDATE"
+	TaskDelete      = "TASK_DELETE"
+	TaskCreateIndex = "TASK_CREATE_INDEX"
+	TaskDeleteIndex = "TASK_DELETE_INDEX"
 )
 
 var (
@@ -41,11 +43,13 @@ type component struct {
 type execution struct {
 	base.ComponentExecution
 
-	execute      func(*structpb.Struct) (*structpb.Struct, error)
-	searchClient esapi.Search
-	indexClient  esapi.Index
-	updateClient esapi.UpdateByQuery
-	deleteClient esapi.DeleteByQuery
+	execute           func(*structpb.Struct) (*structpb.Struct, error)
+	searchClient      esapi.Search
+	indexClient       esapi.Index
+	updateClient      esapi.UpdateByQuery
+	deleteClient      esapi.DeleteByQuery
+	createIndexClient esapi.IndicesCreate
+	deleteIndexClient esapi.IndicesDelete
 }
 
 type ESSearch func(o ...func(*esapi.SearchRequest)) (*esapi.Response, error)
@@ -55,6 +59,10 @@ type ESIndex func(index string, body io.Reader, o ...func(*esapi.IndexRequest)) 
 type ESUpdate func(index []string, o ...func(*esapi.UpdateByQueryRequest)) (*esapi.Response, error)
 
 type ESDelete func(index []string, body io.Reader, o ...func(*esapi.DeleteByQueryRequest)) (*esapi.Response, error)
+
+type ESCreateIndex func(index string, o ...func(*esapi.IndicesCreateRequest)) (*esapi.Response, error)
+
+type ESDeleteIndex func(index []string, o ...func(*esapi.IndicesDeleteRequest)) (*esapi.Response, error)
 
 // Init returns an implementation of IConnector that interacts with Elasticsearch.
 func Init(bc base.Component) *component {
@@ -70,13 +78,15 @@ func Init(bc base.Component) *component {
 }
 
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	searchClient, indexClient, updateClient, deleteClient := newClient(setup)
+	searchClient, indexClient, updateClient, deleteClient, createIndexClient, deleteIndexClient := newClient(setup)
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 		searchClient:       *searchClient,
 		indexClient:        *indexClient,
 		updateClient:       *updateClient,
 		deleteClient:       *deleteClient,
+		createIndexClient:  *createIndexClient,
+		deleteIndexClient:  *deleteIndexClient,
 	}
 
 	switch task {
@@ -88,6 +98,10 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.update
 	case TaskDelete:
 		e.execute = e.delete
+	case TaskCreateIndex:
+		e.execute = e.createIndex
+	case TaskDeleteIndex:
+		e.execute = e.deleteIndex
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),

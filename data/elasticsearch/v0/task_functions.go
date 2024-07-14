@@ -79,6 +79,22 @@ type DeleteOutput struct {
 	Status string `json:"status"`
 }
 
+type CreateIndexInput struct {
+	IndexName string `json:"index-name"`
+}
+
+type CreateIndexOutput struct {
+	Status string `json:"status"`
+}
+
+type DeleteIndexInput struct {
+	IndexName string `json:"index-name"`
+}
+
+type DeleteIndexOutput struct {
+	Status string `json:"status"`
+}
+
 // Index document into Elasticsearch
 func indexDocument(es *esapi.Index, indexName string, data map[string]interface{}) error {
 	// Serialize data to JSON
@@ -245,6 +261,42 @@ func deleteDocument(es *esapi.DeleteByQuery, indexName string, query string, cri
 	return nil
 }
 
+func createIndexDocument(es *esapi.IndicesCreate, indexName string) error {
+	esClient := ESCreateIndex(*es)
+
+	// Create index using elasticsearch.Client.Index method
+	res, err := esClient(indexName)
+
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("error creating index: %s", res.Status())
+	}
+
+	return nil
+}
+
+func deleteIndexDocument(es *esapi.IndicesDelete, indexName string) error {
+	esClient := ESDeleteIndex(*es)
+
+	// Delete index using elasticsearch.Client.Delete method
+	res, err := esClient([]string{indexName})
+
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("error deleting index: %s", res.Status())
+	}
+
+	return nil
+}
+
 func (e *execution) index(in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct IndexInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
@@ -329,6 +381,52 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 
 	outputStruct := DeleteOutput{
 		Status: "Successfully deleted document",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (e *execution) createIndex(in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct CreateIndexInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	err = createIndexDocument(&e.createIndexClient, inputStruct.IndexName)
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := CreateIndexOutput{
+		Status: "Successfully created index",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (e *execution) deleteIndex(in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct DeleteIndexInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	err = deleteIndexDocument(&e.deleteIndexClient, inputStruct.IndexName)
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := DeleteIndexOutput{
+		Status: "Successfully deleted index",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
