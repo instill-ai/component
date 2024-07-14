@@ -8,13 +8,13 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-type rerankInput struct {
+type RerankInput struct {
 	Query     string   `json:"query"`
 	Documents []string `json:"documents"`
 	ModelName string   `json:"model-name"`
 }
 
-type rerankOutput struct {
+type RerankOutput struct {
 	Ranking   []string    `json:"ranking"`
 	Usage     rerankUsage `json:"usage"`
 	Relevance []float64   `json:"relevance"`
@@ -26,7 +26,7 @@ type rerankUsage struct {
 
 func (e *execution) taskRerank(in *structpb.Struct) (*structpb.Struct, error) {
 
-	inputStruct := rerankInput{}
+	inputStruct := RerankInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, fmt.Errorf("error generating input struct: %v", err)
@@ -61,7 +61,7 @@ func (e *execution) taskRerank(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 	bills := resp.Meta.BilledUnits
 
-	outputStruct := rerankOutput{
+	outputStruct := RerankOutput{
 		Ranking:   newRanking,
 		Usage:     rerankUsage{Search: int(*bills.SearchUnits)},
 		Relevance: relevance,
