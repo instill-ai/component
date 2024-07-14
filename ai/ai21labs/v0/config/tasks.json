@@ -780,5 +780,277 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_GRAMMAR_CHECK": {
+    "instillShortDescription": "Suggests changes to grammatical errors found by the model in the submitted string",
+    "description": "With AI21labs Grammatical Error Corrections (GEC) endpoint, you can tap into our advanced GEC engine, purpose-built and expertly tuned for this task.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "text"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "text": {
+          "description": "The text content to be checked",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillUIOrder": 0,
+      "properties": {
+        "suggestions": {
+          "description": "Model Output",
+          "instillUIOrder": 0,
+          "instillFormat": "array:string",
+          "instillUIMultiline": true,
+          "title": "Suggestions",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "start-indexs": {
+          "description": "Start index of the errors",
+          "instillUIOrder": 1,
+          "instillFormat": "array:number",
+          "title": "Start Indexs",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "end-indexs": {
+          "description": "End index of the errors",
+          "instillUIOrder": 2,
+          "instillFormat": "array:number",
+          "title": "End Indexs",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "types": {
+          "description": "Type of the errors",
+          "instillUIOrder": 3,
+          "instillFormat": "array:string",
+          "title": "Types",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "suggestions"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_TEXT_IMPROVEMENT": {
+    "instillShortDescription": "Provides rewrite recommendations for improving the fluency, clarity and style of the input text.",
+    "description": "By using AI21labs Text Improvement endpoint, you can access our state-of-the-art recommendations engine, which is optimized for generating high-quality results efficiently.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "text"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "text": {
+          "description": "The text content to be improved",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillUIOrder": 0,
+      "properties": {
+        "suggestions": {
+          "description": "Suggestions for improving the text",
+          "instillUIOrder": 0,
+          "instillFormat": "array:string",
+          "instillUIMultiline": true,
+          "title": "Suggestions",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "start-indexs": {
+          "description": "Start index of the improvements",
+          "instillUIOrder": 1,
+          "instillFormat": "array:number",
+          "title": "Start Indexs",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "end-indexs": {
+          "description": "End index of the improvements",
+          "instillUIOrder": 2,
+          "instillFormat": "array:number",
+          "title": "End Indexs",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "types": {
+          "description": "Type of the improvements",
+          "instillUIOrder": 3,
+          "instillFormat": "array:string",
+          "title": "Types",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "suggestions"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_TEXT_SEGMENTATION": {
+    "instillShortDescription": "Split text into segments by function or topic",
+    "description": "Use the AI21labs Text Segmentation endpoint to intelligently segment text into coherent and readable units, based on distinct topics and lines. This allows for easy breakdown of long text into manageable chunks of text. The endpoint supports both raw text and URLs of webpages as input sources.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "text",
+        "source"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "text": {
+          "description": "The text content to be summarized",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Text",
+          "type": "string"
+        },
+        "focus": {
+          "description": "The focus of the summary",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Focus",
+          "type": "string"
+        },
+        "source": {
+          "description": "Whether the text is plain text or from a URL",
+          "enum": [
+            "TEXT",
+            "URL"
+          ],
+          "example": "TEXT",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "value"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "source"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillUIOrder": 0,
+      "properties": {
+        "segments": {
+          "instillFormat": "array:string",
+          "items": {
+            "instillFormat": "string",
+            "title": "Segemnt Text",
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Origanl text for each segment of the input text",
+          "instillUIOrder": 0,
+          "title": "Segment Text"
+        },
+        "types": {
+          "instillFormat": "array:string",
+          "items": {
+            "instillFormat": "string",
+            "title": "Segment Type",
+            "type": "string"
+          },
+          "type": "array",
+          "description": "Type of each segment of the input text",
+          "instillUIOrder": 0,
+          "title": "Segment Type"
+        }
+      },
+      "required": [
+        "segments"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
   }
 }

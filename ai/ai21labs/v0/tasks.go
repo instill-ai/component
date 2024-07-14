@@ -139,13 +139,13 @@ func (e *execution) TaskTextEmbeddings(in *structpb.Struct) (*structpb.Struct, e
 
 type TaskTextImprovementInput struct {
 	Text string `json:"text"`
-	Type string `json:"type"`
 }
 
 type TaskTextImprovementOutput struct {
-	Suggestions []string `json:"suggestion"`
+	Suggestions []string `json:"suggestions"`
 	StartIndexs []int    `json:"start-indexs"`
 	EndIndexs   []int    `json:"end-indexs"`
+	Types       []string `json:"types"`
 }
 
 func (e *execution) TaskTextImprovement(in *structpb.Struct) (*structpb.Struct, error) {
@@ -154,9 +154,18 @@ func (e *execution) TaskTextImprovement(in *structpb.Struct) (*structpb.Struct, 
 		return nil, err
 	}
 
+	// Default to all improvement types
+	ImprovementTypes := []ImprovementType{
+		Fluency,
+		Specificity,
+		Variety,
+		ShortSentences,
+		Conciseness,
+	}
+
 	req := TextImprovementsRequest{
 		Text:  input.Text,
-		Types: []ImprovementType{ImprovementType(input.Type)},
+		Types: ImprovementTypes,
 	}
 
 	resp, err := e.client.TextImprovements(req)
@@ -170,6 +179,7 @@ func (e *execution) TaskTextImprovement(in *structpb.Struct) (*structpb.Struct, 
 		output.Suggestions = append(output.Suggestions, improvement.Suggestions...)
 		output.StartIndexs = append(output.StartIndexs, improvement.StartIndex)
 		output.EndIndexs = append(output.EndIndexs, improvement.EndIndex)
+		output.Types = append(output.Types, string(improvement.ImprovementType))
 	}
 	return base.ConvertToStructpb(output)
 }
