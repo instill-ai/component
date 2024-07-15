@@ -104,10 +104,10 @@ func TestComponent_Tasks(t *testing.T) {
 
 	chatTc := struct {
 		input    map[string]any
-		wantResp textGenerationOutput
+		wantResp TextGenerationOutput
 	}{
 		input:    map[string]any{"model-name": "open-mixtral-8x22b", "prompt": "Hello World"},
-		wantResp: textGenerationOutput{Text: "Hello Mistral! message count: 1", Usage: chatUsage{InputTokens: len("Hello World"), OutputTokens: len("Hello Mistral! message count: 1")}},
+		wantResp: TextGenerationOutput{Text: "Hello Mistral! message count: 1", Usage: chatUsage{InputTokens: len("Hello World"), OutputTokens: len("Hello Mistral! message count: 1")}},
 	}
 
 	c.Run("ok - task text generation", func(c *qt.C) {
@@ -135,10 +135,10 @@ func TestComponent_Tasks(t *testing.T) {
 
 	embeddingTc := struct {
 		input    map[string]any
-		wantResp textEmbeddingOutput
+		wantResp TextEmbeddingOutput
 	}{
 		input:    map[string]any{"model-name": "mistral-embed", "text": "Hello World"},
-		wantResp: textEmbeddingOutput{Embedding: []float64{1.0, 2.0, 3.0}, Usage: textEmbeddingUsage{Tokens: len("Hello World")}},
+		wantResp: TextEmbeddingOutput{Embedding: []float64{1.0, 2.0, 3.0}, Usage: textEmbeddingUsage{Tokens: len("Hello World")}},
 	}
 
 	c.Run("ok - task embedding", func(c *qt.C) {

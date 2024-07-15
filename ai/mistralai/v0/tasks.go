@@ -22,7 +22,7 @@ type MultiModalContent struct {
 	Type     string `json:"type"`
 }
 
-type textGenerationInput struct {
+type TextGenerationInput struct {
 	ChatHistory  []ChatMessage `json:"chat-history"`
 	MaxNewTokens int           `json:"max-new-tokens"`
 	ModelName    string        `json:"model-name"`
@@ -41,12 +41,12 @@ type chatUsage struct {
 	OutputTokens int `json:"output-tokens"`
 }
 
-type textGenerationOutput struct {
+type TextGenerationOutput struct {
 	Text  string    `json:"text"`
 	Usage chatUsage `json:"usage"`
 }
 
-type textEmbeddingInput struct {
+type TextEmbeddingInput struct {
 	Text      string `json:"text"`
 	ModelName string `json:"model-name"`
 }
@@ -55,14 +55,14 @@ type textEmbeddingUsage struct {
 	Tokens int `json:"tokens"`
 }
 
-type textEmbeddingOutput struct {
+type TextEmbeddingOutput struct {
 	Embedding []float64          `json:"embedding"`
 	Usage     textEmbeddingUsage `json:"usage"`
 }
 
 func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, error) {
 
-	inputStruct := textGenerationInput{}
+	inputStruct := TextGenerationInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, fmt.Errorf("error generating input struct: %v", err)
@@ -117,7 +117,7 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 		return nil, fmt.Errorf("error calling Chat: %v", err)
 	}
 
-	outputStruct := textGenerationOutput{}
+	outputStruct := TextGenerationOutput{}
 
 	outputStruct.Text = resp.Choices[0].Message.Content
 	outputStruct.Usage = chatUsage{
@@ -132,7 +132,7 @@ func (e *execution) taskTextGeneration(in *structpb.Struct) (*structpb.Struct, e
 }
 
 func (e *execution) taskTextEmbedding(in *structpb.Struct) (*structpb.Struct, error) {
-	inputStruct := textEmbeddingInput{}
+	inputStruct := TextEmbeddingInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, fmt.Errorf("error generating input struct: %v", err)
@@ -142,7 +142,7 @@ func (e *execution) taskTextEmbedding(in *structpb.Struct) (*structpb.Struct, er
 	if err != nil {
 		return nil, fmt.Errorf("error calling Embeddings: %v", err)
 	}
-	outputStruct := textEmbeddingOutput{
+	outputStruct := TextEmbeddingOutput{
 		Embedding: resp.Data[0].Embedding,
 		Usage: textEmbeddingUsage{
 			Tokens: resp.Usage.TotalTokens,
