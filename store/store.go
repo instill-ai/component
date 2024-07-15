@@ -109,10 +109,11 @@ func Init(
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
-    {
+		{
 			// Mistral
 			conn := mistralai.Init(baseComp)
-			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			// Secret doesn't allow hyphens
+			conn = conn.WithInstillCredentials(secrets["mistralai"])
 			compStore.Import(conn)
 		}
 		{
