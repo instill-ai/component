@@ -26,8 +26,15 @@ type ChatChoice struct {
 	Index   int         `json:"index"`
 	Message ChatMessage `json:"message"`
 	// could be "stop" or "length"
-	FinishReason string `json:"finish_reason"`
+	FinishReason FinishReason `json:"finish_reason"`
 }
+
+type FinishReason string
+
+const (
+	FinishReasonStop   FinishReason = "stop"
+	FinishReasonLength FinishReason = "length"
+)
 
 type ChatUsage struct {
 	PromptTokens     int `json:"prompt_tokens"`
