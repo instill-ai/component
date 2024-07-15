@@ -1,0 +1,271 @@
+---
+title: "AI21labs"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP AI21labs component https://github.com/instill-ai/instill-core"
+---
+
+The AI21labs component is an AI component that allows users to connect the AI models served on the AI21labs Platform.
+It can carry out the following tasks:
+
+- [Text Generation Chat](#text-generation-chat)
+- [Text Embeddings](#text-embeddings)
+- [Contextual Answering](#contextual-answering)
+- [Text Summarization](#text-summarization)
+- [Text Summarization Segment](#text-summarization-segment)
+- [Text Paraphrasing](#text-paraphrasing)
+- [Grammar Check](#grammar-check)
+- [Text Improvement](#text-improvement)
+- [Text Segmentation](#text-segmentation)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/ai/ai21labs/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| API Key (required) | `api-key` | string | Fill in your AI21labs key. To find your keys, visit the AI21labs platform page |
+
+
+
+
+## Supported Tasks
+
+### Text Generation Chat
+
+Provide text outputs in response to text inputs.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_GENERATION_CHAT` |
+| Model Name (required) | `model-name` | string | The AI21labs model to be used |
+| Prompt (required) | `prompt` | string | The prompt text |
+| System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is set using a generic message as "You are a helpful assistant." |
+| Prompt Images | `prompt-images` | array[string] | The prompt images (Note: Not supported by AI21labs Models) |
+| Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
+| Seed | `seed` | integer | The seed (Note: Not supported by AI21labs Models) |
+| N | `n` | integer | Numbers of responses to generate |
+| Temperature | `temperature` | number | The temperature for sampling |
+| Top K | `top-k` | integer | Top k for sampling (Note: Not supported by AI21labs Models) |
+| Top P | `top-p` | number | Top p for sampling |
+| Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Text | `text` | string | Model Output |
+| Usage (optional) | `usage` | object | Usage tokens in AI21labs chat models |
+
+
+
+
+
+
+### Text Embeddings
+
+Provide a vector representation of the provided text
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_EMBEDDINGS` |
+| Text (required) | `text` | string | The text content to be embedded |
+| Style | `style` | string | The style of the text |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Embedding | `embedding` | array[number] | Model Output |
+| Usage (optional) | `usage` | object | Usage tokens in AI21labs embedding models |
+
+
+
+
+
+
+### Contextual Answering
+
+Contextual answers based on information passed into the prompt
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CONTEXTUAL_ANSWERING` |
+| Context (required) | `context` | string | The context text |
+| Question (required) | `question` | string | The question text |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Answer | `answer` | string | Model Output |
+| Answer in Context (optional) | `answer-in-context` | boolean | Whether the answer is in context |
+
+
+
+
+
+
+### Text Summarization
+
+Summarize text content
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_SUMMARIZATION` |
+| Text (required) | `text` | string | The text content to be summarized |
+| Focus | `focus` | string | The focus of the summary |
+| Source (required) | `source` | string | Whether the text is plain text or from a URL |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Summary | `summary` | string | Model Output |
+
+
+
+
+
+
+### Text Summarization Segment
+
+Summarize text content by segments
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_SUMMARIZATION_SEGMENT` |
+| Text (required) | `text` | string | The text content to be summarized |
+| Focus | `focus` | string | The focus of the summary |
+| Source (required) | `source` | string | Whether the text is plain text or from a URL |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Segment HTML (optional) | `segment-htmls` | array[string] | HTML for each segment of the input text |
+| Segment Text (optional) | `segments` | array[string] | Origanl text for each segment of the input text |
+| Summaries | `summerizations` | array[string] | Summeries for each segment of the input text |
+| Segment Type (optional) | `types` | array[string] | Type of each segment of the input text |
+
+
+
+
+
+
+### Text Paraphrasing
+
+Paraphrase text content
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_PARAPHRASING` |
+| Text (required) | `text` | string | The text content to be paraphrased |
+| Style (required) | `style` | string | The style of the text |
+| Start Index | `start-index` | integer | The start index of the text to be paraphrased |
+| End Index | `end-index` | integer | The end index of the text to be paraphrased |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Suggestions | `suggestions` | array[string] | Model Output |
+
+
+
+
+
+
+### Grammar Check
+
+Suggests changes to grammatical errors found by the model in the submitted string
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GRAMMAR_CHECK` |
+| Text (required) | `text` | string | The text content to be checked |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Suggestions | `suggestions` | array[string] | Model Output |
+| Start Indexs (optional) | `start-indexs` | array[number] | Start index of the errors |
+| End Indexs (optional) | `end-indexs` | array[number] | End index of the errors |
+| Types (optional) | `types` | array[string] | Type of the errors |
+
+
+
+
+
+
+### Text Improvement
+
+Provides rewrite recommendations for improving the fluency, clarity and style of the input text.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_IMPROVEMENT` |
+| Text (required) | `text` | string | The text content to be improved |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Suggestions | `suggestions` | array[string] | Suggestions for improving the text |
+| Start Indexs (optional) | `start-indexs` | array[number] | Start index of the improvements |
+| End Indexs (optional) | `end-indexs` | array[number] | End index of the improvements |
+| Types (optional) | `types` | array[string] | Type of the improvements |
+
+
+
+
+
+
+### Text Segmentation
+
+Split text into segments by function or topic
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_SEGMENTATION` |
+| Text (required) | `text` | string | The text content to be summarized |
+| Focus | `focus` | string | The focus of the summary |
+| Source (required) | `source` | string | Whether the text is plain text or from a URL |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Segment Text | `segments` | array[string] | Origanl text for each segment of the input text |
+| Segment Type (optional) | `types` | array[string] | Type of each segment of the input text |
+
+
+
+
+
+
+
