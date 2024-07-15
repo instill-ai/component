@@ -93,8 +93,8 @@ func TestOperator_Execute(t *testing.T) {
 
 			task: taskJQ,
 			in: map[string]any{
-				"jsonInput": `{"a": {"b": 42}}`,
-				"jqFilter":  ".a | .[]",
+				"json-string": `{"a": {"b": 42}}`,
+				"jq-filter":   ".a | .[]",
 			},
 			want: map[string]any{
 				"results": []any{42},
@@ -105,8 +105,8 @@ func TestOperator_Execute(t *testing.T) {
 
 			task: taskJQ,
 			in: map[string]any{
-				"jsonInput": "{",
-				"jqFilter":  ".",
+				"json-string": "{",
+				"jq-filter":   ".",
 			},
 			wantErr: "Couldn't parse the JSON input. Please check the syntax is correct.",
 		},
@@ -116,7 +116,7 @@ func TestOperator_Execute(t *testing.T) {
 			task: taskJQ,
 			in: map[string]any{
 				"json-value": "foo",
-				"jqFilter":   `. + "bar"`,
+				"jq-filter":  `. + "bar"`,
 			},
 			want: map[string]any{
 				"results": []any{"foobar"},
@@ -128,7 +128,7 @@ func TestOperator_Execute(t *testing.T) {
 			task: taskJQ,
 			in: map[string]any{
 				"json-value": []any{2, 3, 23},
-				"jqFilter":   ".[2]",
+				"jq-filter":  ".[2]",
 			},
 			want: map[string]any{
 				"results": []any{23},
@@ -143,7 +143,7 @@ func TestOperator_Execute(t *testing.T) {
 					"id": "sample",
 					"10": map[string]any{"b": 42},
 				},
-				"jqFilter": `{(.id): .["10"].b}`,
+				"jq-filter": `{(.id): .["10"].b}`,
 			},
 			want: map[string]any{
 				"results": []any{
@@ -156,8 +156,8 @@ func TestOperator_Execute(t *testing.T) {
 
 			task: taskJQ,
 			in: map[string]any{
-				"jsonInput": asJSON,
-				"jqFilter":  ".foo & .bar",
+				"json-string": asJSON,
+				"jq-filter":   ".foo & .bar",
 			},
 			wantErr: `Couldn't parse the jq filter: unexpected token "&". Please check the syntax is correct.`,
 		},
