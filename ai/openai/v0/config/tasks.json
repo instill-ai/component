@@ -173,6 +173,19 @@
           ],
           "title": "Text",
           "type": "string"
+        },
+        "dimensions": {
+          "description": "The number of dimensions the resulting output embeddings should have. Only supported in text-embedding-3 and later models.",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Dimensions",
+          "type": "integer"
         }
       },
       "required": [

@@ -68,6 +68,10 @@ func getInstillUserUID(vars map[string]any) string {
 	return vars["__PIPELINE_USER_UID"].(string)
 }
 
+func getInstillRequesterUID(vars map[string]any) string {
+	return vars["__PIPELINE_REQUESTER_UID"].(string)
+}
+
 func getModelServerURL(vars map[string]any) string {
 	if v, ok := vars["__MODEL_BACKEND"]; ok {
 		return v.(string)
@@ -83,11 +87,17 @@ func getMgmtServerURL(vars map[string]any) string {
 }
 
 func getRequestMetadata(vars map[string]any) metadata.MD {
-	return metadata.Pairs(
+	md := metadata.Pairs(
 		"Authorization", getHeaderAuthorization(vars),
 		"Instill-User-Uid", getInstillUserUID(vars),
 		"Instill-Auth-Type", "user",
 	)
+
+	if requester := getInstillRequesterUID(vars); requester != "" {
+		md.Set("Instill-Requester-Uid", requester)
+	}
+
+	return md
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
@@ -216,9 +226,10 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(sysVars))
 
 	pageToken := ""
+	pageSize := int32(100)
 	models := []*modelPB.Model{}
 	for {
-		resp, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{PageToken: &pageToken})
+		resp, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{PageToken: &pageToken, PageSize: &pageSize})
 		if err != nil {
 
 			return def, nil
@@ -238,14 +249,14 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 		go func(m *modelPB.Model) {
 			var versions []*modelPB.ModelVersion
 			if strings.HasPrefix(m.Name, "organizations") {
-				resp, err := gRPCCLient.ListOrganizationModelVersions(ctx, &modelPB.ListOrganizationModelVersionsRequest{Name: m.Name})
+				resp, err := gRPCCLient.ListOrganizationModelVersions(ctx, &modelPB.ListOrganizationModelVersionsRequest{Name: m.Name, PageSize: &pageSize})
 				if err != nil {
 					ch <- nil
 					return
 				}
 				versions = resp.Versions
 			} else {
-				resp, err := gRPCCLient.ListUserModelVersions(ctx, &modelPB.ListUserModelVersionsRequest{Name: m.Name})
+				resp, err := gRPCCLient.ListUserModelVersions(ctx, &modelPB.ListUserModelVersionsRequest{Name: m.Name, PageSize: &pageSize})
 				if err != nil {
 					ch <- nil
 					return

@@ -11,11 +11,14 @@ import (
 
 	"github.com/instill-ai/component/ai/anthropic/v0"
 	"github.com/instill-ai/component/ai/archetypeai/v0"
+	"github.com/instill-ai/component/ai/cohere/v0"
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
+	"github.com/instill-ai/component/ai/mistralai/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
 	"github.com/instill-ai/component/application/email/v0"
+	"github.com/instill-ai/component/application/github/v0"
 	"github.com/instill-ai/component/application/googlesearch/v0"
 	"github.com/instill-ai/component/application/hubspot/v0"
 
@@ -82,6 +85,7 @@ func Init(
 		compStore.Import(text.Init(baseComp))
 		compStore.Import(document.Init(baseComp))
 
+		compStore.Import(github.Init(baseComp))
 		{
 			// StabilityAI
 			conn := stabilityai.Init(baseComp)
@@ -103,6 +107,18 @@ func Init(
 		{
 			// Anthropic
 			conn := anthropic.Init(baseComp)
+			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			compStore.Import(conn)
+		}
+    {
+			// Mistral
+			conn := mistralai.Init(baseComp)
+			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			compStore.Import(conn)
+		}
+		{
+			// Cohere
+			conn := cohere.Init(baseComp)
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}

@@ -215,10 +215,22 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			}
 
 			resp := TextEmbeddingsResp{}
-			req := client.R().SetBody(TextEmbeddingsReq{
-				Model: inputStruct.Model,
-				Input: []string{inputStruct.Text},
-			}).SetResult(&resp)
+
+			var reqParams TextEmbeddingsReq
+			if inputStruct.Dimensions == 0 {
+				reqParams = TextEmbeddingsReq{
+					Model: inputStruct.Model,
+					Input: []string{inputStruct.Text},
+				}
+			} else {
+				reqParams = TextEmbeddingsReq{
+					Model:      inputStruct.Model,
+					Input:      []string{inputStruct.Text},
+					Dimensions: inputStruct.Dimensions,
+				}
+			}
+
+			req := client.R().SetBody(reqParams).SetResult(&resp)
 
 			if _, err := req.Post(embeddingsPath); err != nil {
 				return inputs, err

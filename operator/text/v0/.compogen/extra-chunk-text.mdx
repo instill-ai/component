@@ -1,0 +1,46 @@
+### Chunking Strategy
+There are three strategies available for chunking text in Text Component:
+- 1. Token
+- 2. Recursive
+- 3. Markdown
+
+#### Token
+Language models have a token limit. You should not exceed the token limit. When you split your text into chunks it is therefore a good idea to count the number of tokens. There are many tokenizers. When you count tokens in your text you should use the same tokenizer as used in the language model.
+
+| **Parameter**        | **Type**         | **Description**                                                                                                                                                                                              |
+|----------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `chunk-size`         | integer          | Specifies the maximum size of each chunk in terms of the number of tokens                                                                                                                                    |
+| `chunk-overlap`      | integer          | Determines the number of tokens that overlap between consecutive chunks                                                                                                                                      |
+| `model-name`         | string           | The name of the model used for tokenization                                                                                                                                                                  |
+| `allowed-special`    | array of strings | A list of special tokens that are allowed within chunks                                                                                                                                                      |
+| `disallowed-special` | array of strings | A list of special tokens that should not appear within chunks                                                                                                                                                |
+
+#### Recursive
+This text splitter is the recommended one for generic text. It is parameterized by a list of characters. It tries to split on them in order until the chunks are small enough. The default list is ["\n\n", "\n", " ", ""]. This has the effect of trying to keep all paragraphs (and then sentences, and then words) together as long as possible, as those would generically seem to be the strongest semantically related pieces of text.
+
+| **Parameter**      | **Type**         | **Description**                                                                                                                                                                                              |
+|--------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `chunk-size`       | integer          | Specifies the maximum size of each chunk in terms of the number of tokens                                                                                                                                    |
+| `chunk-overlap`    | integer          | Determines the number of tokens that overlap between consecutive chunks                                                                                                                                      |
+| `model-name`       | string           | The name of the model used for tokenization                                                                                                                                                                  |
+| `separators`       | array of strings | A list of strings representing the separators used to split the text                                                                                                                                         |
+| `keep-separator`   | boolean          | A flag indicating whether to keep the separator characters at the beginning or end of chunks                                                                                                                 |
+
+
+#### Markdown
+This text splitter is specially designed for Markdown format.
+
+| **Parameter**      | **Type** | **Description**                                                                                                                                                                                              |
+|--------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `chunk-size`       | integer  | Specifies the maximum size of each chunk in terms of the number of tokens                                                                                                                                    |
+| `chunk-overlap`    | integer  | Determines the number of tokens that overlap between consecutive chunks                                                                                                                                      |
+| `model-name`       | string   | The name of the model used for tokenization                                                                                                                                                                  |
+| `code-blocks`      | boolean  | A flag indicating whether code blocks should be treated as a single unit                                                                                                                                     |
+| `reference-links`  | boolean  | A flag indicating whether reference links should be kept intact                                                                                                                                              |
+
+### Text Chunks in Output
+| **Parameter**    | **Type** | **Description**                                              |
+|------------------|----------|--------------------------------------------------------------|
+| `test`           | string   | The text chunk                                               |
+| `start-position` | integer  | The starting position of the text chunk in the original text |
+| `end-position`   | integer  | The ending position of the text chunk in the original text   |
