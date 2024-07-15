@@ -142,8 +142,8 @@
           "type": "string"
         },
         "board-type": {
-          "default": "scrum",
-          "description": "The type of board, can be: scrum, kanban. Default is scrum",
+          "default": "simple",
+          "description": "The type of board, can be: scrum, kanban, simple. Default is simple",
           "instillUIOrder": 1,
           "enum": [
             "scrum",

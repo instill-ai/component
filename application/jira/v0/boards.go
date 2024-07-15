@@ -18,7 +18,7 @@ type Board struct {
 }
 
 type ListBoardsInput struct {
-	ProjectKeyOrID string `json:"project-key-or-id,omitempty" api:"projectKeyOrID"`
+	ProjectKeyOrID string `json:"project-key-or-id,omitempty" api:"projectKeyOrId"`
 	BoardType      string `json:"board-type,omitempty" api:"type"`
 	Name           string `json:"name,omitempty" api:"name"`
 	StartAt        int    `json:"start-at,omitempty" api:"startAt"`
@@ -64,7 +64,7 @@ func (jiraClient *Client) listBoardsTask(ctx context.Context, props *structpb.St
 
 func (jiraClient *Client) listBoards(_ context.Context, opt *ListBoardsInput) (*ListBoardsResp, error) {
 	var debug DebugSession
-	debug.SessionStart("listBoards", StaticVerboseLevel)
+	debug.SessionStart("listBoards", DevelopVerboseLevel)
 	defer debug.SessionEnd()
 
 	apiEndpoint := "rest/agile/1.0/board"
