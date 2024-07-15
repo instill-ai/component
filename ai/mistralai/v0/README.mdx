@@ -1,0 +1,97 @@
+---
+title: "Mistral"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP Mistral component https://github.com/instill-ai/instill-core"
+---
+
+The Mistral component is an AI component that allows users to connect the AI models served on the Mistral Platform.
+It can carry out the following tasks:
+
+- [Text Generation Chat](#text-generation-chat)
+- [Text Embeddings](#text-embeddings)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/ai/mistral/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| API Key (required) | `api-key` | string | Fill in your Mistral API key. To find your keys, visit the Mistral platform page. |
+
+
+
+
+## Supported Tasks
+
+### Text Generation Chat
+
+Provide text outputs in response to text inputs.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_GENERATION_CHAT` |
+| Model Name (required) | `model-name` | string | The Mistral model to be used |
+| Prompt (required) | `prompt` | string | The prompt text |
+| System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is set using a generic message as "You are a helpful assistant." |
+| Prompt Images | `prompt-images` | array[string] | The prompt images (Note: The Mistral models are not trained to process images, thus images will be omitted) |
+| Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\} |
+| Seed | `seed` | integer | The seed |
+| Temperature | `temperature` | number | The temperature for sampling |
+| Top K | `top-k` | integer | Integer to define the top tokens considered within the sample operation to create new text (Note: The Mistral models does not support top-k sampling) |
+| Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
+| Top P | `top-p` | number | Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p (default=0.5) |
+| Safe | `safe` | boolean | Safe generation mode |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Text | `text` | string | Model Output |
+| Usage (optional) | `usage` | object | Token usage on the Mistral platform text generation models |
+
+
+
+
+
+
+### Text Embeddings
+
+Turn text into a vector of numbers that capture its meaning, unlocking use cases like semantic search.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_EMBEDDINGS` |
+| Embedding Type (required) | `embedding-type` | string | Specifies the return type of embedding. |
+| Model Name (required) | `model-name` | string | The Mistral embed model to be used |
+| Text (required) | `text` | string | The text |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Embedding | `embedding` | array[number] | Embedding of the input text |
+| Usage (optional) | `usage` | object | Token usage on the Mistral platform embedding models |
+
+
+
+
+
+
+
