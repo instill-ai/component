@@ -109,10 +109,15 @@ func Init(
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
-		compStore.Import(cohere.Init(baseComp))
-		{
+    {
 			// Mistral
 			conn := mistralai.Init(baseComp)
+			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			compStore.Import(conn)
+		}
+		{
+			// Cohere
+			conn := cohere.Init(baseComp)
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}

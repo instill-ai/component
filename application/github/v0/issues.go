@@ -79,6 +79,7 @@ type ListIssuesInput struct {
 	Direction     string `json:"direction"`
 	Since         string `json:"since"`
 	NoPullRequest bool   `json:"no-pull-request"`
+	PageOptions
 }
 
 type ListIssuesResp struct {
@@ -105,6 +106,10 @@ func (githubClient *Client) listIssuesTask(ctx context.Context, props *structpb.
 		Sort:      inputStruct.Sort,
 		Direction: inputStruct.Direction,
 		Since:     *sinceTime,
+		ListOptions: github.ListOptions{
+			Page:    inputStruct.Page,
+			PerPage: min(inputStruct.PerPage, 100), // GitHub API only allows 100 per page
+		},
 	}
 	if opts.Mentioned == "none" {
 		opts.Mentioned = ""
