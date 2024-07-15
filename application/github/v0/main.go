@@ -100,7 +100,7 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	for i, input := range inputs {
-		if err := e.FillInDefaultValues(input); err != nil {
+		if _, err := e.FillInDefaultValues(input); err != nil {
 			return nil, err
 		}
 		output, err := e.execute(ctx, input)

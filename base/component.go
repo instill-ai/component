@@ -271,10 +271,6 @@ func generateComponentSpec(title string, tasks []*pb.ComponentTask, taskStructs 
 	componentSpec.Fields["title"] = structpb.NewStringValue(fmt.Sprintf("%s Component", title))
 	componentSpec.Fields["type"] = structpb.NewStringValue("object")
 
-	if err != nil {
-		return nil, err
-	}
-
 	oneOfList := &structpb.ListValue{
 		Values: []*structpb.Value{},
 	}
@@ -310,9 +306,7 @@ func generateComponentSpec(title string, tasks []*pb.ComponentTask, taskStructs 
 		condition := &structpb.Struct{}
 		err = protojson.Unmarshal([]byte(conditionJSON), condition)
 		if err != nil {
-			if err != nil {
-				panic(err)
-			}
+			panic(err)
 		}
 		oneOf.Fields["properties"].GetStructValue().Fields["condition"] = structpb.NewStructValue(condition)
 		oneOf.Fields["properties"].GetStructValue().Fields["input"] = structpb.NewStructValue(compInputStruct)
@@ -854,36 +848,139 @@ func (e *ComponentExecution) GetTaskOutputSchema() string {
 // explicit credentials.
 func (e *ComponentExecution) UsesInstillCredentials() bool { return false }
 
-// Fills input fields of the task with default values in place.
-func (e *ComponentExecution) FillInDefaultValues(input *structpb.Struct) error {
-	task := e.Task
+
+func (e *ComponentExecution) getInputSchemaJSON(task string) (map[string]interface{}, error) {
 	taskSpec, ok := e.Component.GetTaskInputSchemas()[task]
 	if !ok {
-		return errmsg.AddMessage(
+		return nil, errmsg.AddMessage(
 			fmt.Errorf("task %s not found", task),
 			fmt.Sprintf("Task %s not found", task),
 		)
 	}
 	var taskSpecMap map[string]interface{}
-	if err := json.Unmarshal([]byte(taskSpec), &taskSpecMap); err != nil {
-		return errmsg.AddMessage(
+	err := json.Unmarshal([]byte(taskSpec), &taskSpecMap)
+	if err != nil {
+		return nil, errmsg.AddMessage(
 			err,
 			"Failed to unmarshal input",
 		)
 	}
 	inputMap := taskSpecMap["properties"].(map[string]interface{})
-	for key, value := range inputMap {
+	return inputMap, nil
+}
+func (e *ComponentExecution) FillInDefaultValues(input *structpb.Struct) (*structpb.Struct, error) {
+	inputMap, err := e.getInputSchemaJSON(e.Task)
+	if err != nil {
+		return nil, err
+	}
+	return e.fillInDefaultValuesWithReference(input, inputMap)
+}
+func hasNextLevel(valueMap map[string]interface{}) bool {
+	if valType, ok := valueMap["type"]; ok {
+		if valType != "object" {
+			return false
+		}
+	}
+	if _, ok := valueMap["properties"]; ok {
+		return true
+	}
+	for _, target := range []string{"allOf", "anyOf", "oneOf"} {
+		if _, ok := valueMap[target]; ok {
+			items := valueMap[target].([]interface{})
+			for _, v := range items {
+				if _, ok := v.(map[string]interface{})["properties"].(map[string]interface{}); ok {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+func optionMatch(valueMap *structpb.Struct, reference map[string]interface{}, checkFields []string) bool {
+	for _, checkField := range checkFields {
+		if _, ok := valueMap.GetFields()[checkField]; !ok {
+			return false
+		}
+		if val, ok := reference[checkField].(map[string]interface{})["const"]; ok {
+			if valueMap.GetFields()[checkField].GetStringValue() != val {
+				return false
+			}
+		}
+	}
+	return true
+}
+func (e *ComponentExecution) fillInDefaultValuesWithReference(input *structpb.Struct, reference map[string]interface{}) (*structpb.Struct, error) {
+	for key, value := range reference {
 		valueMap, ok := value.(map[string]interface{})
 		if !ok {
 			continue
 		}
 		if _, ok := valueMap["default"]; !ok {
+			if !hasNextLevel(valueMap) {
+				continue
+			}
+			if _, ok := input.GetFields()[key]; !ok {
+				input.GetFields()[key] = &structpb.Value{
+					Kind: &structpb.Value_StructValue{
+						StructValue: &structpb.Struct{
+							Fields: make(map[string]*structpb.Value),
+						},
+					},
+				}
+			}
+			var properties map[string]interface{}
+			if _, ok := valueMap["properties"]; !ok {
+				var requiredFieldsRaw []interface{}
+				if requiredFieldsRaw, ok = valueMap["required"].([]interface{}); !ok {
+					continue
+				}
+				requiredFields := make([]string, len(requiredFieldsRaw))
+				for idx, v := range requiredFieldsRaw {
+					requiredFields[idx] = fmt.Sprintf("%v", v)
+				}
+				for _, target := range []string{"allOf", "anyOf", "oneOf"} {
+					var items []interface{}
+					if items, ok = valueMap[target].([]interface{}); !ok {
+						continue
+					}
+					for _, v := range items {
+						if properties, ok = v.(map[string]interface{})["properties"].(map[string]interface{}); !ok {
+							continue
+						}
+						inputSubField := input.GetFields()[key].GetStructValue()
+						if target == "oneOf" && !optionMatch(inputSubField, properties, requiredFields) {
+							continue
+						}
+						subField, err := e.fillInDefaultValuesWithReference(inputSubField, properties)
+						if err != nil {
+							return nil, err
+						}
+						input.GetFields()[key] = &structpb.Value{
+							Kind: &structpb.Value_StructValue{
+								StructValue: subField,
+							},
+						}
+					}
+				}
+			} else {
+				if properties, ok = valueMap["properties"].(map[string]interface{}); !ok {
+					continue
+				}
+				subField, err := e.fillInDefaultValuesWithReference(input.GetFields()[key].GetStructValue(), properties)
+				if err != nil {
+					return nil, err
+				}
+				input.GetFields()[key] = &structpb.Value{
+					Kind: &structpb.Value_StructValue{
+						StructValue: subField,
+					},
+				}
+			}
 			continue
 		}
 		if _, ok := input.GetFields()[key]; ok {
 			continue
 		}
-		// TODO: We can add logger or warning here to notify that the default value is used.
 		defaultValue := valueMap["default"]
 		typeValue := valueMap["type"]
 		switch typeValue {
@@ -905,9 +1002,44 @@ func (e *ComponentExecution) FillInDefaultValues(input *structpb.Struct) error {
 					BoolValue: defaultValue.(bool),
 				},
 			}
+		case "array":
+			input.GetFields()[key] = &structpb.Value{
+				Kind: &structpb.Value_ListValue{
+					ListValue: &structpb.ListValue{
+						Values: []*structpb.Value{},
+					},
+				},
+			}
+			itemType := valueMap["items"].(map[string]interface{})["type"]
+			switch itemType {
+			case "string":
+				for _, v := range defaultValue.([]interface{}) {
+					input.GetFields()[key].GetListValue().Values = append(input.GetFields()[key].GetListValue().Values, &structpb.Value{
+						Kind: &structpb.Value_StringValue{
+							StringValue: fmt.Sprintf("%v", v),
+						},
+					})
+				}
+			case "integer", "number":
+				for _, v := range defaultValue.([]interface{}) {
+					input.GetFields()[key].GetListValue().Values = append(input.GetFields()[key].GetListValue().Values, &structpb.Value{
+						Kind: &structpb.Value_NumberValue{
+							NumberValue: v.(float64),
+						},
+					})
+				}
+			case "boolean":
+				for _, v := range defaultValue.([]interface{}) {
+					input.GetFields()[key].GetListValue().Values = append(input.GetFields()[key].GetListValue().Values, &structpb.Value{
+						Kind: &structpb.Value_BoolValue{
+							BoolValue: v.(bool),
+						},
+					})
+				}
+			}
 		}
 	}
-	return nil
+	return input, nil
 }
 
 // ReadFromGlobalConfig looks up a component credential field from a secret map
