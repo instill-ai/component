@@ -22,6 +22,6 @@
   "instillEditOnNodeFields": [
     "token"
   ],
-  "title": "Slack Connection",
+  "title": "HubSpot Connection",
   "type": "object"
 }
