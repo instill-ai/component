@@ -68,31 +68,27 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	}
 	e := &execution{
 		ComponentExecution:     base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: resolvedSetup},
-		client:                 newClient(getAPIKey(resolvedSetup), baseURL, c.GetLogger()),
+		client:                 newClient(getAPIKey(resolvedSetup), getBasePath(resolvedSetup), c.GetLogger()),
 		usesInstillCredentials: resolved,
 	}
-	switch task {
-	case "TASK_TEXT_GENERATION_CHAT":
-		e.execute = e.TaskTextGenerationChat
-	case "TASK_TEXT_EMBEDDINGS":
-		e.execute = e.TaskTextEmbeddings
-	case "TASK_CONTEXTUAL_ANSWERING":
-		e.execute = e.TaskContextualAnswering
-	case "TASK_TEXT_SUMMARIZATION":
-		e.execute = e.TaskTextSummarization
-	case "TASK_TEXT_SUMMARIZATION_SEGMENT":
-		e.execute = e.TaskTextSummarizationBySegment
-	case "TASK_TEXT_PARAPHRASING":
-		e.execute = e.TaskTextParaphrasing
-	case "TASK_GRAMMAR_CHECK":
-		e.execute = e.TaskGrammarCheck
-	case "TASK_TEXT_IMPROVEMENT":
-		e.execute = e.TaskTextImprovement
-	case "TASK_TEXT_SEGMENTATION":
-		e.execute = e.TaskTextSegmentation
-	default:
+
+	taskMap := map[string]func(*structpb.Struct) (*structpb.Struct, error){
+		"TASK_TEXT_GENERATION_CHAT":       e.TaskTextGenerationChat,
+		"TASK_TEXT_EMBEDDINGS":            e.TaskTextEmbeddings,
+		"TASK_CONTEXTUAL_ANSWERING":       e.TaskContextualAnswering,
+		"TASK_TEXT_SUMMARIZATION":         e.TaskTextSummarization,
+		"TASK_TEXT_SUMMARIZATION_SEGMENT": e.TaskTextSummarizationBySegment,
+		"TASK_TEXT_PARAPHRASING":          e.TaskTextParaphrasing,
+		"TASK_GRAMMAR_CHECK":              e.TaskGrammarCheck,
+		"TASK_TEXT_IMPROVEMENT":           e.TaskTextImprovement,
+		"TASK_TEXT_SEGMENTATION":          e.TaskTextSegmentation,
+	}
+	if taskFunc, ok := taskMap[task]; ok {
+		e.execute = taskFunc
+	} else {
 		return nil, fmt.Errorf("unsupported task")
 	}
+
 	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
@@ -135,4 +131,13 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 func getAPIKey(setup *structpb.Struct) string {
 	return setup.GetFields()[cfgAPIKey].GetStringValue()
+}
+
+// This function is not used in the codebase. It is only used in the tests.
+func getBasePath(setup *structpb.Struct) string {
+	v, ok := setup.GetFields()["base-path"]
+	if !ok {
+		return baseURL
+	}
+	return v.GetStringValue()
 }
