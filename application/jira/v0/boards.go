@@ -18,11 +18,11 @@ type Board struct {
 }
 
 type ListBoardsInput struct {
-	ProjectKeyOrID string `json:"project-key-or-id,omitempty" struct:"projectKeyOrID"`
-	BoardType      string `json:"board-type,omitempty" struct:"type"`
-	Name           string `json:"name,omitempty" struct:"name"`
-	StartAt        int    `json:"start-at,omitempty" struct:"startAt"`
-	MaxResults     int    `json:"max-results,omitempty" struct:"maxResults"`
+	ProjectKeyOrID string `json:"project-key-or-id,omitempty" api:"projectKeyOrID"`
+	BoardType      string `json:"board-type,omitempty" api:"type"`
+	Name           string `json:"name,omitempty" api:"name"`
+	StartAt        int    `json:"start-at,omitempty" api:"startAt"`
+	MaxResults     int    `json:"max-results,omitempty" api:"maxResults"`
 }
 type ListBoardsResp struct {
 	Values     []Board `json:"values"`

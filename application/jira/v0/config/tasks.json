@@ -527,7 +527,7 @@
     }
   },
   "TASK_GET_ISSUE": {
-    "description": "Get an issue in Jira",
+    "description": "Get an issue in Jira. The issue will only be returned if the user has permission to view it. Issues returned from this resource include Agile fields, like sprint, closedSprints, flagged, and epic.",
     "instillShortDescription": "Get an issue in Jira",
     "input": {
       "description": "Get an issue in Jira",
@@ -636,7 +636,7 @@
     }
   },
   "TASK_GET_SPRINT": {
-    "description": "Get a sprint in Jira",
+    "description": "Get a sprint in Jira. The sprint will only be returned if the user can view the board that the sprint was created on, or view at least one of the issues in the sprint.",
     "instillShortDescription": "Get a sprint in Jira",
     "input": {
       "description": "Get an sprint in Jira",

@@ -69,6 +69,8 @@ func (d *DebugSession) AddMapMessage(name string, m interface{}) {
 	if v.Kind() == reflect.Ptr && v.IsNil() {
 		d.AddMessage("Not a map")
 		return
+	} else if v.Kind() == reflect.Ptr {
+		v = v.Elem()
 	}
 	mapVal := make(map[string]interface{})
 	if v.Kind() == reflect.Map {
@@ -88,8 +90,11 @@ func (d *DebugSession) AddMapMessage(name string, m interface{}) {
 			paramName := typeOfS.Field(i).Name
 			mapVal[paramName] = val
 		}
+	} else {
+		d.AddMessage("Not parseable as a map. Type: ", v.Kind().String())
+		return
 	}
-	d.addControlledMapMessage(mapVal, 0)
+	d.addInternalMapMessage(mapVal, 0)
 }
 
 func (d *DebugSession) AddRawMessage(m interface{}) {
@@ -98,7 +103,7 @@ func (d *DebugSession) AddRawMessage(m interface{}) {
 		fmt.Sprintf("[%s] %s%v", d.SessionID, strings.Repeat("\t", d.indentLevel), m))
 }
 
-func (d *DebugSession) addControlledMapMessage(m map[string]interface{}, depth int) {
+func (d *DebugSession) addInternalMapMessage(m map[string]interface{}, depth int) {
 	d.indentLevel++
 	defer func() {
 		d.indentLevel--
@@ -110,18 +115,20 @@ func (d *DebugSession) addControlledMapMessage(m map[string]interface{}, depth i
 	for k, v := range m {
 		switch v := v.(type) {
 		case map[string]interface{}:
-			d.AddMessage(k + ":")
-			d.addControlledMapMessage(v, depth+1)
+			d.AddMessage(k + ": {")
+			d.addInternalMapMessage(v, depth+1)
+			d.AddMessage("}")
 		case []interface{}:
-			d.AddMessage(k + ":")
-			d.addControlledSliceMessage(v, depth+1)
+			d.AddMessage(k + ": {")
+			d.addInternalSliceMessage(v, depth+1)
+			d.AddMessage("}")
 		default:
 			d.AddMessage(fmt.Sprintf("%s: %v", k, v))
 		}
 	}
 }
 
-func (d *DebugSession) addControlledSliceMessage(s []interface{}, depth int) {
+func (d *DebugSession) addInternalSliceMessage(s []interface{}, depth int) {
 	d.indentLevel++
 	defer func() {
 		d.indentLevel--
@@ -134,10 +141,10 @@ func (d *DebugSession) addControlledSliceMessage(s []interface{}, depth int) {
 		switch v := v.(type) {
 		case map[string]interface{}:
 			d.AddMessage("-")
-			d.addControlledMapMessage(v, depth+1)
+			d.addInternalMapMessage(v, depth+1)
 		case []interface{}:
 			d.AddMessage("-")
-			d.addControlledSliceMessage(v, depth+1)
+			d.addInternalSliceMessage(v, depth+1)
 		default:
 			d.AddMessage(fmt.Sprintf("- %v", v))
 		}

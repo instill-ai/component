@@ -120,7 +120,7 @@ func addQueryOptions(req *resty.Request, opt interface{}) error {
 					continue
 				}
 				if stringVal == fmt.Sprintf("%v", reflect.Zero(reflect.TypeOf(val))) {
-					debug.AddMessage(key.String(), "Default value is not set. Skipping.")
+					debug.AddMessage(key.String(), "Query value is not set. Skipping.")
 					continue
 				}
 				paramName := key.String()
@@ -147,10 +147,10 @@ func addQueryOptions(req *resty.Request, opt interface{}) error {
 				continue
 			}
 			if stringVal == fmt.Sprintf("%v", reflect.Zero(reflect.TypeOf(val))) {
-				debug.AddMessage(typeOfS.Field(i).Name, "Default value is not set. Skipping.")
+				debug.AddMessage(typeOfS.Field(i).Name, "Query value is not set. Skipping.")
 				continue
 			}
-			paramName := typeOfS.Field(i).Tag.Get("struct")
+			paramName := typeOfS.Field(i).Tag.Get("api")
 			if paramName == "" {
 				paramName = typeOfS.Field(i).Name
 			}
