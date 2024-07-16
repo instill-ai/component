@@ -10,7 +10,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/ai/anthropic/v0"
-	"github.com/instill-ai/component/ai/archetypeai/v0"
 	"github.com/instill-ai/component/ai/cohere/v0"
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
@@ -123,7 +122,6 @@ func Init(
 			compStore.Import(conn)
 		}
 
-		compStore.Import(archetypeai.Init(baseComp))
 		compStore.Import(numbers.Init(baseComp))
 		compStore.Import(bigquery.Init(baseComp))
 		compStore.Import(googlecloudstorage.Init(baseComp))
