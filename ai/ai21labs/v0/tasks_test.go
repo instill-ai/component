@@ -174,7 +174,7 @@ func TestTasks(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 		e := &execution{
-			ComponentExecution:     base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: "TASK_TEXT_GENERATION_CHAT"},
+			ComponentExecution:     base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskTextGenerationChat},
 			client:                 &MockAI21labsClient{},
 			usesInstillCredentials: false,
 		}
@@ -192,4 +192,316 @@ func TestTasks(t *testing.T) {
 		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
 
+	c.Run("ok - task embedding", func(c *qt.C) {
+		tc := struct {
+			input    map[string]any
+			wantResp TaskTextEmbeddingsOutput
+		}{
+			input: map[string]any{"text": "Hello World!"},
+			wantResp: TaskTextEmbeddingsOutput{
+				Embedding: []float32{0.1, 0.2, 0.3},
+				Usage: base.EmbeddingTextModelUsage{
+					Tokens: len("Hello World!") / 2, // IMPORTANT: The vendor's API does not return the actual token count, so we are using a dummy value here.
+				},
+			},
+		}
+		setup, err := structpb.NewStruct(map[string]any{
+			"api-key": apiKey,
+		})
+		c.Assert(err, qt.IsNil)
+		e := &execution{
+			ComponentExecution:     base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskTextEmbeddings},
+			client:                 &MockAI21labsClient{},
+			usesInstillCredentials: false,
+		}
+		e.execute = e.TaskTextEmbeddings
+		exec := &base.ExecutionWrapper{Execution: e}
+
+		pbIn, err := base.ConvertToStructpb(tc.input)
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		c.Assert(err, qt.IsNil)
+
+		wantJSON, err := json.Marshal(tc.wantResp)
+		c.Assert(err, qt.IsNil)
+		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+	})
+
+	c.Run("ok - task contextual answers without answers", func(c *qt.C) {
+
+		tc := struct {
+			input    map[string]any
+			wantResp TaskContextualAnsweringOutput
+		}{
+			input: map[string]any{"question": ""},
+			wantResp: TaskContextualAnsweringOutput{
+				Answer:          "Not found",
+				AnswerInContext: false,
+			},
+		}
+		setup, err := structpb.NewStruct(map[string]any{
+			"api-key": apiKey,
+		})
+		c.Assert(err, qt.IsNil)
+		e := &execution{
+			ComponentExecution:     base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskContextualAnswering},
+			client:                 &MockAI21labsClient{},
+			usesInstillCredentials: false,
+		}
+		e.execute = e.TaskContextualAnswering
+		exec := &base.ExecutionWrapper{Execution: e}
+
+		pbIn, err := base.ConvertToStructpb(tc.input)
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		c.Assert(err, qt.IsNil)
+
+		wantJSON, err := json.Marshal(tc.wantResp)
+		c.Assert(err, qt.IsNil)
+		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+
+	})
+
+	c.Run("ok - task contextual answers with answers", func(c *qt.C) {
+
+		tc := struct {
+			input    map[string]any
+			wantResp TaskContextualAnsweringOutput
+		}{
+			input: map[string]any{"question": "How's the weather today?"},
+			wantResp: TaskContextualAnsweringOutput{
+				Answer:          "How's the weather today?" + " is a question",
+				AnswerInContext: true,
+			},
+		}
+		setup, err := structpb.NewStruct(map[string]any{
+			"api-key": apiKey,
+		})
+		c.Assert(err, qt.IsNil)
+		e := &execution{
+			ComponentExecution:     base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskContextualAnswering},
+			client:                 &MockAI21labsClient{},
+			usesInstillCredentials: false,
+		}
+		e.execute = e.TaskContextualAnswering
+		exec := &base.ExecutionWrapper{Execution: e}
+
+		pbIn, err := base.ConvertToStructpb(tc.input)
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		c.Assert(err, qt.IsNil)
+
+		wantJSON, err := json.Marshal(tc.wantResp)
+		c.Assert(err, qt.IsNil)
+		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+	})
+
+	c.Run("ok - task text summarization", func(c *qt.C) {
+		tc := struct {
+			input    map[string]any
+			wantResp TaskTextSummarizationOutput
+		}{
+			input: map[string]any{},
+			wantResp: TaskTextSummarizationOutput{
+				Summary: "ABC",
+			},
+		}
+		setup, err := structpb.NewStruct(map[string]any{
+			"api-key": apiKey,
+		})
+		c.Assert(err, qt.IsNil)
+		e := &execution{
+			ComponentExecution:     base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskTextSummarization},
+			client:                 &MockAI21labsClient{},
+			usesInstillCredentials: false,
+		}
+		e.execute = e.TaskTextSummarization
+		exec := &base.ExecutionWrapper{Execution: e}
+
+		pbIn, err := base.ConvertToStructpb(tc.input)
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		c.Assert(err, qt.IsNil)
+
+		wantJSON, err := json.Marshal(tc.wantResp)
+		c.Assert(err, qt.IsNil)
+		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+	})
+
+	c.Run("ok - task text summarization by segment", func(c *qt.C) {
+		tc := struct {
+			input    map[string]any
+			wantResp TaskTextSummarizationBySegmentOutput
+		}{
+			input: map[string]any{},
+			wantResp: TaskTextSummarizationBySegmentOutput{
+				Summerizations: []string{"abc"},
+				SegmentTexts:   []string{"ABC"},
+				SegmentHtmls:   []string{"<h1>ABC</h1>"},
+				Types:          []string{"title"},
+			},
+		}
+		setup, err := structpb.NewStruct(map[string]any{
+			"api-key": apiKey,
+		})
+		c.Assert(err, qt.IsNil)
+		e := &execution{
+			ComponentExecution:     base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskTextSummarizationBySegment},
+			client:                 &MockAI21labsClient{},
+			usesInstillCredentials: false,
+		}
+		e.execute = e.TaskTextSummarizationBySegment
+		exec := &base.ExecutionWrapper{Execution: e}
+		pbIn, err := base.ConvertToStructpb(tc.input)
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		c.Assert(err, qt.IsNil)
+
+		wantJSON, err := json.Marshal(tc.wantResp)
+		c.Assert(err, qt.IsNil)
+		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+	})
+
+	c.Run("ok - task text paraphrasing", func(c *qt.C) {
+		tc := struct {
+			input    map[string]any
+			wantResp TaskTextParaphrasingOutput
+		}{
+			input: map[string]any{},
+			wantResp: TaskTextParaphrasingOutput{
+				Suggestions: []string{"ABC"},
+			},
+		}
+		setup, err := structpb.NewStruct(map[string]any{
+			"api-key": apiKey,
+		})
+		c.Assert(err, qt.IsNil)
+		e := &execution{
+			ComponentExecution:     base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskTextParaphrasing},
+			client:                 &MockAI21labsClient{},
+			usesInstillCredentials: false,
+		}
+		e.execute = e.TaskTextParaphrasing
+		exec := &base.ExecutionWrapper{Execution: e}
+		pbIn, err := base.ConvertToStructpb(tc.input)
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		c.Assert(err, qt.IsNil)
+
+		wantJSON, err := json.Marshal(tc.wantResp)
+		c.Assert(err, qt.IsNil)
+		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+	})
+
+	c.Run("ok - task grammar check", func(c *qt.C) {
+		tc := struct {
+			input    map[string]any
+			wantResp TaskGrammarCheckOutput
+		}{
+			input: map[string]any{"text": "Hello world!`"},
+			wantResp: TaskGrammarCheckOutput{
+				Suggestions: []string{"ABC"},
+				StartIndexs: []int{0},
+				EndIndexs:   []int{3},
+				Types:       []string{"spelling"},
+			},
+		}
+		setup, err := structpb.NewStruct(map[string]any{
+			"api-key": apiKey,
+		})
+
+		c.Assert(err, qt.IsNil)
+		e := &execution{
+			ComponentExecution:     base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskGrammarCheck},
+			client:                 &MockAI21labsClient{},
+			usesInstillCredentials: false,
+		}
+		e.execute = e.TaskGrammarCheck
+		exec := &base.ExecutionWrapper{Execution: e}
+		pbIn, err := base.ConvertToStructpb(tc.input)
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		c.Assert(err, qt.IsNil)
+
+		wantJSON, err := json.Marshal(tc.wantResp)
+		c.Assert(err, qt.IsNil)
+		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+	})
+
+	c.Run("ok - task text improvement", func(c *qt.C) {
+		tc := struct {
+			input    map[string]any
+			wantResp TaskTextImprovementOutput
+		}{
+			input: map[string]any{"text": "Hello world!`"},
+			wantResp: TaskTextImprovementOutput{
+				Suggestions: []string{"ABC"},
+				StartIndexs: []int{0},
+				EndIndexs:   []int{3},
+				Types:       []string{"fluency"},
+			},
+		}
+		setup, err := structpb.NewStruct(map[string]any{
+			"api-key": apiKey,
+		})
+
+		c.Assert(err, qt.IsNil)
+		e := &execution{
+			ComponentExecution:     base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskTextImprovement},
+			client:                 &MockAI21labsClient{},
+			usesInstillCredentials: false,
+		}
+		e.execute = e.TaskTextImprovement
+		exec := &base.ExecutionWrapper{Execution: e}
+		pbIn, err := base.ConvertToStructpb(tc.input)
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		c.Assert(err, qt.IsNil)
+
+		wantJSON, err := json.Marshal(tc.wantResp)
+		c.Assert(err, qt.IsNil)
+		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+	})
+
+	c.Run("ok - task text segmentation", func(c *qt.C) {
+		tc := struct {
+			input    map[string]any
+			wantResp TaskTextSegmentationOutput
+		}{
+			input: map[string]any{"text": "Hello world!`"},
+			wantResp: TaskTextSegmentationOutput{
+				SegmentTexts: []string{"ABC"},
+				Types:        []string{"title"},
+			},
+		}
+		setup, err := structpb.NewStruct(map[string]any{
+			"api-key": apiKey,
+		})
+
+		c.Assert(err, qt.IsNil)
+		e := &execution{
+			ComponentExecution:     base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskTextSegmentation},
+			client:                 &MockAI21labsClient{},
+			usesInstillCredentials: false,
+		}
+		e.execute = e.TaskTextSegmentation
+		exec := &base.ExecutionWrapper{Execution: e}
+		pbIn, err := base.ConvertToStructpb(tc.input)
+		c.Assert(err, qt.IsNil)
+
+		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		c.Assert(err, qt.IsNil)
+
+		wantJSON, err := json.Marshal(tc.wantResp)
+		c.Assert(err, qt.IsNil)
+		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+	})
 }

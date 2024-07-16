@@ -8,6 +8,18 @@ import (
 // pricing info: https://www.ai21.com/pricing
 // note: task specific models are billed based on API calls, not generated tokens
 
+const (
+	TaskTextGenerationChat         = "TASK_TEXT_GENERATION_CHAT"
+	TaskContextualAnswering        = "TASK_CONTEXTUAL_ANSWERING"
+	TaskTextEmbeddings             = "TASK_TEXT_EMBEDDINGS"
+	TaskTextImprovement            = "TASK_TEXT_IMPROVEMENT"
+	TaskTextParaphrasing           = "TASK_TEXT_PARAPHRASING"
+	TaskTextSummarization          = "TASK_TEXT_SUMMARIZATION"
+	TaskTextSummarizationBySegment = "TASK_TEXT_SUMMARIZATION_SEGMENT"
+	TaskTextSegmentation           = "TASK_TEXT_SEGMENTATION"
+	TaskGrammarCheck               = "TASK_GRAMMAR_CHECK"
+)
+
 type TaskTextGenerationChatInput struct {
 	base.TemplateTextGenerationInput
 	TopP float64 `json:"top-p"`
