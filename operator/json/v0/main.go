@@ -110,13 +110,13 @@ func (e *execution) jq(in *structpb.Struct) (*structpb.Struct, error) {
 
 	input := in.Fields["json-value"].AsInterface()
 	if input == nil {
-		b := []byte(in.Fields["jsonInput"].GetStringValue())
+		b := []byte(in.Fields["json-string"].GetStringValue())
 		if err := json.Unmarshal(b, &input); err != nil {
 			return nil, errmsg.AddMessage(err, "Couldn't parse the JSON input. Please check the syntax is correct.")
 		}
 	}
 
-	queryStr := in.Fields["jqFilter"].GetStringValue()
+	queryStr := in.Fields["jq-filter"].GetStringValue()
 	q, err := gojq.Parse(queryStr)
 	if err != nil {
 		// Error messages from gojq are human-friendly enough.
