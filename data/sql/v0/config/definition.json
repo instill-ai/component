@@ -3,7 +3,9 @@
     "TASK_INSERT",
     "TASK_UPDATE",
     "TASK_SELECT",
-    "TASK_DELETE"
+    "TASK_DELETE",
+    "TASK_CREATE_TABLE",
+    "TASK_DROP_TABLE"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/data/sql",
   "icon": "assets/sql.svg",

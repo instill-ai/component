@@ -15,10 +15,12 @@ import (
 )
 
 const (
-	TaskInsert = "TASK_INSERT"
-	TaskUpdate = "TASK_UPDATE"
-	TaskSelect = "TASK_SELECT"
-	TaskDelete = "TASK_DELETE"
+	TaskInsert      = "TASK_INSERT"
+	TaskUpdate      = "TASK_UPDATE"
+	TaskSelect      = "TASK_SELECT"
+	TaskDelete      = "TASK_DELETE"
+	TaskCreateTable = "TASK_CREATE_TABLE"
+	TaskDropTable   = "TASK_DROP_TABLE"
 )
 
 //go:embed config/definition.json
@@ -75,6 +77,10 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.selects
 	case TaskDelete:
 		e.execute = e.delete
+	case TaskCreateTable:
+		e.execute = e.createTable
+	case TaskDropTable:
+		e.execute = e.dropTable
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),

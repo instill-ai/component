@@ -62,7 +62,7 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 
 		return sqlxDB.NamedExec("DELETE FROM users WHERE id = :id AND name = :name", arg)
 
-	} else {
+	} else if strings.Contains(query, "UPDATE") {
 		mockDB, mock, _ := sqlmock.New()
 		defer mockDB.Close()
 
@@ -76,7 +76,34 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 			WithArgs("1", "John Doe Updated", "1", "John Doe Updated").WillReturnResult(sqlmock.NewResult(1, 1))
 
 		return sqlxDB.NamedExec("UPDATE users SET id = :id, name = :name WHERE id = :id AND name = :name", arg)
+	} else if strings.Contains(query, "CREATE") {
+		mockDB, mock, _ := sqlmock.New()
+		defer mockDB.Close()
+
+		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
+		arg = map[string]interface{}{
+			"id":   "INT",
+			"name": "VARCHAR(255)",
+		}
+
+		mock.ExpectExec("CREATE TABLE users \\(id INT, name VARCHAR\\(255\\)\\)").
+			WillReturnResult(sqlmock.NewResult(1, 1))
+
+		return sqlxDB.NamedExec("CREATE TABLE users (id INT, name VARCHAR(255))", arg)
+	} else if strings.Contains(query, "DROP") {
+		mockDB, mock, _ := sqlmock.New()
+		defer mockDB.Close()
+
+		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
+		arg = map[string]interface{}{}
+
+		mock.ExpectExec("DROP TABLE users").
+			WillReturnResult(sqlmock.NewResult(1, 1))
+
+		return sqlxDB.NamedExec("DROP TABLE users", arg)
 	}
+
+	return nil, nil
 }
 
 func TestInsertUser(t *testing.T) {
@@ -330,6 +357,129 @@ func TestDeleteUser(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.delete
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestCreateTable(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name      string
+		tableName string
+		input     CreateTableInput
+		wantResp  CreateTableOutput
+		wantErr   string
+	}{
+		{
+			name: "create table",
+			input: CreateTableInput{
+				Columns: map[string]string{
+					"id":   "INT",
+					"name": "VARCHAR(255)",
+				},
+				TableName: "users",
+			},
+			wantResp: CreateTableOutput{
+				Status: "Successfully created table",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"user":     "test_user",
+				"password": "test_pass",
+				"name":     "test_db",
+				"host":     "localhost",
+				"port":     "3306",
+				"region":   "us-west-2",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskCreateTable},
+				client:             &MockSQLClient{},
+			}
+			e.execute = e.createTable
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestDropTable(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    DropTableInput
+		wantResp DropTableOutput
+		wantErr  string
+	}{
+		{
+			name: "drop table",
+			input: DropTableInput{
+				TableName: "users",
+			},
+			wantResp: DropTableOutput{
+				Status: "Successfully dropped table",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"user":     "test_user",
+				"password": "test_pass",
+				"name":     "test_db",
+				"host":     "localhost",
+				"port":     "3306",
+				"region":   "us-west-2",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDropTable},
+				client:             &MockSQLClient{},
+			}
+			e.execute = e.dropTable
 			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)

@@ -315,5 +315,112 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_CREATE_TABLE":{
+    "instillShortDescription": "Create a table in the database",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "table-name": {
+          "description": "The table name in the database to be created",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Database Table Name",
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Table Name",
+          "type":"string"
+        },
+        "columns": {
+          "description": "The columns to be created in the table",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Columns"
+        }
+      },
+      "required": [
+        "table-name",
+        "columns"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Create table status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_DROP_TABLE":{
+    "instillShortDescription": "Drop a table in the database",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "table-name": {
+          "description": "The table name in the database to be dropped",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Database Table Name",
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Table Name",
+          "type":"string"
+        }
+      },
+      "required": [
+        "table-name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Drop table status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
   }
 }

@@ -12,6 +12,8 @@ It can carry out the following tasks:
 - [Update](#update)
 - [Select](#select)
 - [Delete](#delete)
+- [Create Table](#create-table)
+- [Drop Table](#drop-table)
 
 
 
@@ -131,6 +133,49 @@ Perform a delete operation based on specified criteria
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
+
+
+
+### Create Table
+
+Create a table in the database
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CREATE_TABLE` |
+| Table Name (required) | `table-name` | string | The table name in the database to be created |
+| Columns (required) | `columns` | semi-structured/json | The columns to be created in the table |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Create table status |
+
+
+
+
+
+
+### Drop Table
+
+Drop a table in the database
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DROP_TABLE` |
+| Table Name (required) | `table-name` | string | The table name in the database to be dropped |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Drop table status |
 
 
 

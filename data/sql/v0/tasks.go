@@ -49,6 +49,23 @@ type DeleteOutput struct {
 	Status string `json:"status"`
 }
 
+type CreateTableInput struct {
+	TableName string            `json:"table-name"`
+	Columns   map[string]string `json:"columns"`
+}
+
+type CreateTableOutput struct {
+	Status string `json:"status"`
+}
+
+type DropTableInput struct {
+	TableName string `json:"table-name"`
+}
+
+type DropTableOutput struct {
+	Status string `json:"status"`
+}
+
 func buildSQLStatementInsert(tableName string, data *map[string]any) (string, map[string]any) {
 	sqlStatement := "INSERT INTO " + tableName + " ("
 	var columns []string
@@ -164,6 +181,26 @@ func buildSQLStatementDelete(tableName string, criteria *map[string]any) (string
 
 	sqlStatement += strings.Join(where, " AND ")
 
+	return sqlStatement, values
+}
+
+func buildSQLStatementCreateTable(tableName string, columns map[string]string) (string, map[string]any) {
+	sqlStatement := "CREATE TABLE " + tableName + " ("
+	var columnDefs []string
+	values := make(map[string]any)
+
+	for colName, colType := range columns {
+		columnDefs = append(columnDefs, fmt.Sprintf("%s %s", colName, colType))
+		values[colName] = colType
+	}
+
+	sqlStatement += strings.Join(columnDefs, ", ") + ");"
+	return sqlStatement, values
+}
+
+func buildSQLStatementDropTable(tableName string) (string, map[string]any) {
+	sqlStatement := "DROP TABLE " + tableName + ";"
+	values := map[string]any{"table_name": tableName}
 	return sqlStatement, values
 }
 
@@ -294,6 +331,60 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 
 	outputStruct := DeleteOutput{
 		Status: "Successfully deleted rows",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (e *execution) createTable(in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct CreateTableInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	sqlStatement, values := buildSQLStatementCreateTable(inputStruct.TableName, inputStruct.Columns)
+
+	// Prepare and execute the statement using NamedExec
+	_, err = e.client.NamedExec(sqlStatement, values)
+
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := CreateTableOutput{
+		Status: "Successfully created table",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (e *execution) dropTable(in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct DropTableInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	sqlStatement, values := buildSQLStatementDropTable(inputStruct.TableName)
+
+	// Prepare and execute the statement using NamedExec
+	_, err = e.client.NamedExec(sqlStatement, values)
+
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := DropTableOutput{
+		Status: "Successfully dropped table",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
