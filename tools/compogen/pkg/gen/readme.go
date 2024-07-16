@@ -292,6 +292,10 @@ func parseResourceProperties(o *objectSchema) []resourceProperty {
 	// transform it to a slice.
 	propMap := make(map[string]resourceProperty)
 	for k, op := range o.Properties {
+		if op.Deprecated {
+			continue
+		}
+
 		prop := resourceProperty{
 			ID:       k,
 			property: op,
@@ -319,11 +323,11 @@ func parseResourceProperties(o *objectSchema) []resourceProperty {
 		}
 	}
 
-	props := make([]resourceProperty, len(o.Properties))
+	props := make([]resourceProperty, len(propMap))
 	idx := 0
 	for k := range propMap {
 		props[idx] = propMap[k]
-		idx += 1
+		idx++
 	}
 
 	// Note: The order might not be consecutive numbers.

@@ -159,7 +159,7 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 					if err != nil {
 						return nil, err
 					}
-					compSpec.Fields[target].GetListValue().AsSlice()[idx] = structpb.NewStructValue(converted)
+					compSpec.Fields[target].GetListValue().Values[idx] = structpb.NewStructValue(converted)
 				}
 			}
 		}

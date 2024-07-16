@@ -351,20 +351,6 @@
                       ],
                       "title": "Code Blocks",
                       "type": "boolean"
-                    },
-                    "reference-links": {
-                      "description": "A flag indicating whether reference links should be kept intact",
-                      "instillAcceptFormats": [
-                        "boolean"
-                      ],
-                      "instillUIOrder": 4,
-                      "instillUpstreamTypes": [
-                        "value",
-                        "reference",
-                        "template"
-                      ],
-                      "title": "Reference Links",
-                      "type": "boolean"
                     }
                   },
                   "required": [
@@ -375,8 +361,7 @@
                     "chunk-size",
                     "chunk-overlap",
                     "model-name",
-                    "code-blocks",
-                    "reference-links"
+                    "code-blocks"
                   ],
                   "type": "object"
                 }

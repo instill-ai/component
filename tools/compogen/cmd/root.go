@@ -9,10 +9,14 @@ import (
 
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
-	Use:     "compogen",
-	Short:   "compogen is the Instill AI component schema generation tool",
-	Long:    "compogen is the Instill AI component schema generation tool",
-	Version: "0.1.1",
+	Use:   "compogen",
+	Short: "compogen is the Instill AI component schema generation tool",
+	Long:  "compogen is the Instill AI component schema generation tool",
+
+	// TODO jvallesm: this should be automatically set according to repo
+	// releases.
+	Version: "0.1.2",
+
 	// We print errors ourselves rather than letting Cobra do it.
 	// This lets us print usage information selectively.
 	SilenceErrors: true,

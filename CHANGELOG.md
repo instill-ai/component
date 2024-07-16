@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.22.0-beta](https://github.com/instill-ai/component/compare/v0.21.0-beta...v0.22.0-beta) (2024-07-16)
+
+
+### Features
+
+* add GitHub component ([#177](https://github.com/instill-ai/component/issues/177)) ([46e5a8e](https://github.com/instill-ai/component/commit/46e5a8e9122d900c3010705b9a0003c7e23a7d41))
+* add JQ input field that accepts any type ([#201](https://github.com/instill-ai/component/issues/201)) ([cba4aac](https://github.com/instill-ai/component/commit/cba4aacdda1bca8fe676f299248c04547996c828))
+* **cohere:** add Cohere component ([#187](https://github.com/instill-ai/component/issues/187)) ([63fd578](https://github.com/instill-ai/component/commit/63fd57891a10a61f4454816bd39e53cb282ee291))
+* **cohere:** add cohere to be able to use instill credit ([#213](https://github.com/instill-ai/component/issues/213)) ([80415b1](https://github.com/instill-ai/component/commit/80415b1467a61348b6d8d32c7199f73de2b6256e))
+* GitHub component pagination ([#212](https://github.com/instill-ai/component/issues/212)) ([4b8bbc7](https://github.com/instill-ai/component/commit/4b8bbc7ad39600d115f5f422c69e04181ae497a3))
+* **instill:** send requester UID, if present, on model trigger ([#202](https://github.com/instill-ai/component/issues/202)) ([31422cd](https://github.com/instill-ai/component/commit/31422cda00c507e6a53a3f288de16dba2ca9e6cf))
+* **mistral:** add Mistral AI component ([#204](https://github.com/instill-ai/component/issues/204)) ([12aaf4f](https://github.com/instill-ai/component/commit/12aaf4f3954c19bf9eab48b8c70459881bdca340))
+* **openai:** add dimensions in openai component ([#200](https://github.com/instill-ai/component/issues/200)) ([0d08912](https://github.com/instill-ai/component/commit/0d089121d280e663c36529426e4518411b58f6c2))
+* **text:** add input and output and fix bugs ([#209](https://github.com/instill-ai/component/issues/209)) ([56ab3eb](https://github.com/instill-ai/component/commit/56ab3eba4b0286f51caa53d1b3e27aae9113c73b))
+* unify pipeline and component usage handlers ([#197](https://github.com/instill-ai/component/issues/197)) ([e27e46c](https://github.com/instill-ai/component/commit/e27e46c0876b68217084ed9d56ea2a77ee081fe2))
+
+
+### Bug Fixes
+
+* fix instillUpstreamTypes not correctly render the JSON schema ([#216](https://github.com/instill-ai/component/issues/216)) ([bb603bd](https://github.com/instill-ai/component/commit/bb603bd7c74ab6a57ec07158477a99d968cd1c80))
+* **mistralai:** svg naming is wrong ([#218](https://github.com/instill-ai/component/issues/218)) ([108817a](https://github.com/instill-ai/component/commit/108817a2a85befbc55b6ed8e39b9a24881804154))
+* **text:** hotfix the bug from langchaingo without importing the function o… ([#217](https://github.com/instill-ai/component/issues/217)) ([4cfc263](https://github.com/instill-ai/component/commit/4cfc263154730e0dc04b7fc51c9a27585b947299))
+* typo ([#195](https://github.com/instill-ai/component/issues/195)) ([d6b2a42](https://github.com/instill-ai/component/commit/d6b2a42e7f3d0d3cede4ded8c4c973585077f4bd))
+
 ## [0.21.0-beta](https://github.com/instill-ai/component/compare/v0.20.2-beta...v0.21.0-beta) (2024-07-02)
 
 
