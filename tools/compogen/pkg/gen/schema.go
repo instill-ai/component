@@ -11,6 +11,8 @@ type property struct {
 	Items struct {
 		Type string `json:"type"`
 	} `json:"items"`
+
+	Deprecated bool `json:"deprecated"`
 }
 
 type objectSchema struct {

@@ -14,6 +14,7 @@ import (
 	"github.com/instill-ai/component/ai/cohere/v0"
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
+	"github.com/instill-ai/component/ai/mistralai/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
 	"github.com/instill-ai/component/application/email/v0"
@@ -107,6 +108,13 @@ func Init(
 			// Anthropic
 			conn := anthropic.Init(baseComp)
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			compStore.Import(conn)
+		}
+		{
+			// Mistral
+			conn := mistralai.Init(baseComp)
+			// Secret doesn't allow hyphens
+			conn = conn.WithInstillCredentials(secrets["mistralai"])
 			compStore.Import(conn)
 		}
 		{
