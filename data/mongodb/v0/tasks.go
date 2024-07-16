@@ -45,6 +45,22 @@ type DeleteOutput struct {
 	Status string `json:"status"`
 }
 
+type DeleteCollectionInput struct {
+	CollectionName string `json:"collection-name"`
+}
+
+type DeleteCollectionOutput struct {
+	Status string `json:"status"`
+}
+
+type DeleteDatabaseInput struct {
+	DatabaseName string `json:"database-name"`
+}
+
+type DeleteDatabaseOutput struct {
+	Status string `json:"status"`
+}
+
 func (e *execution) insert(in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct InsertInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
@@ -55,7 +71,7 @@ func (e *execution) insert(in *structpb.Struct) (*structpb.Struct, error) {
 	data := inputStruct.Data
 	ctx := context.Background()
 
-	_, err = e.client.InsertOne(ctx, data)
+	_, err = e.collectionClient.InsertOne(ctx, data)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +107,7 @@ func (e *execution) find(in *structpb.Struct) (*structpb.Struct, error) {
 	var cursor *mongo.Cursor
 	if len(criteria) == 0 {
 		// Find all documents with the specified projection
-		cursor, err = e.client.Find(ctx, realCriteria)
+		cursor, err = e.collectionClient.Find(ctx, realCriteria)
 	} else {
 		// Define the projection to include only the email field
 		projection := bson.M{}
@@ -102,7 +118,7 @@ func (e *execution) find(in *structpb.Struct) (*structpb.Struct, error) {
 		}
 
 		// Find all documents with the specified projection
-		cursor, err = e.client.Find(ctx, realCriteria, options.Find().SetProjection(projection))
+		cursor, err = e.collectionClient.Find(ctx, realCriteria, options.Find().SetProjection(projection))
 	}
 
 	if err != nil {
@@ -144,7 +160,7 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 
 	// Get the document to identify which fields need to be removed
 	var result map[string]interface{}
-	err = e.client.FindOne(ctx, criteria).Decode(&result)
+	err = e.collectionClient.FindOne(ctx, criteria).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
@@ -175,7 +191,7 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("no valid update operations found")
 	}
 
-	_, err = e.client.UpdateMany(ctx, criteria, updateDoc)
+	_, err = e.collectionClient.UpdateMany(ctx, criteria, updateDoc)
 	if err != nil {
 		return nil, err
 	}
@@ -201,13 +217,51 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 	criteria := inputStruct.Criteria
 	ctx := context.Background()
 
-	_, err = e.client.DeleteMany(ctx, criteria)
+	_, err = e.collectionClient.DeleteMany(ctx, criteria)
 	if err != nil {
 		return nil, err
 	}
 
 	outputStruct := DeleteOutput{
 		Status: "Successfully deleted documents",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (e *execution) deleteCollection(in *structpb.Struct) (*structpb.Struct, error) {
+	ctx := context.Background()
+
+	err := e.collectionClient.Drop(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := DeleteCollectionOutput{
+		Status: "Successfully deleted collection",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (e *execution) deleteDatabase(in *structpb.Struct) (*structpb.Struct, error) {
+	ctx := context.Background()
+
+	err := e.dbClient.Drop(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := DeleteDatabaseOutput{
+		Status: "Successfully deleted database",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)

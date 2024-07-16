@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": false,
   "properties": {
-    "name": {
+    "database-name": {
       "description": "Fill in your MongoDB database name",
       "instillUpstreamTypes": [
         "value","reference"
@@ -43,12 +43,12 @@
   },
   "required": [
     "uri",
-    "name",
+    "database-name",
     "collection-name"
   ],
   "instillEditOnNodeFields": [
     "uri",
-    "name",
+    "database-name",
     "collection-name"
   ],
   "title": "MongoDB Connection",

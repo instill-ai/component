@@ -60,6 +60,10 @@ func (m *MockMongoClient) DeleteMany(ctx context.Context, filter interface{}, op
 	return mockResult, nil
 }
 
+func (m *MockMongoClient) Drop(ctx context.Context) error {
+	return nil
+}
+
 func TestComponent_ExecuteInsertTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
@@ -95,7 +99,7 @@ func TestComponent_ExecuteInsertTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskInsert},
-				client:             &MockMongoClient{},
+				collectionClient:   &MockMongoClient{},
 			}
 			e.execute = e.insert
 			exec := &base.ExecutionWrapper{Execution: e}
@@ -155,7 +159,7 @@ func TestComponent_ExecuteFindTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskFind},
-				client:             &MockMongoClient{},
+				collectionClient:   &MockMongoClient{},
 			}
 			e.execute = e.find
 			exec := &base.ExecutionWrapper{Execution: e}
@@ -212,7 +216,7 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskUpdate},
-				client:             &MockMongoClient{},
+				collectionClient:   &MockMongoClient{},
 			}
 			e.execute = e.update
 			exec := &base.ExecutionWrapper{Execution: e}
@@ -268,9 +272,121 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDelete},
-				client:             &MockMongoClient{},
+				collectionClient:   &MockMongoClient{},
 			}
 			e.execute = e.delete
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestComponent_ExecuteDeleteCollectionTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    DeleteCollectionInput
+		wantResp DeleteCollectionOutput
+		wantErr  string
+	}{
+		{
+			name: "ok to delete collection",
+			input: DeleteCollectionInput{
+				CollectionName: "test_coll",
+			},
+			wantResp: DeleteCollectionOutput{
+				Status: "Successfully deleted collection",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"name":            "test",
+				"collection-name": tc.input.CollectionName,
+				"uri":             "mongodb://localhost:27017",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDeleteCollection},
+				collectionClient:   &MockMongoClient{},
+			}
+			e.execute = e.deleteCollection
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestComponent_ExecuteDeleteDatabaseTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    DeleteDatabaseInput
+		wantResp DeleteDatabaseOutput
+		wantErr  string
+	}{
+		{
+			name: "ok to delete database",
+			input: DeleteDatabaseInput{
+				DatabaseName: "test_db",
+			},
+			wantResp: DeleteDatabaseOutput{
+				Status: "Successfully deleted database",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"name":            tc.input.DatabaseName,
+				"collection-name": "test_coll",
+				"uri":             "mongodb://localhost:27017",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDeleteDatabase},
+				dbClient:           &MockMongoClient{},
+			}
+			e.execute = e.deleteDatabase
 			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)

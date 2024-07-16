@@ -15,10 +15,12 @@ import (
 )
 
 const (
-	TaskInsert = "TASK_INSERT"
-	TaskFind   = "TASK_FIND"
-	TaskUpdate = "TASK_UPDATE"
-	TaskDelete = "TASK_DELETE"
+	TaskInsert           = "TASK_INSERT"
+	TaskFind             = "TASK_FIND"
+	TaskUpdate           = "TASK_UPDATE"
+	TaskDelete           = "TASK_DELETE"
+	TaskDeleteCollection = "TASK_DELETE_COLLECTION"
+	TaskDeleteDatabase   = "TASK_DELETE_DATABASE"
 )
 
 //go:embed config/definition.json
@@ -37,19 +39,25 @@ type component struct {
 	base.Component
 }
 
-type MongoClient interface {
+type MongoCollectionClient interface {
 	Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (cur *mongo.Cursor, err error)
 	FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) *mongo.SingleResult
 	InsertOne(ctx context.Context, document interface{}, opts ...*options.InsertOneOptions) (*mongo.InsertOneResult, error)
 	UpdateMany(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
 	DeleteMany(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error)
+	Drop(ctx context.Context) error
+}
+
+type MongoDBClient interface {
+	Drop(ctx context.Context) error
 }
 
 type execution struct {
 	base.ComponentExecution
 
-	execute func(*structpb.Struct) (*structpb.Struct, error)
-	client  MongoClient
+	execute          func(*structpb.Struct) (*structpb.Struct, error)
+	collectionClient MongoCollectionClient
+	dbClient         MongoDBClient
 }
 
 // Init returns an implementation of IConnector that interacts with MongoDB.
@@ -66,9 +74,11 @@ func Init(bc base.Component) *component {
 }
 
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+	collectionClient, dbClient := newClient(setup)
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
-		client:             newClient(setup),
+		collectionClient:   collectionClient,
+		dbClient:           dbClient,
 	}
 
 	switch task {
@@ -80,6 +90,10 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.update
 	case TaskDelete:
 		e.execute = e.delete
+	case TaskDeleteCollection:
+		e.execute = e.deleteCollection
+	case TaskDeleteDatabase:
+		e.execute = e.deleteDatabase
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),

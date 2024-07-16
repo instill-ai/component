@@ -207,5 +207,79 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_DELETE_COLLECTION":{
+    "instillShortDescription": "Delete the collection",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "collection-name": {
+          "description": "The collection to be deleted",
+          "instillFormat": "string",
+          "instillShortDescription": "Collection Name",
+          "instillUIOrder": 0,
+          "title": "Collection",
+          "type": "string"
+        }
+      },
+      "required": [],
+      "title": "No Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Delete collection status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_DELETE_DATABASE":{
+    "instillShortDescription": "Delete the database",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "database-name": {
+          "description": "The database to be deleted",
+          "instillFormat": "string",
+          "instillShortDescription": "Database Name",
+          "instillUIOrder": 0,
+          "title": "Database",
+          "type": "string"
+        }
+      },
+      "required": [],
+      "title": "No Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Delete database status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
   }
 }
