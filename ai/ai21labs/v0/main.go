@@ -73,15 +73,15 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	}
 
 	taskMap := map[string]func(*structpb.Struct) (*structpb.Struct, error){
-		"TASK_TEXT_GENERATION_CHAT":       e.TaskTextGenerationChat,
-		"TASK_TEXT_EMBEDDINGS":            e.TaskTextEmbeddings,
-		"TASK_CONTEXTUAL_ANSWERING":       e.TaskContextualAnswering,
-		"TASK_TEXT_SUMMARIZATION":         e.TaskTextSummarization,
-		"TASK_TEXT_SUMMARIZATION_SEGMENT": e.TaskTextSummarizationBySegment,
-		"TASK_TEXT_PARAPHRASING":          e.TaskTextParaphrasing,
-		"TASK_GRAMMAR_CHECK":              e.TaskGrammarCheck,
-		"TASK_TEXT_IMPROVEMENT":           e.TaskTextImprovement,
-		"TASK_TEXT_SEGMENTATION":          e.TaskTextSegmentation,
+		TaskTextGenerationChat:         e.TaskTextGenerationChat,
+		TaskTextEmbeddings:             e.TaskTextEmbeddings,
+		TaskContextualAnswering:        e.TaskContextualAnswering,
+		TaskTextSummarization:          e.TaskTextSummarization,
+		TaskTextSummarizationBySegment: e.TaskTextSummarizationBySegment,
+		TaskTextParaphrasing:           e.TaskTextParaphrasing,
+		TaskGrammarCheck:               e.TaskGrammarCheck,
+		TaskTextImprovement:            e.TaskTextImprovement,
+		TaskTextSegmentation:           e.TaskTextSegmentation,
 	}
 	if taskFunc, ok := taskMap[task]; ok {
 		e.execute = taskFunc
