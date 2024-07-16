@@ -138,15 +138,16 @@ func (jiraClient *Client) getIssueTask(ctx context.Context, props *structpb.Stru
 	return base.ConvertToStructpb(issueOutput)
 }
 
+type Range struct {
+	Range     string `json:"range,omitempty"`
+	EpicKey   string `json:"epic-key,omitempty"`
+	SprintKey string `json:"sprint-key,omitempty"`
+}
 type ListIssuesInput struct {
-	BoardID    int `json:"board-id,omitempty" api:"boardId"`
-	MaxResults int `json:"max-results,omitempty" api:"maxResults"`
-	StartAt    int `json:"start-at,omitempty" api:"startAt"`
-	Range      struct {
-		Range     string `json:"range,omitempty"`
-		EpicKey   string `json:"epic-key,omitempty"`
-		SprintKey string `json:"sprint-key,omitempty"`
-	} `json:"range,omitempty"`
+	BoardID    int   `json:"board-id,omitempty" api:"boardId"`
+	MaxResults int   `json:"max-results,omitempty" api:"maxResults"`
+	StartAt    int   `json:"start-at,omitempty" api:"startAt"`
+	Range      Range `json:"range,omitempty"`
 }
 
 type ListIssuesResp struct {
@@ -168,7 +169,7 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 	debug.SessionStart("listIssuesTask", DevelopVerboseLevel)
 	defer debug.SessionEnd()
 
-	debug.AddRawMessage(props)
+	debug.AddMapMessage("props", props)
 	var (
 		opt ListIssuesInput
 		jql string
@@ -177,7 +178,7 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err
 	}
-	debug.AddMessage(fmt.Sprintf("ListIssuesInput: %+v", opt))
+	debug.AddMapMessage("ListIssuesInput", opt)
 	board, err := jiraClient.getBoard(ctx, opt.BoardID)
 	if err != nil {
 		return nil, err

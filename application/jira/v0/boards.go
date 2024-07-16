@@ -77,16 +77,8 @@ func (jiraClient *Client) listBoards(_ context.Context, opt *ListBoardsInput) (*
 	}
 	resp, err := req.Get(apiEndpoint)
 
-	if resp != nil && resp.StatusCode() == 404 {
-		return nil, fmt.Errorf(
-			err.Error(),
-			errmsg.Message(err)+"Please check you have the correct permissions to access this resource.",
-		)
-	}
 	if err != nil {
-		return nil, fmt.Errorf(
-			err.Error(), errmsg.Message(err),
-		)
+		return nil, err
 	}
 	debug.AddMessage("GET", apiEndpoint)
 	debug.AddMapMessage("QueryParam", resp.Request.QueryParam)

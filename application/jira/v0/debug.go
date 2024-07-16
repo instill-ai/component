@@ -85,7 +85,6 @@ func (d *DebugSession) AddMapMessage(name string, m interface{}) {
 			if !v.Field(i).IsValid() || !v.Field(i).CanInterface() {
 				continue
 			}
-
 			val := v.Field(i).Interface()
 			paramName := typeOfS.Field(i).Name
 			mapVal[paramName] = val
@@ -104,10 +103,7 @@ func (d *DebugSession) AddRawMessage(m interface{}) {
 }
 
 func (d *DebugSession) addInternalMapMessage(m map[string]interface{}, depth int) {
-	d.indentLevel++
-	defer func() {
-		d.indentLevel--
-	}()
+	defer d.Indent()()
 	if depth > d.maxDepth {
 		d.AddMessage("...")
 		return
@@ -129,10 +125,8 @@ func (d *DebugSession) addInternalMapMessage(m map[string]interface{}, depth int
 }
 
 func (d *DebugSession) addInternalSliceMessage(s []interface{}, depth int) {
-	d.indentLevel++
-	defer func() {
-		d.indentLevel--
-	}()
+	defer d.Indent()()
+
 	if depth > d.maxDepth {
 		d.AddMessage("...")
 		return
@@ -162,6 +156,24 @@ func (d *DebugSession) SessionEnd() {
 	endHalfBanner := strings.Repeat("=", d.halfBannerLen-2)
 	endBanner := fmt.Sprintf("%s %s end %s", endHalfBanner, d.SessionID, endHalfBanner)
 	d.Messages = append(d.Messages, endBanner)
+}
+
+func (d *DebugSession) IncrementIndent() {
+	d.indentLevel++
+}
+func (d *DebugSession) DecrementIndent() {
+	d.indentLevel--
+}
+func (d *DebugSession) Indent() func() {
+	d.IncrementIndent()
+	return d.DecrementIndent
+}
+
+func (d *DebugSession) Separator() {
+	if Verbose < d.verboseLevel {
+		return
+	}
+	d.Messages = append(d.Messages, strings.Repeat("=", d.halfBannerLen*2+len(d.SessionID)+2))
 }
 
 func (d *DebugSession) flush() {

@@ -322,6 +322,23 @@
                 "range": {
                   "const": "All",
                   "type": "string"
+                },
+                "epic-key": {
+                  "default": "optional",
+                  "title": "Epic Key (Optional field)",
+                  "description": "Optional field",
+                  "instillShortDescription": "Optional field",
+                  "instillUIOrder": 0,
+                  "instillFormat": "string",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "type": "string"
                 }
               },
               "required": [
