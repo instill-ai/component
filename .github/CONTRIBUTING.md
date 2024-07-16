@@ -592,6 +592,33 @@ func (e *execution) greet(in *structpb.Struct) (*structpb.Struct, error) {
 }
 ```
 
+#### End-user error messages
+
+The [`errmsg`](https://github.com/instill-ai/x/tree/main/errmsg) package allows
+us to attach messages to our errors.
+
+```go
+func (e *execution) greet(in *structpb.Struct) (*structpb.Struct, error) {
+	out := new(structpb.Struct)
+
+	greetee := in.Fields["target"].GetStringValue()
+	if greetee == "Voldemort" {
+		return nil, errmsg.AddMessage(fmt.Errorf("invalid greetee"), "He-Who-Must-Not-Be-Named can't be greeted.")
+	}
+
+	greeting := "Hello, " + greetee + "!"
+
+	out.Fields = map[string]*structpb.Value{
+		"greeting": structpb.NewStringValue(greeting),
+	}
+
+	return out, nil
+}
+```
+
+The middleware in `pipeline-backend` will capture error messages in order to
+to return a human-friendly errors to the API clients and console users.
+
 #### Unit tests
 
 Before initializing testing your component in **💧 Instill VDP**, we can unit test its

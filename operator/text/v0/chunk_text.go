@@ -27,7 +27,6 @@ type Setting struct {
 	Separators        []string `json:"separators,omitempty"`
 	KeepSeparator     bool     `json:"keep-separator,omitempty"`
 	CodeBlocks        bool     `json:"code-blocks,omitempty"`
-	ReferenceLinks    bool     `json:"reference-links,omitempty"`
 	// TODO: Add SecondSplitter, which is to set the details about how to chunk the paragraphs in Markdown format.
 	// https://pkg.go.dev/github.com/tmc/langchaingo@v0.1.10/textsplitter#MarkdownTextSplitter
 	// secondSplitter textsplitter.TextSplitter
@@ -97,7 +96,6 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 			textsplitter.WithChunkSize(setting.ChunkSize),
 			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
 			textsplitter.WithCodeBlocks(setting.CodeBlocks),
-			textsplitter.WithReferenceLinks(setting.ReferenceLinks),
 		)
 	case "Recursive":
 		positionCalculator = PositionCalculator{}

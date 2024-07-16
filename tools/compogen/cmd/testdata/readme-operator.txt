@@ -51,6 +51,13 @@ cmp pkg/dummy/README.mdx want-readme.mdx
           "instillUIOrder": 0,
           "title": "Durna",
           "type": "string"
+        },
+        "parra": {
+          "deprecated": true,
+          "description": "Shouldn't appear, it's deprecated",
+          "instillUIOrder": 1,
+          "title": "Parra",
+          "type": "string"
         }
       },
       "required": [

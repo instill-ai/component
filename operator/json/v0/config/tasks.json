@@ -114,9 +114,11 @@
       "description": "Source JSON and jq command",
       "instillUIOrder": 0,
       "properties": {
-        "jsonInput": {
-          "instillUIOrder": 0,
-          "description": "JSON string to be processed",
+        "json-string": {
+          "deprecated": true,
+          "instillUIOrder": 2,
+          "description": "(DEPRECATED, use 'JSON value' instead) String with the JSON value to be processed. This field allows templated inputs, but the data might require preprocessing (marshalling). This field will be used in absence of 'JSON value' for backwards compatibility reasons.",
+          "instillShortDescription": "(DEPRECATED) JSON string to be processed",
           "instillAcceptFormats": [
             "string"
           ],
@@ -126,10 +128,25 @@
             "template"
           ],
           "instillUIMultiline": true,
-          "title": "JSON input",
+          "title": "(DEPRECATED) JSON string",
           "type": "string"
         },
-        "jqFilter": {
+        "json-value": {
+          "instillUIOrder": 0,
+          "description": "JSON value (e.g. string, number, object, array...) to be processed by the filter",
+          "instillAcceptFormats": [
+            "object",
+            "structured/*",
+            "semi-structured/*"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIMultiline": true,
+          "title": "JSON value"
+        },
+        "jq-filter": {
           "instillUIOrder": 1,
           "description": "Filter, in `jq` syntax, that will be applied to the JSON input",
           "instillAcceptFormats": [
@@ -146,8 +163,11 @@
         }
       },
       "required": [
-        "jsonInput",
-        "jqFilter"
+        "jq-filter"
+      ],
+      "instillEditOnNodeFields": [
+        "json-value",
+        "jq-filter"
       ],
       "title": "Input",
       "type": "object"
