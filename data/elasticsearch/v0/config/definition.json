@@ -4,7 +4,6 @@
     "TASK_INDEX",
     "TASK_UPDATE",
     "TASK_DELETE",
-    "TASK_CREATE_INDEX",
     "TASK_DELETE_INDEX"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/elasticsearch",

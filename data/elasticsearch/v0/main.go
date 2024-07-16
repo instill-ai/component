@@ -20,7 +20,6 @@ const (
 	TaskIndex       = "TASK_INDEX"
 	TaskUpdate      = "TASK_UPDATE"
 	TaskDelete      = "TASK_DELETE"
-	TaskCreateIndex = "TASK_CREATE_INDEX"
 	TaskDeleteIndex = "TASK_DELETE_INDEX"
 )
 
@@ -98,8 +97,6 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.update
 	case TaskDelete:
 		e.execute = e.delete
-	case TaskCreateIndex:
-		e.execute = e.createIndex
 	case TaskDeleteIndex:
 		e.execute = e.deleteIndex
 	default:
