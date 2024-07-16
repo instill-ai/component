@@ -4,8 +4,8 @@
     "TASK_FIND",
     "TASK_UPDATE",
     "TASK_DELETE",
-    "TASK_DELETE_COLLECTION",
-    "TASK_DELETE_DATABASE"
+    "TASK_DROP_COLLECTION",
+    "TASK_DROP_DATABASE"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/data/mongodb",

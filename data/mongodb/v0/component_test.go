@@ -302,17 +302,17 @@ func TestComponent_ExecuteDeleteCollectionTask(t *testing.T) {
 
 	testcases := []struct {
 		name     string
-		input    DeleteCollectionInput
-		wantResp DeleteCollectionOutput
+		input    DropCollectionInput
+		wantResp DropCollectionOutput
 		wantErr  string
 	}{
 		{
 			name: "ok to delete collection",
-			input: DeleteCollectionInput{
+			input: DropCollectionInput{
 				CollectionName: "test_coll",
 			},
-			wantResp: DeleteCollectionOutput{
-				Status: "Successfully deleted collection",
+			wantResp: DropCollectionOutput{
+				Status: "Successfully dropped collection",
 			},
 		},
 	}
@@ -327,10 +327,10 @@ func TestComponent_ExecuteDeleteCollectionTask(t *testing.T) {
 			c.Assert(err, qt.IsNil)
 
 			e := &execution{
-				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDeleteCollection},
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDropCollection},
 				collectionClient:   &MockMongoClient{},
 			}
-			e.execute = e.deleteCollection
+			e.execute = e.dropCollection
 			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
@@ -358,17 +358,17 @@ func TestComponent_ExecuteDeleteDatabaseTask(t *testing.T) {
 
 	testcases := []struct {
 		name     string
-		input    DeleteDatabaseInput
-		wantResp DeleteDatabaseOutput
+		input    DropDatabaseInput
+		wantResp DropDatabaseOutput
 		wantErr  string
 	}{
 		{
 			name: "ok to delete database",
-			input: DeleteDatabaseInput{
+			input: DropDatabaseInput{
 				DatabaseName: "test_db",
 			},
-			wantResp: DeleteDatabaseOutput{
-				Status: "Successfully deleted database",
+			wantResp: DropDatabaseOutput{
+				Status: "Successfully dropped database",
 			},
 		},
 	}
@@ -383,10 +383,10 @@ func TestComponent_ExecuteDeleteDatabaseTask(t *testing.T) {
 			c.Assert(err, qt.IsNil)
 
 			e := &execution{
-				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDeleteDatabase},
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDropDatabase},
 				dbClient:           &MockMongoClient{},
 			}
-			e.execute = e.deleteDatabase
+			e.execute = e.dropDatabase
 			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)

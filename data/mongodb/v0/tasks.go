@@ -45,19 +45,19 @@ type DeleteOutput struct {
 	Status string `json:"status"`
 }
 
-type DeleteCollectionInput struct {
+type DropCollectionInput struct {
 	CollectionName string `json:"collection-name"`
 }
 
-type DeleteCollectionOutput struct {
+type DropCollectionOutput struct {
 	Status string `json:"status"`
 }
 
-type DeleteDatabaseInput struct {
+type DropDatabaseInput struct {
 	DatabaseName string `json:"database-name"`
 }
 
-type DeleteDatabaseOutput struct {
+type DropDatabaseOutput struct {
 	Status string `json:"status"`
 }
 
@@ -233,7 +233,7 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 	return output, nil
 }
 
-func (e *execution) deleteCollection(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) dropCollection(in *structpb.Struct) (*structpb.Struct, error) {
 	ctx := context.Background()
 
 	err := e.collectionClient.Drop(ctx)
@@ -241,8 +241,8 @@ func (e *execution) deleteCollection(in *structpb.Struct) (*structpb.Struct, err
 		return nil, err
 	}
 
-	outputStruct := DeleteCollectionOutput{
-		Status: "Successfully deleted collection",
+	outputStruct := DropCollectionOutput{
+		Status: "Successfully dropped collection",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -252,7 +252,7 @@ func (e *execution) deleteCollection(in *structpb.Struct) (*structpb.Struct, err
 	return output, nil
 }
 
-func (e *execution) deleteDatabase(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) dropDatabase(in *structpb.Struct) (*structpb.Struct, error) {
 	ctx := context.Background()
 
 	err := e.dbClient.Drop(ctx)
@@ -260,8 +260,8 @@ func (e *execution) deleteDatabase(in *structpb.Struct) (*structpb.Struct, error
 		return nil, err
 	}
 
-	outputStruct := DeleteDatabaseOutput{
-		Status: "Successfully deleted database",
+	outputStruct := DropDatabaseOutput{
+		Status: "Successfully dropped database",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
