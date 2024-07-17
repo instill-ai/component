@@ -45,6 +45,12 @@ type FakeIssue struct {
 	Self   string                 `json:"self"`
 	Fields map[string]interface{} `json:"fields"`
 }
+type FakeSprintAsIssue struct {
+	ID     int                    `json:"id"`
+	Key    string                 `json:"key"`
+	Self   string                 `json:"self"`
+	Fields map[string]interface{} `json:"fields"`
+}
 
 func (f *FakeIssue) getSelf() string {
 	if f.Self == "" {
@@ -109,6 +115,16 @@ var fakeIssues = []FakeIssue{
 			},
 		},
 	},
+}
+
+func (f *FakeIssue) toSprint() func() {
+	recovery := f.Fields["issuetype"].(map[string]interface{})["name"].(string)
+	f.Fields["issuetype"] = map[string]interface{}{
+		"name": "Sprint",
+	}
+	return func() {
+		f.Fields["issuetype"].(map[string]interface{})["name"] = recovery
+	}
 }
 
 type FakeSprint struct {

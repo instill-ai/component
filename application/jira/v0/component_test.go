@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	qt "github.com/frankban/quicktest"
@@ -198,7 +199,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 	testcases := []TaskCase[ListIssuesInput, ListIssuesOutput]{
 		{
 			_type: "ok",
-			name:  "get all issues",
+			name:  "All",
 			input: ListIssuesInput{
 				BoardID:    1,
 				MaxResults: 10,
@@ -230,6 +231,207 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 						Summary:   "Test issue 4",
 					},
 				},
+			},
+		},
+		{
+			_type: "ok",
+			name:  "Epics only",
+			input: ListIssuesInput{
+				BoardID:    1,
+				MaxResults: 10,
+				StartAt:    0,
+				Range: Range{
+					Range: "Epics only",
+				},
+			},
+			wantResp: ListIssuesOutput{
+				Total:      1,
+				StartAt:    0,
+				MaxResults: 10,
+				Issues: []Issue{
+					{
+						ID:  "4",
+						Key: "KAN-4",
+						Fields: map[string]interface{}{
+							"summary": "Test issue 4",
+							"status": map[string]interface{}{
+								"name": "Done",
+							},
+							"issuetype": map[string]interface{}{
+								"name": "Epic",
+							},
+						},
+						IssueType: "Epic",
+						Self:      "https://test.atlassian.net/rest/agile/1.0/issue/4",
+						Status:    "Done",
+						Summary:   "Test issue 4",
+					},
+				},
+			},
+		},
+		{
+			_type: "ok",
+			name:  "Sprints only",
+			input: ListIssuesInput{
+				BoardID:    1,
+				MaxResults: 10,
+				StartAt:    0,
+				Range: Range{
+					Range: "Sprints only",
+				},
+			},
+			wantResp: ListIssuesOutput{
+				Total:      1,
+				StartAt:    0,
+				MaxResults: 10,
+				Issues: []Issue{
+					{
+						ID:  "4",
+						Key: "KAN-4",
+						Fields: map[string]interface{}{
+							"summary": "Test issue 4",
+							"status": map[string]interface{}{
+								"name": "Done",
+							},
+							"issuetype": map[string]interface{}{
+								"name": "Sprint",
+							},
+						},
+						IssueType: "Sprint",
+						Self:      "https://test.atlassian.net/rest/agile/1.0/issue/4",
+						Status:    "Done",
+						Summary:   "Test issue 4",
+					},
+				},
+			},
+		},
+		{
+			_type: "ok",
+			name:  "In backlog only",
+			input: ListIssuesInput{
+				BoardID:    1,
+				MaxResults: 10,
+				StartAt:    0,
+				Range: Range{
+					Range: "In backlog only",
+				},
+			},
+			wantResp: ListIssuesOutput{
+				Total:      1,
+				StartAt:    0,
+				MaxResults: 10,
+				Issues: []Issue{
+					{
+						ID:  "4",
+						Key: "KAN-4",
+						Fields: map[string]interface{}{
+							"summary": "Test issue 4",
+							"status": map[string]interface{}{
+								"name": "Done",
+							},
+							"issuetype": map[string]interface{}{
+								"name": "Epic",
+							},
+						},
+						IssueType: "Epic",
+						Self:      "https://test.atlassian.net/rest/agile/1.0/issue/4",
+						Status:    "Done",
+						Summary:   "Test issue 4",
+					},
+				},
+			},
+		},
+		{
+			_type: "ok",
+			name:  "Issues without epic assigned",
+			input: ListIssuesInput{
+				BoardID:    1,
+				MaxResults: 10,
+				StartAt:    0,
+				Range: Range{
+					Range: "Issues without epic assigned",
+				},
+			},
+			wantResp: ListIssuesOutput{
+				Total:      1,
+				StartAt:    0,
+				MaxResults: 10,
+				Issues: []Issue{
+					{
+						ID:  "4",
+						Key: "KAN-4",
+						Fields: map[string]interface{}{
+							"summary": "Test issue 4",
+							"status": map[string]interface{}{
+								"name": "Done",
+							},
+							"issuetype": map[string]interface{}{
+								"name": "Epic",
+							},
+						},
+						IssueType: "Epic",
+						Self:      "https://test.atlassian.net/rest/agile/1.0/issue/4",
+						Status:    "Done",
+						Summary:   "Test issue 4",
+					},
+				},
+			},
+		},
+		{
+			_type: "ok",
+			name:  "Issues of an epic",
+			input: ListIssuesInput{
+				BoardID:    1,
+				MaxResults: 10,
+				StartAt:    0,
+				Range: Range{
+					Range: "Issues of an epic",
+					EpicKey: "KAN-4",
+				},
+			},
+			wantResp: ListIssuesOutput{
+				Total:      0,
+				StartAt:    0,
+				MaxResults: 10,
+				Issues:     []Issue{},
+			},
+		},
+		{
+			_type: "ok",
+			name:  "Issues of an epic(long query)",
+			input: ListIssuesInput{
+				BoardID:    1,
+				MaxResults: 10,
+				StartAt:    0,
+				Range: Range{
+					Range: "Issues of an epic",
+					EpicKey: "KAN-4" + strings.Repeat("-0", 100),
+				},
+			},
+			wantResp: ListIssuesOutput{
+				Total:      0,
+				StartAt:    0,
+				MaxResults: 10,
+				Issues:     []Issue{},
+			},
+		},
+		{
+			_type: "ok",
+			name:  "Issues of a sprint",
+			input: ListIssuesInput{
+				BoardID:    1,
+				MaxResults: 10,
+				StartAt:    0,
+				Range: Range{
+					Range: "Issues of a sprint",
+					SprintKey: "1",
+				},
+			},
+			wantResp: ListIssuesOutput{
+				Total:      0,
+				StartAt:    0,
+				MaxResults: 10,
+				Issues:     []Issue{},
 			},
 		},
 	}

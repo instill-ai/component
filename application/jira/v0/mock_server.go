@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -19,10 +20,7 @@ func router(middlewares ...func(http.Handler) http.Handler) http.Handler {
 	}
 	r.Get("/_edge/tenant_info", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		_, err := w.Write([]byte(`{"cloudId":"12345678-1234-1234-1234-123456789012"}`))
-		if err != nil {
-			fmt.Println("/_edge/tenant_info", err)
-		}
+		_, _ = w.Write([]byte(`{"cloudId":"12345678-1234-1234-1234-123456789012"}`))
 	})
 	r.Get("/rest/agile/1.0/issue/{issueIdOrKey:[a-zA-z0-9-]+}", mockGetIssue)
 	r.Get("/rest/agile/1.0/sprint/{sprintId}", mockGetSprint)
@@ -33,6 +31,9 @@ func router(middlewares ...func(http.Handler) http.Handler) http.Handler {
 	r.Get("/rest/agile/1.0/board/{boardId}/epic/none/issue", mockListIssues) // list all issues without epic assigned
 	r.Get("/rest/agile/1.0/board/{boardId}", mockGetBoard)
 	r.Get("/rest/agile/1.0/board", mockListBoards)
+
+	r.Get("/rest/api/2/search", mockIssuesSearch)
+	r.Post("/rest/api/2/search", mockIssuesSearch)
 	return r
 }
 
@@ -64,10 +65,7 @@ func mockListBoards(res http.ResponseWriter, req *http.Request) {
 	}
 	if pjNotFound {
 		res.WriteHeader(http.StatusBadRequest)
-		_, err := res.Write([]byte(fmt.Sprintf(`{"errorMessages":["No project could be found with key or id '%s'"]}`, projectKeyOrID)))
-		if err != nil {
-			fmt.Println("/rest/agile/1.0/board", err)
-		}
+		_, _ = res.Write([]byte(`{"errorMessages":["No project could be found with key or id"]}`))
 		return
 	}
 	// pagination
@@ -75,11 +73,6 @@ func mockListBoards(res http.ResponseWriter, req *http.Request) {
 	if startAt != "" {
 		start, err = strconv.Atoi(startAt)
 		if err != nil {
-			res.WriteHeader(http.StatusBadRequest)
-			_, err := res.Write([]byte(`{"errorMessages":["The 'startAt' parameter must be a number"]}`))
-			if err != nil {
-				fmt.Println("/rest/agile/1.0/board", err)
-			}
 			return
 		}
 	}
@@ -87,11 +80,6 @@ func mockListBoards(res http.ResponseWriter, req *http.Request) {
 	if maxResults != "" {
 		maxResultsNum, err = strconv.Atoi(maxResults)
 		if err != nil {
-			res.WriteHeader(http.StatusBadRequest)
-			_, err := res.Write([]byte(`{"errorMessages":["The 'maxResults' parameter must be a number"]}`))
-			if err != nil {
-				fmt.Println("/rest/agile/1.0/board", err)
-			}
 			return
 		}
 		end = start + maxResultsNum
@@ -112,11 +100,9 @@ func mockListBoards(res http.ResponseWriter, req *http.Request) {
 	}
 	respText += `],`
 	respText += `"total":` + strconv.Itoa(len(boards)) + `,"startAt":` + strconv.Itoa(start) + `,"maxResults":` + strconv.Itoa(maxResultsNum) + `,"isLast":` + strconv.FormatBool(end == len(boards)) + `}`
-	_, err = res.Write([]byte(respText))
-	if err != nil {
-		fmt.Println("/rest/agile/1.0/board", err)
-	}
+	_, _ = res.Write([]byte(respText))
 }
+
 func mockGetBoard(res http.ResponseWriter, req *http.Request) {
 	var err error
 	boardID := chi.URLParam(req, "boardId")
@@ -130,22 +116,16 @@ func mockGetBoard(res http.ResponseWriter, req *http.Request) {
 	}
 	if board == nil {
 		res.WriteHeader(http.StatusNotFound)
-		_, err := res.Write([]byte(`{"errorMessages":["Board does not exist or you do not have permission to see it"]}`))
-		if err != nil {
-			fmt.Println("mockGetBoard", err)
-		}
+		_, _ = res.Write([]byte(`{"errorMessages":["Board does not exist or you do not have permission to see it"]}`))
 		return
 	}
 	// response
 	res.WriteHeader(http.StatusOK)
 	respText, err := json.Marshal(board)
 	if err != nil {
-		fmt.Println("mockGetBoard", err)
+		return
 	}
-	_, err = res.Write([]byte(respText))
-	if err != nil {
-		fmt.Println("/rest/agile/1.0/board", err)
-	}
+	_, _ = res.Write([]byte(respText))
 }
 
 func mockGetIssue(res http.ResponseWriter, req *http.Request) {
@@ -154,10 +134,7 @@ func mockGetIssue(res http.ResponseWriter, req *http.Request) {
 	issueID := chi.URLParam(req, "issueIdOrKey")
 	if issueID == "" {
 		res.WriteHeader(http.StatusBadRequest)
-		_, err := res.Write([]byte(`{"errorMessages":["Issue id or key is required"]}`))
-		if err != nil {
-			fmt.Println("/rest/agile/1.0/issue", err)
-		}
+		_, _ = res.Write([]byte(`{"errorMessages":["Issue id or key is required"]}`))
 		return
 	}
 	// find issue
@@ -171,10 +148,7 @@ func mockGetIssue(res http.ResponseWriter, req *http.Request) {
 	}
 	if issue == nil {
 		res.WriteHeader(http.StatusNotFound)
-		_, err := res.Write([]byte(`{"errorMessages":["Issue does not exist or you do not have permission to see it"]}`))
-		if err != nil {
-			fmt.Println("/rest/agile/1.0/issue", err)
-		}
+		_, _ = res.Write([]byte(`{"errorMessages":["Issue does not exist or you do not have permission to see it"]}`))
 		return
 	}
 	fmt.Println(issue)
@@ -182,12 +156,9 @@ func mockGetIssue(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusOK)
 	respText, err := json.Marshal(issue)
 	if err != nil {
-		fmt.Println("/rest/agile/1.0/issue", err)
+		return
 	}
-	_, err = res.Write(respText)
-	if err != nil {
-		fmt.Println("/rest/agile/1.0/issue", err)
-	}
+	_, _ = res.Write(respText)
 }
 
 func mockGetSprint(res http.ResponseWriter, req *http.Request) {
@@ -195,10 +166,7 @@ func mockGetSprint(res http.ResponseWriter, req *http.Request) {
 	sprintID := chi.URLParam(req, "sprintId")
 	if sprintID == "" {
 		res.WriteHeader(http.StatusBadRequest)
-		_, err := res.Write([]byte(`{"errorMessages":["Sprint id is required"]}`))
-		if err != nil {
-			fmt.Println("/rest/agile/1.0/sprint", err)
-		}
+		_, _ = res.Write([]byte(`{"errorMessages":["Sprint id is required"]}`))
 		return
 	}
 	// find sprint
@@ -212,29 +180,24 @@ func mockGetSprint(res http.ResponseWriter, req *http.Request) {
 	}
 	if sprint == nil {
 		res.WriteHeader(http.StatusNotFound)
-		_, err := res.Write([]byte(`{"errorMessages":["Sprint does not exist or you do not have permission to see it"]}`))
-		if err != nil {
-			fmt.Println("/rest/agile/1.0/sprint", err)
-		}
+		_, _ = res.Write([]byte(`{"errorMessages":["Sprint does not exist or you do not have permission to see it"]}`))
 		return
 	}
 	// response
 	res.WriteHeader(http.StatusOK)
 	respText, err := json.Marshal(sprint)
 	if err != nil {
-		fmt.Println("/rest/agile/1.0/sprint", err)
+		return
 	}
-	_, err = res.Write(respText)
-	if err != nil {
-		fmt.Println("/rest/agile/1.0/sprint", err)
-	}
+	_, _ = res.Write(respText)
 }
 
 type MockListIssuesResponse struct {
-	Issues     []FakeIssue `json:"issues"`
-	Total      int         `json:"total"`
-	StartAt    int         `json:"start-at"`
-	MaxResults int         `json:"max-results"`
+	Values     []FakeSprintAsIssue `json:"values"`
+	Issues     []FakeIssue         `json:"issues"`
+	Total      int                 `json:"total"`
+	StartAt    int                 `json:"start-at"`
+	MaxResults int                 `json:"max-results"`
 }
 
 func mockListIssues(res http.ResponseWriter, req *http.Request) {
@@ -254,10 +217,7 @@ func mockListIssues(res http.ResponseWriter, req *http.Request) {
 	}
 	if board == nil {
 		res.WriteHeader(http.StatusNotFound)
-		_, err := res.Write([]byte(`{"errorMessages":["Board does not exist or you do not have permission to see it"]}`))
-		if err != nil {
-			fmt.Println("mockListIssues", err)
-		}
+		_, _ = res.Write([]byte(`{"errorMessages":["Board does not exist or you do not have permission to see it"]}`))
 		return
 	}
 	// filter issues
@@ -273,6 +233,98 @@ func mockListIssues(res http.ResponseWriter, req *http.Request) {
 			continue
 		}
 		issue.getSelf()
+		if strings.Contains(req.URL.Path, "sprint") {
+			defer issue.toSprint()()
+		}
+		issues = append(issues, issue)
+	}
+	var fakeSprintAsIssue []FakeSprintAsIssue
+	if strings.Contains(req.URL.Path, "sprint") {
+		for _, sprint := range issues {
+			idNum, err := strconv.Atoi(sprint.ID)
+			if err != nil {
+				continue
+			}
+			fakeSprintAsIssue = append(fakeSprintAsIssue, FakeSprintAsIssue{
+				ID:     idNum,
+				Key:    sprint.Key,
+				Self:   sprint.getSelf(),
+				Fields: sprint.Fields,
+			})
+		}
+	}
+	// response
+	res.WriteHeader(http.StatusOK)
+	startAtNum := 0
+	if startAt != "" {
+		startAtNum, err = strconv.Atoi(startAt)
+		if err != nil {
+			return
+		}
+	}
+	maxResultsNum, err := strconv.Atoi(maxResults)
+	if err != nil {
+		return
+	}
+	resp := MockListIssuesResponse{
+		Issues:     issues,
+		Total:      len(issues),
+		StartAt:    startAtNum,
+		MaxResults: maxResultsNum,
+	}
+	if strings.Contains(req.URL.Path, "sprint") {
+		resp.Values = fakeSprintAsIssue
+		resp.Issues = nil
+	}
+	respText, err := json.Marshal(resp)
+	if err != nil {
+		return
+	}
+	_, _ = res.Write([]byte(respText))
+}
+
+
+type MockIssuesSearchRequest struct {
+	JQL        string `json:"jql"`
+	StartAt    int `json:"startAt"`
+	MaxResults int `json:"maxResults"`
+}
+func mockIssuesSearch(res http.ResponseWriter, req *http.Request) {
+	var err error
+	var (
+		opt url.Values
+		jql string
+		startAt string
+		maxResults string
+	)
+	if req.Method == http.MethodGet {
+		opt = req.URL.Query()
+		jql = opt.Get("jql")
+		startAt = opt.Get("startAt")
+		maxResults = opt.Get("maxResults")
+	}else if req.Method == http.MethodPost {
+		body := MockIssuesSearchRequest{}
+		err = json.NewDecoder(req.Body).Decode(&body)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		jql = body.JQL
+		startAt = strconv.Itoa(body.StartAt)
+		maxResults = strconv.Itoa(body.MaxResults)
+	}else{
+		res.WriteHeader(http.StatusMethodNotAllowed)
+		_, _ = res.Write([]byte(`{"errorMessages":["Method not allowed"]}`))
+		return
+	}
+	// filter issues
+	var issues []FakeIssue
+	for _, issue := range fakeIssues {
+		if jql != "" {
+			// Skip JQL filter as there is no need to implement it
+			continue
+		}
+		issue.getSelf()
 		issues = append(issues, issue)
 	}
 	// response
@@ -281,13 +333,11 @@ func mockListIssues(res http.ResponseWriter, req *http.Request) {
 	if startAt != "" {
 		startAtNum, err = strconv.Atoi(startAt)
 		if err != nil {
-			fmt.Println("mockListIssues", err)
 			return
 		}
 	}
 	maxResultsNum, err := strconv.Atoi(maxResults)
 	if err != nil {
-		fmt.Println("mockListIssues", err)
 		return
 	}
 	resp := MockListIssuesResponse{
@@ -298,10 +348,7 @@ func mockListIssues(res http.ResponseWriter, req *http.Request) {
 	}
 	respText, err := json.Marshal(resp)
 	if err != nil {
-		fmt.Println("mockListIssues", err)
+		return
 	}
-	_, err = res.Write([]byte(respText))
-	if err != nil {
-		fmt.Println("mockListIssues", err)
-	}
+	_, _ = res.Write([]byte(respText))
 }
