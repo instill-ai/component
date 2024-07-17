@@ -122,14 +122,15 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 
 	startScanPosition := 0
 	rawRunes := []rune(input.Text)
-	for _, chunk := range chunks {
+	for i, chunk := range chunks {
 		chunkRunes := []rune(chunk)
 
 		startPosition, endPosition := positionCalculator.getChunkPositions(rawRunes, chunkRunes, startScanPosition)
 
-
-		if shouldScanRawTextFromBeginning(startPosition, endPosition) {
-			startPosition, endPosition = positionCalculator.getChunkPositions(rawRunes, chunkRunes, 0)
+		if shouldScanRawTextFromPreviousChunk(startPosition, endPosition) {
+			// position should strictly increasing
+			previousChunk := output.TextChunks[i-1]
+			startPosition, endPosition = positionCalculator.getChunkPositions(rawRunes, chunkRunes, previousChunk.StartPosition)
 		}
 
 		output.TextChunks = append(output.TextChunks, TextChunk{
@@ -143,7 +144,7 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	return output, nil
 }
 
-func shouldScanRawTextFromBeginning(startPosition, endPosition int) bool {
+func shouldScanRawTextFromPreviousChunk(startPosition, endPosition int) bool {
 	return startPosition == 0 && endPosition == 0
 }
 
