@@ -1,7 +1,6 @@
 package ollama
 
 import (
-	"encoding/json"
 	"fmt"
 	"slices"
 
@@ -125,22 +124,47 @@ type ChatResponse struct {
 
 func (c *OllamaClient) Chat(request ChatRequest) (ChatResponse, error) {
 	response := ChatResponse{}
-
-	requestJSON, err := json.Marshal(request)
-	if err != nil {
-		return response, fmt.Errorf("error when marshalling request %v", err)
-	}
-	println("### request body: ", string(requestJSON))
-
-	if !c.CheckModelAvailability(request.Model) && c.autoPull {
-		err := c.Pull(request.Model)
-		if err != nil {
-			return response, fmt.Errorf("error when auto pulling model %v", err)
+	if !c.CheckModelAvailability(request.Model) {
+		if c.autoPull {
+			err := c.Pull(request.Model)
+			if err != nil {
+				return response, fmt.Errorf("error when auto pulling model %v", err)
+			}
+		} else {
+			return response, fmt.Errorf("model %s is not available", request.Model)
 		}
 	}
 	req := c.httpClient.R().SetResult(&response).SetBody(request)
 	if _, err := req.Post("/api/chat"); err != nil {
 		return response, fmt.Errorf("error when sending chat request %v", err)
+	}
+	return response, nil
+}
+
+type EmbedRequest struct {
+	Model  string `json:"model"`
+	Prompt string `json:"prompt"`
+}
+
+type EmbedResponse struct {
+	Embedding []float32 `json:"embedding"`
+}
+
+func (c *OllamaClient) Embed(request EmbedRequest) (EmbedResponse, error) {
+	response := EmbedResponse{}
+	if !c.CheckModelAvailability(request.Model) {
+		if c.autoPull {
+			err := c.Pull(request.Model)
+			if err != nil {
+				return response, fmt.Errorf("error when auto pulling model %v", err)
+			}
+		} else {
+			return response, fmt.Errorf("model %s is not available", request.Model)
+		}
+	}
+	req := c.httpClient.R().SetResult(&response).SetBody(request)
+	if _, err := req.Post("/api/embeddings"); err != nil {
+		return response, fmt.Errorf("error when sending embeddings request %v", err)
 	}
 	return response, nil
 }

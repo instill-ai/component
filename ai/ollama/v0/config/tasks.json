@@ -262,5 +262,76 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_TEXT_EMBEDDINGS": {
+    "instillShortDescription": "Turn text into a vector of numbers that capture its meaning, unlocking use cases like semantic search.",
+    "description": "An embedding is a list of floating point numbers that captures semantic information about the text that it represents.",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "model-name": {
+          "example": "snowflake-arctic-embed:22m",
+          "description": "The OSS model to be used, check https://ollama.com/library for list of models available",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Model Name",
+          "type": "string"
+        },
+        "text": {
+          "description": "The text",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "model-name"
+      ],
+      "instillEditOnNodeFields": [
+        "text",
+        "model-name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "embedding": {
+          "instillFormat": "array:number",
+          "items": {
+            "instillFormat": "number",
+            "title": "Embedding",
+            "type": "number"
+          },
+          "type": "array",
+          "description": "Embedding of the input text",
+          "instillUIOrder": 0,
+          "title": "Embedding"
+        }
+      },
+      "required": [
+        "embedding"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
   }
 }

@@ -60,7 +60,7 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 			if content.Type == "text" {
 				textContent = textContent + content.Text
 			} else {
-				imageContent = append(imageContent, content.ImageURL.URL)
+				imageContent = append(imageContent, base.TrimBase64Mime(content.ImageURL.URL))
 			}
 		}
 		messages = append(messages, OllamaChatMessage{
@@ -70,10 +70,16 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 		})
 	}
 
+	images := []string{}
+
+	for _, image := range input.PromptImages {
+		input.PromptImages = append(images, base.TrimBase64Mime(image))
+	}
+
 	messages = append(messages, OllamaChatMessage{
 		Role:    "user",
 		Content: input.Prompt,
-		Images:  input.PromptImages,
+		Images:  images,
 	})
 
 	request := ChatRequest{
@@ -95,9 +101,38 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 	output := TaskTextGenerationChatOuput{
 		Text: response.Message.Content,
 		Usage: TaskTextGenerationChatUsage{
-			InputTokens:  response.PromptEvalCount - response.EvalCount,
+			InputTokens:  response.PromptEvalCount,
 			OutputTokens: response.EvalCount,
 		},
 	}
+	return base.ConvertToStructpb(output)
+}
+
+type TaskTextEmbeddingsInput struct {
+	Text      string `json:"text"`
+	ModelName string `json:"model-name"`
+}
+
+type TaskTextEmbeddingsOutput struct {
+	Embedding []float32 `json:"embedding"`
+}
+
+func (e *execution) TaskTextEmbeddings(in *structpb.Struct) (*structpb.Struct, error) {
+	input := TaskTextEmbeddingsInput{}
+	if err := base.ConvertFromStructpb(in, &input); err != nil {
+		return nil, err
+	}
+
+	request := EmbedRequest{
+		Model:  input.ModelName,
+		Prompt: input.Text,
+	}
+
+	response, err := e.client.Embed(request)
+	if err != nil {
+		return nil, err
+	}
+
+	output := TaskTextEmbeddingsOutput(response)
 	return base.ConvertToStructpb(output)
 }

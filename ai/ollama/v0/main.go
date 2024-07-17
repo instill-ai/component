@@ -14,6 +14,7 @@ import (
 
 const (
 	TaskTextGenerationChat = "TASK_TEXT_GENERATION_CHAT"
+	TaskTextEmbeddings     = "TASK_TEXT_EMBEDDINGS"
 	EndPoint               = "endpoint"
 )
 
@@ -51,6 +52,7 @@ func Init(bc base.Component) *component {
 
 type OllamaClientInterface interface {
 	Chat(ChatRequest) (ChatResponse, error)
+	Embed(EmbedRequest) (EmbedResponse, error)
 }
 
 type execution struct {
@@ -88,6 +90,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	switch task {
 	case TaskTextGenerationChat:
 		e.execute = e.TaskTextGenerationChat
+	case TaskTextEmbeddings:
+		e.execute = e.TaskTextEmbeddings
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
