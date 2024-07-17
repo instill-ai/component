@@ -147,6 +147,13 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		startScanPosition = startPosition + 1
 	}
 
+	if len(output.TextChunks) == 0 {
+		output.TextChunks = append(output.TextChunks, TextChunk{
+			Text:          input.Text,
+			StartPosition: 0,
+			EndPosition:   len(rawRunes) - 1,
+		})
+	}
 	return output, nil
 }
 

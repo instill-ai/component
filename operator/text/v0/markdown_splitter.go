@@ -175,6 +175,10 @@ func (sp MarkdownTextSplitter) buildDocument(rawRunes []rune, previousDocument M
 		}
 
 	}
+	if len(content) > 0 && document.Content == "" {
+		document.Content = content
+		setHeaderSize(&document)
+	}
 	return document, 0
 }
 
