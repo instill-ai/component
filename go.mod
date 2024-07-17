@@ -16,6 +16,7 @@ require (
 	github.com/frankban/quicktest v1.14.6
 	github.com/gabriel-vasile/mimetype v1.4.3
 	github.com/gage-technologies/mistral-go v1.1.0
+	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-resty/resty/v2 v2.12.0
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/gofrs/uuid v4.4.0+incompatible

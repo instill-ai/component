@@ -36,7 +36,6 @@ type SprintOrEpic struct {
 type GetIssueInput struct {
 	IssueKeyOrID  string `json:"issue-id-or-key,omitempty" struct:"issueIdOrKey"`
 	UpdateHistory bool   `json:"update-history,omitempty" struct:"updateHistory"`
-	FromBacklog   bool   `json:"from-backlog,omitempty" struct:"fromBacklog"`
 }
 type GetIssueOutput struct {
 	Issue

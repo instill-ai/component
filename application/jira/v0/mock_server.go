@@ -1,31 +1,33 @@
 package jira
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
-func router(res http.ResponseWriter, req *http.Request) {
-	path := req.URL.Path
-	var logger DebugSession
-	logger.SessionStart("router", StaticVerboseLevel)
-	defer logger.SessionEnd()
-	switch path {
-	case "/_edge/tenant_info":
-		res.WriteHeader(http.StatusOK)
-		_, err := res.Write([]byte(`{"id":"12345678-1234-1234-1234-123456789012"}`))
+func router(middlewares ...func(http.Handler) http.Handler) http.Handler {
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	for _, m := range middlewares {
+		r.Use(m)
+	}
+	r.Get("/_edge/tenant_info", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write([]byte(`{"cloudId":"12345678-1234-1234-1234-123456789012"}`))
 		if err != nil {
 			fmt.Println("/_edge/tenant_info", err)
 		}
-	case "/rest/agile/1.0/board":
-		mockListBoards(res, req)
-	case "/rest/agile/1.0/board/1":
-	case "/rest/api/2/issue":
-	default:
-		http.NotFound(res, req)
-	}
+	})
+	r.Get("/rest/agile/1.0/board", mockListBoards)
+	r.Get("/rest/agile/1.0/issue/{issueIdOrKey:[a-zA-z0-9-]+}", mockGetIssue)
+	r.Get("/rest/agile/1.0/sprint/{sprintId}", mockGetSprint)
+	return r
 }
 
 func mockListBoards(res http.ResponseWriter, req *http.Request) {
@@ -107,5 +109,87 @@ func mockListBoards(res http.ResponseWriter, req *http.Request) {
 	_, err = res.Write([]byte(respText))
 	if err != nil {
 		fmt.Println("/rest/agile/1.0/board", err)
+	}
+}
+
+func mockGetIssue(res http.ResponseWriter, req *http.Request) {
+	var err error
+
+	issueID := chi.URLParam(req, "issueIdOrKey")
+	if issueID == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		_, err := res.Write([]byte(`{"errorMessages":["Issue id or key is required"]}`))
+		if err != nil {
+			fmt.Println("/rest/agile/1.0/issue", err)
+		}
+		return
+	}
+	// find issue
+	var issue *FakeIssue
+	for _, i := range fakeIssues {
+		if i.ID == issueID || i.Key == issueID {
+			issue = &i
+			issue.getSelf()
+			break
+		}
+	}
+	if issue == nil {
+		res.WriteHeader(http.StatusNotFound)
+		_, err := res.Write([]byte(`{"errorMessages":["Issue does not exist or you do not have permission to see it"]}`))
+		if err != nil {
+			fmt.Println("/rest/agile/1.0/issue", err)
+		}
+		return
+	}
+	fmt.Println(issue)
+	// response
+	res.WriteHeader(http.StatusOK)
+	respText, err := json.Marshal(issue)
+	if err != nil {
+		fmt.Println("/rest/agile/1.0/issue", err)
+	}
+	_, err = res.Write(respText)
+	if err != nil {
+		fmt.Println("/rest/agile/1.0/issue", err)
+	}
+}
+
+func mockGetSprint(res http.ResponseWriter, req *http.Request) {
+	var err error
+	sprintID := chi.URLParam(req, "sprintId")
+	if sprintID == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		_, err := res.Write([]byte(`{"errorMessages":["Sprint id is required"]}`))
+		if err != nil {
+			fmt.Println("/rest/agile/1.0/sprint", err)
+		}
+		return
+	}
+	// find sprint
+	var sprint *FakeSprint
+	for _, s := range fakeSprints {
+		if strconv.Itoa(s.ID) == sprintID {
+			sprint = &s
+			sprint.getSelf()
+			break
+		}
+	}
+	if sprint == nil {
+		res.WriteHeader(http.StatusNotFound)
+		_, err := res.Write([]byte(`{"errorMessages":["Sprint does not exist or you do not have permission to see it"]}`))
+		if err != nil {
+			fmt.Println("/rest/agile/1.0/sprint", err)
+		}
+		return
+	}
+	// response
+	res.WriteHeader(http.StatusOK)
+	respText, err := json.Marshal(sprint)
+	if err != nil {
+		fmt.Println("/rest/agile/1.0/sprint", err)
+	}
+	_, err = res.Write(respText)
+	if err != nil {
+		fmt.Println("/rest/agile/1.0/sprint", err)
 	}
 }

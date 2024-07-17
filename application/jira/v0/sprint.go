@@ -37,7 +37,7 @@ type GetSprintOutput struct {
 	Goal          string `json:"goal"`
 }
 
-func (jiraClient *Client) extractSprintOutput(sprint *Sprint) *GetSprintOutput {
+func extractSprintOutput(sprint *Sprint) *GetSprintOutput {
 	return &GetSprintOutput{
 		ID:            sprint.ID,
 		Self:          sprint.Self,
@@ -92,6 +92,6 @@ func (jiraClient *Client) getSprintTask(_ context.Context, props *structpb.Struc
 			fmt.Sprintf("failed to convert %v to `Get Sprint` Output", resp.Result()),
 		)
 	}
-	out := jiraClient.extractSprintOutput(issue)
+	out := extractSprintOutput(issue)
 	return base.ConvertToStructpb(out)
 }
