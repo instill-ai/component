@@ -18,8 +18,6 @@ import (
 const (
 	email   = "testemail@gmail.com"
 	token   = "testToken"
-	errResp = `{"message": "Bad request"}`
-	okResp  = `{"title": "Be the wheel"}`
 )
 
 type TaskCase[inType any, outType any] struct {
