@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/pkoukk/tiktoken-go"
+	tiktoken "github.com/pkoukk/tiktoken-go"
 	"github.com/tmc/langchaingo/textsplitter"
 )
 
@@ -65,8 +65,12 @@ func (s *Setting) SetDefault() {
 	}
 }
 
+type TextSplitter interface {
+	SplitText(text string) ([]string, error)
+}
+
 func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
-	var split textsplitter.TextSplitter
+	var split TextSplitter
 	setting := input.Strategy.Setting
 	// TODO: Take this out when we fix the error in frontend side.
 	// Bug: The default value is not set from frontend side.
@@ -92,10 +96,9 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		)
 	case "Markdown":
 		positionCalculator = MarkdownPositionCalculator{}
-		split = textsplitter.NewMarkdownTextSplitter(
+		split = NewMarkdownTextSplitter(
 			textsplitter.WithChunkSize(setting.ChunkSize),
 			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
-			textsplitter.WithCodeBlocks(setting.CodeBlocks),
 		)
 	case "Recursive":
 		positionCalculator = PositionCalculator{}
@@ -128,9 +131,12 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		startPosition, endPosition := positionCalculator.getChunkPositions(rawRunes, chunkRunes, startScanPosition)
 
 		if shouldScanRawTextFromPreviousChunk(startPosition, endPosition) {
-			// position should strictly increasing
 			previousChunk := output.TextChunks[i-1]
 			startPosition, endPosition = positionCalculator.getChunkPositions(rawRunes, chunkRunes, previousChunk.StartPosition)
+		}
+
+		if startPosition == endPosition {
+			continue
 		}
 
 		output.TextChunks = append(output.TextChunks, TextChunk{
@@ -199,14 +205,16 @@ func (MarkdownPositionCalculator) getChunkPositions(rawText, chunk []rune, start
 
 func getSkipHeaderIndex(chunk []rune) int {
 	hashtagCount := 0
+	skipPosition := 0
 	for i := 0; i < len(chunk); i++ {
 		if chunk[i] == '#' {
 			hashtagCount++
 		}
 
 		if hashtagCount >= 1 && chunk[i] == '\n' {
-			return i + 1
+			skipPosition = i + 1
+			hashtagCount = 0
 		}
 	}
-	return 0
+	return skipPosition
 }
