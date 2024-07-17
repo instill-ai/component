@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": true,
+  "properties": {
+    "endpoint": {
+      "description": "Fill in your Ollama hosting endpoint.",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "default": "http://localhost:11434",
+      "instillSecret": false,
+      "instillCredential": false,
+      "instillUIOrder": 0,
+      "title": "Endpoint",
+      "type": "string"
+    },
+    "auto-pull": {
+      "description": "Automatically pull the requested models from the Ollama server if the model is not found in the local cache.",
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "boolean"
+      ],
+      "default": "http://localhost:11434",
+      "instillSecret": false,
+      "instillCredential": false,
+      "instillUIOrder": 1,
+      "title": "Model Auto-Pull",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "endpoint",
+    "auto-pull"
+  ],
+  "instillEditOnNodeFields": [
+    "endpoint",
+    "auto-pull"
+  ],
+  "title": "Ollama Connection",
+  "type": "object"
+}
