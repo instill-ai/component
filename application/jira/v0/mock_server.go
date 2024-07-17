@@ -196,8 +196,8 @@ type MockListIssuesResponse struct {
 	Values     []FakeSprintAsIssue `json:"values"`
 	Issues     []FakeIssue         `json:"issues"`
 	Total      int                 `json:"total"`
-	StartAt    int                 `json:"start-at"`
-	MaxResults int                 `json:"max-results"`
+	StartAt    int                 `json:"startAt"`
+	MaxResults int                 `json:"maxResults"`
 }
 
 func mockListIssues(res http.ResponseWriter, req *http.Request) {
