@@ -93,7 +93,7 @@ func (c *OllamaClient) Pull(modelName string) error {
 type OllamaChatMessage struct {
 	Role    string   `json:"role"`
 	Content string   `json:"content"`
-	Images  []string `json:"images"`
+	Images  []string `json:"images,omitempty"`
 }
 
 type OllamaOptions struct {
@@ -110,17 +110,17 @@ type ChatRequest struct {
 }
 
 type ChatResponse struct {
-	Model              string              `json:"model"`
-	CreatedAt          string              `json:"created_at"`
-	Message            []OllamaChatMessage `json:"message"`
-	Done               bool                `json:"done"`
-	Context            []int               `json:"context"`
-	TotalDuration      int                 `json:"total_duration"`
-	LoadDuration       int                 `json:"load_duration"`
-	PromptEvalCount    int                 `json:"prompt_eval_count"`
-	PromptEvalDuration int                 `json:"prompt_eval_duration"`
-	EvalCount          int                 `json:"eval_count"`
-	EvalDuration       int                 `json:"eval_duration"`
+	Model              string            `json:"model"`
+	CreatedAt          string            `json:"created_at"`
+	Message            OllamaChatMessage `json:"message"`
+	Done               bool              `json:"done"`
+	Context            []int             `json:"context"`
+	TotalDuration      int               `json:"total_duration"`
+	LoadDuration       int               `json:"load_duration"`
+	PromptEvalCount    int               `json:"prompt_eval_count"`
+	PromptEvalDuration int               `json:"prompt_eval_duration"`
+	EvalCount          int               `json:"eval_count"`
+	EvalDuration       int               `json:"eval_duration"`
 }
 
 func (c *OllamaClient) Chat(request ChatRequest) (ChatResponse, error) {

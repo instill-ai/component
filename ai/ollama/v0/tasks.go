@@ -73,6 +73,7 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 	messages = append(messages, OllamaChatMessage{
 		Role:    "user",
 		Content: input.Prompt,
+		Images:  input.PromptImages,
 	})
 
 	request := ChatRequest{
@@ -92,7 +93,7 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 	}
 
 	output := TaskTextGenerationChatOuput{
-		Text: response.Message[0].Content,
+		Text: response.Message.Content,
 		Usage: TaskTextGenerationChatUsage{
 			InputTokens:  response.PromptEvalCount - response.EvalCount,
 			OutputTokens: response.EvalCount,
