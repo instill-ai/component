@@ -24,9 +24,15 @@ func router(middlewares ...func(http.Handler) http.Handler) http.Handler {
 			fmt.Println("/_edge/tenant_info", err)
 		}
 	})
-	r.Get("/rest/agile/1.0/board", mockListBoards)
 	r.Get("/rest/agile/1.0/issue/{issueIdOrKey:[a-zA-z0-9-]+}", mockGetIssue)
 	r.Get("/rest/agile/1.0/sprint/{sprintId}", mockGetSprint)
+	r.Get("/rest/agile/1.0/board/{boardId}/issue", mockListIssues)           // list all issues
+	r.Get("/rest/agile/1.0/board/{boardId}/epic", mockListIssues)            // list all epic
+	r.Get("/rest/agile/1.0/board/{boardId}/sprint", mockListIssues)          // list all sprint
+	r.Get("/rest/agile/1.0/board/{boardId}/backlog", mockListIssues)         // list all issues in backlog
+	r.Get("/rest/agile/1.0/board/{boardId}/epic/none/issue", mockListIssues) // list all issues without epic assigned
+	r.Get("/rest/agile/1.0/board/{boardId}", mockGetBoard)
+	r.Get("/rest/agile/1.0/board", mockListBoards)
 	return r
 }
 
@@ -106,6 +112,36 @@ func mockListBoards(res http.ResponseWriter, req *http.Request) {
 	}
 	respText += `],`
 	respText += `"total":` + strconv.Itoa(len(boards)) + `,"startAt":` + strconv.Itoa(start) + `,"maxResults":` + strconv.Itoa(maxResultsNum) + `,"isLast":` + strconv.FormatBool(end == len(boards)) + `}`
+	_, err = res.Write([]byte(respText))
+	if err != nil {
+		fmt.Println("/rest/agile/1.0/board", err)
+	}
+}
+func mockGetBoard(res http.ResponseWriter, req *http.Request) {
+	var err error
+	boardID := chi.URLParam(req, "boardId")
+	// filter boards
+	var board *FakeBoard
+	for _, b := range fakeBoards {
+		if boardID != "" && strconv.Itoa(b.ID) != boardID {
+			continue
+		}
+		board = &b
+	}
+	if board == nil {
+		res.WriteHeader(http.StatusNotFound)
+		_, err := res.Write([]byte(`{"errorMessages":["Board does not exist or you do not have permission to see it"]}`))
+		if err != nil {
+			fmt.Println("mockGetBoard", err)
+		}
+		return
+	}
+	// response
+	res.WriteHeader(http.StatusOK)
+	respText, err := json.Marshal(board)
+	if err != nil {
+		fmt.Println("mockGetBoard", err)
+	}
 	_, err = res.Write([]byte(respText))
 	if err != nil {
 		fmt.Println("/rest/agile/1.0/board", err)
@@ -191,5 +227,81 @@ func mockGetSprint(res http.ResponseWriter, req *http.Request) {
 	_, err = res.Write(respText)
 	if err != nil {
 		fmt.Println("/rest/agile/1.0/sprint", err)
+	}
+}
+
+type MockListIssuesResponse struct {
+	Issues     []FakeIssue `json:"issues"`
+	Total      int         `json:"total"`
+	StartAt    int         `json:"start-at"`
+	MaxResults int         `json:"max-results"`
+}
+
+func mockListIssues(res http.ResponseWriter, req *http.Request) {
+	var err error
+	opt := req.URL.Query()
+	boardID := chi.URLParam(req, "boardId")
+	jql := opt.Get("jql")
+	startAt := opt.Get("startAt")
+	maxResults := opt.Get("maxResults")
+	// find board
+	var board *FakeBoard
+	for _, b := range fakeBoards {
+		if strconv.Itoa(b.ID) == boardID {
+			board = &b
+			break
+		}
+	}
+	if board == nil {
+		res.WriteHeader(http.StatusNotFound)
+		_, err := res.Write([]byte(`{"errorMessages":["Board does not exist or you do not have permission to see it"]}`))
+		if err != nil {
+			fmt.Println("mockListIssues", err)
+		}
+		return
+	}
+	// filter issues
+	var issues []FakeIssue
+	for _, issue := range fakeIssues {
+		prefix := strings.Split(issue.Key, "-")[0]
+		if board.Name != "" && prefix != board.Name {
+			fmt.Println("prefix", prefix, "board.Name", board.Name)
+			continue
+		}
+		if jql != "" {
+			// Skip JQL filter as there is no need to implement it
+			continue
+		}
+		issue.getSelf()
+		issues = append(issues, issue)
+	}
+	// response
+	res.WriteHeader(http.StatusOK)
+	startAtNum := 0
+	if startAt != "" {
+		startAtNum, err = strconv.Atoi(startAt)
+		if err != nil {
+			fmt.Println("mockListIssues", err)
+			return
+		}
+	}
+	maxResultsNum, err := strconv.Atoi(maxResults)
+	if err != nil {
+		fmt.Println("mockListIssues", err)
+		return
+	}
+	resp := MockListIssuesResponse{
+		Issues:     issues,
+		Total:      len(issues),
+		StartAt:    startAtNum,
+		MaxResults: maxResultsNum,
+	}
+	respText, err := json.Marshal(resp)
+	if err != nil {
+		fmt.Println("mockListIssues", err)
+	}
+	_, err = res.Write([]byte(respText))
+	if err != nil {
+		fmt.Println("mockListIssues", err)
 	}
 }

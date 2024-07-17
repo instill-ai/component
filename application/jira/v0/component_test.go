@@ -194,6 +194,48 @@ func TestComponent_GetSprintTask(t *testing.T) {
 	taskTesting(testcases, taskGetSprint, t)
 }
 
+func TestComponent_ListIssuesTask(t *testing.T) {
+	testcases := []TaskCase[ListIssuesInput, ListIssuesOutput]{
+		{
+			_type: "ok",
+			name:  "get all issues",
+			input: ListIssuesInput{
+				BoardID:    1,
+				MaxResults: 10,
+				StartAt:    0,
+				Range: Range{
+					Range: "All",
+				},
+			},
+			wantResp: ListIssuesOutput{
+				Total:      1,
+				StartAt:    0,
+				MaxResults: 10,
+				Issues: []Issue{
+					{
+						ID:  "4",
+						Key: "KAN-4",
+						Fields: map[string]interface{}{
+							"summary": "Test issue 4",
+							"status": map[string]interface{}{
+								"name": "Done",
+							},
+							"issuetype": map[string]interface{}{
+								"name": "Epic",
+							},
+						},
+						IssueType: "Epic",
+						Self:      "https://test.atlassian.net/rest/agile/1.0/issue/4",
+						Status:    "Done",
+						Summary:   "Test issue 4",
+					},
+				},
+			},
+		},
+	}
+	taskTesting(testcases, taskListIssues, t)
+}
+
 func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType], task string, t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
