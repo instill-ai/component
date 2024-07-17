@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	email   = "testemail@gmail.com"
-	token   = "testToken"
+	email = "testemail@gmail.com"
+	token = "testToken"
 )
 
 type TaskCase[inType any, outType any] struct {
@@ -383,7 +383,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
-					Range: "Issues of an epic",
+					Range:   "Issues of an epic",
 					EpicKey: "KAN-4",
 				},
 			},
@@ -402,7 +402,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
-					Range: "Issues of an epic",
+					Range:   "Issues of an epic",
 					EpicKey: "KAN-4" + strings.Repeat("-0", 100),
 				},
 			},
@@ -421,7 +421,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
-					Range: "Issues of a sprint",
+					Range:     "Issues of a sprint",
 					SprintKey: "1",
 				},
 			},

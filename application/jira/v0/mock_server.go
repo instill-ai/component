@@ -283,18 +283,18 @@ func mockListIssues(res http.ResponseWriter, req *http.Request) {
 	_, _ = res.Write([]byte(respText))
 }
 
-
 type MockIssuesSearchRequest struct {
 	JQL        string `json:"jql"`
-	StartAt    int `json:"startAt"`
-	MaxResults int `json:"maxResults"`
+	StartAt    int    `json:"startAt"`
+	MaxResults int    `json:"maxResults"`
 }
+
 func mockIssuesSearch(res http.ResponseWriter, req *http.Request) {
 	var err error
 	var (
-		opt url.Values
-		jql string
-		startAt string
+		opt        url.Values
+		jql        string
+		startAt    string
 		maxResults string
 	)
 	if req.Method == http.MethodGet {
@@ -302,7 +302,7 @@ func mockIssuesSearch(res http.ResponseWriter, req *http.Request) {
 		jql = opt.Get("jql")
 		startAt = opt.Get("startAt")
 		maxResults = opt.Get("maxResults")
-	}else if req.Method == http.MethodPost {
+	} else if req.Method == http.MethodPost {
 		body := MockIssuesSearchRequest{}
 		err = json.NewDecoder(req.Body).Decode(&body)
 		if err != nil {
@@ -312,7 +312,7 @@ func mockIssuesSearch(res http.ResponseWriter, req *http.Request) {
 		jql = body.JQL
 		startAt = strconv.Itoa(body.StartAt)
 		maxResults = strconv.Itoa(body.MaxResults)
-	}else{
+	} else {
 		res.WriteHeader(http.StatusMethodNotAllowed)
 		_, _ = res.Write([]byte(`{"errorMessages":["Method not allowed"]}`))
 		return
