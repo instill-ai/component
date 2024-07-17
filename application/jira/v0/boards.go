@@ -64,7 +64,7 @@ func (jiraClient *Client) listBoardsTask(ctx context.Context, props *structpb.St
 
 func (jiraClient *Client) listBoards(_ context.Context, opt *ListBoardsInput) (*ListBoardsResp, error) {
 	var debug DebugSession
-	debug.SessionStart("listBoards", DevelopVerboseLevel)
+	debug.SessionStart("listBoards", StaticVerboseLevel)
 	defer debug.SessionEnd()
 
 	apiEndpoint := "rest/agile/1.0/board"
@@ -89,7 +89,7 @@ func (jiraClient *Client) listBoards(_ context.Context, opt *ListBoardsInput) (*
 
 func (jiraClient *Client) getBoard(_ context.Context, boardID int) (*Board, error) {
 	var debug DebugSession
-	debug.SessionStart("getBoard", DevelopVerboseLevel)
+	debug.SessionStart("getBoard", StaticVerboseLevel)
 	defer debug.SessionEnd()
 
 	apiEndpoint := fmt.Sprintf("rest/agile/1.0/board/%v", boardID)

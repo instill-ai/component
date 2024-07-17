@@ -91,7 +91,7 @@ func transformToIssue(val *SprintOrEpic) *Issue {
 
 func (jiraClient *Client) getIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var debug DebugSession
-	debug.SessionStart("getIssueTask", DevelopVerboseLevel)
+	debug.SessionStart("getIssueTask", StaticVerboseLevel)
 	defer debug.SessionEnd()
 
 	var opt GetIssueInput
@@ -165,7 +165,7 @@ type ListIssuesOutput struct {
 
 func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var debug DebugSession
-	debug.SessionStart("listIssuesTask", DevelopVerboseLevel)
+	debug.SessionStart("listIssuesTask", StaticVerboseLevel)
 	defer debug.SessionEnd()
 
 	debug.AddMapMessage("props", props)
@@ -286,7 +286,7 @@ type nextGenSearchRequest struct {
 // https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-search/#api-rest-api-2-search-post
 func (jiraClient *Client) nextGenIssuesSearch(_ context.Context, opt nextGenSearchRequest) (*resty.Response, error) {
 	var debug DebugSession
-	debug.SessionStart("nextGenIssuesSearch", DevelopVerboseLevel)
+	debug.SessionStart("nextGenIssuesSearch", StaticVerboseLevel)
 	defer debug.SessionEnd()
 
 	debug.AddMessage("opt:")
