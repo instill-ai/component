@@ -34,8 +34,8 @@ type SprintOrEpic struct {
 }
 
 type GetIssueInput struct {
-	IssueKeyOrID  string `json:"issue-id-or-key,omitempty" struct:"issueIdOrKey"`
-	UpdateHistory bool   `json:"update-history,omitempty" struct:"updateHistory"`
+	IssueKeyOrID  string `json:"issue-id-or-key,omitempty" api:"issueIdOrKey"`
+	UpdateHistory bool   `json:"update-history,omitempty" api:"updateHistory"`
 }
 type GetIssueOutput struct {
 	Issue
@@ -152,8 +152,8 @@ type ListIssuesInput struct {
 type ListIssuesResp struct {
 	Issues     []Issue        `json:"issues"`
 	Values     []SprintOrEpic `json:"values"`
-	StartAt    int            `json:"start-at"`
-	MaxResults int            `json:"max-results"`
+	StartAt    int            `json:"startAt"`
+	MaxResults int            `json:"maxResults"`
 	Total      int            `json:"total"`
 }
 type ListIssuesOutput struct {

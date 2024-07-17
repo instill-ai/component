@@ -322,23 +322,6 @@
                 "range": {
                   "const": "All",
                   "type": "string"
-                },
-                "epic-key": {
-                  "default": "optional",
-                  "title": "Epic Key (Optional field)",
-                  "description": "Optional field",
-                  "instillShortDescription": "Optional field",
-                  "instillUIOrder": 0,
-                  "instillFormat": "string",
-                  "instillAcceptFormats": [
-                    "string"
-                  ],
-                  "instillUpstreamTypes": [
-                    "value",
-                    "reference",
-                    "template"
-                  ],
-                  "type": "string"
                 }
               },
               "required": [
@@ -392,7 +375,7 @@
                   "title": "Epic Key",
                   "description": "The Key of the epic",
                   "instillShortDescription": "The Key of the epic",
-                  "instillUIOrder": 0,
+                  "instillUIOrder": 10,
                   "instillFormat": "string",
                   "instillAcceptFormats": [
                     "string"
@@ -419,14 +402,14 @@
             {
               "properties": {
                 "range": {
-                  "const": "Issues of an sprint",
+                  "const": "Issues of a sprint",
                   "type": "string"
                 },
                 "sprint-key": {
                   "title": "Sprint Key",
                   "description": "The Key of the sprint",
                   "instillShortDescription": "The Key of the sprint",
-                  "instillUIOrder": 0,
+                  "instillUIOrder": 10,
                   "instillFormat": "string",
                   "instillAcceptFormats": [
                     "string"
@@ -693,54 +676,63 @@
           "title": "ID",
           "description": "The ID of the sprint",
           "type": "integer",
+          "instillUIOrder": 0,
           "instillFormat": "integer"
         },
         "self": {
           "title": "Self",
           "description": "The URL of the sprint",
           "type": "string",
+          "instillUIOrder": 1,
           "instillFormat": "string"
         },
         "state": {
           "title": "State",
           "description": "The state of the sprint, can be: `active`, `closed`, `future`",
           "type": "string",
+          "instillUIOrder": 2,
           "instillFormat": "string"
         },
         "name": {
           "title": "Name",
           "description": "The name of the sprint",
           "type": "string",
+          "instillUIOrder": 3,
           "instillFormat": "string"
         },
         "start-date": {
           "title": "Start Date",
           "description": "The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
           "type": "string",
+          "instillUIOrder": 4,
           "instillFormat": "string"
         },
         "end-date": {
           "title": "End Date",
           "description": "The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
           "type": "string",
+          "instillUIOrder": 5,
           "instillFormat": "string"
         },
         "complete-date": {
           "title": "Complete Date",
           "description": "The complete date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
           "type": "string",
+          "instillUIOrder": 6,
           "instillFormat": "string"
         },
         "origin-board-id": {
           "title": "Origin Board ID",
           "description": "The ID of the origin board",
           "type": "integer",
+          "instillUIOrder": 7,
           "instillFormat": "integer"
         },
         "goal": {
           "title": "Goal",
           "description": "The Goal of the sprint",
           "type": "string",
+          "instillUIOrder": 8,
           "instillFormat": "string"
         }
       },
