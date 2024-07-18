@@ -9,7 +9,8 @@
       "instillUIOrder": 0,
       "properties": {
         "json": {
-          "description": "JSON input to be marshaled",
+          "description": "JSON entity to be marshaled. It can be any valid JSON datatype (e.g. number, string, hash, array).",
+          "instillShortDescription": "JSON entity to be marshaled",
           "instillAcceptFormats": [
             "object",
             "semi-structured/*",
@@ -63,7 +64,8 @@
       "instillUIOrder": 0,
       "properties": {
         "string": {
-          "description": "JSON string to be unmarshaled",
+          "description": "JSON string to be unmarshaled. It can represent any valid JSON datatype (e.g. number, string, hash, array).",
+          "instillShortDescription": "JSON string to be unmarshaled",
           "instillAcceptFormats": [
             "string"
           ],
@@ -92,7 +94,7 @@
       "instillUIOrder": 0,
       "properties": {
         "json": {
-          "description": "JSON object extracted from the string input",
+          "description": "JSON entity extracted from the string input",
           "instillEditOnNodeFields": [],
           "instillFormat": "semi-structured/json",
           "instillUIOrder": 0,
@@ -111,7 +113,7 @@
     "instillShortDescription": "Process JSON through a `jq` command",
     "title": "jq",
     "input": {
-      "description": "Source JSON and jq command",
+      "description": "Source JSON and `jq` command",
       "instillUIOrder": 0,
       "properties": {
         "json-string": {
@@ -133,7 +135,7 @@
         },
         "json-value": {
           "instillUIOrder": 0,
-          "description": "JSON value (e.g. string, number, object, array...) to be processed by the filter",
+          "description": "JSON entity to be processed by the filter. It can be any valid JSON datatype (e.g. number, string, hash, array).",
           "instillAcceptFormats": [
             "object",
             "structured/*",
@@ -177,7 +179,7 @@
       "instillUIOrder": 0,
       "properties": {
         "results": {
-          "description": "The `jq` command results. Depending on the filter and the input JSON the type of each element may vary.",
+          "description": "The `jq` command results",
           "instillEditOnNodeFields": [],
           "instillUIOrder": 0,
           "required": [],
