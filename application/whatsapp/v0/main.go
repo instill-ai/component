@@ -137,7 +137,7 @@ func (e *execution) SendTemplate(in *structpb.Struct) (*structpb.Struct, error) 
 	case "image":
 
 		// the image header type only has 1 parameter, which is the id/link of the image
-		if len(inputStruct.HeaderParameters) != 1 {
+		if len(inputStruct.HeaderParameters) == 1 {
 
 			component = &ComponentObject{
 				Type:       "header",
@@ -167,7 +167,7 @@ func (e *execution) SendTemplate(in *structpb.Struct) (*structpb.Struct, error) 
 	case "video":
 		// the video header type only has 1 parameter, which is the id/link of the video
 
-		if len(inputStruct.HeaderParameters) != 1 {
+		if len(inputStruct.HeaderParameters) == 1 {
 			component = &ComponentObject{
 				Type:       "header",
 				Parameters: make([]interface{}, 1),
@@ -319,9 +319,6 @@ func (e *execution) SendTemplate(in *structpb.Struct) (*structpb.Struct, error) 
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("RESPPP")
-	fmt.Println(resp)
 
 	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
 	outputStruct := SendTemplateOutput{

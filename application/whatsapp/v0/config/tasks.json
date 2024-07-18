@@ -4,7 +4,7 @@
       "phone-number-id": {
         "description": "Phone Number ID. Obtainable through the app dashboard.",
         "instillAcceptFormats": ["string"],
-        "instillUIMultiline": true,
+        "instillUIMultiline": false,
         "instillUIOrder": 0,
         "instillUpstreamTypes": ["value", "reference", "template"],
         "title": "Phone Number ID",
@@ -13,7 +13,7 @@
       "to": {
         "description": "The number of the recipient you are sending the message to",
         "instillAcceptFormats": ["string"],
-        "instillUIMultiline": true,
+        "instillUIMultiline": false,
         "instillUIOrder": 1,
         "instillUpstreamTypes": ["value", "reference", "template"],
         "title": "Recipient Phone Number",
@@ -45,7 +45,7 @@
     }
   },
   "TASK_SEND_TEMPLATE": {
-    "instillShortDescription": "Send template. Support all template types except product/catalog-based template. For more information: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates",
+    "instillShortDescription": "Send template. Support all template types except product/catalog-based template. Please use the other task to send catalog template. For more information about template: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates",
     "input": {
       "description": "Contact and template information",
       "instillUIOrder": 0,
@@ -62,7 +62,8 @@
             "text",
             "image",
             "video",
-            "document"
+            "document",
+            "location"
           ],
           "example": "none",
           "description": "Specify the parameter type for the header section of the template. If there is no header section, pick none. If there is, select one and fill out the Header Parameters.",
