@@ -4,13 +4,42 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "database-name": {
+          "description": "Fill in your MongoDB database name",
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "collection-name": {
+          "description": "The name of the collection in the MongoDB database",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Collection Name",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Collection Name",
+          "type": "string"
+        },
         "data": {
           "description": "The data to be inserted",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 0,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -20,6 +49,8 @@
         }
       },
       "required": [
+        "database-name",
+        "collection-name",
         "data"
       ],
       "title": "Input",
@@ -49,23 +80,70 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "database-name": {
+          "description": "Fill in your MongoDB database name",
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "collection-name": {
+          "description": "The name of the collection in the MongoDB database",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Collection Name",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Collection Name",
+          "type": "string"
+        },
         "criteria": {
           "description": "The criteria to find documents, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any criteria, if JSON is empty e.g {}, then all fields will be selected",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 0,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
-          "title": "criteria"
+          "title": "Criteria"
+        },
+        "limit":{
+          "description": "The number of documents to return, if 0 then all documents will be returned, otherwise the number of documents to return",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillShortDescription": "Limit the documents, 0 for all documents",
+          "default": 0,
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Limit",
+          "type": "integer"
         }
       },
       "required": [
-        "criteria"
+        "database-name",
+        "collection-name",
+        "criteria",
+        "limit"
       ],
       "title": "Input",
       "type": "object"
@@ -108,19 +186,48 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "database-name": {
+          "description": "Fill in your MongoDB database name",
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "collection-name": {
+          "description": "The name of the collection in the MongoDB database",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Collection Name",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Collection Name",
+          "type": "string"
+        },
         "criteria": {
           "description": "The criteria to update documents",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 0,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
-          "title": "criteria"
+          "title": "Criteria"
         },
         "update": {
           "description": "The updated data to be applied to the documents",
@@ -128,7 +235,7 @@
             "semi-structured/*","structured/*","object"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 1,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -138,6 +245,8 @@
         }
       },
       "required": [
+        "database-name",
+        "collection-name",
         "criteria",
         "update"
       ],
@@ -168,22 +277,53 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "database-name": {
+          "description": "Fill in your MongoDB database name",
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "collection-name": {
+          "description": "The name of the collection in the MongoDB database",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Collection Name",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Collection Name",
+          "type": "string"
+        },
         "criteria": {
           "description": "The criteria to delete documents",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 0,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
-          "title": "criteria"
+          "title": "Criteria"
         }
       },
       "required": [
+        "database-name",
+        "collection-name",
         "criteria"
       ],
       "title": "Input",
@@ -213,17 +353,41 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "collection-name": {
-          "description": "The collection to be deleted",
-          "instillFormat": "string",
-          "instillShortDescription": "Collection Name",
+        "database-name": {
+          "description": "Fill in your MongoDB database name",
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIOrder": 0,
-          "title": "Collection",
+          "title": "Database Name",
+          "type": "string"
+        },
+        "collection-name": {
+          "description": "The name of the collection in the MongoDB database",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Collection Name",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Collection Name",
           "type": "string"
         }
       },
-      "required": [],
-      "title": "No Input",
+      "required": [
+        "database-name",
+        "collection-name"
+      ],
+      "title": "Input",
       "type": "object"
     },
     "output": {
@@ -251,16 +415,24 @@
       "instillUIOrder": 0,
       "properties": {
         "database-name": {
-          "description": "The database to be deleted",
-          "instillFormat": "string",
-          "instillShortDescription": "Database Name",
+          "description": "Fill in your MongoDB database name",
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIOrder": 0,
-          "title": "Database",
+          "title": "Database Name",
           "type": "string"
         }
       },
-      "required": [],
-      "title": "No Input",
+      "required": [
+        "database-name"
+      ],
+      "title": "Input",
       "type": "object"
     },
     "output": {

@@ -12,8 +12,8 @@ It can carry out the following tasks:
 - [Find](#find)
 - [Update](#update)
 - [Delete](#delete)
-- [Delete Collection](#delete-collection)
-- [Delete Database](#delete-database)
+- [Drop Collection](#drop-collection)
+- [Drop Database](#drop-database)
 
 
 
@@ -35,8 +35,6 @@ The component configuration is defined and maintained [here](https://github.com/
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Database Name (required) | `database-name` | string | Fill in your MongoDB database name |
-| Collection Name (required) | `collection-name` | string | The name of the collection in the MongoDB database |
 | URI (required) | `uri` | string | Fill in your MongoDB URI |
 
 
@@ -52,6 +50,8 @@ Perform an insert operation
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_INSERT` |
+| Database Name (required) | `database-name` | string | Fill in your MongoDB database name |
+| Collection Name (required) | `collection-name` | string | The name of the collection in the MongoDB database |
 | Data (required) | `data` | semi-structured/json | The data to be inserted |
 
 
@@ -73,7 +73,10 @@ Perform a find operation
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_FIND` |
-| criteria (required) | `criteria` | semi-structured/json | The criteria to find documents, if JSON value of a key is null e.g \{'name':null\}, then name field will be selected without any criteria, if JSON is empty e.g \{\}, then all fields will be selected |
+| Database Name (required) | `database-name` | string | Fill in your MongoDB database name |
+| Collection Name (required) | `collection-name` | string | The name of the collection in the MongoDB database |
+| Criteria (required) | `criteria` | semi-structured/json | The criteria to find documents, if JSON value of a key is null e.g \{'name':null\}, then name field will be selected without any criteria, if JSON is empty e.g \{\}, then all fields will be selected |
+| Limit (required) | `limit` | integer | The number of documents to return, if 0 then all documents will be returned, otherwise the number of documents to return |
 
 
 
@@ -95,7 +98,9 @@ Perform an update operation
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UPDATE` |
-| criteria (required) | `criteria` | semi-structured/json | The criteria to update documents |
+| Database Name (required) | `database-name` | string | Fill in your MongoDB database name |
+| Collection Name (required) | `collection-name` | string | The name of the collection in the MongoDB database |
+| Criteria (required) | `criteria` | semi-structured/json | The criteria to update documents |
 | Update (required) | `update` | semi-structured/json | The updated data to be applied to the documents |
 
 
@@ -117,7 +122,9 @@ Perform a delete operation
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DELETE` |
-| criteria (required) | `criteria` | semi-structured/json | The criteria to delete documents |
+| Database Name (required) | `database-name` | string | Fill in your MongoDB database name |
+| Collection Name (required) | `collection-name` | string | The name of the collection in the MongoDB database |
+| Criteria (required) | `criteria` | semi-structured/json | The criteria to delete documents |
 
 
 
@@ -130,15 +137,16 @@ Perform a delete operation
 
 
 
-### Delete Collection
+### Drop Collection
 
 Delete the collection
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_DELETE_COLLECTION` |
-| Collection | `collection-name` | string | The collection to be deleted |
+| Task ID (required) | `task` | string | `TASK_DROP_COLLECTION` |
+| Database Name (required) | `database-name` | string | Fill in your MongoDB database name |
+| Collection Name (required) | `collection-name` | string | The name of the collection in the MongoDB database |
 
 
 
@@ -151,15 +159,15 @@ Delete the collection
 
 
 
-### Delete Database
+### Drop Database
 
 Delete the database
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_DELETE_DATABASE` |
-| Database | `database-name` | string | The database to be deleted |
+| Task ID (required) | `task` | string | `TASK_DROP_DATABASE` |
+| Database Name (required) | `database-name` | string | Fill in your MongoDB database name |
 
 
 

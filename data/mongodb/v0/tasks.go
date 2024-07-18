@@ -21,6 +21,7 @@ type InsertOutput struct {
 
 type FindInput struct {
 	Criteria map[string]any `json:"criteria"`
+	Limit    int            `json:"limit"`
 }
 
 type FindOutput struct {
@@ -95,6 +96,7 @@ func (e *execution) find(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	criteria := inputStruct.Criteria
+	limit := inputStruct.Limit
 	ctx := context.Background()
 
 	realCriteria := bson.M{}
@@ -104,21 +106,27 @@ func (e *execution) find(in *structpb.Struct) (*structpb.Struct, error) {
 		}
 	}
 
+	findOptions := options.Find()
+
+	if limit > 0 {
+		findOptions.SetLimit(int64(limit))
+	}
+
 	var cursor *mongo.Cursor
 	if len(criteria) == 0 {
-		// Find all documents with the specified projection
-		cursor, err = e.collectionClient.Find(ctx, realCriteria)
+		// Find all documents with the specified options (including limit if set)
+		cursor, err = e.collectionClient.Find(ctx, realCriteria, findOptions)
 	} else {
-		// Define the projection to include only the email field
+		// Define the projection to include only the specified fields
 		projection := bson.M{}
-
 		projection["_id"] = 0
 		for key := range criteria {
 			projection[key] = 1
 		}
+		findOptions.SetProjection(projection)
 
-		// Find all documents with the specified projection
-		cursor, err = e.collectionClient.Find(ctx, realCriteria, options.Find().SetProjection(projection))
+		// Find all documents with the specified options (including limit if set)
+		cursor, err = e.collectionClient.Find(ctx, realCriteria, findOptions)
 	}
 
 	if err != nil {

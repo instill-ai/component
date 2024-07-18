@@ -137,6 +137,7 @@ func TestComponent_ExecuteFindTask(t *testing.T) {
 			name: "ok to find",
 			input: FindInput{
 				Criteria: map[string]any{"name": "test"},
+				Limit:    0,
 			},
 			wantResp: FindOutput{
 				Status: "Successfully found documents",

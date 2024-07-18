@@ -74,11 +74,8 @@ func Init(bc base.Component) *component {
 }
 
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	collectionClient, dbClient := newClient(setup)
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
-		collectionClient:   collectionClient,
-		dbClient:           dbClient,
 	}
 
 	switch task {
@@ -104,10 +101,32 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
+type Destination struct {
+	DatabaseName   string `json:"database-name"`
+	CollectionName string `json:"collection-name"`
+}
+
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
+	client := newClient(e.Setup)
 
 	for i, input := range inputs {
+		var inputStruct Destination
+		err := base.ConvertFromStructpb(input, &inputStruct)
+		if err != nil {
+			return nil, err
+		}
+
+		if e.dbClient == nil {
+			db := client.Database(inputStruct.DatabaseName)
+			e.dbClient = db
+
+			if e.Task != TaskDropDatabase && e.collectionClient == nil {
+				collection := db.Collection(inputStruct.CollectionName)
+				e.collectionClient = collection
+			}
+		}
+
 		output, err := e.execute(input)
 		if err != nil {
 			return nil, err
