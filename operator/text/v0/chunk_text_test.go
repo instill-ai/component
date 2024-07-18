@@ -55,12 +55,17 @@ func TestChunkText(t *testing.T) {
 			output: ChunkTextOutput{
 				TextChunks: []TextChunk{
 					{
-						Text:          "Hello world.",
+						Text:          "Hello",
 						StartPosition: 0,
+						EndPosition:   4,
+					},
+					{
+						Text:          "world.",
+						StartPosition: 6,
 						EndPosition:   11,
 					},
 				},
-				ChunkNum:   1,
+				ChunkNum:   2,
 				TokenCount: 3,
 			},
 		},
