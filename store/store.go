@@ -25,6 +25,7 @@ import (
 	"github.com/instill-ai/component/application/numbers/v0"
 	"github.com/instill-ai/component/application/slack/v0"
 	"github.com/instill-ai/component/application/website/v0"
+	"github.com/instill-ai/component/application/whatsapp/v0"
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/data/bigquery/v0"
 	"github.com/instill-ai/component/data/googlecloudstorage/v0"
@@ -143,6 +144,7 @@ func Init(
 		compStore.Import(jira.Init(baseComp))
 		compStore.Import(ollama.Init(baseComp))
 		compStore.Import(hubspot.Init(baseComp))
+		compStore.Import(whatsapp.Init(baseComp))
 
 	})
 	return compStore

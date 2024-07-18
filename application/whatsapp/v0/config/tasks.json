@@ -1,0 +1,162 @@
+{
+  "$defs": {
+    "input": {
+      "phone-number-id": {
+        "description": "Phone Number ID. Obtainable through the app dashboard.",
+        "instillAcceptFormats": ["string"],
+        "instillUIMultiline": true,
+        "instillUIOrder": 0,
+        "instillUpstreamTypes": ["value", "reference", "template"],
+        "title": "Phone Number ID",
+        "type": "string"
+      },
+      "to": {
+        "description": "The number of the recipient you are sending the message to",
+        "instillAcceptFormats": ["string"],
+        "instillUIMultiline": true,
+        "instillUIOrder": 1,
+        "instillUpstreamTypes": ["value", "reference", "template"],
+        "title": "Recipient Phone Number",
+        "type": "string"
+      }
+    },
+    "output": {
+      "recipient-wa-id": {
+        "description": "The WhatsApp ID of the recipient. Most likely the same with their phone number.",
+        "instillUIOrder": 0,
+        "title": "Recipient WhatsApp ID",
+        "type": "string",
+        "instillFormat": "string"
+      },
+      "message-id": {
+        "description": "The ID of the message",
+        "instillUIOrder": 1,
+        "title": "Message ID",
+        "type": "string",
+        "instillFormat": "string"
+      },
+      "message-status": {
+        "description": "The status of the message. It is not always available. Example: when sending authentication template, it won't show up.",
+        "instillUIOrder": 2,
+        "title": "Message Status",
+        "type": "string",
+        "instillFormat": "string"
+      }
+    }
+  },
+  "TASK_SEND_TEMPLATE": {
+    "instillShortDescription": "Send template. Support all template types except product/catalog-based template. For more information: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates",
+    "input": {
+      "description": "Contact and template information",
+      "instillUIOrder": 0,
+      "properties": {
+        "phone-number-id": {
+          "$ref": "#/$defs/input/phone-number-id"
+        },
+        "to": {
+          "$ref": "#/$defs/input/to"
+        },
+        "header-type":{
+          "enum": [
+            "none",
+            "text",
+            "image",
+            "video",
+            "document"
+          ],
+          "example": "none",
+          "description": "Specify the parameter type for the header section of the template. If there is no header section, pick none. If there is, select one and fill out the Header Parameters.",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Header Type",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the template",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Template Name",
+          "type": "string"
+        },
+        "language-code": {
+          "description": "The code of the language or locale to use. Supported languages: https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": false,
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Language Code",
+          "type": "string"
+        },
+        "header-parameters": {
+          "description": "Specify the parameters for the header section of the template. If the header is a 'text', just create a normal string array (if there is no parameter, leave it blank). If the header is an 'image' or a 'video', the array format will be [the ID or link of the media]. If the header is a 'document', the array format will be [the ID or link of the document, file name to be displayed in WhatsApp (optional)]. If the header is a 'location', the array format will be [latitude, longitude, name, address]. Please make sure that it has 'http' in the url if you use link as the parameter." ,
+          "instillUIOrder": 5,
+          "title": "Header Parameters",
+          "type": "array",
+          "instillFormat": "array:string",
+          "items": {
+            "title": "Header Parameter",
+            "type": "string",
+            "description": "Header parameter",
+            "instillFormat": "string"
+          }
+        },
+        "body-parameters": {
+          "description": "Specify the parameters for the body section of the template. Leave this blank if there is no parameter.",
+          "instillUIOrder": 6,
+          "title": "Body Parameters",
+          "type": "array",
+          "instillFormat": "array:string",
+          "items": {
+            "title": "Body Parameter",
+            "type": "string",
+            "description": "Body parameter",
+            "instillFormat": "string"
+          }
+        },
+        "button-parameters": {
+          "description": "Specify the parameters for button(s). Leave this blank if there is no parameter. Follow this format or it won't work: parameter_type;value_of_the_parameter. The seperator is a semicolon. Example: quick_reply;randomvalue. Note: This button parameter only support two types 'quick_reply' and 'url'",
+          "instillUIOrder": 7,
+          "title": "Button Parameters",
+          "type": "array",
+          "instillFormat": "array:string",
+          "items": {
+            "title": "Button Parameter",
+            "type": "string",
+            "description": "Button parameter",
+            "instillFormat": "string"
+          }
+        }
+      },
+      "required": ["header-type","phone-number-id", "to", "name", "language-code"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "API response",
+      "instillUIOrder": 0,
+      "properties": {
+        "recipient-wa-id":{
+          "$ref": "#/$defs/output/recipient-wa-id"
+        },
+        "message-id":{
+          "$ref": "#/$defs/output/message-id"
+        },
+        "message-status":{
+          "$ref": "#/$defs/output/message-status"
+        }
+      },
+      "required": ["recipient-wa-id", "message-id", "message-status"],
+      "title": "Output",
+      "type": "object"
+    }
+  }
+}
