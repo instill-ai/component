@@ -76,10 +76,12 @@ func (sp MarkdownTextSplitter) buildDocuments(rawRunes []rune) []MarkdownDocumen
 	for startPosition < len(rawRunes) {
 		document, startPosition = sp.buildDocument(rawRunes, document, startPosition)
 
+		if !isBlankDocument(document) {
+			documents = append(documents, document)
+		}
 		if startPosition == 0 {
 			break
 		}
-		documents = append(documents, document)
 	}
 
 	return documents
