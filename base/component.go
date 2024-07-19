@@ -17,6 +17,7 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 
+	"github.com/instill-ai/component/internal/debug"
 	"github.com/instill-ai/component/internal/jsonref"
 
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
@@ -190,6 +191,9 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 			newCompSpec.Fields["instillAcceptFormats"] = structpb.NewListValue(compSpec.Fields["instillAcceptFormats"].GetListValue())
 		}
 		newCompSpec.Fields["instillUpstreamTypes"] = structpb.NewListValue(compSpec.Fields["instillUpstreamTypes"].GetListValue())
+		if compSpec.Fields["instillFormat"] != nil {
+			newCompSpec.Fields["instillSecret"] = structpb.NewBoolValue(compSpec.Fields["instillSecret"].GetBoolValue())
+		}
 		newCompSpec.Fields["anyOf"] = structpb.NewListValue(&structpb.ListValue{Values: []*structpb.Value{}})
 
 		for _, v := range compSpec.Fields["instillUpstreamTypes"].GetListValue().GetValues() {
@@ -774,6 +778,17 @@ func (c *Component) initSecretField(def *pb.ComponentDefinition) {
 		c.secretFields = []string{}
 	}
 	secretFields := []string{}
+
+	verboseLevel := debug.StaticVerboseLevel
+	if t, ok := def.Spec.GetComponentSpecification().GetFields()["title"]; ok {
+		if strings.Contains(t.GetStringValue(), "GitHub") {
+			verboseLevel = debug.DevelopVerboseLevel
+		}
+	}
+	var logger debug.DebugSession
+	logger.SessionStart("initSecretField", verboseLevel)
+	defer logger.SessionEnd()
+	logger.Info("def", def.Spec.GetComponentSpecification().GetFields())
 	setup := def.Spec.GetComponentSpecification().GetFields()["properties"].GetStructValue().GetFields()["setup"].GetStructValue()
 	secretFields = c.traverseSecretField(setup.GetFields()["properties"], "", secretFields)
 	if l, ok := setup.GetFields()["oneOf"]; ok {
@@ -781,6 +796,16 @@ func (c *Component) initSecretField(def *pb.ComponentDefinition) {
 			secretFields = c.traverseSecretField(v.GetStructValue().GetFields()["properties"], "", secretFields)
 		}
 	}
+	if l, ok := def.Spec.GetComponentSpecification().GetFields()["oneOf"]; ok {
+		for _, v := range l.GetListValue().Values {
+			input := v.GetStructValue().GetFields()["properties"].GetStructValue().GetFields()["input"].GetStructValue().GetFields()["properties"]
+			secretFields = c.traverseSecretField(input, "", secretFields)
+			// Or we can use the task name as prefix
+			// task := v.GetStructValue().GetFields()["properties"].GetStructValue().GetFields()["task"].GetStructValue().GetFields()["const"].GetStringValue()
+			// secretFields = c.traverseSecretField(input, task+".", secretFields)
+		}
+	}
+	logger.Info(secretFields)
 	c.secretFields = secretFields
 }
 
