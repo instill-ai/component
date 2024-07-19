@@ -113,7 +113,7 @@ type ChatResponse struct {
 	CreatedAt          string            `json:"created_at"`
 	Message            OllamaChatMessage `json:"message"`
 	Done               bool              `json:"done"`
-	Context            []int             `json:"context"`
+	DoneReason         string            `json:"done_reason"`
 	TotalDuration      int               `json:"total_duration"`
 	LoadDuration       int               `json:"load_duration"`
 	PromptEvalCount    int               `json:"prompt_eval_count"`
@@ -153,7 +153,7 @@ type EmbedResponse struct {
 func (c *OllamaClient) Embed(request EmbedRequest) (EmbedResponse, error) {
 	response := EmbedResponse{}
 	if !c.CheckModelAvailability(request.Model) {
-		if c.autoPull {
+		if c.IsAutoPull() {
 			err := c.Pull(request.Model)
 			if err != nil {
 				return response, fmt.Errorf("error when auto pulling model %v", err)
@@ -167,4 +167,8 @@ func (c *OllamaClient) Embed(request EmbedRequest) (EmbedResponse, error) {
 		return response, fmt.Errorf("error when sending embeddings request %v", err)
 	}
 	return response, nil
+}
+
+func (c *OllamaClient) IsAutoPull() bool {
+	return c.autoPull
 }

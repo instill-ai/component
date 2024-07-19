@@ -48,11 +48,14 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 		return nil, err
 	}
 
-	messages := []OllamaChatMessage{{
-		Role:    "system",
-		Content: input.SystemMsg},
-	}
+	messages := []OllamaChatMessage{}
 
+	if input.SystemMsg != "" {
+		messages = append(messages, OllamaChatMessage{
+			Role:    "system",
+			Content: input.SystemMsg,
+		})
+	}
 	for _, msg := range input.ChatHistory {
 		textContent := ""
 		imageContent := []string{}

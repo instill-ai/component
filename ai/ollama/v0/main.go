@@ -53,6 +53,7 @@ func Init(bc base.Component) *component {
 type OllamaClientInterface interface {
 	Chat(ChatRequest) (ChatResponse, error)
 	Embed(EmbedRequest) (EmbedResponse, error)
+	IsAutoPull() bool
 }
 
 type execution struct {
