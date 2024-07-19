@@ -494,7 +494,8 @@
           ],
           "instillUpstreamTypes": [
             "value",
-            "reference"
+            "reference",
+            "template"
           ],
           "instillUIOrder": 10,
           "type": "string"
@@ -515,7 +516,8 @@
           ],
           "instillUpstreamTypes": [
             "value",
-            "reference"
+            "reference",
+            "template"
           ],
           "instillUIOrder": 11,
           "type": "string"
@@ -534,7 +536,8 @@
           ],
           "instillUpstreamTypes": [
             "value",
-            "reference"
+            "reference",
+            "template"
           ],
           "instillUIOrder": 12,
           "type": "string"
@@ -690,8 +693,7 @@
             "string"
           ],
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "value"
           ],
           "instillUIOrder": 11,
           "type": "string"
@@ -709,8 +711,7 @@
             "string"
           ],
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "value"
           ],
           "instillUIOrder": 12,
           "type": "string"
@@ -725,7 +726,8 @@
           ],
           "instillUpstreamTypes": [
             "value",
-            "reference"
+            "reference",
+            "template"
           ],
           "instillUIOrder": 13,
           "type": "string"
@@ -831,34 +833,89 @@
           "properties": {
             "commit-id": {
               "$ref": "#/$defs/review-comments/properties/commitId",
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ],
               "instillUIOrder": 0
             },
             "body": {
               "$ref": "#/$defs/review-comments/properties/body",
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference",
+                "template"
+              ],
               "instillUIOrder": 1
             },
             "path": {
               "$ref": "#/$defs/review-comments/properties/path",
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference",
+                "template"
+              ],
               "instillUIOrder": 2
             },
             "start-line": {
               "$ref": "#/$defs/review-comments/properties/start-line",
+              "instillAcceptFormats": [
+                "integer"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ],
               "instillUIOrder": 3
             },
             "line": {
               "$ref": "#/$defs/review-comments/properties/line",
+              "instillAcceptFormats": [
+                "integer"
+              ],
+              "instillUpstreamTypes": [
+                "value",
+                "reference"
+              ],
               "instillUIOrder": 4
             },
             "start-side": {
               "$ref": "#/$defs/review-comments/properties/start-side",
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value"
+              ],
               "instillUIOrder": 5
             },
             "side": {
               "$ref": "#/$defs/review-comments/properties/side",
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value"
+              ],
               "instillUIOrder": 6
             },
             "subject-type": {
               "$ref": "#/$defs/review-comments/properties/subject-type",
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "instillUpstreamTypes": [
+                "value"
+              ],
               "instillUIOrder": 7
             }
           },
@@ -905,6 +962,13 @@
         "$ref": "#/$defs/repository-info",
         "sha": {
           "$ref": "#/$defs/commit/properties/sha",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "instillUIOrder": 3
         }
       },
@@ -955,8 +1019,7 @@
             "string"
           ],
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "value"
           ],
           "instillUIOrder": 10,
           "type": "string"
@@ -976,8 +1039,7 @@
             "string"
           ],
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "value"
           ],
           "instillUIOrder": 11,
           "type": "string"
@@ -995,8 +1057,7 @@
             "string"
           ],
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "value"
           ],
           "instillUIOrder": 12,
           "type": "string"
@@ -1011,7 +1072,8 @@
           ],
           "instillUpstreamTypes": [
             "value",
-            "reference"
+            "reference",
+            "template"
           ],
           "instillUIOrder": 13,
           "type": "string"
@@ -1158,10 +1220,26 @@
         "$ref": "#/$defs/repository-info",
         "title": {
           "$ref": "#/$defs/issue/properties/title",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "instillUIOrder": 3
         },
         "body": {
           "$ref": "#/$defs/issue/properties/body",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "instillUIOrder": 4
         }
       },
@@ -1209,7 +1287,8 @@
           ],
           "instillUpstreamTypes": [
             "value",
-            "reference"
+            "reference",
+            "template"
           ],
           "instillUIOrder": 3,
           "type": "string"
@@ -1233,7 +1312,8 @@
             ],
             "instillUpstreamTypes": [
               "value",
-              "reference"
+              "reference",
+              "template"
             ],
             "type": "string"
           }
@@ -1265,8 +1345,7 @@
             "string"
           ],
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "value"
           ],
           "instillUIOrder": 6,
           "type": "string"
@@ -1305,13 +1384,6 @@
           "instillUIOrder": 1,
           "title": "Webhook ID",
           "instillFormat": "integer",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "integer"
         },
         "url": {
@@ -1319,13 +1391,6 @@
           "instillUIOrder": 2,
           "title": "Webhook URL",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "ping-url": {
@@ -1333,13 +1398,6 @@
           "instillUIOrder": 3,
           "title": "Ping URL",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "test-url": {
@@ -1347,13 +1405,6 @@
           "instillUIOrder": 4,
           "title": "Test URL",
           "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
           "type": "string"
         },
         "config": {

@@ -1,4 +1,4 @@
-//go:generate compogen readme ./config ./README.mdx
+//go:generate compogen readme ./config ./README.mdx --extraContents TASK_JQ=.compogen/extra-jq.mdx
 package json
 
 import (
