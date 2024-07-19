@@ -190,7 +190,7 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 			newCompSpec.Fields["instillAcceptFormats"] = structpb.NewListValue(compSpec.Fields["instillAcceptFormats"].GetListValue())
 		}
 		newCompSpec.Fields["instillUpstreamTypes"] = structpb.NewListValue(compSpec.Fields["instillUpstreamTypes"].GetListValue())
-		if compSpec.Fields["instillFormat"] != nil {
+		if compSpec.Fields["instillSecret"] != nil {
 			newCompSpec.Fields["instillSecret"] = structpb.NewBoolValue(compSpec.Fields["instillSecret"].GetBoolValue())
 		}
 		newCompSpec.Fields["anyOf"] = structpb.NewListValue(&structpb.ListValue{Values: []*structpb.Value{}})
