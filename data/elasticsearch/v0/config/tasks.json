@@ -157,10 +157,29 @@
     }
   },
   "TASK_SEARCH": {
-    "instillShortDescription": "Search for documents in Elasticsearch",
+    "instillShortDescription": "Search for documents and vector similarity search in Elasticsearch",
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "search-type":{
+          "description": "Type of search to perform, elastic search will perform normal search and vector search will perform vector similarity search",
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "default": "Elastic Search",
+          "instillUIOrder": 0,
+          "title": "Search Type",
+          "enum": [
+            "Elastic Search",
+            "Vector Search"
+          ],
+          "type": "string"
+        },
         "mode": {
           "description": "Document mode to return, Hits will return documents with (_id, _index, _score), Source Only will return only documents",
           "instillUpstreamTypes": [
@@ -172,7 +191,7 @@
             "string"
           ],
           "default": "Hits",
-          "instillUIOrder": 0,
+          "instillUIOrder": 1,
           "title": "Mode",
           "enum": [
             "Hits",
@@ -186,7 +205,7 @@
             "string"
           ],
           "instillShortDescription": "Elasticsearch Index Name",
-          "instillUIOrder": 1,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -201,7 +220,7 @@
             "string"
           ],
           "instillShortDescription": "String Query",
-          "instillUIOrder": 2,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -211,12 +230,12 @@
           "title": "Query"
         },
         "filter": {
-          "description": "Filter for selecting documents to search, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected. Additionally, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any filter",
+          "description": "Filter for selecting documents to search or vector similarity search, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected. Additionally, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any filter. For vector similarity search, make sure to create an index with dense_vector field and provide vector field name in filter e.g {'vector_field1':'vector_value1','vector_field2':'vector_value2'}",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data",
-          "instillUIOrder": 3,
+          "instillShortDescription": "JSON Data, support vector search",
+          "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -226,12 +245,11 @@
         },
         "size":{
           "description": "Number of documents to return, this field is optional. If empty then all documents will be returned",
-          "default": 0,
           "instillAcceptFormats": [
             "integer"
           ],
           "instillShortDescription": "Size of documents to return, optional (empty for all documents)",
-          "instillUIOrder": 4,
+          "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "value",
             "reference"
@@ -241,11 +259,12 @@
         }
       },
       "required": [
+        "search-type",
         "mode",
-        "index-name",
-        "size"
+        "index-name"
       ],
       "instillEditOnNodeFields": [
+        "search-type",
         "mode",
         "index-name",
         "query",
@@ -352,6 +371,66 @@
       "properties": {
         "status": {
           "description": "Delete operation status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_INDEX":{
+    "instillShortDescription": "Create an index in Elasticsearch",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "index-name": {
+          "description": "Name of the Elasticsearch index",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillShortDescription": "Elasticsearch Index Name",
+          "title": "Index Name",
+          "type": "string"
+        },
+        "mappings": {
+          "description": "Index mappings, support both vector search and non-vector search mappings, for vector search type mappings use json object with type dense_vector and dims fields, e.g {'name':{'type':'dense_vector','dims':2},'name':{'type':'text'}",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Mappings"
+        }
+      },
+      "required": [
+        "index-name",
+        "mappings"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Create index operation status",
           "instillFormat": "string",
           "required": [],
           "instillUIOrder": 0,

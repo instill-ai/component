@@ -33,11 +33,12 @@ type UpdateOutput struct {
 }
 
 type SearchInput struct {
-	Mode      string         `json:"mode"`
-	Filter    map[string]any `json:"filter"`
-	Query     string         `json:"query"`
-	IndexName string         `json:"index-name"`
-	Size      int            `json:"size"`
+	SearchType string         `json:"search-type"`
+	Mode       string         `json:"mode"`
+	Filter     map[string]any `json:"filter"`
+	Query      string         `json:"query"`
+	IndexName  string         `json:"index-name"`
+	Size       int            `json:"size"`
 }
 
 type SearchOutput struct {
@@ -81,6 +82,15 @@ type DeleteOutput struct {
 	Status string `json:"status"`
 }
 
+type CreateIndexInput struct {
+	IndexName string         `json:"index-name"`
+	Mappings  map[string]any `json:"mappings"`
+}
+
+type CreateIndexOutput struct {
+	Status string `json:"status"`
+}
+
 type DeleteIndexInput struct {
 	IndexName string `json:"index-name"`
 }
@@ -89,7 +99,7 @@ type DeleteIndexOutput struct {
 	Status string `json:"status"`
 }
 
-func indexDocument(es *esapi.Index, indexName string, data map[string]any) error {
+func IndexDocument(es *esapi.Index, indexName string, data map[string]any) error {
 	dataJSON, err := json.Marshal(data)
 	if err != nil {
 		return err
@@ -113,10 +123,10 @@ func indexDocument(es *esapi.Index, indexName string, data map[string]any) error
 	return nil
 }
 
-func searchDocument(es *esapi.Search, indexName string, query string, rawFilter map[string]any, size int) ([]Hit, error) {
+func SearchDocument(es *esapi.Search, indexName string, query string, rawFilter map[string]interface{}, size int, searchType string) ([]Hit, error) {
 	var body io.Reader = nil
 	if rawFilter != nil {
-		filter := make(map[string]any)
+		filter := make(map[string]interface{})
 		var source []string
 		for key, value := range rawFilter {
 			if value != nil {
@@ -125,13 +135,55 @@ func searchDocument(es *esapi.Search, indexName string, query string, rawFilter 
 			source = append(source, key)
 		}
 
-		filterQuery := make(map[string]any)
-		if len(source) > 0 {
-			filterQuery["_source"] = source
-		}
-		if len(filter) > 0 {
-			filterQuery["query"] = map[string]any{
-				"match": filter,
+		filterQuery := make(map[string]interface{})
+		if searchType == "Elastic Search" {
+			if len(source) > 0 {
+				filterQuery["_source"] = source
+			}
+			if len(filter) > 0 {
+				filterQuery["query"] = map[string]interface{}{
+					"match": filter,
+				}
+			}
+		} else if searchType == "Vector Search" {
+			var functions []map[string]interface{}
+
+			for _, value := range filter {
+				if vector, ok := value.([]interface{}); ok {
+					floatVector := make([]float64, len(vector))
+					for i, v := range vector {
+						if val, ok := v.(float64); ok {
+							floatVector[i] = val
+						}
+					}
+
+					function := map[string]interface{}{
+						"script_score": map[string]interface{}{
+							"script": map[string]interface{}{
+								"source": "cosineSimilarity(params.query_vector, 'vector_field') + 1.0",
+								"params": map[string]interface{}{
+									"query_vector": floatVector,
+								},
+							},
+						},
+					}
+					functions = append(functions, function)
+				}
+			}
+
+			filterQuery["query"] = map[string]interface{}{
+				"function_score": map[string]interface{}{
+					"query": map[string]interface{}{
+						"match_all": map[string]interface{}{},
+					},
+					"functions":  functions,
+					"boost_mode": "sum",
+					"score_mode": "sum",
+				},
+			}
+
+			if len(source) > 0 {
+				filterQuery["_source"] = source
 			}
 		}
 
@@ -173,7 +225,7 @@ func searchDocument(es *esapi.Search, indexName string, query string, rawFilter 
 	return response.Hits.Hits, nil
 }
 
-func updateDocument(es *esapi.UpdateByQuery, indexName string, query string, filter map[string]any, update map[string]any) error {
+func UpdateDocument(es *esapi.UpdateByQuery, indexName string, query string, filter map[string]any, update map[string]any) error {
 	updateByQueryReq := map[string]any{
 		"query": map[string]any{
 			"match": filter,
@@ -217,7 +269,7 @@ func updateDocument(es *esapi.UpdateByQuery, indexName string, query string, fil
 	return nil
 }
 
-func deleteDocument(es *esapi.DeleteByQuery, indexName string, query string, filter map[string]any) error {
+func DeleteDocument(es *esapi.DeleteByQuery, indexName string, query string, filter map[string]any) error {
 	deleteByQueryReq := map[string]any{
 		"query": map[string]any{
 			"match": filter,
@@ -252,7 +304,7 @@ func deleteDocument(es *esapi.DeleteByQuery, indexName string, query string, fil
 	return nil
 }
 
-func deleteIndex(es *esapi.IndicesDelete, indexName string) error {
+func DeleteIndex(es *esapi.IndicesDelete, indexName string) error {
 	esClient := ESDeleteIndex(*es)
 
 	res, err := esClient([]string{indexName})
@@ -269,6 +321,36 @@ func deleteIndex(es *esapi.IndicesDelete, indexName string) error {
 	return nil
 }
 
+func CreateIndex(es *esapi.IndicesCreate, indexName string, mappings map[string]any) error {
+	createIndexReq := map[string]map[string]any{
+		"mappings": {
+			"properties": mappings,
+		},
+	}
+
+	createIndexJSON, err := json.Marshal(createIndexReq)
+	if err != nil {
+		return err
+	}
+
+	esClient := ESCreateIndex(*es)
+
+	res, err := esClient(indexName, func(r *esapi.IndicesCreateRequest) {
+		r.Body = strings.NewReader(string(createIndexJSON))
+	})
+
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("error creating index: %s", res.Status())
+	}
+
+	return nil
+}
+
 func (e *execution) index(in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct IndexInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
@@ -276,7 +358,7 @@ func (e *execution) index(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = indexDocument(&e.indexClient, inputStruct.IndexName, inputStruct.Data)
+	err = IndexDocument(&e.indexClient, inputStruct.IndexName, inputStruct.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -299,7 +381,7 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = updateDocument(&e.updateClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Update)
+	err = UpdateDocument(&e.updateClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Update)
 	if err != nil {
 		return nil, err
 	}
@@ -322,7 +404,7 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	resultTemp, err := searchDocument(&e.searchClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Size)
+	resultTemp, err := SearchDocument(&e.searchClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Size, inputStruct.SearchType)
 	if err != nil {
 		return nil, err
 	}
@@ -362,13 +444,36 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = deleteDocument(&e.deleteClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter)
+	err = DeleteDocument(&e.deleteClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter)
 	if err != nil {
 		return nil, err
 	}
 
 	outputStruct := DeleteOutput{
 		Status: "Successfully deleted document",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (e *execution) createIndex(in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct CreateIndexInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	err = CreateIndex(&e.createIndexClient, inputStruct.IndexName, inputStruct.Mappings)
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := CreateIndexOutput{
+		Status: "Successfully created index",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -385,7 +490,7 @@ func (e *execution) deleteIndex(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = deleteIndex(&e.deleteIndexClient, inputStruct.IndexName)
+	err = DeleteIndex(&e.deleteIndexClient, inputStruct.IndexName)
 	if err != nil {
 		return nil, err
 	}
