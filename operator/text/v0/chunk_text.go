@@ -153,6 +153,7 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 			StartPosition: 0,
 			EndPosition:   len(rawRunes) - 1,
 		})
+		output.ChunkNum = 1
 	}
 	return output, nil
 }

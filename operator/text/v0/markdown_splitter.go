@@ -76,10 +76,12 @@ func (sp MarkdownTextSplitter) buildDocuments(rawRunes []rune) []MarkdownDocumen
 	for startPosition < len(rawRunes) {
 		document, startPosition = sp.buildDocument(rawRunes, document, startPosition)
 
+		if !isBlankDocument(document) {
+			documents = append(documents, document)
+		}
 		if startPosition == 0 {
 			break
 		}
-		documents = append(documents, document)
 	}
 
 	return documents
@@ -278,19 +280,21 @@ func isHashtagInContent(position int, rawRunes []rune) bool {
 	breakChar := string(rawRunes[position-1])
 	if string(rawRunes[position-1]) == "#" {
 		hashTagCount++
-		for i := position - 2; i >= 0; i-- {
-			if string(rawRunes[i]) == "#" {
+		position = position - 2
+		for position >= 0 {
+			if string(rawRunes[position]) == "#" {
 				hashTagCount++
 			} else {
-				breakChar = string(rawRunes[i])
+				breakChar = string(rawRunes[position])
 				break
 			}
+			position--
 		}
 	}
 	if hashTagCount > 6 {
 		return true
 	}
-	if breakChar == "\n" {
+	if breakChar == "\n" || position == -1 {
 		return false
 	}
 	return true
