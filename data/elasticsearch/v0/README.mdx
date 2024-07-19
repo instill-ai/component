@@ -34,8 +34,8 @@ The component configuration is defined and maintained [here](https://github.com/
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in the API key for the Elasticsearch instance |
 | Cloud ID (required) | `cloud-id` | string | Fill in the Cloud ID for the Elasticsearch instance |
+| API Key (required) | `api-key` | string | Fill in the API key for the Elasticsearch instance (please use encoded one) |
 
 
 
@@ -50,9 +50,11 @@ Search for documents in Elasticsearch
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEARCH` |
+| Mode (required) | `mode` | string | Document mode to return, Hits will return documents with (_id, _index, _score), Source Only will return only documents |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
 | Query | `query` | string | Query to be used for search, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected |
-| Criteria | `criteria` | semi-structured/json | Criteria for selecting documents to search, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected |
+| Criteria | `criteria` | semi-structured/json | Criteria for selecting documents to search, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected. Additionally, if JSON value of a key is null e.g \{'name':null\}, then name field will be selected without any criteria |
+| Size (required) | `size` | integer | Number of documents to return, 0 will return all documents |
 
 
 

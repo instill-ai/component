@@ -159,12 +159,31 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "mode": {
+          "description": "Document mode to return, Hits will return documents with (_id, _index, _score), Source Only will return only documents",
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "default": "Hits",
+          "instillUIOrder": 0,
+          "title": "Mode",
+          "enum": [
+            "Hits",
+            "Source Only"
+          ],
+          "type": "string"
+        },
         "index-name": {
           "description": "Name of the Elasticsearch index",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillUIOrder": 0,
+          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -179,7 +198,7 @@
             "string"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 1,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -189,27 +208,45 @@
           "title": "Query"
         },
         "criteria": {
-          "description": "Criteria for selecting documents to search, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+          "description": "Criteria for selecting documents to search, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected. Additionally, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any criteria",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 2,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "value",
             "reference",
             "template"
           ],
           "title": "Criteria"
+        },
+        "size":{
+          "description": "Number of documents to return, 0 will return all documents",
+          "default": 0,
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Size",
+          "type": "integer"
         }
       },
       "required": [
-        "index-name"
+        "mode",
+        "index-name",
+        "size"
       ],
       "instillEditOnNodeFields": [
+        "mode",
         "index-name",
         "query",
-        "criteria"
+        "criteria",
+        "size"
       ],
       "title": "Input",
       "type": "object"

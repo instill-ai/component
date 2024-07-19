@@ -33,14 +33,16 @@ type UpdateOutput struct {
 }
 
 type SearchInput struct {
+	Mode      string         `json:"mode"`
 	Criteria  map[string]any `json:"criteria"`
 	Query     string         `json:"query"`
 	IndexName string         `json:"index-name"`
+	Size      int            `json:"size"`
 }
 
 type SearchOutput struct {
-	Documents []Hit  `json:"documents"`
-	Status    string `json:"status"`
+	Documents []map[string]any `json:"documents"`
+	Status    string           `json:"status"`
 }
 
 type SearchResponse struct {
@@ -88,7 +90,7 @@ type DeleteIndexOutput struct {
 }
 
 // Index document into Elasticsearch
-func indexDocument(es *esapi.Index, indexName string, data map[string]interface{}) error {
+func indexDocument(es *esapi.Index, indexName string, data map[string]any) error {
 	// Serialize data to JSON
 	dataJSON, err := json.Marshal(data)
 	if err != nil {
@@ -115,15 +117,28 @@ func indexDocument(es *esapi.Index, indexName string, data map[string]interface{
 }
 
 // Search document from Elasticsearch
-func searchDocument(es *esapi.Search, indexName string, query string, criteria map[string]any) ([]Hit, error) {
-	criteriaQuery := map[string]interface{}{
-		"query": map[string]interface{}{
-			"match": criteria,
-		},
-	}
-
+func searchDocument(es *esapi.Search, indexName string, query string, rawCriteria map[string]any, size int) ([]Hit, error) {
 	var body io.Reader
-	if criteria != nil {
+	if rawCriteria != nil {
+		criteria := make(map[string]any)
+		var source []string
+		for key, value := range rawCriteria {
+			if value != nil {
+				criteria[key] = value
+			}
+			source = append(source, key)
+		}
+
+		criteriaQuery := make(map[string]any)
+		if len(source) > 0 {
+			criteriaQuery["_source"] = source
+		}
+		if len(criteria) > 0 {
+			criteriaQuery["query"] = map[string]any{
+				"match": criteria,
+			}
+		}
+
 		// Serialize data to JSON
 		criteriaJSON, err := json.Marshal(criteriaQuery)
 		if err != nil {
@@ -142,6 +157,9 @@ func searchDocument(es *esapi.Search, indexName string, query string, criteria m
 		r.Body = body
 		r.Query = query
 		r.TrackTotalHits = true
+		if size > 0 {
+			r.Size = esapi.IntPtr(size)
+		}
 	})
 
 	if err != nil {
@@ -163,16 +181,16 @@ func searchDocument(es *esapi.Search, indexName string, query string, criteria m
 }
 
 // Update document in Elasticsearch
-func updateDocument(es *esapi.UpdateByQuery, indexName string, query string, criteria map[string]interface{}, update map[string]interface{}) error {
+func updateDocument(es *esapi.UpdateByQuery, indexName string, query string, criteria map[string]any, update map[string]any) error {
 	// Create the update by query request body
-	updateByQueryReq := map[string]interface{}{
-		"query": map[string]interface{}{
+	updateByQueryReq := map[string]any{
+		"query": map[string]any{
 			"match": criteria,
 		},
-		"script": map[string]interface{}{
+		"script": map[string]any{
 			"source": "for (entry in params.entry.entrySet()) { ctx._source[entry.getKey()] = entry.getValue() }",
 			"lang":   "painless",
-			"params": map[string]interface{}{
+			"params": map[string]any{
 				"entry": update,
 			},
 		},
@@ -213,10 +231,10 @@ func updateDocument(es *esapi.UpdateByQuery, indexName string, query string, cri
 }
 
 // Delete document from Elasticsearch
-func deleteDocument(es *esapi.DeleteByQuery, indexName string, query string, criteria map[string]interface{}) error {
+func deleteDocument(es *esapi.DeleteByQuery, indexName string, query string, criteria map[string]any) error {
 	// Create the delete by query request body
-	deleteByQueryReq := map[string]interface{}{
-		"query": map[string]interface{}{
+	deleteByQueryReq := map[string]any{
+		"query": map[string]any{
 			"match": criteria,
 		},
 	}
@@ -324,9 +342,25 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	result, err := searchDocument(&e.searchClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Criteria)
+	resultTemp, err := searchDocument(&e.searchClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Criteria, inputStruct.Size)
 	if err != nil {
 		return nil, err
+	}
+
+	var result []map[string]any
+	if inputStruct.Mode == "Source Only" {
+		for _, hit := range resultTemp {
+			result = append(result, hit.Source)
+		}
+	} else if inputStruct.Mode == "Hits" {
+		for _, hit := range resultTemp {
+			hitMap := make(map[string]any)
+			hitMap["_index"] = hit.Index
+			hitMap["_id"] = hit.ID
+			hitMap["_score"] = hit.Score
+			hitMap["_source"] = hit.Source
+			result = append(result, hitMap)
+		}
 	}
 
 	outputStruct := SearchOutput{

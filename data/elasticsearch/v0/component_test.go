@@ -15,6 +15,10 @@ import (
 )
 
 func MockESSearch(wantResp SearchOutput) *esapi.Response {
+	var Hits []Hit
+	documentsBytes, _ := json.Marshal(wantResp.Documents)
+	json.Unmarshal(documentsBytes, &Hits)
+
 	resp := SearchResponse{
 		Took:     1,
 		TimedOut: false,
@@ -45,7 +49,7 @@ func MockESSearch(wantResp SearchOutput) *esapi.Response {
 				Relation: "eq",
 			},
 			MaxScore: 2,
-			Hits:     wantResp.Documents,
+			Hits:     Hits,
 		},
 	}
 
@@ -112,23 +116,25 @@ func TestComponent_ExecuteSearchTask(t *testing.T) {
 		{
 			name: "ok to search",
 			input: SearchInput{
+				Mode:      "Hits",
 				IndexName: "index_name",
 				Criteria:  map[string]any{"city": "New York"},
+				Size:      0,
 			},
 			wantResp: SearchOutput{
 				Status: "Successfully searched document",
-				Documents: []Hit{
+				Documents: []map[string]any{
 					{
-						Index:  "index_name",
-						ID:     "mockID1",
-						Score:  0,
-						Source: map[string]any{"name": "John Doe", "email": "john@example.com", "city": "New York"},
+						"_index":  "index_name",
+						"_id":     "mockID1",
+						"_score":  0,
+						"_source": map[string]any{"name": "John Doe", "email": "john@example.com", "city": "New York"},
 					},
 					{
-						Index:  "index_name",
-						ID:     "mockID2",
-						Score:  0,
-						Source: map[string]any{"name": "Jane Smith", "email": "jane@example.com", "city": "New York"},
+						"_index":  "index_name",
+						"_id":     "mockID2",
+						"_score":  0,
+						"_source": map[string]any{"name": "Jane Smith", "email": "jane@example.com", "city": "New York"},
 					},
 				},
 			},
