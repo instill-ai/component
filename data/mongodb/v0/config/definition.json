@@ -7,10 +7,8 @@
     "TASK_DROP_COLLECTION",
     "TASK_DROP_DATABASE"
   ],
-  "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/data/mongodb",
   "icon": "assets/mongodb.svg",
-  "iconUrl": "",
   "id": "mongodb",
   "public": true,
   "title": "MongoDB",

@@ -109,8 +109,8 @@
           "title": "Collection Name",
           "type": "string"
         },
-        "criteria": {
-          "description": "The criteria to find documents, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any criteria, if JSON is empty e.g {}, then all fields will be selected",
+        "filter": {
+          "description": "The filter to find documents, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any filter, if JSON is empty e.g {}, then all fields will be selected",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
@@ -121,15 +121,14 @@
             "template",
             "value"
           ],
-          "title": "Criteria"
+          "title": "Filter"
         },
         "limit":{
-          "description": "The number of documents to return, if 0 then all documents will be returned, otherwise the number of documents to return",
+          "description": "The number of documents to return, this field is optional. If empty then all documents will be returned",
           "instillAcceptFormats": [
             "integer"
           ],
-          "instillShortDescription": "Limit the documents, 0 for all documents",
-          "default": 0,
+          "instillShortDescription": "Limit the documents, optional (empty for all documents)",
           "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
@@ -142,7 +141,12 @@
       "required": [
         "database-name",
         "collection-name",
-        "criteria",
+        "filter"
+      ],
+      "instillEditOnNodeFields":[
+        "database-name",
+        "collection-name",
+        "filter",
         "limit"
       ],
       "title": "Input",
@@ -168,7 +172,7 @@
           "type": "array",
           "instillFormat": "array:semi-structured/json",
           "items": {
-            "title": "Result",
+            "title": "Document",
             "instillFormat": "semi-structured/json"
           }
         }
@@ -215,8 +219,8 @@
           "title": "Collection Name",
           "type": "string"
         },
-        "criteria": {
-          "description": "The criteria to update documents",
+        "filter": {
+          "description": "The filter to update documents",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
@@ -227,9 +231,9 @@
             "template",
             "value"
           ],
-          "title": "Criteria"
+          "title": "Filter"
         },
-        "update": {
+        "update-data": {
           "description": "The updated data to be applied to the documents",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
@@ -247,8 +251,8 @@
       "required": [
         "database-name",
         "collection-name",
-        "criteria",
-        "update"
+        "filter",
+        "update-data"
       ],
       "title": "Input",
       "type": "object"
@@ -306,8 +310,8 @@
           "title": "Collection Name",
           "type": "string"
         },
-        "criteria": {
-          "description": "The criteria to delete documents",
+        "filter": {
+          "description": "The filter to delete documents",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
@@ -318,13 +322,13 @@
             "template",
             "value"
           ],
-          "title": "Criteria"
+          "title": "Filter"
         }
       },
       "required": [
         "database-name",
         "collection-name",
-        "criteria"
+        "filter"
       ],
       "title": "Input",
       "type": "object"

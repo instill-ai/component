@@ -48,16 +48,18 @@ type MongoCollectionClient interface {
 	Drop(ctx context.Context) error
 }
 
-type MongoDBClient interface {
+type MongoDatabaseClient interface {
 	Drop(ctx context.Context) error
 }
 
+// dbClient for task DropDatabase
+// collectionClient for other than task DropDatabase
 type execution struct {
 	base.ComponentExecution
 
-	execute          func(*structpb.Struct) (*structpb.Struct, error)
+	execute          func(context.Context, *structpb.Struct) (*structpb.Struct, error)
 	collectionClient MongoCollectionClient
-	dbClient         MongoDBClient
+	dbClient         MongoDatabaseClient
 }
 
 // Init returns an implementation of IConnector that interacts with MongoDB.
@@ -106,9 +108,12 @@ type Destination struct {
 	CollectionName string `json:"collection-name"`
 }
 
-func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+// dbClient wont be nil on component test (use mock dbClient)
+// collectionClient wont be nil on component test (use mock collectionClient)
+// collectionClient will be nil on task DropDatabase
+func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
-	client := newClient(e.Setup)
+	client := newClient(ctx, e.Setup)
 
 	for i, input := range inputs {
 		var inputStruct Destination
@@ -117,17 +122,18 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			return nil, err
 		}
 
+		var db *mongo.Database
 		if e.dbClient == nil {
-			db := client.Database(inputStruct.DatabaseName)
+			db = client.Database(inputStruct.DatabaseName)
 			e.dbClient = db
-
-			if e.Task != TaskDropDatabase && e.collectionClient == nil {
-				collection := db.Collection(inputStruct.CollectionName)
-				e.collectionClient = collection
-			}
 		}
 
-		output, err := e.execute(input)
+		if e.Task != TaskDropDatabase && e.collectionClient == nil {
+			collection := db.Collection(inputStruct.CollectionName)
+			e.collectionClient = collection
+		}
+
+		output, err := e.execute(ctx, input)
 		if err != nil {
 			return nil, err
 		}
@@ -136,9 +142,4 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	}
 
 	return outputs, nil
-}
-
-func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
-
-	return nil
 }

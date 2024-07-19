@@ -136,8 +136,8 @@ func TestComponent_ExecuteFindTask(t *testing.T) {
 		{
 			name: "ok to find",
 			input: FindInput{
-				Criteria: map[string]any{"name": "test"},
-				Limit:    0,
+				Filter: map[string]any{"name": "test"},
+				Limit:  0,
 			},
 			wantResp: FindOutput{
 				Status: "Successfully found documents",
@@ -197,8 +197,8 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 		{
 			name: "ok to update",
 			input: UpdateInput{
-				Criteria: map[string]any{"name": "test1"},
-				Update:   map[string]any{"name": "test2"},
+				Filter:     map[string]any{"name": "test1"},
+				UpdateData: map[string]any{"name": "test2"},
 			},
 			wantResp: UpdateOutput{
 				Status: "Successfully updated documents",
@@ -254,7 +254,7 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 		{
 			name: "ok to delete",
 			input: DeleteInput{
-				Criteria: map[string]any{"name": "test"},
+				Filter: map[string]any{"name": "test"},
 			},
 			wantResp: DeleteOutput{
 				Status: "Successfully deleted documents",

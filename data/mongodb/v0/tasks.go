@@ -20,8 +20,8 @@ type InsertOutput struct {
 }
 
 type FindInput struct {
-	Criteria map[string]any `json:"criteria"`
-	Limit    int            `json:"limit"`
+	Filter map[string]any `json:"filter"`
+	Limit  int            `json:"limit"`
 }
 
 type FindOutput struct {
@@ -30,8 +30,8 @@ type FindOutput struct {
 }
 
 type UpdateInput struct {
-	Criteria map[string]any `json:"criteria"`
-	Update   map[string]any `json:"update"`
+	Filter     map[string]any `json:"filter"`
+	UpdateData map[string]any `json:"update-data"`
 }
 
 type UpdateOutput struct {
@@ -39,7 +39,7 @@ type UpdateOutput struct {
 }
 
 type DeleteInput struct {
-	Criteria map[string]any `json:"criteria"`
+	Filter map[string]any `json:"filter"`
 }
 
 type DeleteOutput struct {
@@ -62,7 +62,7 @@ type DropDatabaseOutput struct {
 	Status string `json:"status"`
 }
 
-func (e *execution) insert(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) insert(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct InsertInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
@@ -70,7 +70,6 @@ func (e *execution) insert(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	data := inputStruct.Data
-	ctx := context.Background()
 
 	_, err = e.collectionClient.InsertOne(ctx, data)
 	if err != nil {
@@ -88,21 +87,21 @@ func (e *execution) insert(in *structpb.Struct) (*structpb.Struct, error) {
 	return output, nil
 }
 
-func (e *execution) find(in *structpb.Struct) (*structpb.Struct, error) {
+// Limit is optional (default is 0)
+func (e *execution) find(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct FindInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, err
 	}
 
-	criteria := inputStruct.Criteria
+	filter := inputStruct.Filter
 	limit := inputStruct.Limit
-	ctx := context.Background()
 
-	realCriteria := bson.M{}
-	for key, value := range criteria {
+	realFilter := bson.M{}
+	for key, value := range filter {
 		if value != nil {
-			realCriteria[key] = value
+			realFilter[key] = value
 		}
 	}
 
@@ -113,21 +112,15 @@ func (e *execution) find(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	var cursor *mongo.Cursor
-	if len(criteria) == 0 {
-		// Find all documents with the specified options (including limit if set)
-		cursor, err = e.collectionClient.Find(ctx, realCriteria, findOptions)
-	} else {
-		// Define the projection to include only the specified fields
+	if len(filter) != 0 {
 		projection := bson.M{}
 		projection["_id"] = 0
-		for key := range criteria {
+		for key := range filter {
 			projection[key] = 1
 		}
 		findOptions.SetProjection(projection)
-
-		// Find all documents with the specified options (including limit if set)
-		cursor, err = e.collectionClient.Find(ctx, realCriteria, findOptions)
 	}
+	cursor, err = e.collectionClient.Find(ctx, realFilter, findOptions)
 
 	if err != nil {
 		return nil, err
@@ -135,12 +128,12 @@ func (e *execution) find(in *structpb.Struct) (*structpb.Struct, error) {
 
 	var documents []map[string]any
 	for cursor.Next(ctx) {
-		var row map[string]any
-		err := cursor.Decode(&row)
+		var document map[string]any
+		err := cursor.Decode(&document)
 		if err != nil {
 			return nil, err
 		}
-		documents = append(documents, row)
+		documents = append(documents, document)
 	}
 
 	outputStruct := FindOutput{
@@ -155,20 +148,18 @@ func (e *execution) find(in *structpb.Struct) (*structpb.Struct, error) {
 	return output, nil
 }
 
-func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) update(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct UpdateInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, err
 	}
 
-	criteria := inputStruct.Criteria
-	updateFields := inputStruct.Update
-	ctx := context.Background()
+	filter := inputStruct.Filter
+	updateFields := inputStruct.UpdateData
 
-	// Get the document to identify which fields need to be removed
 	var result map[string]interface{}
-	err = e.collectionClient.FindOne(ctx, criteria).Decode(&result)
+	err = e.collectionClient.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
@@ -177,7 +168,6 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 	unsetFields := bson.M{}
 
 	for key := range result {
-		// If the field in the existing document is not in the updateFields, it should be removed
 		if _, found := updateFields[key]; !found && key != "_id" {
 			unsetFields[key] = ""
 		}
@@ -199,7 +189,7 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("no valid update operations found")
 	}
 
-	_, err = e.collectionClient.UpdateMany(ctx, criteria, updateDoc)
+	_, err = e.collectionClient.UpdateMany(ctx, filter, updateDoc)
 	if err != nil {
 		return nil, err
 	}
@@ -215,17 +205,16 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 	return output, nil
 }
 
-func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct DeleteInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, err
 	}
 
-	criteria := inputStruct.Criteria
-	ctx := context.Background()
+	filter := inputStruct.Filter
 
-	_, err = e.collectionClient.DeleteMany(ctx, criteria)
+	_, err = e.collectionClient.DeleteMany(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -241,8 +230,7 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 	return output, nil
 }
 
-func (e *execution) dropCollection(in *structpb.Struct) (*structpb.Struct, error) {
-	ctx := context.Background()
+func (e *execution) dropCollection(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
 
 	err := e.collectionClient.Drop(ctx)
 	if err != nil {
@@ -260,8 +248,7 @@ func (e *execution) dropCollection(in *structpb.Struct) (*structpb.Struct, error
 	return output, nil
 }
 
-func (e *execution) dropDatabase(in *structpb.Struct) (*structpb.Struct, error) {
-	ctx := context.Background()
+func (e *execution) dropDatabase(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
 
 	err := e.dbClient.Drop(ctx)
 	if err != nil {
