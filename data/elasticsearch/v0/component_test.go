@@ -17,7 +17,7 @@ import (
 func MockESSearch(wantResp SearchOutput) *esapi.Response {
 	var Hits []Hit
 	documentsBytes, _ := json.Marshal(wantResp.Documents)
-	json.Unmarshal(documentsBytes, &Hits)
+	_ = json.Unmarshal(documentsBytes, &Hits)
 
 	resp := SearchResponse{
 		Took:     1,
