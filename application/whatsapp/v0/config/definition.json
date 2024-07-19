@@ -2,7 +2,6 @@
   "availableTasks": [
     "TASK_SEND_TEMPLATE"
   ],
-  "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/application/whatsapp",
   "icon": "assets/whatsapp.svg",
   "id": "whatsapp",
