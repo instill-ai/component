@@ -152,6 +152,13 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 		taskOut.StatusCode = resp.StatusCode()
 		taskOut.Header = resp.Header()
 
+		if taskOut.Body == nil {
+			// Maintain a JSON structure for the output to avoid frontend render overhead.
+			taskOut.Body = map[string]interface{}{
+				"response": resp.String(),
+			}
+		}
+
 		output, err := base.ConvertToStructpb(taskOut)
 		if err != nil {
 			return nil, err
