@@ -17,7 +17,6 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 
-	"github.com/instill-ai/component/internal/debug"
 	"github.com/instill-ai/component/internal/jsonref"
 
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
@@ -779,16 +778,6 @@ func (c *Component) initSecretField(def *pb.ComponentDefinition) {
 	}
 	secretFields := []string{}
 
-	verboseLevel := debug.StaticVerboseLevel
-	if t, ok := def.Spec.GetComponentSpecification().GetFields()["title"]; ok {
-		if strings.Contains(t.GetStringValue(), "GitHub") {
-			verboseLevel = debug.DevelopVerboseLevel
-		}
-	}
-	var logger debug.DebugSession
-	logger.SessionStart("initSecretField", verboseLevel)
-	defer logger.SessionEnd()
-	logger.Info("def", def.Spec.GetComponentSpecification().GetFields())
 	setup := def.Spec.GetComponentSpecification().GetFields()["properties"].GetStructValue().GetFields()["setup"].GetStructValue()
 	secretFields = c.traverseSecretField(setup.GetFields()["properties"], "", secretFields)
 	if l, ok := setup.GetFields()["oneOf"]; ok {
@@ -805,7 +794,6 @@ func (c *Component) initSecretField(def *pb.ComponentDefinition) {
 			// secretFields = c.traverseSecretField(input, task+".", secretFields)
 		}
 	}
-	logger.Info(secretFields)
 	c.secretFields = secretFields
 }
 
