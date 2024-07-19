@@ -448,7 +448,19 @@
           "properties": {
             "total-tokens": {
               "title": "Total tokens",
-              "description": "Total number of tokens used (request + response)",
+              "description": "Total number of tokens used (prompt + completion)",
+              "instillFormat": "integer",
+              "type": "integer"
+            },
+            "completion-tokens": {
+              "title": "Completion tokens",
+              "description": "Total number of tokens used (completion)",
+              "instillFormat": "integer",
+              "type": "integer"
+            },
+            "prompt-tokens": {
+              "title": "Prompt tokens",
+              "description": "Total number of tokens used (prompt)",
               "instillFormat": "integer",
               "type": "integer"
             }
