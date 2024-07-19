@@ -23,7 +23,7 @@ type IndexOutput struct {
 
 type UpdateInput struct {
 	Update    map[string]any `json:"update"`
-	Criteria  map[string]any `json:"criteria"`
+	Filter    map[string]any `json:"filter"`
 	Query     string         `json:"query"`
 	IndexName string         `json:"index-name"`
 }
@@ -34,7 +34,7 @@ type UpdateOutput struct {
 
 type SearchInput struct {
 	Mode      string         `json:"mode"`
-	Criteria  map[string]any `json:"criteria"`
+	Filter    map[string]any `json:"filter"`
 	Query     string         `json:"query"`
 	IndexName string         `json:"index-name"`
 	Size      int            `json:"size"`
@@ -72,7 +72,7 @@ type Hit struct {
 }
 
 type DeleteInput struct {
-	Criteria  map[string]any `json:"criteria"`
+	Filter    map[string]any `json:"filter"`
 	Query     string         `json:"query"`
 	IndexName string         `json:"index-name"`
 }
@@ -89,9 +89,7 @@ type DeleteIndexOutput struct {
 	Status string `json:"status"`
 }
 
-// Index document into Elasticsearch
 func indexDocument(es *esapi.Index, indexName string, data map[string]any) error {
-	// Serialize data to JSON
 	dataJSON, err := json.Marshal(data)
 	if err != nil {
 		return err
@@ -99,7 +97,6 @@ func indexDocument(es *esapi.Index, indexName string, data map[string]any) error
 
 	esClient := ESIndex(*es)
 
-	// Index document using elasticsearch.Client.Index method
 	res, err := esClient(indexName, bytes.NewReader(dataJSON), func(r *esapi.IndexRequest) {
 		r.Refresh = "true"
 	})
@@ -116,38 +113,34 @@ func indexDocument(es *esapi.Index, indexName string, data map[string]any) error
 	return nil
 }
 
-// Search document from Elasticsearch
-func searchDocument(es *esapi.Search, indexName string, query string, rawCriteria map[string]any, size int) ([]Hit, error) {
-	var body io.Reader
-	if rawCriteria != nil {
-		criteria := make(map[string]any)
+func searchDocument(es *esapi.Search, indexName string, query string, rawFilter map[string]any, size int) ([]Hit, error) {
+	var body io.Reader = nil
+	if rawFilter != nil {
+		filter := make(map[string]any)
 		var source []string
-		for key, value := range rawCriteria {
+		for key, value := range rawFilter {
 			if value != nil {
-				criteria[key] = value
+				filter[key] = value
 			}
 			source = append(source, key)
 		}
 
-		criteriaQuery := make(map[string]any)
+		filterQuery := make(map[string]any)
 		if len(source) > 0 {
-			criteriaQuery["_source"] = source
+			filterQuery["_source"] = source
 		}
-		if len(criteria) > 0 {
-			criteriaQuery["query"] = map[string]any{
-				"match": criteria,
+		if len(filter) > 0 {
+			filterQuery["query"] = map[string]any{
+				"match": filter,
 			}
 		}
 
-		// Serialize data to JSON
-		criteriaJSON, err := json.Marshal(criteriaQuery)
+		filterJSON, err := json.Marshal(filterQuery)
 		if err != nil {
 			return nil, err
 		}
 
-		body = strings.NewReader(string(criteriaJSON))
-	} else {
-		body = nil
+		body = strings.NewReader(string(filterJSON))
 	}
 
 	esClient := ESSearch(*es)
@@ -172,7 +165,7 @@ func searchDocument(es *esapi.Search, indexName string, query string, rawCriteri
 	}
 
 	var response SearchResponse
-	// Deserialize response body
+
 	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
 		return nil, err
 	}
@@ -180,12 +173,10 @@ func searchDocument(es *esapi.Search, indexName string, query string, rawCriteri
 	return response.Hits.Hits, nil
 }
 
-// Update document in Elasticsearch
-func updateDocument(es *esapi.UpdateByQuery, indexName string, query string, criteria map[string]any, update map[string]any) error {
-	// Create the update by query request body
+func updateDocument(es *esapi.UpdateByQuery, indexName string, query string, filter map[string]any, update map[string]any) error {
 	updateByQueryReq := map[string]any{
 		"query": map[string]any{
-			"match": criteria,
+			"match": filter,
 		},
 		"script": map[string]any{
 			"source": "for (entry in params.entry.entrySet()) { ctx._source[entry.getKey()] = entry.getValue() }",
@@ -196,22 +187,18 @@ func updateDocument(es *esapi.UpdateByQuery, indexName string, query string, cri
 		},
 	}
 
-	var body io.Reader
-	if criteria != nil {
-		// Serialize data to JSON
+	var body io.Reader = nil
+	if filter != nil {
 		updateJSON, err := json.Marshal(updateByQueryReq)
 		if err != nil {
 			return err
 		}
 
 		body = strings.NewReader(string(updateJSON))
-	} else {
-		body = nil
 	}
 
 	esClient := ESUpdate(*es)
 
-	// Update documents using elasticsearch.Client.UpdateByQuery method
 	res, err := esClient([]string{indexName}, func(r *esapi.UpdateByQueryRequest) {
 		r.Body = body
 		r.Query = query
@@ -230,31 +217,25 @@ func updateDocument(es *esapi.UpdateByQuery, indexName string, query string, cri
 	return nil
 }
 
-// Delete document from Elasticsearch
-func deleteDocument(es *esapi.DeleteByQuery, indexName string, query string, criteria map[string]any) error {
-	// Create the delete by query request body
+func deleteDocument(es *esapi.DeleteByQuery, indexName string, query string, filter map[string]any) error {
 	deleteByQueryReq := map[string]any{
 		"query": map[string]any{
-			"match": criteria,
+			"match": filter,
 		},
 	}
 
-	var body io.Reader
-	if criteria != nil {
-		// Serialize data to JSON
-		criteriaJSON, err := json.Marshal(deleteByQueryReq)
+	var body io.Reader = nil
+	if filter != nil {
+		filterJSON, err := json.Marshal(deleteByQueryReq)
 		if err != nil {
 			return err
 		}
 
-		body = bytes.NewReader(criteriaJSON)
-	} else {
-		body = nil
+		body = bytes.NewReader(filterJSON)
 	}
 
 	esClient := ESDelete(*es)
 
-	// Delete documents using elasticsearch.Client.DeleteByQuery method
 	res, err := esClient([]string{indexName}, body, func(r *esapi.DeleteByQueryRequest) {
 		r.Query = query
 		r.Refresh = esapi.BoolPtr(true)
@@ -274,7 +255,6 @@ func deleteDocument(es *esapi.DeleteByQuery, indexName string, query string, cri
 func deleteIndex(es *esapi.IndicesDelete, indexName string) error {
 	esClient := ESDeleteIndex(*es)
 
-	// Delete index using elasticsearch.Client.Delete method
 	res, err := esClient([]string{indexName})
 
 	if err != nil {
@@ -319,7 +299,7 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = updateDocument(&e.updateClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Criteria, inputStruct.Update)
+	err = updateDocument(&e.updateClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Update)
 	if err != nil {
 		return nil, err
 	}
@@ -342,7 +322,7 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	resultTemp, err := searchDocument(&e.searchClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Criteria, inputStruct.Size)
+	resultTemp, err := searchDocument(&e.searchClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Size)
 	if err != nil {
 		return nil, err
 	}
@@ -382,7 +362,7 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = deleteDocument(&e.deleteClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Criteria)
+	err = deleteDocument(&e.deleteClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter)
 	if err != nil {
 		return nil, err
 	}

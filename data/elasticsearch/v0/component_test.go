@@ -118,7 +118,7 @@ func TestComponent_ExecuteSearchTask(t *testing.T) {
 			input: SearchInput{
 				Mode:      "Hits",
 				IndexName: "index_name",
-				Criteria:  map[string]any{"city": "New York"},
+				Filter:    map[string]any{"city": "New York"},
 				Size:      0,
 			},
 			wantResp: SearchOutput{
@@ -251,7 +251,7 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 			name: "ok to update",
 			input: UpdateInput{
 				IndexName: "index_name",
-				Criteria:  map[string]any{"name": "John Doe", "city": "New York"},
+				Filter:    map[string]any{"name": "John Doe", "city": "New York"},
 				Update:    map[string]any{"name": "Pablo Vereira", "city": "Los Angeles"},
 			},
 			wantResp: UpdateOutput{
@@ -312,7 +312,7 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 			name: "ok to delete",
 			input: DeleteInput{
 				IndexName: "index_name",
-				Criteria:  map[string]any{"name": "John Doe", "city": "New York}"},
+				Filter:    map[string]any{"name": "John Doe", "city": "New York}"},
 			},
 			wantResp: DeleteOutput{
 				Status: "Successfully deleted document",

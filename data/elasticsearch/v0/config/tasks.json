@@ -9,6 +9,7 @@
           "instillAcceptFormats": [
             "string"
           ],
+          "instillShortDescription": "Elasticsearch Index Name",
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "value",
@@ -69,6 +70,7 @@
           "instillAcceptFormats": [
             "string"
           ],
+          "instillShortDescription": "Elasticsearch Index Name",
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "value",
@@ -79,11 +81,11 @@
           "type": "string"
         },
         "query": {
-          "description": "Query to be used for update, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+          "description": "Query to be used for update, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillShortDescription": "JSON Data",
+          "instillShortDescription": "String Query",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "value",
@@ -93,8 +95,8 @@
           "type":"string",
           "title": "Query"
         },
-        "criteria": {
-          "description": "Criteria for selecting documents to update, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+        "filter": {
+          "description": "Filter for selecting documents to update, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
@@ -105,7 +107,7 @@
             "reference",
             "template"
           ],
-          "title": "Criteria"
+          "title": "Filter"
         },
         "update": {
           "description": "Update data",
@@ -129,7 +131,7 @@
       "instillEditOnNodeFields": [
         "index-name",
         "query",
-        "criteria",
+        "filter",
         "update"
       ],
       "title": "Input",
@@ -183,6 +185,7 @@
           "instillAcceptFormats": [
             "string"
           ],
+          "instillShortDescription": "Elasticsearch Index Name",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "value",
@@ -193,11 +196,11 @@
           "type": "string"
         },
         "query": {
-          "description": "Query to be used for search, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+          "description": "Query to be used for search, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillShortDescription": "JSON Data",
+          "instillShortDescription": "String Query",
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "value",
@@ -207,8 +210,8 @@
           "type":"string",
           "title": "Query"
         },
-        "criteria": {
-          "description": "Criteria for selecting documents to search, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected. Additionally, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any criteria",
+        "filter": {
+          "description": "Filter for selecting documents to search, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected. Additionally, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any filter",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
@@ -219,14 +222,15 @@
             "reference",
             "template"
           ],
-          "title": "Criteria"
+          "title": "Filter"
         },
         "size":{
-          "description": "Number of documents to return, 0 will return all documents",
+          "description": "Number of documents to return, this field is optional. If empty then all documents will be returned",
           "default": 0,
           "instillAcceptFormats": [
             "integer"
           ],
+          "instillShortDescription": "Size of documents to return, optional (empty for all documents)",
           "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "value",
@@ -245,7 +249,7 @@
         "mode",
         "index-name",
         "query",
-        "criteria",
+        "filter",
         "size"
       ],
       "title": "Input",
@@ -298,15 +302,16 @@
             "reference",
             "template"
           ],
+          "instillShortDescription": "Elasticsearch Index Name",
           "title": "Index Name",
           "type": "string"
         },
         "query": {
-          "description": "Query to be used for delete, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+          "description": "Query to be used for delete, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillShortDescription": "JSON Data",
+          "instillShortDescription": "String Query",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "value",
@@ -316,8 +321,8 @@
           "type":"string",
           "title": "Query"
         },
-        "criteria": {
-          "description": "Criteria for selecting documents to delete, query will be prioritised over criteria if both are provided, if both query and criteria are not provided, all documents will be selected",
+        "filter": {
+          "description": "Filter for selecting documents to delete, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
@@ -328,7 +333,7 @@
             "reference",
             "template"
           ],
-          "title": "Criteria"
+          "title": "Filter"
         }
       },
       "required": [
@@ -337,7 +342,7 @@
       "instillEditOnNodeFields": [
         "index-name",
         "query",
-        "criteria"
+        "filter"
       ],
       "title": "Input",
       "type": "object"
@@ -377,6 +382,7 @@
             "reference",
             "template"
           ],
+          "instillShortDescription": "Elasticsearch Index Name",
           "title": "Index Name",
           "type": "string"
         }
