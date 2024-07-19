@@ -297,7 +297,8 @@
               "gpt-4-vision-preview",
               "gpt-4",
               "gpt-4-32k",
-              "gpt-3.5-turbo"
+              "gpt-3.5-turbo",
+              "gpt-4o-mini"
             ],
             "targets": [
               "setup.api-key"
@@ -447,7 +448,19 @@
           "properties": {
             "total-tokens": {
               "title": "Total tokens",
-              "description": "Total number of tokens used (request + response)",
+              "description": "Total number of tokens used (prompt + completion)",
+              "instillFormat": "integer",
+              "type": "integer"
+            },
+            "completion-tokens": {
+              "title": "Completion tokens",
+              "description": "Total number of tokens used (completion)",
+              "instillFormat": "integer",
+              "type": "integer"
+            },
+            "prompt-tokens": {
+              "title": "Prompt tokens",
+              "description": "Total number of tokens used (prompt)",
               "instillFormat": "integer",
               "type": "integer"
             }

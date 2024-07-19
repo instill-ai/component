@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.23.0-beta](https://github.com/instill-ai/component/compare/v0.22.0-beta...v0.23.0-beta) (2024-07-19)
+
+
+### Features
+
+* add new models in open ai ([#229](https://github.com/instill-ai/component/issues/229)) ([b8e39ae](https://github.com/instill-ai/component/commit/b8e39ae535b2a795295c191ff810898791ceaa3b))
+
+
+### Bug Fixes
+
+* fix markdown chunking bugs ([#228](https://github.com/instill-ai/component/issues/228)) ([2194773](https://github.com/instill-ai/component/commit/21947732e259ea471d654c1041eef5e360f247ff))
+* **github:** patch missing fields ([#227](https://github.com/instill-ai/component/issues/227)) ([c61b134](https://github.com/instill-ai/component/commit/c61b13495fe73c4c52aae863528e59588227209e))
+* **restapi:** fix response body missing problem ([#222](https://github.com/instill-ai/component/issues/222)) ([47a28dd](https://github.com/instill-ai/component/commit/47a28dd52521ac3bb2480dc9eed0e6548136245d))
+* **text:** fix bug and replace markdown chunking ([#221](https://github.com/instill-ai/component/issues/221)) ([298c91a](https://github.com/instill-ai/component/commit/298c91a474314301dd5982aaf5cc60cb1229c7e9))
+
 ## [0.22.0-beta](https://github.com/instill-ai/component/compare/v0.21.0-beta...v0.22.0-beta) (2024-07-16)
 
 
