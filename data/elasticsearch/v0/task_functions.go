@@ -127,6 +127,7 @@ func IndexDocument(es *esapi.Index, indexName string, data map[string]any) error
 	return nil
 }
 
+// size is optional, empty means all documents
 func SearchDocument(es *esapi.Search, indexName string, query string, rawFilter map[string]any, size int) ([]Hit, error) {
 	var body io.Reader = nil
 	if rawFilter != nil {
@@ -188,6 +189,8 @@ func SearchDocument(es *esapi.Search, indexName string, query string, rawFilter 
 	return response.Hits.Hits, nil
 }
 
+// Only support vector search for now, for semantic search, we can use external model on other component combined with vector search
+// Can support up to more than 1 vector similarity fields, overall result will then be combined
 func VectorSearchDocument(es *esapi.Search, esCount *esapi.Count, indexName string, rawFilter map[string]any, size int) ([]Hit, error) {
 	var body io.Reader = nil
 
@@ -372,6 +375,8 @@ func DeleteIndex(es *esapi.IndicesDelete, indexName string) error {
 	return nil
 }
 
+// mappings refer to elasticsearch documentation for more information, use dense_vector type with similarity and dims fields
+// pre-defined mappings is mandatory for vector search, if index isnt created with mappings, vector search will not work as dense_vector type doesnt explicitly defined
 func CreateIndex(es *esapi.IndicesCreate, indexName string, mappings map[string]any) error {
 	createIndexReq := map[string]map[string]any{
 		"mappings": {
