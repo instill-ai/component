@@ -19,7 +19,7 @@ type InsertOutput struct {
 
 type UpdateInput struct {
 	Update    map[string]any `json:"update"`
-	Criteria  map[string]any `json:"criteria"`
+	Filter    map[string]any `json:"filter"`
 	TableName string         `json:"table-name"`
 }
 
@@ -28,7 +28,7 @@ type UpdateOutput struct {
 }
 
 type SelectInput struct {
-	Criteria  map[string]any `json:"criteria"`
+	Filter    map[string]any `json:"filter"`
 	TableName string         `json:"table-name"`
 	Limit     int            `json:"limit"`
 }
@@ -39,7 +39,7 @@ type SelectOutput struct {
 }
 
 type DeleteInput struct {
-	Criteria  map[string]any `json:"criteria"`
+	Filter    map[string]any `json:"filter"`
 	TableName string         `json:"table-name"`
 }
 
@@ -81,7 +81,7 @@ func buildSQLStatementInsert(tableName string, data *map[string]any) (string, ma
 	return sqlStatement, values
 }
 
-func buildSQLStatementUpdate(tableName string, updateData map[string]interface{}, criteria map[string]interface{}, e execution) (string, map[string]interface{}) {
+func buildSQLStatementUpdate(tableName string, updateData map[string]interface{}, filter map[string]interface{}, e execution) (string, map[string]interface{}) {
 	sqlStatementCols := "SELECT * FROM " + tableName
 
 	rows, _ := e.client.Queryx(sqlStatementCols)
@@ -105,9 +105,9 @@ func buildSQLStatementUpdate(tableName string, updateData map[string]interface{}
 	sqlStatement += strings.Join(setClauses, ", ")
 
 	var whereClauses []string
-	for col, criteriaValue := range criteria {
-		whereClauses = append(whereClauses, fmt.Sprintf("%s = :%s_criteria", col, col))
-		values[col+"_criteria"] = criteriaValue
+	for col, filterValue := range filter {
+		whereClauses = append(whereClauses, fmt.Sprintf("%s = :%s_filter", col, col))
+		values[col+"_filter"] = filterValue
 	}
 
 	sqlStatement += " WHERE " + strings.Join(whereClauses, " AND ")
@@ -116,24 +116,24 @@ func buildSQLStatementUpdate(tableName string, updateData map[string]interface{}
 }
 
 // limit can be empty, but it will have default value 0
-func buildSQLStatementSelect(tableName string, criteria *map[string]any, limit int) string {
+func buildSQLStatementSelect(tableName string, filter *map[string]any, limit int) string {
 	sqlStatement := "SELECT "
 	var where []string
 	var columns []string
 
-	for criteriaKey, criteriaValue := range *criteria {
-		if criteriaValue != nil {
-			switch criteriaValue.(type) {
+	for filterKey, filterValue := range *filter {
+		if filterValue != nil {
+			switch filterValue.(type) {
 			case string:
-				where = append(where, fmt.Sprintf("%s = '%v'", criteriaKey, criteriaValue))
+				where = append(where, fmt.Sprintf("%s = '%v'", filterKey, filterValue))
 			case map[string]any:
-				where = append(where, fmt.Sprintf("%s = '%v'", criteriaKey, criteriaValue))
+				where = append(where, fmt.Sprintf("%s = '%v'", filterKey, filterValue))
 			default:
-				where = append(where, fmt.Sprintf("%s = %v", criteriaKey, criteriaValue))
+				where = append(where, fmt.Sprintf("%s = %v", filterKey, filterValue))
 			}
 		}
 
-		columns = append(columns, criteriaKey)
+		columns = append(columns, filterKey)
 	}
 
 	var notAll string
@@ -158,14 +158,14 @@ func buildSQLStatementSelect(tableName string, criteria *map[string]any, limit i
 	return sqlStatement
 }
 
-func buildSQLStatementDelete(tableName string, criteria *map[string]any) (string, map[string]any) {
+func buildSQLStatementDelete(tableName string, filter *map[string]any) (string, map[string]any) {
 	sqlStatement := "DELETE FROM " + tableName + " WHERE "
 	var where []string
 	values := make(map[string]any)
 
-	for criteriaKey, criteriaValue := range *criteria {
-		where = append(where, fmt.Sprintf("%s = :%s", criteriaKey, criteriaKey))
-		values[criteriaKey] = criteriaValue
+	for filterKey, filterValue := range *filter {
+		where = append(where, fmt.Sprintf("%s = :%s", filterKey, filterKey))
+		values[filterKey] = filterValue
 	}
 
 	sqlStatement += strings.Join(where, " AND ")
@@ -227,7 +227,7 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	sqlStatement, values := buildSQLStatementUpdate(inputStruct.TableName, inputStruct.Update, inputStruct.Criteria, *e)
+	sqlStatement, values := buildSQLStatementUpdate(inputStruct.TableName, inputStruct.Update, inputStruct.Filter, *e)
 
 	_, err = e.client.NamedExec(sqlStatement, values)
 
@@ -254,7 +254,7 @@ func (e *execution) selects(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	sqlStatement := buildSQLStatementSelect(inputStruct.TableName, &inputStruct.Criteria, inputStruct.Limit)
+	sqlStatement := buildSQLStatementSelect(inputStruct.TableName, &inputStruct.Filter, inputStruct.Limit)
 
 	rows, err := e.client.Queryx(sqlStatement)
 	if err != nil {
@@ -301,7 +301,7 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	sqlStatement, values := buildSQLStatementDelete(inputStruct.TableName, &inputStruct.Criteria)
+	sqlStatement, values := buildSQLStatementDelete(inputStruct.TableName, &inputStruct.Filter)
 
 	_, err = e.client.NamedExec(sqlStatement, values)
 

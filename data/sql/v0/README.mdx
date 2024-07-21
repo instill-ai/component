@@ -45,7 +45,7 @@ The component configuration is defined and maintained [here](https://github.com/
 
 ### Insert
 
-Perform an insert operation based on specified criteria
+Perform an insert operation based on specified filter
 
 
 | Input | ID | Type | Description |
@@ -71,7 +71,7 @@ Perform an insert operation based on specified criteria
 
 ### Update
 
-Perform an update operation based on specified criteria
+Perform an update operation based on specified filter
 
 
 | Input | ID | Type | Description |
@@ -82,7 +82,7 @@ Perform an update operation based on specified criteria
 | Table Name (required) | `table-name` | string | The table name in the database to update data into |
 | Host (required) | `host` | string | The host of your database |
 | Port (required) | `port` | number | The port of your database |
-| Criteria (required) | `criteria` | semi-structured/json | The data criteria to be updated |
+| Filter (required) | `filter` | semi-structured/json | The data filter to be updated |
 | Update (required) | `update` | semi-structured/json | The new data to be updated to |
 
 
@@ -98,7 +98,7 @@ Perform an update operation based on specified criteria
 
 ### Select
 
-Perform a select operation based on specified criteria
+Perform a select operation based on specified filter
 
 
 | Input | ID | Type | Description |
@@ -109,7 +109,7 @@ Perform a select operation based on specified criteria
 | Table Name (required) | `table-name` | string | The table name in the database to be selected |
 | Host (required) | `host` | string | The host of your database |
 | Port (required) | `port` | number | The port of your database |
-| Criteria (required) | `criteria` | semi-structured/json | The data criteria to be selected, if JSON value of a key is null e.g \{'name':null\}, then name column will be selected without any criteria, if JSON is empty e.g \{\}, then all columns will be selected |
+| Filter | `filter` | semi-structured/json | The data filter to be selected, if JSON value of a key is null e.g \{"name":null\}, then name column will be selected without any filter. If empty, then all columns will be selected |
 | Limit | `limit` | integer | The limit of rows to be selected, optional (empty for all rows) |
 
 
@@ -126,7 +126,7 @@ Perform a select operation based on specified criteria
 
 ### Delete
 
-Perform a delete operation based on specified criteria
+Perform a delete operation based on specified filter
 
 
 | Input | ID | Type | Description |
@@ -137,7 +137,7 @@ Perform a delete operation based on specified criteria
 | Table Name (required) | `table-name` | string | The table name in the database to be deleted |
 | Host (required) | `host` | string | The host of your database |
 | Port (required) | `port` | number | The port of your database |
-| Criteria (required) | `criteria` | semi-structured/json | The data criteria to be deleted |
+| Filter (required) | `filter` | semi-structured/json | The data filter to be deleted |
 
 
 
@@ -163,7 +163,7 @@ Create a table in the database
 | Table Name (required) | `table-name` | string | The table name in the database to be created |
 | Host (required) | `host` | string | The host of your database |
 | Port (required) | `port` | number | The port of your database |
-| Columns (required) | `columns` | semi-structured/json | The columns to be created in the table, json with value string, e.g \{'name': 'VARCHAR(255'), 'age': 'INT not null'\} |
+| Columns (required) | `columns` | semi-structured/json | The columns to be created in the table, json with value string, e.g \{"name": "VARCHAR(255)", "age": "INT not null"\} |
 
 
 

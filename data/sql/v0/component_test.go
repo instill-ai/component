@@ -188,7 +188,7 @@ func TestUpdateUser(t *testing.T) {
 			name:      "update user",
 			tableName: "users",
 			input: UpdateInput{
-				Criteria: map[string]any{
+				Filter: map[string]any{
 					"id":   "1",
 					"name": "John Doe",
 				},
@@ -257,7 +257,7 @@ func TestSelectUser(t *testing.T) {
 			name:      "select users",
 			tableName: "users",
 			input: SelectInput{
-				Criteria: map[string]any{
+				Filter: map[string]any{
 					"id":    "1",
 					"name":  "john",
 					"email": "john@example.com",
@@ -327,7 +327,7 @@ func TestDeleteUser(t *testing.T) {
 			name:      "delete user",
 			tableName: "users",
 			input: DeleteInput{
-				Criteria: map[string]any{
+				Filter: map[string]any{
 					"id":   "1",
 					"name": "john",
 				},

@@ -92,7 +92,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 type SetupNoSecret struct {
 	DBName   string `json:"database-name"`
 	DBHost   string `json:"host"`
-	DBPort   string `json:"port"`
+	DBPort   int    `json:"port"`
 	DBEngine string `json:"engine"`
 }
 

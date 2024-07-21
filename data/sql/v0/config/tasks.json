@@ -1,6 +1,6 @@
 {
   "TASK_INSERT": {
-    "instillShortDescription": "Perform an insert operation based on specified criteria",
+    "instillShortDescription": "Perform an insert operation based on specified filter",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -127,7 +127,7 @@
     }
   },
   "TASK_UPDATE": {
-    "instillShortDescription": "Perform an update operation based on specified criteria",
+    "instillShortDescription": "Perform an update operation based on specified filter",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -189,8 +189,8 @@
           "title": "Port",
           "type": "number"
         },
-        "criteria": {
-          "description": "The data criteria to be updated",
+        "filter": {
+          "description": "The data filter to be updated",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
@@ -201,7 +201,7 @@
             "template",
             "value"
           ],
-          "title": "Criteria"
+          "title": "Filter"
         },
         "update": {
           "description": "The new data to be updated to",
@@ -242,7 +242,7 @@
         "database-name",
         "host",
         "port",
-        "criteria",
+        "filter",
         "update",
         "table-name"
       ],
@@ -269,7 +269,7 @@
     }
   },
   "TASK_SELECT":{
-    "instillShortDescription": "Perform a select operation based on specified criteria",
+    "instillShortDescription": "Perform a select operation based on specified filter",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -331,19 +331,19 @@
           "title": "Port",
           "type": "number"
         },
-        "criteria": {
-          "description": "The data criteria to be selected, if JSON value of a key is null e.g {'name':null}, then name column will be selected without any criteria, if JSON is empty e.g {}, then all columns will be selected",
+        "filter": {
+          "description": "The data filter to be selected, if JSON value of a key is null e.g {\"name\":null}, then name column will be selected without any filter. If empty, then all columns will be selected",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data",
+          "instillShortDescription": "JSON Data, optional (empty for all rows)",
           "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
-          "title": "Criteria"
+          "title": "Filter"
         },
         "limit": {
           "description": "The limit of rows to be selected, optional (empty for all rows)",
@@ -381,8 +381,7 @@
         "database-name",
         "host",
         "port",
-        "table-name",
-        "criteria"
+        "table-name"
       ],
       "instillEditOnNodeFields": [
         "engine",
@@ -390,7 +389,7 @@
         "host",
         "port",
         "table-name",
-        "criteria",
+        "filter",
         "limit"
       ],
       "title": "Input",
@@ -434,7 +433,7 @@
     }
   },
   "TASK_DELETE": {
-    "instillShortDescription": "Perform a delete operation based on specified criteria",
+    "instillShortDescription": "Perform a delete operation based on specified filter",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -496,8 +495,8 @@
           "title": "Port",
           "type": "number"
         },
-        "criteria": {
-          "description": "The data criteria to be deleted",
+        "filter": {
+          "description": "The data filter to be deleted",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
@@ -508,7 +507,7 @@
             "template",
             "value"
           ],
-          "title": "Criteria"
+          "title": "Filter"
         },
         "table-name": {
           "description": "The table name in the database to be deleted",
@@ -531,7 +530,7 @@
         "database-name",
         "host",
         "port",
-        "criteria",
+        "filter",
         "table-name"
       ],
       "title": "Input",
@@ -635,11 +634,11 @@
           "type":"string"
         },
         "columns": {
-          "description": "The columns to be created in the table, json with value string, e.g {'name': 'VARCHAR(255'), 'age': 'INT not null'}",
+          "description": "The columns to be created in the table, json with value string, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data, e.g {'name': 'VARCHAR(255'), 'age': 'INT not null'}",
+          "instillShortDescription": "JSON Data, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
           "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "reference",
