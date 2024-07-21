@@ -263,8 +263,7 @@ func TestSelectUser(t *testing.T) {
 					"email": "john@example.com",
 				},
 				TableName: "users",
-				From:      0,
-				To:        1,
+				Limit:     0,
 			},
 			wantResp: SelectOutput{
 				Status: "Successfully selected rows",

@@ -35,12 +35,8 @@ The component configuration is defined and maintained [here](https://github.com/
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Engine (required) | `engine` | string | Choose the engine of your database |
 | Username (required) | `user` | string | Fill in your account username |
-| Password | `password` | string | Fill in your account password |
-| Database Name (required) | `name` | string | Fill in your database name |
-| Host (required) | `host` | string | Fill in your database host |
-| Port (required) | `port` | number | Fill in your database port |
+| Password (required) | `password` | string | Fill in your account password |
 
 
 
@@ -55,7 +51,11 @@ Perform an insert operation based on specified criteria
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_INSERT` |
+| Engine (required) | `engine` | string | Choose the engine of your database |
+| Database Name (required) | `database-name` | string | The database name to insert data into |
 | Table Name (required) | `table-name` | string | The table name in the database to insert data into |
+| Host (required) | `host` | string | The host of your database |
+| Port (required) | `port` | number | The port of your database |
 | Data (required) | `data` | semi-structured/json | The data to be inserted |
 
 
@@ -77,7 +77,11 @@ Perform an update operation based on specified criteria
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UPDATE` |
+| Engine (required) | `engine` | string | Choose the engine of your database |
+| Database Name (required) | `database-name` | string | The database name to insert data into |
 | Table Name (required) | `table-name` | string | The table name in the database to update data into |
+| Host (required) | `host` | string | The host of your database |
+| Port (required) | `port` | number | The port of your database |
 | Criteria (required) | `criteria` | semi-structured/json | The data criteria to be updated |
 | Update (required) | `update` | semi-structured/json | The new data to be updated to |
 
@@ -100,10 +104,13 @@ Perform a select operation based on specified criteria
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SELECT` |
+| Engine (required) | `engine` | string | Choose the engine of your database |
+| Database Name (required) | `database-name` | string | The database name to insert data into |
 | Table Name (required) | `table-name` | string | The table name in the database to be selected |
+| Host (required) | `host` | string | The host of your database |
+| Port (required) | `port` | number | The port of your database |
 | Criteria (required) | `criteria` | semi-structured/json | The data criteria to be selected, if JSON value of a key is null e.g \{'name':null\}, then name column will be selected without any criteria, if JSON is empty e.g \{\}, then all columns will be selected |
-| From (required) | `from` | number | The starting row to be selected, if both 'from' and 'to' equals 0 then all rows will be selected |
-| To (required) | `to` | number | The starting row to be selected, if both 'from' and 'to' equals 0 then all rows will be selected |
+| Limit | `limit` | integer | The limit of rows to be selected, optional (empty for all rows) |
 
 
 
@@ -125,7 +132,11 @@ Perform a delete operation based on specified criteria
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DELETE` |
+| Engine (required) | `engine` | string | Choose the engine of your database |
+| Database Name (required) | `database-name` | string | The database name to insert data into |
 | Table Name (required) | `table-name` | string | The table name in the database to be deleted |
+| Host (required) | `host` | string | The host of your database |
+| Port (required) | `port` | number | The port of your database |
 | Criteria (required) | `criteria` | semi-structured/json | The data criteria to be deleted |
 
 
@@ -147,8 +158,12 @@ Create a table in the database
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_TABLE` |
+| Engine (required) | `engine` | string | Choose the engine of your database |
+| Database Name (required) | `database-name` | string | The database name to insert data into |
 | Table Name (required) | `table-name` | string | The table name in the database to be created |
-| Columns (required) | `columns` | semi-structured/json | The columns to be created in the table |
+| Host (required) | `host` | string | The host of your database |
+| Port (required) | `port` | number | The port of your database |
+| Columns (required) | `columns` | semi-structured/json | The columns to be created in the table, json with value string, e.g \{'name': 'VARCHAR(255'), 'age': 'INT not null'\} |
 
 
 
@@ -169,7 +184,11 @@ Drop a table in the database
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DROP_TABLE` |
+| Engine (required) | `engine` | string | Choose the engine of your database |
+| Database Name (required) | `database-name` | string | The database name to insert data into |
 | Table Name (required) | `table-name` | string | The table name in the database to be dropped |
+| Host (required) | `host` | string | The host of your database |
+| Port (required) | `port` | number | The port of your database |
 
 
 

@@ -65,7 +65,6 @@ func Init(bc base.Component) *component {
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
-		client:             newClient(setup),
 	}
 
 	switch task {
@@ -90,10 +89,29 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
+type SetupNoSecret struct {
+	DBName   string `json:"database-name"`
+	DBHost   string `json:"host"`
+	DBPort   string `json:"port"`
+	DBEngine string `json:"engine"`
+}
+
+// newClient being setup here in the Execute since all the input for connection string is in inputs
+// therefore, every new inputs will create a new connection
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	for i, input := range inputs {
+		var inputStruct SetupNoSecret
+		err := base.ConvertFromStructpb(input, &inputStruct)
+		if err != nil {
+			return nil, err
+		}
+
+		if e.client == nil {
+			e.client = newClient(e.Setup, &inputStruct)
+		}
+
 		output, err := e.execute(input)
 		if err != nil {
 			return nil, err
@@ -103,9 +121,4 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	}
 
 	return outputs, nil
-}
-
-func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
-
-	return nil
 }

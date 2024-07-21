@@ -4,13 +4,71 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "engine": {
+          "description": "Choose the engine of your database",
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Engine",
+          "enum": [
+            "MySQL",
+            "PostgreSQL",
+            "SQL Server",
+            "Oracle",
+            "MariaDB",
+            "Firebird"
+          ],
+          "type": "string"
+        },
+        "database-name": {
+          "description": "The database name to insert data into",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "host": {
+          "description": "The host of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 3,
+          "title": "Host",
+          "type": "string"
+        },
+        "port": {
+          "description": "The port of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "number"
+          ],
+          "instillUIOrder": 4,
+          "title": "Port",
+          "type": "number"
+        },
         "data": {
           "description": "The data to be inserted",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object","array"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 1,
+          "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -28,7 +86,7 @@
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 0,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -39,6 +97,10 @@
         }
       },
       "required": [
+        "engine",
+        "database-name",
+        "host",
+        "port",
         "data",
         "table-name"
       ],
@@ -69,13 +131,71 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "engine": {
+          "description": "Choose the engine of your database",
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Engine",
+          "enum": [
+            "MySQL",
+            "PostgreSQL",
+            "SQL Server",
+            "Oracle",
+            "MariaDB",
+            "Firebird"
+          ],
+          "type": "string"
+        },
+        "database-name": {
+          "description": "The database name to insert data into",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "host": {
+          "description": "The host of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 3,
+          "title": "Host",
+          "type": "string"
+        },
+        "port": {
+          "description": "The port of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "number"
+          ],
+          "instillUIOrder": 4,
+          "title": "Port",
+          "type": "number"
+        },
         "criteria": {
           "description": "The data criteria to be updated",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 1,
+          "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -89,7 +209,7 @@
             "semi-structured/*","structured/*","object","array"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 2,
+          "instillUIOrder": 6,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -107,7 +227,7 @@
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 0,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -118,6 +238,10 @@
         }
       },
       "required": [
+        "engine",
+        "database-name",
+        "host",
+        "port",
         "criteria",
         "update",
         "table-name"
@@ -149,13 +273,71 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "engine": {
+          "description": "Choose the engine of your database",
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Engine",
+          "enum": [
+            "MySQL",
+            "PostgreSQL",
+            "SQL Server",
+            "Oracle",
+            "MariaDB",
+            "Firebird"
+          ],
+          "type": "string"
+        },
+        "database-name": {
+          "description": "The database name to insert data into",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "host": {
+          "description": "The host of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 3,
+          "title": "Host",
+          "type": "string"
+        },
+        "port": {
+          "description": "The port of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "number"
+          ],
+          "instillUIOrder": 4,
+          "title": "Port",
+          "type": "number"
+        },
         "criteria": {
           "description": "The data criteria to be selected, if JSON value of a key is null e.g {'name':null}, then name column will be selected without any criteria, if JSON is empty e.g {}, then all columns will be selected",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 1,
+          "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -163,35 +345,20 @@
           ],
           "title": "Criteria"
         },
-        "from": {
-          "description": "The starting row to be selected, if both 'from' and 'to' equals 0 then all rows will be selected",
+        "limit": {
+          "description": "The limit of rows to be selected, optional (empty for all rows)",
           "instillAcceptFormats": [
-            "number"
+            "integer"
           ],
-          "instillShortDescription": "Starting of rows (check description for more details)",
-          "instillUIOrder": 2,
+          "instillShortDescription": "Limit Rows",
+          "instillUIOrder": 6,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
-          "title": "From",
-          "type":"number"
-        },
-        "to": {
-          "description": "The starting row to be selected, if both 'from' and 'to' equals 0 then all rows will be selected",
-          "instillAcceptFormats": [
-            "number"
-          ],
-          "instillShortDescription": "Ending of rows (check description for more details)",
-          "instillUIOrder": 3,
-          "instillUpstreamTypes": [
-            "reference",
-            "template",
-            "value"
-          ],
-          "title": "To",
-          "type":"number"
+          "title": "Limit",
+          "type":"integer"
         },
         "table-name": {
           "description": "The table name in the database to be selected",
@@ -199,7 +366,7 @@
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 0,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -210,10 +377,21 @@
         }
       },
       "required": [
+        "engine",
+        "database-name",
+        "host",
+        "port",
+        "table-name",
+        "criteria"
+      ],
+      "instillEditOnNodeFields": [
+        "engine",
+        "database-name",
+        "host",
+        "port",
         "table-name",
         "criteria",
-        "from",
-        "to"
+        "limit"
       ],
       "title": "Input",
       "type": "object"
@@ -260,13 +438,71 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "engine": {
+          "description": "Choose the engine of your database",
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Engine",
+          "enum": [
+            "MySQL",
+            "PostgreSQL",
+            "SQL Server",
+            "Oracle",
+            "MariaDB",
+            "Firebird"
+          ],
+          "type": "string"
+        },
+        "database-name": {
+          "description": "The database name to insert data into",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "host": {
+          "description": "The host of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 3,
+          "title": "Host",
+          "type": "string"
+        },
+        "port": {
+          "description": "The port of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "number"
+          ],
+          "instillUIOrder": 4,
+          "title": "Port",
+          "type": "number"
+        },
         "criteria": {
           "description": "The data criteria to be deleted",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
           "instillShortDescription": "JSON Data",
-          "instillUIOrder": 1,
+          "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -280,7 +516,7 @@
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 0,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -291,6 +527,10 @@
         }
       },
       "required": [
+        "engine",
+        "database-name",
+        "host",
+        "port",
         "criteria",
         "table-name"
       ],
@@ -321,13 +561,71 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "engine": {
+          "description": "Choose the engine of your database",
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Engine",
+          "enum": [
+            "MySQL",
+            "PostgreSQL",
+            "SQL Server",
+            "Oracle",
+            "MariaDB",
+            "Firebird"
+          ],
+          "type": "string"
+        },
+        "database-name": {
+          "description": "The database name to insert data into",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "host": {
+          "description": "The host of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 3,
+          "title": "Host",
+          "type": "string"
+        },
+        "port": {
+          "description": "The port of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "number"
+          ],
+          "instillUIOrder": 4,
+          "title": "Port",
+          "type": "number"
+        },
         "table-name": {
           "description": "The table name in the database to be created",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 0,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -337,12 +635,12 @@
           "type":"string"
         },
         "columns": {
-          "description": "The columns to be created in the table",
+          "description": "The columns to be created in the table, json with value string, e.g {'name': 'VARCHAR(255'), 'age': 'INT not null'}",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data",
-          "instillUIOrder": 1,
+          "instillShortDescription": "JSON Data, e.g {'name': 'VARCHAR(255'), 'age': 'INT not null'}",
+          "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -352,6 +650,10 @@
         }
       },
       "required": [
+        "engine",
+        "database-name",
+        "host",
+        "port",
         "table-name",
         "columns"
       ],
@@ -382,13 +684,71 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "engine": {
+          "description": "Choose the engine of your database",
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Engine",
+          "enum": [
+            "MySQL",
+            "PostgreSQL",
+            "SQL Server",
+            "Oracle",
+            "MariaDB",
+            "Firebird"
+          ],
+          "type": "string"
+        },
+        "database-name": {
+          "description": "The database name to insert data into",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "host": {
+          "description": "The host of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 3,
+          "title": "Host",
+          "type": "string"
+        },
+        "port": {
+          "description": "The port of your database",
+          "instillUpstreamTypes": [
+            "value","reference"
+          ],
+          "instillAcceptFormats": [
+            "number"
+          ],
+          "instillUIOrder": 4,
+          "title": "Port",
+          "type": "number"
+        },
         "table-name": {
           "description": "The table name in the database to be dropped",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 0,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -399,6 +759,10 @@
         }
       },
       "required": [
+        "engine",
+        "database-name",
+        "host",
+        "port",
         "table-name"
       ],
       "title": "Input",

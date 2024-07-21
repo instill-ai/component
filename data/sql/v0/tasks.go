@@ -2,7 +2,6 @@ package sql
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/instill-ai/component/base"
@@ -31,8 +30,7 @@ type UpdateOutput struct {
 type SelectInput struct {
 	Criteria  map[string]any `json:"criteria"`
 	TableName string         `json:"table-name"`
-	From      int            `json:"from"`
-	To        int            `json:"to"`
+	Limit     int            `json:"limit"`
 }
 
 type SelectOutput struct {
@@ -84,20 +82,16 @@ func buildSQLStatementInsert(tableName string, data *map[string]any) (string, ma
 }
 
 func buildSQLStatementUpdate(tableName string, updateData map[string]interface{}, criteria map[string]interface{}, e execution) (string, map[string]interface{}) {
-	// Take all columns
 	sqlStatementCols := "SELECT * FROM " + tableName
 
-	// Prepare and execute the statement
 	rows, _ := e.client.Queryx(sqlStatementCols)
 	defer rows.Close()
 
 	sqlStatement := "UPDATE " + tableName + " SET "
 	values := make(map[string]interface{})
 
-	// Get column names from the query result
 	columns, _ := rows.Columns()
 
-	// Build SET clauses
 	var setClauses []string
 	for _, col := range columns {
 		if updateValue, found := updateData[col]; found {
@@ -110,7 +104,6 @@ func buildSQLStatementUpdate(tableName string, updateData map[string]interface{}
 
 	sqlStatement += strings.Join(setClauses, ", ")
 
-	// Build WHERE clauses
 	var whereClauses []string
 	for col, criteriaValue := range criteria {
 		whereClauses = append(whereClauses, fmt.Sprintf("%s = :%s_criteria", col, col))
@@ -122,8 +115,8 @@ func buildSQLStatementUpdate(tableName string, updateData map[string]interface{}
 	return sqlStatement, values
 }
 
-func buildSQLStatementSelect(tableName string, criteria *map[string]any, to int, from int) string {
-	// Begin constructing SQL statement
+// limit can be empty, but it will have default value 0
+func buildSQLStatementSelect(tableName string, criteria *map[string]any, limit int) string {
 	sqlStatement := "SELECT "
 	var where []string
 	var columns []string
@@ -132,13 +125,10 @@ func buildSQLStatementSelect(tableName string, criteria *map[string]any, to int,
 		if criteriaValue != nil {
 			switch criteriaValue.(type) {
 			case string:
-				// If the value is a string, quote it in the SQL statement
 				where = append(where, fmt.Sprintf("%s = '%v'", criteriaKey, criteriaValue))
 			case map[string]any:
-				// If the value is json, quote it in the SQL statement
 				where = append(where, fmt.Sprintf("%s = '%v'", criteriaKey, criteriaValue))
 			default:
-				// If the value is a number or bool, use it directly without quotes
 				where = append(where, fmt.Sprintf("%s = %v", criteriaKey, criteriaValue))
 			}
 		}
@@ -147,10 +137,10 @@ func buildSQLStatementSelect(tableName string, criteria *map[string]any, to int,
 	}
 
 	var notAll string
-	if to == 0 && from == 0 {
+	if limit == 0 {
 		notAll = ""
 	} else {
-		notAll = " LIMIT " + strconv.Itoa(to-from+1) + " OFFSET " + strconv.Itoa(from-1)
+		notAll = fmt.Sprintf(" LIMIT %d", limit)
 	}
 
 	if len(columns) > 0 {
@@ -169,10 +159,9 @@ func buildSQLStatementSelect(tableName string, criteria *map[string]any, to int,
 }
 
 func buildSQLStatementDelete(tableName string, criteria *map[string]any) (string, map[string]any) {
-	// Begin constructing SQL statement
 	sqlStatement := "DELETE FROM " + tableName + " WHERE "
 	var where []string
-	values := make(map[string]any) // Initialize the map
+	values := make(map[string]any)
 
 	for criteriaKey, criteriaValue := range *criteria {
 		where = append(where, fmt.Sprintf("%s = :%s", criteriaKey, criteriaKey))
@@ -184,6 +173,7 @@ func buildSQLStatementDelete(tableName string, criteria *map[string]any) (string
 	return sqlStatement, values
 }
 
+// columns is a map of column name and column type and handled in json format to prevent sql injection
 func buildSQLStatementCreateTable(tableName string, columns map[string]string) (string, map[string]any) {
 	sqlStatement := "CREATE TABLE " + tableName + " ("
 	var columnDefs []string
@@ -213,7 +203,6 @@ func (e *execution) insert(in *structpb.Struct) (*structpb.Struct, error) {
 
 	sqlStatement, values := buildSQLStatementInsert(inputStruct.TableName, &inputStruct.Data)
 
-	// Prepare and execute the statement using NamedExec
 	_, err = e.client.NamedExec(sqlStatement, values)
 
 	if err != nil {
@@ -240,7 +229,6 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 
 	sqlStatement, values := buildSQLStatementUpdate(inputStruct.TableName, inputStruct.Update, inputStruct.Criteria, *e)
 
-	// Prepare and execute the statement using NamedExec
 	_, err = e.client.NamedExec(sqlStatement, values)
 
 	if err != nil {
@@ -258,6 +246,7 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 	return output, nil
 }
 
+// Queryx is used since we need not only status but also result return
 func (e *execution) selects(in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct SelectInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
@@ -265,39 +254,31 @@ func (e *execution) selects(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	sqlStatement := buildSQLStatementSelect(inputStruct.TableName, &inputStruct.Criteria, inputStruct.To, inputStruct.From)
+	sqlStatement := buildSQLStatementSelect(inputStruct.TableName, &inputStruct.Criteria, inputStruct.Limit)
 
-	// Prepare and execute the statement
 	rows, err := e.client.Queryx(sqlStatement)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	// Prepare the result slice of maps
 	var result []map[string]any
 
-	// Iterate over the rows
 	for rows.Next() {
-		// Create a map to hold the row data
 		rowMap := make(map[string]any)
 
-		// Load the row data into the map
 		err := rows.MapScan(rowMap)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan row: %v", err)
 		}
 
-		// Convert each value in the map to the appropriate type
 		for key, value := range rowMap {
 			switch v := value.(type) {
 			case []byte:
-				// Convert byte slices to strings
 				rowMap[key] = string(v)
 			}
 		}
 
-		// Add the row map to the result slice
 		result = append(result, rowMap)
 	}
 
@@ -322,7 +303,6 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 
 	sqlStatement, values := buildSQLStatementDelete(inputStruct.TableName, &inputStruct.Criteria)
 
-	// Prepare and execute the statement using NamedExec
 	_, err = e.client.NamedExec(sqlStatement, values)
 
 	if err != nil {
@@ -349,7 +329,6 @@ func (e *execution) createTable(in *structpb.Struct) (*structpb.Struct, error) {
 
 	sqlStatement, values := buildSQLStatementCreateTable(inputStruct.TableName, inputStruct.Columns)
 
-	// Prepare and execute the statement using NamedExec
 	_, err = e.client.NamedExec(sqlStatement, values)
 
 	if err != nil {
@@ -376,7 +355,6 @@ func (e *execution) dropTable(in *structpb.Struct) (*structpb.Struct, error) {
 
 	sqlStatement, values := buildSQLStatementDropTable(inputStruct.TableName)
 
-	// Prepare and execute the statement using NamedExec
 	_, err = e.client.NamedExec(sqlStatement, values)
 
 	if err != nil {
