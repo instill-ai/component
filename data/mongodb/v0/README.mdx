@@ -75,7 +75,7 @@ Perform a find operation
 | Task ID (required) | `task` | string | `TASK_FIND` |
 | Database Name (required) | `database-name` | string | Fill in your MongoDB database name |
 | Collection Name (required) | `collection-name` | string | The name of the collection in the MongoDB database |
-| Filter (required) | `filter` | semi-structured/json | The filter to find documents, if JSON value of a key is null e.g \{'name':null\}, then name field will be selected without any filter, if JSON is empty e.g \{\}, then all fields will be selected |
+| Filter | `filter` | semi-structured/json | The filter to find documents, if JSON value of a key is null e.g \{'name':null\}, then name field will be selected without any filter. If empty, then all fields will be selected |
 | Limit | `limit` | integer | The number of documents to return, this field is optional. If empty then all documents will be returned |
 
 

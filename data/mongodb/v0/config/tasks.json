@@ -110,11 +110,11 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to find documents, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any filter, if JSON is empty e.g {}, then all fields will be selected",
+          "description": "The filter to find documents, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any filter. If empty, then all fields will be selected",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data",
+          "instillShortDescription": "JSON Data, optional (empty for all documents)",
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
@@ -140,8 +140,7 @@
       },
       "required": [
         "database-name",
-        "collection-name",
-        "filter"
+        "collection-name"
       ],
       "instillEditOnNodeFields":[
         "database-name",
