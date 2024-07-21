@@ -99,7 +99,9 @@ func TestComponent_ExecuteInsertTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskInsert},
-				collectionClient:   &MockMongoClient{},
+				client: &MongoClient{
+					collectionClient: &MockMongoClient{},
+				},
 			}
 			e.execute = e.insert
 			exec := &base.ExecutionWrapper{Execution: e}
@@ -160,7 +162,9 @@ func TestComponent_ExecuteFindTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskFind},
-				collectionClient:   &MockMongoClient{},
+				client: &MongoClient{
+					collectionClient: &MockMongoClient{},
+				},
 			}
 			e.execute = e.find
 			exec := &base.ExecutionWrapper{Execution: e}
@@ -217,7 +221,9 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskUpdate},
-				collectionClient:   &MockMongoClient{},
+				client: &MongoClient{
+					collectionClient: &MockMongoClient{},
+				},
 			}
 			e.execute = e.update
 			exec := &base.ExecutionWrapper{Execution: e}
@@ -273,7 +279,9 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDelete},
-				collectionClient:   &MockMongoClient{},
+				client: &MongoClient{
+					collectionClient: &MockMongoClient{},
+				},
 			}
 			e.execute = e.delete
 			exec := &base.ExecutionWrapper{Execution: e}
@@ -329,7 +337,9 @@ func TestComponent_ExecuteDeleteCollectionTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDropCollection},
-				collectionClient:   &MockMongoClient{},
+				client: &MongoClient{
+					collectionClient: &MockMongoClient{},
+				},
 			}
 			e.execute = e.dropCollection
 			exec := &base.ExecutionWrapper{Execution: e}
@@ -385,7 +395,9 @@ func TestComponent_ExecuteDeleteDatabaseTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDropDatabase},
-				dbClient:           &MockMongoClient{},
+				client: &MongoClient{
+					databaseClient: &MockMongoClient{},
+				},
 			}
 			e.execute = e.dropDatabase
 			exec := &base.ExecutionWrapper{Execution: e}

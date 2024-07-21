@@ -52,14 +52,18 @@ type MongoDatabaseClient interface {
 	Drop(ctx context.Context) error
 }
 
+type MongoClient struct {
+	collectionClient MongoCollectionClient
+	databaseClient   MongoDatabaseClient
+}
+
 // dbClient for task DropDatabase
 // collectionClient for other than task DropDatabase
 type execution struct {
 	base.ComponentExecution
 
-	execute          func(context.Context, *structpb.Struct) (*structpb.Struct, error)
-	collectionClient MongoCollectionClient
-	dbClient         MongoDatabaseClient
+	execute func(context.Context, *structpb.Struct) (*structpb.Struct, error)
+	client  *MongoClient
 }
 
 // Init returns an implementation of IConnector that interacts with MongoDB.
@@ -78,6 +82,7 @@ func Init(bc base.Component) *component {
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
+		client:             &MongoClient{},
 	}
 
 	switch task {
@@ -123,14 +128,14 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 		}
 
 		var db *mongo.Database
-		if e.dbClient == nil {
+		if e.client.databaseClient == nil {
 			db = client.Database(inputStruct.DatabaseName)
-			e.dbClient = db
+			e.client.databaseClient = db
 		}
 
-		if e.Task != TaskDropDatabase && e.collectionClient == nil {
+		if e.Task != TaskDropDatabase && e.client.collectionClient == nil {
 			collection := db.Collection(inputStruct.CollectionName)
-			e.collectionClient = collection
+			e.client.collectionClient = collection
 		}
 
 		output, err := e.execute(ctx, input)

@@ -71,7 +71,7 @@ func (e *execution) insert(ctx context.Context, in *structpb.Struct) (*structpb.
 
 	data := inputStruct.Data
 
-	_, err = e.collectionClient.InsertOne(ctx, data)
+	_, err = e.client.collectionClient.InsertOne(ctx, data)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func (e *execution) find(ctx context.Context, in *structpb.Struct) (*structpb.St
 		}
 		findOptions.SetProjection(projection)
 	}
-	cursor, err = e.collectionClient.Find(ctx, realFilter, findOptions)
+	cursor, err = e.client.collectionClient.Find(ctx, realFilter, findOptions)
 
 	if err != nil {
 		return nil, err
@@ -159,7 +159,7 @@ func (e *execution) update(ctx context.Context, in *structpb.Struct) (*structpb.
 	updateFields := inputStruct.UpdateData
 
 	var result map[string]interface{}
-	err = e.collectionClient.FindOne(ctx, filter).Decode(&result)
+	err = e.client.collectionClient.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +189,7 @@ func (e *execution) update(ctx context.Context, in *structpb.Struct) (*structpb.
 		return nil, fmt.Errorf("no valid update operations found")
 	}
 
-	_, err = e.collectionClient.UpdateMany(ctx, filter, updateDoc)
+	_, err = e.client.collectionClient.UpdateMany(ctx, filter, updateDoc)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +214,7 @@ func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.
 
 	filter := inputStruct.Filter
 
-	_, err = e.collectionClient.DeleteMany(ctx, filter)
+	_, err = e.client.collectionClient.DeleteMany(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -232,7 +232,7 @@ func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.
 
 func (e *execution) dropCollection(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
 
-	err := e.collectionClient.Drop(ctx)
+	err := e.client.collectionClient.Drop(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +250,7 @@ func (e *execution) dropCollection(ctx context.Context, in *structpb.Struct) (*s
 
 func (e *execution) dropDatabase(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
 
-	err := e.dbClient.Drop(ctx)
+	err := e.client.databaseClient.Drop(ctx)
 	if err != nil {
 		return nil, err
 	}
