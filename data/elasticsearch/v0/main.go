@@ -16,12 +16,13 @@ import (
 )
 
 const (
-	TaskSearch      = "TASK_SEARCH"
-	TaskIndex       = "TASK_INDEX"
-	TaskUpdate      = "TASK_UPDATE"
-	TaskDelete      = "TASK_DELETE"
-	TaskCreateIndex = "TASK_CREATE_INDEX"
-	TaskDeleteIndex = "TASK_DELETE_INDEX"
+	TaskSearch       = "TASK_SEARCH"
+	TaskVectorSearch = "TASK_VECTOR_SEARCH"
+	TaskIndex        = "TASK_INDEX"
+	TaskUpdate       = "TASK_UPDATE"
+	TaskDelete       = "TASK_DELETE"
+	TaskCreateIndex  = "TASK_CREATE_INDEX"
+	TaskDeleteIndex  = "TASK_DELETE_INDEX"
 )
 
 var (
@@ -43,13 +44,18 @@ type component struct {
 type execution struct {
 	base.ComponentExecution
 
-	execute           func(*structpb.Struct) (*structpb.Struct, error)
-	searchClient      esapi.Search
+	execute func(*structpb.Struct) (*structpb.Struct, error)
+	client  ESClient
+}
+
+type ESClient struct {
 	indexClient       esapi.Index
+	searchClient      esapi.Search
 	updateClient      esapi.UpdateByQuery
 	deleteClient      esapi.DeleteByQuery
 	createIndexClient esapi.IndicesCreate
 	deleteIndexClient esapi.IndicesDelete
+	countClient       esapi.Count
 }
 
 type ESSearch func(o ...func(*esapi.SearchRequest)) (*esapi.Response, error)
@@ -63,6 +69,8 @@ type ESDelete func(index []string, body io.Reader, o ...func(*esapi.DeleteByQuer
 type ESCreateIndex func(index string, o ...func(*esapi.IndicesCreateRequest)) (*esapi.Response, error)
 
 type ESDeleteIndex func(index []string, o ...func(*esapi.IndicesDeleteRequest)) (*esapi.Response, error)
+
+type ESCount func(o ...func(*esapi.CountRequest)) (*esapi.Response, error)
 
 // Init returns an implementation of IConnector that interacts with Elasticsearch.
 func Init(bc base.Component) *component {
@@ -78,18 +86,14 @@ func Init(bc base.Component) *component {
 }
 
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	searchClient, indexClient, updateClient, deleteClient, createIndexClient, deleteIndexClient := newClient(setup)
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
-		searchClient:       *searchClient,
-		indexClient:        *indexClient,
-		updateClient:       *updateClient,
-		deleteClient:       *deleteClient,
-		createIndexClient:  *createIndexClient,
-		deleteIndexClient:  *deleteIndexClient,
+		client:             *newClient(setup),
 	}
 
 	switch task {
+	case TaskVectorSearch:
+		e.execute = e.search
 	case TaskSearch:
 		e.execute = e.search
 	case TaskIndex:

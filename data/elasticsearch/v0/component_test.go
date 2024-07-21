@@ -111,6 +111,16 @@ func MockESDeleteIndex(wantResp DeleteIndexOutput) *esapi.Response {
 	}
 }
 
+func MockESCount(count int) *esapi.Response {
+	resp := map[string]int{"count": count}
+	b, _ := json.Marshal(resp)
+	return &esapi.Response{
+		StatusCode: 200,
+		Body:       io.NopCloser(bytes.NewReader(b)),
+		Header:     make(map[string][]string),
+	}
+}
+
 func TestComponent_ExecuteSearchTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
@@ -122,6 +132,8 @@ func TestComponent_ExecuteSearchTask(t *testing.T) {
 		input    SearchInput
 		wantResp SearchOutput
 		wantErr  string
+		task     string
+		count    int
 	}{
 		{
 			name: "ok to search",
@@ -148,6 +160,35 @@ func TestComponent_ExecuteSearchTask(t *testing.T) {
 					},
 				},
 			},
+			task: TaskSearch,
+		},
+		{
+			name: "ok to vector search",
+			input: SearchInput{
+				Mode:      "Hits",
+				IndexName: "index_name",
+				Filter:    map[string]any{"vector": []float64{0.1, 0.2}},
+				Size:      0,
+			},
+			wantResp: SearchOutput{
+				Status: "Successfully searched document",
+				Documents: []map[string]any{
+					{
+						"_index":  "index_name",
+						"_id":     "mockID1",
+						"_score":  2,
+						"_source": map[string]any{"vector": []float64{0.1, 0.2}},
+					},
+					{
+						"_index":  "index_name",
+						"_id":     "mockID2",
+						"_score":  1,
+						"_source": map[string]any{"vector": []float64{0.2, 0.1}},
+					},
+				},
+			},
+			task:  TaskVectorSearch,
+			count: 2,
 		},
 	}
 
@@ -160,9 +201,14 @@ func TestComponent_ExecuteSearchTask(t *testing.T) {
 			c.Assert(err, qt.IsNil)
 
 			e := &execution{
-				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskSearch},
-				searchClient: func(o ...func(*esapi.SearchRequest)) (*esapi.Response, error) {
-					return MockESSearch(tc.wantResp), nil
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: tc.task},
+				client: ESClient{
+					searchClient: func(o ...func(*esapi.SearchRequest)) (*esapi.Response, error) {
+						return MockESSearch(tc.wantResp), nil
+					},
+					countClient: func(o ...func(*esapi.CountRequest)) (*esapi.Response, error) {
+						return MockESCount(tc.count), nil
+					},
 				},
 			}
 
@@ -220,8 +266,10 @@ func TestComponent_ExecuteIndexTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskIndex},
-				indexClient: func(index string, body io.Reader, o ...func(*esapi.IndexRequest)) (*esapi.Response, error) {
-					return MockESIndex(tc.wantResp), nil
+				client: ESClient{
+					indexClient: func(index string, body io.Reader, o ...func(*esapi.IndexRequest)) (*esapi.Response, error) {
+						return MockESIndex(tc.wantResp), nil
+					},
 				},
 			}
 
@@ -280,8 +328,10 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskUpdate},
-				updateClient: func(index []string, o ...func(*esapi.UpdateByQueryRequest)) (*esapi.Response, error) {
-					return MockESUpdate(tc.wantResp), nil
+				client: ESClient{
+					updateClient: func(index []string, o ...func(*esapi.UpdateByQueryRequest)) (*esapi.Response, error) {
+						return MockESUpdate(tc.wantResp), nil
+					},
 				},
 			}
 
@@ -340,8 +390,10 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDelete},
-				deleteClient: func(index []string, body io.Reader, o ...func(*esapi.DeleteByQueryRequest)) (*esapi.Response, error) {
-					return MockESDelete(tc.wantResp), nil
+				client: ESClient{
+					deleteClient: func(index []string, body io.Reader, o ...func(*esapi.DeleteByQueryRequest)) (*esapi.Response, error) {
+						return MockESDelete(tc.wantResp), nil
+					},
 				},
 			}
 
@@ -399,8 +451,10 @@ func TestComponent_ExecuteCreateIndexTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskCreateIndex},
-				createIndexClient: func(index string, o ...func(*esapi.IndicesCreateRequest)) (*esapi.Response, error) {
-					return MockESCreateIndex(tc.wantResp), nil
+				client: ESClient{
+					createIndexClient: func(index string, o ...func(*esapi.IndicesCreateRequest)) (*esapi.Response, error) {
+						return MockESCreateIndex(tc.wantResp), nil
+					},
 				},
 			}
 
@@ -457,8 +511,10 @@ func TestComponent_ExecuteDeleteIndexTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDeleteIndex},
-				deleteIndexClient: func(index []string, o ...func(*esapi.IndicesDeleteRequest)) (*esapi.Response, error) {
-					return MockESDeleteIndex(tc.wantResp), nil
+				client: ESClient{
+					deleteIndexClient: func(index []string, o ...func(*esapi.IndicesDeleteRequest)) (*esapi.Response, error) {
+						return MockESDeleteIndex(tc.wantResp), nil
+					},
 				},
 			}
 

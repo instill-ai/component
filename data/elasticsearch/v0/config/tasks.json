@@ -157,29 +157,10 @@
     }
   },
   "TASK_SEARCH": {
-    "instillShortDescription": "Search for documents and vector similarity search in Elasticsearch",
+    "instillShortDescription": "Search for documents in Elasticsearch",
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "search-type":{
-          "description": "Type of search to perform, elastic search will perform normal search and vector search will perform vector similarity search",
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "default": "Elastic Search",
-          "instillUIOrder": 0,
-          "title": "Search Type",
-          "enum": [
-            "Elastic Search",
-            "Vector Search"
-          ],
-          "type": "string"
-        },
         "mode": {
           "description": "Document mode to return, Hits will return documents with (_id, _index, _score), Source Only will return only documents",
           "instillUpstreamTypes": [
@@ -191,7 +172,7 @@
             "string"
           ],
           "default": "Hits",
-          "instillUIOrder": 1,
+          "instillUIOrder": 0,
           "title": "Mode",
           "enum": [
             "Hits",
@@ -205,7 +186,7 @@
             "string"
           ],
           "instillShortDescription": "Elasticsearch Index Name",
-          "instillUIOrder": 2,
+          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -220,7 +201,7 @@
             "string"
           ],
           "instillShortDescription": "String Query",
-          "instillUIOrder": 3,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -230,12 +211,12 @@
           "title": "Query"
         },
         "filter": {
-          "description": "Filter for selecting documents to search or vector similarity search, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected. Additionally, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any filter. For vector similarity search, make sure to create an index with dense_vector field and provide vector field name in filter e.g {'vector_field1':'vector_value1','vector_field2':'vector_value2'}",
+          "description": "Filter for selecting documents to search, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected. Additionally, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any filter",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data, support vector search",
-          "instillUIOrder": 4,
+          "instillShortDescription": "JSON Data, e.g {'vector_field1':'vector_value1','vector_field2':'vector_value2'}",
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -249,7 +230,7 @@
             "integer"
           ],
           "instillShortDescription": "Size of documents to return, optional (empty for all documents)",
-          "instillUIOrder": 5,
+          "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "value",
             "reference"
@@ -259,15 +240,125 @@
         }
       },
       "required": [
-        "search-type",
         "mode",
         "index-name"
       ],
       "instillEditOnNodeFields": [
-        "search-type",
         "mode",
         "index-name",
         "query",
+        "filter",
+        "size"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "documents": {
+          "description": "Search result documents",
+          "instillUIOrder": 0,
+          "title": "Documents",
+          "type": "array",
+          "instillFormat": "array:semi-structured/json",
+          "items": {
+            "title": "Document",
+            "instillFormat": "semi-structured/json"
+          }
+        },
+        "status": {
+          "description": "Search operation status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "documents",
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_VECTOR_SEARCH": {
+    "instillShortDescription": "Search for vector similarity search in Elasticsearch with CosineSimilarity algorithm",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "mode": {
+          "description": "Document mode to return, Hits will return documents with (_id, _index, _score), Source Only will return only documents",
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "default": "Hits",
+          "instillUIOrder": 0,
+          "title": "Mode",
+          "enum": [
+            "Hits",
+            "Source Only"
+          ],
+          "type": "string"
+        },
+        "index-name": {
+          "description": "Name of the Elasticsearch index",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Elasticsearch Index Name",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Index Name",
+          "type": "string"
+        },
+        "filter": {
+          "description": "Filter for conducting vector similarity search. If JSON value of a key is null e.g {'name':null}, then name field will be selected without any filter. For vector similarity search, make sure to create an index with dense_vector field and provide vector field name in filter e.g {'vector_field1':'vector_value1','vector_field2':'vector_value2'}",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data, support vector search",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Filter"
+        },
+        "size":{
+          "description": "Number of documents to return, this field is optional. If empty then all documents will be returned",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillShortDescription": "Size of documents to return, optional (empty for all documents)",
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mode",
+        "index-name"
+      ],
+      "instillEditOnNodeFields": [
+        "mode",
+        "index-name",
         "filter",
         "size"
       ],
@@ -406,7 +497,7 @@
           "type": "string"
         },
         "mappings": {
-          "description": "Index mappings, support both vector search and non-vector search mappings, for vector search type mappings use json object with type dense_vector and dims fields, e.g {'name':{'type':'dense_vector','dims':2},'name':{'type':'text'}",
+          "description": "Index mappings, support both vector search and non-vector search mappings, for vector search index type mappings use json object with type dense_vector, dims, and similarity fields, e.g {'vector':{'type':'dense_vector','dims':2, 'similarity':'cosine'},'name':{'type':'text'}. Currently supported similarity metric [cosine, l2_norm, dot_product, max_inner_product]. If no similarity field is provided, cosine similarity will be used by default",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],

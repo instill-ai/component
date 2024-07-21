@@ -2,18 +2,26 @@ package elasticsearch
 
 import (
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-func newClient(setup *structpb.Struct) (*esapi.Search, *esapi.Index, *esapi.UpdateByQuery, *esapi.DeleteByQuery, *esapi.IndicesCreate, *esapi.IndicesDelete) {
+func newClient(setup *structpb.Struct) *ESClient {
 	cfg := elasticsearch.Config{
 		CloudID: getCloudID(setup),
 		APIKey:  getAPIKey(setup),
 	}
 
 	es, _ := elasticsearch.NewClient(cfg)
-	return &es.Search, &es.Index, &es.UpdateByQuery, &es.DeleteByQuery, &es.Indices.Create, &es.Indices.Delete
+
+	return &ESClient{
+		indexClient:       es.Index,
+		searchClient:      es.Search,
+		updateClient:      es.UpdateByQuery,
+		deleteClient:      es.DeleteByQuery,
+		createIndexClient: es.Indices.Create,
+		deleteIndexClient: es.Indices.Delete,
+		countClient:       es.Count,
+	}
 }
 
 // Need to confirm where the map is

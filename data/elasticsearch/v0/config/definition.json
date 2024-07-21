@@ -1,6 +1,7 @@
 {
   "availableTasks": [
     "TASK_SEARCH",
+    "TASK_VECTOR_SEARCH",
     "TASK_INDEX",
     "TASK_UPDATE",
     "TASK_DELETE",

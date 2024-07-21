@@ -99,6 +99,10 @@ type DeleteIndexOutput struct {
 	Status string `json:"status"`
 }
 
+type CountResponse struct {
+	Count int `json:"count"`
+}
+
 func IndexDocument(es *esapi.Index, indexName string, data map[string]any) error {
 	dataJSON, err := json.Marshal(data)
 	if err != nil {
@@ -123,10 +127,10 @@ func IndexDocument(es *esapi.Index, indexName string, data map[string]any) error
 	return nil
 }
 
-func SearchDocument(es *esapi.Search, indexName string, query string, rawFilter map[string]interface{}, size int, searchType string) ([]Hit, error) {
+func SearchDocument(es *esapi.Search, indexName string, query string, rawFilter map[string]any, size int) ([]Hit, error) {
 	var body io.Reader = nil
 	if rawFilter != nil {
-		filter := make(map[string]interface{})
+		filter := make(map[string]any)
 		var source []string
 		for key, value := range rawFilter {
 			if value != nil {
@@ -135,55 +139,14 @@ func SearchDocument(es *esapi.Search, indexName string, query string, rawFilter 
 			source = append(source, key)
 		}
 
-		filterQuery := make(map[string]interface{})
-		if searchType == "Elastic Search" {
-			if len(source) > 0 {
-				filterQuery["_source"] = source
-			}
-			if len(filter) > 0 {
-				filterQuery["query"] = map[string]interface{}{
-					"match": filter,
-				}
-			}
-		} else if searchType == "Vector Search" {
-			var functions []map[string]interface{}
+		filterQuery := make(map[string]any)
 
-			for _, value := range filter {
-				if vector, ok := value.([]interface{}); ok {
-					floatVector := make([]float64, len(vector))
-					for i, v := range vector {
-						if val, ok := v.(float64); ok {
-							floatVector[i] = val
-						}
-					}
-
-					function := map[string]interface{}{
-						"script_score": map[string]interface{}{
-							"script": map[string]interface{}{
-								"source": "cosineSimilarity(params.query_vector, 'vector_field') + 1.0",
-								"params": map[string]interface{}{
-									"query_vector": floatVector,
-								},
-							},
-						},
-					}
-					functions = append(functions, function)
-				}
-			}
-
-			filterQuery["query"] = map[string]interface{}{
-				"function_score": map[string]interface{}{
-					"query": map[string]interface{}{
-						"match_all": map[string]interface{}{},
-					},
-					"functions":  functions,
-					"boost_mode": "sum",
-					"score_mode": "sum",
-				},
-			}
-
-			if len(source) > 0 {
-				filterQuery["_source"] = source
+		if len(source) > 0 {
+			filterQuery["_source"] = source
+		}
+		if len(filter) > 0 {
+			filterQuery["query"] = map[string]any{
+				"match": filter,
 			}
 		}
 
@@ -218,6 +181,94 @@ func SearchDocument(es *esapi.Search, indexName string, query string, rawFilter 
 
 	var response SearchResponse
 
+	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
+		return nil, err
+	}
+
+	return response.Hits.Hits, nil
+}
+
+func VectorSearchDocument(es *esapi.Search, esCount *esapi.Count, indexName string, rawFilter map[string]any, size int) ([]Hit, error) {
+	var body io.Reader = nil
+
+	filterQuery := make(map[string]any)
+	var knnQueries []map[string]any
+	var source []string
+
+	if size == 0 {
+		ESCount := ESCount(*esCount)
+		res, err := ESCount(func(r *esapi.CountRequest) {
+			r.Index = []string{indexName}
+		})
+
+		if err != nil {
+			return nil, err
+		}
+
+		defer res.Body.Close()
+
+		var countResponse CountResponse
+		if err := json.NewDecoder(res.Body).Decode(&countResponse); err != nil {
+			return nil, err
+		}
+
+		size = countResponse.Count
+	}
+
+	for key, value := range rawFilter {
+		interfaceVector, ok := value.([]any)
+
+		if ok {
+			floatVector := make([]float64, len(interfaceVector))
+			for i, v := range interfaceVector {
+				num, _ := v.(float64)
+				floatVector[i] = num
+			}
+
+			knnQuery := map[string]any{
+				"field":          key,
+				"query_vector":   floatVector,
+				"k":              size * 2,
+				"num_candidates": size * 5,
+			}
+
+			knnQueries = append(knnQueries, knnQuery)
+		}
+
+		source = append(source, key)
+	}
+
+	filterQuery["knn"] = knnQueries
+	filterQuery["size"] = size
+
+	if len(source) > 0 {
+		filterQuery["_source"] = source
+	}
+
+	filterJSON, err := json.Marshal(filterQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	body = strings.NewReader(string(filterJSON))
+
+	esClient := ESSearch(*es)
+	res, err := esClient(func(r *esapi.SearchRequest) {
+		r.Index = []string{indexName}
+		r.Body = body
+		r.TrackTotalHits = true
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return nil, fmt.Errorf("error vector searching document: %s", res.Status())
+	}
+
+	var response SearchResponse
 	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
 		return nil, err
 	}
@@ -358,7 +409,7 @@ func (e *execution) index(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = IndexDocument(&e.indexClient, inputStruct.IndexName, inputStruct.Data)
+	err = IndexDocument(&e.client.indexClient, inputStruct.IndexName, inputStruct.Data)
 	if err != nil {
 		return nil, err
 	}
@@ -381,7 +432,7 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = UpdateDocument(&e.updateClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Update)
+	err = UpdateDocument(&e.client.updateClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Update)
 	if err != nil {
 		return nil, err
 	}
@@ -404,7 +455,13 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	resultTemp, err := SearchDocument(&e.searchClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Size, inputStruct.SearchType)
+	var resultTemp []Hit
+	if e.Task == TaskSearch {
+		resultTemp, err = SearchDocument(&e.client.searchClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Size)
+	} else if e.Task == TaskVectorSearch {
+		resultTemp, err = VectorSearchDocument(&e.client.searchClient, &e.client.countClient, inputStruct.IndexName, inputStruct.Filter, inputStruct.Size)
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -444,7 +501,7 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = DeleteDocument(&e.deleteClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter)
+	err = DeleteDocument(&e.client.deleteClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter)
 	if err != nil {
 		return nil, err
 	}
@@ -467,7 +524,7 @@ func (e *execution) createIndex(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = CreateIndex(&e.createIndexClient, inputStruct.IndexName, inputStruct.Mappings)
+	err = CreateIndex(&e.client.createIndexClient, inputStruct.IndexName, inputStruct.Mappings)
 	if err != nil {
 		return nil, err
 	}
@@ -490,7 +547,7 @@ func (e *execution) deleteIndex(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = DeleteIndex(&e.deleteIndexClient, inputStruct.IndexName)
+	err = DeleteIndex(&e.client.deleteIndexClient, inputStruct.IndexName)
 	if err != nil {
 		return nil, err
 	}
