@@ -34,7 +34,8 @@ type component struct {
 
 type execution struct {
 	base.ComponentExecution
-	execute func(*structpb.Struct) (*structpb.Struct, error)
+	execute                func(*structpb.Struct) (*structpb.Struct, error)
+	getMarkdownTransformer func(fileExtension string, inputStruct convertDocumentToMarkdownInput) (MarkdownTransformer, error)
 }
 
 func Init(bc base.Component) *component {
@@ -50,7 +51,8 @@ func Init(bc base.Component) *component {
 
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
 	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
+		ComponentExecution:     base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
+		getMarkdownTransformer: getMarkdownTransformer,
 	}
 
 	switch task {

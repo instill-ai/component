@@ -36,11 +36,11 @@ func (e *execution) convertDocumentToMarkdown(input *structpb.Struct) (*structpb
 	}
 
 	var transformer MarkdownTransformer
-	transformer, err = getMarkdownTransformer(fileExtension, inputStruct)
+
+	transformer, err = e.getMarkdownTransformer(fileExtension, inputStruct)
 	if err != nil {
 		return nil, err
 	}
-
 	extractedTextInMarkdownFormat, err := transformer.Transform()
 	if err != nil {
 		return nil, err
