@@ -253,7 +253,7 @@ type nextGenSearchRequest struct {
 // https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-search/#api-rest-api-2-search-post
 func (jiraClient *Client) nextGenIssuesSearch(_ context.Context, opt nextGenSearchRequest) (*resty.Response, error) {
 	var debug DebugSession
-	debug.SessionStart("nextGenIssuesSearch", DevelopVerboseLevel)
+	debug.SessionStart("nextGenIssuesSearch", StaticVerboseLevel)
 	defer debug.SessionEnd()
 
 	debug.AddMessage("opt:")

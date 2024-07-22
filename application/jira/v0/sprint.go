@@ -106,7 +106,7 @@ type ListSprintsOutput struct {
 
 func (jiraClient *Client) listSprintsTask(_ context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var debug DebugSession
-	debug.SessionStart("listSprintsTask", DevelopVerboseLevel)
+	debug.SessionStart("listSprintsTask", StaticVerboseLevel)
 	defer debug.SessionEnd()
 
 	var opt ListSprintInput
