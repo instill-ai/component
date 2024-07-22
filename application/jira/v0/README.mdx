@@ -10,6 +10,7 @@ It can carry out the following tasks:
 
 - [List Boards](#list-boards)
 - [List Issues](#list-issues)
+- [List Sprints](#list-sprints)
 - [Get Issue](#get-issue)
 - [Get Sprint](#get-sprint)
 
@@ -89,6 +90,32 @@ List issues in Jira
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Issues (optional) | `issues` | array[object] | A array of issues in Jira |
+| Start At | `start-at` | integer | The starting index of the returned boards. Base index: 0 |
+| Max Results | `max-results` | integer | The maximum number of boards |
+| Total | `total` | integer | The total number of boards |
+
+
+
+
+
+
+### List Sprints
+
+List sprints in Jira
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_LIST_SPRINTS` |
+| Board ID (required) | `board-id` | integer | The ID of the board |
+| Start At | `start-at` | integer | The starting index of the returned boards. Base index: 0. Default is 0 |
+| Max Results | `max-results` | integer | The maximum number of boards to return. Default is 50 |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Sprints (optional) | `sprints` | array[object] | A array of sprints in Jira |
 | Start At | `start-at` | integer | The starting index of the returned boards. Base index: 0 |
 | Max Results | `max-results` | integer | The maximum number of boards |
 | Total | `total` | integer | The total number of boards |
