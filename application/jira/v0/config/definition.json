@@ -2,6 +2,7 @@
   "availableTasks": [
     "TASK_LIST_BOARDS",
     "TASK_LIST_ISSUES",
+    "TASK_LIST_SPRINTS",
     "TASK_GET_ISSUE",
     "TASK_GET_SPRINT"
   ],

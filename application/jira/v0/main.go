@@ -15,11 +15,12 @@ import (
 )
 
 const (
-	apiBaseURL     = "https://api.atlassian.com"
-	taskListBoards = "TASK_LIST_BOARDS"
-	taskListIssues = "TASK_LIST_ISSUES"
-	taskGetIssue   = "TASK_GET_ISSUE"
-	taskGetSprint  = "TASK_GET_SPRINT"
+	apiBaseURL      = "https://api.atlassian.com"
+	taskListBoards  = "TASK_LIST_BOARDS"
+	taskListIssues  = "TASK_LIST_ISSUES"
+	taskListSprints = "TASK_LIST_SPRINTS"
+	taskGetIssue    = "TASK_GET_ISSUE"
+	taskGetSprint   = "TASK_GET_SPRINT"
 )
 
 var (
@@ -73,6 +74,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.client.listBoardsTask
 	case taskListIssues:
 		e.execute = e.client.listIssuesTask
+	case taskListSprints:
+		e.execute = e.client.listSprintsTask
 	case taskGetIssue:
 		e.execute = e.client.getIssueTask
 	case taskGetSprint:

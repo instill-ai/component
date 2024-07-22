@@ -615,6 +615,91 @@
       "type": "object"
     }
   },
+  "TASK_LIST_SPRINTS": {
+    "description": "List sprints in Jira",
+    "instillShortDescription": "List sprints in Jira",
+    "input": {
+      "description": "List sprints in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "board-id"
+      ],
+      "properties": {
+        "board-id": {
+          "title": "Board ID",
+          "description": "The ID of the board",
+          "instillShortDescription": "The ID of the board",
+          "instillUIOrder": 0,
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "integer"
+        },
+        "start-at": {
+          "$ref": "#/$defs/common-query-params/start-at",
+          "instillUIOrder": 1
+        },
+        "max-results": {
+          "$ref": "#/$defs/common-query-params/max-results",
+          "instillUIOrder": 2
+        }
+      },
+      "required": [
+        "board-id"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Get sprints in Jira",
+      "instillUIOrder": 0,
+      "properties": {
+        "sprints": {
+          "description": "A array of sprints in Jira",
+          "instillUIOrder": 1,
+          "title": "Sprints",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sprint"
+          }
+        },
+        "start-at": {
+          "description": "The starting index of the returned boards. Base index: 0",
+          "instillUIOrder": 2,
+          "title": "Start At",
+          "instillFormat": "integer",
+          "type": "integer"
+        },
+        "max-results": {
+          "description": "The maximum number of boards",
+          "instillUIOrder": 3,
+          "title": "Max Results",
+          "instillFormat": "integer",
+          "type": "integer"
+        },
+        "total": {
+          "description": "The total number of boards",
+          "instillUIOrder": 4,
+          "title": "Total",
+          "instillFormat": "integer",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start-at",
+        "max-results",
+        "total"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
   "TASK_GET_ISSUE": {
     "description": "Get an issue in Jira. The issue will only be returned if the user has permission to view it. Issues returned from this resource include Agile fields, like sprint, closedSprints, flagged, and epic.",
     "instillShortDescription": "Get an issue in Jira",
