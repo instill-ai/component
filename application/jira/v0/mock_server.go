@@ -26,7 +26,7 @@ func router(middlewares ...func(http.Handler) http.Handler) http.Handler {
 	r.Get("/rest/agile/1.0/sprint/{sprintId}", mockGetSprint)
 	r.Get("/rest/agile/1.0/board/{boardId}/issue", mockListIssues)           // list all issues
 	r.Get("/rest/agile/1.0/board/{boardId}/epic", mockListIssues)            // list all epic
-	r.Get("/rest/agile/1.0/board/{boardId}/sprint", mockListIssues)          // list all sprint
+	r.Get("/rest/agile/1.0/board/{boardId}/sprint", mockListSprints)         // list all sprint
 	r.Get("/rest/agile/1.0/board/{boardId}/backlog", mockListIssues)         // list all issues in backlog
 	r.Get("/rest/agile/1.0/board/{boardId}/epic/none/issue", mockListIssues) // list all issues without epic assigned
 	r.Get("/rest/agile/1.0/board/{boardId}", mockGetBoard)
@@ -193,11 +193,10 @@ func mockGetSprint(res http.ResponseWriter, req *http.Request) {
 }
 
 type MockListIssuesResponse struct {
-	Values     []FakeSprintAsIssue `json:"values"`
-	Issues     []FakeIssue         `json:"issues"`
-	Total      int                 `json:"total"`
-	StartAt    int                 `json:"startAt"`
-	MaxResults int                 `json:"maxResults"`
+	Issues     []FakeIssue `json:"issues"`
+	Total      int         `json:"total"`
+	StartAt    int         `json:"startAt"`
+	MaxResults int         `json:"maxResults"`
 }
 
 func mockListIssues(res http.ResponseWriter, req *http.Request) {
@@ -233,25 +232,7 @@ func mockListIssues(res http.ResponseWriter, req *http.Request) {
 			continue
 		}
 		issue.getSelf()
-		if strings.Contains(req.URL.Path, "sprint") {
-			defer issue.toSprint()()
-		}
 		issues = append(issues, issue)
-	}
-	var fakeSprintAsIssue []FakeSprintAsIssue
-	if strings.Contains(req.URL.Path, "sprint") {
-		for _, sprint := range issues {
-			idNum, err := strconv.Atoi(sprint.ID)
-			if err != nil {
-				continue
-			}
-			fakeSprintAsIssue = append(fakeSprintAsIssue, FakeSprintAsIssue{
-				ID:     idNum,
-				Key:    sprint.Key,
-				Self:   sprint.getSelf(),
-				Fields: sprint.Fields,
-			})
-		}
 	}
 	// response
 	res.WriteHeader(http.StatusOK)
@@ -272,9 +253,82 @@ func mockListIssues(res http.ResponseWriter, req *http.Request) {
 		StartAt:    startAtNum,
 		MaxResults: maxResultsNum,
 	}
-	if strings.Contains(req.URL.Path, "sprint") {
-		resp.Values = fakeSprintAsIssue
-		resp.Issues = nil
+	respText, err := json.Marshal(resp)
+	if err != nil {
+		return
+	}
+	_, _ = res.Write([]byte(respText))
+}
+
+type MockListSprintsResponse struct {
+	Values     []FakeSprint `json:"values"`
+	StartAt    int          `json:"startAt"`
+	MaxResults int          `json:"maxResults"`
+	Total      int          `json:"total"`
+}
+
+func mockListSprints(res http.ResponseWriter, req *http.Request) {
+	var err error
+	opt := req.URL.Query()
+	boardID := chi.URLParam(req, "boardId")
+	state := opt.Get("state")
+	startAt := opt.Get("startAt")
+	maxResults := opt.Get("maxResults")
+	// find board
+	var board *FakeBoard
+	for _, b := range fakeBoards {
+		if strconv.Itoa(b.ID) == boardID {
+			board = &b
+			break
+		}
+	}
+	if board == nil {
+		res.WriteHeader(http.StatusNotFound)
+		_, _ = res.Write([]byte(`{"errorMessages":["Board does not exist or you do not have permission to see it"]}`))
+		return
+	}
+	// filter sprints
+	var sprints []FakeSprint
+	for _, sprint := range fakeSprints {
+		if sprint.ID != board.ID {
+			continue
+		}
+		if state != "" && sprint.State != state {
+			continue
+		}
+		sprints = append(sprints, sprint)
+	}
+	// pagination
+	start, end := 0, len(sprints)
+	if startAt != "" {
+		start, err = strconv.Atoi(startAt)
+		if err != nil {
+			return
+		}
+	}
+	maxResultsNum := len(sprints)
+	if maxResults != "" {
+		maxResultsNum, err = strconv.Atoi(maxResults)
+		if err != nil {
+			return
+		}
+		end = start + maxResultsNum
+		if end > len(sprints) {
+			end = len(sprints)
+		}
+	}
+	// response
+	res.WriteHeader(http.StatusOK)
+
+	resp := MockListSprintsResponse{
+		Values:     sprints[start:end],
+		StartAt:    start,
+		MaxResults: maxResultsNum,
+		Total:      len(sprints),
+	}
+	for i := range resp.Values {
+		resp.Values[i].getSelf()
+
 	}
 	respText, err := json.Marshal(resp)
 	if err != nil {

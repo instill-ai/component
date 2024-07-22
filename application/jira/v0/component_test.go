@@ -269,42 +269,6 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 		},
 		{
 			_type: "ok",
-			name:  "Sprints only",
-			input: ListIssuesInput{
-				BoardID:    1,
-				MaxResults: 10,
-				StartAt:    0,
-				Range: Range{
-					Range: "Sprints only",
-				},
-			},
-			wantResp: ListIssuesOutput{
-				Total:      1,
-				StartAt:    0,
-				MaxResults: 10,
-				Issues: []Issue{
-					{
-						ID:  "4",
-						Key: "KAN-4",
-						Fields: map[string]interface{}{
-							"summary": "Test issue 4",
-							"status": map[string]interface{}{
-								"name": "Done",
-							},
-							"issuetype": map[string]interface{}{
-								"name": "Sprint",
-							},
-						},
-						IssueType: "Sprint",
-						Self:      "https://test.atlassian.net/rest/agile/1.0/issue/4",
-						Status:    "Done",
-						Summary:   "Test issue 4",
-					},
-				},
-			},
-		},
-		{
-			_type: "ok",
 			name:  "In backlog only",
 			input: ListIssuesInput{
 				BoardID:    1,
@@ -432,8 +396,101 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 				Issues:     []Issue{},
 			},
 		},
+		{
+			_type: "ok",
+			name:  "Standard Issues",
+			input: ListIssuesInput{
+				BoardID:    1,
+				MaxResults: 10,
+				StartAt:    0,
+				Range: Range{
+					Range: "Standard Issues",
+				},
+			},
+			wantResp: ListIssuesOutput{
+				Total:      0,
+				StartAt:    0,
+				MaxResults: 10,
+				Issues:     []Issue{},
+			},
+		},
+		{
+			_type: "ok",
+			name:  "JQL",
+			input: ListIssuesInput{
+				BoardID:    1,
+				MaxResults: 10,
+				StartAt:    0,
+				Range: Range{
+					Range: "JQL query",
+					JQL:   "project = TST",
+				},
+			},
+			wantResp: ListIssuesOutput{
+				Total:      0,
+				StartAt:    0,
+				MaxResults: 10,
+				Issues:     []Issue{},
+			},
+		},
+		{
+			_type: "nok",
+			name:  "invalid range",
+			input: ListIssuesInput{
+				BoardID:    1,
+				MaxResults: 10,
+				StartAt:    0,
+				Range: Range{
+					Range: "invalid",
+				},
+			},
+			wantErr: "invalid range",
+		},
 	}
 	taskTesting(testcases, taskListIssues, t)
+}
+
+func TestComponent_ListSprintsTask(t *testing.T) {
+	testcases := []TaskCase[ListSprintInput, ListSprintsOutput]{
+		{
+			_type: "ok",
+			name:  "get all sprints",
+			input: ListSprintInput{
+				BoardID:    1,
+				StartAt:    0,
+				MaxResults: 10,
+			},
+			wantResp: ListSprintsOutput{
+				Total:      1,
+				StartAt:    0,
+				MaxResults: 10,
+				Sprints: []*GetSprintOutput{
+					{
+						ID:            1,
+						Self:          "https://test.atlassian.net/rest/agile/1.0/sprint/1",
+						State:         "active",
+						Name:          "Sprint 1",
+						StartDate:     "2021-01-01T00:00:00.000Z",
+						EndDate:       "2021-01-15T00:00:00.000Z",
+						CompleteDate:  "2021-01-15T00:00:00.000Z",
+						OriginBoardID: 1,
+						Goal:          "Sprint goal",
+					},
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name:  "400 - Bad Request",
+			input: ListSprintInput{
+				BoardID:    -1,
+				StartAt:    0,
+				MaxResults: 10,
+			},
+			wantErr: "unsuccessful HTTP response.*",
+		},
+	}
+	taskTesting(testcases, taskListSprints, t)
 }
 
 func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType], task string, t *testing.T) {

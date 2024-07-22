@@ -65,17 +65,6 @@ func (jiraClient *Client) getSprintTask(_ context.Context, props *structpb.Struc
 	req := jiraClient.Client.R().SetResult(&Sprint{})
 	resp, err := req.Get(apiEndpoint)
 
-	if resp != nil && resp.StatusCode() == 404 {
-		return nil, fmt.Errorf(
-			err.Error(),
-			errmsg.Message(err)+"Please check you have the correct permissions to access this resource.",
-		)
-	} else if resp != nil && resp.StatusCode() == 401 {
-		return nil, fmt.Errorf(
-			err.Error(),
-			errmsg.Message(err)+"You are not logged in. Please provide a valid token and an email account.",
-		)
-	}
 	if err != nil {
 		return nil, fmt.Errorf(
 			err.Error(), errmsg.Message(err),
@@ -97,7 +86,9 @@ func (jiraClient *Client) getSprintTask(_ context.Context, props *structpb.Struc
 }
 
 type ListSprintInput struct {
-	BoardID int `json:"board-id"`
+	BoardID    int `json:"board-id"`
+	StartAt    int `json:"start-at" api:"startAt"`
+	MaxResults int `json:"max-results" api:"maxResults"`
 }
 
 type ListSprintsResp struct {
@@ -115,16 +106,24 @@ type ListSprintsOutput struct {
 
 func (jiraClient *Client) listSprintsTask(_ context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var debug DebugSession
-	debug.SessionStart("listSprintsTask", StaticVerboseLevel)
+	debug.SessionStart("listSprintsTask", DevelopVerboseLevel)
 	defer debug.SessionEnd()
 
 	var opt ListSprintInput
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err
 	}
+	debug.AddMapMessage("props", props)
+	debug.AddMapMessage("opt", opt)
 	apiEndpoint := fmt.Sprintf("rest/agile/1.0/board/%d/sprint", opt.BoardID)
 
 	req := jiraClient.Client.R().SetResult(&ListSprintsResp{})
+	opt.BoardID = 0
+	err := addQueryOptions(req, opt)
+	if err != nil {
+		return nil, err
+	}
+
 	resp, err := req.Get(apiEndpoint)
 
 	if err != nil {

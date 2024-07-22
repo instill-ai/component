@@ -22,15 +22,6 @@ type Issue struct {
 	IssueType   string                 `json:"issue-type"`
 	Status      string                 `json:"status"`
 }
-type SprintOrEpic struct {
-	ID      int                    `json:"id"`
-	Key     string                 `json:"key"`
-	Name    string                 `json:"name"`
-	Summary string                 `json:"summary"`
-	Self    string                 `json:"self"`
-	Done    bool                   `json:"done"`
-	Fields  map[string]interface{} `json:"fields"`
-}
 
 type GetIssueInput struct {
 	IssueKeyOrID  string `json:"issue-id-or-key,omitempty" api:"issueIdOrKey"`
@@ -68,24 +59,6 @@ func extractIssue(issue *Issue) *Issue {
 		}
 	}
 	return issue
-}
-
-func transformToIssue(val *SprintOrEpic) *Issue {
-	fields := make(map[string]interface{})
-	if val.Fields != nil {
-		for key, value := range val.Fields {
-			fields[key] = value
-		}
-	}
-
-	return &Issue{
-		ID:          fmt.Sprintf("%d", val.ID),
-		Key:         val.Key,
-		Description: val.Name,
-		Summary:     val.Summary,
-		Self:        val.Self,
-		Fields:      fields,
-	}
 }
 
 func (jiraClient *Client) getIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -150,11 +123,10 @@ type ListIssuesInput struct {
 }
 
 type ListIssuesResp struct {
-	Issues     []Issue        `json:"issues"`
-	Values     []SprintOrEpic `json:"values"`
-	StartAt    int            `json:"startAt"`
-	MaxResults int            `json:"maxResults"`
-	Total      int            `json:"total"`
+	Issues     []Issue `json:"issues"`
+	StartAt    int     `json:"startAt"`
+	MaxResults int     `json:"maxResults"`
+	Total      int     `json:"total"`
 }
 type ListIssuesOutput struct {
 	Issues     []Issue `json:"issues"`
@@ -251,13 +223,8 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 		)
 	}
 
-	if issues.Issues == nil && issues.Values == nil {
+	if issues.Issues == nil {
 		issues.Issues = []Issue{}
-	} else if issues.Issues == nil {
-		issues.Issues = make([]Issue, len(issues.Values))
-		for i, val := range issues.Values {
-			issues.Issues[i] = *transformToIssue(&val)
-		}
 	}
 
 	output := ListIssuesOutput{
@@ -270,8 +237,6 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 		output.Issues[idx] = *extractIssue(&issue)
 		if opt.Range.Range == "Epics only" {
 			output.Issues[idx].IssueType = "Epic"
-		} else if opt.Range.Range == "Sprints only" {
-			output.Issues[idx].IssueType = "Sprint"
 		}
 	}
 	return base.ConvertToStructpb(output)
@@ -288,7 +253,7 @@ type nextGenSearchRequest struct {
 // https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-search/#api-rest-api-2-search-post
 func (jiraClient *Client) nextGenIssuesSearch(_ context.Context, opt nextGenSearchRequest) (*resty.Response, error) {
 	var debug DebugSession
-	debug.SessionStart("nextGenIssuesSearch", StaticVerboseLevel)
+	debug.SessionStart("nextGenIssuesSearch", DevelopVerboseLevel)
 	defer debug.SessionEnd()
 
 	debug.AddMessage("opt:")

@@ -73,7 +73,7 @@
         "fields": {
           "description": "The fields of the issue. All navigable and Agile fields are returned",
           "instillUIOrder": 3,
-          "instillFormat": "object",
+          "instillFormat": "semi-structured/json",
           "title": "Fields",
           "type": "object",
           "required": []
