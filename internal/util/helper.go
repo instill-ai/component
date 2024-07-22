@@ -2,6 +2,7 @@ package util
 
 import (
 	"encoding/base64"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"strings"
@@ -69,4 +70,37 @@ func ScrapeWebpageHTMLToMarkdown(html string) (string, error) {
 // and decodes the remaining bytes.
 func DecodeBase64(input string) ([]byte, error) {
 	return base64.StdEncoding.DecodeString(base.TrimBase64Mime(input))
+}
+
+func GetContentTypeFromBase64(base64String string) (string, error) {
+	// Remove the "data:" prefix and split at the first semicolon
+	contentType := strings.TrimPrefix(base64String, "data:")
+
+	parts := strings.SplitN(contentType, ";", 2)
+	if len(parts) != 2 {
+		return "", fmt.Errorf("invalid format")
+	}
+
+	// The first part is the content type
+	return parts[0], nil
+}
+
+func TransformContentTypeToFileExtension(contentType string) string {
+	// https://gist.github.com/AshHeskes/6038140
+	// We can integrate more Content-Type to file extension mappings in the future
+	switch contentType {
+	case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+		return "docx"
+	case "application/msword":
+		return "doc"
+	case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+		return "pptx"
+	case "application/vnd.ms-powerpoint":
+		return "ppt"
+	case "text/html":
+		return "html"
+	case "application/pdf":
+		return "pdf"
+	}
+	return ""
 }
