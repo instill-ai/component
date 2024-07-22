@@ -441,7 +441,7 @@
             {
               "properties": {
                 "range": {
-                  "const": "Sprints only",
+                  "const": "In backlog only",
                   "type": "string"
                 }
               },
@@ -525,7 +525,7 @@
             {
               "properties": {
                 "range": {
-                  "const": "In backlog only",
+                  "const": "Issues without epic assigned",
                   "type": "string"
                 }
               },
@@ -541,15 +541,33 @@
             {
               "properties": {
                 "range": {
-                  "const": "Issues without epic assigned",
+                  "const": "JQL query",
+                  "type": "string"
+                },
+                "jql": {
+                  "title": "JQL",
+                  "description": "The JQL query. For example, `project = JRA AND status = Done`. For more information, see [Advanced searching reference](https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-search-in-jira-cloud/)",
+                  "instillShortDescription": "The JQL query",
+                  "instillUIOrder": 10,
+                  "instillFormat": "string",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
                   "type": "string"
                 }
               },
               "required": [
-                "range"
+                "range",
+                "jql"
               ],
               "instillEditOnNodeFields": [
-                "range"
+                "range",
+                "jql"
               ],
               "instillFormat": "object",
               "type": "object"

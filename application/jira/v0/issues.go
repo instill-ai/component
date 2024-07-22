@@ -192,9 +192,6 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 	case "Epics only":
 		// https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-epic-get
 		apiEndpoint = apiEndpoint + "/epic"
-	case "Sprints only":
-		// https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-sprint-get
-		apiEndpoint = apiEndpoint + "/sprint"
 	case "Issues of an epic":
 		// API not working: https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-epic-epicid-issue-get
 		// use JQL instead
