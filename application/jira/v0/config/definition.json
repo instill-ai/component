@@ -5,10 +5,8 @@
     "TASK_GET_ISSUE",
     "TASK_GET_SPRINT"
   ],
-  "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/application/jira",
   "icon": "assets/Jira.svg",
-  "iconUrl": "",
   "id": "jira",
   "public": true,
   "title": "Jira",

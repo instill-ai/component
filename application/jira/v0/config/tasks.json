@@ -115,6 +115,79 @@
       ],
       "title": "Issue",
       "type": "object"
+    },
+    "sprint": {
+      "properties": {
+        "id": {
+          "title": "ID",
+          "description": "The ID of the sprint",
+          "type": "integer",
+          "instillUIOrder": 0,
+          "instillFormat": "integer"
+        },
+        "self": {
+          "title": "Self",
+          "description": "The URL of the sprint",
+          "type": "string",
+          "instillUIOrder": 1,
+          "instillFormat": "string"
+        },
+        "state": {
+          "title": "State",
+          "description": "The state of the sprint, can be: `active`, `closed`, `future`",
+          "type": "string",
+          "instillUIOrder": 2,
+          "instillFormat": "string"
+        },
+        "name": {
+          "title": "Name",
+          "description": "The name of the sprint",
+          "type": "string",
+          "instillUIOrder": 3,
+          "instillFormat": "string"
+        },
+        "start-date": {
+          "title": "Start Date",
+          "description": "The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "type": "string",
+          "instillUIOrder": 4,
+          "instillFormat": "string"
+        },
+        "end-date": {
+          "title": "End Date",
+          "description": "The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "type": "string",
+          "instillUIOrder": 5,
+          "instillFormat": "string"
+        },
+        "complete-date": {
+          "title": "Complete Date",
+          "description": "The complete date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "type": "string",
+          "instillUIOrder": 6,
+          "instillFormat": "string"
+        },
+        "origin-board-id": {
+          "title": "Origin Board ID",
+          "description": "The ID of the origin board",
+          "type": "integer",
+          "instillUIOrder": 7,
+          "instillFormat": "integer"
+        },
+        "goal": {
+          "title": "Goal",
+          "description": "The Goal of the sprint",
+          "type": "string",
+          "instillUIOrder": 8,
+          "instillFormat": "string"
+        }
+      },
+      "required": [
+        "id",
+        "self"
+      ],
+      "title": "Sprint",
+      "type": "object"
     }
   },
   "TASK_LIST_BOARDS": {
@@ -336,6 +409,22 @@
             {
               "properties": {
                 "range": {
+                  "const": "Standard Issues",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "range"
+              ],
+              "instillEditOnNodeFields": [
+                "range"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            },
+            {
+              "properties": {
+                "range": {
                   "const": "Epics only",
                   "type": "string"
                 }
@@ -483,7 +572,7 @@
       "type": "object"
     },
     "output": {
-      "description": "Get an issue in Jira",
+      "description": "Get issues in Jira",
       "instillUIOrder": 0,
       "properties": {
         "issues": {
@@ -566,71 +655,7 @@
     "output": {
       "description": "Get an issue in Jira",
       "instillUIOrder": 0,
-      "properties": {
-        "id": {
-          "description": "The ID of the issue",
-          "instillUIOrder": 0,
-          "title": "ID",
-          "instillFormat": "string",
-          "type": "string"
-        },
-        "key": {
-          "description": "The key of the issue",
-          "instillUIOrder": 1,
-          "instillFormat": "string",
-          "title": "Key",
-          "type": "string"
-        },
-        "self": {
-          "description": "The URL of the issue",
-          "instillUIOrder": 2,
-          "instillFormat": "string",
-          "title": "Self",
-          "type": "string"
-        },
-        "fields": {
-          "description": "The fields of the issue. All navigable and Agile fields are returned",
-          "instillUIOrder": 3,
-          "instillFormat": "object",
-          "title": "Fields",
-          "type": "object",
-          "required": []
-        },
-        "issue-type": {
-          "description": "The type of the issue, can be: `Task`, `Epic`",
-          "instillUIOrder": 4,
-          "instillFormat": "string",
-          "title": "Issue Type",
-          "type": "string"
-        },
-        "summary": {
-          "description": "The summary of the issue",
-          "instillUIOrder": 5,
-          "instillFormat": "string",
-          "title": "Summary",
-          "type": "string"
-        },
-        "description": {
-          "description": "The description of the issue",
-          "instillUIOrder": 6,
-          "instillFormat": "string",
-          "title": "Description",
-          "type": "string"
-        },
-        "status": {
-          "description": "The status of the issue, can be: `To Do`, `In Progress`, `Done`",
-          "instillUIOrder": 7,
-          "instillFormat": "string",
-          "title": "Status",
-          "type": "string"
-        }
-      },
-      "required": [
-        "id",
-        "key",
-        "self",
-        "fields"
-      ],
+      "$ref": "#/$defs/issue",
       "title": "Output",
       "type": "object"
     }
@@ -669,73 +694,9 @@
       "type": "object"
     },
     "output": {
-      "description": "Get an issue in Jira",
+      "description": "Get an sprint in Jira",
       "instillUIOrder": 0,
-      "properties": {
-        "id": {
-          "title": "ID",
-          "description": "The ID of the sprint",
-          "type": "integer",
-          "instillUIOrder": 0,
-          "instillFormat": "integer"
-        },
-        "self": {
-          "title": "Self",
-          "description": "The URL of the sprint",
-          "type": "string",
-          "instillUIOrder": 1,
-          "instillFormat": "string"
-        },
-        "state": {
-          "title": "State",
-          "description": "The state of the sprint, can be: `active`, `closed`, `future`",
-          "type": "string",
-          "instillUIOrder": 2,
-          "instillFormat": "string"
-        },
-        "name": {
-          "title": "Name",
-          "description": "The name of the sprint",
-          "type": "string",
-          "instillUIOrder": 3,
-          "instillFormat": "string"
-        },
-        "start-date": {
-          "title": "Start Date",
-          "description": "The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
-          "type": "string",
-          "instillUIOrder": 4,
-          "instillFormat": "string"
-        },
-        "end-date": {
-          "title": "End Date",
-          "description": "The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
-          "type": "string",
-          "instillUIOrder": 5,
-          "instillFormat": "string"
-        },
-        "complete-date": {
-          "title": "Complete Date",
-          "description": "The complete date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
-          "type": "string",
-          "instillUIOrder": 6,
-          "instillFormat": "string"
-        },
-        "origin-board-id": {
-          "title": "Origin Board ID",
-          "description": "The ID of the origin board",
-          "type": "integer",
-          "instillUIOrder": 7,
-          "instillFormat": "integer"
-        },
-        "goal": {
-          "title": "Goal",
-          "description": "The Goal of the sprint",
-          "type": "string",
-          "instillUIOrder": 8,
-          "instillFormat": "string"
-        }
-      },
+      "$ref": "#/$defs/sprint",
       "required": [],
       "title": "Output",
       "type": "object"

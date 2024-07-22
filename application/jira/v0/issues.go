@@ -4,7 +4,6 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
-	"slices"
 	"strings"
 
 	"github.com/go-resty/resty/v2"
@@ -141,6 +140,7 @@ type Range struct {
 	Range     string `json:"range,omitempty"`
 	EpicKey   string `json:"epic-key,omitempty"`
 	SprintKey string `json:"sprint-key,omitempty"`
+	JQL       string `json:"jql,omitempty"`
 }
 type ListIssuesInput struct {
 	BoardID    int   `json:"board-id,omitempty" api:"boardId"`
@@ -209,6 +209,11 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 	case "Issues without epic assigned":
 		// https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-epic-none-issue-get
 		apiEndpoint = apiEndpoint + "/epic/none/issue"
+	case "Standard Issues":
+		// https://support.atlassian.com/jira-cloud-administration/docs/what-are-issue-types/
+		jql = fmt.Sprintf("project=\"%s\" AND issuetype not in (Epic, subtask)", boardKey)
+	case "JQL query":
+		jql = opt.Range.JQL
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("invalid range"),
@@ -217,7 +222,7 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 	}
 
 	var resp *resty.Response
-	if slices.Contains([]string{"Issues of an epic", "Issues of a sprint"}, opt.Range.Range) {
+	if jql != "" {
 		resp, err = jiraClient.nextGenIssuesSearch(ctx, nextGenSearchRequest{
 			JQL:        jql,
 			MaxResults: opt.MaxResults,
