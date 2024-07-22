@@ -2,10 +2,16 @@ package hubspot
 
 import (
 	hubspot "github.com/belong-inc/go-hubspot"
+	"github.com/instill-ai/component/base"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
+// following go-hubspot sdk format
+
+// API functions for Thread
+
 type ThreadService interface {
-	Get(threadId string) (*ThreadResponseHSFormat, error)
+	Get(threadId string) (*TaskGetThreadResp, error)
 }
 
 type ThreadServiceOp struct {
@@ -13,69 +19,89 @@ type ThreadServiceOp struct {
 	client     *hubspot.Client
 }
 
-// The structs used to receive response from HubSpot API
-
-// Give more information about sender/receiver. If it is email, the value is email of the sender/receiver.
-type ThreadDeliveryIdentifier struct {
-	Type  string `json:"type,omitempty"`
-	Value string `json:"value,omitempty"`
-}
-
-type ThreadUserHSFormat struct {
-	Name               string                   `json:"name,omitempty"`
-	DeliveryIdentifier ThreadDeliveryIdentifier `json:"deliveryIdentifier,omitempty"`
-}
-
-type ThreadClientHSFormat struct {
-	ClientType string `json:"clientType,omitempty"`
-}
-
-type ThreadResultHSFormat struct {
-	CreatedAt  string               `json:"createdAt"`
-	Client     ThreadClientHSFormat `json:"client,omitempty"`
-	Senders    []ThreadUserHSFormat `json:"senders,omitempty"`
-	Recipients []ThreadUserHSFormat `json:"recipients,omitempty"`
-	Text       string               `json:"text,omitempty"`
-	Subject    string               `json:"subject,omitempty"`
-}
-
-// The response received from HubSpot when requesting thread.
-type ThreadResponseHSFormat struct {
-	Results []ThreadResultHSFormat `json:"results"`
-}
-
-// Structs used for task format
-
-type ThreadUserTaskFormat struct {
-	Name  string `json:"name,omitempty"`
-	Type  string `json:"type,omitempty"`
-	Value string `json:"value,omitempty"`
-}
-
-type ThreadResultTaskFormat struct {
-	CreatedAt  string                 `json:"created-at"`
-	Senders    []ThreadUserTaskFormat `json:"senders,omitempty"`
-	Recipients []ThreadUserTaskFormat `json:"recipients,omitempty"`
-	Text       string                 `json:"text"`
-	Subject    string                 `json:"subject"`
-}
-
-type ThreadResponseTaskFormat struct {
-	Results []ThreadResultTaskFormat `json:"results"`
-}
-
-// Used to do http request and get thread
-func (s *ThreadServiceOp) Get(threadId string) (*ThreadResponseHSFormat, error) {
-	resource := &ThreadResponseHSFormat{}
+func (s *ThreadServiceOp) Get(threadId string) (*TaskGetThreadResp, error) {
+	resource := &TaskGetThreadResp{}
 	if err := s.client.Get(s.threadPath+"/"+threadId+"/messages", resource, nil); err != nil {
 		return nil, err
 	}
 	return resource, nil
 }
 
-// Used to convert struct response to struct for task. Also used to collapse ThreadDeliveryIdentifier and ThreadUser into one struct.
-func ThreadConvertToTaskFormat(res *ThreadResponseHSFormat) *ThreadResponseTaskFormat {
-	responseOutput := ThreadResponseTaskFormat{}
+// Get Thread
+
+// Get Thread Input
+
+type TaskGetThreadInput struct {
+	ThreadId string `json:"thread-id"`
+}
+
+// Get Thread Reponse structs
+
+type TaskGetThreadResp struct {
+	Results []taskGetThreadRespResult `json:"results"`
+}
+
+type taskGetThreadRespResult struct {
+	CreatedAt  string                      `json:"createdAt"`
+	Client     taskGetThreadRespUserClient `json:"client,omitempty"`
+	Senders    []taskGetThreadRespUser     `json:"senders,omitempty"`
+	Recipients []taskGetThreadRespUser     `json:"recipients,omitempty"`
+	Text       string                      `json:"text,omitempty"`
+	Subject    string                      `json:"subject,omitempty"`
+}
+
+type taskGetThreadRespUserClient struct {
+	ClientType string `json:"clientType,omitempty"`
+}
+
+type taskGetThreadRespUser struct {
+	Name               string                      `json:"name,omitempty"`
+	DeliveryIdentifier taskGetThreadRespIdentifier `json:"deliveryIdentifier,omitempty"`
+}
+
+type taskGetThreadRespIdentifier struct {
+	Type  string `json:"type,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+// Get Thread Output structs
+
+type TaskGetThreadOutput struct {
+	Results []taskGetThreadOutputResult `json:"results"`
+}
+
+type taskGetThreadOutputResult struct {
+	CreatedAt  string                    `json:"created-at"`
+	Senders    []taskGetThreadOutputUser `json:"senders,omitempty"`
+	Recipients []taskGetThreadOutputUser `json:"recipients,omitempty"`
+	Text       string                    `json:"text"`
+	Subject    string                    `json:"subject"`
+}
+
+type taskGetThreadOutputUser struct {
+	Name  string `json:"name,omitempty"`
+	Type  string `json:"type,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+func (e *execution) GetThread(input *structpb.Struct) (*structpb.Struct, error) {
+
+	inputStruct := TaskGetThreadInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
+
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := e.client.Thread.Get(inputStruct.ThreadId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// convert to output struct
+
+	outputStruct := TaskGetThreadOutput{}
 
 	for _, value1 := range res.Results {
 		// this will make the output to not contain any system message
@@ -83,7 +109,7 @@ func ThreadConvertToTaskFormat(res *ThreadResponseHSFormat) *ThreadResponseTaskF
 			continue
 		}
 
-		resultOutput := ThreadResultTaskFormat{
+		resultOutput := taskGetThreadOutputResult{
 			CreatedAt: value1.CreatedAt,
 			Text:      value1.Text,
 			Subject:   value1.Subject,
@@ -91,7 +117,7 @@ func ThreadConvertToTaskFormat(res *ThreadResponseHSFormat) *ThreadResponseTaskF
 
 		// sender
 		for _, value2 := range value1.Senders {
-			userOutput := ThreadUserTaskFormat{
+			userOutput := taskGetThreadOutputUser{
 				Name:  value2.Name,
 				Type:  value2.DeliveryIdentifier.Type,
 				Value: value2.DeliveryIdentifier.Value,
@@ -102,7 +128,7 @@ func ThreadConvertToTaskFormat(res *ThreadResponseHSFormat) *ThreadResponseTaskF
 
 		// recipient
 		for _, value3 := range value1.Recipients {
-			userOutput := ThreadUserTaskFormat{
+			userOutput := taskGetThreadOutputUser{
 				Name:  value3.Name,
 				Type:  value3.DeliveryIdentifier.Type,
 				Value: value3.DeliveryIdentifier.Value,
@@ -112,9 +138,14 @@ func ThreadConvertToTaskFormat(res *ThreadResponseHSFormat) *ThreadResponseTaskF
 
 		}
 
-		responseOutput.Results = append(responseOutput.Results, resultOutput)
+		outputStruct.Results = append(outputStruct.Results, resultOutput)
 
 	}
 
-	return &responseOutput
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	return output, nil
 }

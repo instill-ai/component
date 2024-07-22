@@ -18,26 +18,26 @@ import (
 // Mock Thread struct and its functions
 type MockThread struct{}
 
-func (s *MockThread) Get(threadId string) (*ThreadResponseHSFormat, error) {
+func (s *MockThread) Get(threadId string) (*TaskGetThreadResp, error) {
 
-	var fakeThread ThreadResponseHSFormat
+	var fakeThread TaskGetThreadResp
 	if threadId == "7509711154" {
-		fakeThread = ThreadResponseHSFormat{
-			Results: []ThreadResultHSFormat{
+		fakeThread = TaskGetThreadResp{
+			Results: []taskGetThreadRespResult{
 				{
 					CreatedAt: "2024-07-02T10:42:15Z",
-					Senders: []ThreadUserHSFormat{
+					Senders: []taskGetThreadRespUser{
 						{
 							Name: "Brian Halligan (Sample Contact)",
-							DeliveryIdentifier: ThreadDeliveryIdentifier{
+							DeliveryIdentifier: taskGetThreadRespIdentifier{
 								Type:  "HS_EMAIL_ADDRESS",
 								Value: "bh@hubspot.com",
 							},
 						},
 					},
-					Recipients: []ThreadUserHSFormat{
+					Recipients: []taskGetThreadRespUser{
 						{
-							DeliveryIdentifier: ThreadDeliveryIdentifier{
+							DeliveryIdentifier: taskGetThreadRespIdentifier{
 								Type:  "HS_EMAIL_ADDRESS",
 								Value: "fake_email@gmail.com",
 							},
@@ -57,32 +57,32 @@ func (s *MockThread) Get(threadId string) (*ThreadResponseHSFormat, error) {
 
 type MockRetrieveAssociation struct{}
 
-func (s *MockRetrieveAssociation) GetThreadId(contactId string) (*RetrieveThreadIdResponse, error) {
+func (s *MockRetrieveAssociation) GetThreadId(contactId string) (*TaskRetrieveAssociationThreadResp, error) {
 
-	var fakeThreadId RetrieveThreadIdResponse
+	var fakeThreadId TaskRetrieveAssociationThreadResp
 	if contactId == "32027696539" {
-		fakeThreadId = RetrieveThreadIdResponse{
-			Results: []RetrieveThreadIdResult{
-				{
-					Id: "7509711154",
-				},
+		fakeThreadId = TaskRetrieveAssociationThreadResp{
+			Results: []struct {
+				Id string `json:"id"`
+			}{
+				{Id: "7509711154"},
 			},
 		}
 	}
 	return &fakeThreadId, nil
 }
 
-func (s *MockRetrieveAssociation) GetCrmId(contactId string, objectType string) (*RetrieveCrmIdResponseHSFormat, error) {
+func (s *MockRetrieveAssociation) GetCrmId(contactId string, objectType string) (*TaskRetrieveAssociationCrmResp, error) {
 
-	var fakeCrmId RetrieveCrmIdResponseHSFormat
+	var fakeCrmId TaskRetrieveAssociationCrmResp
 	if contactId == "32027696539" {
-		fakeCrmId = RetrieveCrmIdResponseHSFormat{
-			Results: []RetrieveCrmIdResultHSFormat{
+		fakeCrmId = TaskRetrieveAssociationCrmResp{
+			Results: []taskRetrieveAssociationCrmRespResult{
 				{
-					IdArray: []RetrieveCrmId{
-						{
-							Id: "12345678900",
-						},
+					IdArray: []struct {
+						Id string `json:"id"`
+					}{
+						{Id: "12345678900"},
 					},
 				},
 			},
@@ -103,22 +103,22 @@ func TestComponent_ExecuteGetThreadTask(t *testing.T) {
 	tc := struct {
 		name     string
 		input    string
-		wantResp ThreadResponseTaskFormat
+		wantResp TaskGetThreadOutput
 	}{
 		name:  "ok - get thread",
 		input: "7509711154",
-		wantResp: ThreadResponseTaskFormat{
-			Results: []ThreadResultTaskFormat{
+		wantResp: TaskGetThreadOutput{
+			Results: []taskGetThreadOutputResult{
 				{
 					CreatedAt: "2024-07-02T10:42:15Z",
-					Senders: []ThreadUserTaskFormat{
+					Senders: []taskGetThreadOutputUser{
 						{
 							Name:  "Brian Halligan (Sample Contact)",
 							Type:  "HS_EMAIL_ADDRESS",
 							Value: "bh@hubspot.com",
 						},
 					},
-					Recipients: []ThreadUserTaskFormat{
+					Recipients: []taskGetThreadOutputUser{
 						{
 							Type:  "HS_EMAIL_ADDRESS",
 							Value: "fake_email@gmail.com",
@@ -168,34 +168,30 @@ func TestComponent_ExecuteRetrieveAssociationTask(t *testing.T) {
 
 	testcases := []struct {
 		name     string
-		input    RetrieveAssociationInput
+		input    TaskRetrieveAssociationInput
 		wantResp interface{}
 	}{
 		{
 			name: "ok - retrieve association: thread ID",
-			input: RetrieveAssociationInput{
+			input: TaskRetrieveAssociationInput{
 				ContactId:  "32027696539",
 				ObjectType: "Threads",
 			},
-			wantResp: RetrieveThreadIdResponse{
-				Results: []RetrieveThreadIdResult{
-					{
-						Id: "7509711154",
-					},
+			wantResp: TaskRetrieveAssociationOutput{
+				ObjectIds: []string{
+					"7509711154",
 				},
 			},
 		},
 		{
 			name: "ok - retrieve association: deal ID",
-			input: RetrieveAssociationInput{
+			input: TaskRetrieveAssociationInput{
 				ContactId:  "32027696539",
 				ObjectType: "Deals",
 			},
-			wantResp: RetrieveCrmIdResultTaskFormat{
-				IdArray: []RetrieveCrmId{
-					{
-						Id: "12345678900",
-					},
+			wantResp: TaskRetrieveAssociationOutput{
+				ObjectIds: []string{
+					"12345678900",
 				},
 			},
 		},

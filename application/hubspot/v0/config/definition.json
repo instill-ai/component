@@ -11,10 +11,8 @@
     "TASK_GET_THREAD",
     "TASK_RETRIEVE_ASSOCIATION"
   ],
-  "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/application/hubspot",
   "icon": "assets/HubSpot.svg",
-  "iconUrl": "",
   "id": "hubspot",
   "public": true,
   "title": "HubSpot",

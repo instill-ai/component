@@ -4,11 +4,17 @@ import (
 	"strings"
 
 	hubspot "github.com/belong-inc/go-hubspot"
+	"github.com/instill-ai/component/base"
+	"google.golang.org/protobuf/types/known/structpb"
 )
+
+// following go-hubspot sdk format
+
+// API functions for Ticket
 
 type TicketService interface {
 	Get(ticketId string) (*hubspot.ResponseResource, error)
-	Create(ticket *TicketInfoHSFormat) (*hubspot.ResponseResource, error)
+	Create(ticket *TaskCreateTicketReq) (*hubspot.ResponseResource, error)
 }
 
 type TicketServiceOp struct {
@@ -16,7 +22,45 @@ type TicketServiceOp struct {
 	ticketPath string
 }
 
-type TicketInfoHSFormat struct {
+var ticketProperties = []string{
+	"hubspot_owner_id",
+	"subject",
+	"hs_pipeline_stage",
+	"hs_pipeline",
+	"hs_ticket_category",
+	"hs_ticket_priority",
+	"source_type",
+	"hs_object_source_label",
+	"createdate",
+	"hs_lastmodifieddate",
+}
+
+func (s *TicketServiceOp) Get(ticketId string) (*hubspot.ResponseResource, error) {
+	resource := &hubspot.ResponseResource{Properties: &TaskGetTicketResp{}}
+	option := &hubspot.RequestQueryOption{Properties: ticketProperties, Associations: []string{"contacts"}}
+	if err := s.client.Get(s.ticketPath+"/"+ticketId, resource, option); err != nil {
+		return nil, err
+	}
+
+	return resource, nil
+}
+
+func (s *TicketServiceOp) Create(ticket *TaskCreateTicketReq) (*hubspot.ResponseResource, error) {
+	req := &hubspot.RequestPayload{Properties: ticket}
+	resource := &hubspot.ResponseResource{Properties: ticket}
+	if err := s.client.Post(s.ticketPath, req, resource); err != nil {
+		return nil, err
+	}
+	return resource, nil
+}
+
+// Get Ticket
+
+type TaskGetTicketInput struct {
+	TicketId string `json:"ticket-id"`
+}
+
+type TaskGetTicketResp struct {
 	OwnerId          string `json:"hubspot_owner_id,omitempty"`
 	TicketName       string `json:"subject"`
 	TicketStatus     string `json:"hs_pipeline_stage"`
@@ -30,93 +74,144 @@ type TicketInfoHSFormat struct {
 	TicketId         string `json:"hs_object_id"`
 }
 
-type TicketInfoTaskFormat struct {
-	OwnerId          string   `json:"owner-id,omitempty"`
-	TicketName       string   `json:"ticket-name"`
-	TicketStatus     string   `json:"ticket-status"`
-	Pipeline         string   `json:"pipeline"`
-	Category         []string `json:"category,omitempty"`
-	Priority         string   `json:"priority,omitempty"`
-	Source           string   `json:"source,omitempty"`
-	RecordSource     string   `json:"record-source,omitempty"`
-	CreateDate       string   `json:"create-date"`
-	LastModifiedDate string   `json:"last-modified-date"`
-	TicketId         string   `json:"ticket-id"`
+type TaskGetTicketOutput struct {
+	OwnerId              string   `json:"owner-id,omitempty"`
+	TicketName           string   `json:"ticket-name"`
+	TicketStatus         string   `json:"ticket-status"`
+	Pipeline             string   `json:"pipeline"`
+	Category             []string `json:"category,omitempty"`
+	Priority             string   `json:"priority,omitempty"`
+	Source               string   `json:"source,omitempty"`
+	RecordSource         string   `json:"record-source,omitempty"`
+	CreateDate           string   `json:"create-date"`
+	LastModifiedDate     string   `json:"last-modified-date"`
+	AssociatedContactIds []string `json:"associated-contact-ids,omitempty"`
 }
 
-// for Get function
-var ticketProperties = []string{
-	"hubspot_owner_id",
-	"subject",
-	"hs_pipeline_stage",
-	"hs_pipeline",
-	"hs_ticket_category",
-	"hs_ticket_priority",
-	"source_type",
-	"hs_object_source_label",
-	"createdate",
-	"hs_lastmodifieddate",
-	"hs_object_id",
-}
+func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) {
 
-func (s *TicketServiceOp) Get(ticketId string) (*hubspot.ResponseResource, error) {
-	resource := &hubspot.ResponseResource{Properties: &TicketInfoHSFormat{}}
-	option := &hubspot.RequestQueryOption{Properties: ticketProperties, Associations: []string{"contacts"}}
-	if err := s.client.Get(s.ticketPath+"/"+ticketId, resource, option); err != nil {
+	inputStruct := TaskGetTicketInput{}
+
+	err := base.ConvertFromStructpb(input, &inputStruct)
+
+	if err != nil {
 		return nil, err
 	}
 
-	return resource, nil
-}
-
-func (s *TicketServiceOp) Create(ticket *TicketInfoHSFormat) (*hubspot.ResponseResource, error) {
-	req := &hubspot.RequestPayload{Properties: ticket}
-	resource := &hubspot.ResponseResource{Properties: ticket}
-	if err := s.client.Post(s.ticketPath, req, resource); err != nil {
+	res, err := e.client.Ticket.Get(inputStruct.TicketId)
+	if err != nil {
 		return nil, err
 	}
-	return resource, nil
-}
 
-func TicketConvertToTaskFormat(res *TicketInfoHSFormat) *TicketInfoTaskFormat {
+	ticketInfo := res.Properties.(*TaskGetTicketResp)
+
+	// get contacts associated with ticket
+
+	ticketContactAssociation := res.Associations.Contacts.Results
+	ticketContactList := make([]string, len(ticketContactAssociation))
+
+	for index, value := range ticketContactAssociation {
+		ticketContactList[index] = value.ID
+	}
 
 	var categoryValues []string
-	if res.Category != "" {
-		categoryValues = strings.Split(res.Category, ";")
+	if ticketInfo.Category != "" {
+		categoryValues = strings.Split(ticketInfo.Category, ";")
 	}
 
-	ret := &TicketInfoTaskFormat{
-		OwnerId:          res.OwnerId,
-		TicketName:       res.TicketName,
-		TicketStatus:     res.TicketStatus,
-		Pipeline:         res.Pipeline,
-		Priority:         res.Priority,
-		Category:         categoryValues,
-		Source:           res.Source,
-		RecordSource:     res.RecordSource,
-		CreateDate:       res.CreateDate,
-		LastModifiedDate: res.LastModifiedDate,
-		TicketId:         res.TicketId,
+	outputStruct := TaskGetTicketOutput{
+		OwnerId:              ticketInfo.OwnerId,
+		TicketName:           ticketInfo.TicketName,
+		TicketStatus:         ticketInfo.TicketStatus,
+		Pipeline:             ticketInfo.Pipeline,
+		Category:             categoryValues,
+		Priority:             ticketInfo.Priority,
+		Source:               ticketInfo.Source,
+		RecordSource:         ticketInfo.RecordSource,
+		CreateDate:           ticketInfo.CreateDate,
+		LastModifiedDate:     ticketInfo.LastModifiedDate,
+		AssociatedContactIds: ticketContactList,
 	}
 
-	return ret
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	return output, nil
 }
 
-func TicketConvertToHSFormat(res *TicketInfoTaskFormat) *TicketInfoHSFormat {
+// Create Ticket
+type TaskCreateTicketInput struct {
+	OwnerId                   string   `json:"owner-id"`
+	TicketName                string   `json:"ticket-name"`
+	TicketStatus              string   `json:"ticket-status"`
+	Pipeline                  string   `json:"pipeline"`
+	Category                  []string `json:"category"`
+	Priority                  string   `json:"priority"`
+	Source                    string   `json:"source"`
+	CreateContactsAssociation []string `json:"create-contacts-association"`
+}
 
-	combinedCategoryValues := strings.Join(res.Category, ";")
+type TaskCreateTicketReq struct {
+	OwnerId      string `json:"hubspot_owner_id,omitempty"`
+	TicketName   string `json:"subject"`
+	TicketStatus string `json:"hs_pipeline_stage"`
+	Pipeline     string `json:"hs_pipeline"`
+	Category     string `json:"hs_ticket_category,omitempty"`
+	Priority     string `json:"hs_ticket_priority,omitempty"`
+	Source       string `json:"source_type,omitempty"`
+	TicketId     string `json:"hs_object_id"`
+}
 
-	ret := &TicketInfoHSFormat{
-		TicketName:   res.TicketName,
-		TicketStatus: res.TicketStatus,
-		Pipeline:     res.Pipeline,
-		Priority:     res.Priority,
-		Category:     combinedCategoryValues,
-		Source:       res.Source,
-		RecordSource: res.RecordSource,
-		CreateDate:   res.CreateDate,
+type TaskCreateTicketOutput struct {
+	TicketId string `json:"ticket-id"`
+}
+
+func (e *execution) CreateTicket(input *structpb.Struct) (*structpb.Struct, error) {
+
+	inputStruct := TaskCreateTicketInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
+
+	if err != nil {
+		return nil, err
 	}
 
-	return ret
+	req := TaskCreateTicketReq{
+		OwnerId:      inputStruct.OwnerId,
+		TicketName:   inputStruct.TicketName,
+		TicketStatus: inputStruct.TicketStatus,
+		Pipeline:     inputStruct.Pipeline,
+		Category:     strings.Join(inputStruct.Category, ";"),
+		Priority:     inputStruct.Priority,
+		Source:       inputStruct.Source,
+	}
 
+	res, err := e.client.Ticket.Create(&req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// get ticket Id
+	ticketId := res.Properties.(*TaskCreateTicketReq).TicketId
+
+	outputStruct := TaskCreateTicketOutput{TicketId: ticketId}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// This section is for creating associations (ticket -> object)
+	if len(inputStruct.CreateContactsAssociation) != 0 {
+		err := CreateAssociation(&outputStruct.TicketId, &inputStruct.CreateContactsAssociation, "ticket", "contact", e)
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return output, nil
 }

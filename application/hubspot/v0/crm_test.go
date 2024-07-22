@@ -44,10 +44,10 @@ type MockContact struct{}
 
 func (s *MockContact) Get(contactID string, contact interface{}, option *hubspot.RequestQueryOption) (*hubspot.ResponseResource, error) {
 
-	var fakeContact ContactInfoHSFormat
+	var fakeContact TaskGetContactResp
 	if contactID == "32027696539" || contactID == "bh@hubspot.com" {
 
-		fakeContact = ContactInfoHSFormat{
+		fakeContact = TaskGetContactResp{
 			FirstName:      "Brian",
 			LastName:       "Halligan (Sample Contact)",
 			Email:          "bh@hubspot.com",
@@ -70,7 +70,7 @@ func (s *MockContact) Create(contact interface{}) (*hubspot.ResponseResource, er
 
 	arbitraryContactId := "12345678"
 
-	fakeContactInfo := contact.(*ContactInfoHSFormat)
+	fakeContactInfo := contact.(*TaskCreateContactReq)
 
 	fakeContactInfo.ContactId = arbitraryContactId
 
@@ -96,14 +96,13 @@ type MockDeal struct{}
 
 func (s *MockDeal) Get(dealID string, deal interface{}, option *hubspot.RequestQueryOption) (*hubspot.ResponseResource, error) {
 
-	var fakeDeal DealInfoHSFormat
+	var fakeDeal TaskGetDealResp
 	if dealID == "20620806729" {
-		fakeDeal = DealInfoHSFormat{
+		fakeDeal = TaskGetDealResp{
 			DealName:   "Fake deal",
 			Pipeline:   "default",
 			DealStage:  "qualifiedtobuy",
 			CreateDate: "2024-07-09T02:22:06.140Z",
-			DealId:     "20620806729",
 		}
 	}
 
@@ -117,7 +116,7 @@ func (s *MockDeal) Get(dealID string, deal interface{}, option *hubspot.RequestQ
 func (s *MockDeal) Create(deal interface{}) (*hubspot.ResponseResource, error) {
 	arbitraryDealId := "12345678900"
 
-	fakeDealInfo := deal.(*DealInfoHSFormat)
+	fakeDealInfo := deal.(*TaskCreateDealReq)
 
 	fakeDealInfo.DealId = arbitraryDealId
 
@@ -140,9 +139,9 @@ type MockCompany struct{}
 
 func (s *MockCompany) Get(companyID string, company interface{}, option *hubspot.RequestQueryOption) (*hubspot.ResponseResource, error) {
 
-	var fakeCompany CompanyInfoHSFormat
+	var fakeCompany TaskGetCompanyResp
 	if companyID == "20620806729" {
-		fakeCompany = CompanyInfoHSFormat{
+		fakeCompany = TaskGetCompanyResp{
 			CompanyName:   "HubSpot",
 			CompanyDomain: "hubspot.com",
 			Description:   "HubSpot offers a comprehensive cloud-based marketing and sales platform with integrated applications for attracting, converting, and delighting customers through inbound marketing strategies.",
@@ -162,7 +161,7 @@ func (s *MockCompany) Get(companyID string, company interface{}, option *hubspot
 func (s *MockCompany) Create(company interface{}) (*hubspot.ResponseResource, error) {
 	arbitraryCompanyId := "99999999999"
 
-	fakeCompanyInfo := company.(*CompanyInfoHSFormat)
+	fakeCompanyInfo := company.(*TaskCreateCompanyReq)
 
 	fakeCompanyInfo.CompanyId = arbitraryCompanyId
 
@@ -186,9 +185,9 @@ func (s *MockCompany) AssociateAnotherObj(companyID string, conf *hubspot.Associ
 type MockTicket struct{}
 
 func (s *MockTicket) Get(ticketId string) (*hubspot.ResponseResource, error) {
-	var fakeTicket TicketInfoHSFormat
+	var fakeTicket TaskGetTicketResp
 	if ticketId == "2865646368" {
-		fakeTicket = TicketInfoHSFormat{
+		fakeTicket = TaskGetTicketResp{
 			TicketName:   "HubSpot - New Query (Sample Query)",
 			TicketStatus: "1",
 			Pipeline:     "0",
@@ -202,7 +201,7 @@ func (s *MockTicket) Get(ticketId string) (*hubspot.ResponseResource, error) {
 
 	return ret, nil
 }
-func (s *MockTicket) Create(ticket *TicketInfoHSFormat) (*hubspot.ResponseResource, error) {
+func (s *MockTicket) Create(ticket *TaskCreateTicketReq) (*hubspot.ResponseResource, error) {
 	arbitraryTicketId := "99987654321"
 
 	fakeTicketInfo := ticket
@@ -227,11 +226,11 @@ func TestComponent_ExecuteGetContactTask(t *testing.T) {
 	tc := struct {
 		name     string
 		input    string
-		wantResp ContactInfoTaskFormat
+		wantResp TaskGetContactOutput
 	}{
 		name:  "ok - get contact",
 		input: "32027696539",
-		wantResp: ContactInfoTaskFormat{
+		wantResp: TaskGetContactOutput{
 			FirstName:      "Brian",
 			LastName:       "Halligan (Sample Contact)",
 			Email:          "bh@hubspot.com",
@@ -279,11 +278,11 @@ func TestComponent_ExecuteCreateContactTask(t *testing.T) {
 
 	tc := struct {
 		name     string
-		input    ContactInfoTaskFormat
+		input    TaskCreateContactInput
 		wantResp string
 	}{
 		name: "ok - create contact",
-		input: ContactInfoTaskFormat{
+		input: TaskCreateContactInput{
 			FirstName: "Test",
 			LastName:  "Name",
 			Email:     "test_name@gmail.com",
@@ -326,11 +325,11 @@ func TestComponent_ExecuteGetDealTask(t *testing.T) {
 	tc := struct {
 		name     string
 		input    string
-		wantResp DealInfoTaskFormat
+		wantResp TaskGetDealOutput
 	}{
 		name:  "ok - get deal",
 		input: "20620806729",
-		wantResp: DealInfoTaskFormat{
+		wantResp: TaskGetDealOutput{
 			DealName:   "Fake deal",
 			Pipeline:   "default",
 			DealStage:  "qualifiedtobuy",
@@ -375,12 +374,12 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 
 	tc := struct {
 		name           string
-		inputDeal      DealInfoTaskFormat
+		inputDeal      TaskCreateDealInput
 		inputContactId string //used to associate contact with deal
 		wantResp       string
 	}{
 		name: "ok - create deal",
-		inputDeal: DealInfoTaskFormat{
+		inputDeal: TaskCreateDealInput{
 			DealName:  "Test Creating Deal",
 			Pipeline:  "default",
 			DealStage: "contractsent",
@@ -425,11 +424,11 @@ func TestComponent_ExecuteGetCompanyTask(t *testing.T) {
 	tc := struct {
 		name     string
 		input    string
-		wantResp CompanyInfoTaskFormat
+		wantResp TaskGetCompanyOutput
 	}{
 		name:  "ok - get company",
 		input: "20620806729",
-		wantResp: CompanyInfoTaskFormat{
+		wantResp: TaskGetCompanyOutput{
 			CompanyName:   "HubSpot",
 			CompanyDomain: "hubspot.com",
 			Description:   "HubSpot offers a comprehensive cloud-based marketing and sales platform with integrated applications for attracting, converting, and delighting customers through inbound marketing strategies.",
@@ -477,12 +476,12 @@ func TestComponent_ExecuteCreateCompanyTask(t *testing.T) {
 
 	tc := struct {
 		name           string
-		inputCompany   CompanyInfoTaskFormat
+		inputCompany   TaskCreateCompanyInput
 		inputContactId string //used to associate contact with company
 		wantResp       string
 	}{
 		name: "ok - create company",
-		inputCompany: CompanyInfoTaskFormat{
+		inputCompany: TaskCreateCompanyInput{
 			CompanyName:   "Fake Company",
 			CompanyDomain: "fakecompany.com",
 			AnnualRevenue: 5000000,
@@ -527,11 +526,11 @@ func TestComponent_ExecuteGetTicketTask(t *testing.T) {
 	tc := struct {
 		name     string
 		input    string
-		wantResp TicketInfoTaskFormat
+		wantResp TaskGetTicketOutput
 	}{
 		name:  "ok - get ticket",
 		input: "2865646368",
-		wantResp: TicketInfoTaskFormat{
+		wantResp: TaskGetTicketOutput{
 			TicketName:   "HubSpot - New Query (Sample Query)",
 			TicketStatus: "1",
 			Pipeline:     "0",
@@ -577,12 +576,12 @@ func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
 
 	tc := struct {
 		name           string
-		inputTicket    TicketInfoTaskFormat
+		inputTicket    TaskCreateTicketInput
 		inputContactId string //used to associate contact with ticket
 		wantResp       string
 	}{
 		name: "ok - create ticket",
-		inputTicket: TicketInfoTaskFormat{
+		inputTicket: TaskCreateTicketInput{
 			TicketName:   "Fake Ticket",
 			TicketStatus: "2",
 			Pipeline:     "0",

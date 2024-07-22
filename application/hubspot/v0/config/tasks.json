@@ -1,79 +1,115 @@
 {
   "$defs": {
     "common": {
-      "contact-id-or-email": {
-        "instillAcceptFormats": ["string"],
-        "instillUIMultiline": true,
-        "instillUIOrder": 0,
-        "instillUpstreamTypes": ["value", "reference", "template"],
-        "title": "Contact ID or Email",
-        "type": "string"
-      },
       "owner-id": {
         "description": "The user who is assigned to the object",
         "title": "Owner ID",
-        "instillUIOrder": 1,
+        "instillUIOrder": 0,
         "type": "string"
       },
-      "associated-contact-id": {
-          "description": "Contact IDs associated with the object",
-          "title": "Associated Contact IDs",
-          "type": "array",
-          "instillFormat": "array:string",
-          "items": {
-            "title": "Associated Contact ID",
-            "type": "string",
-            "description": "Contact ID associated with the object",
-            "instillFormat": "string"
-          }
+      "associated-contact-ids": {
+        "description": "Contact IDs associated with the object",
+        "title": "Associated Contact IDs",
+        "type": "array",
+        "instillFormat": "array:string",
+        "items": {
+          "title": "Associated Contact ID",
+          "type": "string",
+          "description": "Contact ID associated with the object",
+          "instillFormat": "string"
+        }
+      },
+      "create-contacts-association": {
+        "description": "Existing contact IDs to be associated with the object",
+        "title": "Create Object -> Contact Association using contact IDs",
+        "type": "array",
+        "instillAcceptFormats": ["array:string"],
+        "items": {
+          "instillUIMultiline": true,
+          "type": "string"
+        },
+        "instillUpstreamTypes": ["value", "reference"]
+      },
+      "create-deals-association": {
+        "description": "Existing deal IDs to be associated with the object",
+        "title": "Create Object -> Deal Association using deal IDs",
+        "type": "array",
+        "instillAcceptFormats": ["array:string"],
+        "items": {
+          "instillUIMultiline": true,
+          "type": "string"
+        },
+        "instillUpstreamTypes": ["value", "reference"]
+      },
+      "create-companies-association": {
+        "description": "Existing company IDs to be associated with the object",
+        "title": "Create Object -> Company Association using company IDs",
+        "type": "array",
+        "instillAcceptFormats": ["array:string"],
+        "items": {
+          "instillUIMultiline": true,
+          "type": "string"
+        },
+        "instillUpstreamTypes": ["value", "reference"]
+      },
+      "create-tickets-association": {
+        "description": "Existing ticket IDs to be associated with the object",
+        "title": "Create Object -> Ticket Association using ticket IDs",
+        "type": "array",
+        "instillAcceptFormats": ["array:string"],
+        "items": {
+          "instillUIMultiline": true,
+          "type": "string"
+        },
+        "instillUpstreamTypes": ["value", "reference"]
       }
     },
     "contact": {
       "email": {
         "description": "Email address",
-        "instillUIOrder": 2,
+        "instillUIOrder": 1,
         "title": "Email Address",
         "type": "string"
       },
       "first-name": {
         "description": "First name",
-        "instillUIOrder": 3,
+        "instillUIOrder": 2,
         "title": "First Name",
         "type": "string"
       },
       "last-name": {
         "description": "Last name",
-        "instillUIOrder": 4,
+        "instillUIOrder": 3,
         "title": "Last Name",
         "type": "string"
       },
       "phone-number": {
-        "description": "Phone number. Preferably, format is in country code + phone number. Example: +886xxxxxxxxx ",
-        "instillUIOrder": 5,
+        "description": "Phone number. If you plan to use the number formatting feature in HubSpot, use country code + phone number. Example: +886xxxxxxxxx",
+        "instillUIOrder": 4,
         "title": "Phone Number",
         "type": "string"
       },
       "company": {
         "description": "Company",
-        "instillUIOrder": 6,
+        "instillUIOrder": 5,
         "title": "Company",
         "type": "string"
       },
       "job-title": {
         "description": "Job title",
-        "instillUIOrder": 7,
+        "instillUIOrder": 6,
         "title": "Job Title",
         "type": "string"
       },
       "lifecycle-stage": {
-        "description": "Lifecycle stage. Default format is in small letters, all words are combined. Example: salesqualifiedlead. However, remember to check internal value for custom fields.",
-        "instillUIOrder": 8,
+        "description": "Lifecycle stages are used to track how contacts or companies move forward in your process. Default format is in small letters, all words are combined. Example: salesqualifiedlead. However, remember to check internal value for custom fields.",
+        "instillUIOrder": 7,
         "title": "Lifecycle Stage",
         "type": "string"
       },
       "lead-status": {
-        "description": "Lead status. Default format is in capital letters, with _ as space. Example: IN_PROGRESS. However, remember to check internal value for custom fields.",
-        "instillUIOrder": 9,
+        "description": "The contact's sales, prospecting or outreach status. Default format is in capital letters, with _ as space. Example: IN_PROGRESS. However, remember to check internal value for custom fields.",
+        "instillUIOrder": 8,
         "title": "Lead Status",
         "type": "string"
       }
@@ -81,43 +117,43 @@
     "deal": {
       "deal-name": {
         "description": "Deal name",
-        "instillUIOrder": 2,
+        "instillUIOrder": 1,
         "title": "Deal Name",
         "type": "string"
       },
       "pipeline": {
-        "description": "Pipeline. HubSpot uses interval value rather than the name displayed in the view",
-        "instillUIOrder": 3,
+        "description": "A pipeline is the place where you document and manage how your prospects move through the steps of your sales process. HubSpot uses interval value rather than the name displayed in the view",
+        "instillUIOrder": 2,
         "title": "Pipeline",
         "type": "string"
       },
       "deal-stage": {
-        "description": "Deal stage. Default format is in small letters, all words are combined. Example: qualifiedtobuy. However, remember to check internal value for custom fields.",
-        "instillUIOrder": 4,
+        "description": "Deal stages allow you to categorize and track the progress of the deals that you are working on. Default format is in small letters, all words are combined. Example: qualifiedtobuy. However, remember to check internal value for custom fields.",
+        "instillUIOrder": 3,
         "title": "Deal Stage",
         "type": "string"
       },
       "amount": {
         "description": "The total amount of the deal",
-        "instillUIOrder": 5,
+        "instillUIOrder": 4,
         "title": "Amount",
         "type": "number"
       },
       "deal-type": {
-        "description": "Deal type. Default format is in small letters, all words are combined. Example: newbusiness. However, remember to check internal value for custom fields.",
-        "instillUIOrder": 6,
+        "description": "The type of deal. Default format is in small letters, all words are combined. Example: newbusiness. However, remember to check internal value for custom fields.",
+        "instillUIOrder": 5,
         "title": "Deal Type",
         "type": "string"
       },
       "close-date": {
-        "description": "Close date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z",
-        "instillUIOrder": 7,
+        "description": "Date the deal was closed. Set automatically by HubSpot. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z",
+        "instillUIOrder": 6,
         "title": "Close Date",
         "type": "string"
       },
       "create-date": {
         "description": "Create date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z",
-        "instillUIOrder": 8,
+        "instillUIOrder": 7,
         "title": "Create Date",
         "type": "string"
       }
@@ -125,85 +161,85 @@
     "company": {
       "company-name": {
         "description": "Company name",
-        "instillUIOrder": 2,
+        "instillUIOrder": 1,
         "title": "Company Name",
         "type": "string"
       },
       "company-domain": {
         "description": "The domain name of the company",
-        "instillUIOrder": 3,
+        "instillUIOrder": 2,
         "title": "Company Domain",
         "type": "string"
       },
       "description": {
         "description": "Description of the company",
-        "instillUIOrder": 4,
+        "instillUIOrder": 3,
         "title": "Description",
         "type": "string"
       },
       "phone-number": {
-        "description": "Phone number of the company",
-        "instillUIOrder": 5,
+        "description": "Phone number of the company. If you plan to use the number formatting feature in HubSpot, use country code + phone number. Example: +886xxxxxxxxx",
+        "instillUIOrder": 4,
         "title": "Phone Number",
         "type": "string"
       },
       "industry": {
         "description": "The industry the company belongs to. Default format is in capital letters, with _ as space. Example: BROADCAST_MEDIA",
-        "instillUIOrder": 6,
+        "instillUIOrder": 5,
         "title": "Industry",
         "type": "string"
       },
       "company-type": {
         "description": "Type of company. Default format is capital letter. Example: RESELLER",
-        "instillUIOrder": 7,
+        "instillUIOrder": 6,
         "title": "Company Type",
         "type": "string"
       },
       "city": {
         "description": "City",
-        "instillUIOrder": 8,
+        "instillUIOrder": 7,
         "title": "City",
         "type": "string"
       },
       "state": {
         "description": "State",
-        "instillUIOrder": 9,
+        "instillUIOrder": 8,
         "title": "State",
         "type": "string"
       },
       "country": {
         "description": "Country",
-        "instillUIOrder": 10,
+        "instillUIOrder": 9,
         "title": "Country",
         "type": "string"
       },
       "postal-code": {
         "description": "Postal code",
-        "instillUIOrder": 11,
+        "instillUIOrder": 10,
         "title": "Postal Code",
         "type": "string"
       },
       "time-zone": {
         "description": "Time zone",
-        "instillUIOrder": 12,
+        "instillUIOrder": 11,
         "title": "Time Zone",
         "type": "string"
       },
       "annual-revenue": {
         "description": "Annual revenue",
-        "instillUIOrder": 13,
+        "instillUIOrder": 12,
         "title": "Annual Revenue",
         "type": "number"
       },
       "total-revenue": {
         "description": "Total revenue. Calculated automatically by HubSpot",
-        "instillUIOrder": 14,
+        "instillUIOrder": 13,
         "title": "Total Revenue",
         "type": "number"
       },
       "linkedin-page": {
         "description": "Linkedin page of the company",
-        "instillUIOrder": 15,
+        "instillUIOrder": 14,
         "title": "Linkedin Page",
         "type": "string"
       }
@@ -211,55 +247,55 @@
     "ticket": {
       "ticket-name": {
         "description": "Ticket name",
-        "instillUIOrder": 2,
+        "instillUIOrder": 1,
         "title": "Ticket Name",
         "type": "string"
       },
       "ticket-status": {
-        "description": "Ticket Status. Default format is number. Example: 0. However, remember to check internal value for custom fields.",
-        "instillUIOrder": 3,
+        "description": "The pipeline stage that contains this ticket. Default format is number. Example: 0. However, remember to check internal value for custom fields.",
+        "instillUIOrder": 2,
         "title": "Ticket Status",
         "type": "string"
       },
       "pipeline": {
-        "description": "Pipeline. HubSpot uses interval value rather than the name displayed in the view",
-        "instillUIOrder": 4,
+        "description": "A pipeline organizes and tracks the progression of tickets through various stages of resolution within your support process. HubSpot uses interval value rather than the name displayed in the view",
+        "instillUIOrder": 3,
         "title": "Pipeline",
         "type": "string"
       },
       "category": {
-        "description": "Category, main reason customer reached out for help. Default format is in capital letters. Example: BILLING_ISSUE. However, remember to check internal value for custom fields.",
-        "instillUIOrder": 5,
+        "description": "The main reason customer reached out for help. Default format is in capital letters. Example: BILLING_ISSUE. However, remember to check internal value for custom fields.",
+        "instillUIOrder": 4,
         "title": "Category",
         "type": "array"
       },
       "priority": {
         "description": "The level of attention needed on the ticket. Default format is in capital letters. Example: MEDIUM. However, remember to check internal value for custom fields.",
-        "instillUIOrder": 6,
+        "instillUIOrder": 5,
         "title": "Priority",
         "type": "string"
       },
       "source": {
         "description": "Channel where ticket was originally submitted. Default format is in capital letters. Example: EMAIL",
-        "instillUIOrder": 7,
+        "instillUIOrder": 6,
         "title": "Source",
         "type": "string"
       },
       "record-source": {
         "description": "How this record was created.",
-        "instillUIOrder": 8,
+        "instillUIOrder": 7,
         "title": "Record Source",
         "type": "string"
       },
       "create-date": {
         "description": "Create date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z",
-        "instillUIOrder": 9,
+        "instillUIOrder": 8,
         "title": "Create Date",
         "type": "string"
       },
       "last-modified-date": {
         "description": "Last modified date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z",
-        "instillUIOrder": 10,
+        "instillUIOrder": 9,
         "title": "Last Modified Date",
         "type": "string"
       }
@@ -302,7 +338,12 @@
       "properties": {
         "contact-id-or-email": {
           "description": "Input contact ID or email. If the input has @, it will search the contact using email",
-          "$ref": "#/$defs/common/contact-id-or-email"
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Contact ID or Email",
+          "type": "string"
         }
       },
       "required": ["contact-id-or-email"],
@@ -431,6 +472,18 @@
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "create-deals-association": {
+          "$ref": "#/$defs/common/create-deals-association",
+          "instillUIOrder": 9
+        },
+        "create-companies-association": {
+          "$ref": "#/$defs/common/create-companies-association",
+          "instillUIOrder": 10
+        },
+        "create-tickets-association": {
+          "$ref": "#/$defs/common/create-tickets-association",
+          "instillUIOrder": 11
         }
       },
       "required": ["email"],
@@ -519,11 +572,10 @@
           "instillFormat": "string",
           "required": []
         },
-        "associated-contact-id": {
-          "$ref": "#/$defs/common/associated-contact-id",
-          "instillUIorder": 9
+        "associated-contact-ids": {
+          "$ref": "#/$defs/common/associated-contact-ids",
+          "instillUIorder": 8
         }
-        
       },
       "required": ["deal-name", "pipeline", "deal-stage"],
       "title": "Output",
@@ -536,10 +588,6 @@
       "description": "Deal information",
       "instillUIOrder": 0,
       "properties": {
-        "contact-id-or-email": {
-          "description": "Use to associate contact with deal. If the input has @, it will use email, otherwise, it will use contact id.",
-          "$ref": "#/$defs/common/contact-id-or-email"
-        },
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
           "instillAcceptFormats": ["string"],
@@ -581,6 +629,10 @@
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "create-contacts-association": {
+          "$ref": "#/$defs/common/create-contacts-association",
+          "instillUIOrder": 7
         }
       },
       "required": ["deal-name", "pipeline", "deal-stage"],
@@ -704,11 +756,10 @@
           "instillFormat": "string",
           "required": []
         },
-        "associated-contact-id": {
-          "$ref": "#/$defs/common/associated-contact-id",
-          "instillUIorder": 16
+        "associated-contact-ids": {
+          "$ref": "#/$defs/common/associated-contact-ids",
+          "instillUIorder": 15
         }
-        
       },
       "required": [],
       "title": "Output",
@@ -721,10 +772,6 @@
       "description": "Company information",
       "instillUIOrder": 0,
       "properties": {
-        "contact-id-or-email": {
-          "description": "Use to associate contact with company. If the input has @, it will use email, otherwise, it will use contact id.",
-          "$ref": "#/$defs/common/contact-id-or-email"
-        },
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
           "instillAcceptFormats": ["string"],
@@ -808,6 +855,10 @@
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "create-contacts-association": {
+          "$ref": "#/$defs/common/create-contacts-association",
+          "instillUIOrder": 15
         }
       },
       "required": ["company-domain"],
@@ -911,9 +962,9 @@
           "instillFormat": "string",
           "required": []
         },
-        "associated-contact-id": {
-          "$ref": "#/$defs/common/associated-contact-id",
-          "instillUIorder": 11
+        "associated-contact-ids": {
+          "$ref": "#/$defs/common/associated-contact-ids",
+          "instillUIorder": 10
         }
       },
       "required": ["ticket-name", "ticket-status", "pipeline"],
@@ -927,10 +978,6 @@
       "description": "Ticket information",
       "instillUIOrder": 0,
       "properties": {
-        "contact-id-or-email": {
-          "description": "Use to associate contact with ticket. If the input has @, it will use email, otherwise, it will use contact id.",
-          "$ref": "#/$defs/common/contact-id-or-email"
-        },
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
           "instillAcceptFormats": ["string"],
@@ -962,7 +1009,7 @@
             "instillUIMultiline": true,
             "type": "string"
           },
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": ["value", "reference"]
         },
         "priority": {
           "$ref": "#/$defs/ticket/priority",
@@ -975,6 +1022,10 @@
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "reference", "template"]
+        },
+        "create-contacts-association": {
+          "$ref": "#/$defs/common/create-contacts-association",
+          "instillUIOrder": 7
         }
       },
       "required": ["ticket-name", "ticket-status", "pipeline"],
@@ -1062,19 +1113,19 @@
                 }
               },
               "text": {
-                "description": "when a conversation starts",
+                "description": "The content of the message",
                 "instillFormat": "string",
                 "instillUIOrder": 3,
                 "required": [],
-                "title": "Start Date",
+                "title": "Text",
                 "type": "string"
               },
               "subject": {
-                "description": "Date of the last message",
+                "description": "The subject of the message",
                 "instillFormat": "string",
                 "instillUIOrder": 4,
                 "required": [],
-                "title": "Last Date",
+                "title": "Subject",
                 "type": "string"
               }
             },
@@ -1105,7 +1156,7 @@
         "object-type": {
           "description": "Input object type (CRM objects or 'Threads'). Note: CRM objects include 'Deals', 'Companies', 'Tickets', etc",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": true,
+          "instillUIMultiline": false,
           "instillUIOrder": 1,
           "instillUpstreamTypes": ["value", "reference", "template"],
           "title": "Object Type",
@@ -1120,28 +1171,19 @@
       "description": "All object IDs",
       "instillUIOrder": 0,
       "properties": {
-        "results": {
-          "description": "An array of object ID",
+        "object-ids": {
+          "description": "An array of object ID associated with the contact",
           "instillUIOrder": 0,
           "title": "Object ID Array ",
           "type": "array",
           "items": {
             "title": "Object ID",
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Object ID",
-                "instillFormat": "string",
-                "instillUIOrder": 0,
-                "title": "Object ID",
-                "type": "string"
-              }
-            },
-            "required": ["id"]
+            "type": "string",
+            "description": "The object ID associated with the contact"
           }
         }
       },
-      "required": ["results"],
+      "required": ["object-ids"],
       "title": "Output",
       "type": "object"
     }
