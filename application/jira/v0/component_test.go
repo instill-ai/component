@@ -88,7 +88,7 @@ func TestComponent_GetIssueTask(t *testing.T) {
 			_type: "ok",
 			name:  "get issue-Task",
 			input: GetIssueInput{
-				IssueKeyOrID:  "1",
+				IssueKey:      "TST-1",
 				UpdateHistory: true,
 			},
 			wantResp: GetIssueOutput{
@@ -117,7 +117,7 @@ func TestComponent_GetIssueTask(t *testing.T) {
 			_type: "ok",
 			name:  "get issue-Epic",
 			input: GetIssueInput{
-				IssueKeyOrID:  "4",
+				IssueKey:      "KAN-4",
 				UpdateHistory: false,
 			},
 			wantResp: GetIssueOutput{
@@ -144,7 +144,7 @@ func TestComponent_GetIssueTask(t *testing.T) {
 			_type: "nok",
 			name:  "404 - Not Found",
 			input: GetIssueInput{
-				IssueKeyOrID:  "5",
+				IssueKey:      "5",
 				UpdateHistory: true,
 			},
 			wantErr: "unsuccessful HTTP response.*",
@@ -385,8 +385,8 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
-					Range:     "Issues of a sprint",
-					SprintKey: "1",
+					Range:      "Issues of a sprint",
+					SprintName: "KAN Sprint 1",
 				},
 			},
 			wantResp: ListIssuesOutput{

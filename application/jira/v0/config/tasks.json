@@ -34,7 +34,7 @@
         "type": "integer"
       },
       "update-history": {
-        "description": "Whether the project in which the issue is created is added to the user's Recently viewed project list, as shown under Projects in Jira.",
+        "description": "Whether the action taken is added to the user's Recent history, as shown under `Your Work` in Jira.",
         "title": "Update History",
         "instillUIOrder": 5,
         "instillFormat": "boolean",
@@ -57,7 +57,7 @@
           "type": "string"
         },
         "key": {
-          "description": "The key of the issue",
+          "description": "The key of the issue, e.g. `JRA-1330`",
           "instillUIOrder": 1,
           "instillFormat": "string",
           "title": "Key",
@@ -201,7 +201,7 @@
           "default": "",
           "title": "Project Key or ID",
           "description": "This filters results to boards that are relevant to a project. Relevance meaning that the JQL filter defined in board contains a reference to a project.",
-          "instillShortDescription": "The project key or ID. Default is empty",
+          "instillShortDescription": "The project key or ID, e.g. `INS`. Default is empty",
           "instillUIOrder": 0,
           "instillFormat": "string",
           "instillAcceptFormats": [
@@ -462,7 +462,7 @@
                 },
                 "epic-key": {
                   "title": "Epic Key",
-                  "description": "The Key of the epic",
+                  "description": "The Key of the epic, e.g. `JRA-1330`",
                   "instillShortDescription": "The Key of the epic",
                   "instillUIOrder": 10,
                   "instillFormat": "string",
@@ -494,10 +494,10 @@
                   "const": "Issues of a sprint",
                   "type": "string"
                 },
-                "sprint-key": {
-                  "title": "Sprint Key",
-                  "description": "The Key of the sprint",
-                  "instillShortDescription": "The Key of the sprint",
+                "sprint-name": {
+                  "title": "Sprint Name",
+                  "description": "The name of the sprint",
+                  "instillShortDescription": "The Name of the sprint",
                   "instillUIOrder": 10,
                   "instillFormat": "string",
                   "instillAcceptFormats": [
@@ -513,11 +513,11 @@
               },
               "required": [
                 "range",
-                "sprint-key"
+                "sprint-name"
               ],
               "instillEditOnNodeFields": [
                 "range",
-                "sprint-key"
+                "sprint-name"
               ],
               "instillFormat": "object",
               "type": "object"
@@ -725,13 +725,13 @@
       "description": "Get an issue in Jira",
       "instillUIOrder": 0,
       "instillEditOnNodeFields": [
-        "issue-id-or-key"
+        "issue-key"
       ],
       "properties": {
-        "issue-id-or-key": {
-          "title": "Issue ID or Key",
-          "description": "The ID or key of the issue",
-          "instillShortDescription": "The ID or key of the issue",
+        "issue-key": {
+          "title": "Issue Key",
+          "description": "The key of the issue, e.g. `JRA-1330`",
+          "instillShortDescription": "The key of the issue",
           "instillUIOrder": 0,
           "instillFormat": "string",
           "instillAcceptFormats": [
@@ -750,7 +750,7 @@
         }
       },
       "required": [
-        "issue-id-or-key"
+        "issue-key"
       ],
       "title": "Input",
       "type": "object"

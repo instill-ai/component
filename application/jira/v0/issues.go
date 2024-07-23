@@ -24,7 +24,7 @@ type Issue struct {
 }
 
 type GetIssueInput struct {
-	IssueKeyOrID  string `json:"issue-id-or-key,omitempty" api:"issueIdOrKey"`
+	IssueKey      string `json:"issue-key,omitempty" api:"issueIdOrKey"`
 	UpdateHistory bool   `json:"update-history,omitempty" api:"updateHistory"`
 }
 type GetIssueOutput struct {
@@ -72,10 +72,10 @@ func (jiraClient *Client) getIssueTask(ctx context.Context, props *structpb.Stru
 	}
 	debug.AddMessage(fmt.Sprintf("GetIssueInput: %+v", opt))
 
-	apiEndpoint := fmt.Sprintf("rest/agile/1.0/issue/%s", opt.IssueKeyOrID)
+	apiEndpoint := fmt.Sprintf("rest/agile/1.0/issue/%s", opt.IssueKey)
 	req := jiraClient.Client.R().SetResult(&Issue{})
 
-	opt.IssueKeyOrID = "" // Remove from query params
+	opt.IssueKey = "" // Remove from query params
 	err := addQueryOptions(req, opt)
 	if err != nil {
 		return nil, err
@@ -110,10 +110,10 @@ func (jiraClient *Client) getIssueTask(ctx context.Context, props *structpb.Stru
 }
 
 type Range struct {
-	Range     string `json:"range,omitempty"`
-	EpicKey   string `json:"epic-key,omitempty"`
-	SprintKey string `json:"sprint-key,omitempty"`
-	JQL       string `json:"jql,omitempty"`
+	Range      string `json:"range,omitempty"`
+	EpicKey    string `json:"epic-key,omitempty"`
+	SprintName string `json:"sprint-name,omitempty"`
+	JQL        string `json:"jql,omitempty"`
 }
 type ListIssuesInput struct {
 	BoardID    int   `json:"board-id,omitempty" api:"boardId"`
@@ -171,7 +171,7 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 	case "Issues of a sprint":
 		// API not working: https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-sprint-sprintid-issue-get
 		// use JQL instead
-		jql = fmt.Sprintf("project=\"%s\" AND sprint=\"%s\"", boardKey, opt.Range.SprintKey)
+		jql = fmt.Sprintf("project=\"%s\" AND sprint=\"%s\"", boardKey, opt.Range.SprintName)
 	case "In backlog only":
 		// https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-backlog-get
 		apiEndpoint = apiEndpoint + "/backlog"
@@ -281,5 +281,3 @@ func (jiraClient *Client) nextGenIssuesSearch(_ context.Context, opt nextGenSear
 	debug.AddMessage("Status", resp.Status())
 	return resp, nil
 }
-
-var JQLReservedWords = []string{"a", "an", "abort", "access", "add", "after", "alias", "all", "alter", "and", "any", "are", "as", "asc", "at", "audit", "avg", "be", "before", "begin", "between", "boolean", "break", "but", "by", "byte", "catch", "cf", "char", "character", "check", "checkpoint", "collate", "collation", "column", "commit", "connect", "continue", "count", "create", "current", "date", "decimal", "declare", "decrement", "default", "defaults", "define", "delete", "delimiter", "desc", "difference", "distinct", "divide", "do", "double", "drop", "else", "empty", "encoding", "end", "equals", "escape", "exclusive", "exec", "execute", "exists", "explain", "false", "fetch", "file", "field", "first", "float", "for", "from", "function", "go", "goto", "grant", "greater", "group", "having", "identified", "if", "immediate", "in", "increment", "index", "initial", "inner", "inout", "input", "insert", "int", "integer", "intersect", "intersection", "into", "is", "isempty", "isnull", "it", "join", "last", "left", "less", "like", "limit", "lock", "long", "max", "min", "minus", "mode", "modify", "modulo", "more", "multiply", "next", "no", "noaudit", "not", "notin", "nowait", "null", "number", "object", "of", "on", "option", "or", "order", "outer", "output", "power", "previous", "prior", "privileges", "public", "raise", "raw", "remainder", "rename", "resource", "return", "returns", "revoke", "right", "row", "rowid", "rownum", "rows", "select", "session", "set", "share", "size", "sqrt", "start", "strict", "string", "subtract", "such", "sum", "synonym", "table", "that", "the", "their", "then", "there", "these", "they", "this", "to", "trans", "transaction", "trigger", "true", "uid", "union", "unique", "update", "user", "validate", "values", "view", "was", "when", "whenever", "where", "while", "will", "with"}
