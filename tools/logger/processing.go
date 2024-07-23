@@ -7,17 +7,11 @@ import (
 )
 
 func (d *Session) addRawMessage(m ...interface{}) {
-	if Verbose < d.verboseLevel {
-		return
-	}
 	d.messages = append(d.messages,
 		fmt.Sprintf("%s %s%v", d.header, strings.Repeat(d.indentSymbol, d.indentLevel), m))
 }
 
 func (d *Session) addMessage(msg ...interface{}) {
-	if Verbose < d.verboseLevel {
-		return
-	}
 	parseMsg := ""
 	for _, m := range msg {
 		parseMsg += fmt.Sprintf(" %v", m)
@@ -65,9 +59,6 @@ func (d *Session) checkMapOrSlice(value interface{}) (map[string]interface{}, []
 }
 
 func (d *Session) addMapMessage(name string, m interface{}) {
-	if Verbose < d.verboseLevel {
-		return
-	}
 	mapVal, sliceVal, v := d.checkMapOrSlice(m)
 	if mapVal != nil {
 		d.addMessage(name + ": {")

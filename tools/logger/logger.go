@@ -13,14 +13,14 @@ func (d *Session) Indent() func() *Session {
 
 // Separator adds a separator line
 func (d *Session) Separator() {
-	if Verbose < d.verboseLevel {
+	if d.verboseLevel < Static {
 		return
 	}
 	d.messages = append(d.messages, strings.Repeat("=", d.halfBannerLen*2+len(d.sessionID)+2))
 }
 
 func (d *Session) flush() {
-	if Verbose < d.verboseLevel {
+	if d.verboseLevel < Static {
 		return
 	}
 	if len(d.messages) == 0 {
@@ -60,7 +60,7 @@ func (d *Session) autoPrint(msg ...interface{}) {
 
 // Info logs messages with black color
 func (d *Session) Info(msg ...interface{}) {
-	if Verbose < d.verboseLevel {
+	if d.verboseLevel < Develop {
 		return
 	}
 	defer d.flush()
@@ -68,14 +68,9 @@ func (d *Session) Info(msg ...interface{}) {
 	d.autoPrint(msg...)
 }
 
-// Alias for Info
-func (d *Session) Message(msg ...interface{}) {
-	d.Info(msg...)
-}
-
 // Success logs messages with green color
 func (d *Session) Success(msg ...interface{}) {
-	if Verbose < d.verboseLevel {
+	if d.verboseLevel < Error {
 		return
 	}
 	defer d.flush()
@@ -85,7 +80,7 @@ func (d *Session) Success(msg ...interface{}) {
 
 // Warn logs messages with yellow color
 func (d *Session) Warn(msg ...interface{}) {
-	if Verbose < d.verboseLevel {
+	if d.verboseLevel < Warn {
 		return
 	}
 	defer d.flush()
@@ -95,7 +90,7 @@ func (d *Session) Warn(msg ...interface{}) {
 
 // Error logs messages with red color
 func (d *Session) Error(msg ...interface{}) {
-	if Verbose < d.verboseLevel {
+	if d.verboseLevel < Error {
 		return
 	}
 	defer d.flush()
@@ -105,7 +100,7 @@ func (d *Session) Error(msg ...interface{}) {
 
 // Log messages without expanding them
 func (d *Session) Raw(msg ...interface{}) {
-	if Verbose < d.verboseLevel {
+	if d.verboseLevel < Develop {
 		return
 	}
 	defer d.flush()

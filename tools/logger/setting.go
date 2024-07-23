@@ -7,10 +7,12 @@ import (
 	"github.com/fatih/color"
 )
 
+// Verbose Level for the logger to determine whether to print the log or not
 const (
-	Verbose             = 1
-	DevelopVerboseLevel = 1
-	StaticVerboseLevel  = 2
+	Static  = iota // Sessions set to this level will never print
+	Error          // Sessions set to this level will only print errors
+	Warn           // Sessions set to this level will print errors and warnings
+	Develop        // Developing sessions will print all logs
 )
 
 type Session struct {
@@ -32,7 +34,7 @@ type Session struct {
 // If no name is provided, the name will be <filename>:<function name> of the caller
 func (d *Session) SessionStart(name string, verboseLevel int) (self *Session) {
 	d.verboseLevel = verboseLevel
-	if Verbose < verboseLevel {
+	if verboseLevel < Static {
 		return d
 	}
 	defer d.flush()
@@ -50,7 +52,7 @@ func (d *Session) SessionStart(name string, verboseLevel int) (self *Session) {
 	/************ Set Default Value ************/
 	d.halfBannerLen = 20
 	d.indentLevel = 0
-	d.maxDepth = 5 * Verbose
+	d.maxDepth = 5
 	d.active = true
 	d.messages = []string{}
 	d.indentSymbol = "  "
@@ -67,7 +69,7 @@ func (d *Session) SessionStart(name string, verboseLevel int) (self *Session) {
 }
 
 func (d *Session) SessionEnd() (self *Session) {
-	if Verbose < d.verboseLevel || !d.active {
+	if d.verboseLevel < Static || !d.active {
 		return d
 	}
 	defer d.flush()
