@@ -37,11 +37,11 @@ func (s *MockDeal) Get(dealID string, deal interface{}, option *hubspot.RequestQ
 }
 
 func (s *MockDeal) Create(deal interface{}) (*hubspot.ResponseResource, error) {
-	arbitraryDealId := "12345678900"
+	arbitraryDealID := "12345678900"
 
 	fakeDealInfo := deal.(*TaskCreateDealReq)
 
-	fakeDealInfo.DealId = arbitraryDealId
+	fakeDealInfo.DealID = arbitraryDealID
 
 	ret := &hubspot.ResponseResource{
 		Properties: fakeDealInfo,
@@ -117,7 +117,7 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 	tc := struct {
 		name           string
 		inputDeal      TaskCreateDealInput
-		inputContactId string //used to associate contact with deal
+		inputContactID string //used to associate contact with deal
 		wantResp       string
 	}{
 		name: "ok - create deal",
@@ -126,7 +126,7 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 			Pipeline:  "default",
 			DealStage: "contractsent",
 		},
-		inputContactId: "32027696539",
+		inputContactID: "32027696539",
 		wantResp:       "12345678900",
 	}
 
@@ -144,7 +144,7 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbInput, err := base.ConvertToStructpb(tc.inputDeal)
-		pbInput.Fields["contact-id-or-email"] = structpb.NewStringValue(tc.inputContactId)
+		pbInput.Fields["contact-id-or-email"] = structpb.NewStringValue(tc.inputContactID)
 
 		c.Assert(err, qt.IsNil)
 

@@ -12,11 +12,11 @@ import (
 // Get Contact
 
 type TaskGetContactInput struct {
-	ContactIdOrEmail string `json:"contact-id-or-email"`
+	ContactIDOrEmail string `json:"contact-id-or-email"`
 }
 
 type TaskGetContactResp struct {
-	OwnerId        string `json:"hubspot_owner_id,omitempty"`
+	OwnerID        string `json:"hubspot_owner_id,omitempty"`
 	Email          string `json:"email,omitempty"`
 	FirstName      string `json:"firstname,omitempty"`
 	LastName       string `json:"lastname,omitempty"`
@@ -25,11 +25,11 @@ type TaskGetContactResp struct {
 	JobTitle       string `json:"jobtitle,omitempty"`
 	LifecycleStage string `json:"lifecyclestage,omitempty"`
 	LeadStatus     string `json:"hs_lead_status,omitempty"`
-	ContactId      string `json:"hs_object_id"`
+	ContactID      string `json:"hs_object_id"`
 }
 
 type TaskGetContactOutput struct {
-	OwnerId        string `json:"owner-id,omitempty"`
+	OwnerID        string `json:"owner-id,omitempty"`
 	Email          string `json:"email,omitempty"`
 	FirstName      string `json:"first-name,omitempty"`
 	LastName       string `json:"last-name,omitempty"`
@@ -38,7 +38,7 @@ type TaskGetContactOutput struct {
 	JobTitle       string `json:"job-title,omitempty"`
 	LifecycleStage string `json:"lifecycle-stage,omitempty"`
 	LeadStatus     string `json:"lead-status,omitempty"`
-	ContactId      string `json:"contact-id"`
+	ContactID      string `json:"contact-id"`
 }
 
 func (e *execution) GetContact(input *structpb.Struct) (*structpb.Struct, error) {
@@ -50,7 +50,7 @@ func (e *execution) GetContact(input *structpb.Struct) (*structpb.Struct, error)
 		return nil, err
 	}
 
-	uniqueKey := inputStruct.ContactIdOrEmail
+	uniqueKey := inputStruct.ContactIDOrEmail
 
 	// If user enter email instead of contact ID
 	if strings.Contains(uniqueKey, "@") {
@@ -80,7 +80,7 @@ func (e *execution) GetContact(input *structpb.Struct) (*structpb.Struct, error)
 
 // TODO: to future me, dont forget to create association feature in the future
 type TaskCreateContactInput struct {
-	OwnerId                    string   `json:"owner-id"`
+	OwnerID                    string   `json:"owner-id"`
 	Email                      string   `json:"email"`
 	FirstName                  string   `json:"first-name"`
 	LastName                   string   `json:"last-name"`
@@ -95,7 +95,7 @@ type TaskCreateContactInput struct {
 }
 
 type TaskCreateContactReq struct {
-	OwnerId        string `json:"hubspot_owner_id,omitempty"`
+	OwnerID        string `json:"hubspot_owner_id,omitempty"`
 	Email          string `json:"email,omitempty"`
 	FirstName      string `json:"firstname,omitempty"`
 	LastName       string `json:"lastname,omitempty"`
@@ -104,11 +104,11 @@ type TaskCreateContactReq struct {
 	JobTitle       string `json:"jobtitle,omitempty"`
 	LifecycleStage string `json:"lifecyclestage,omitempty"`
 	LeadStatus     string `json:"hs_lead_status,omitempty"`
-	ContactId      string `json:"hs_object_id"`
+	ContactID      string `json:"hs_object_id"`
 }
 
 type TaskCreateContactOutput struct {
-	ContactId string `json:"contact-id"`
+	ContactID string `json:"contact-id"`
 }
 
 func (e *execution) CreateContact(input *structpb.Struct) (*structpb.Struct, error) {
@@ -122,7 +122,7 @@ func (e *execution) CreateContact(input *structpb.Struct) (*structpb.Struct, err
 	}
 
 	req := TaskCreateContactReq{
-		OwnerId:        inputStruct.OwnerId,
+		OwnerID:        inputStruct.OwnerID,
 		Email:          inputStruct.Email,
 		FirstName:      inputStruct.FirstName,
 		LastName:       inputStruct.LastName,
@@ -139,9 +139,9 @@ func (e *execution) CreateContact(input *structpb.Struct) (*structpb.Struct, err
 		return nil, err
 	}
 
-	contactId := res.Properties.(*TaskCreateContactReq).ContactId
+	contactID := res.Properties.(*TaskCreateContactReq).ContactID
 
-	outputStruct := TaskCreateContactOutput{ContactId: contactId}
+	outputStruct := TaskCreateContactOutput{ContactID: contactID}
 
 	output, err := base.ConvertToStructpb(outputStruct)
 
@@ -152,21 +152,21 @@ func (e *execution) CreateContact(input *structpb.Struct) (*structpb.Struct, err
 	// This section is for creating associations (contact -> object)
 
 	if len(inputStruct.CreateDealsAssociation) != 0 {
-		err := CreateAssociation(&outputStruct.ContactId, &inputStruct.CreateDealsAssociation, "contact", "deal", e)
+		err := CreateAssociation(&outputStruct.ContactID, &inputStruct.CreateDealsAssociation, "contact", "deal", e)
 
 		if err != nil {
 			return nil, err
 		}
 	}
 	if len(inputStruct.CreateCompaniesAssociation) != 0 {
-		err := CreateAssociation(&outputStruct.ContactId, &inputStruct.CreateCompaniesAssociation, "contact", "company", e)
+		err := CreateAssociation(&outputStruct.ContactID, &inputStruct.CreateCompaniesAssociation, "contact", "company", e)
 
 		if err != nil {
 			return nil, err
 		}
 	}
 	if len(inputStruct.CreateTicketsAssociation) != 0 {
-		err := CreateAssociation(&outputStruct.ContactId, &inputStruct.CreateTicketsAssociation, "contact", "ticket", e)
+		err := CreateAssociation(&outputStruct.ContactID, &inputStruct.CreateTicketsAssociation, "contact", "ticket", e)
 
 		if err != nil {
 			return nil, err

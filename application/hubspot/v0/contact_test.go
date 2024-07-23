@@ -53,7 +53,7 @@ func (s *MockContact) Get(contactID string, contact interface{}, option *hubspot
 			Company:        "HubSpot",
 			JobTitle:       "CEO",
 			LifecycleStage: "lead",
-			ContactId:      "32027696539",
+			ContactID:      "32027696539",
 		}
 	}
 	ret := &hubspot.ResponseResource{
@@ -67,11 +67,11 @@ func (s *MockContact) Create(contact interface{}) (*hubspot.ResponseResource, er
 
 	// in the actual create function, if the user created a contact, it will return all the information back to the user, so I will be mimicking that
 
-	arbitraryContactId := "12345678"
+	arbitraryContactID := "12345678"
 
 	fakeContactInfo := contact.(*TaskCreateContactReq)
 
-	fakeContactInfo.ContactId = arbitraryContactId
+	fakeContactInfo.ContactID = arbitraryContactID
 
 	ret := &hubspot.ResponseResource{
 		Properties: fakeContactInfo,
@@ -110,7 +110,7 @@ func TestComponent_ExecuteGetContactTask(t *testing.T) {
 			Company:        "HubSpot",
 			JobTitle:       "CEO",
 			LifecycleStage: "lead",
-			ContactId:      "32027696539",
+			ContactID:      "32027696539",
 		},
 	}
 

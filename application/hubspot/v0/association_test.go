@@ -17,38 +17,38 @@ import (
 
 type MockRetrieveAssociation struct{}
 
-func (s *MockRetrieveAssociation) GetThreadId(contactId string) (*TaskRetrieveAssociationThreadResp, error) {
+func (s *MockRetrieveAssociation) GetThreadID(contactID string) (*TaskRetrieveAssociationThreadResp, error) {
 
-	var fakeThreadId TaskRetrieveAssociationThreadResp
-	if contactId == "32027696539" {
-		fakeThreadId = TaskRetrieveAssociationThreadResp{
+	var fakeThreadID TaskRetrieveAssociationThreadResp
+	if contactID == "32027696539" {
+		fakeThreadID = TaskRetrieveAssociationThreadResp{
 			Results: []struct {
-				Id string `json:"id"`
+				ID string `json:"id"`
 			}{
-				{Id: "7509711154"},
+				{ID: "7509711154"},
 			},
 		}
 	}
-	return &fakeThreadId, nil
+	return &fakeThreadID, nil
 }
 
-func (s *MockRetrieveAssociation) GetCrmId(contactId string, objectType string) (*TaskRetrieveAssociationCrmResp, error) {
+func (s *MockRetrieveAssociation) GetCrmID(contactID string, objectType string) (*TaskRetrieveAssociationCrmResp, error) {
 
-	var fakeCrmId TaskRetrieveAssociationCrmResp
-	if contactId == "32027696539" {
-		fakeCrmId = TaskRetrieveAssociationCrmResp{
+	var fakeCrmID TaskRetrieveAssociationCrmResp
+	if contactID == "32027696539" {
+		fakeCrmID = TaskRetrieveAssociationCrmResp{
 			Results: []taskRetrieveAssociationCrmRespResult{
 				{
-					IdArray: []struct {
-						Id string `json:"id"`
+					IDArray: []struct {
+						ID string `json:"id"`
 					}{
-						{Id: "12345678900"},
+						{ID: "12345678900"},
 					},
 				},
 			},
 		}
 	}
-	return &fakeCrmId, nil
+	return &fakeCrmID, nil
 
 }
 
@@ -66,11 +66,11 @@ func TestComponent_ExecuteRetrieveAssociationTask(t *testing.T) {
 		{
 			name: "ok - retrieve association: thread ID",
 			input: TaskRetrieveAssociationInput{
-				ContactId:  "32027696539",
+				ContactID:  "32027696539",
 				ObjectType: "Threads",
 			},
 			wantResp: TaskRetrieveAssociationOutput{
-				ObjectIds: []string{
+				ObjectIDs: []string{
 					"7509711154",
 				},
 			},
@@ -78,11 +78,11 @@ func TestComponent_ExecuteRetrieveAssociationTask(t *testing.T) {
 		{
 			name: "ok - retrieve association: deal ID",
 			input: TaskRetrieveAssociationInput{
-				ContactId:  "32027696539",
+				ContactID:  "32027696539",
 				ObjectType: "Deals",
 			},
 			wantResp: TaskRetrieveAssociationOutput{
-				ObjectIds: []string{
+				ObjectIDs: []string{
 					"12345678900",
 				},
 			},

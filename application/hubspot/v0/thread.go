@@ -11,7 +11,7 @@ import (
 // API functions for Thread
 
 type ThreadService interface {
-	Get(threadId string) (*TaskGetThreadResp, error)
+	Get(threadID string) (*TaskGetThreadResp, error)
 }
 
 type ThreadServiceOp struct {
@@ -19,9 +19,9 @@ type ThreadServiceOp struct {
 	client     *hubspot.Client
 }
 
-func (s *ThreadServiceOp) Get(threadId string) (*TaskGetThreadResp, error) {
+func (s *ThreadServiceOp) Get(threadID string) (*TaskGetThreadResp, error) {
 	resource := &TaskGetThreadResp{}
-	if err := s.client.Get(s.threadPath+"/"+threadId+"/messages", resource, nil); err != nil {
+	if err := s.client.Get(s.threadPath+"/"+threadID+"/messages", resource, nil); err != nil {
 		return nil, err
 	}
 	return resource, nil
@@ -32,7 +32,7 @@ func (s *ThreadServiceOp) Get(threadId string) (*TaskGetThreadResp, error) {
 // Get Thread Input
 
 type TaskGetThreadInput struct {
-	ThreadId string `json:"thread-id"`
+	ThreadID string `json:"thread-id"`
 }
 
 // Get Thread Reponse structs
@@ -56,10 +56,10 @@ type taskGetThreadRespUserClient struct {
 
 type taskGetThreadRespUser struct {
 	Name               string                      `json:"name,omitempty"`
-	DeliveryIdentifier taskGetThreadRespIdentifier `json:"deliveryIdentifier,omitempty"`
+	DeliveryIDentifier taskGetThreadRespIDentifier `json:"deliveryIDentifier,omitempty"`
 }
 
-type taskGetThreadRespIdentifier struct {
+type taskGetThreadRespIDentifier struct {
 	Type  string `json:"type,omitempty"`
 	Value string `json:"value,omitempty"`
 }
@@ -93,7 +93,7 @@ func (e *execution) GetThread(input *structpb.Struct) (*structpb.Struct, error) 
 		return nil, err
 	}
 
-	res, err := e.client.Thread.Get(inputStruct.ThreadId)
+	res, err := e.client.Thread.Get(inputStruct.ThreadID)
 
 	if err != nil {
 		return nil, err
@@ -119,8 +119,8 @@ func (e *execution) GetThread(input *structpb.Struct) (*structpb.Struct, error) 
 		for _, value2 := range value1.Senders {
 			userOutput := taskGetThreadOutputUser{
 				Name:  value2.Name,
-				Type:  value2.DeliveryIdentifier.Type,
-				Value: value2.DeliveryIdentifier.Value,
+				Type:  value2.DeliveryIDentifier.Type,
+				Value: value2.DeliveryIDentifier.Value,
 			}
 
 			resultOutput.Senders = append(resultOutput.Senders, userOutput)
@@ -130,8 +130,8 @@ func (e *execution) GetThread(input *structpb.Struct) (*structpb.Struct, error) 
 		for _, value3 := range value1.Recipients {
 			userOutput := taskGetThreadOutputUser{
 				Name:  value3.Name,
-				Type:  value3.DeliveryIdentifier.Type,
-				Value: value3.DeliveryIdentifier.Value,
+				Type:  value3.DeliveryIDentifier.Type,
+				Value: value3.DeliveryIDentifier.Value,
 			}
 
 			resultOutput.Recipients = append(resultOutput.Recipients, userOutput)

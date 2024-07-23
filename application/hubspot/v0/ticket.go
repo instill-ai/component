@@ -13,7 +13,7 @@ import (
 // API functions for Ticket
 
 type TicketService interface {
-	Get(ticketId string) (*hubspot.ResponseResource, error)
+	Get(ticketID string) (*hubspot.ResponseResource, error)
 	Create(ticket *TaskCreateTicketReq) (*hubspot.ResponseResource, error)
 }
 
@@ -35,10 +35,10 @@ var ticketProperties = []string{
 	"hs_lastmodifieddate",
 }
 
-func (s *TicketServiceOp) Get(ticketId string) (*hubspot.ResponseResource, error) {
+func (s *TicketServiceOp) Get(ticketID string) (*hubspot.ResponseResource, error) {
 	resource := &hubspot.ResponseResource{Properties: &TaskGetTicketResp{}}
 	option := &hubspot.RequestQueryOption{Properties: ticketProperties, Associations: []string{"contacts"}}
-	if err := s.client.Get(s.ticketPath+"/"+ticketId, resource, option); err != nil {
+	if err := s.client.Get(s.ticketPath+"/"+ticketID, resource, option); err != nil {
 		return nil, err
 	}
 
@@ -57,11 +57,11 @@ func (s *TicketServiceOp) Create(ticket *TaskCreateTicketReq) (*hubspot.Response
 // Get Ticket
 
 type TaskGetTicketInput struct {
-	TicketId string `json:"ticket-id"`
+	TicketID string `json:"ticket-id"`
 }
 
 type TaskGetTicketResp struct {
-	OwnerId          string `json:"hubspot_owner_id,omitempty"`
+	OwnerID          string `json:"hubspot_owner_id,omitempty"`
 	TicketName       string `json:"subject"`
 	TicketStatus     string `json:"hs_pipeline_stage"`
 	Pipeline         string `json:"hs_pipeline"`
@@ -71,11 +71,11 @@ type TaskGetTicketResp struct {
 	RecordSource     string `json:"hs_object_source_label,omitempty"`
 	CreateDate       string `json:"createdate"`
 	LastModifiedDate string `json:"hs_lastmodifieddate"`
-	TicketId         string `json:"hs_object_id"`
+	TicketID         string `json:"hs_object_id"`
 }
 
 type TaskGetTicketOutput struct {
-	OwnerId              string   `json:"owner-id,omitempty"`
+	OwnerID              string   `json:"owner-id,omitempty"`
 	TicketName           string   `json:"ticket-name"`
 	TicketStatus         string   `json:"ticket-status"`
 	Pipeline             string   `json:"pipeline"`
@@ -85,7 +85,7 @@ type TaskGetTicketOutput struct {
 	RecordSource         string   `json:"record-source,omitempty"`
 	CreateDate           string   `json:"create-date"`
 	LastModifiedDate     string   `json:"last-modified-date"`
-	AssociatedContactIds []string `json:"associated-contact-ids,omitempty"`
+	AssociatedContactIDs []string `json:"associated-contact-ids,omitempty"`
 }
 
 func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) {
@@ -98,7 +98,7 @@ func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) 
 		return nil, err
 	}
 
-	res, err := e.client.Ticket.Get(inputStruct.TicketId)
+	res, err := e.client.Ticket.Get(inputStruct.TicketID)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) 
 	}
 
 	outputStruct := TaskGetTicketOutput{
-		OwnerId:              ticketInfo.OwnerId,
+		OwnerID:              ticketInfo.OwnerID,
 		TicketName:           ticketInfo.TicketName,
 		TicketStatus:         ticketInfo.TicketStatus,
 		Pipeline:             ticketInfo.Pipeline,
@@ -132,7 +132,7 @@ func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) 
 		RecordSource:         ticketInfo.RecordSource,
 		CreateDate:           ticketInfo.CreateDate,
 		LastModifiedDate:     ticketInfo.LastModifiedDate,
-		AssociatedContactIds: ticketContactList,
+		AssociatedContactIDs: ticketContactList,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -145,7 +145,7 @@ func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) 
 
 // Create Ticket
 type TaskCreateTicketInput struct {
-	OwnerId                   string   `json:"owner-id"`
+	OwnerID                   string   `json:"owner-id"`
 	TicketName                string   `json:"ticket-name"`
 	TicketStatus              string   `json:"ticket-status"`
 	Pipeline                  string   `json:"pipeline"`
@@ -156,18 +156,18 @@ type TaskCreateTicketInput struct {
 }
 
 type TaskCreateTicketReq struct {
-	OwnerId      string `json:"hubspot_owner_id,omitempty"`
+	OwnerID      string `json:"hubspot_owner_id,omitempty"`
 	TicketName   string `json:"subject"`
 	TicketStatus string `json:"hs_pipeline_stage"`
 	Pipeline     string `json:"hs_pipeline"`
 	Category     string `json:"hs_ticket_category,omitempty"`
 	Priority     string `json:"hs_ticket_priority,omitempty"`
 	Source       string `json:"source_type,omitempty"`
-	TicketId     string `json:"hs_object_id"`
+	TicketID     string `json:"hs_object_id"`
 }
 
 type TaskCreateTicketOutput struct {
-	TicketId string `json:"ticket-id"`
+	TicketID string `json:"ticket-id"`
 }
 
 func (e *execution) CreateTicket(input *structpb.Struct) (*structpb.Struct, error) {
@@ -180,7 +180,7 @@ func (e *execution) CreateTicket(input *structpb.Struct) (*structpb.Struct, erro
 	}
 
 	req := TaskCreateTicketReq{
-		OwnerId:      inputStruct.OwnerId,
+		OwnerID:      inputStruct.OwnerID,
 		TicketName:   inputStruct.TicketName,
 		TicketStatus: inputStruct.TicketStatus,
 		Pipeline:     inputStruct.Pipeline,
@@ -195,10 +195,10 @@ func (e *execution) CreateTicket(input *structpb.Struct) (*structpb.Struct, erro
 		return nil, err
 	}
 
-	// get ticket Id
-	ticketId := res.Properties.(*TaskCreateTicketReq).TicketId
+	// get ticket ID
+	ticketID := res.Properties.(*TaskCreateTicketReq).TicketID
 
-	outputStruct := TaskCreateTicketOutput{TicketId: ticketId}
+	outputStruct := TaskCreateTicketOutput{TicketID: ticketID}
 
 	output, err := base.ConvertToStructpb(outputStruct)
 
@@ -208,7 +208,7 @@ func (e *execution) CreateTicket(input *structpb.Struct) (*structpb.Struct, erro
 
 	// This section is for creating associations (ticket -> object)
 	if len(inputStruct.CreateContactsAssociation) != 0 {
-		err := CreateAssociation(&outputStruct.TicketId, &inputStruct.CreateContactsAssociation, "ticket", "contact", e)
+		err := CreateAssociation(&outputStruct.TicketID, &inputStruct.CreateContactsAssociation, "ticket", "contact", e)
 
 		if err != nil {
 			return nil, err

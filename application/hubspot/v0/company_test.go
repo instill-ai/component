@@ -39,11 +39,11 @@ func (s *MockCompany) Get(companyID string, company interface{}, option *hubspot
 }
 
 func (s *MockCompany) Create(company interface{}) (*hubspot.ResponseResource, error) {
-	arbitraryCompanyId := "99999999999"
+	arbitraryCompanyID := "99999999999"
 
 	fakeCompanyInfo := company.(*TaskCreateCompanyReq)
 
-	fakeCompanyInfo.CompanyId = arbitraryCompanyId
+	fakeCompanyInfo.CompanyID = arbitraryCompanyID
 
 	ret := &hubspot.ResponseResource{
 		Properties: fakeCompanyInfo,
@@ -124,7 +124,7 @@ func TestComponent_ExecuteCreateCompanyTask(t *testing.T) {
 	tc := struct {
 		name           string
 		inputCompany   TaskCreateCompanyInput
-		inputContactId string //used to associate contact with company
+		inputContactID string //used to associate contact with company
 		wantResp       string
 	}{
 		name: "ok - create company",
@@ -133,7 +133,7 @@ func TestComponent_ExecuteCreateCompanyTask(t *testing.T) {
 			CompanyDomain: "fakecompany.com",
 			AnnualRevenue: 5000000,
 		},
-		inputContactId: "32027696539",
+		inputContactID: "32027696539",
 		wantResp:       "99999999999",
 	}
 
@@ -151,7 +151,7 @@ func TestComponent_ExecuteCreateCompanyTask(t *testing.T) {
 		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbInput, err := base.ConvertToStructpb(tc.inputCompany)
-		pbInput.Fields["contact-id-or-email"] = structpb.NewStringValue(tc.inputContactId)
+		pbInput.Fields["contact-id-or-email"] = structpb.NewStringValue(tc.inputContactID)
 
 		c.Assert(err, qt.IsNil)
 

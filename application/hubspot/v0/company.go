@@ -10,11 +10,11 @@ import (
 
 // Get Company
 type TaskGetCompanyInput struct {
-	CompanyId string `json:"company-id"`
+	CompanyID string `json:"company-id"`
 }
 
 type TaskGetCompanyResp struct {
-	OwnerId       string `json:"hubspot_owner_id,omitempty"`
+	OwnerID       string `json:"hubspot_owner_id,omitempty"`
 	CompanyName   string `json:"name,omitempty"`
 	CompanyDomain string `json:"domain,omitempty"`
 	Description   string `json:"description,omitempty"`
@@ -32,7 +32,7 @@ type TaskGetCompanyResp struct {
 }
 
 type TaskGetCompanyOutput struct {
-	OwnerId              string   `json:"owner-id,omitempty"`
+	OwnerID              string   `json:"owner-id,omitempty"`
 	CompanyName          string   `json:"company-name,omitempty"`
 	CompanyDomain        string   `json:"company-domain,omitempty"`
 	Description          string   `json:"description,omitempty"`
@@ -47,7 +47,7 @@ type TaskGetCompanyOutput struct {
 	AnnualRevenue        float64  `json:"annual-revenue,omitempty"`
 	TotalRevenue         float64  `json:"total-revenue,omitempty"`
 	LinkedinPage         string   `json:"linkedin-page,omitempty"`
-	AssociatedContactIds []string `json:"associated-contact-ids,omitempty"`
+	AssociatedContactIDs []string `json:"associated-contact-ids,omitempty"`
 }
 
 func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error) {
@@ -59,7 +59,7 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 		return nil, err
 	}
 
-	res, err := e.client.CRM.Company.Get(inputStruct.CompanyId, &TaskGetCompanyResp{}, &hubspot.RequestQueryOption{Associations: []string{"contacts"}})
+	res, err := e.client.CRM.Company.Get(inputStruct.CompanyID, &TaskGetCompanyResp{}, &hubspot.RequestQueryOption{Associations: []string{"contacts"}})
 
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 	}
 
 	outputStruct := TaskGetCompanyOutput{
-		OwnerId:              companyInfo.OwnerId,
+		OwnerID:              companyInfo.OwnerID,
 		CompanyName:          companyInfo.CompanyName,
 		CompanyDomain:        companyInfo.CompanyDomain,
 		Description:          companyInfo.Description,
@@ -117,7 +117,7 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 		AnnualRevenue:        annualRevenue,
 		TotalRevenue:         totalRevenue,
 		LinkedinPage:         companyInfo.LinkedinPage,
-		AssociatedContactIds: companyContactList,
+		AssociatedContactIDs: companyContactList,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -131,7 +131,7 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 
 // Create Company
 type TaskCreateCompanyInput struct {
-	OwnerId                   string   `json:"owner-id"`
+	OwnerID                   string   `json:"owner-id"`
 	CompanyName               string   `json:"company-name"`
 	CompanyDomain             string   `json:"company-domain"`
 	Description               string   `json:"description"`
@@ -149,7 +149,7 @@ type TaskCreateCompanyInput struct {
 }
 
 type TaskCreateCompanyReq struct {
-	OwnerId       string `json:"hubspot_owner_id,omitempty"`
+	OwnerID       string `json:"hubspot_owner_id,omitempty"`
 	CompanyName   string `json:"name,omitempty"`
 	CompanyDomain string `json:"domain,omitempty"`
 	Description   string `json:"description,omitempty"`
@@ -163,11 +163,11 @@ type TaskCreateCompanyReq struct {
 	TimeZone      string `json:"timezone,omitempty"`
 	AnnualRevenue string `json:"annualrevenue,omitempty"`
 	LinkedinPage  string `json:"linkedin_company_page,omitempty"`
-	CompanyId     string `json:"hs_object_id"`
+	CompanyID     string `json:"hs_object_id"`
 }
 
 type TaskCreateCompanyOutput struct {
-	CompanyId string `json:"company-id"`
+	CompanyID string `json:"company-id"`
 }
 
 func (e *execution) CreateCompany(input *structpb.Struct) (*structpb.Struct, error) {
@@ -185,7 +185,7 @@ func (e *execution) CreateCompany(input *structpb.Struct) (*structpb.Struct, err
 	}
 
 	req := TaskCreateCompanyReq{
-		OwnerId:       inputStruct.OwnerId,
+		OwnerID:       inputStruct.OwnerID,
 		CompanyName:   inputStruct.CompanyName,
 		CompanyDomain: inputStruct.CompanyDomain,
 		Description:   inputStruct.Description,
@@ -207,10 +207,10 @@ func (e *execution) CreateCompany(input *structpb.Struct) (*structpb.Struct, err
 		return nil, err
 	}
 
-	// get company Id
-	companyId := res.Properties.(*TaskCreateCompanyReq).CompanyId
+	// get company ID
+	companyID := res.Properties.(*TaskCreateCompanyReq).CompanyID
 
-	outputStruct := TaskCreateCompanyOutput{CompanyId: companyId}
+	outputStruct := TaskCreateCompanyOutput{CompanyID: companyID}
 
 	output, err := base.ConvertToStructpb(outputStruct)
 
@@ -220,7 +220,7 @@ func (e *execution) CreateCompany(input *structpb.Struct) (*structpb.Struct, err
 
 	// This section is for creating associations (company -> object)
 	if len(inputStruct.CreateContactsAssociation) != 0 {
-		err := CreateAssociation(&outputStruct.CompanyId, &inputStruct.CreateContactsAssociation, "company", "contact", e)
+		err := CreateAssociation(&outputStruct.CompanyID, &inputStruct.CreateContactsAssociation, "company", "contact", e)
 
 		if err != nil {
 			return nil, err

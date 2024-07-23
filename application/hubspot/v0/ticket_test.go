@@ -17,9 +17,9 @@ import (
 // Mock Ticket struct and its functions
 type MockTicket struct{}
 
-func (s *MockTicket) Get(ticketId string) (*hubspot.ResponseResource, error) {
+func (s *MockTicket) Get(ticketID string) (*hubspot.ResponseResource, error) {
 	var fakeTicket TaskGetTicketResp
-	if ticketId == "2865646368" {
+	if ticketID == "2865646368" {
 		fakeTicket = TaskGetTicketResp{
 			TicketName:   "HubSpot - New Query (Sample Query)",
 			TicketStatus: "1",
@@ -35,11 +35,11 @@ func (s *MockTicket) Get(ticketId string) (*hubspot.ResponseResource, error) {
 	return ret, nil
 }
 func (s *MockTicket) Create(ticket *TaskCreateTicketReq) (*hubspot.ResponseResource, error) {
-	arbitraryTicketId := "99987654321"
+	arbitraryTicketID := "99987654321"
 
 	fakeTicketInfo := ticket
 
-	fakeTicketInfo.TicketId = arbitraryTicketId
+	fakeTicketInfo.TicketID = arbitraryTicketID
 
 	ret := &hubspot.ResponseResource{
 		Properties: fakeTicketInfo,
@@ -109,7 +109,7 @@ func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
 	tc := struct {
 		name           string
 		inputTicket    TaskCreateTicketInput
-		inputContactId string //used to associate contact with ticket
+		inputContactID string //used to associate contact with ticket
 		wantResp       string
 	}{
 		name: "ok - create ticket",
@@ -119,7 +119,7 @@ func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
 			Pipeline:     "0",
 			Category:     []string{"FEATURE_REQUEST", "GENERAL_INQUIRY"},
 		},
-		inputContactId: "32027696539",
+		inputContactID: "32027696539",
 		wantResp:       "99987654321",
 	}
 
@@ -137,7 +137,7 @@ func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
 		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbInput, err := base.ConvertToStructpb(tc.inputTicket)
-		pbInput.Fields["contact-id-or-email"] = structpb.NewStringValue(tc.inputContactId)
+		pbInput.Fields["contact-id-or-email"] = structpb.NewStringValue(tc.inputContactID)
 
 		c.Assert(err, qt.IsNil)
 

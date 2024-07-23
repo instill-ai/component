@@ -16,10 +16,10 @@ import (
 // Mock Thread struct and its functions
 type MockThread struct{}
 
-func (s *MockThread) Get(threadId string) (*TaskGetThreadResp, error) {
+func (s *MockThread) Get(threadID string) (*TaskGetThreadResp, error) {
 
 	var fakeThread TaskGetThreadResp
-	if threadId == "7509711154" {
+	if threadID == "7509711154" {
 		fakeThread = TaskGetThreadResp{
 			Results: []taskGetThreadRespResult{
 				{
@@ -27,7 +27,7 @@ func (s *MockThread) Get(threadId string) (*TaskGetThreadResp, error) {
 					Senders: []taskGetThreadRespUser{
 						{
 							Name: "Brian Halligan (Sample Contact)",
-							DeliveryIdentifier: taskGetThreadRespIdentifier{
+							DeliveryIDentifier: taskGetThreadRespIDentifier{
 								Type:  "HS_EMAIL_ADDRESS",
 								Value: "bh@hubspot.com",
 							},
@@ -35,7 +35,7 @@ func (s *MockThread) Get(threadId string) (*TaskGetThreadResp, error) {
 					},
 					Recipients: []taskGetThreadRespUser{
 						{
-							DeliveryIdentifier: taskGetThreadRespIdentifier{
+							DeliveryIDentifier: taskGetThreadRespIDentifier{
 								Type:  "HS_EMAIL_ADDRESS",
 								Value: "fake_email@gmail.com",
 							},

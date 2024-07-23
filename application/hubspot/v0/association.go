@@ -14,33 +14,33 @@ import (
 // API functions for Retrieve Association
 
 type RetrieveAssociationService interface {
-	GetThreadId(contactId string) (*TaskRetrieveAssociationThreadResp, error)
-	GetCrmId(contactId string, objectType string) (*TaskRetrieveAssociationCrmResp, error)
+	GetThreadID(contactID string) (*TaskRetrieveAssociationThreadResp, error)
+	GetCrmID(contactID string, objectType string) (*TaskRetrieveAssociationCrmResp, error)
 }
 
 type RetrieveAssociationServiceOp struct {
-	retrieveCrmIdPath    string
-	retrieveThreadIdPath string
+	retrieveCrmIDPath    string
+	retrieveThreadIDPath string
 	client               *hubspot.Client
 }
 
-func (s *RetrieveAssociationServiceOp) GetThreadId(contactId string) (*TaskRetrieveAssociationThreadResp, error) {
+func (s *RetrieveAssociationServiceOp) GetThreadID(contactID string) (*TaskRetrieveAssociationThreadResp, error) {
 	resource := &TaskRetrieveAssociationThreadResp{}
-	if err := s.client.Get(s.retrieveThreadIdPath+contactId, resource, nil); err != nil {
+	if err := s.client.Get(s.retrieveThreadIDPath+contactID, resource, nil); err != nil {
 		return nil, err
 	}
 	return resource, nil
 }
 
-func (s *RetrieveAssociationServiceOp) GetCrmId(contactId string, objectType string) (*TaskRetrieveAssociationCrmResp, error) {
+func (s *RetrieveAssociationServiceOp) GetCrmID(contactID string, objectType string) (*TaskRetrieveAssociationCrmResp, error) {
 	resource := &TaskRetrieveAssociationCrmResp{}
 
-	contactIdInput := TaskRetrieveAssociationCrmReqId{ContactId: contactId}
+	contactIDInput := TaskRetrieveAssociationCrmReqID{ContactID: contactID}
 
 	req := &TaskRetrieveAssociationCrmReq{}
-	req.Input = append(req.Input, contactIdInput)
+	req.Input = append(req.Input, contactIDInput)
 
-	path := s.retrieveCrmIdPath + "/" + objectType + "/batch/read"
+	path := s.retrieveCrmIDPath + "/" + objectType + "/batch/read"
 
 	if err := s.client.Post(path, req, resource); err != nil {
 		return nil, err
@@ -51,31 +51,31 @@ func (s *RetrieveAssociationServiceOp) GetCrmId(contactId string, objectType str
 // Retrieve Association: use contact id to get the object ID associated with it
 
 type TaskRetrieveAssociationInput struct {
-	ContactId  string `json:"contact-id"`
+	ContactID  string `json:"contact-id"`
 	ObjectType string `json:"object-type"`
 }
 
 // Retrieve Association Task is mainly divided into two:
-// 1. GetThreadId
-// 2. GetCrmId
+// 1. GetThreadID
+// 2. GetCrmID
 // Basically, these two will have seperate structs for handling request/response
 
-// For GetThreadId
+// For GetThreadID
 
 type TaskRetrieveAssociationThreadResp struct {
 	Results []struct {
-		Id string `json:"id"`
+		ID string `json:"id"`
 	} `json:"results"`
 }
 
-// For GetCrmId
+// For GetCrmID
 
 type TaskRetrieveAssociationCrmReq struct {
-	Input []TaskRetrieveAssociationCrmReqId `json:"inputs"`
+	Input []TaskRetrieveAssociationCrmReqID `json:"inputs"`
 }
 
-type TaskRetrieveAssociationCrmReqId struct {
-	ContactId string `json:"id"`
+type TaskRetrieveAssociationCrmReqID struct {
+	ContactID string `json:"id"`
 }
 
 type TaskRetrieveAssociationCrmResp struct {
@@ -83,15 +83,15 @@ type TaskRetrieveAssociationCrmResp struct {
 }
 
 type taskRetrieveAssociationCrmRespResult struct {
-	IdArray []struct {
-		Id string `json:"id"`
+	IDArray []struct {
+		ID string `json:"id"`
 	} `json:"to"`
 }
 
 // Retrieve Association Output
 
 type TaskRetrieveAssociationOutput struct {
-	ObjectIds []string `json:"object-ids"`
+	ObjectIDs []string `json:"object-ids"`
 }
 
 func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struct, error) {
@@ -104,39 +104,39 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 
 	// API calls to retrieve association for Threads and CRM objects are different
 
-	var objectIds []string
+	var objectIDs []string
 	if retrieveInput.ObjectType == "Threads" {
 		// To handle Threads
-		res, err := e.client.RetrieveAssociation.GetThreadId(retrieveInput.ContactId)
+		res, err := e.client.RetrieveAssociation.GetThreadID(retrieveInput.ContactID)
 
 		if err != nil {
 			return nil, err
 		}
 
-		objectIds = make([]string, len(res.Results))
+		objectIDs = make([]string, len(res.Results))
 		for index, value := range res.Results {
-			objectIds[index] = value.Id
+			objectIDs[index] = value.ID
 		}
 
 	} else {
 
 		// To handle CRM objects
-		res, err := e.client.RetrieveAssociation.GetCrmId(retrieveInput.ContactId, retrieveInput.ObjectType)
+		res, err := e.client.RetrieveAssociation.GetCrmID(retrieveInput.ContactID, retrieveInput.ObjectType)
 
 		if err != nil {
 			return nil, err
 		}
 
 		// only take the first Result, because the input is only one contact id
-		objectIds = make([]string, len(res.Results))
-		for index, value := range res.Results[0].IdArray {
-			objectIds[index] = value.Id
+		objectIDs = make([]string, len(res.Results))
+		for index, value := range res.Results[0].IDArray {
+			objectIDs[index] = value.ID
 		}
 
 	}
 
 	outputStruct := TaskRetrieveAssociationOutput{
-		ObjectIds: objectIds,
+		ObjectIDs: objectIDs,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -175,9 +175,9 @@ type CreateAssociationResponse struct {
 
 // CreateAssociation is used to create batch associations between objects
 
-func CreateAssociation(fromId *string, toIds *[]string, fromObjectType string, toObjectType string, e *execution) error {
+func CreateAssociation(fromID *string, toIDs *[]string, fromObjectType string, toObjectType string, e *execution) error {
 	req := &CreateAssociationReq{
-		Associations: make([]association, len(*toIds)),
+		Associations: make([]association, len(*toIDs)),
 	}
 
 	//for any association created related to company, it will use non-primary label.
@@ -199,18 +199,18 @@ func CreateAssociation(fromId *string, toIds *[]string, fromObjectType string, t
 		associationType = fmt.Sprintf("%s_to_%s", fromObjectType, toObjectType)
 	}
 
-	for index, toId := range *toIds {
+	for index, toID := range *toIDs {
 
 		req.Associations[index] = association{
 			From: struct {
 				ID string `json:"id"`
 			}{
-				ID: *fromId,
+				ID: *fromID,
 			},
 			To: struct {
 				ID string `json:"id"`
 			}{
-				ID: toId,
+				ID: toID,
 			},
 			Type: associationType,
 		}

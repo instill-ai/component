@@ -11,11 +11,11 @@ import (
 // Get Deal
 
 type TaskGetDealInput struct {
-	DealId string `json:"deal-id"`
+	DealID string `json:"deal-id"`
 }
 
 type TaskGetDealResp struct {
-	OwnerId    string `json:"hubspot_owner_id,omitempty"`
+	OwnerID    string `json:"hubspot_owner_id,omitempty"`
 	DealName   string `json:"dealname"`
 	Pipeline   string `json:"pipeline"`
 	DealStage  string `json:"dealstage"`
@@ -26,7 +26,7 @@ type TaskGetDealResp struct {
 }
 
 type TaskGetDealOutput struct {
-	OwnerId              string   `json:"owner-id,omitempty"`
+	OwnerID              string   `json:"owner-id,omitempty"`
 	DealName             string   `json:"deal-name"`
 	Pipeline             string   `json:"pipeline"`
 	DealStage            string   `json:"deal-stage"`
@@ -34,7 +34,7 @@ type TaskGetDealOutput struct {
 	DealType             string   `json:"deal-type,omitempty"`
 	CreateDate           string   `json:"create-date"`
 	CloseDate            string   `json:"close-date,omitempty"`
-	AssociatedContactIds []string `json:"associated-contact-ids,omitempty"`
+	AssociatedContactIDs []string `json:"associated-contact-ids,omitempty"`
 }
 
 func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
@@ -48,7 +48,7 @@ func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
 
 	// get deal information
 
-	res, err := e.client.CRM.Deal.Get(inputStruct.DealId, &TaskGetDealResp{}, &hubspot.RequestQueryOption{Associations: []string{"contacts"}})
+	res, err := e.client.CRM.Deal.Get(inputStruct.DealID, &TaskGetDealResp{}, &hubspot.RequestQueryOption{Associations: []string{"contacts"}})
 
 	if err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	outputStruct := TaskGetDealOutput{
-		OwnerId:              dealInfo.OwnerId,
+		OwnerID:              dealInfo.OwnerID,
 		DealName:             dealInfo.DealName,
 		Pipeline:             dealInfo.Pipeline,
 		DealStage:            dealInfo.DealStage,
@@ -89,7 +89,7 @@ func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
 		DealType:             dealInfo.DealType,
 		CreateDate:           dealInfo.CreateDate,
 		CloseDate:            dealInfo.CloseDate,
-		AssociatedContactIds: dealContactList,
+		AssociatedContactIDs: dealContactList,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -104,7 +104,7 @@ func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
 // Create Deal
 
 type TaskCreateDealInput struct {
-	OwnerId                   string   `json:"owner-id"`
+	OwnerID                   string   `json:"owner-id"`
 	DealName                  string   `json:"deal-name"`
 	Pipeline                  string   `json:"pipeline"`
 	DealStage                 string   `json:"deal-stage"`
@@ -115,18 +115,18 @@ type TaskCreateDealInput struct {
 }
 
 type TaskCreateDealReq struct {
-	OwnerId   string `json:"hubspot_owner_id,omitempty"`
+	OwnerID   string `json:"hubspot_owner_id,omitempty"`
 	DealName  string `json:"dealname"`
 	Pipeline  string `json:"pipeline"`
 	DealStage string `json:"dealstage"`
 	Amount    string `json:"amount,omitempty"`
 	DealType  string `json:"dealtype,omitempty"`
 	CloseDate string `json:"closedate,omitempty"`
-	DealId    string `json:"hs_object_id"`
+	DealID    string `json:"hs_object_id"`
 }
 
 type TaskCreateDealOutput struct {
-	DealId string `json:"deal-id"`
+	DealID string `json:"deal-id"`
 }
 
 func (e *execution) CreateDeal(input *structpb.Struct) (*structpb.Struct, error) {
@@ -144,7 +144,7 @@ func (e *execution) CreateDeal(input *structpb.Struct) (*structpb.Struct, error)
 	}
 
 	req := TaskCreateDealReq{
-		OwnerId:   inputStruct.OwnerId,
+		OwnerID:   inputStruct.OwnerID,
 		DealName:  inputStruct.DealName,
 		Pipeline:  inputStruct.Pipeline,
 		DealStage: inputStruct.DealStage,
@@ -159,10 +159,10 @@ func (e *execution) CreateDeal(input *structpb.Struct) (*structpb.Struct, error)
 		return nil, err
 	}
 
-	// get deal Id
-	dealId := res.Properties.(*TaskCreateDealReq).DealId
+	// get deal ID
+	dealID := res.Properties.(*TaskCreateDealReq).DealID
 
-	outputStruct := TaskCreateDealOutput{DealId: dealId}
+	outputStruct := TaskCreateDealOutput{DealID: dealID}
 
 	output, err := base.ConvertToStructpb(outputStruct)
 
@@ -172,7 +172,7 @@ func (e *execution) CreateDeal(input *structpb.Struct) (*structpb.Struct, error)
 
 	// This section is for creating associations (deal -> object)
 	if len(inputStruct.CreateContactsAssociation) != 0 {
-		err := CreateAssociation(&outputStruct.DealId, &inputStruct.CreateContactsAssociation, "deal", "contact", e)
+		err := CreateAssociation(&outputStruct.DealID, &inputStruct.CreateContactsAssociation, "deal", "contact", e)
 
 		if err != nil {
 			return nil, err

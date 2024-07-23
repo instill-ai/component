@@ -29,8 +29,8 @@ func NewCustomClient(setAuthMethod hubspot.AuthMethod, opts ...hubspot.Option) (
 			client:     c,
 		},
 		RetrieveAssociation: &RetrieveAssociationServiceOp{
-			retrieveCrmIdPath:    "crm/v3/associations/Contacts",
-			retrieveThreadIdPath: "conversations/v3/conversations/threads?associatedContactId=",
+			retrieveCrmIDPath:    "crm/v3/associations/Contacts",
+			retrieveThreadIDPath: "conversations/v3/conversations/threads?associatedContactID=",
 			client:               c,
 		},
 		Ticket: &TicketServiceOp{
