@@ -27,7 +27,9 @@ type Session struct {
 	indentSymbol  string
 }
 
-// Session Logger is only verbose when package verbose is greater than the verbose level specified here
+// Session Logger is only verbose when package verbose is greater than the verbose level specified here.
+//
+// If no name is provided, the name will be <filename>:<function name> of the caller
 func (d *Session) SessionStart(name string, verboseLevel int) (self *Session) {
 	d.verboseLevel = verboseLevel
 	if Verbose < verboseLevel {
@@ -79,11 +81,11 @@ func (d *Session) SessionEnd() (self *Session) {
 	return d
 }
 
-func (d *Session) AddIndent() (self *Session) {
+func (d *Session) IncrementIndent() (self *Session) {
 	d.indentLevel++
 	return d
 }
-func (d *Session) RemoveIndent() (self *Session) {
+func (d *Session) DecrementIndent() (self *Session) {
 	d.indentLevel--
 	return d
 }

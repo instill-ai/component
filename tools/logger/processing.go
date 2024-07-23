@@ -10,7 +10,6 @@ func (d *Session) addRawMessage(m ...interface{}) {
 	if Verbose < d.verboseLevel {
 		return
 	}
-	defer d.flush()
 	d.messages = append(d.messages,
 		fmt.Sprintf("%s %s%v", d.header, strings.Repeat(d.indentSymbol, d.indentLevel), m))
 }
@@ -19,7 +18,6 @@ func (d *Session) addMessage(msg ...interface{}) {
 	if Verbose < d.verboseLevel {
 		return
 	}
-	defer d.flush()
 	parseMsg := ""
 	for _, m := range msg {
 		parseMsg += fmt.Sprintf(" %v", m)
@@ -70,8 +68,6 @@ func (d *Session) addMapMessage(name string, m interface{}) {
 	if Verbose < d.verboseLevel {
 		return
 	}
-	defer d.flush()
-
 	mapVal, sliceVal, v := d.checkMapOrSlice(m)
 	if mapVal != nil {
 		d.addMessage(name + ": {")
@@ -120,10 +116,7 @@ func (d *Session) addInternalMapMessage(m map[string]interface{}, depth int) {
 }
 
 func (d *Session) addInternalSliceMessage(s []interface{}, depth int) {
-	d.indentLevel++
-	defer func() {
-		d.indentLevel--
-	}()
+	defer d.Indent()()
 	if depth > d.maxDepth {
 		d.addMessage("...")
 		return

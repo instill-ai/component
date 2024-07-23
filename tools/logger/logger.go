@@ -5,11 +5,13 @@ import (
 	"strings"
 )
 
+// Increase the indentation level and return a function to decrease it
 func (d *Session) Indent() func() *Session {
-	d.AddIndent()
-	return d.RemoveIndent
+	d.IncrementIndent()
+	return d.DecrementIndent
 }
 
+// Separator adds a separator line
 func (d *Session) Separator() {
 	if Verbose < d.verboseLevel {
 		return
@@ -31,29 +33,28 @@ func (d *Session) flush() {
 }
 
 func (d *Session) autoPrint(msg ...interface{}) {
-	switch len(msg) {
-	case 0:
+	if len(msg) == 0 {
 		return
+	}
+	key, ok := msg[0].(string)
+	if !ok {
+		_, funcName, line, _ := getCallerDetails(2)
+		sfuncName := sanitizeName(funcName)
+		key = fmt.Sprintf("%s:%d", sfuncName, line)
+		if len(msg) == 1 {
+			d.addMapMessage(key, msg[0])
+		} else {
+			d.addMapMessage(key, msg)
+		}
+		return
+	}
+	switch len(msg) {
 	case 1:
 		d.addMessage(fmt.Sprintf("%v", msg[0]))
 	case 2:
-		key, ok := msg[0].(string)
-		if !ok {
-			_, funcName, line, _ := getCallerDetails(2)
-			key = fmt.Sprintf("%s:%d", funcName, line)
-			d.addMapMessage(key, msg)
-		} else {
-			d.addMapMessage(key, msg[1])
-		}
+		d.addMapMessage(key, msg[1])
 	default:
-		key, ok := msg[0].(string)
-		if !ok {
-			_, funcName, line, _ := getCallerDetails(2)
-			key = fmt.Sprintf("%s:%d", funcName, line)
-			d.addMapMessage(key, msg)
-		} else {
-			d.addMapMessage(key, msg[1:])
-		}
+		d.addMapMessage(key, msg[1:])
 	}
 }
 
@@ -102,6 +103,7 @@ func (d *Session) Error(msg ...interface{}) {
 	d.autoPrint(msg...)
 }
 
+// Log messages without expanding them
 func (d *Session) Raw(msg ...interface{}) {
 	if Verbose < d.verboseLevel {
 		return
