@@ -11,7 +11,7 @@
         "string"
       ],
       "instillSecret": true,
-      "instillUIOrder": 2,
+      "instillUIOrder": 0,
       "title": "URI",
       "type": "string"
     }

@@ -64,6 +64,34 @@ func (m *MockMongoClient) Drop(ctx context.Context) error {
 	return nil
 }
 
+func (m *MockMongoClient) SearchIndexes() mongo.SearchIndexView {
+	return mongo.SearchIndexView{}
+}
+
+func (m *MockMongoClient) CreateOne(ctx context.Context, model mongo.SearchIndexModel, opts ...*options.CreateSearchIndexesOptions) (string, error) {
+	return "mockIndex", nil
+}
+
+func (m *MockMongoClient) DropOne(ctx context.Context, name string, _ ...*options.DropSearchIndexOptions) error {
+	return nil
+}
+
+func (m *MockMongoClient) Aggregate(ctx context.Context, pipeline interface{}, opts ...*options.AggregateOptions) (*mongo.Cursor, error) {
+	mockDocs := []bson.M{
+		{"vector": []float64{0.1, 0.2}, "name": "test"},
+	}
+
+	var docs []interface{}
+	for _, doc := range mockDocs {
+		docs = append(docs, doc)
+	}
+	mockCursor, err := mongo.NewCursorFromDocuments(docs, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return mockCursor, nil
+}
+
 func TestComponent_ExecuteInsertTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
@@ -400,6 +428,199 @@ func TestComponent_ExecuteDeleteDatabaseTask(t *testing.T) {
 				},
 			}
 			e.execute = e.dropDatabase
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestComponent_ExecuteCreateSearchIndexTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    CreateSearchIndexInput
+		wantResp CreateSearchIndexOutput
+		wantErr  string
+	}{
+		{
+			name: "ok to create search index",
+			input: CreateSearchIndexInput{
+				Syntax: map[string]any{
+					"Fields": []map[string]any{{
+						"type":          "vector",
+						"numDimensions": 2,
+						"path":          "mock_collection",
+						"similarity":    "cosine",
+					},
+					},
+				},
+			},
+			wantResp: CreateSearchIndexOutput{
+				Status: "Successfully created search index",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"name":            "test",
+				"collection-name": "test_coll",
+				"uri":             "mongodb://localhost:27017",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskCreateSearchIndex},
+				client: &MongoClient{
+					collectionClient:  &MockMongoClient{},
+					searchIndexClient: &MockMongoClient{},
+				},
+			}
+			e.execute = e.createSearchIndex
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestComponent_ExecuteDropSearchIndexTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    DropSearchIndexInput
+		wantResp DropSearchIndexOutput
+		wantErr  string
+	}{
+		{
+			name: "ok to drop search index",
+			input: DropSearchIndexInput{
+				IndexName: "index_name",
+			},
+			wantResp: DropSearchIndexOutput{
+				Status: "Successfully dropped search index",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"name":            "test",
+				"collection-name": "test_coll",
+				"uri":             "mongodb://localhost:27017",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDropSearchIndex},
+				client: &MongoClient{
+					collectionClient:  &MockMongoClient{},
+					searchIndexClient: &MockMongoClient{},
+				},
+			}
+			e.execute = e.dropSearchIndex
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    VectorSearchInput
+		wantResp VectorSearchOutput
+		wantErr  string
+	}{
+		{
+			name: "ok to vector search",
+			input: VectorSearchInput{
+				Exact:         false,
+				IndexName:     "index_name",
+				Limit:         0,
+				NumCandidates: 10,
+				Path:          "vector",
+				QueryVector:   []float64{0.1, 0.2},
+				Filter:        map[string]any{"name": "test"},
+			},
+			wantResp: VectorSearchOutput{
+				Status: "Successfully found documents",
+				Documents: []map[string]any{
+					{"vector": []float64{0.1, 0.2}, "name": "test"},
+				},
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"name":            "test",
+				"collection-name": "test_coll",
+				"uri":             "mongodb://localhost:27017",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskVectorSearch},
+				client: &MongoClient{
+					collectionClient: &MockMongoClient{},
+				},
+			}
+			e.execute = e.vectorSearch
 			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)

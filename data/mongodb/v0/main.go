@@ -15,12 +15,15 @@ import (
 )
 
 const (
-	TaskInsert         = "TASK_INSERT"
-	TaskFind           = "TASK_FIND"
-	TaskUpdate         = "TASK_UPDATE"
-	TaskDelete         = "TASK_DELETE"
-	TaskDropCollection = "TASK_DROP_COLLECTION"
-	TaskDropDatabase   = "TASK_DROP_DATABASE"
+	TaskInsert            = "TASK_INSERT"
+	TaskFind              = "TASK_FIND"
+	TaskUpdate            = "TASK_UPDATE"
+	TaskDelete            = "TASK_DELETE"
+	TaskDropCollection    = "TASK_DROP_COLLECTION"
+	TaskDropDatabase      = "TASK_DROP_DATABASE"
+	TaskCreateSearchIndex = "TASK_CREATE_SEARCH_INDEX"
+	TaskDropSearchIndex   = "TASK_DROP_SEARCH_INDEX"
+	TaskVectorSearch      = "TASK_VECTOR_SEARCH"
 )
 
 //go:embed config/definition.json
@@ -46,15 +49,24 @@ type MongoCollectionClient interface {
 	UpdateMany(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
 	DeleteMany(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error)
 	Drop(ctx context.Context) error
+
+	SearchIndexes() mongo.SearchIndexView
+	Aggregate(ctx context.Context, pipeline interface{}, opts ...*options.AggregateOptions) (*mongo.Cursor, error)
 }
 
 type MongoDatabaseClient interface {
 	Drop(ctx context.Context) error
 }
 
+type MongoSearchIndexClient interface {
+	CreateOne(ctx context.Context, model mongo.SearchIndexModel, opts ...*options.CreateSearchIndexesOptions) (string, error)
+	DropOne(ctx context.Context, name string, _ ...*options.DropSearchIndexOptions) error
+}
+
 type MongoClient struct {
-	collectionClient MongoCollectionClient
-	databaseClient   MongoDatabaseClient
+	collectionClient  MongoCollectionClient
+	databaseClient    MongoDatabaseClient
+	searchIndexClient MongoSearchIndexClient
 }
 
 // dbClient for task DropDatabase
@@ -98,6 +110,12 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.dropCollection
 	case TaskDropDatabase:
 		e.execute = e.dropDatabase
+	case TaskCreateSearchIndex:
+		e.execute = e.createSearchIndex
+	case TaskDropSearchIndex:
+		e.execute = e.dropSearchIndex
+	case TaskVectorSearch:
+		e.execute = e.vectorSearch
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),
@@ -136,6 +154,7 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 		if e.Task != TaskDropDatabase && e.client.collectionClient == nil {
 			collection := db.Collection(inputStruct.CollectionName)
 			e.client.collectionClient = collection
+			e.client.searchIndexClient = collection.SearchIndexes()
 		}
 
 		output, err := e.execute(ctx, input)

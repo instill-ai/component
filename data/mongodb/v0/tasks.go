@@ -22,6 +22,7 @@ type InsertOutput struct {
 type FindInput struct {
 	Filter map[string]any `json:"filter"`
 	Limit  int            `json:"limit"`
+	Fields []string       `json:"fields"`
 }
 
 type FindOutput struct {
@@ -62,6 +63,40 @@ type DropDatabaseOutput struct {
 	Status string `json:"status"`
 }
 
+type CreateSearchIndexInput struct {
+	IndexName string         `json:"index-name"`
+	IndexType string         `json:"index-type"`
+	Syntax    map[string]any `json:"syntax"`
+}
+
+type CreateSearchIndexOutput struct {
+	Status string `json:"status"`
+}
+
+type DropSearchIndexInput struct {
+	IndexName string `json:"index-name"`
+}
+
+type DropSearchIndexOutput struct {
+	Status string `json:"status"`
+}
+
+type VectorSearchInput struct {
+	Exact         bool           `json:"exact"`
+	Filter        map[string]any `json:"filter"`
+	IndexName     string         `json:"index-name"`
+	Limit         int            `json:"limit"`
+	NumCandidates int            `json:"num-candidates"`
+	Path          string         `json:"path"`
+	QueryVector   []float64      `json:"query-vector"`
+	Fields        []string       `json:"fields"`
+}
+
+type VectorSearchOutput struct {
+	Status    string           `json:"status"`
+	Documents []map[string]any `json:"documents"`
+}
+
 func (e *execution) insert(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct InsertInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
@@ -97,6 +132,7 @@ func (e *execution) find(ctx context.Context, in *structpb.Struct) (*structpb.St
 
 	filter := inputStruct.Filter
 	limit := inputStruct.Limit
+	fields := inputStruct.Fields
 
 	realFilter := bson.M{}
 	for key, value := range filter {
@@ -112,11 +148,11 @@ func (e *execution) find(ctx context.Context, in *structpb.Struct) (*structpb.St
 	}
 
 	var cursor *mongo.Cursor
-	if len(filter) != 0 {
+	if len(fields) > 0 {
 		projection := bson.M{}
 		projection["_id"] = 0
-		for key := range filter {
-			projection[key] = 1
+		for _, field := range fields {
+			projection[field] = 1
 		}
 		findOptions.SetProjection(projection)
 	}
@@ -263,5 +299,151 @@ func (e *execution) dropDatabase(ctx context.Context, in *structpb.Struct) (*str
 	if err != nil {
 		return nil, err
 	}
+	return output, nil
+}
+
+func (e *execution) createSearchIndex(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct CreateSearchIndexInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	syntax := inputStruct.Syntax
+
+	searchIndexModel := mongo.SearchIndexModel{
+		Definition: syntax,
+		Options: &options.SearchIndexesOptions{
+			Name: &inputStruct.IndexName,
+			Type: &inputStruct.IndexType,
+		},
+	}
+
+	_, err = e.client.searchIndexClient.CreateOne(ctx, searchIndexModel)
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := CreateSearchIndexOutput{
+		Status: "Successfully created search index",
+	}
+
+	// Convert the output structure to Structpb
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (e *execution) dropSearchIndex(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct DropSearchIndexInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	indexName := inputStruct.IndexName
+
+	err = e.client.searchIndexClient.DropOne(ctx, indexName)
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := DropSearchIndexOutput{
+		Status: "Successfully dropped search index",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct VectorSearchInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	exact := inputStruct.Exact
+	filter := inputStruct.Filter
+	indexName := inputStruct.IndexName
+	limit := inputStruct.Limit
+	numCandidates := inputStruct.NumCandidates
+	path := inputStruct.Path
+	queryVector := inputStruct.QueryVector
+	fields := inputStruct.Fields
+
+	vectorSearch := bson.M{
+		"exact":       exact,
+		"index":       indexName,
+		"path":        path,
+		"queryVector": queryVector,
+		"limit":       limit,
+	}
+	if filter != nil {
+		vectorSearch["filter"] = filter
+	}
+
+	if !exact {
+		if numCandidates > 0 {
+			vectorSearch["numCandidates"] = numCandidates
+		} else {
+			vectorSearch["numCandidates"] = 3 * limit
+		}
+	}
+
+	project := bson.M{"_id": 0}
+	for _, field := range fields {
+		project[field] = 1
+	}
+
+	query := bson.A{
+		bson.M{
+			"$vectorSearch": vectorSearch,
+		},
+		bson.M{
+			"$addFields": bson.M{
+				"score": bson.M{
+					"$meta": "vectorSearchScore",
+				},
+			},
+		},
+	}
+
+	if len(fields) > 0 {
+		query = append(query, bson.M{
+			"$project": project,
+		})
+	}
+
+	cursor, err := e.client.collectionClient.Aggregate(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	var documents []map[string]any
+	for cursor.Next(ctx) {
+		var document map[string]any
+		err := cursor.Decode(&document)
+		if err != nil {
+			return nil, err
+		}
+		documents = append(documents, document)
+	}
+
+	outputStruct := VectorSearchOutput{
+		Status:    "Successfully found documents",
+		Documents: documents,
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+
 	return output, nil
 }

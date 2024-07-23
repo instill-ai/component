@@ -110,11 +110,11 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to find documents, if JSON value of a key is null e.g {'name':null}, then name field will be selected without any filter. If empty, then all fields will be selected",
+          "description": "The filter to find documents, this field is optional, support mongodb query, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data, optional (empty for all documents)",
+          "instillShortDescription": "JSON Data, optional (empty for all documents), support mongodb query",
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
@@ -124,11 +124,11 @@
           "title": "Filter"
         },
         "limit":{
-          "description": "The number of documents to return, this field is optional. If empty then all documents will be returned",
+          "description": "The number of documents to return. If empty then all documents will be returned",
           "instillAcceptFormats": [
             "integer"
           ],
-          "instillShortDescription": "Limit the documents, optional (empty for all documents)",
+          "instillShortDescription": "Limit the documents, (empty for all documents)",
           "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
@@ -136,6 +136,25 @@
           ],
           "title": "Limit",
           "type": "integer"
+        },
+        "fields":{
+          "description": "The fields to return in the documents. If empty then all fields will be returned",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillShortDescription": "Fields to be returned, (empty for all fields)",
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Fields",
+          "type":"array:string",
+          "items": {
+            "title":"Field",
+            "type": "string"
+          }
         }
       },
       "required": [
@@ -145,8 +164,7 @@
       "instillEditOnNodeFields":[
         "database-name",
         "collection-name",
-        "filter",
-        "limit"
+        "filter"
       ],
       "title": "Input",
       "type": "object"
@@ -219,11 +237,11 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to update documents",
+          "description": "The filter to update documents, support mongodb query, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data",
+          "instillShortDescription": "JSON Data, support mongodb query",
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
@@ -310,11 +328,11 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to delete documents",
+          "description": "The filter to delete documents, support mongodb query, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data",
+          "instillShortDescription": "JSON Data, support mongodb query",
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
@@ -452,6 +470,395 @@
       },
       "required": [
         "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_SEARCH_INDEX":{
+    "instillShortDescription": "Create a search index",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "database-name": {
+          "description": "Fill in your MongoDB database name",
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "collection-name": {
+          "description": "The name of the collection in the MongoDB database",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Collection Name",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "index-name":{
+          "description": "The name of the index to be created",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Index Name",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Index Name",
+          "type": "string"
+        },
+        "index-type":{
+          "description": "The type of the index to be created",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Index Type",
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "enum": [
+            "search",
+            "vectorSearch"
+          ],
+          "title": "Index Type",
+          "type": "string"
+        },
+        "syntax":{
+          "description": "The syntax structure of the search index, please refer to the MongoDB documentation for more information. search https://www.mongodb.com/docs/atlas/atlas-search/create-index/. vectorSearch https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-type/",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "Syntax Structure, vectorSearch {\"fields\":{\"type\": \"vector\",\"path\": <field-to-index>,\"numDimensions\": <number-of-dimensions>,\"similarity\": \"euclidean | cosine | dotProduct\"}}, search { \"mappings\": { \"dynamic\": <boolean>, \"fields\": { <field-definition> } }}",
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Syntax"
+        }
+      },
+      "required": [
+        "database-name",
+        "collection-name",
+        "index-type",
+        "index-name",
+        "syntax"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Create index status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_DROP_SEARCH_INDEX":{
+    "instillShortDescription": "Drop a search index",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "database-name": {
+          "description": "Fill in your MongoDB database name",
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "collection-name": {
+          "description": "The name of the collection in the MongoDB database",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Collection Name",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "index-name": {
+          "description": "The name of the index to be deleted",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Index Name",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Index Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database-name",
+        "collection-name",
+        "index-name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Delete index status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_VECTOR_SEARCH":{
+    "instillShortDescription": "Perform a vector search operation",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "database-name": {
+          "description": "Fill in your MongoDB database name",
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "collection-name": {
+          "description": "The name of the collection in the MongoDB database",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Collection Name",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "index-name": {
+          "description": "The name of the index to be used for vector search",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Index Name",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Index Name",
+          "type": "string"
+        },
+        "query-vector": {
+          "description": "The query vector to be used for vector search",
+          "instillAcceptFormats": [
+            "array:number", "array:integer"
+          ],
+          "instillShortDescription": "Query Vector",
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Query Vector",
+          "type": "array",
+          "items": {
+            "title":"point",
+            "type": "number"
+          }
+        },
+        "exact": {
+          "description": "The exact value for vector search. If true, then ENN search will be performed, otherwise ANN search will be performed. Default to false",
+          "instillAcceptFormats": [
+            "boolean"
+          ],
+          "instillShortDescription": "Exact Search, true for ENN search, false for ANN search",
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Exact",
+          "type": "boolean",
+          "default": false
+        },
+        "limit": {
+          "description": "Limit the documents to be returned",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillShortDescription": "Limit Documents",
+          "instillUIOrder": 5,
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Limit",
+          "type": "integer"
+        },
+        "num-candidates": {
+          "description": "The number of candidates to the field to be used for vector search. Default to 3 times limit",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillShortDescription": "Number of Candidates, default to 3 times limit",
+          "instillUIOrder": 6,
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Number of Candidates",
+          "type": "integer"
+        },
+        "path": {
+          "description": "The path to the field to be used for vector search",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Path, need to first create vectorSearch search index",
+          "instillUIOrder": 7,
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Path",
+          "type": "string"
+        },
+        "filter": {
+          "description": "The filter to be used for vector search, need to first create filter vectorSearch search index, support mongodb query, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/ to be used for vector search",
+          "instillAcceptFormats": [
+            "semi-structured/*","structured/*","object"
+          ],
+          "instillShortDescription": "JSON Data, support mongodb query, (empty for all documents)",
+          "instillUIOrder": 8,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Filter"
+        },
+        "fields":{
+          "description": "The fields to return in the documents. If empty then all fields will be returned",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillShortDescription": "Fields to be returned, (empty for all fields)",
+          "instillUIOrder": 9,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Fields",
+          "type":"array:string",
+          "items": {
+            "title":"Field",
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "database-name",
+        "collection-name",
+        "index-name",
+        "query-vector",
+        "path",
+        "limit"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output":{
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Vector search status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        },
+        "documents": {
+          "description": "The documents returned from the vector search operation",
+          "instillEditOnNodeFields": [],
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Documents",
+          "type": "array",
+          "instillFormat": "array:semi-structured/json",
+          "items": {
+            "title": "Document",
+            "instillFormat": "semi-structured/json"
+          }
+        }
+      },
+      "required": [
+        "status",
+        "documents"
       ],
       "title": "Output",
       "type": "object"
