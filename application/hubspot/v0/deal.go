@@ -58,11 +58,13 @@ func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
 
 	// get contacts associated with deal
 
-	dealContactAssociation := res.Associations.Contacts.Results
-	dealContactList := make([]string, len(dealContactAssociation))
-
-	for index, value := range dealContactAssociation {
-		dealContactList[index] = value.ID
+	var dealContactList []string
+	if res.Associations != nil {
+		dealContactAssociation := res.Associations.Contacts.Results
+		dealContactList = make([]string, len(dealContactAssociation))
+		for index, value := range dealContactAssociation {
+			dealContactList[index] = value.ID
+		}
 	}
 
 	// convert to outputStruct

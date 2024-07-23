@@ -69,11 +69,14 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 
 	// get contacts associated with company
 
-	companyContactAssociation := res.Associations.Contacts.Results
-	companyContactList := make([]string, len(companyContactAssociation))
+	var companyContactList []string
+	if res.Associations != nil {
+		companyContactAssociation := res.Associations.Contacts.Results
+		companyContactList = make([]string, len(companyContactAssociation))
 
-	for index, value := range companyContactAssociation {
-		companyContactList[index] = value.ID
+		for index, value := range companyContactAssociation {
+			companyContactList[index] = value.ID
+		}
 	}
 
 	// convert to outputStruct

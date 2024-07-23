@@ -107,11 +107,13 @@ func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) 
 
 	// get contacts associated with ticket
 
-	ticketContactAssociation := res.Associations.Contacts.Results
-	ticketContactList := make([]string, len(ticketContactAssociation))
-
-	for index, value := range ticketContactAssociation {
-		ticketContactList[index] = value.ID
+	var ticketContactList []string
+	if res.Associations != nil {
+		ticketContactAssociation := res.Associations.Contacts.Results
+		ticketContactList = make([]string, len(ticketContactAssociation))
+		for index, value := range ticketContactAssociation {
+			ticketContactList[index] = value.ID
+		}
 	}
 
 	var categoryValues []string

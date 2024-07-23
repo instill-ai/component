@@ -100,6 +100,10 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.GetTicket
 	case taskCreateTicket:
 		e.execute = e.CreateTicket
+	case taskGetThread:
+		e.execute = e.GetThread
+	case taskRetrieveAssociation:
+		e.execute = e.RetrieveAssociation
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
