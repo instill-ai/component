@@ -2,7 +2,6 @@ package hubspot
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	hubspot "github.com/belong-inc/go-hubspot"
@@ -100,7 +99,7 @@ func TestComponent_ExecuteGetDealTask(t *testing.T) {
 
 		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
 		c.Assert(err, qt.IsNil)
-		fmt.Println("yo did u go here?2222")
+
 		resJSON, err := protojson.Marshal(res[0])
 		c.Assert(err, qt.IsNil)
 
