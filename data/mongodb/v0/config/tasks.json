@@ -725,9 +725,11 @@
           "title": "Query Vector",
           "type": "array",
           "items": {
-            "title":"point",
+            "description": "A dimension of the vector",
+            "example": 0.8167237,
             "type": "number"
-          }
+          },
+          "minItems": 1
         },
         "exact": {
           "description": "The exact value for vector search. If true, then ENN search will be performed, otherwise ANN search will be performed. Default to false",
