@@ -49,7 +49,6 @@ This tool is used to log messages to the console for a better debugging experien
     //   },
     //   ...
     // ]
-    ...
     ```
     - Message with only non-string data
     ```golang
@@ -64,7 +63,6 @@ This tool is used to log messages to the console for a better debugging experien
     //   },
     //   ...
     // ]
-    ...
     ```
 
 ## Note
