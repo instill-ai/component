@@ -29,6 +29,7 @@ import (
 	"github.com/instill-ai/component/data/googlecloudstorage/v0"
 	"github.com/instill-ai/component/data/pinecone/v0"
 	"github.com/instill-ai/component/data/redis/v0"
+	"github.com/instill-ai/component/operator/audio/v0"
 	"github.com/instill-ai/component/data/sql/v0"
 	"github.com/instill-ai/component/operator/base64/v0"
 	"github.com/instill-ai/component/operator/document/v0"
@@ -83,6 +84,7 @@ func Init(
 		compStore.Import(image.Init(baseComp))
 		compStore.Import(text.Init(baseComp))
 		compStore.Import(document.Init(baseComp))
+		compStore.Import(audio.Init(baseComp))
 
 		compStore.Import(github.Init(baseComp))
 		{
