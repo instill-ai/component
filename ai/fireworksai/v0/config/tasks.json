@@ -122,7 +122,7 @@
           "instillAcceptFormats": [
             "structured/chat-messages"
           ],
-          "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. (Note: The Mistral models are not trained to process images, thus images will be omitted)",
+          "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. (Note: According to Fireworks AI documentation on 2024-07-24, the total number of images included in a single API request should not exceed 30, and all the images should be smaller than 5MB in size)",
           "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "reference"
@@ -158,12 +158,11 @@
             "firefunction-v2",
             "deepseek-coder-v2-instruct",
             "deepseek-coder-v2-lite-instruct",
-            "gemma2-9b-it",
             "phi-3-vision-128k-instruct",
             "qwen2-72b-instruct",
             "mythomax-l2-13b"
           ],
-          "example": "gemma2-9b-it",
+          "example": "llama-v3p1-8b-instruct",
           "description": "The OSS model to be used",
           "instillAcceptFormats": [
             "string"
@@ -213,7 +212,7 @@
           "type": "string"
         },
         "prompt-images": {
-          "description": "The prompt images (Note: The Mistral models are not trained to process images, thus images will be omitted)",
+          "description": "The prompt images (Note: According to Fireworks AI documentation on 2024-07-24, the total number of images included in a single API request should not exceed 30, and all the images should be smaller than 5MB in size)",
           "instillAcceptFormats": [
             "array:image/*"
           ],
@@ -300,19 +299,6 @@
           ],
           "title": "Top P",
           "type": "number"
-        },
-        "safe": {
-          "description": "Safe generation mode",
-          "instillAcceptFormats": [
-            "boolean"
-          ],
-          "instillUIOrder": 7,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "title": "Safe",
-          "type": "boolean"
         }
       },
       "required": [

@@ -96,8 +96,7 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 				Type:     FireworksContentTypeImageURL,
 			})
 		}
-		lastMessage := messages[len(messages)-1]
-		lastMessage.Content = append(lastMessage.Content, contents...)
+		messages[len(messages)-1].Content = append(messages[len(messages)-1].Content, contents...)
 	}
 
 	req := ChatRequest{
