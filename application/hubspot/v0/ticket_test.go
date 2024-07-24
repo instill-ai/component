@@ -107,10 +107,9 @@ func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
 	connector := Init(bc)
 
 	tc := struct {
-		name           string
-		inputTicket    TaskCreateTicketInput
-		inputContactID string //used to associate contact with ticket
-		wantResp       string
+		name        string
+		inputTicket TaskCreateTicketInput
+		wantResp    string
 	}{
 		name: "ok - create ticket",
 		inputTicket: TaskCreateTicketInput{
@@ -119,8 +118,7 @@ func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
 			Pipeline:     "0",
 			Category:     []string{"FEATURE_REQUEST", "GENERAL_INQUIRY"},
 		},
-		inputContactID: "32027696539",
-		wantResp:       "99987654321",
+		wantResp: "99987654321",
 	}
 
 	c.Run(tc.name, func(c *qt.C) {
@@ -137,7 +135,6 @@ func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
 		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbInput, err := base.ConvertToStructpb(tc.inputTicket)
-		pbInput.Fields["contact-id-or-email"] = structpb.NewStringValue(tc.inputContactID)
 
 		c.Assert(err, qt.IsNil)
 

@@ -115,10 +115,9 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 	connector := Init(bc)
 
 	tc := struct {
-		name           string
-		inputDeal      TaskCreateDealInput
-		inputContactID string //used to associate contact with deal
-		wantResp       string
+		name      string
+		inputDeal TaskCreateDealInput
+		wantResp  string
 	}{
 		name: "ok - create deal",
 		inputDeal: TaskCreateDealInput{
@@ -126,8 +125,7 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 			Pipeline:  "default",
 			DealStage: "contractsent",
 		},
-		inputContactID: "32027696539",
-		wantResp:       "12345678900",
+		wantResp: "12345678900",
 	}
 
 	c.Run(tc.name, func(c *qt.C) {
@@ -144,7 +142,6 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbInput, err := base.ConvertToStructpb(tc.inputDeal)
-		pbInput.Fields["contact-id-or-email"] = structpb.NewStringValue(tc.inputContactID)
 
 		c.Assert(err, qt.IsNil)
 

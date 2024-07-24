@@ -122,10 +122,9 @@ func TestComponent_ExecuteCreateCompanyTask(t *testing.T) {
 	connector := Init(bc)
 
 	tc := struct {
-		name           string
-		inputCompany   TaskCreateCompanyInput
-		inputContactID string //used to associate contact with company
-		wantResp       string
+		name         string
+		inputCompany TaskCreateCompanyInput
+		wantResp     string
 	}{
 		name: "ok - create company",
 		inputCompany: TaskCreateCompanyInput{
@@ -133,8 +132,7 @@ func TestComponent_ExecuteCreateCompanyTask(t *testing.T) {
 			CompanyDomain: "fakecompany.com",
 			AnnualRevenue: 5000000,
 		},
-		inputContactID: "32027696539",
-		wantResp:       "99999999999",
+		wantResp: "99999999999",
 	}
 
 	c.Run(tc.name, func(c *qt.C) {
@@ -151,7 +149,6 @@ func TestComponent_ExecuteCreateCompanyTask(t *testing.T) {
 		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbInput, err := base.ConvertToStructpb(tc.inputCompany)
-		pbInput.Fields["contact-id-or-email"] = structpb.NewStringValue(tc.inputContactID)
 
 		c.Assert(err, qt.IsNil)
 
