@@ -56,31 +56,48 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 	messages := []FireworksChatRequestMessage{}
 	if input.SystemMsg != "" {
 		messages = append(messages, FireworksChatRequestMessage{
-			Role:    FireworksChatMessageRoleSystem,
-			Content: input.SystemMsg,
+			Role: FireworksChatMessageRoleSystem,
+			Content: []FireworksMultiModalContent{{
+				Text: input.SystemMsg,
+				Type: FireworksContentTypeText,
+			}},
 		})
 	}
 
 	for _, msg := range input.ChatHistory {
-		content := ""
+		contents := []FireworksMultiModalContent{}
 		for _, c := range msg.Content {
-			if c.Type == "text" {
-				// the documentation currently does not specify how to handle multi modal data, thus non-text content is ignored
-				// check: https://docs.fireworks.ai/api-reference/post-chatcompletions
-				content += c.Text
-			}
+			contents = append(contents, FireworksMultiModalContent{
+				ImageURL: FireworksURL{URL: c.ImageURL.URL},
+				Text:     c.Text,
+				Type:     FireworksContentType(c.Type),
+			})
 		}
 		messages = append(messages, FireworksChatRequestMessage{
 			Role:    FireworksChatMessageRole(msg.Role),
-			Content: content,
+			Content: contents,
 		})
 	}
 
 	if input.Prompt != "" {
 		messages = append(messages, FireworksChatRequestMessage{
-			Role:    FireworksChatMessageRoleUser,
-			Content: input.Prompt,
+			Role: FireworksChatMessageRoleUser,
+			Content: []FireworksMultiModalContent{{
+				Text: input.Prompt, Type: FireworksContentTypeText,
+			}},
 		})
+	}
+
+	if len(input.PromptImages) > 0 {
+		contents := []FireworksMultiModalContent{}
+		for _, img := range input.PromptImages {
+			contents = append(contents, FireworksMultiModalContent{
+				ImageURL: FireworksURL{URL: img},
+				Type:     FireworksContentTypeImageURL,
+			})
+		}
+		lastMessage := messages[len(messages)-1]
+		lastMessage.Content = append(lastMessage.Content, contents...)
 	}
 
 	req := ChatRequest{

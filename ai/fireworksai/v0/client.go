@@ -42,9 +42,26 @@ func (e errBody) Message() string {
 }
 
 type FireworksChatRequestMessage struct {
-	Role    FireworksChatMessageRole `json:"role"`
-	Content string                   `json:"content"`
-	Name    string                   `json:"name,omitempty"`
+	Role    FireworksChatMessageRole     `json:"role"`
+	Content []FireworksMultiModalContent `json:"content"`
+	Name    string                       `json:"name,omitempty"`
+}
+
+type FireworksMultiModalContent struct {
+	ImageURL FireworksURL         `json:"image_url,omitempty"`
+	Text     string               `json:"text,omitempty"`
+	Type     FireworksContentType `json:"type"`
+}
+
+type FireworksContentType string
+
+const (
+	FireworksContentTypeText     FireworksContentType = "text"
+	FireworksContentTypeImageURL FireworksContentType = "image_url"
+)
+
+type FireworksURL struct {
+	URL string `json:"url"`
 }
 
 type FireworksChatMessageRole string
