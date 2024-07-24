@@ -115,11 +115,12 @@ type Range struct {
 	SprintName string `json:"sprint-name,omitempty"`
 	JQL        string `json:"jql,omitempty"`
 }
+
 type ListIssuesInput struct {
-	BoardID    int   `json:"board-id,omitempty" api:"boardId"`
-	MaxResults int   `json:"max-results,omitempty" api:"maxResults"`
-	StartAt    int   `json:"start-at,omitempty" api:"startAt"`
-	Range      Range `json:"range,omitempty"`
+	BoardName  string `json:"board-name,omitempty" api:"boardName"`
+	MaxResults int    `json:"max-results,omitempty" api:"maxResults"`
+	StartAt    int    `json:"start-at,omitempty" api:"startAt"`
+	Range      Range  `json:"range,omitempty"`
 }
 
 type ListIssuesResp struct {
@@ -137,7 +138,7 @@ type ListIssuesOutput struct {
 
 func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var debug DebugSession
-	debug.SessionStart("listIssuesTask", StaticVerboseLevel)
+	debug.SessionStart("listIssuesTask", DevelopVerboseLevel)
 	defer debug.SessionEnd()
 
 	debug.AddMapMessage("props", props)
@@ -149,14 +150,34 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err
 	}
-	debug.AddMapMessage("ListIssuesInput", opt)
-	board, err := jiraClient.getBoard(ctx, opt.BoardID)
+
+	boards, err := jiraClient.listBoards(ctx, &ListBoardsInput{Name: opt.BoardName})
 	if err != nil {
 		return nil, err
 	}
-	debug.AddMapMessage("board", *board)
-	boardKey := strings.Split(board.Name, " ")[0]
-	apiEndpoint := fmt.Sprintf("rest/agile/1.0/board/%d", opt.BoardID)
+	if len(boards.Values) == 0 {
+		return nil, errmsg.AddMessage(
+			fmt.Errorf("board not found"),
+			fmt.Sprintf("board with name %s not found", opt.BoardName),
+		)
+	} else if len(boards.Values) > 1 {
+		return nil, errmsg.AddMessage(
+			fmt.Errorf("multiple boards found"),
+			fmt.Sprintf("multiple boards are found with the partial name \"%s\". Please provide a more specific name", opt.BoardName),
+		)
+	}
+	debug.AddMapMessage("boards", boards)
+	board := boards.Values[0]
+
+	boardDetails, err := jiraClient.getBoard(ctx, board.ID)
+	if err != nil {
+		return nil, err
+	}
+	projectKey := boardDetails.Location.ProjectKey
+	if projectKey == "" {
+		projectKey = strings.Split(board.Name, "-")[0]
+	}
+	apiEndpoint := fmt.Sprintf("rest/agile/1.0/board/%d", board.ID)
 	switch opt.Range.Range {
 	case "All":
 		// https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-issue-get
@@ -167,11 +188,11 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 	case "Issues of an epic":
 		// API not working: https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-epic-epicid-issue-get
 		// use JQL instead
-		jql = fmt.Sprintf("project=\"%s\" AND parent=\"%s\"", boardKey, opt.Range.EpicKey)
+		jql = fmt.Sprintf("project=\"%s\" AND parent=\"%s\"", projectKey, opt.Range.EpicKey)
 	case "Issues of a sprint":
 		// API not working: https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-sprint-sprintid-issue-get
 		// use JQL instead
-		jql = fmt.Sprintf("project=\"%s\" AND sprint=\"%s\"", boardKey, opt.Range.SprintName)
+		jql = fmt.Sprintf("project=\"%s\" AND sprint=\"%s\"", projectKey, opt.Range.SprintName)
 	case "In backlog only":
 		// https://developer.atlassian.com/cloud/jira/software/rest/api-group-board/#api-rest-agile-1-0-board-boardid-backlog-get
 		apiEndpoint = apiEndpoint + "/backlog"
@@ -180,7 +201,7 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 		apiEndpoint = apiEndpoint + "/epic/none/issue"
 	case "Standard Issues":
 		// https://support.atlassian.com/jira-cloud-administration/docs/what-are-issue-types/
-		jql = fmt.Sprintf("project=\"%s\" AND issuetype not in (Epic, subtask)", boardKey)
+		jql = fmt.Sprintf("project=\"%s\" AND issuetype not in (Epic, subtask)", projectKey)
 	case "JQL query":
 		jql = opt.Range.JQL
 	default:

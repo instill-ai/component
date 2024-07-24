@@ -199,7 +199,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 			_type: "ok",
 			name:  "All",
 			input: ListIssuesInput{
-				BoardID:    1,
+				BoardName:  "KAN",
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
@@ -235,7 +235,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 			_type: "ok",
 			name:  "Epics only",
 			input: ListIssuesInput{
-				BoardID:    1,
+				BoardName:  "KAN",
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
@@ -271,7 +271,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 			_type: "ok",
 			name:  "In backlog only",
 			input: ListIssuesInput{
-				BoardID:    1,
+				BoardName:  "KAN",
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
@@ -307,7 +307,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 			_type: "ok",
 			name:  "Issues without epic assigned",
 			input: ListIssuesInput{
-				BoardID:    1,
+				BoardName:  "KAN",
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
@@ -343,7 +343,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 			_type: "ok",
 			name:  "Issues of an epic",
 			input: ListIssuesInput{
-				BoardID:    1,
+				BoardName:  "KAN",
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
@@ -362,7 +362,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 			_type: "ok",
 			name:  "Issues of an epic(long query)",
 			input: ListIssuesInput{
-				BoardID:    1,
+				BoardName:  "KAN",
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
@@ -381,7 +381,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 			_type: "ok",
 			name:  "Issues of a sprint",
 			input: ListIssuesInput{
-				BoardID:    1,
+				BoardName:  "KAN",
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
@@ -400,7 +400,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 			_type: "ok",
 			name:  "Standard Issues",
 			input: ListIssuesInput{
-				BoardID:    1,
+				BoardName:  "TST",
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
@@ -418,7 +418,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 			_type: "ok",
 			name:  "JQL",
 			input: ListIssuesInput{
-				BoardID:    1,
+				BoardName:  "TST",
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
@@ -437,7 +437,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 			_type: "nok",
 			name:  "invalid range",
 			input: ListIssuesInput{
-				BoardID:    1,
+				BoardName:  "TST",
 				MaxResults: 10,
 				StartAt:    0,
 				Range: Range{
@@ -491,6 +491,32 @@ func TestComponent_ListSprintsTask(t *testing.T) {
 		},
 	}
 	taskTesting(testcases, taskListSprints, t)
+}
+
+func TestAuth_nok(t *testing.T) {
+	c := qt.New(t)
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+	c.Run("nok-empty token", func(c *qt.C) {
+		setup, err := structpb.NewStruct(map[string]any{
+			"token":    "",
+			"email":    email,
+			"base-url": "url",
+		})
+		c.Assert(err, qt.IsNil)
+		_, err = connector.CreateExecution(nil, setup, "invalid")
+		c.Assert(err, qt.ErrorMatches, "token not provided")
+	})
+	c.Run("nok-empty email", func(c *qt.C) {
+		setup, err := structpb.NewStruct(map[string]any{
+			"token":    token,
+			"email":    "",
+			"base-url": "url",
+		})
+		c.Assert(err, qt.IsNil)
+		_, err = connector.CreateExecution(nil, setup, "invalid")
+		c.Assert(err, qt.ErrorMatches, "email not provided")
+	})
 }
 
 func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType], task string, t *testing.T) {

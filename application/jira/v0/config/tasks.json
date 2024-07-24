@@ -359,25 +359,25 @@
       "description": "List issues in Jira",
       "instillUIOrder": 0,
       "instillEditOnNodeFields": [
-        "board-id",
+        "board-name",
         "range"
       ],
       "properties": {
-        "board-id": {
-          "title": "Board ID",
-          "description": "The ID of the board",
-          "instillShortDescription": "The ID of the board",
+        "board-name": {
+          "title": "Board Name",
+          "description": "The name of the board",
+          "instillShortDescription": "The name of the board",
           "instillUIOrder": 0,
-          "instillFormat": "integer",
+          "instillFormat": "string",
           "instillAcceptFormats": [
-            "integer"
+            "string"
           ],
           "instillUpstreamTypes": [
             "value",
             "reference",
             "template"
           ],
-          "type": "integer"
+          "type": "string"
         },
         "range": {
           "title": "Range",
@@ -546,7 +546,7 @@
                 },
                 "jql": {
                   "title": "JQL",
-                  "description": "The JQL query. For example, `project = JRA AND status = Done`. For more information, see [Advanced searching reference](https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-search-in-jira-cloud/)",
+                  "description": "The JQL query. For example, `type = \"Task\" AND status = \"Done\"`. For more information, see [Advanced searching](https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-search-in-jira-cloud/)",
                   "instillShortDescription": "The JQL query",
                   "instillUIOrder": 10,
                   "instillFormat": "string",
@@ -584,7 +584,7 @@
         }
       },
       "required": [
-        "board-id"
+        "board-name"
       ],
       "title": "Input",
       "type": "object"

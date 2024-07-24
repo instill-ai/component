@@ -63,14 +63,9 @@ func (jiraClient *Client) listBoardsTask(ctx context.Context, props *structpb.St
 }
 
 func (jiraClient *Client) listBoards(_ context.Context, opt *ListBoardsInput) (*ListBoardsResp, error) {
-	var debug DebugSession
-	debug.SessionStart("listBoards", StaticVerboseLevel)
-	defer debug.SessionEnd()
-
 	apiEndpoint := "rest/agile/1.0/board"
 
 	req := jiraClient.Client.R().SetResult(&ListBoardsResp{})
-	debug.AddMapMessage("opt", *opt)
 	err := addQueryOptions(req, *opt)
 	if err != nil {
 		return nil, err
@@ -80,30 +75,35 @@ func (jiraClient *Client) listBoards(_ context.Context, opt *ListBoardsInput) (*
 	if err != nil {
 		return nil, err
 	}
-	debug.AddMessage("GET", apiEndpoint)
-	debug.AddMapMessage("QueryParam", resp.Request.QueryParam)
-	debug.AddMessage("Status", resp.Status())
 	boards := resp.Result().(*ListBoardsResp)
 	return boards, err
 }
 
-func (jiraClient *Client) getBoard(_ context.Context, boardID int) (*Board, error) {
-	var debug DebugSession
-	debug.SessionStart("getBoard", StaticVerboseLevel)
-	defer debug.SessionEnd()
+type GetBoardResp struct {
+	Location struct {
+		DisplayName    string `json:"displayName"`
+		Name           string `json:"name"`
+		ProjectKey     string `json:"projectKey"`
+		ProjectID      int    `json:"projectId"`
+		ProjectName    string `json:"projectName"`
+		ProjectTypeKey string `json:"projectTypeKey"`
+		UserAccountID  string `json:"userAccountId"`
+		UserID         string `json:"userId"`
+	} `json:"location"`
+	Board
+}
 
+func (jiraClient *Client) getBoard(_ context.Context, boardID int) (*GetBoardResp, error) {
 	apiEndpoint := fmt.Sprintf("rest/agile/1.0/board/%v", boardID)
-	req := jiraClient.Client.R().SetResult(&Board{})
-	resp, err := req.Get(apiEndpoint)
 
+	req := jiraClient.Client.R().SetResult(&GetBoardResp{})
+	resp, err := req.Get(apiEndpoint)
 	if err != nil {
 		return nil, fmt.Errorf(
 			err.Error(), errmsg.Message(err),
 		)
 	}
-	debug.AddMessage("GET", apiEndpoint)
-	debug.AddMapMessage("QueryParam", resp.Request.QueryParam)
-	debug.AddMessage("Status", resp.Status())
-	board := resp.Result().(*Board)
-	return board, err
+	result := resp.Result().(*GetBoardResp)
+
+	return result, err
 }
