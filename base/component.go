@@ -848,7 +848,6 @@ func (e *ComponentExecution) GetTaskOutputSchema() string {
 // explicit credentials.
 func (e *ComponentExecution) UsesInstillCredentials() bool { return false }
 
-
 func (e *ComponentExecution) getInputSchemaJSON(task string) (map[string]interface{}, error) {
 	taskSpec, ok := e.Component.GetTaskInputSchemas()[task]
 	if !ok {
@@ -920,13 +919,7 @@ func (e *ComponentExecution) fillInDefaultValuesWithReference(input *structpb.St
 				continue
 			}
 			if _, ok := input.GetFields()[key]; !ok {
-				input.GetFields()[key] = &structpb.Value{
-					Kind: &structpb.Value_StructValue{
-						StructValue: &structpb.Struct{
-							Fields: make(map[string]*structpb.Value),
-						},
-					},
-				}
+				input.GetFields()[key] = structpb.NewStructValue(&structpb.Struct{Fields: make(map[string]*structpb.Value)})
 			}
 			var properties map[string]interface{}
 			if _, ok := valueMap["properties"]; !ok {
@@ -955,11 +948,7 @@ func (e *ComponentExecution) fillInDefaultValuesWithReference(input *structpb.St
 						if err != nil {
 							return nil, err
 						}
-						input.GetFields()[key] = &structpb.Value{
-							Kind: &structpb.Value_StructValue{
-								StructValue: subField,
-							},
-						}
+						input.GetFields()[key] = structpb.NewStructValue(subField)
 					}
 				}
 			} else {
@@ -970,11 +959,7 @@ func (e *ComponentExecution) fillInDefaultValuesWithReference(input *structpb.St
 				if err != nil {
 					return nil, err
 				}
-				input.GetFields()[key] = &structpb.Value{
-					Kind: &structpb.Value_StructValue{
-						StructValue: subField,
-					},
-				}
+				input.GetFields()[key] = structpb.NewStructValue(subField)
 			}
 			continue
 		}
@@ -984,59 +969,26 @@ func (e *ComponentExecution) fillInDefaultValuesWithReference(input *structpb.St
 		defaultValue := valueMap["default"]
 		typeValue := valueMap["type"]
 		switch typeValue {
-		case "string":
-			input.GetFields()[key] = &structpb.Value{
-				Kind: &structpb.Value_StringValue{
-					StringValue: fmt.Sprintf("%v", defaultValue),
-				},
+		case "string", "integer", "number", "boolean":
+			val, err := structpb.NewValue(defaultValue)
+			if err != nil {
+				continue
 			}
-		case "integer", "number":
-			input.GetFields()[key] = &structpb.Value{
-				Kind: &structpb.Value_NumberValue{
-					NumberValue: defaultValue.(float64),
-				},
-			}
-		case "boolean":
-			input.GetFields()[key] = &structpb.Value{
-				Kind: &structpb.Value_BoolValue{
-					BoolValue: defaultValue.(bool),
-				},
-			}
+			input.GetFields()[key] = val
 		case "array":
-			input.GetFields()[key] = &structpb.Value{
-				Kind: &structpb.Value_ListValue{
-					ListValue: &structpb.ListValue{
-						Values: []*structpb.Value{},
-					},
-				},
-			}
+			tempArray := &structpb.ListValue{Values: []*structpb.Value{}}
 			itemType := valueMap["items"].(map[string]interface{})["type"]
 			switch itemType {
-			case "string":
+			case "string", "integer", "number", "boolean":
 				for _, v := range defaultValue.([]interface{}) {
-					input.GetFields()[key].GetListValue().Values = append(input.GetFields()[key].GetListValue().Values, &structpb.Value{
-						Kind: &structpb.Value_StringValue{
-							StringValue: fmt.Sprintf("%v", v),
-						},
-					})
-				}
-			case "integer", "number":
-				for _, v := range defaultValue.([]interface{}) {
-					input.GetFields()[key].GetListValue().Values = append(input.GetFields()[key].GetListValue().Values, &structpb.Value{
-						Kind: &structpb.Value_NumberValue{
-							NumberValue: v.(float64),
-						},
-					})
-				}
-			case "boolean":
-				for _, v := range defaultValue.([]interface{}) {
-					input.GetFields()[key].GetListValue().Values = append(input.GetFields()[key].GetListValue().Values, &structpb.Value{
-						Kind: &structpb.Value_BoolValue{
-							BoolValue: v.(bool),
-						},
-					})
+					val, err := structpb.NewValue(v)
+					if err != nil {
+						continue
+					}
+					tempArray.Values = append(tempArray.Values, val)
 				}
 			}
+			input.GetFields()[key] = structpb.NewListValue(tempArray)
 		}
 	}
 	return input, nil
