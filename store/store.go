@@ -11,6 +11,7 @@ import (
 
 	"github.com/instill-ai/component/ai/anthropic/v0"
 	"github.com/instill-ai/component/ai/cohere/v0"
+	"github.com/instill-ai/component/ai/fireworksai/v0"
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
 	"github.com/instill-ai/component/ai/mistralai/v0"
@@ -125,6 +126,12 @@ func Init(
 		{
 			// Cohere
 			conn := cohere.Init(baseComp)
+			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			compStore.Import(conn)
+		}
+		{
+			// FireworksAI
+			conn := fireworksai.Init(baseComp)
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
