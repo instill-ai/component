@@ -1,7 +1,6 @@
 package hubspot
 
 import (
-	"fmt"
 	"strings"
 
 	hubspot "github.com/belong-inc/go-hubspot"
@@ -115,7 +114,6 @@ func (e *execution) CreateContact(input *structpb.Struct) (*structpb.Struct, err
 	inputStruct := TaskCreateContactInput{}
 
 	err := base.ConvertFromStructpb(input, &inputStruct)
-	fmt.Println(input)
 
 	if err != nil {
 		return nil, err

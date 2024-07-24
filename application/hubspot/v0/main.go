@@ -23,6 +23,7 @@ const (
 	taskGetTicket           = "TASK_GET_TICKET"
 	taskCreateTicket        = "TASK_CREATE_TICKET"
 	taskGetThread           = "TASK_GET_THREAD"
+	taskInsertMessage       = "TASK_INSERT_MESSAGE"
 	taskRetrieveAssociation = "TASK_RETRIEVE_ASSOCIATION"
 )
 
@@ -48,8 +49,6 @@ type execution struct {
 	execute func(*structpb.Struct) (*structpb.Struct, error)
 }
 
-// Init returns an implementation of IComponent that implements the greeting
-// task.
 func Init(bc base.Component) *component {
 	once.Do(func() {
 		comp = &component{Component: bc}
@@ -102,6 +101,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.CreateTicket
 	case taskGetThread:
 		e.execute = e.GetThread
+	case taskInsertMessage:
+		e.execute = e.InsertMessage
 	case taskRetrieveAssociation:
 		e.execute = e.RetrieveAssociation
 	default:

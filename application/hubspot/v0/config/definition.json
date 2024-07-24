@@ -9,6 +9,7 @@
     "TASK_GET_TICKET",
     "TASK_CREATE_TICKET",
     "TASK_GET_THREAD",
+    "TASK_INSERT_MESSAGE",
     "TASK_RETRIEVE_ASSOCIATION"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/hubspot",

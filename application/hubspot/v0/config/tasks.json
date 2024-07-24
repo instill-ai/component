@@ -25,7 +25,6 @@
         "type": "array",
         "instillAcceptFormats": ["array:string"],
         "items": {
-          "instillUIMultiline": true,
           "type": "string"
         },
         "instillUpstreamTypes": ["value", "reference"]
@@ -36,7 +35,6 @@
         "type": "array",
         "instillAcceptFormats": ["array:string"],
         "items": {
-          "instillUIMultiline": true,
           "type": "string"
         },
         "instillUpstreamTypes": ["value", "reference"]
@@ -47,7 +45,6 @@
         "type": "array",
         "instillAcceptFormats": ["array:string"],
         "items": {
-          "instillUIMultiline": true,
           "type": "string"
         },
         "instillUpstreamTypes": ["value", "reference"]
@@ -58,7 +55,6 @@
         "type": "array",
         "instillAcceptFormats": ["array:string"],
         "items": {
-          "instillUIMultiline": true,
           "type": "string"
         },
         "instillUpstreamTypes": ["value", "reference"]
@@ -252,7 +248,7 @@
         "type": "string"
       },
       "ticket-status": {
-        "description": "The pipeline stage that contains this ticket. Default format is number. Example: 0. However, remember to check internal value for custom fields.",
+        "description": "The pipeline stage that contains this ticket. Default format is number. Example: 1. However, remember to check internal value for custom fields. Note: In Instill, ticket-status is displayed as string because of the possible custom internal value.",
         "instillUIOrder": 2,
         "title": "Ticket Status",
         "type": "string"
@@ -299,35 +295,6 @@
         "title": "Last Modified Date",
         "type": "string"
       }
-    },
-    "thread": {
-      "thread-user-information": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the contact",
-            "instillFormat": "string",
-            "instillUIOrder": 0,
-            "title": "Name",
-            "type": "string"
-          },
-          "type": {
-            "description": "Specify the category of contact information",
-            "instillFormat": "string",
-            "instillUIOrder": 1,
-            "title": "Type",
-            "type": "string"
-          },
-          "value": {
-            "description": "Contains the actual contact information (e.g.: email address)",
-            "instillFormat": "string",
-            "instillUIOrder": 2,
-            "title": "Value",
-            "type": "string"
-          }
-        },
-        "required": []
-      }
     }
   },
   "TASK_GET_CONTACT": {
@@ -339,7 +306,7 @@
         "contact-id-or-email": {
           "description": "Input contact ID or email. If the input has @, it will search the contact using email",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": true,
+          "instillUIMultiline": false,
           "instillUIOrder": 0,
           "instillUpstreamTypes": ["value", "reference", "template"],
           "title": "Contact ID or Email",
@@ -422,7 +389,7 @@
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": true,
+          "instillUIMultiline": false,
           "instillUpstreamTypes": ["value", "reference", "template"]
         },
         "email": {
@@ -517,7 +484,7 @@
         "deal-id": {
           "description": "Input deal ID",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": true,
+          "instillUIMultiline": false,
           "instillUIOrder": 0,
           "instillUpstreamTypes": ["value", "reference", "template"],
           "title": "Deal ID",
@@ -591,7 +558,7 @@
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": true,
+          "instillUIMultiline": false,
           "instillUpstreamTypes": ["value", "reference", "template"]
         },
         "deal-name": {
@@ -666,7 +633,7 @@
         "company-id": {
           "description": "Input company ID",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": true,
+          "instillUIMultiline": false,
           "instillUIOrder": 0,
           "instillUpstreamTypes": ["value", "reference", "template"],
           "title": "Company ID",
@@ -775,7 +742,7 @@
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": true,
+          "instillUIMultiline": false,
           "instillUpstreamTypes": ["value", "reference", "template"]
         },
         "company-name": {
@@ -892,7 +859,7 @@
         "ticket-id": {
           "description": "Input ticket ID",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": true,
+          "instillUIMultiline": false,
           "instillUIOrder": 0,
           "instillUpstreamTypes": ["value", "reference", "template"],
           "title": "Ticket ID",
@@ -981,7 +948,7 @@
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": true,
+          "instillUIMultiline": false,
           "instillUpstreamTypes": ["value", "reference", "template"]
         },
         "ticket-name": {
@@ -1006,7 +973,6 @@
           "$ref": "#/$defs/ticket/category",
           "instillAcceptFormats": ["array:string"],
           "items": {
-            "instillUIMultiline": true,
             "type": "string"
           },
           "instillUpstreamTypes": ["value", "reference"]
@@ -1051,7 +1017,7 @@
     }
   },
   "TASK_GET_THREAD": {
-    "instillShortDescription": "Retrieve all the messages inside a thread (conversation inbox)",
+    "instillShortDescription": "Retrieve all the messages inside a thread (conversation inbox). The messages will be sorted from most recent to least recent. Note: This task uses Conversation API from HubSpot, which is still in BETA.",
     "input": {
       "description": "Input thread ID",
       "instillUIOrder": 0,
@@ -1059,7 +1025,7 @@
         "thread-id": {
           "description": "Input thread ID",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": true,
+          "instillUIMultiline": false,
           "instillUIOrder": 0,
           "instillUpstreamTypes": ["value", "reference", "template"],
           "title": "Thread ID",
@@ -1090,26 +1056,77 @@
                 "title": "Start Conversation Message",
                 "type": "string"
               },
-              "senders": {
-                "description": "Senders",
-                "instillFormat": "array",
+              "sender": {
+                "description": "Sender's information",
                 "instillUIOrder": 1,
-                "title": "Senders",
-                "type": "array",
-                "items": {
-                  "title": "Sender's information",
-                  "$ref": "#/$defs/thread/thread-user-information"
-                }
+                "title": "Sender",
+                "type": "object",
+                "instillFormat": "object",
+                "properties": {
+                  "sender-name": {
+                    "description": "The name of the sender",
+                    "instillFormat": "string",
+                    "instillUIOrder": 0,
+                    "title": "Name",
+                    "type": "string"
+                  },
+                  "sender-type": {
+                    "description": "Specify the category of sender information",
+                    "instillFormat": "string",
+                    "instillUIOrder": 1,
+                    "title": "Type",
+                    "type": "string"
+                  },
+                  "sender-value": {
+                    "description": "Contains the actual sender information (e.g.: email address)",
+                    "instillFormat": "string",
+                    "instillUIOrder": 2,
+                    "title": "Value",
+                    "type": "string"
+                  },
+                  "sender-actor-id": {
+                    "description": "The actor ID of the sender",
+                    "instillFormat": "string",
+                    "instillUIOrder": 3,
+                    "title": "Actor ID",
+                    "type": "string"
+                  }
+                },
+                "required": ["sender-actor-id"]
               },
               "recipients": {
-                "description": "Recipients",
+                "description": "Recipients' information",
                 "instillFormat": "array",
                 "instillUIOrder": 2,
                 "title": "Recipients",
                 "type": "array",
                 "items": {
                   "title": "Recipient's information",
-                  "$ref": "#/$defs/thread/thread-user-information"
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "description": "The name of the recipient",
+                      "instillFormat": "string",
+                      "instillUIOrder": 0,
+                      "title": "Name",
+                      "type": "string"
+                    },
+                    "type": {
+                      "description": "Specify the category of recipient information",
+                      "instillFormat": "string",
+                      "instillUIOrder": 1,
+                      "title": "Type",
+                      "type": "string"
+                    },
+                    "value": {
+                      "description": "Contains the actual recipient information (e.g.: email address)",
+                      "instillFormat": "string",
+                      "instillUIOrder": 2,
+                      "title": "Value",
+                      "type": "string"
+                    }
+                  },
+                  "required": []
                 }
               },
               "text": {
@@ -1127,13 +1144,126 @@
                 "required": [],
                 "title": "Subject",
                 "type": "string"
+              },
+              "channel-id": {
+                "description": "The ID of a generic channel returned from the channels endpoint, like 1000 for live chat, 1001 for Facebook Messenger, 1002 for email, etc.",
+                "instillFormat": "string",
+                "instillUIOrder": 5,
+                "required": [],
+                "title": "Channel ID",
+                "type": "string"
+              },
+              "channel-account-id": {
+                "description": "The ID of an account that is part of the channel-id channel.",
+                "instillFormat": "string",
+                "instillUIOrder": 6,
+                "required": [],
+                "title": "Channel Account ID",
+                "type": "string"
               }
             },
-            "required": ["created-at", "text", "subject"]
+            "required": [
+              "created-at",
+              "text",
+              "channel-id",
+              "channel-account-id"
+            ]
           }
         }
       },
       "required": ["results"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_INSERT_MESSAGE": {
+    "instillShortDescription": "Insert message into a thread (only support email thread)",
+    "input": {
+      "description": "Input",
+      "instillUIOrder": 0,
+      "properties": {
+        "thread-id": {
+          "description": "Input thread ID",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": false,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Thread ID",
+          "type": "string"
+        },
+        "sender-actor-id": {
+          "description": "Input sender actor id. Example: A-12345678. To obtain this, it is recommended to use and copy the 'Get Thread task' sender output. For more information about actor id: https://developers.hubspot.com/beta-docs/guides/api/conversations/inbox-and-messages#get-actors",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": false,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Sender Actor ID",
+          "type": "string"
+        },
+        "recipients": {
+          "description": "Recipients of the message",
+          "title": "Recipients",
+          "type": "array",
+          "instillAcceptFormats": ["array:string"],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": ["value", "reference"],
+          "items": {
+            "type": "string"
+          }
+        },
+        "channel-account-id": {
+          "description": "The ID of an account that is part of the channel-id channel. On an existing thread, it is recommended to copy channel-account-id of the most recent message on the thread.",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": false,
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Channel Account ID",
+          "type": "string"
+        },
+        "subject": {
+          "description": "The subject of the message",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Subject",
+          "type": "string"
+        },
+        "text": {
+          "description": "The body of the message",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUIOrder": 5,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread-id",
+        "sender-actor-id",
+        "recipients",
+        "channel-account-id",
+        "subject",
+        "text"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Status of the message",
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "The message status",
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Status",
+          "type": "string",
+          "instillFormat": "string"
+        }
+      },
+      "required": ["status"],
       "title": "Output",
       "type": "object"
     }
@@ -1147,7 +1277,7 @@
         "contact-id": {
           "description": "Input contact ID",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": true,
+          "instillUIMultiline": false,
           "instillUIOrder": 0,
           "instillUpstreamTypes": ["value", "reference", "template"],
           "title": "Contact ID",
@@ -1174,6 +1304,7 @@
         "object-ids": {
           "description": "An array of object ID associated with the contact",
           "instillUIOrder": 0,
+          "instillFormat":"array:string",
           "title": "Object ID Array ",
           "type": "array",
           "items": {

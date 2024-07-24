@@ -95,8 +95,8 @@ type TaskRetrieveAssociationOutput struct {
 }
 
 func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struct, error) {
-	retrieveInput := TaskRetrieveAssociationInput{}
-	err := base.ConvertFromStructpb(input, &retrieveInput)
+	inputStruct := TaskRetrieveAssociationInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
 		return nil, err
@@ -105,12 +105,17 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 	// API calls to retrieve association for Threads and CRM objects are different
 
 	var objectIDs []string
-	if retrieveInput.ObjectType == "Threads" {
+	if inputStruct.ObjectType == "Threads" {
+
 		// To handle Threads
-		res, err := e.client.RetrieveAssociation.GetThreadID(retrieveInput.ContactID)
+		res, err := e.client.RetrieveAssociation.GetThreadID(inputStruct.ContactID)
 
 		if err != nil {
 			return nil, err
+		}
+
+		if len(res.Results) == 0 {
+			return nil, fmt.Errorf("no object ID found")
 		}
 
 		objectIDs = make([]string, len(res.Results))
@@ -121,14 +126,18 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 	} else {
 
 		// To handle CRM objects
-		res, err := e.client.RetrieveAssociation.GetCrmID(retrieveInput.ContactID, retrieveInput.ObjectType)
+		res, err := e.client.RetrieveAssociation.GetCrmID(inputStruct.ContactID, inputStruct.ObjectType)
 
 		if err != nil {
 			return nil, err
 		}
 
+		if len(res.Results) == 0 {
+			return nil, fmt.Errorf("no object ID found")
+		}
+
 		// only take the first Result, because the input is only one contact id
-		objectIDs = make([]string, len(res.Results))
+		objectIDs = make([]string, len(res.Results[0].IDArray))
 		for index, value := range res.Results[0].IDArray {
 			objectIDs[index] = value.ID
 		}

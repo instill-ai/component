@@ -27,7 +27,7 @@ func (s *MockThread) Get(threadID string) (*TaskGetThreadResp, error) {
 					Senders: []taskGetThreadRespUser{
 						{
 							Name: "Brian Halligan (Sample Contact)",
-							DeliveryIDentifier: taskGetThreadRespIDentifier{
+							DeliveryIdentifier: taskGetThreadRespIdentifier{
 								Type:  "HS_EMAIL_ADDRESS",
 								Value: "bh@hubspot.com",
 							},
@@ -35,14 +35,17 @@ func (s *MockThread) Get(threadID string) (*TaskGetThreadResp, error) {
 					},
 					Recipients: []taskGetThreadRespUser{
 						{
-							DeliveryIDentifier: taskGetThreadRespIDentifier{
+							DeliveryIdentifier: taskGetThreadRespIdentifier{
 								Type:  "HS_EMAIL_ADDRESS",
 								Value: "fake_email@gmail.com",
 							},
 						},
 					},
-					Text:    "Just random content inside",
-					Subject: "A fake message",
+					Text:             "Just random content inside",
+					Subject:          "A fake message",
+					ChannelID:        "1002",
+					ChannelAccountID: "638727358",
+					Type:             "MESSAGE",
 				},
 			},
 		}
@@ -51,12 +54,22 @@ func (s *MockThread) Get(threadID string) (*TaskGetThreadResp, error) {
 	return &fakeThread, nil
 }
 
+func (s *MockThread) Insert(threadID string, message *TaskInsertMessageReq) (*TaskInsertMessageResp, error) {
+
+	res := &TaskInsertMessageResp{}
+	if threadID == "7509711154" {
+		res.Status = taskInsertMessageRespStatusType{
+			StatusType: "SENT",
+		}
+	}
+	return res, nil
+}
+
 func TestComponent_ExecuteGetThreadTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
-
 	tc := struct {
 		name     string
 		input    string
@@ -68,21 +81,21 @@ func TestComponent_ExecuteGetThreadTask(t *testing.T) {
 			Results: []taskGetThreadOutputResult{
 				{
 					CreatedAt: "2024-07-02T10:42:15Z",
-					Senders: []taskGetThreadOutputUser{
-						{
-							Name:  "Brian Halligan (Sample Contact)",
-							Type:  "HS_EMAIL_ADDRESS",
-							Value: "bh@hubspot.com",
-						},
+					Sender: taskGetThreadOutputSender{
+						Name:  "Brian Halligan (Sample Contact)",
+						Type:  "HS_EMAIL_ADDRESS",
+						Value: "bh@hubspot.com",
 					},
-					Recipients: []taskGetThreadOutputUser{
+					Recipients: []taskGetThreadOutputRecipient{
 						{
 							Type:  "HS_EMAIL_ADDRESS",
 							Value: "fake_email@gmail.com",
 						},
 					},
-					Text:    "Just random content inside",
-					Subject: "A fake message",
+					Text:             "Just random content inside",
+					Subject:          "A fake message",
+					ChannelID:        "1002",
+					ChannelAccountID: "638727358",
 				},
 			},
 		},
@@ -100,7 +113,6 @@ func TestComponent_ExecuteGetThreadTask(t *testing.T) {
 		}
 		e.execute = e.GetThread
 		exec := &base.ExecutionWrapper{Execution: e}
-
 		pbInput, err := structpb.NewStruct(map[string]any{
 			"thread-id": tc.input,
 		})
@@ -116,4 +128,55 @@ func TestComponent_ExecuteGetThreadTask(t *testing.T) {
 		c.Check(resJSON, qt.JSONEquals, tc.wantResp)
 
 	})
+}
+
+func TestComponent_ExecuteInsertMessageTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	tc := struct {
+		name     string
+		input    TaskInsertMessageInput
+		wantResp string
+	}{
+
+		name: "ok - insert message",
+		input: TaskInsertMessageInput{
+			ThreadID:         "7509711154",
+			SenderActorID:    "A-12345678",
+			Recipients:       []string{"randomemail@gmail.com"},
+			ChannelAccountID: "123456789",
+			Subject:          "A fake message",
+			Text:             "A message with random content inside",
+		},
+		wantResp: "SENT",
+	}
+
+	c.Run(tc.name, func(c *qt.C) {
+		setup, err := structpb.NewStruct(map[string]any{
+			"token": bearerToken,
+		})
+		c.Assert(err, qt.IsNil)
+
+		e := &execution{
+			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: taskInsertMessage},
+			client:             createMockClient(),
+		}
+		e.execute = e.InsertMessage
+		exec := &base.ExecutionWrapper{Execution: e}
+
+		pbInput, err := base.ConvertToStructpb(tc.input)
+
+		c.Assert(err, qt.IsNil)
+
+		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+
+		c.Assert(err, qt.IsNil)
+		resString := res[0].Fields["status"].GetStringValue()
+		c.Check(resString, qt.Equals, tc.wantResp)
+
+	})
+
 }
