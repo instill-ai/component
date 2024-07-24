@@ -4,6 +4,11 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	jsoniter "github.com/json-iterator/go"
+
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 func (d *Session) addRawMessage(m ...interface{}) {
@@ -28,7 +33,18 @@ func (d *Session) checkMapOrSlice(value interface{}) (map[string]interface{}, []
 		v = v.Elem()
 	}
 	mapVal := make(map[string]interface{})
-	if v.Kind() == reflect.Map {
+	if value, ok := value.(*structpb.Struct); ok {
+		inputJSON, err := protojson.Marshal(value)
+		if err != nil {
+			return nil, nil, v
+		}
+
+		err = jsoniter.Unmarshal(inputJSON, &mapVal)
+		if err != nil {
+			return nil, nil, v
+		}
+		return mapVal, nil, v
+	} else if v.Kind() == reflect.Map {
 		for _, key := range v.MapKeys() {
 			if v.MapIndex(key).IsValid() && v.MapIndex(key).CanInterface() {
 				mapVal[fmt.Sprintf("%v", key)] = v.MapIndex(key).Interface()
