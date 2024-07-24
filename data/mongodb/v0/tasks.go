@@ -2,7 +2,6 @@ package mongodb
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/instill-ai/component/base"
 	"go.mongodb.org/mongo-driver/bson"
@@ -194,38 +193,7 @@ func (e *execution) update(ctx context.Context, in *structpb.Struct) (*structpb.
 	filter := inputStruct.Filter
 	updateFields := inputStruct.UpdateData
 
-	var result map[string]interface{}
-	err = e.client.collectionClient.FindOne(ctx, filter).Decode(&result)
-	if err != nil {
-		return nil, err
-	}
-
-	setFields := bson.M{}
-	unsetFields := bson.M{}
-
-	for key := range result {
-		if _, found := updateFields[key]; !found && key != "_id" {
-			unsetFields[key] = ""
-		}
-	}
-
-	for key, value := range updateFields {
-		setFields[key] = value
-	}
-
-	updateDoc := bson.M{}
-	if len(setFields) > 0 {
-		updateDoc["$set"] = setFields
-	}
-	if len(unsetFields) > 0 {
-		updateDoc["$unset"] = unsetFields
-	}
-
-	if len(updateDoc) == 0 {
-		return nil, fmt.Errorf("no valid update operations found")
-	}
-
-	_, err = e.client.collectionClient.UpdateMany(ctx, filter, updateDoc)
+	_, err = e.client.collectionClient.UpdateMany(ctx, filter, updateFields)
 	if err != nil {
 		return nil, err
 	}

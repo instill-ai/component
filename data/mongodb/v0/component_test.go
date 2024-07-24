@@ -39,12 +39,6 @@ func (m *MockMongoClient) Find(ctx context.Context, filter interface{}, opts ...
 	return mockCursor, nil
 }
 
-func (m *MockMongoClient) FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) *mongo.SingleResult {
-	mockDoc := bson.M{"_id": "mockID", "name": "John Doe", "email": "john.doe@example.com"}
-	mockResult := mongo.NewSingleResultFromDocument(mockDoc, nil, nil)
-	return mockResult
-}
-
 func (m *MockMongoClient) UpdateMany(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	mockResult := &mongo.UpdateResult{
 		MatchedCount:  1,

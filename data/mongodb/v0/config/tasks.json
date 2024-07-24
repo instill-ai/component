@@ -5,7 +5,7 @@
       "instillUIOrder": 0,
       "properties": {
         "database-name": {
-          "description": "Fill in your MongoDB database name",
+          "description": "The name of the database in MongoDB",
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -19,11 +19,10 @@
           "type": "string"
         },
         "collection-name": {
-          "description": "The name of the collection in the MongoDB database",
+          "description": "The name of the collection in MongoDB",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillShortDescription": "Collection Name",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
@@ -38,7 +37,6 @@
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data",
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
@@ -81,7 +79,7 @@
       "instillUIOrder": 0,
       "properties": {
         "database-name": {
-          "description": "Fill in your MongoDB database name",
+          "description": "The name of the database in MongoDB",
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -95,11 +93,10 @@
           "type": "string"
         },
         "collection-name": {
-          "description": "The name of the collection in the MongoDB database",
+          "description": "The name of the collection in MongoDB",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillShortDescription": "Collection Name",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
@@ -110,11 +107,11 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to find documents, this field is optional, support mongodb query, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/",
+          "description": "The filter to find documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data, optional (empty for all documents), support mongodb query",
+          "instillShortDescription": "The mongodb language query to filter the documents",
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
@@ -128,7 +125,7 @@
           "instillAcceptFormats": [
             "integer"
           ],
-          "instillShortDescription": "Limit the documents, (empty for all documents)",
+          "instillShortDescription": "Limit the documents, empty for all documents",
           "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
@@ -142,7 +139,7 @@
           "instillAcceptFormats": [
             "array:string"
           ],
-          "instillShortDescription": "Fields to be returned, (empty for all fields)",
+          "instillShortDescription": "Fields to be returned, empty for all fields",
           "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "reference",
@@ -150,7 +147,7 @@
             "value"
           ],
           "title": "Fields",
-          "type":"array:string",
+          "type":"array",
           "items": {
             "title":"Field",
             "type": "string"
@@ -208,7 +205,7 @@
       "instillUIOrder": 0,
       "properties": {
         "database-name": {
-          "description": "Fill in your MongoDB database name",
+          "description": "The name of the database in MongoDB",
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -222,11 +219,10 @@
           "type": "string"
         },
         "collection-name": {
-          "description": "The name of the collection in the MongoDB database",
+          "description": "The name of the collection in MongoDB",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillShortDescription": "Collection Name",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
@@ -237,11 +233,11 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to update documents, support mongodb query, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/",
+          "description": "The filter to update documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data, support mongodb query",
+          "instillShortDescription": "The mongodb language query to filter the documents",
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
@@ -255,7 +251,6 @@
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data",
           "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
@@ -299,7 +294,7 @@
       "instillUIOrder": 0,
       "properties": {
         "database-name": {
-          "description": "Fill in your MongoDB database name",
+          "description": "The name of the database in MongoDB",
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -313,11 +308,10 @@
           "type": "string"
         },
         "collection-name": {
-          "description": "The name of the collection in the MongoDB database",
+          "description": "The name of the collection in MongoDB",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillShortDescription": "Collection Name",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
@@ -328,11 +322,11 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to delete documents, support mongodb query, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/",
+          "description": "The filter to delete documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data, support mongodb query",
+          "instillShortDescription": "The mongodb language query to filter the documents",
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
@@ -375,7 +369,7 @@
       "instillUIOrder": 0,
       "properties": {
         "database-name": {
-          "description": "Fill in your MongoDB database name",
+          "description": "The name of the database in MongoDB",
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -389,11 +383,10 @@
           "type": "string"
         },
         "collection-name": {
-          "description": "The name of the collection in the MongoDB database",
+          "description": "The name of the collection in MongoDB",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillShortDescription": "Collection Name",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
@@ -436,7 +429,7 @@
       "instillUIOrder": 0,
       "properties": {
         "database-name": {
-          "description": "Fill in your MongoDB database name",
+          "description": "The name of the database in MongoDB",
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -481,7 +474,7 @@
       "instillUIOrder": 0,
       "properties": {
         "database-name": {
-          "description": "Fill in your MongoDB database name",
+          "description": "The name of the database in MongoDB",
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -495,11 +488,10 @@
           "type": "string"
         },
         "collection-name": {
-          "description": "The name of the collection in the MongoDB database",
+          "description": "The name of the collection in MongoDB",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillShortDescription": "Collection Name",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
@@ -546,7 +538,7 @@
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "Syntax Structure, vectorSearch {\"fields\":{\"type\": \"vector\",\"path\": <field-to-index>,\"numDimensions\": <number-of-dimensions>,\"similarity\": \"euclidean | cosine | dotProduct\"}}, search { \"mappings\": { \"dynamic\": <boolean>, \"fields\": { <field-definition> } }}",
+          "instillShortDescription": "Syntax Structure, please refer to the MongoDB documentation",
           "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "reference",
@@ -590,7 +582,7 @@
       "instillUIOrder": 0,
       "properties": {
         "database-name": {
-          "description": "Fill in your MongoDB database name",
+          "description": "The name of the database in MongoDB",
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -604,11 +596,10 @@
           "type": "string"
         },
         "collection-name": {
-          "description": "The name of the collection in the MongoDB database",
+          "description": "The name of the collection in MongoDB",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillShortDescription": "Collection Name",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
@@ -619,7 +610,7 @@
           "type": "string"
         },
         "index-name": {
-          "description": "The name of the index to be deleted",
+          "description": "The name of the index to be dropped",
           "instillAcceptFormats": [
             "string"
           ],
@@ -667,7 +658,7 @@
       "instillUIOrder": 0,
       "properties": {
         "database-name": {
-          "description": "Fill in your MongoDB database name",
+          "description": "The name of the database in MongoDB",
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -681,11 +672,10 @@
           "type": "string"
         },
         "collection-name": {
-          "description": "The name of the collection in the MongoDB database",
+          "description": "The name of the collection in MongoDB",
           "instillAcceptFormats": [
             "string"
           ],
-          "instillShortDescription": "Collection Name",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
@@ -789,11 +779,11 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to be used for vector search, need to first create filter vectorSearch search index, support mongodb query, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/ to be used for vector search",
+          "description": "The filter to be used for vector search, need to first create filter vectorSearch search index, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned to be used for vector search",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data, support mongodb query, (empty for all documents)",
+          "instillShortDescription": "The mongodb language query to filter the documents, empty for all documents",
           "instillUIOrder": 8,
           "instillUpstreamTypes": [
             "reference",
@@ -807,7 +797,7 @@
           "instillAcceptFormats": [
             "array:string"
           ],
-          "instillShortDescription": "Fields to be returned, (empty for all fields)",
+          "instillShortDescription": "Fields to be returned, empty for all fields",
           "instillUIOrder": 9,
           "instillUpstreamTypes": [
             "reference",
@@ -815,7 +805,7 @@
             "value"
           ],
           "title": "Fields",
-          "type":"array:string",
+          "type":"array",
           "items": {
             "title":"Field",
             "type": "string"
