@@ -193,8 +193,7 @@ type FireworksEmbedUsage struct {
 func (c FireworksClient) Embed(request EmbedRequest) (EmbedResponse, error) {
 	response := EmbedResponse{}
 	req := c.httpClient.R().SetResult(&response).SetBody(request)
-	if rawResp, err := req.Post(embedEndpoint); err != nil {
-		fmt.Println("### raw resp: " + string(rawResp.Body()))
+	if _, err := req.Post(embedEndpoint); err != nil {
 		return response, fmt.Errorf("error when sending embedding request %v", err)
 	}
 	return response, nil
