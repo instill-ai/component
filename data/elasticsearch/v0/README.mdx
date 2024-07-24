@@ -52,11 +52,14 @@ Search for documents in Elasticsearch
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEARCH` |
-| Mode (required) | `mode` | string | Document mode to return, Hits will return documents with (_id, _index, _score), Source Only will return only documents |
+| Mode | `mode` | string | Document mode to return, Hits will return documents with (_id, _index, _score), Source Only will return only documents |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
-| Query | `query` | string | Query to be used for search, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
-| Filter | `filter` | semi-structured/json | Filter for selecting documents to search, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected. Additionally, if JSON value of a key is null e.g \{'name':null\}, then name field will be selected without any filter |
-| Size | `size` | integer | Number of documents to return, this field is optional. If empty then all documents will be returned |
+| Query | `query` | string | Full text search query for search task, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
+| Filter | `filter` | semi-structured/json | The query dsl filter which starts with "query" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html |
+| Filter SQL | `filter-sql` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for no filter |
+| Size | `size` | integer | Number of documents to return. If empty then all documents will be returned |
+| Fields | `fields` | array[string] | The fields to return in the documents. If empty then all fields will be returned |
+| Min-Score | `min-score` | number | Minimum score to consider for search results. If empty then no minimum score will be considered |
 
 
 
@@ -78,10 +81,16 @@ Search for vector similarity search in Elasticsearch with CosineSimilarity algor
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_VECTOR_SEARCH` |
-| Mode (required) | `mode` | string | Document mode to return, Hits will return documents with (_id, _index, _score), Source Only will return only documents |
+| Mode | `mode` | string | Document mode to return, Hits will return documents with (_id, _index, _score), Source Only will return only documents |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
-| Filter | `filter` | semi-structured/json | Filter for conducting vector similarity search. If JSON value of a key is null e.g \{'name':null\}, then name field will be selected without any filter. For vector similarity search, make sure to create an index with dense_vector field and provide vector field name in filter e.g \{'vector_field1':'vector_value1','vector_field2':'vector_value2'\} |
-| Size | `size` | integer | Number of documents to return, this field is optional. If empty then all documents will be returned |
+| Field (required) | `field` | string | Field name of the vector to search for similar vectors |
+| Query Vector | `query-vector` | array[number] | Query vector to search for similar vectors |
+| K | `k` | integer | K of documents to do kNN vector search |
+| Num-Candidates | `num-candidates` | integer | Number of candidates to be considered for kNN vector search. Default to 2 times of k |
+| Filter | `filter` | semi-structured/json | The query dsl filter which starts with "filter" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html#knn-search-filter-example |
+| Filter SQL | `filter-sql` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for no filter |
+| Fields | `fields` | array[string] | The fields to return in the documents. If empty then all fields will be returned |
+| Min-Score | `min-score` | number | Minimum score to consider for search results. If empty then no minimum score will be considered |
 
 
 
@@ -126,8 +135,9 @@ Update a document in Elasticsearch
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UPDATE` |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
-| Query | `query` | string | Query to be used for update, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
-| Filter | `filter` | semi-structured/json | Filter for selecting documents to update, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
+| Query | `query` | string | Full text search query for update task, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
+| Filter | `filter` | semi-structured/json | The query dsl filter which starts with "query" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html |
+| Filter SQL | `filter-sql` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for no filter |
 | Update (required) | `update` | semi-structured/json | Update data |
 
 
@@ -150,8 +160,9 @@ Delete documents from Elasticsearch
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
-| Query | `query` | string | Query to be used for delete, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
-| Filter | `filter` | semi-structured/json | Filter for selecting documents to delete, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
+| Query | `query` | string | Full text search query for delete task, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
+| Filter | `filter` | semi-structured/json | The query dsl filter which starts with "query" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html |
+| Filter SQL | `filter-sql` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for no filter |
 
 
 
@@ -173,7 +184,7 @@ Create an index in Elasticsearch
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_INDEX` |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
-| Mappings (required) | `mappings` | semi-structured/json | Index mappings, support both vector search and non-vector search mappings, for vector search index type mappings use json object with type dense_vector, dims, and similarity fields, e.g \{'vector':\{'type':'dense_vector','dims':2, 'similarity':'cosine'\},'name':\{'type':'text'\}. Currently supported similarity metric [cosine, l2_norm, dot_product, max_inner_product]. If no similarity field is provided, cosine similarity will be used by default |
+| Mappings (required) | `mappings` | semi-structured/json | Index mappings which starts with \{"mappings":\{"properties"\}\} field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/dense-vector.html for vector search and https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html for other mappings |
 
 
 

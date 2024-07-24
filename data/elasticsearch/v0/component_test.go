@@ -111,13 +111,12 @@ func MockESDeleteIndex(wantResp DeleteIndexOutput) *esapi.Response {
 	}
 }
 
-func MockESCount(count int) *esapi.Response {
-	resp := map[string]int{"count": count}
+func MockESSQLTranslate() *esapi.Response {
+	resp := map[string]any{"query": map[string]any{}}
 	b, _ := json.Marshal(resp)
 	return &esapi.Response{
 		StatusCode: 200,
 		Body:       io.NopCloser(bytes.NewReader(b)),
-		Header:     make(map[string][]string),
 	}
 }
 
@@ -140,7 +139,7 @@ func TestComponent_ExecuteSearchTask(t *testing.T) {
 			input: SearchInput{
 				Mode:      "Hits",
 				IndexName: "index_name",
-				Filter:    map[string]any{"city": "New York"},
+				FilterSQL: "city = 'New York'",
 				Size:      0,
 			},
 			wantResp: SearchOutput{
@@ -162,33 +161,89 @@ func TestComponent_ExecuteSearchTask(t *testing.T) {
 			},
 			task: TaskSearch,
 		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"api-key":  "mock-api-key",
+				"cloud-id": "mock-cloud-id",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: tc.task},
+				client: ESClient{
+					searchClient: func(o ...func(*esapi.SearchRequest)) (*esapi.Response, error) {
+						return MockESSearch(tc.wantResp), nil
+					},
+					sqlTranslateClient: func(body io.Reader, o ...func(*esapi.SQLTranslateRequest)) (*esapi.Response, error) {
+						return MockESSQLTranslate(), nil
+					},
+				},
+			}
+
+			e.execute = e.search
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    VectorSearchInput
+		wantResp SearchOutput
+		wantErr  string
+		task     string
+		count    int
+	}{
 		{
 			name: "ok to vector search",
-			input: SearchInput{
-				Mode:      "Hits",
-				IndexName: "index_name",
-				Filter:    map[string]any{"vector": []float64{0.1, 0.2}},
-				Size:      0,
+			input: VectorSearchInput{
+				Mode:        "Hits",
+				IndexName:   "index_name",
+				FilterSQL:   "name = 'a'",
+				QueryVector: []float64{0.1, 0.2},
+				K:           2,
 			},
 			wantResp: SearchOutput{
-				Status: "Successfully searched document",
+				Status: "Successfully vector searched document",
 				Documents: []map[string]any{
 					{
 						"_index":  "index_name",
 						"_id":     "mockID1",
-						"_score":  2,
-						"_source": map[string]any{"vector": []float64{0.1, 0.2}},
+						"_score":  1,
+						"_source": map[string]any{"name": "a", "vector": []float32{0.1, 0.2}},
 					},
 					{
 						"_index":  "index_name",
 						"_id":     "mockID2",
-						"_score":  1,
-						"_source": map[string]any{"vector": []float64{0.2, 0.1}},
+						"_score":  0.5,
+						"_source": map[string]any{"name": "b", "vector": []float32{0.2, 0.3}},
 					},
 				},
 			},
-			task:  TaskVectorSearch,
-			count: 2,
+			task: TaskVectorSearch,
 		},
 	}
 
@@ -206,13 +261,13 @@ func TestComponent_ExecuteSearchTask(t *testing.T) {
 					searchClient: func(o ...func(*esapi.SearchRequest)) (*esapi.Response, error) {
 						return MockESSearch(tc.wantResp), nil
 					},
-					countClient: func(o ...func(*esapi.CountRequest)) (*esapi.Response, error) {
-						return MockESCount(tc.count), nil
+					sqlTranslateClient: func(body io.Reader, o ...func(*esapi.SQLTranslateRequest)) (*esapi.Response, error) {
+						return MockESSQLTranslate(), nil
 					},
 				},
 			}
 
-			e.execute = e.search
+			e.execute = e.vectorSearch
 			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
@@ -309,7 +364,7 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 			name: "ok to update",
 			input: UpdateInput{
 				IndexName: "index_name",
-				Filter:    map[string]any{"name": "John Doe", "city": "New York"},
+				FilterSQL: "name = 'John Doe' AND city = 'New York'",
 				Update:    map[string]any{"name": "Pablo Vereira", "city": "Los Angeles"},
 			},
 			wantResp: UpdateOutput{
@@ -331,6 +386,9 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 				client: ESClient{
 					updateClient: func(index []string, o ...func(*esapi.UpdateByQueryRequest)) (*esapi.Response, error) {
 						return MockESUpdate(tc.wantResp), nil
+					},
+					sqlTranslateClient: func(body io.Reader, o ...func(*esapi.SQLTranslateRequest)) (*esapi.Response, error) {
+						return MockESSQLTranslate(), nil
 					},
 				},
 			}
@@ -372,7 +430,7 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 			name: "ok to delete",
 			input: DeleteInput{
 				IndexName: "index_name",
-				Filter:    map[string]any{"name": "John Doe", "city": "New York}"},
+				FilterSQL: "name = 'John Doe' AND city = 'New York'",
 			},
 			wantResp: DeleteOutput{
 				Status: "Successfully deleted document",
@@ -393,6 +451,9 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 				client: ESClient{
 					deleteClient: func(index []string, body io.Reader, o ...func(*esapi.DeleteByQueryRequest)) (*esapi.Response, error) {
 						return MockESDelete(tc.wantResp), nil
+					},
+					sqlTranslateClient: func(body io.Reader, o ...func(*esapi.SQLTranslateRequest)) (*esapi.Response, error) {
+						return MockESSQLTranslate(), nil
 					},
 				},
 			}

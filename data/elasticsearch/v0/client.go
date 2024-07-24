@@ -14,13 +14,13 @@ func newClient(setup *structpb.Struct) *ESClient {
 	es, _ := elasticsearch.NewClient(cfg)
 
 	return &ESClient{
-		indexClient:       es.Index,
-		searchClient:      es.Search,
-		updateClient:      es.UpdateByQuery,
-		deleteClient:      es.DeleteByQuery,
-		createIndexClient: es.Indices.Create,
-		deleteIndexClient: es.Indices.Delete,
-		countClient:       es.Count,
+		indexClient:        es.Index,
+		searchClient:       es.Search,
+		updateClient:       es.UpdateByQuery,
+		deleteClient:       es.DeleteByQuery,
+		createIndexClient:  es.Indices.Create,
+		deleteIndexClient:  es.Indices.Delete,
+		sqlTranslateClient: es.SQL.Translate,
 	}
 }
 

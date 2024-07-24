@@ -24,6 +24,7 @@ type IndexOutput struct {
 type UpdateInput struct {
 	Update    map[string]any `json:"update"`
 	Filter    map[string]any `json:"filter"`
+	FilterSQL string         `json:"filter-sql"`
 	Query     string         `json:"query"`
 	IndexName string         `json:"index-name"`
 }
@@ -33,17 +34,32 @@ type UpdateOutput struct {
 }
 
 type SearchInput struct {
-	SearchType string         `json:"search-type"`
-	Mode       string         `json:"mode"`
-	Filter     map[string]any `json:"filter"`
-	Query      string         `json:"query"`
-	IndexName  string         `json:"index-name"`
-	Size       int            `json:"size"`
+	Fields    []string       `json:"fields"`
+	Mode      string         `json:"mode"`
+	MinScore  float64        `json:"min-score"`
+	Filter    map[string]any `json:"filter"`
+	FilterSQL string         `json:"filter-sql"`
+	Query     string         `json:"query"`
+	IndexName string         `json:"index-name"`
+	Size      int            `json:"size"`
 }
 
 type SearchOutput struct {
 	Documents []map[string]any `json:"documents"`
 	Status    string           `json:"status"`
+}
+
+type VectorSearchInput struct {
+	Mode          string         `json:"mode"`
+	Filter        map[string]any `json:"filter"`
+	FilterSQL     string         `json:"filter-sql"`
+	IndexName     string         `json:"index-name"`
+	Field         string         `json:"field"`
+	Fields        []string       `json:"fields"`
+	QueryVector   []float64      `json:"query-vector"`
+	K             int            `json:"k"`
+	NumCandidates int            `json:"num-candidates"`
+	MinScore      float64        `json:"min-score"`
 }
 
 type SearchResponse struct {
@@ -74,6 +90,7 @@ type Hit struct {
 
 type DeleteInput struct {
 	Filter    map[string]any `json:"filter"`
+	FilterSQL string         `json:"filter-sql"`
 	Query     string         `json:"query"`
 	IndexName string         `json:"index-name"`
 }
@@ -103,6 +120,38 @@ type CountResponse struct {
 	Count int `json:"count"`
 }
 
+func translateSQLQuery(es *esapi.SQLTranslate, query string, indexName string) (map[string]any, error) {
+	sqlTranslateClient := ESSQLTranslate(*es)
+	sqlQuery := fmt.Sprintf("SELECT * FROM %s WHERE %s", indexName, query)
+	queryJSON := map[string]any{"query": sqlQuery}
+	translateJSON, err := json.Marshal(queryJSON)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := sqlTranslateClient(bytes.NewReader(translateJSON))
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return nil, fmt.Errorf("error translating SQL: %s", res.Status())
+	}
+
+	var response map[string]any
+	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
+		return nil, err
+	}
+
+	translatedQuery, exists := response["query"]
+	if !exists {
+		return nil, fmt.Errorf("query not found in response")
+	}
+
+	return translatedQuery.(map[string]any), nil
+}
+
 func IndexDocument(es *esapi.Index, indexName string, data map[string]any) error {
 	dataJSON, err := json.Marshal(data)
 	if err != nil {
@@ -128,39 +177,41 @@ func IndexDocument(es *esapi.Index, indexName string, data map[string]any) error
 }
 
 // size is optional, empty means all documents
-func SearchDocument(es *esapi.Search, indexName string, query string, rawFilter map[string]any, size int) ([]Hit, error) {
-	var body io.Reader = nil
-	if rawFilter != nil {
-		filter := make(map[string]any)
-		var source []string
-		for key, value := range rawFilter {
-			if value != nil {
-				filter[key] = value
-			}
-			source = append(source, key)
-		}
+func SearchDocument(es *esapi.Search, esSQLTranslate *esapi.SQLTranslate, inputStruct SearchInput) ([]Hit, error) {
+	indexName := inputStruct.IndexName
+	query := inputStruct.Query
+	minScore := inputStruct.MinScore
+	filter := inputStruct.Filter
+	filterSQL := inputStruct.FilterSQL
+	size := inputStruct.Size
+	fields := inputStruct.Fields
 
-		filterQuery := make(map[string]any)
+	queryJSON := map[string]any{}
 
-		if len(source) > 0 {
-			filterQuery["_source"] = source
-		}
-		if len(filter) > 0 {
-			filterQuery["query"] = map[string]any{
-				"match": filter,
-			}
-		}
-
-		filterJSON, err := json.Marshal(filterQuery)
+	if minScore > 0 {
+		queryJSON["min_score"] = minScore
+	}
+	if filterSQL != "" && filter == nil {
+		translatedQuery, err := translateSQLQuery(esSQLTranslate, filterSQL, indexName)
 		if err != nil {
 			return nil, err
 		}
-
-		body = strings.NewReader(string(filterJSON))
+		queryJSON["query"] = translatedQuery
+	} else if filter != nil {
+		queryJSON["query"] = filter
+	}
+	if len(fields) > 0 {
+		queryJSON["_source"] = fields
 	}
 
-	esClient := ESSearch(*es)
+	filterJSON, err := json.Marshal(queryJSON)
+	if err != nil {
+		return nil, err
+	}
 
+	body := strings.NewReader(string(filterJSON))
+
+	esClient := ESSearch(*es)
 	res, err := esClient(func(r *esapi.SearchRequest) {
 		r.Index = []string{indexName}
 		r.Body = body
@@ -181,7 +232,6 @@ func SearchDocument(es *esapi.Search, indexName string, query string, rawFilter 
 	}
 
 	var response SearchResponse
-
 	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
 		return nil, err
 	}
@@ -191,64 +241,50 @@ func SearchDocument(es *esapi.Search, indexName string, query string, rawFilter 
 
 // Only support vector search for now, for semantic search, we can use external model on other component combined with vector search
 // Can support up to more than 1 vector similarity fields, overall result will then be combined
-func VectorSearchDocument(es *esapi.Search, esCount *esapi.Count, indexName string, rawFilter map[string]any, size int) ([]Hit, error) {
+func VectorSearchDocument(es *esapi.Search, esSQLTranslate *esapi.SQLTranslate, inputStruct VectorSearchInput) ([]Hit, error) {
+	indexName := inputStruct.IndexName
+	field := inputStruct.Field
+	queryVector := inputStruct.QueryVector
+	k := inputStruct.K
+	numCandidates := inputStruct.NumCandidates
+	minScore := inputStruct.MinScore
+	filter := inputStruct.Filter
+	fields := inputStruct.Fields
+	filterSQL := inputStruct.FilterSQL
+
 	var body io.Reader = nil
+	query := make(map[string]any)
 
-	filterQuery := make(map[string]any)
-	var knnQueries []map[string]any
-	var source []string
+	knnQuery := map[string]any{
+		"field":          field,
+		"query_vector":   queryVector,
+		"k":              k,
+		"num_candidates": 2 * k,
+	}
 
-	if size == 0 {
-		ESCount := ESCount(*esCount)
-		res, err := ESCount(func(r *esapi.CountRequest) {
-			r.Index = []string{indexName}
-		})
-
+	if filterSQL != "" && filter == nil {
+		translatedQuery, err := translateSQLQuery(esSQLTranslate, filterSQL, indexName)
 		if err != nil {
 			return nil, err
 		}
-
-		defer res.Body.Close()
-
-		var countResponse CountResponse
-		if err := json.NewDecoder(res.Body).Decode(&countResponse); err != nil {
-			return nil, err
-		}
-
-		size = countResponse.Count
+		knnQuery["filter"] = translatedQuery
+	} else if filter != nil {
+		knnQuery["filter"] = filter
+	}
+	if numCandidates > 0 {
+		knnQuery["num_candidates"] = numCandidates
 	}
 
-	for key, value := range rawFilter {
-		interfaceVector, ok := value.([]any)
-
-		if ok {
-			floatVector := make([]float64, len(interfaceVector))
-			for i, v := range interfaceVector {
-				num, _ := v.(float64)
-				floatVector[i] = num
-			}
-
-			knnQuery := map[string]any{
-				"field":          key,
-				"query_vector":   floatVector,
-				"k":              size * 2,
-				"num_candidates": size * 5,
-			}
-
-			knnQueries = append(knnQueries, knnQuery)
-		}
-
-		source = append(source, key)
+	query["knn"] = knnQuery
+	query["size"] = k
+	if minScore > 0 {
+		query["min_score"] = minScore
+	}
+	if len(fields) > 0 {
+		query["_source"] = fields
 	}
 
-	filterQuery["knn"] = knnQueries
-	filterQuery["size"] = size
-
-	if len(source) > 0 {
-		filterQuery["_source"] = source
-	}
-
-	filterJSON, err := json.Marshal(filterQuery)
+	filterJSON, err := json.Marshal(query)
 	if err != nil {
 		return nil, err
 	}
@@ -279,11 +315,23 @@ func VectorSearchDocument(es *esapi.Search, esCount *esapi.Count, indexName stri
 	return response.Hits.Hits, nil
 }
 
-func UpdateDocument(es *esapi.UpdateByQuery, indexName string, query string, filter map[string]any, update map[string]any) error {
+func UpdateDocument(es *esapi.UpdateByQuery, esSQLTranslate *esapi.SQLTranslate, inputStruct UpdateInput) error {
+	indexName := inputStruct.IndexName
+	query := inputStruct.Query
+	filter := inputStruct.Filter
+	filterSQL := inputStruct.FilterSQL
+	update := inputStruct.Update
+
+	if filterSQL != "" && filter == nil {
+		translatedQuery, err := translateSQLQuery(esSQLTranslate, filterSQL, indexName)
+		if err != nil {
+			return err
+		}
+		filter = translatedQuery
+	}
+
 	updateByQueryReq := map[string]any{
-		"query": map[string]any{
-			"match": filter,
-		},
+		"query": filter,
 		"script": map[string]any{
 			"source": "for (entry in params.entry.entrySet()) { ctx._source[entry.getKey()] = entry.getValue() }",
 			"lang":   "painless",
@@ -323,11 +371,21 @@ func UpdateDocument(es *esapi.UpdateByQuery, indexName string, query string, fil
 	return nil
 }
 
-func DeleteDocument(es *esapi.DeleteByQuery, indexName string, query string, filter map[string]any) error {
+func DeleteDocument(es *esapi.DeleteByQuery, esSQLTranslate *esapi.SQLTranslate, inputStruct DeleteInput) error {
+	indexName := inputStruct.IndexName
+	query := inputStruct.Query
+	filter := inputStruct.Filter
+	filterSQL := inputStruct.FilterSQL
+
+	if filterSQL != "" && filter == nil {
+		translatedQuery, err := translateSQLQuery(esSQLTranslate, filterSQL, indexName)
+		if err != nil {
+			return err
+		}
+		filter = translatedQuery
+	}
 	deleteByQueryReq := map[string]any{
-		"query": map[string]any{
-			"match": filter,
-		},
+		"query": filter,
 	}
 
 	var body io.Reader = nil
@@ -437,7 +495,7 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = UpdateDocument(&e.client.updateClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Update)
+	err = UpdateDocument(&e.client.updateClient, &e.client.sqlTranslateClient, inputStruct)
 	if err != nil {
 		return nil, err
 	}
@@ -460,12 +518,7 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	var resultTemp []Hit
-	if e.Task == TaskSearch {
-		resultTemp, err = SearchDocument(&e.client.searchClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter, inputStruct.Size)
-	} else if e.Task == TaskVectorSearch {
-		resultTemp, err = VectorSearchDocument(&e.client.searchClient, &e.client.countClient, inputStruct.IndexName, inputStruct.Filter, inputStruct.Size)
-	}
+	resultTemp, err := SearchDocument(&e.client.searchClient, &e.client.sqlTranslateClient, inputStruct)
 
 	if err != nil {
 		return nil, err
@@ -476,7 +529,7 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		for _, hit := range resultTemp {
 			result = append(result, hit.Source)
 		}
-	} else if inputStruct.Mode == "Hits" {
+	} else {
 		for _, hit := range resultTemp {
 			hitMap := make(map[string]any)
 			hitMap["_index"] = hit.Index
@@ -499,6 +552,47 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 	return output, nil
 }
 
+func (e *execution) vectorSearch(in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct VectorSearchInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	resultTemp, err := VectorSearchDocument(&e.client.searchClient, &e.client.sqlTranslateClient, inputStruct)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var result []map[string]any
+	if inputStruct.Mode == "Source Only" {
+		for _, hit := range resultTemp {
+			result = append(result, hit.Source)
+		}
+	} else {
+		for _, hit := range resultTemp {
+			hitMap := make(map[string]any)
+			hitMap["_index"] = hit.Index
+			hitMap["_id"] = hit.ID
+			hitMap["_score"] = hit.Score
+			hitMap["_source"] = hit.Source
+			result = append(result, hitMap)
+		}
+	}
+
+	outputStruct := SearchOutput{
+		Documents: result,
+		Status:    "Successfully vector searched document",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
 func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct DeleteInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
@@ -506,7 +600,7 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = DeleteDocument(&e.client.deleteClient, inputStruct.IndexName, inputStruct.Query, inputStruct.Filter)
+	err = DeleteDocument(&e.client.deleteClient, &e.client.sqlTranslateClient, inputStruct)
 	if err != nil {
 		return nil, err
 	}

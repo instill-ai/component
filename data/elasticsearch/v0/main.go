@@ -49,13 +49,13 @@ type execution struct {
 }
 
 type ESClient struct {
-	indexClient       esapi.Index
-	searchClient      esapi.Search
-	updateClient      esapi.UpdateByQuery
-	deleteClient      esapi.DeleteByQuery
-	createIndexClient esapi.IndicesCreate
-	deleteIndexClient esapi.IndicesDelete
-	countClient       esapi.Count
+	indexClient        esapi.Index
+	searchClient       esapi.Search
+	updateClient       esapi.UpdateByQuery
+	deleteClient       esapi.DeleteByQuery
+	createIndexClient  esapi.IndicesCreate
+	deleteIndexClient  esapi.IndicesDelete
+	sqlTranslateClient esapi.SQLTranslate
 }
 
 type ESSearch func(o ...func(*esapi.SearchRequest)) (*esapi.Response, error)
@@ -71,6 +71,8 @@ type ESCreateIndex func(index string, o ...func(*esapi.IndicesCreateRequest)) (*
 type ESDeleteIndex func(index []string, o ...func(*esapi.IndicesDeleteRequest)) (*esapi.Response, error)
 
 type ESCount func(o ...func(*esapi.CountRequest)) (*esapi.Response, error)
+
+type ESSQLTranslate func(body io.Reader, o ...func(*esapi.SQLTranslateRequest)) (*esapi.Response, error)
 
 // Init returns an implementation of IConnector that interacts with Elasticsearch.
 func Init(bc base.Component) *component {
@@ -93,7 +95,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 
 	switch task {
 	case TaskVectorSearch:
-		e.execute = e.search
+		e.execute = e.vectorSearch
 	case TaskSearch:
 		e.execute = e.search
 	case TaskIndex:
