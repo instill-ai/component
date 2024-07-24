@@ -987,6 +987,8 @@ func (e *ComponentExecution) fillInDefaultValuesWithReference(input *structpb.St
 					}
 					tempArray.Values = append(tempArray.Values, val)
 				}
+			default:
+				continue
 			}
 			input.GetFields()[key] = structpb.NewListValue(tempArray)
 		}
