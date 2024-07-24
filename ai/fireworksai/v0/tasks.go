@@ -19,6 +19,7 @@ type TaskTextGenerationChatInput struct {
 	SystemMsg    string        `json:"system-message"`
 	Temperature  float32       `json:"temperature"`
 	TopK         int           `json:"top-k"`
+	TopP         float32       `json:"top-p"`
 }
 
 type ChatMessage struct {
@@ -90,6 +91,7 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 		Temperature: input.Temperature,
 		TopK:        input.TopK,
 		N:           1,
+		TopP:        input.TopP,
 	}
 
 	resp, err := e.client.Chat(req)
