@@ -65,7 +65,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-	outputs := []*structpb.Struct{}
+	outputs := make([]*structpb.Struct, len(inputs))
 
 	for i, input := range inputs {
 		output, err := e.execute(input)

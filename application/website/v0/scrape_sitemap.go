@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -21,9 +22,9 @@ type ScrapeSitemapOutput struct {
 type SiteInformation struct {
 	Loc string `json:"loc"`
 	// Follow ISO 8601 format
-	LastModifiedTime string `json:"lastmod"`
-	ChangeFrequency  string `json:"changefreq,omitempty"`
-	Priority         string `json:"priority,omitempty"`
+	LastModifiedTime string  `json:"lastmod"`
+	ChangeFrequency  string  `json:"changefreq,omitempty"`
+	Priority         float64 `json:"priority,omitempty"`
 }
 
 type URLSet struct {
@@ -70,11 +71,16 @@ func ScrapeSitemap(input *structpb.Struct) (*structpb.Struct, error) {
 
 	list := []SiteInformation{}
 	for _, url := range urlSet.Urls {
+		priority, err := strconv.ParseFloat(url.Priority, 64)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse priority: %v", err)
+		}
+
 		list = append(list, SiteInformation{
 			Loc:              url.Loc,
 			LastModifiedTime: url.LastMod,
 			ChangeFrequency:  url.ChangeFreq,
-			Priority:         url.Priority,
+			Priority:         priority,
 		})
 	}
 
