@@ -73,13 +73,13 @@ func TestComponent_Tasks(t *testing.T) {
 		e.execute = e.TaskTextGenerationChat
 		exec := &base.ExecutionWrapper{Execution: e}
 
-		pbIn, err := base.ConvertToStructpb(map[string]any{"model-name": "moondream", "prompt": "Tell me a joke"})
+		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "moondream", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
 		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(TaskTextGenerationChatOuput{Text: "\nWhy did the tomato turn red?\nAnswer: Because it saw the salad dressing", Usage: TaskTextGenerationChatUsage{InputTokens: 10, OutputTokens: 18}})
+		wantJSON, err := json.Marshal(TaskTextGenerationChatOuput{Text: "\nWhy did the tomato turn red?\nAnswer: Because it saw the salad dressing"})
 		c.Assert(err, qt.IsNil)
 		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
@@ -97,7 +97,7 @@ func TestComponent_Tasks(t *testing.T) {
 		e.execute = e.TaskTextGenerationChat
 		exec := &base.ExecutionWrapper{Execution: e}
 
-		pbIn, err := base.ConvertToStructpb(map[string]any{"model-name": "gemini", "prompt": "Tell me a joke"})
+		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "gemini", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
 		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
@@ -117,7 +117,7 @@ func TestComponent_Tasks(t *testing.T) {
 		e.execute = e.TaskTextEmbeddings
 		exec := &base.ExecutionWrapper{Execution: e}
 
-		pbIn, err := base.ConvertToStructpb(map[string]any{"model-name": "snowflake-arctic-embed:22m", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
+		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "snowflake-arctic-embed:22m", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
 		c.Assert(err, qt.IsNil)
 
 		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
@@ -141,7 +141,7 @@ func TestComponent_Tasks(t *testing.T) {
 		e.execute = e.TaskTextEmbeddings
 		exec := &base.ExecutionWrapper{Execution: e}
 
-		pbIn, err := base.ConvertToStructpb(map[string]any{"model-name": "snowflake-arctic-embed:23m", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
+		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "snowflake-arctic-embed:23m", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
 		c.Assert(err, qt.IsNil)
 
 		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})

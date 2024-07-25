@@ -33,13 +33,7 @@ type URL struct {
 }
 
 type TaskTextGenerationChatOuput struct {
-	Text  string                      `json:"text"`
-	Usage TaskTextGenerationChatUsage `json:"usage"`
-}
-
-type TaskTextGenerationChatUsage struct {
-	InputTokens  int `json:"input-tokens"`
-	OutputTokens int `json:"output-tokens"`
+	Text string `json:"text"`
 }
 
 func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struct, error) {
@@ -103,10 +97,6 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 
 	output := TaskTextGenerationChatOuput{
 		Text: response.Message.Content,
-		Usage: TaskTextGenerationChatUsage{
-			InputTokens:  response.PromptEvalCount,
-			OutputTokens: response.EvalCount,
-		},
 	}
 	return base.ConvertToStructpb(output)
 }
