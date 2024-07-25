@@ -8,7 +8,7 @@ import (
 type TaskTextGenerationChatInput struct {
 	ChatHistory  []ChatMessage `json:"chat-history"`
 	MaxNewTokens int           `json:"max-new-tokens"`
-	ModelName    string        `json:"model-name"`
+	Model        string        `json:"model"`
 	Prompt       string        `json:"prompt"`
 	PromptImages []string      `json:"prompt-images"`
 	Seed         int           `json:"seed"`
@@ -86,7 +86,7 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 	})
 
 	request := ChatRequest{
-		Model:    input.ModelName,
+		Model:    input.Model,
 		Messages: messages,
 		Stream:   false,
 		Options: OllamaOptions{
@@ -112,8 +112,8 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 }
 
 type TaskTextEmbeddingsInput struct {
-	Text      string `json:"text"`
-	ModelName string `json:"model-name"`
+	Text  string `json:"text"`
+	Model string `json:"model"`
 }
 
 type TaskTextEmbeddingsOutput struct {
@@ -127,7 +127,7 @@ func (e *execution) TaskTextEmbeddings(in *structpb.Struct) (*structpb.Struct, e
 	}
 
 	request := EmbedRequest{
-		Model:  input.ModelName,
+		Model:  input.Model,
 		Prompt: input.Text,
 	}
 
