@@ -29,7 +29,7 @@
       "type": "string"
     },
     "base-url": {
-      "description": "Fill in your Jira base URL. For example, if your Jira URL is https://mycompany.atlassian.net, then your base URL is https://mycompany.atlassian.net.",
+      "description": "Fill in your Jira base URL. For example, if your Jira URL is \"https://mycompany.atlassian.net/...\", then your base URL is https://mycompany.atlassian.net.",
       "instillUpstreamTypes": [
         "value",
         "reference"

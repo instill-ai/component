@@ -546,7 +546,7 @@
                 },
                 "jql": {
                   "title": "JQL",
-                  "description": "The JQL query. For example, `type = \"Task\" AND status = \"Done\"`. For more information, see [Advanced searching](https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-search-in-jira-cloud/)",
+                  "description": "The JQL query. For example, `type = \"Task\" AND status = \"Done\"`. For more information, see <a href=\"https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-search-in-jira-cloud/\">Advanced searching</a>",
                   "instillShortDescription": "The JQL query",
                   "instillUIOrder": 10,
                   "instillFormat": "string",
