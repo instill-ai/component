@@ -60,32 +60,6 @@
       ],
       "title": "Chat Message",
       "type": "object"
-    },
-    "usage": {
-      "description": "Usage tokens in Anthropic",
-      "instillUIOrder": 1,
-      "properties": {
-        "input-tokens": {
-          "description": "The input tokens used by Anthropic",
-          "instillFormat": "number",
-          "instillUIOrder": 2,
-          "title": "Input Tokens",
-          "type": "number"
-        },
-        "output-tokens": {
-          "description": "The output tokens used by Anthropic",
-          "instillFormat": "number",
-          "instillUIOrder": 3,
-          "title": "Output Tokens",
-          "type": "number"
-        }
-      },
-      "required": [
-        "input-tokens",
-        "output-tokens"
-      ],
-      "title": "Usage",
-      "type": "object"
     }
   },
   "TASK_TEXT_GENERATION_CHAT": {
@@ -95,7 +69,7 @@
       "description": "Input",
       "instillEditOnNodeFields": [
         "prompt",
-        "model-name"
+        "model"
       ],
       "instillUIOrder": 0,
       "properties": {
@@ -129,7 +103,7 @@
           "title": "Max new tokens",
           "type": "integer"
         },
-        "model-name": {
+        "model": {
           "example": "moondream",
           "description": "The OSS model to be used, check https://ollama.com/library for list of models available",
           "instillAcceptFormats": [
@@ -160,7 +134,7 @@
           "type": "string"
         },
         "prompt-images": {
-          "description": "The prompt images (Note: The prompt images will be injected in the order they are provided to the 'prompt' message. Anthropic doesn't support sending images via image-url, use this field instead)",
+          "description": "The prompt images",
           "instillAcceptFormats": [
             "array:image/*"
           ],
@@ -175,7 +149,7 @@
           "type": "array"
         },
         "seed": {
-          "description": "The seed (Note: Not supported by Anthropic Models)",
+          "description": "The seed",
           "instillAcceptFormats": [
             "integer"
           ],
@@ -235,7 +209,7 @@
       },
       "required": [
         "prompt",
-        "model-name"
+        "model"
       ],
       "title": "Input",
       "type": "object"
@@ -251,9 +225,6 @@
           "instillUIMultiline": true,
           "title": "Text",
           "type": "string"
-        },
-        "usage": {
-          "$ref": "#/$defs/usage"
         }
       },
       "required": [
@@ -269,7 +240,7 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "model-name": {
+        "model": {
           "example": "snowflake-arctic-embed:22m",
           "description": "The OSS model to be used, check https://ollama.com/library for list of models available",
           "instillAcceptFormats": [
@@ -302,11 +273,11 @@
       },
       "required": [
         "text",
-        "model-name"
+        "model"
       ],
       "instillEditOnNodeFields": [
         "text",
-        "model-name"
+        "model"
       ],
       "title": "Input",
       "type": "object"

@@ -15,7 +15,6 @@ import (
 const (
 	TaskTextGenerationChat = "TASK_TEXT_GENERATION_CHAT"
 	TaskTextEmbeddings     = "TASK_TEXT_EMBEDDINGS"
-	EndPoint               = "endpoint"
 )
 
 var (

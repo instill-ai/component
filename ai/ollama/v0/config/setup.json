@@ -11,8 +11,6 @@
         "string"
       ],
       "default": "http://localhost:11434",
-      "instillSecret": false,
-      "instillCredential": false,
       "instillUIOrder": 0,
       "title": "Endpoint",
       "type": "string"
@@ -26,9 +24,6 @@
       "instillAcceptFormats": [
         "boolean"
       ],
-      "default": "http://localhost:11434",
-      "instillSecret": false,
-      "instillCredential": false,
       "instillUIOrder": 1,
       "title": "Model Auto-Pull",
       "type": "boolean"
