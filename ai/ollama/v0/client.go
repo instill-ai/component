@@ -124,14 +124,15 @@ type ChatResponse struct {
 
 func (c *OllamaClient) Chat(request ChatRequest) (ChatResponse, error) {
 	response := ChatResponse{}
-	if !c.CheckModelAvailability(request.Model) {
-		if c.autoPull {
-			err := c.Pull(request.Model)
-			if err != nil {
-				return response, fmt.Errorf("error when auto pulling model %v", err)
-			}
-		} else {
-			return response, fmt.Errorf("model %s is not available", request.Model)
+	isAvailable := c.CheckModelAvailability(request.Model)
+
+	if !isAvailable && !c.autoPull {
+		return response, fmt.Errorf("model %s is not available", request.Model)
+	}
+	if !isAvailable {
+		err := c.Pull(request.Model)
+		if err != nil {
+			return response, fmt.Errorf("error when auto pulling model %v", err)
 		}
 	}
 	req := c.httpClient.R().SetResult(&response).SetBody(request)
@@ -152,14 +153,15 @@ type EmbedResponse struct {
 
 func (c *OllamaClient) Embed(request EmbedRequest) (EmbedResponse, error) {
 	response := EmbedResponse{}
-	if !c.CheckModelAvailability(request.Model) {
-		if c.IsAutoPull() {
-			err := c.Pull(request.Model)
-			if err != nil {
-				return response, fmt.Errorf("error when auto pulling model %v", err)
-			}
-		} else {
-			return response, fmt.Errorf("model %s is not available", request.Model)
+	isAvailable := c.CheckModelAvailability(request.Model)
+
+	if !isAvailable && !c.autoPull {
+		return response, fmt.Errorf("model %s is not available", request.Model)
+	}
+	if !isAvailable {
+		err := c.Pull(request.Model)
+		if err != nil {
+			return response, fmt.Errorf("error when auto pulling model %v", err)
 		}
 	}
 	req := c.httpClient.R().SetResult(&response).SetBody(request)
