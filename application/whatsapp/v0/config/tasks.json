@@ -124,7 +124,7 @@
           }
         },
         "button-parameters": {
-          "description": "Specify the parameters for button(s). Leave this blank if there is no parameter. Follow this format or it won't work: parameter_type;value_of_the_parameter. The seperator is a semicolon. Example: quick_reply;randomvalue. Note: This button parameter only support two types 'quick_reply' and 'url'",
+          "description": "Specify the parameters for button(s). Leave this blank if there is no parameter. Follow this format or it won't work: button_type;value_of_the_parameter. The seperator is a semicolon. Example: quick_reply;randomvalue. Note: This button parameter only support three types 'quick_reply', 'url' and 'copy_code'. Note: for authentication template, the button type is url. If it is not authentication template, the button type can either be quick_reply (for custom button), url (for website) or copy_code (for copy offer code).",
           "instillUIOrder": 7,
           "title": "Button Parameters",
           "type": "array",

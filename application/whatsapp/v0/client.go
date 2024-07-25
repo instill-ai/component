@@ -37,18 +37,16 @@ type WhatsappClient struct {
 	httpclient *httpclient.Client
 }
 
+// api functions
+
 type WhatsappInterface interface {
-	SendMessageAPI(messageReq *MessageObjectReq, PhoneNumberId string) (*MessageObjectResp, error)
+	SendMessageAPI(req interface{}, res interface{}, PhoneNumberId string) (interface{}, error)
 }
 
-func (c *WhatsappClient) SendMessageAPI(messageReq *MessageObjectReq, PhoneNumberId string) (*MessageObjectResp, error) {
-	resp := &MessageObjectResp{}
-
-	req := c.httpclient.R().SetBody(*messageReq).SetResult(resp)
-
-	if _, err := req.Post("/" + PhoneNumberId + "/messages"); err != nil {
+func (c *WhatsappClient) SendMessageAPI(req interface{}, resp interface{}, PhoneNumberId string) (interface{}, error) {
+	httpReq := c.httpclient.R().SetBody(req).SetResult(resp)
+	if _, err := httpReq.Post("/" + PhoneNumberId + "/messages"); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
