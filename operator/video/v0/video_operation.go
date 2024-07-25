@@ -129,7 +129,7 @@ func subsampleVideoFrames(input *structpb.Struct) (*structpb.Struct, error) {
 
 	// TODO: chuang8511 confirm how to handle the output pattern
 	// Now, it only contains 4 digits, which means it can only handle 9999 frames
-	outputPattern := "frame_%04d.png"
+	outputPattern := "frame_%04d.jpeg"
 
 	err = ffmpeg.Input(tempFileIn).
 		Output(outputPattern,
@@ -141,13 +141,13 @@ func subsampleVideoFrames(input *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("error in running ffmpeg: %s", err)
 	}
 
-	files, err := filepath.Glob("frame_*.png")
+	files, err := filepath.Glob("frame_*.jpeg")
 	if err != nil {
 		return nil, fmt.Errorf("error listing frames: %s", err)
 	}
 
 	sort.Strings(files)
-	pngPrefix := "data:image/png;base64,"
+	jpegPrefix := "data:image/jpeg;base64,"
 	var frames []Frame
 	for _, file := range files {
 
@@ -158,7 +158,7 @@ func subsampleVideoFrames(input *structpb.Struct) (*structpb.Struct, error) {
 
 		encoded := base64.StdEncoding.EncodeToString(data)
 
-		frames = append(frames, Frame(pngPrefix+encoded))
+		frames = append(frames, Frame(jpegPrefix+encoded))
 
 		err = os.Remove(file)
 		if err != nil {
