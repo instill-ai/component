@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "token": {
-      "description": "Fill in your GitHub access token for advanced usages. For more information about how to create tokens, please refer to the https://github.com/settings/tokens.",
+      "description": "Fill in your GitHub access token for advanced usages. For more information about how to create tokens, please refer to the <a href=\"https://github.com/settings/tokens\">github settings</a>.",
       "instillUpstreamTypes": [
         "reference"
       ],
