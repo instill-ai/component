@@ -7,7 +7,10 @@
     "TASK_GET_SPRINT",
     "TASK_CREATE_ISSUE",
     "TASK_UPDATE_ISSUE",
-    "TASK_MOVE_ISSUE_TO_EPIC"
+    "TASK_MOVE_ISSUE_TO_EPIC",
+    "TASK_CREATE_SPRINT",
+    "TASK_UPDATE_SPRINT",
+    "TASK_RANK_EPIC"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/jira",
   "icon": "assets/Jira.svg",

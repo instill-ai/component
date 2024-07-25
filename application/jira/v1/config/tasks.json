@@ -1177,5 +1177,342 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_CREATE_SPRINT": {
+    "description": "Create a sprint in Jira",
+    "instillShortDescription": "Create a sprint in Jira",
+    "input": {
+      "description": "Create a sprint in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "board-id",
+        "name",
+        "goal",
+        "start-date",
+        "end-date"
+      ],
+      "properties": {
+        "board-name": {
+          "title": "Board Name",
+          "description": "The name of the board",
+          "instillShortDescription": "The name of the board",
+          "instillUIOrder": 0,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "description": "The name of the sprint",
+          "instillShortDescription": "The name of the sprint",
+          "instillUIOrder": 1,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "goal": {
+          "title": "Goal",
+          "description": "The goal of the sprint",
+          "instillShortDescription": "The goal of the sprint",
+          "instillUIOrder": 2,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "start-date": {
+          "title": "Start Date",
+          "description": "The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "instillShortDescription": "The start date of the sprint",
+          "instillUIOrder": 3,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "end-date": {
+          "title": "End Date",
+          "description": "The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "instillShortDescription": "The end date of the sprint",
+          "instillUIOrder": 4,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "board-id",
+        "name",
+        "goal",
+        "start-date",
+        "end-date"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Create a sprint in Jira",
+      "instillUIOrder": 0,
+      "$ref": "#/$defs/sprint",
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_UPDATE_SPRINT": {
+    "description": "Update a sprint in Jira",
+    "instillShortDescription": "Update a sprint in Jira",
+    "input": {
+      "description": "Update a sprint in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "sprint-key",
+        "name",
+        "goal",
+        "start-date",
+        "end-date",
+        "complete-date"
+      ],
+      "properties": {
+        "sprint-key": {
+          "title": "Sprint Key",
+          "description": "The key of the sprint",
+          "instillShortDescription": "The key of the sprint",
+          "instillUIOrder": 0,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "description": "The name of the sprint",
+          "instillShortDescription": "The name of the sprint",
+          "instillUIOrder": 1,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "goal": {
+          "title": "Goal",
+          "description": "The goal of the sprint",
+          "instillShortDescription": "The goal of the sprint",
+          "instillUIOrder": 2,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "start-date": {
+          "title": "Start Date",
+          "description": "The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "instillShortDescription": "The start date of the sprint",
+          "instillUIOrder": 3,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "end-date": {
+          "title": "End Date",
+          "description": "The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "instillShortDescription": "The end date of the sprint",
+          "instillUIOrder": 4,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "complete-date": {
+          "title": "Complete Date",
+          "description": "The complete date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "instillShortDescription": "The complete date of the sprint",
+          "instillUIOrder": 5,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "sprint-key"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Create a sprint in Jira",
+      "instillUIOrder": 0,
+      "$ref": "#/$defs/sprint",
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_RANK_EPIC": {
+    "description": "Rank an epic in Jira",
+    "instillShortDescription": "Rank an epic in Jira",
+    "input": {
+      "description": "Rank an epic in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "epic-key",
+        "rank"
+      ],
+      "properties": {
+        "epic-key": {
+          "title": "Epic Key",
+          "description": "The key of the epic, e.g. `JRA-1330`",
+          "instillShortDescription": "The key of the epic",
+          "instillUIOrder": 0,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "after": {
+          "title": "Rank After Epic",
+          "description": "The key of the epic to rank after",
+          "instillShortDescription": "The key of the epic to rank after",
+          "instillUIOrder": 1,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "before": {
+          "title": "Rank Before Epic",
+          "description": "The key of the epic to rank before",
+          "instillShortDescription": "The key of the epic to rank before",
+          "instillUIOrder": 2,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "rank": {
+          "title": "Rank",
+          "description": "The custom rank field ID of the epic",
+          "instillShortDescription": "The custom rank field ID of the epic",
+          "instillUIOrder": 3,
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
+        }
+      },
+      "required": [
+        "epic-key",
+        "rank"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Rank an epic in Jira",
+      "instillUIOrder": 0,
+      "properties": {
+        "success": {
+          "description": "Whether the epic is ranked",
+          "instillUIOrder": 0,
+          "title": "Success",
+          "instillFormat": "boolean",
+          "type": "boolean"
+        }
+      },
+      "title": "Output",
+      "type": "object"
+    }
   }
 }
