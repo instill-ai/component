@@ -5,6 +5,7 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"io"
 	"sync"
 
 	"google.golang.org/protobuf/types/known/structpb"
@@ -33,7 +34,8 @@ type component struct {
 
 type execution struct {
 	base.ComponentExecution
-	execute func(*structpb.Struct) (*structpb.Struct, error)
+	execute        func(*structpb.Struct) (*structpb.Struct, error)
+	externalCaller func(url string) (ioCloser io.ReadCloser, err error)
 }
 
 func Init(bc base.Component) *component {
@@ -54,9 +56,11 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 
 	switch task {
 	case taskScrapeWebsite:
-		e.execute = Scrape
+		e.execute = e.Scrape
 	case taskScrapeSitemap:
-		e.execute = ScrapeSitemap
+		// To make mocking easier
+		e.externalCaller = scrapSitemapCaller
+		e.execute = e.ScrapeSitemap
 	default:
 		return nil, fmt.Errorf(task + " task is not supported.")
 	}

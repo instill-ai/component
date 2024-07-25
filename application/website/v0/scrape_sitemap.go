@@ -39,7 +39,7 @@ type URL struct {
 	Priority   string `xml:"priority"`
 }
 
-func ScrapeSitemap(input *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) ScrapeSitemap(input *structpb.Struct) (*structpb.Struct, error) {
 
 	inputStruct := ScrapeSitemapInput{}
 	err := base.ConvertFromStructpb(input, &inputStruct)
@@ -48,17 +48,16 @@ func ScrapeSitemap(input *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
-	resp, err := http.Get(inputStruct.URL)
+	ioCloser, err := e.externalCaller(inputStruct.URL)
+
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch the URL: %v", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("error: status code %d", resp.StatusCode)
+		return nil, fmt.Errorf("failed to scrap the URL: %v", err)
 	}
 
-	body, err := io.ReadAll(resp.Body)
+	defer ioCloser.Close()
+
+	body, err := io.ReadAll(ioCloser)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to read the response body: %v", err)
 	}
@@ -94,4 +93,17 @@ func ScrapeSitemap(input *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 	return outputStruct, nil
+}
+
+func scrapSitemapCaller(url string) (io.ReadCloser, error) {
+	resp, err := http.Get(url)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch the URL: %v", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("error: status code %d", resp.StatusCode)
+	}
+	return resp.Body, nil
 }

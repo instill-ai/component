@@ -95,7 +95,7 @@ func getHTMLPageDoc(url string) (*goquery.Document, error) {
 }
 
 // Scrape crawls a webpage and returns a slice of PageInfo
-func Scrape(input *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) Scrape(input *structpb.Struct) (*structpb.Struct, error) {
 	inputStruct := ScrapeWebsiteInput{}
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
