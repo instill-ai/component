@@ -89,20 +89,17 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
-type SetupNoSecret struct {
-	DBName   string `json:"database-name"`
-	DBHost   string `json:"host"`
-	DBPort   int    `json:"port"`
+type Engine struct {
 	DBEngine string `json:"engine"`
 }
 
-// newClient being setup here in the Execute since all the input for connection string is in inputs
+// newClient being setup here in the Execute since engine is part of the input
 // therefore, every new inputs will create a new connection
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	for i, input := range inputs {
-		var inputStruct SetupNoSecret
+		var inputStruct Engine
 		err := base.ConvertFromStructpb(input, &inputStruct)
 		if err != nil {
 			return nil, err

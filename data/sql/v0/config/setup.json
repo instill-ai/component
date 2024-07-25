@@ -10,8 +10,7 @@
       "instillAcceptFormats": [
         "string"
       ],
-      "instillSecret": true,
-      "instillUIOrder": 1,
+      "instillUIOrder": 0,
       "title": "Username",
       "type": "string"
     },
@@ -24,18 +23,61 @@
         "string"
       ],
       "instillSecret": true,
-      "instillUIOrder": 2,
+      "instillUIOrder": 1,
       "title": "Password",
       "type": "string"
+    },
+    "database-name": {
+      "description": "Fill in the name of your database",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 2,
+      "title": "Database Name",
+      "type": "string"
+    },
+    "host": {
+      "description": "Fill in the host of your database",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 3,
+      "title": "Host",
+      "type": "string"
+    },
+    "port": {
+      "description": "Fill in the port of your database",
+      "instillUpstreamTypes": [
+        "value","reference"
+      ],
+      "default": 3306,
+      "instillAcceptFormats": [
+        "number"
+      ],
+      "instillUIOrder": 4,
+      "title": "Port",
+      "type": "number"
     }
   },
   "required": [
     "user",
-    "password"
+    "password",
+    "database-name",
+    "host",
+    "port"
   ],
   "instillEditOnNodeFields": [
     "user",
-    "password"
+    "password",
+    "database-name",
+    "host",
+    "port"
   ],
   "title": "SQL Connection",
   "type": "object"

@@ -2,6 +2,7 @@ package sql
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/jmoiron/sqlx"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -33,19 +34,25 @@ var enginesType = map[string]string{
 type Config struct {
 	DBUser     string
 	DBPassword string
+	DBName     string
+	DBHost     string
+	DBPort     string
 }
 
 func LoadConfig(setup *structpb.Struct) *Config {
 	return &Config{
 		DBUser:     getUser(setup),
 		DBPassword: getPassword(setup),
+		DBName:     getDatabaseName(setup),
+		DBHost:     getHost(setup),
+		DBPort:     getPort(setup),
 	}
 }
 
-func newClient(setup *structpb.Struct, inputSetup *SetupNoSecret) SQLClient {
+func newClient(setup *structpb.Struct, inputSetup *Engine) SQLClient {
 	cfg := LoadConfig(setup)
 
-	DBEndpoint := fmt.Sprintf("%v:%v", inputSetup.DBHost, inputSetup.DBPort)
+	DBEndpoint := fmt.Sprintf("%v:%v", cfg.DBHost, cfg.DBPort)
 
 	// Test every engines to find the correct one
 	var db *sqlx.DB
@@ -56,7 +63,7 @@ func newClient(setup *structpb.Struct, inputSetup *SetupNoSecret) SQLClient {
 	engineType := enginesType[inputSetup.DBEngine]
 
 	dsn := fmt.Sprintf(engine,
-		cfg.DBUser, cfg.DBPassword, DBEndpoint, inputSetup.DBName,
+		cfg.DBUser, cfg.DBPassword, DBEndpoint, cfg.DBName,
 	)
 
 	db, err = sqlx.Open(engineType, dsn)
@@ -72,4 +79,13 @@ func getUser(setup *structpb.Struct) string {
 }
 func getPassword(setup *structpb.Struct) string {
 	return setup.GetFields()["password"].GetStringValue()
+}
+func getDatabaseName(setup *structpb.Struct) string {
+	return setup.GetFields()["database-name"].GetStringValue()
+}
+func getHost(setup *structpb.Struct) string {
+	return setup.GetFields()["host"].GetStringValue()
+}
+func getPort(setup *structpb.Struct) string {
+	return strconv.Itoa(int(setup.GetFields()["port"].GetNumberValue()))
 }

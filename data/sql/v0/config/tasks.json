@@ -26,49 +26,27 @@
           ],
           "type": "string"
         },
-        "database-name": {
-          "description": "The database name to insert data into",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
+        "table-name": {
+          "description": "The table name in the database to insert data into",
           "instillAcceptFormats": [
             "string"
           ],
+          "instillShortDescription": "Database Table Name",
           "instillUIOrder": 1,
-          "title": "Database Name",
-          "type": "string"
-        },
-        "host": {
-          "description": "The host of your database",
           "instillUpstreamTypes": [
-            "value","reference"
+            "reference",
+            "template",
+            "value"
           ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 3,
-          "title": "Host",
-          "type": "string"
-        },
-        "port": {
-          "description": "The port of your database",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "number"
-          ],
-          "instillUIOrder": 4,
-          "title": "Port",
-          "type": "number"
+          "title": "Table Name",
+          "type":"string"
         },
         "data": {
           "description": "The data to be inserted",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object","array"
           ],
-          "instillShortDescription": "JSON Data",
-          "instillUIOrder": 5,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -79,28 +57,10 @@
             "instillFormat": "semi-structured/json"
           },
           "title": "Data"
-        },
-        "table-name": {
-          "description": "The table name in the database to insert data into",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 2,
-          "instillUpstreamTypes": [
-            "reference",
-            "template",
-            "value"
-          ],
-          "title": "Table Name",
-          "type":"string"
         }
       },
       "required": [
         "engine",
-        "database-name",
-        "host",
-        "port",
         "data",
         "table-name"
       ],
@@ -153,63 +113,42 @@
           ],
           "type": "string"
         },
-        "database-name": {
-          "description": "The database name to insert data into",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
+        "table-name": {
+          "description": "The table name in the database to update data into",
           "instillAcceptFormats": [
             "string"
           ],
+          "instillShortDescription": "Database Table Name",
           "instillUIOrder": 1,
-          "title": "Database Name",
-          "type": "string"
-        },
-        "host": {
-          "description": "The host of your database",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 3,
-          "title": "Host",
-          "type": "string"
-        },
-        "port": {
-          "description": "The port of your database",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "number"
-          ],
-          "instillUIOrder": 4,
-          "title": "Port",
-          "type": "number"
-        },
-        "filter": {
-          "description": "The data filter to be updated",
-          "instillAcceptFormats": [
-            "semi-structured/*","structured/*","object"
-          ],
-          "instillShortDescription": "JSON Data",
-          "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
-          "title": "Filter"
+          "title": "Table Name",
+          "type":"string"
         },
-        "update": {
+        "filter": {
+          "instillShortDescription": "The filter to be applied to the data",
+          "description": "The filter to be applied to the data with SQL syntax, which starts with WHERE clause",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats":[
+            "string"
+          ],
+          "title": "Filter",
+          "type": "string"
+        },
+        "update-data": {
           "description": "The new data to be updated to",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object","array"
           ],
-          "instillShortDescription": "JSON Data",
-          "instillUIOrder": 6,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -220,30 +159,12 @@
             "instillFormat": "semi-structured/json"
           },
           "title": "Update"
-        },
-        "table-name": {
-          "description": "The table name in the database to update data into",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 2,
-          "instillUpstreamTypes": [
-            "reference",
-            "template",
-            "value"
-          ],
-          "title": "Table Name",
-          "type":"string"
         }
       },
       "required": [
         "engine",
-        "database-name",
-        "host",
-        "port",
         "filter",
-        "update",
+        "update-data",
         "table-name"
       ],
       "title": "Input",
@@ -295,63 +216,43 @@
           ],
           "type": "string"
         },
-        "database-name": {
-          "description": "The database name to insert data into",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
+        "table-name": {
+          "description": "The table name in the database to be selected",
           "instillAcceptFormats": [
             "string"
           ],
+          "instillShortDescription": "Database Table Name",
           "instillUIOrder": 1,
-          "title": "Database Name",
-          "type": "string"
-        },
-        "host": {
-          "description": "The host of your database",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 3,
-          "title": "Host",
-          "type": "string"
-        },
-        "port": {
-          "description": "The port of your database",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "number"
-          ],
-          "instillUIOrder": 4,
-          "title": "Port",
-          "type": "number"
-        },
-        "filter": {
-          "description": "The data filter to be selected, if JSON value of a key is null e.g {\"name\":null}, then name column will be selected without any filter. If empty, then all columns will be selected",
-          "instillAcceptFormats": [
-            "semi-structured/*","structured/*","object"
-          ],
-          "instillShortDescription": "JSON Data, optional (empty for all rows)",
-          "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
-          "title": "Filter"
+          "title": "Table Name",
+          "type":"string"
+        },
+        "filter": {
+          "instillShortDescription": "The filter to be applied to the data. If empty, then all rows will be updated",
+          "description": "The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for all rows",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats":[
+            "string"
+          ],
+          "title": "Filter",
+          "type": "string"
         },
         "limit": {
-          "description": "The limit of rows to be selected, optional (empty for all rows)",
+          "description": "The limit of rows to be selected, empty for all rows",
           "instillAcceptFormats": [
             "integer"
           ],
           "instillShortDescription": "Limit Rows",
-          "instillUIOrder": 6,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -360,37 +261,34 @@
           "title": "Limit",
           "type":"integer"
         },
-        "table-name": {
-          "description": "The table name in the database to be selected",
+        "columns":{
+          "description": "The columns to return in the rows. If empty then all columns will be returned",
           "instillAcceptFormats": [
-            "string"
+            "array:string"
           ],
-          "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 2,
+          "instillShortDescription": "Columns to be returned, empty for all columns",
+          "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
-          "title": "Table Name",
-          "type":"string"
+          "title": "Columns",
+          "type":"array",
+          "items": {
+            "title":"Column",
+            "type": "string"
+          }
         }
       },
       "required": [
         "engine",
-        "database-name",
-        "host",
-        "port",
         "table-name"
       ],
       "instillEditOnNodeFields": [
         "engine",
-        "database-name",
-        "host",
-        "port",
         "table-name",
-        "filter",
-        "limit"
+        "filter"
       ],
       "title": "Input",
       "type": "object"
@@ -459,63 +357,13 @@
           ],
           "type": "string"
         },
-        "database-name": {
-          "description": "The database name to insert data into",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 1,
-          "title": "Database Name",
-          "type": "string"
-        },
-        "host": {
-          "description": "The host of your database",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 3,
-          "title": "Host",
-          "type": "string"
-        },
-        "port": {
-          "description": "The port of your database",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "number"
-          ],
-          "instillUIOrder": 4,
-          "title": "Port",
-          "type": "number"
-        },
-        "filter": {
-          "description": "The data filter to be deleted",
-          "instillAcceptFormats": [
-            "semi-structured/*","structured/*","object"
-          ],
-          "instillShortDescription": "JSON Data",
-          "instillUIOrder": 5,
-          "instillUpstreamTypes": [
-            "reference",
-            "template",
-            "value"
-          ],
-          "title": "Filter"
-        },
         "table-name": {
           "description": "The table name in the database to be deleted",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 2,
+          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -523,13 +371,25 @@
           ],
           "title": "Table Name",
           "type":"string"
+        },
+        "filter": {
+          "instillShortDescription": "The filter to be applied to the data",
+          "description": "The filter to be applied to the data with SQL syntax, which starts with WHERE clause",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "instillAcceptFormats":[
+            "string"
+          ],
+          "title": "Filter",
+          "type": "string"
         }
       },
       "required": [
         "engine",
-        "database-name",
-        "host",
-        "port",
         "filter",
         "table-name"
       ],
@@ -582,49 +442,13 @@
           ],
           "type": "string"
         },
-        "database-name": {
-          "description": "The database name to insert data into",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 1,
-          "title": "Database Name",
-          "type": "string"
-        },
-        "host": {
-          "description": "The host of your database",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 3,
-          "title": "Host",
-          "type": "string"
-        },
-        "port": {
-          "description": "The port of your database",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "number"
-          ],
-          "instillUIOrder": 4,
-          "title": "Port",
-          "type": "number"
-        },
         "table-name": {
           "description": "The table name in the database to be created",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 2,
+          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -633,13 +457,13 @@
           "title": "Table Name",
           "type":"string"
         },
-        "columns": {
-          "description": "The columns to be created in the table, json with value string, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
+        "columns-structure": {
+          "description": "The columns structure to be created in the table, json with value string, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
           "instillAcceptFormats": [
             "semi-structured/*","structured/*","object"
           ],
-          "instillShortDescription": "JSON Data, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
-          "instillUIOrder": 5,
+          "instillShortDescription": "Columns Structure, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -650,11 +474,8 @@
       },
       "required": [
         "engine",
-        "database-name",
-        "host",
-        "port",
         "table-name",
-        "columns"
+        "columns-structure"
       ],
       "title": "Input",
       "type": "object"
@@ -705,49 +526,13 @@
           ],
           "type": "string"
         },
-        "database-name": {
-          "description": "The database name to insert data into",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 1,
-          "title": "Database Name",
-          "type": "string"
-        },
-        "host": {
-          "description": "The host of your database",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 3,
-          "title": "Host",
-          "type": "string"
-        },
-        "port": {
-          "description": "The port of your database",
-          "instillUpstreamTypes": [
-            "value","reference"
-          ],
-          "instillAcceptFormats": [
-            "number"
-          ],
-          "instillUIOrder": 4,
-          "title": "Port",
-          "type": "number"
-        },
         "table-name": {
           "description": "The table name in the database to be dropped",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 2,
+          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -759,9 +544,6 @@
       },
       "required": [
         "engine",
-        "database-name",
-        "host",
-        "port",
         "table-name"
       ],
       "title": "Input",

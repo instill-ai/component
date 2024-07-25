@@ -2,6 +2,7 @@ package sql
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/instill-ai/component/base"
@@ -18,9 +19,9 @@ type InsertOutput struct {
 }
 
 type UpdateInput struct {
-	Update    map[string]any `json:"update"`
-	Filter    map[string]any `json:"filter"`
-	TableName string         `json:"table-name"`
+	UpdateData map[string]any `json:"update-data"`
+	Filter     string         `json:"filter"`
+	TableName  string         `json:"table-name"`
 }
 
 type UpdateOutput struct {
@@ -28,9 +29,10 @@ type UpdateOutput struct {
 }
 
 type SelectInput struct {
-	Filter    map[string]any `json:"filter"`
-	TableName string         `json:"table-name"`
-	Limit     int            `json:"limit"`
+	Filter    string   `json:"filter"`
+	TableName string   `json:"table-name"`
+	Limit     int      `json:"limit"`
+	Columns   []string `json:"columns"`
 }
 
 type SelectOutput struct {
@@ -39,8 +41,8 @@ type SelectOutput struct {
 }
 
 type DeleteInput struct {
-	Filter    map[string]any `json:"filter"`
-	TableName string         `json:"table-name"`
+	Filter    string `json:"filter"`
+	TableName string `json:"table-name"`
 }
 
 type DeleteOutput struct {
@@ -48,8 +50,8 @@ type DeleteOutput struct {
 }
 
 type CreateTableInput struct {
-	TableName string            `json:"table-name"`
-	Columns   map[string]string `json:"columns"`
+	TableName        string            `json:"table-name"`
+	ColumnsStructure map[string]string `json:"columns-structure"`
 }
 
 type CreateTableOutput struct {
@@ -62,6 +64,16 @@ type DropTableInput struct {
 
 type DropTableOutput struct {
 	Status string `json:"status"`
+}
+
+func isValidWhereClause(whereClause string) error {
+	// Extended regex pattern for logical operators and additional conditions
+	regex := `^(?:\w+ (?:=|!=|>|<|>=|<=|LIKE|MATCH|IS NULL|IS NOT NULL|BETWEEN|IN|EXISTS|NOT|REGEXP|RLIKE|IS DISTINCT FROM|IS NOT DISTINCT FROM|COALESCE\(.*\)|NULLIF\(.*\)) (?:[\w'%]+|\d+|\([\w\s,']+\)|(?:CASE .* END)|(?:\w+\s+\w+)))(?: (?:AND|OR) (?:\w+ (?:=|!=|>|<|>=|<=|LIKE|MATCH|IS NULL|IS NOT NULL|BETWEEN|IN|EXISTS|NOT|REGEXP|RLIKE|IS DISTINCT FROM|IS NOT DISTINCT FROM|COALESCE\(.*\)|NULLIF\(.*\)) (?:[\w'%]+|\d+|\([\w\s,']+\)|(?:CASE .* END)|(?:\w+\s+\w+))))*$`
+	matched, err := regexp.MatchString(regex, whereClause)
+	if err != nil || !matched {
+		return err
+	}
+	return nil
 }
 
 func buildSQLStatementInsert(tableName string, data *map[string]any) (string, map[string]any) {
@@ -81,60 +93,29 @@ func buildSQLStatementInsert(tableName string, data *map[string]any) (string, ma
 	return sqlStatement, values
 }
 
-func buildSQLStatementUpdate(tableName string, updateData map[string]interface{}, filter map[string]interface{}, e execution) (string, map[string]interface{}) {
-	sqlStatementCols := "SELECT * FROM " + tableName
-
-	rows, _ := e.client.Queryx(sqlStatementCols)
-	defer rows.Close()
-
+func buildSQLStatementUpdate(tableName string, updateData map[string]any, filter string) (string, map[string]any) {
 	sqlStatement := "UPDATE " + tableName + " SET "
-	values := make(map[string]interface{})
-
-	columns, _ := rows.Columns()
+	values := make(map[string]any)
 
 	var setClauses []string
-	for _, col := range columns {
-		if updateValue, found := updateData[col]; found {
-			setClauses = append(setClauses, fmt.Sprintf("%s = :%s", col, col))
-			values[col] = updateValue
-		} else {
-			setClauses = append(setClauses, fmt.Sprintf("%s = NULL", col))
-		}
+	for col, updateValue := range updateData {
+		setClauses = append(setClauses, fmt.Sprintf("%s = :%s", col, col))
+		values[col] = updateValue
 	}
 
 	sqlStatement += strings.Join(setClauses, ", ")
 
-	var whereClauses []string
-	for col, filterValue := range filter {
-		whereClauses = append(whereClauses, fmt.Sprintf("%s = :%s_filter", col, col))
-		values[col+"_filter"] = filterValue
+	if filter != "" {
+		sqlStatement += " WHERE " + filter
 	}
-
-	sqlStatement += " WHERE " + strings.Join(whereClauses, " AND ")
 
 	return sqlStatement, values
 }
 
 // limit can be empty, but it will have default value 0
-func buildSQLStatementSelect(tableName string, filter *map[string]any, limit int) string {
+// columns can be empty, if empty it will select all columns
+func buildSQLStatementSelect(tableName string, filter string, limit int, columns []string) string {
 	sqlStatement := "SELECT "
-	var where []string
-	var columns []string
-
-	for filterKey, filterValue := range *filter {
-		if filterValue != nil {
-			switch filterValue.(type) {
-			case string:
-				where = append(where, fmt.Sprintf("%s = '%v'", filterKey, filterValue))
-			case map[string]any:
-				where = append(where, fmt.Sprintf("%s = '%v'", filterKey, filterValue))
-			default:
-				where = append(where, fmt.Sprintf("%s = %v", filterKey, filterValue))
-			}
-		}
-
-		columns = append(columns, filterKey)
-	}
 
 	var notAll string
 	if limit == 0 {
@@ -150,36 +131,31 @@ func buildSQLStatementSelect(tableName string, filter *map[string]any, limit int
 	}
 
 	sqlStatement += " FROM " + tableName
-	if len(where) > 0 {
-		sqlStatement += " WHERE " + strings.Join(where, " AND ")
+	if filter != "" {
+		sqlStatement += " WHERE " + filter
 	}
 	sqlStatement += notAll
 
 	return sqlStatement
 }
 
-func buildSQLStatementDelete(tableName string, filter *map[string]any) (string, map[string]any) {
-	sqlStatement := "DELETE FROM " + tableName + " WHERE "
-	var where []string
-	values := make(map[string]any)
+func buildSQLStatementDelete(tableName string, filter string) string {
+	sqlStatement := "DELETE FROM " + tableName
 
-	for filterKey, filterValue := range *filter {
-		where = append(where, fmt.Sprintf("%s = :%s", filterKey, filterKey))
-		values[filterKey] = filterValue
+	if filter != "" {
+		sqlStatement += " WHERE " + filter
 	}
 
-	sqlStatement += strings.Join(where, " AND ")
-
-	return sqlStatement, values
+	return sqlStatement
 }
 
 // columns is a map of column name and column type and handled in json format to prevent sql injection
-func buildSQLStatementCreateTable(tableName string, columns map[string]string) (string, map[string]any) {
+func buildSQLStatementCreateTable(tableName string, columnsStructure map[string]string) (string, map[string]any) {
 	sqlStatement := "CREATE TABLE " + tableName + " ("
 	var columnDefs []string
 	values := make(map[string]any)
 
-	for colName, colType := range columns {
+	for colName, colType := range columnsStructure {
 		columnDefs = append(columnDefs, fmt.Sprintf("%s %s", colName, colType))
 		values[colName] = colType
 	}
@@ -226,8 +202,12 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = isValidWhereClause(inputStruct.Filter)
+	if err != nil {
+		return nil, err
+	}
 
-	sqlStatement, values := buildSQLStatementUpdate(inputStruct.TableName, inputStruct.Update, inputStruct.Filter, *e)
+	sqlStatement, values := buildSQLStatementUpdate(inputStruct.TableName, inputStruct.UpdateData, inputStruct.Filter)
 
 	_, err = e.client.NamedExec(sqlStatement, values)
 
@@ -253,8 +233,12 @@ func (e *execution) selects(in *structpb.Struct) (*structpb.Struct, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = isValidWhereClause(inputStruct.Filter)
+	if err != nil {
+		return nil, err
+	}
 
-	sqlStatement := buildSQLStatementSelect(inputStruct.TableName, &inputStruct.Filter, inputStruct.Limit)
+	sqlStatement := buildSQLStatementSelect(inputStruct.TableName, inputStruct.Filter, inputStruct.Limit, inputStruct.Columns)
 
 	rows, err := e.client.Queryx(sqlStatement)
 	if err != nil {
@@ -300,10 +284,14 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = isValidWhereClause(inputStruct.Filter)
+	if err != nil {
+		return nil, err
+	}
 
-	sqlStatement, values := buildSQLStatementDelete(inputStruct.TableName, &inputStruct.Filter)
+	sqlStatement := buildSQLStatementDelete(inputStruct.TableName, inputStruct.Filter)
 
-	_, err = e.client.NamedExec(sqlStatement, values)
+	_, err = e.client.Queryx(sqlStatement)
 
 	if err != nil {
 		return nil, err
@@ -327,7 +315,7 @@ func (e *execution) createTable(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	sqlStatement, values := buildSQLStatementCreateTable(inputStruct.TableName, inputStruct.Columns)
+	sqlStatement, values := buildSQLStatementCreateTable(inputStruct.TableName, inputStruct.ColumnsStructure)
 
 	_, err = e.client.NamedExec(sqlStatement, values)
 

@@ -61,7 +61,6 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 			WithArgs("1", "john").WillReturnResult(sqlmock.NewResult(1, 1))
 
 		return sqlxDB.NamedExec("DELETE FROM users WHERE id = :id AND name = :name", arg)
-
 	} else if strings.Contains(query, "UPDATE") {
 		mockDB, mock, _ := sqlmock.New()
 		defer mockDB.Close()
@@ -188,11 +187,8 @@ func TestUpdateUser(t *testing.T) {
 			name:      "update user",
 			tableName: "users",
 			input: UpdateInput{
-				Filter: map[string]any{
-					"id":   "1",
-					"name": "John Doe",
-				},
-				Update: map[string]any{
+				Filter: "id = 1 AND name = 'John Doe'",
+				UpdateData: map[string]any{
 					"id":   "1",
 					"name": "John Doe Updated",
 				},
@@ -257,11 +253,7 @@ func TestSelectUser(t *testing.T) {
 			name:      "select users",
 			tableName: "users",
 			input: SelectInput{
-				Filter: map[string]any{
-					"id":    "1",
-					"name":  "john",
-					"email": "john@example.com",
-				},
+				Filter:    "id = 1 AND name = 'john' AND email = 'john@example.com'",
 				TableName: "users",
 				Limit:     0,
 			},
@@ -327,10 +319,7 @@ func TestDeleteUser(t *testing.T) {
 			name:      "delete user",
 			tableName: "users",
 			input: DeleteInput{
-				Filter: map[string]any{
-					"id":   "1",
-					"name": "john",
-				},
+				Filter:    "id = 1 AND name = 'john'",
 				TableName: "users",
 			},
 			wantResp: DeleteOutput{
@@ -391,7 +380,7 @@ func TestCreateTable(t *testing.T) {
 		{
 			name: "create table",
 			input: CreateTableInput{
-				Columns: map[string]string{
+				ColumnsStructure: map[string]string{
 					"id":   "INT",
 					"name": "VARCHAR(255)",
 				},
