@@ -1,11 +1,11 @@
 ---
-title: "Mistral"
+title: "Mistral AI"
 lang: "en-US"
 draft: false
-description: "Learn about how to set up a VDP Mistral component https://github.com/instill-ai/instill-core"
+description: "Learn about how to set up a VDP Mistral AI component https://github.com/instill-ai/instill-core"
 ---
 
-The Mistral component is an AI component that allows users to connect the AI models served on the Mistral Platform.
+The Mistral AI component is an AI component that allows users to connect the AI models served on the Mistral AI Platform.
 It can carry out the following tasks:
 
 - [Text Generation Chat](#text-generation-chat)
@@ -21,7 +21,7 @@ It can carry out the following tasks:
 
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/ai/mistral/v0/config/definition.json).
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/ai/mistralai/v0/config/definition.json).
 
 
 
@@ -31,7 +31,7 @@ The component configuration is defined and maintained [here](https://github.com/
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Mistral API key. To find your keys, visit the Mistral platform page. |
+| API Key (required) | `api-key` | string | Fill in your Mistral API key. To find your keys, visit the Mistral AI platform page. |
 
 
 
@@ -78,7 +78,6 @@ Turn text into a vector of numbers that capture its meaning, unlocking use cases
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_TEXT_EMBEDDINGS` |
-| Embedding Type (required) | `embedding-type` | string | Specifies the return type of embedding. |
 | Model Name (required) | `model-name` | string | The Mistral embed model to be used |
 | Text (required) | `text` | string | The text |
 

@@ -10,7 +10,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/ai/anthropic/v0"
-	"github.com/instill-ai/component/ai/archetypeai/v0"
 	"github.com/instill-ai/component/ai/cohere/v0"
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
@@ -31,11 +30,14 @@ import (
 	"github.com/instill-ai/component/data/googlecloudstorage/v0"
 	"github.com/instill-ai/component/data/pinecone/v0"
 	"github.com/instill-ai/component/data/redis/v0"
+	"github.com/instill-ai/component/data/sql/v0"
+	"github.com/instill-ai/component/operator/audio/v0"
 	"github.com/instill-ai/component/operator/base64/v0"
 	"github.com/instill-ai/component/operator/document/v0"
 	"github.com/instill-ai/component/operator/image/v0"
 	"github.com/instill-ai/component/operator/json/v0"
 	"github.com/instill-ai/component/operator/text/v0"
+	"github.com/instill-ai/component/operator/video/v0"
 
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -84,6 +86,8 @@ func Init(
 		compStore.Import(image.Init(baseComp))
 		compStore.Import(text.Init(baseComp))
 		compStore.Import(document.Init(baseComp))
+		compStore.Import(audio.Init(baseComp))
+		compStore.Import(video.Init(baseComp))
 
 		compStore.Import(github.Init(baseComp))
 		{
@@ -110,10 +114,11 @@ func Init(
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
-    {
+		{
 			// Mistral
 			conn := mistralai.Init(baseComp)
-			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			// Secret doesn't allow hyphens
+			conn = conn.WithInstillCredentials(secrets["mistralai"])
 			compStore.Import(conn)
 		}
 		{
@@ -123,13 +128,13 @@ func Init(
 			compStore.Import(conn)
 		}
 
-		compStore.Import(archetypeai.Init(baseComp))
 		compStore.Import(numbers.Init(baseComp))
 		compStore.Import(bigquery.Init(baseComp))
 		compStore.Import(googlecloudstorage.Init(baseComp))
 		compStore.Import(googlesearch.Init(baseComp))
 		compStore.Import(pinecone.Init(baseComp))
 		compStore.Import(redis.Init(baseComp))
+		compStore.Import(sql.Init(baseComp))
 		compStore.Import(restapi.Init(baseComp))
 		compStore.Import(website.Init(baseComp))
 		compStore.Import(slack.Init(baseComp))
