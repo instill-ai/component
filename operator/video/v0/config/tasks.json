@@ -36,7 +36,7 @@
           "type": "number"
         },
         "start-time": {
-          "description": "Start time in seconds, format is hh:mm:ss or ss",
+          "description": "Start time in seconds, format is hh:mm:ss",
           "instillAcceptFormats": [
             "string"
           ],
@@ -49,7 +49,7 @@
           "type": "string"
         },
         "duration": {
-          "description": "Duration in seconds, format is hh:mm:ss or ss",
+          "description": "Duration in seconds, format is hh:mm:ss",
           "instillAcceptFormats": [
             "string"
           ],
@@ -124,7 +124,7 @@
           "type": "number"
         },
         "start-time": {
-          "description": "Start time in seconds, format is hh:mm:ss or ss",
+          "description": "Start time in seconds, format is hh:mm:ss",
           "instillAcceptFormats": [
             "string"
           ],
@@ -137,7 +137,7 @@
           "type": "string"
         },
         "duration": {
-          "description": "Duration in seconds, format is hh:mm:ss or ss",
+          "description": "Duration in seconds, format is hh:mm:ss",
           "instillAcceptFormats": [
             "string"
           ],

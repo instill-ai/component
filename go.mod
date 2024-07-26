@@ -24,6 +24,7 @@ require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/gojuno/minimock/v3 v3.3.6
 	github.com/google/go-github/v62 v62.0.0
+	github.com/google/uuid v1.6.0
 	github.com/h2non/filetype v1.1.3
 	github.com/iFaceless/godub v0.0.0-20200728093528-a30bb4d1a0f1
 	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240530065422-d384f728a1e2
@@ -94,7 +95,6 @@ require (
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.3 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect

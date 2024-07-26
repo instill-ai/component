@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/instill-ai/component/base"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -61,29 +62,37 @@ func subsampleVideo(input *structpb.Struct) (*structpb.Struct, error) {
 	videoPrefix := strings.Split(base64Video, ",")[0]
 
 	// TODO: chuang8511 map the file extension to the correct format
-	// using mp4 first because it has smaller size.
-	tempFileIn := "temp.mp4"
+	tempInputFile, err := os.CreateTemp("", "temp.*.mp4")
 
-	err = os.WriteFile(tempFileIn, videoBytes, 0644)
 	if err != nil {
+		return nil, fmt.Errorf("error in creating temp input file: %s", err)
+	}
+
+	tempInputFileName := tempInputFile.Name()
+	defer os.Remove(tempInputFileName)
+
+	if _, err := tempInputFile.Write(videoBytes); err != nil {
 		return nil, fmt.Errorf("error in writing file: %s", err)
 	}
 
-	split := ffmpeg.Input(tempFileIn)
+	split := ffmpeg.Input(tempInputFileName)
 
-	tempFileOut := "temp_out.mp4"
+	tempOutputFile, err := os.CreateTemp("", "temp_out.*.mp4")
+	if err != nil {
+		return nil, fmt.Errorf("error in creating temp output file: %s", err)
+	}
+	tempOutputFileName := tempOutputFile.Name()
+	defer os.Remove(tempOutputFileName)
 
-	err = split.Output(tempFileOut, getKwArgs(inputStruct)).Run()
+	split = split.OverWriteOutput()
+	err = split.Output(tempOutputFileName, getKwArgs(inputStruct)).Run()
 
 	if err != nil {
 		return nil, fmt.Errorf("error in running ffmpeg: %s", err)
 	}
 
-	byOut, _ := os.ReadFile(tempFileOut)
+	byOut, _ := os.ReadFile(tempOutputFileName)
 	base64Subsample := videoPrefix + "," + base64.StdEncoding.EncodeToString(byOut)
-
-	os.Remove(tempFileIn)
-	os.Remove(tempFileOut)
 
 	output := SubsampleVideoOutput{
 		Video: Video(base64Subsample),
@@ -119,19 +128,25 @@ func subsampleVideoFrames(input *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("error in decoding for inner: %s", err)
 	}
 
-	tempFileIn := "temp.mp4"
-	defer os.Remove(tempFileIn)
-
-	err = os.WriteFile(tempFileIn, videoBytes, 0644)
+	tempInputFile, err := os.CreateTemp("", "temp.*.mp4")
 	if err != nil {
+		return nil, fmt.Errorf("error in creating temp input file: %s", err)
+	}
+	tempInputFileName := tempInputFile.Name()
+	defer os.Remove(tempInputFileName)
+
+	if _, err := tempInputFile.Write(videoBytes); err != nil {
 		return nil, fmt.Errorf("error in writing file: %s", err)
 	}
 
-	// TODO: chuang8511 confirm how to handle the output pattern
-	// Now, it only contains 4 digits, which means it can only handle 9999 frames
-	outputPattern := "frame_%04d.jpeg"
+	random := uuid.New().String()
+	// TODO: chuang8511 confirm the reasonable numbers for outputPattern.
+	// In the future, we will support bigger size of video, so we set the frame number to 8 digits.
+	// Because the sequence is important, we need to use pattern
+	// with frame number rather than uuid as suffix.
+	outputPattern := random + "_frame_%08d.jpeg"
 
-	err = ffmpeg.Input(tempFileIn).
+	err = ffmpeg.Input(tempInputFileName).
 		Output(outputPattern,
 			getFramesKwArgs(inputStruct),
 		).
@@ -141,7 +156,7 @@ func subsampleVideoFrames(input *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("error in running ffmpeg: %s", err)
 	}
 
-	files, err := filepath.Glob("frame_*.jpeg")
+	files, err := filepath.Glob(random + "_frame_*.jpeg")
 	if err != nil {
 		return nil, fmt.Errorf("error listing frames: %s", err)
 	}
