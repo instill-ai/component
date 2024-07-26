@@ -1,3 +1,4 @@
+//go:generate compogen readme ./config ./README.mdx
 package audio
 
 import (

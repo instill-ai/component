@@ -1,0 +1,77 @@
+---
+title: "Audio"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP Audio component https://github.com/instill-ai/instill-core"
+---
+
+The Audio component is an operator component that allows users to extract and manipulate audio from different sources.
+It can carry out the following tasks:
+
+- [Chunk Audios](#chunk-audios)
+- [Slice Audio](#slice-audio)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/operator/audio/v0/config/definition.json).
+
+
+
+
+
+## Supported Tasks
+
+### Chunk Audios
+
+Split audio file into chunks
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CHUNK_AUDIOS` |
+| Audio (required) | `audio` | string | Base64 encoded audio file to be split |
+| Chunk count (required) | `chunk-count` | integer | Number of chunks to equally split the audio into |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Audios | `audios` | array[string] | A list of base64 encoded audios |
+
+
+
+
+
+
+### Slice Audio
+
+Specify a time range to slice an audio file
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_SLICE_AUDIO` |
+| Audio (required) | `audio` | string | Base64 encoded audio file to be sliced |
+| Start time (required) | `start-time` | integer | Start time of the slice in seconds |
+| End time (required) | `end-time` | integer | End time of the slice in seconds |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Audio | `audio` | string | Base64 encoded audio slice |
+
+
+
+
+
+
+

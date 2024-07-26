@@ -56,7 +56,7 @@ Perform an insert operation based on specified filter
 | Task ID (required) | `task` | string | `TASK_INSERT` |
 | Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to insert data into |
-| Data (required) | `data` | semi-structured/json | The data to be inserted |
+| Data (required) | `data` | any | The data to be inserted |
 
 
 
@@ -80,7 +80,7 @@ Perform an update operation based on specified filter
 | Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to update data into |
 | Filter (required) | `filter` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause |
-| Update (required) | `update-data` | semi-structured/json | The new data to be updated to |
+| Update (required) | `update-data` | any | The new data to be updated to |
 
 
 
@@ -152,7 +152,7 @@ Create a table in the database
 | Task ID (required) | `task` | string | `TASK_CREATE_TABLE` |
 | Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to be created |
-| Columns (required) | `columns-structure` | semi-structured/json | The columns structure to be created in the table, json with value string, e.g \{"name": "VARCHAR(255)", "age": "INT not null"\} |
+| Columns (required) | `columns-structure` | any | The columns structure to be created in the table, json with value string, e.g \{"name": "VARCHAR(255)", "age": "INT not null"\} |
 
 
 
