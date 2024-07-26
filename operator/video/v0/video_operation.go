@@ -160,12 +160,12 @@ func subsampleVideoFrames(input *structpb.Struct) (*structpb.Struct, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error listing frames: %s", err)
 	}
+	defer removeFiles(files)
 
 	sort.Strings(files)
 	jpegPrefix := "data:image/jpeg;base64,"
 	var frames []Frame
 	for _, file := range files {
-		defer os.Remove(file)
 		data, err := os.ReadFile(file)
 		if err != nil {
 			return nil, fmt.Errorf("error reading file %s: %v", file, err)
@@ -192,4 +192,10 @@ func getFramesKwArgs(inputStruct SubsampleVideoFramesInput) ffmpeg.KwArgs {
 		kwArgs["t"] = inputStruct.Duration
 	}
 	return kwArgs
+}
+
+func removeFiles(files []string) {
+	for _, file := range files {
+		os.Remove(file)
+	}
 }
