@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	taskSendTemplate = "TASK_SEND_TEMPLATE"
+	taskSendTemplateMessage = "TASK_SEND_TEMPLATE_MESSAGE"
 
 	basePath = "https://graph.facebook.com"
 	version  = "v20.0"
@@ -61,8 +61,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	}
 
 	switch task {
-	case taskSendTemplate:
-		e.execute = e.SendTemplate
+	case taskSendTemplateMessage:
+		e.execute = e.SendTemplateMessage
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}

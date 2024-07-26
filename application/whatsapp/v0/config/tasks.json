@@ -44,11 +44,18 @@
       }
     }
   },
-  "TASK_SEND_TEMPLATE": {
-    "instillShortDescription": "Send template. Support all template types except product/catalog-based template. Please use the other task to send catalog template. For more information about template: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates",
+  "TASK_SEND_TEMPLATE_MESSAGE": {
+    "instillShortDescription": "Send template. Support various kinds of templates: text-based, media-based, interactive, location-based & authentication. This task does not support catalog/multi-product message template. For more information about sending template message, please go to: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates",
     "input": {
       "description": "Contact and template information",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "header-type",
+        "phone-number-id",
+        "to",
+        "name",
+        "language-code"
+      ],
       "properties": {
         "phone-number-id": {
           "$ref": "#/$defs/input/phone-number-id"
@@ -56,26 +63,13 @@
         "to": {
           "$ref": "#/$defs/input/to"
         },
-        "header-type":{
-          "enum": [
-            "none",
-            "text",
-            "image",
-            "video",
-            "document",
-            "location"
-          ],
+        "header-type": {
+          "enum": ["none", "text", "image", "video", "document", "location"],
           "example": "none",
           "description": "Specify the parameter type for the header section of the template. If there is no header section, pick none. If there is, select one and fill out the Header Parameters.",
-          "instillAcceptFormats": [
-            "string"
-          ],
+          "instillAcceptFormats": ["string"],
           "instillUIOrder": 2,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
+          "instillUpstreamTypes": ["value", "reference", "template"],
           "title": "Header Type",
           "type": "string"
         },
@@ -98,7 +92,7 @@
           "type": "string"
         },
         "header-parameters": {
-          "description": "Specify the parameters for the header section of the template. If the header is a 'text', just create a normal string array (if there is no parameter, leave it blank). If the header is an 'image' or a 'video', the array format will be [the ID or link of the media]. If the header is a 'document', the array format will be [the ID or link of the document, file name to be displayed in WhatsApp (optional)]. If the header is a 'location', the array format will be [latitude, longitude, name, address]. Please make sure that it has 'http' in the url if you use link as the parameter." ,
+          "description": "Specify the parameters for the header section of the template. If the header is a 'text', just create a normal string array (if there is no parameter, leave it blank). If the header is an 'image' or a 'video', the array format will be [the ID or link of the media]. If the header is a 'document', the array format will be [the ID or link of the document, file name to be displayed in WhatsApp (optional)]. If the header is a 'location', the array format will be [latitude, longitude, name, address]. Please make sure that it has 'http' in the url if you use link as the parameter.",
           "instillUIOrder": 5,
           "title": "Header Parameters",
           "type": "array",
@@ -137,7 +131,13 @@
           }
         }
       },
-      "required": ["header-type","phone-number-id", "to", "name", "language-code"],
+      "required": [
+        "header-type",
+        "phone-number-id",
+        "to",
+        "name",
+        "language-code"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -145,13 +145,13 @@
       "description": "API response",
       "instillUIOrder": 0,
       "properties": {
-        "recipient-wa-id":{
+        "recipient-wa-id": {
           "$ref": "#/$defs/output/recipient-wa-id"
         },
-        "message-id":{
+        "message-id": {
           "$ref": "#/$defs/output/message-id"
         },
-        "message-status":{
+        "message-status": {
           "$ref": "#/$defs/output/message-status"
         }
       },

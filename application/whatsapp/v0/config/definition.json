@@ -1,6 +1,9 @@
 {
   "availableTasks": [
-    "TASK_SEND_TEMPLATE"
+    "TASK_SEND_TEMPLATE_MESSAGE",
+    "TASK_SEND_TEXT_MESSAGE",
+    "TASK_SEND_MEDIA_MESSAGE",
+    "TASK_SEND_LOCATION_MESSAGE"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/whatsapp",
   "icon": "assets/whatsapp.svg",

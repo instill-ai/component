@@ -9,54 +9,10 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-// Reference: https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages
-
-// this file is used to handle all send related tasks for WhatsApp, which include
+// this file is used to handle send template task
 // send template task: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates
-// send catalog template task: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates/mpm-template-messages
-// send message task: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages
 
-// Objects (structs that are part of request struct; can be used in more than one task)
-
-type templateObject struct {
-	Name       string            `json:"name"`
-	Language   languageObject    `json:"language"`
-	Components []componentObject `json:"components,omitempty"`
-}
-
-type languageObject struct {
-	Code string `json:"code"`
-}
-
-// Component type is either header, body or button
-// Note:
-// footer cannot have any parameters.
-// header can have various parameters: text, image, location, document and video
-// body support text parameters (along with currency and date time), but for our implementation, we will only do text parameter (for simplification). User can actually just input currency and date time as text as well, so it is not a big deal.
-// button type is quick reply and call to action. Can either specify payload or text as the parameter for button.
-
-type componentObject struct {
-	Type          string        `json:"type"`
-	Parameters    []interface{} `json:"parameters"`
-	ButtonSubType string        `json:"sub_type,omitempty"` // only used when the type is button. Type of button
-	ButtonIndex   string        `json:"index,omitempty"`    // only used when the type is button. Refers to the position index of the button
-}
-
-type locationObject struct {
-	Latitude  string `json:"latitude"`
-	Longitude string `json:"longitude"`
-	Name      string `json:"name"`
-	Address   string `json:"address"`
-}
-
-type mediaObject struct {
-	ID       string `json:"id,omitempty"`
-	Link     string `json:"link,omitempty"`     // if id is used, no need link.
-	Filename string `json:"filename,omitempty"` // only for document. This will specify the format of the file displayed in WhatsApp
-	Caption  string `json:"caption,omitempty"`  // cannot be used in template message
-}
-
-// Component parameters
+// parameters for Component object (these parameters are only used in send template task)
 
 // used when the header type is text (also used for body)
 type textParameter struct {
@@ -95,21 +51,9 @@ type buttonParameter struct {
 	Text    string `json:"text,omitempty"`
 }
 
-// structs that are part of response (used in multiple task)
+// Send Template Message task
 
-type contact struct {
-	Input string `json:"input"`
-	WaID  string `json:"wa_id"`
-}
-
-type message struct {
-	ID            string `json:"id"`
-	MessageStatus string `json:"message_status"`
-}
-
-// Send Template task
-
-type TaskSendTemplateInput struct {
+type TaskSendTemplateMessageInput struct {
 	PhoneNumberID    string   `json:"phone-number-id"`
 	To               string   `json:"to"`
 	HeaderType       string   `json:"header-type"`
@@ -120,35 +64,35 @@ type TaskSendTemplateInput struct {
 	ButtonParameters []string `json:"button-parameters"`
 }
 
-type TaskSendTemplateReq struct {
+type TaskSendTemplateMessageReq struct {
 	MessagingProduct string         `json:"messaging_product"`
 	To               string         `json:"to"`
 	Type             string         `json:"type"`
 	Template         templateObject `json:"template"`
 }
 
-type TaskSendTemplateResp struct {
+type TaskSendTemplateMessageResp struct {
 	MessagingProduct string    `json:"messaging_product"`
 	Contacts         []contact `json:"contacts"`
 	Messages         []message `json:"messages"`
 }
 
-type TaskSendTemplateOutput struct {
+type TaskSendTemplateMessageOutput struct {
 	WaID          string `json:"recipient-wa-id"`
 	ID            string `json:"message-id"`
 	MessageStatus string `json:"message-status,omitempty"`
 }
 
-func (e *execution) SendTemplate(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) SendTemplateMessage(in *structpb.Struct) (*structpb.Struct, error) {
 
-	inputStruct := TaskSendTemplateInput{}
+	inputStruct := TaskSendTemplateMessageInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
-	req := TaskSendTemplateReq{
+	req := TaskSendTemplateMessageReq{
 		MessagingProduct: "whatsapp",
 		To:               inputStruct.To,
 		Type:             "template",
@@ -367,16 +311,16 @@ func (e *execution) SendTemplate(in *structpb.Struct) (*structpb.Struct, error) 
 		req.Template.Components = append(req.Template.Components, component)
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateResp{}, inputStruct.PhoneNumberID)
+	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to do API request: %v", err)
 	}
 
-	respStruct := resp.(*TaskSendTemplateResp)
+	respStruct := resp.(*TaskSendTemplateMessageResp)
 
 	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
-	outputStruct := TaskSendTemplateOutput{
+	outputStruct := TaskSendTemplateMessageOutput{
 		WaID:          respStruct.Contacts[0].WaID,
 		ID:            respStruct.Messages[0].ID,
 		MessageStatus: respStruct.Messages[0].MessageStatus,
@@ -385,10 +329,8 @@ func (e *execution) SendTemplate(in *structpb.Struct) (*structpb.Struct, error) 
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil
 }
-
-// Send Catalog Template task
