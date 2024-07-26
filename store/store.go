@@ -36,6 +36,7 @@ import (
 	image "github.com/instill-ai/component/operator/image/v0"
 	json "github.com/instill-ai/component/operator/json/v0"
 	text "github.com/instill-ai/component/operator/text/v0"
+	video "github.com/instill-ai/component/operator/video/v0"
 
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -85,6 +86,7 @@ func Init(
 		compStore.Import(text.Init(baseComp))
 		compStore.Import(document.Init(baseComp))
 		compStore.Import(audio.Init(baseComp))
+		compStore.Import(video.Init(baseComp))
 
 		compStore.Import(github.Init(baseComp))
 		{

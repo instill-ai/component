@@ -24,6 +24,7 @@ require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/gojuno/minimock/v3 v3.3.6
 	github.com/google/go-github/v62 v62.0.0
+	github.com/google/uuid v1.6.0
 	github.com/h2non/filetype v1.1.3
 	github.com/iFaceless/godub v0.0.0-20200728093528-a30bb4d1a0f1
 	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240530065422-d384f728a1e2
@@ -46,6 +47,7 @@ require (
 	github.com/slack-go/slack v0.12.5
 	github.com/stretchr/testify v1.9.0
 	github.com/tmc/langchaingo v0.1.10
+	github.com/u2takey/ffmpeg-go v0.5.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/image v0.18.0
 	golang.org/x/oauth2 v0.18.0
@@ -69,6 +71,7 @@ require (
 	github.com/antchfx/xpath v1.2.4 // indirect
 	github.com/apache/arrow/go/v14 v14.0.2 // indirect
 	github.com/araddon/dateparse v0.0.0-20200409225146-d820a6159ab1 // indirect
+	github.com/aws/aws-sdk-go v1.55.1 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.30.1 // indirect
 	github.com/aws/smithy-go v1.20.3 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -92,13 +95,13 @@ require (
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.3 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.0 // indirect
 	github.com/itchyny/timefmt-go v0.1.5 // indirect
 	github.com/jaytaylor/html2text v0.0.0-20200412013138-3577fbdbcff7 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/klauspost/compress v1.17.2 // indirect
@@ -123,6 +126,7 @@ require (
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/tink-ab/tempfile v0.0.0-20180226111222-33beb0518f1a // indirect
+	github.com/u2takey/go-utils v0.3.1 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	gitlab.com/golang-commonmark/html v0.0.0-20191124015941-a22733972181 // indirect
 	gitlab.com/golang-commonmark/linkify v0.0.0-20191026162114-a0c2df6c8f82 // indirect
