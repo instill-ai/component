@@ -43,7 +43,7 @@
       "properties": {
         "audios": {
           "description": "A list of base64 encoded audios",
-          "instillFormat": "array:string",
+          "instillFormat": "array:audio/wav",
           "instillUIOrder": 0,
           "items": {
             "type": "string",
@@ -115,7 +115,7 @@
       "properties": {
         "audio": {
           "description": "Base64 encoded audio slice",
-          "instillFormat": "string",
+          "instillFormat": "audio/wav",
           "instillUIOrder": 0,
           "title": "Audio",
           "type": "string"

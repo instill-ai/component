@@ -73,9 +73,6 @@ func chunkAudios(input *structpb.Struct) (*structpb.Struct, error) {
 		startTime = getStartTime(chunkSeconds, i)
 		endTime := getEndTime(chunkSeconds, i, inputStruct.ChunkCount, duration)
 
-		fmt.Println("start time", startTime)
-		fmt.Println("end time", endTime)
-
 		slicedSegment, err := segment.Slice(startTime, endTime)
 		if err != nil {
 			return nil, fmt.Errorf("failed to slice audio: %w in chunk %v", err, i)
