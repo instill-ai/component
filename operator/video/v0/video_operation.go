@@ -165,7 +165,7 @@ func subsampleVideoFrames(input *structpb.Struct) (*structpb.Struct, error) {
 	jpegPrefix := "data:image/jpeg;base64,"
 	var frames []Frame
 	for _, file := range files {
-
+		defer os.Remove(file)
 		data, err := os.ReadFile(file)
 		if err != nil {
 			return nil, fmt.Errorf("error reading file %s: %v", file, err)
@@ -174,11 +174,6 @@ func subsampleVideoFrames(input *structpb.Struct) (*structpb.Struct, error) {
 		encoded := base64.StdEncoding.EncodeToString(data)
 
 		frames = append(frames, Frame(jpegPrefix+encoded))
-
-		err = os.Remove(file)
-		if err != nil {
-			return nil, fmt.Errorf("error removing file %s: %v", file, err)
-		}
 	}
 
 	output := SubsampleVideoFramesOutput{
