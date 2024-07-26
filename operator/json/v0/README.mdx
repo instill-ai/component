@@ -82,7 +82,6 @@ Process JSON through a `jq` command
 | Task ID (required) | `task` | string | `TASK_JQ` |
 | JSON value | `json-value` | any | JSON entity to be processed by the filter. It can be any valid JSON datatype (e.g. number, string, hash, array). |
 | Filter (required) | `jq-filter` | string | Filter, in `jq` syntax, that will be applied to the JSON input |
-| (DEPRECATED) JSON string | `json-string` | string | (DEPRECATED, use 'JSON value' instead) String with the JSON value to be processed. This field allows templated inputs, but the data might require preprocessing (marshalling). This field will be used in absence of 'JSON value' for backwards compatibility reasons. |
 
 
 
