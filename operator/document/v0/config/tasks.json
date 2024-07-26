@@ -1,15 +1,15 @@
 {
   "TASK_CONVERT_TO_MARKDOWN": {
-    "instillShortDescription": "Convert PDF to Markdown format.",
+    "instillShortDescription": "Convert document to text in Markdown format.",
     "input": {
       "description": "Input",
       "instillEditOnNodeFields": [
-        "pdf"
+        "document"
       ],
       "instillUIOrder": 0,
       "properties": {
-        "pdf": {
-          "description": "Base64 encoded PDF to be converted to Markdown",
+        "document": {
+          "description": "Base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML to be converted to text in Markdown format",
           "instillAcceptFormats": [
             "*/*"
           ],
@@ -37,7 +37,7 @@
         }
       },
       "required": [
-        "pdf"
+        "document"
       ],
       "title": "Input",
       "type": "object"

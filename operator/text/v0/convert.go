@@ -3,7 +3,6 @@ package text
 import (
 	"bytes"
 	"fmt"
-	"strings"
 	"time"
 	"unicode/utf8"
 
@@ -12,6 +11,7 @@ import (
 	"code.sajari.com/docconv"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/util"
 )
 
 var (
@@ -56,19 +56,6 @@ type ConvertToTextOutput struct {
 	MSecs uint32 `json:"msecs"`
 	// Error: Error message if any during the conversion process
 	Error string `json:"error"`
-}
-
-func getContentTypeFromBase64(base64String string) (string, error) {
-	// Remove the "data:" prefix and split at the first semicolon
-	contentType := strings.TrimPrefix(base64String, "data:")
-
-	parts := strings.SplitN(contentType, ";", 2)
-	if len(parts) != 2 {
-		return "", fmt.Errorf("invalid format")
-	}
-
-	// The first part is the content type
-	return parts[0], nil
 }
 
 type converter interface {
@@ -122,7 +109,7 @@ func isSupportedByDocconvConvert(contentType string) bool {
 
 func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
 
-	contentType, err := getContentTypeFromBase64(input.Doc)
+	contentType, err := util.GetContentTypeFromBase64(input.Doc)
 	if err != nil {
 		return ConvertToTextOutput{}, err
 	}
