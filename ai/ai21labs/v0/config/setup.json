@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": true,
+  "properties": {
+    "api-key": {
+      "description": "Fill in your AI21labs key. To find your keys, visit the AI21labs platform page",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": true,
+      "instillCredential": true,
+      "instillUIOrder": 0,
+      "title": "API Key",
+      "type": "string"
+    }
+  },
+  "required": [
+    "api-key"
+  ],
+  "instillEditOnNodeFields": [
+    "api-key"
+  ],
+  "title": "AI21labs Connection",
+  "type": "object"
+}
