@@ -2,7 +2,7 @@
   "components": {
     "schemas": {
       "AssistantFileObject": {
-        "description": "A list of [Files](/docs/api-reference/files) attached to an `assistant`.",
+        "description": "A list of <a href=\"/docs/api-reference/files\">Files</a> attached to an `assistant`.",
         "properties": {
           "assistant_id": {
             "description": "The assistant ID that the file is attached to.",
@@ -53,7 +53,7 @@
           },
           "file_ids": {
             "default": [],
-            "description": "A list of [file](/docs/api-reference/files) IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order.\n",
+            "description": "A list of <a href=\"/docs/api-reference/files\">file</a> IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order.\n",
             "items": {
               "type": "string"
             },
@@ -77,7 +77,7 @@
             "x-oaiTypeLabel": "map"
           },
           "model": {
-            "description": "ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.\n",
+            "description": "ID of the model to use. You can use the <a href=\"/docs/api-reference/models/list\">List models</a> API to see all of your available models, or see our <a href=\"/docs/models/overview\">Model overview</a> for descriptions of them.\n",
             "type": "string"
           },
           "name": {
@@ -441,7 +441,7 @@
             "properties": {
               "detail": {
                 "default": "auto",
-                "description": "Specifies the detail level of the image. Learn more in the [Vision guide](/docs/guides/vision/low-or-high-fidelity-image-understanding).",
+                "description": "Specifies the detail level of the image. Learn more in the <a href=\"/docs/guides/vision/low-or-high-fidelity-image-understanding\">Vision guide</a>.",
                 "enum": [
                   "auto",
                   "low",
@@ -805,7 +805,7 @@
         "additionalProperties": false,
         "properties": {
           "file_id": {
-            "description": "A [File](/docs/api-reference/files) ID (with `purpose=\"assistants\"`) that the assistant should use. Useful for tools like `retrieval` and `code_interpreter` that can access files.",
+            "description": "A <a href=\"/docs/api-reference/files\">File</a> ID (with `purpose=\"assistants\"`) that the assistant should use. Useful for tools like `retrieval` and `code_interpreter` that can access files.",
             "type": "string"
           }
         },
@@ -825,7 +825,7 @@
           },
           "file_ids": {
             "default": [],
-            "description": "A list of [file](/docs/api-reference/files) IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order.\n",
+            "description": "A list of <a href=\"/docs/api-reference/files\">file</a> IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order.\n",
             "items": {
               "type": "string"
             },
@@ -850,7 +850,7 @@
                 "type": "string"
               }
             ],
-            "description": "ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.\n"
+            "description": "ID of the model to use. You can use the <a href=\"/docs/api-reference/models/list\">List models</a> API to see all of your available models, or see our <a href=\"/docs/models/overview\">Model overview</a> for descriptions of them.\n"
           },
           "name": {
             "description": "The name of the assistant. The maximum length is 256 characters.\n",
@@ -973,7 +973,7 @@
         "properties": {
           "frequency_penalty": {
             "default": 0,
-            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.\n\n[See more information about frequency and presence penalties.](/docs/guides/text-generation/parameter-details)\n",
+            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.\n\n<a href=\"/docs/guides/text-generation/parameter-details\">See more information about frequency and presence penalties.<a/>\n",
             "maximum": 2,
             "minimum": -2,
             "nullable": true,
@@ -1024,12 +1024,12 @@
             "type": "boolean"
           },
           "max_tokens": {
-            "description": "The maximum number of [tokens](/tokenizer) that can be generated in the chat completion.\n\nThe total length of input tokens and generated tokens is limited by the model's context length. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.\n",
+            "description": "The maximum number of <a href=\"/tokenizer\">tokens</a> that can be generated in the chat completion.\n\nThe total length of input tokens and generated tokens is limited by the model's context length. <a href=\"https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken\">Example Python code</a> for counting tokens.\n",
             "nullable": true,
             "type": "integer"
           },
           "messages": {
-            "description": "A list of messages comprising the conversation so far. [Example Python code](https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models).",
+            "description": "A list of messages comprising the conversation so far. <a href=\"https://cookbook.openai.com/examples/how_to_format_inputs_to_chatgpt_models\">Example Python code</a>.",
             "items": {
               "$ref": "#/components/schemas/ChatCompletionRequestMessage"
             },
@@ -1037,7 +1037,7 @@
             "type": "array"
           },
           "model": {
-            "description": "ID of the model to use. See the [model endpoint compatibility](/docs/models/model-endpoint-compatibility) table for details on which models work with the Chat API.",
+            "description": "ID of the model to use. See the <a href=\"/docs/models/model-endpoint-compatibility\">model endpoint compatibility</a> table for details on which models work with the Chat API.",
             "enum": [
               "gpt-4o-mini",
               "gpt-4o",
@@ -1077,14 +1077,14 @@
           },
           "presence_penalty": {
             "default": 0,
-            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.\n\n[See more information about frequency and presence penalties.](/docs/guides/text-generation/parameter-details)\n",
+            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.\n\n<a href=\"/docs/guides/text-generation/parameter-details\">See more information about frequency and presence penalties.</a>\n",
             "maximum": 2,
             "minimum": -2,
             "nullable": true,
             "type": "number"
           },
           "response_format": {
-            "description": "An object specifying the format that the model must output. Compatible with [GPT-4 Turbo](/docs/models/gpt-4-and-gpt-4-turbo) and `gpt-3.5-turbo-1106`.\n\nSetting to `{ \"type\": \"json_object\" }` enables JSON mode, which guarantees the message the model generates is valid JSON.\n\n**Important:** when using JSON mode, you **must** also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly \"stuck\" request. Also note that the message content may be partially cut off if `finish_reason=\"length\"`, which indicates the generation exceeded `max_tokens` or the conversation exceeded the max context length.\n",
+            "description": "An object specifying the format that the model must output. Compatible with <a href=\"/docs/models/gpt-4-and-gpt-4-turbo\">GPT-4 Turbo</a> and `gpt-3.5-turbo-1106`.\n\nSetting to `{ \"type\": \"json_object\" }` enables JSON mode, which guarantees the message the model generates is valid JSON.\n\n**Important:** when using JSON mode, you **must** also instruct the model to produce JSON yourself via a system or user message. Without this, the model may generate an unending stream of whitespace until the generation reaches the token limit, resulting in a long-running and seemingly \"stuck\" request. Also note that the message content may be partially cut off if `finish_reason=\"length\"`, which indicates the generation exceeded `max_tokens` or the conversation exceeded the max context length.\n",
             "properties": {
               "type": {
                 "default": "text",
@@ -1129,7 +1129,7 @@
           },
           "stream": {
             "default": false,
-            "description": "If set, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message. [Example Python code](https://cookbook.openai.com/examples/how_to_stream_completions).\n",
+            "description": "If set, partial message deltas will be sent, like in ChatGPT. Tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message. <a href=\"https://cookbook.openai.com/examples/how_to_stream_completions\">Example Python code</a>.\n",
             "nullable": true,
             "type": "boolean"
           },
@@ -1169,7 +1169,7 @@
             "type": "number"
           },
           "user": {
-            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).\n",
+            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. <a href=\"/docs/guides/safety-best-practices/end-user-ids\">Learn more</a>.\n",
             "example": "user-1234",
             "type": "string"
           }
@@ -1385,7 +1385,7 @@
           },
           "frequency_penalty": {
             "default": 0,
-            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.\n\n[See more information about frequency and presence penalties.](/docs/guides/text-generation/parameter-details)\n",
+            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.\n\n<a href=\"/docs/guides/text-generation/parameter-details\">See more information about frequency and presence penalties.</a>\n",
             "maximum": 2,
             "minimum": -2,
             "nullable": true,
@@ -1411,7 +1411,7 @@
           },
           "max_tokens": {
             "default": 16,
-            "description": "The maximum number of [tokens](/tokenizer) that can be generated in the completion.\n\nThe token count of your prompt plus `max_tokens` cannot exceed the model's context length. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.\n",
+            "description": "The maximum number of <a href=\"/tokenizer\">tokens</a> that can be generated in the completion.\n\nThe token count of your prompt plus `max_tokens` cannot exceed the model's context length. <a href=\"https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken\">Example Python code</a> for counting tokens.\n",
             "example": 16,
             "minimum": 0,
             "nullable": true,
@@ -1431,7 +1431,7 @@
                 "type": "string"
               }
             ],
-            "description": "ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.\n",
+            "description": "ID of the model to use. You can use the <a href=\"/docs/api-reference/models/list\">List models</a> API to see all of your available models, or see our <a href=\"/docs/models/overview\">Model overview</a> for descriptions of them.\n",
             "x-oaiTypeLabel": "string"
           },
           "n": {
@@ -1445,7 +1445,7 @@
           },
           "presence_penalty": {
             "default": 0,
-            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.\n\n[See more information about frequency and presence penalties.](/docs/guides/text-generation/parameter-details)\n",
+            "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.\n\n<a href=\"/docs/guides/text-generation/parameter-details\">See more information about frequency and presence penalties.</a>\n",
             "maximum": 2,
             "minimum": -2,
             "nullable": true,
@@ -1522,7 +1522,7 @@
           },
           "stream": {
             "default": false,
-            "description": "Whether to stream back partial progress. If set, tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message. [Example Python code](https://cookbook.openai.com/examples/how_to_stream_completions).\n",
+            "description": "Whether to stream back partial progress. If set, tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message. <a href=\"https://cookbook.openai.com/examples/how_to_stream_completions\">Example Python code</a>.\n",
             "nullable": true,
             "type": "boolean"
           },
@@ -1552,7 +1552,7 @@
             "type": "number"
           },
           "user": {
-            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).\n",
+            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. <a href=\"/docs/guides/safety-best-practices/end-user-ids\">Learn more</a>.\n",
             "example": "user-1234",
             "type": "string"
           }
@@ -1689,7 +1689,7 @@
             "type": "string"
           },
           "input": {
-            "description": "Input text to embed, encoded as a string or array of tokens. To embed multiple inputs in a single request, pass an array of strings or array of token arrays. The input must not exceed the max input tokens for the model (8192 tokens for `text-embedding-ada-002`), cannot be an empty string, and any array must be 2048 dimensions or less. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.\n",
+            "description": "Input text to embed, encoded as a string or array of tokens. To embed multiple inputs in a single request, pass an array of strings or array of token arrays. The input must not exceed the max input tokens for the model (8192 tokens for `text-embedding-ada-002`), cannot be an empty string, and any array must be 2048 dimensions or less. <a href=\"https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken\">Example Python code</a> for counting tokens.\n",
             "example": "The quick brown fox jumped over the lazy dog",
             "oneOf": [
               {
@@ -1741,7 +1741,7 @@
             "x-oaiExpandable": true
           },
           "model": {
-            "description": "ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.\n",
+            "description": "ID of the model to use. You can use the <a href=\"/docs/api-reference/models/list\">List models</a> API to see all of your available models, or see our <a href=\"/docs/models/overview\">Model overview</a> for descriptions of them.\n",
             "enum": [
               "text-embedding-ada-002",
               "text-embedding-3-small",
@@ -1752,7 +1752,7 @@
             "x-oaiTypeLabel": "string"
           },
           "user": {
-            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).\n",
+            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. <a href=\"/docs/guides/safety-best-practices/end-user-ids\">Learn more</a>.\n",
             "example": "user-1234",
             "type": "string"
           }
@@ -1819,7 +1819,7 @@
             "type": "string"
           },
           "purpose": {
-            "description": "The intended purpose of the uploaded file.\n\nUse \"fine-tune\" for [Fine-tuning](/docs/api-reference/fine-tuning) and \"assistants\" for [Assistants](/docs/api-reference/assistants) and [Messages](/docs/api-reference/messages). This allows us to validate the format of the uploaded file is correct for fine-tuning.\n",
+            "description": "The intended purpose of the uploaded file.\n\nUse \"fine-tune\" for <a href=\"/docs/api-reference/fine-tuning\">Fine-tuning</a> and \"assistants\" for <a href=\"/docs/api-reference/assistants\">Assistants</a> and <a href=\"/docs/api-reference/messages\">Messages</a>. This allows us to validate the format of the uploaded file is correct for fine-tuning.\n",
             "enum": [
               "fine-tune",
               "assistants"
@@ -1906,7 +1906,7 @@
                 "type": "string"
               }
             ],
-            "description": "The name of the model to fine-tune. You can select one of the\n[supported models](/docs/guides/fine-tuning/what-models-can-be-fine-tuned).\n",
+            "description": "The name of the model to fine-tune. You can select one of the\n<a href=\"/docs/guides/fine-tuning/what-models-can-be-fine-tuned\">supported models</a>.\n",
             "example": "gpt-3.5-turbo",
             "x-oaiTypeLabel": "string"
           },
@@ -1919,12 +1919,12 @@
             "type": "string"
           },
           "training_file": {
-            "description": "The ID of an uploaded file that contains training data.\n\nSee [upload file](/docs/api-reference/files/upload) for how to upload a file.\n\nYour dataset must be formatted as a JSONL file. Additionally, you must upload your file with the purpose `fine-tune`.\n\nSee the [fine-tuning guide](/docs/guides/fine-tuning) for more details.\n",
+            "description": "The ID of an uploaded file that contains training data.\n\nSee <a href=\"/docs/api-reference/files/upload\">upload file</a> for how to upload a file.\n\nYour dataset must be formatted as a JSONL file. Additionally, you must upload your file with the purpose `fine-tune`.\n\nSee the <a href=\"/docs/guides/fine-tuning\">fine-tuning guide</a> for more details.\n",
             "example": "file-abc123",
             "type": "string"
           },
           "validation_file": {
-            "description": "The ID of an uploaded file that contains validation data.\n\nIf you provide this file, the data is used to generate validation\nmetrics periodically during fine-tuning. These metrics can be viewed in\nthe fine-tuning results file.\nThe same data should not be present in both train and validation files.\n\nYour dataset must be formatted as a JSONL file. You must upload your file with the purpose `fine-tune`.\n\nSee the [fine-tuning guide](/docs/guides/fine-tuning) for more details.\n",
+            "description": "The ID of an uploaded file that contains validation data.\n\nIf you provide this file, the data is used to generate validation\nmetrics periodically during fine-tuning. These metrics can be viewed in\nthe fine-tuning results file.\nThe same data should not be present in both train and validation files.\n\nYour dataset must be formatted as a JSONL file. You must upload your file with the purpose `fine-tune`.\n\nSee the <a href=\"/docs/guides/fine-tuning\">fine-tuning guide</a> for more details.\n",
             "example": "file-abc123",
             "nullable": true,
             "type": "string"
@@ -2004,7 +2004,7 @@
             "type": "string"
           },
           "user": {
-            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).\n",
+            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. <a href=\"/docs/guides/safety-best-practices/end-user-ids\">Learn more</a>.\n",
             "example": "user-1234",
             "type": "string"
           }
@@ -2090,7 +2090,7 @@
             "type": "string"
           },
           "user": {
-            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).\n",
+            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. <a href=\"/docs/guides/safety-best-practices/end-user-ids\">Learn more</a>.\n",
             "example": "user-1234",
             "type": "string"
           }
@@ -2158,7 +2158,7 @@
             "type": "string"
           },
           "user": {
-            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices/end-user-ids).\n",
+            "description": "A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. <a href=\"/docs/guides/safety-best-practices/end-user-ids\">Learn more</a>.\n",
             "example": "user-1234",
             "type": "string"
           }
@@ -2179,7 +2179,7 @@
           },
           "file_ids": {
             "default": [],
-            "description": "A list of [File](/docs/api-reference/files) IDs that the message should use. There can be a maximum of 10 files attached to a message. Useful for tools like `retrieval` and `code_interpreter` that can access and use files.",
+            "description": "A list of <a href=\"/docs/api-reference/files\">File</a> IDs that the message should use. There can be a maximum of 10 files attached to a message. Useful for tools like `retrieval` and `code_interpreter` that can access and use files.",
             "items": {
               "type": "string"
             },
@@ -2428,11 +2428,11 @@
             "type": "string"
           },
           "assistant_id": {
-            "description": "The ID of the [assistant](/docs/api-reference/assistants) to use to execute this run.",
+            "description": "The ID of the <a href=\"/docs/api-reference/assistants\">assistant</a> to use to execute this run.",
             "type": "string"
           },
           "instructions": {
-            "description": "Overrides the [instructions](/docs/api-reference/assistants/createAssistant) of the assistant. This is useful for modifying the behavior on a per-run basis.",
+            "description": "Overrides the <a href=\"/docs/api-reference/assistants/createAssistant\">instructions</a> of the assistant. This is useful for modifying the behavior on a per-run basis.",
             "nullable": true,
             "type": "string"
           },
@@ -2443,7 +2443,7 @@
             "x-oaiTypeLabel": "map"
           },
           "model": {
-            "description": "The ID of the [Model](/docs/api-reference/models) to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used.",
+            "description": "The ID of the <a href=\"/docs/api-reference/models\">Model</a> to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used.",
             "nullable": true,
             "type": "string"
           },
@@ -2495,7 +2495,7 @@
                 "type": "string"
               }
             ],
-            "description": "One of the available [TTS models](/docs/models/tts): `tts-1` or `tts-1-hd`\n",
+            "description": "One of the available <a href=\"/docs/models/tts\">TTS models</a>: `tts-1` or `tts-1-hd`\n",
             "x-oaiTypeLabel": "string"
           },
           "response_format": {
@@ -2517,7 +2517,7 @@
             "type": "number"
           },
           "voice": {
-            "description": "The voice to use when generating the audio. Supported voices are `alloy`, `echo`, `fable`, `onyx`, `nova`, and `shimmer`. Previews of the voices are available in the [Text to speech guide](/docs/guides/text-to-speech/voice-options).",
+            "description": "The voice to use when generating the audio. Supported voices are `alloy`, `echo`, `fable`, `onyx`, `nova`, and `shimmer`. Previews of the voices are available in the <a href=\"/docs/guides/text-to-speech/voice-options\">Text to speech guide</a>.",
             "enum": [
               "alloy",
               "echo",
@@ -2540,7 +2540,7 @@
         "additionalProperties": false,
         "properties": {
           "assistant_id": {
-            "description": "The ID of the [assistant](/docs/api-reference/assistants) to use to execute this run.",
+            "description": "The ID of the <a href=\"/docs/api-reference/assistants\">assistant</a> to use to execute this run.",
             "type": "string"
           },
           "instructions": {
@@ -2555,7 +2555,7 @@
             "x-oaiTypeLabel": "map"
           },
           "model": {
-            "description": "The ID of the [Model](/docs/api-reference/models) to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used.",
+            "description": "The ID of the <a href=\"/docs/api-reference/models\">Model</a> to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used.",
             "nullable": true,
             "type": "string"
           },
@@ -2593,7 +2593,7 @@
         "additionalProperties": false,
         "properties": {
           "messages": {
-            "description": "A list of [messages](/docs/api-reference/messages) to start the thread with.",
+            "description": "A list of <a href=\"/docs/api-reference/messages\">messages</a> to start the thread with.",
             "items": {
               "$ref": "#/components/schemas/CreateMessageRequest"
             },
@@ -2618,7 +2618,7 @@
             "x-oaiTypeLabel": "file"
           },
           "language": {
-            "description": "The language of the input audio. Supplying the input language in [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) format will improve accuracy and latency.\n",
+            "description": "The language of the input audio. Supplying the input language in <a href=\"https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes\">ISO-639-1</a> format will improve accuracy and latency.\n",
             "type": "string"
           },
           "model": {
@@ -2631,7 +2631,7 @@
             "x-oaiTypeLabel": "string"
           },
           "prompt": {
-            "description": "An optional text to guide the model's style or continue a previous audio segment. The [prompt](/docs/guides/speech-to-text/prompting) should match the audio language.\n",
+            "description": "An optional text to guide the model's style or continue a previous audio segment. The <a href=\"/docs/guides/speech-to-text/prompting\">prompt</a> should match the audio language.\n",
             "type": "string"
           },
           "response_format": {
@@ -2648,7 +2648,7 @@
           },
           "temperature": {
             "default": 0,
-            "description": "The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use [log probability](https://en.wikipedia.org/wiki/Log_probability) to automatically increase the temperature until certain thresholds are hit.\n",
+            "description": "The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use <a href=\"https://en.wikipedia.org/wiki/Log_probability\">log probability</a> to automatically increase the temperature until certain thresholds are hit.\n",
             "type": "number"
           }
         },
@@ -2695,7 +2695,7 @@
             "x-oaiTypeLabel": "string"
           },
           "prompt": {
-            "description": "An optional text to guide the model's style or continue a previous audio segment. The [prompt](/docs/guides/speech-to-text/prompting) should be in English.\n",
+            "description": "An optional text to guide the model's style or continue a previous audio segment. The <a href=\"/docs/guides/speech-to-text/prompting\">prompt</a> should be in English.\n",
             "type": "string"
           },
           "response_format": {
@@ -2705,7 +2705,7 @@
           },
           "temperature": {
             "default": 0,
-            "description": "The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use [log probability](https://en.wikipedia.org/wiki/Log_probability) to automatically increase the temperature until certain thresholds are hit.\n",
+            "description": "The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use <a href=\"https://en.wikipedia.org/wiki/Log_probability\">log probability</a> to automatically increase the temperature until certain thresholds are hit.\n",
             "type": "number"
           }
         },
@@ -2727,7 +2727,7 @@
         "type": "object"
       },
       "DeleteAssistantFileResponse": {
-        "description": "Deletes the association between the assistant and the file, but does not delete the [File](/docs/api-reference/files) object itself.",
+        "description": "Deletes the association between the assistant and the file, but does not delete the <a href=\"/docs/api-reference/files\">File</a> object itself.",
         "properties": {
           "deleted": {
             "type": "boolean"
@@ -2860,7 +2860,7 @@
         "description": "Represents an embedding vector returned by embedding endpoint.\n",
         "properties": {
           "embedding": {
-            "description": "The embedding vector, which is a list of floats. The length of vector depends on the model as listed in the [embedding guide](/docs/guides/embeddings).\n",
+            "description": "The embedding vector, which is a list of floats. The length of vector depends on the model as listed in the <a href=\"/docs/guides/embeddings\">embedding guide</a>.\n",
             "items": {
               "type": "number"
             },
@@ -2970,7 +2970,7 @@
             "type": "integer"
           },
           "hyperparameters": {
-            "description": "The hyperparameters used for the fine-tuning job. See the [fine-tuning guide](/docs/guides/fine-tuning) for more details.",
+            "description": "The hyperparameters used for the fine-tuning job. See the <a href=\"/docs/guides/fine-tuning\">fine-tuning guide</a> for more details.",
             "properties": {
               "n_epochs": {
                 "default": "auto",
@@ -3015,7 +3015,7 @@
             "type": "string"
           },
           "result_files": {
-            "description": "The compiled results file ID(s) for the fine-tuning job. You can retrieve the results with the [Files API](/docs/api-reference/files/retrieve-contents).",
+            "description": "The compiled results file ID(s) for the fine-tuning job. You can retrieve the results with the <a href=\"/docs/api-reference/files/retrieve-contents\">Files API</a>.",
             "items": {
               "example": "file-abc123",
               "type": "string"
@@ -3040,11 +3040,11 @@
             "type": "integer"
           },
           "training_file": {
-            "description": "The file ID used for training. You can retrieve the training data with the [Files API](/docs/api-reference/files/retrieve-contents).",
+            "description": "The file ID used for training. You can retrieve the training data with the <a href=\"/docs/api-reference/files/retrieve-contents\">Files API</a>.",
             "type": "string"
           },
           "validation_file": {
-            "description": "The file ID used for validation. You can retrieve the validation results with the [Files API](/docs/api-reference/files/retrieve-contents).",
+            "description": "The file ID used for validation. You can retrieve the validation results with the <a href=\"/docs/api-reference/files/retrieve-contents\">Files API</a>.",
             "nullable": true,
             "type": "string"
           }
@@ -3133,7 +3133,7 @@
       },
       "FunctionParameters": {
         "additionalProperties": true,
-        "description": "The parameters the functions accepts, described as a JSON Schema object. See the [guide](/docs/guides/text-generation/function-calling) for examples, and the [JSON Schema reference](https://json-schema.org/understanding-json-schema/) for documentation about the format. \n\nOmitting `parameters` defines a function with an empty parameter list.",
+        "description": "The parameters the functions accepts, described as a JSON Schema object. See the <a href=\"/docs/guides/text-generation/function-calling\">guide</a> for examples, and the <a href=\"https://json-schema.org/understanding-json-schema/\">JSON Schema reference</a> for documentation about the format. \n\nOmitting `parameters` defines a function with an empty parameter list.",
         "type": "object"
       },
       "Image": {
@@ -3504,12 +3504,12 @@
         ]
       },
       "MessageContentImageFileObject": {
-        "description": "References an image [File](/docs/api-reference/files) in the content of a message.",
+        "description": "References an image <a href=\"/docs/api-reference/files\">File</a> in the content of a message.",
         "properties": {
           "image_file": {
             "properties": {
               "file_id": {
-                "description": "The [File](/docs/api-reference/files) ID of the image in the message content.",
+                "description": "The <a href=\"/docs/api-reference/files\">File</a> ID of the image in the message content.",
                 "type": "string"
               }
             },
@@ -3685,7 +3685,7 @@
             "type": "string"
           },
           "message_id": {
-            "description": "The ID of the [message](/docs/api-reference/messages) that the [File](/docs/api-reference/files) is attached to.",
+            "description": "The ID of the <a href=\"/docs/api-reference/messages\">message</a> that the <a href=\"/docs/api-reference/files\">File</a> is attached to.",
             "type": "string"
           },
           "object": {
@@ -3711,10 +3711,10 @@
         }
       },
       "MessageObject": {
-        "description": "Represents a message within a [thread](/docs/api-reference/threads).",
+        "description": "Represents a message within a <a href=\"/docs/api-reference/threads\">thread</a>.",
         "properties": {
           "assistant_id": {
-            "description": "If applicable, the ID of the [assistant](/docs/api-reference/assistants) that authored this message.",
+            "description": "If applicable, the ID of the <a href=\"/docs/api-reference/assistants\">assistant</a> that authored this message.",
             "nullable": true,
             "type": "string"
           },
@@ -3739,7 +3739,7 @@
           },
           "file_ids": {
             "default": [],
-            "description": "A list of [file](/docs/api-reference/files) IDs that the assistant should use. Useful for tools like retrieval and code_interpreter that can access files. A maximum of 10 files can be attached to a message.",
+            "description": "A list of <a href=\"/docs/api-reference/files\">file</a> IDs that the assistant should use. Useful for tools like retrieval and code_interpreter that can access files. A maximum of 10 files can be attached to a message.",
             "items": {
               "type": "string"
             },
@@ -3772,12 +3772,12 @@
             "type": "string"
           },
           "run_id": {
-            "description": "If applicable, the ID of the [run](/docs/api-reference/runs) associated with the authoring of this message.",
+            "description": "If applicable, the ID of the <a href=\"/docs/api-reference/runs\">run</a> associated with the authoring of this message.",
             "nullable": true,
             "type": "string"
           },
           "thread_id": {
-            "description": "The [thread](/docs/api-reference/threads) ID that this message belongs to.",
+            "description": "The <a href=\"/docs/api-reference/threads\">thread</a> ID that this message belongs to.",
             "type": "string"
           }
         },
@@ -3847,7 +3847,7 @@
           },
           "file_ids": {
             "default": [],
-            "description": "A list of [File](/docs/api-reference/files) IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order. If a file was previously attached to the list but does not show up in the list, it will be deleted from the assistant.\n",
+            "description": "A list of <a href=\"/docs/api-reference/files\">File</a> IDs attached to this assistant. There can be a maximum of 20 files attached to the assistant. Files are ordered by their creation date in ascending order. If a file was previously attached to the list but does not show up in the list, it will be deleted from the assistant.\n",
             "items": {
               "type": "string"
             },
@@ -3872,7 +3872,7 @@
                 "type": "string"
               }
             ],
-            "description": "ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models/overview) for descriptions of them.\n"
+            "description": "ID of the model to use. You can use the <a href=\"/docs/api-reference/models/list\">List models</a> API to see all of your available models, or see our <a href=\"/docs/models/overview\">Model overview</a> for descriptions of them.\n"
           },
           "name": {
             "description": "The name of the assistant. The maximum length is 256 characters.\n",
@@ -4031,10 +4031,10 @@
         "type": "object"
       },
       "RunObject": {
-        "description": "Represents an execution run on a [thread](/docs/api-reference/threads).",
+        "description": "Represents an execution run on a <a href=\"/docs/api-reference/threads\">thread</a>.",
         "properties": {
           "assistant_id": {
-            "description": "The ID of the [assistant](/docs/api-reference/assistants) used for execution of this run.",
+            "description": "The ID of the <a href=\"/docs/api-reference/assistants\">assistant</a> used for execution of this run.",
             "type": "string"
           },
           "cancelled_at": {
@@ -4062,7 +4062,7 @@
           },
           "file_ids": {
             "default": [],
-            "description": "The list of [File](/docs/api-reference/files) IDs the [assistant](/docs/api-reference/assistants) used for this run.",
+            "description": "The list of <a href=\"/docs/api-reference/files\">File</a> IDs the <a href=\"/docs/api-reference/assistants\">assistant</a> used for this run.",
             "items": {
               "type": "string"
             },
@@ -4073,7 +4073,7 @@
             "type": "string"
           },
           "instructions": {
-            "description": "The instructions that the [assistant](/docs/api-reference/assistants) used for this run.",
+            "description": "The instructions that the <a href=\"/docs/api-reference/assistants\">assistant</a> used for this run.",
             "type": "string"
           },
           "last_error": {
@@ -4106,7 +4106,7 @@
             "x-oaiTypeLabel": "map"
           },
           "model": {
-            "description": "The model that the [assistant](/docs/api-reference/assistants) used for this run.",
+            "description": "The model that the <a href=\"/docs/api-reference/assistants\">assistant</a> used for this run.",
             "type": "string"
           },
           "object": {
@@ -4170,12 +4170,12 @@
             "type": "string"
           },
           "thread_id": {
-            "description": "The ID of the [thread](/docs/api-reference/threads) that was executed on as a part of this run.",
+            "description": "The ID of the <a href=\"/docs/api-reference/threads\">thread</a> that was executed on as a part of this run.",
             "type": "string"
           },
           "tools": {
             "default": [],
-            "description": "The list of tools that the [assistant](/docs/api-reference/assistants) used for this run.",
+            "description": "The list of tools that the <a href=\"/docs/api-reference/assistants\">assistant</a> used for this run.",
             "items": {
               "oneOf": [
                 {
@@ -4338,7 +4338,7 @@
           "image": {
             "properties": {
               "file_id": {
-                "description": "The [file](/docs/api-reference/files) ID of the image.",
+                "description": "The <a href=\"/docs/api-reference/files\">file</a> ID of the image.",
                 "type": "string"
               }
             },
@@ -4398,7 +4398,7 @@
                 "type": "string"
               },
               "output": {
-                "description": "The output of the function. This will be `null` if the outputs have not been [submitted](/docs/api-reference/runs/submitToolOutputs) yet.",
+                "description": "The output of the function. This will be `null` if the outputs have not been <a href=\"/docs/api-reference/runs/submitToolOutputs\">submitted</a> yet.",
                 "nullable": true,
                 "type": "string"
               }
@@ -4498,7 +4498,7 @@
         "description": "Represents a step in execution of a run.\n",
         "properties": {
           "assistant_id": {
-            "description": "The ID of the [assistant](/docs/api-reference/assistants) associated with the run step.",
+            "description": "The ID of the <a href=\"/docs/api-reference/assistants\">assistant</a> associated with the run step.",
             "type": "string"
           },
           "cancelled_at": {
@@ -4566,7 +4566,7 @@
             "type": "string"
           },
           "run_id": {
-            "description": "The ID of the [run](/docs/api-reference/runs) that this run step is a part of.",
+            "description": "The ID of the <a href=\"/docs/api-reference/runs\">run</a> that this run step is a part of.",
             "type": "string"
           },
           "status": {
@@ -4594,7 +4594,7 @@
             "x-oaiExpandable": true
           },
           "thread_id": {
-            "description": "The ID of the [thread](/docs/api-reference/threads) that was run.",
+            "description": "The ID of the <a href=\"/docs/api-reference/threads\">thread</a> that was run.",
             "type": "string"
           },
           "type": {
@@ -4657,7 +4657,7 @@
             "type": "object"
           },
           "id": {
-            "description": "The ID of the tool call. This ID must be referenced when you submit the tool outputs in using the [Submit tool outputs to run](/docs/api-reference/runs/submitToolOutputs) endpoint.",
+            "description": "The ID of the tool call. This ID must be referenced when you submit the tool outputs in using the <a href=\"/docs/api-reference/runs/submitToolOutputs\">Submit tool outputs to run</a> endpoint.",
             "type": "string"
           },
           "type": {
@@ -4702,7 +4702,7 @@
         "type": "object"
       },
       "ThreadObject": {
-        "description": "Represents a thread that contains [messages](/docs/api-reference/messages).",
+        "description": "Represents a thread that contains <a href=\"/docs/api-reference/messages\">messages</a>.",
         "properties": {
           "created_at": {
             "description": "The Unix timestamp (in seconds) for when the thread was created.",
@@ -4753,7 +4753,7 @@
       "name": "OpenAI Support",
       "url": "https://help.openai.com/"
     },
-    "description": "The OpenAI REST API. Please see https://platform.openai.com/docs/api-reference for more details.",
+    "description": "The OpenAI REST API. Please see <a href=\"https://platform.openai.com/docs/api-reference\">here</a> for more details.",
     "license": {
       "name": "MIT",
       "url": "https://github.com/openai/openai-openapi/blob/master/LICENSE"
@@ -4836,7 +4836,7 @@
           },
           "group": "assistants",
           "name": "List assistants",
-          "returns": "A list of [assistant](/docs/api-reference/assistants/object) objects."
+          "returns": "A list of <a href=\"/docs/api-reference/assistants/object\">assistant</a> objects."
         }
       },
       "post": {
@@ -4891,7 +4891,7 @@
           ],
           "group": "assistants",
           "name": "Create assistant",
-          "returns": "An [assistant](/docs/api-reference/assistants/object) object."
+          "returns": "An <a href=\"/docs/api-reference/assistants/object\">assistant</a> object."
         }
       }
     },
@@ -4981,7 +4981,7 @@
           },
           "group": "assistants",
           "name": "Retrieve assistant",
-          "returns": "The [assistant](/docs/api-reference/assistants/object) object matching the specified ID."
+          "returns": "The <a href=\"/docs/api-reference/assistants/object\">assistant</a> object matching the specified ID."
         }
       },
       "post": {
@@ -5035,7 +5035,7 @@
           },
           "group": "assistants",
           "name": "Modify assistant",
-          "returns": "The modified [assistant](/docs/api-reference/assistants/object) object."
+          "returns": "The modified <a href=\"/docs/api-reference/assistants/object\">assistant</a> object."
         }
       }
     },
@@ -5120,7 +5120,7 @@
           },
           "group": "assistants",
           "name": "List assistant files",
-          "returns": "A list of [assistant file](/docs/api-reference/assistants/file-object) objects."
+          "returns": "A list of <a href=\"/docs/api-reference/assistants/file-object\">assistant file</a> objects."
         }
       },
       "post": {
@@ -5159,7 +5159,7 @@
             "description": "OK"
           }
         },
-        "summary": "Create an assistant file by attaching a [File](/docs/api-reference/files) to an [assistant](/docs/api-reference/assistants).",
+        "summary": "Create an assistant file by attaching a <a href=\"/docs/api-reference/files\">File</a> to an <a href=\"/docs/api-reference/assistants\">assistant</a>.",
         "tags": [
           "Assistants"
         ],
@@ -5175,7 +5175,7 @@
           },
           "group": "assistants",
           "name": "Create assistant file",
-          "returns": "An [assistant file](/docs/api-reference/assistants/file-object) object."
+          "returns": "An <a href=\"/docs/api-reference/assistants/file-object\">assistant file</a> object."
         }
       }
     },
@@ -5283,7 +5283,7 @@
           },
           "group": "assistants",
           "name": "Retrieve assistant file",
-          "returns": "The [assistant file](/docs/api-reference/assistants/file-object) object matching the specified ID."
+          "returns": "The <a href=\"/docs/api-reference/assistants/file-object\">assistant file</a> object matching the specified ID."
         }
       }
     },
@@ -5507,7 +5507,7 @@
           "group": "chat",
           "name": "Create chat completion",
           "path": "create",
-          "returns": "Returns a [chat completion](/docs/api-reference/chat/object) object, or a streamed sequence of [chat completion chunk](/docs/api-reference/chat/streaming) objects if the request is streamed.\n"
+          "returns": "Returns a <a href=\"/docs/api-reference/chat/object\">chat completion</a> object, or a streamed sequence of <a href=\"/docs/api-reference/chat/streaming\">chat completion chunk</a> objects if the request is streamed.\n"
         }
       }
     },
@@ -5564,7 +5564,7 @@
           "group": "completions",
           "legacy": true,
           "name": "Create completion",
-          "returns": "Returns a [completion](/docs/api-reference/completions/object) object, or a sequence of completion objects if the request is streamed.\n"
+          "returns": "Returns a <a href=\"/docs/api-reference/completions/object\">completion</a> object, or a sequence of completion objects if the request is streamed.\n"
         }
       }
     },
@@ -5608,7 +5608,7 @@
           },
           "group": "embeddings",
           "name": "Create embeddings",
-          "returns": "A list of [embedding](/docs/api-reference/embeddings/object) objects."
+          "returns": "A list of <a href=\"/docs/api-reference/embeddings/object\">embedding</a> objects."
         }
       }
     },
@@ -5653,7 +5653,7 @@
           },
           "group": "files",
           "name": "List files",
-          "returns": "A list of [File](/docs/api-reference/files/object) objects."
+          "returns": "A list of <a href=\"/docs/api-reference/files/object\">File</a> objects."
         }
       },
       "post": {
@@ -5680,7 +5680,7 @@
             "description": "OK"
           }
         },
-        "summary": "Upload a file that can be used across various endpoints. The size of all the files uploaded by one organization can be up to 100 GB.\n\nThe size of individual files can be a maximum of 512 MB or 2 million tokens for Assistants. See the [Assistants Tools guide](/docs/assistants/tools) to learn more about the types of files supported. The Fine-tuning API only supports `.jsonl` files.\n\nPlease [contact us](https://help.openai.com/) if you need to increase these storage limits.\n",
+        "summary": "Upload a file that can be used across various endpoints. The size of all the files uploaded by one organization can be up to 100 GB.\n\nThe size of individual files can be a maximum of 512 MB or 2 million tokens for Assistants. See the <a href=\"/docs/assistants/tools\">Assistants Tools guide</a> to learn more about the types of files supported. The Fine-tuning API only supports `.jsonl` files.\n\nPlease <a href=\"https://help.openai.com/\">contact us</a> if you need to increase these storage limits.\n",
         "tags": [
           "Files"
         ],
@@ -5695,7 +5695,7 @@
           },
           "group": "files",
           "name": "Upload file",
-          "returns": "The uploaded [File](/docs/api-reference/files/object) object."
+          "returns": "The uploaded <a href=\"/docs/api-reference/files/object\">File</a> object."
         }
       }
     },
@@ -5783,7 +5783,7 @@
           },
           "group": "files",
           "name": "Retrieve file",
-          "returns": "The [File](/docs/api-reference/files/object) object matching the specified ID."
+          "returns": "The <a href=\"/docs/api-reference/files/object\">File</a> object matching the specified ID."
         }
       }
     },
@@ -5882,7 +5882,7 @@
           },
           "group": "fine-tuning",
           "name": "List fine-tuning jobs",
-          "returns": "A list of paginated [fine-tuning job](/docs/api-reference/fine-tuning/object) objects."
+          "returns": "A list of paginated <a href=\"/docs/api-reference/fine-tuning/object\">fine-tuning job</a> objects."
         }
       },
       "post": {
@@ -5909,7 +5909,7 @@
             "description": "OK"
           }
         },
-        "summary": "Creates a fine-tuning job which begins the process of creating a new model from a given dataset.\n\nResponse includes details of the enqueued job including job status and the name of the fine-tuned models once complete.\n\n[Learn more about fine-tuning](/docs/guides/fine-tuning)\n",
+        "summary": "Creates a fine-tuning job which begins the process of creating a new model from a given dataset.\n\nResponse includes details of the enqueued job including job status and the name of the fine-tuned models once complete.\n\n<a href=\"/docs/guides/fine-tuning\">Learn more about fine-tuning</a>\n",
         "tags": [
           "Fine-tuning"
         ],
@@ -5945,7 +5945,7 @@
           ],
           "group": "fine-tuning",
           "name": "Create fine-tuning job",
-          "returns": "A [fine-tuning.job](/docs/api-reference/fine-tuning/object) object."
+          "returns": "A <a href=\"/docs/api-reference/fine-tuning/object\">fine-tuning.job</a> object."
         }
       }
     },
@@ -5976,7 +5976,7 @@
             "description": "OK"
           }
         },
-        "summary": "Get info about a fine-tuning job.\n\n[Learn more about fine-tuning](/docs/guides/fine-tuning)\n",
+        "summary": "Get info about a fine-tuning job.\n\n<a href=\"/docs/guides/fine-tuning\">Learn more about fine-tuning</a>\n",
         "tags": [
           "Fine-tuning"
         ],
@@ -5991,7 +5991,7 @@
           },
           "group": "fine-tuning",
           "name": "Retrieve fine-tuning job",
-          "returns": "The [fine-tuning](/docs/api-reference/fine-tuning/object) object with the given ID."
+          "returns": "The <a href=\"/docs/api-reference/fine-tuning/object\">fine-tuning</a> object with the given ID."
         }
       }
     },
@@ -6037,7 +6037,7 @@
           },
           "group": "fine-tuning",
           "name": "Cancel fine-tuning",
-          "returns": "The cancelled [fine-tuning](/docs/api-reference/fine-tuning/object) object."
+          "returns": "The cancelled <a href=\"/docs/api-reference/fine-tuning/object\">fine-tuning</a> object."
         }
       }
     },
@@ -6146,7 +6146,7 @@
           },
           "group": "images",
           "name": "Create image edit",
-          "returns": "Returns a list of [image](/docs/api-reference/images/object) objects."
+          "returns": "Returns a list of <a href=\"/docs/api-reference/images/object\">image</a> objects."
         }
       }
     },
@@ -6190,7 +6190,7 @@
           },
           "group": "images",
           "name": "Create image",
-          "returns": "Returns a list of [image](/docs/api-reference/images/object) objects."
+          "returns": "Returns a list of <a href=\"/docs/api-reference/images/object\">image</a> objects."
         }
       }
     },
@@ -6234,7 +6234,7 @@
           },
           "group": "images",
           "name": "Create image variation",
-          "returns": "Returns a list of [image](/docs/api-reference/images/object) objects."
+          "returns": "Returns a list of <a href=\"/docs/api-reference/images/object\">image</a> objects."
         }
       }
     },
@@ -6268,7 +6268,7 @@
           },
           "group": "models",
           "name": "List models",
-          "returns": "A list of [model](/docs/api-reference/models/object) objects."
+          "returns": "A list of <a href=\"/docs/api-reference/models/object\">model</a> objects."
         }
       }
     },
@@ -6358,7 +6358,7 @@
           },
           "group": "models",
           "name": "Retrieve model",
-          "returns": "The [model](/docs/api-reference/models/object) object matching the specified ID."
+          "returns": "The <a href=\"/docs/api-reference/models/object\">model</a> object matching the specified ID."
         }
       }
     },
@@ -6402,7 +6402,7 @@
           },
           "group": "moderations",
           "name": "Create moderation",
-          "returns": "A [moderation](/docs/api-reference/moderations/object) object."
+          "returns": "A <a href=\"/docs/api-reference/moderations/object\">moderation</a> object."
         }
       }
     },
@@ -6458,7 +6458,7 @@
           ],
           "group": "threads",
           "name": "Create thread",
-          "returns": "A [thread](/docs/api-reference/threads) object."
+          "returns": "A <a href=\"/docs/api-reference/threads\">thread</a> object."
         }
       }
     },
@@ -6503,7 +6503,7 @@
           },
           "group": "threads",
           "name": "Create thread and run",
-          "returns": "A [run](/docs/api-reference/runs/object) object."
+          "returns": "A <a href=\"/docs/api-reference/runs/object\">run</a> object."
         }
       }
     },
@@ -6593,7 +6593,7 @@
           },
           "group": "threads",
           "name": "Retrieve thread",
-          "returns": "The [thread](/docs/api-reference/threads/object) object matching the specified ID."
+          "returns": "The <a href=\"/docs/api-reference/threads/object\">thread</a> object matching the specified ID."
         }
       },
       "post": {
@@ -6647,7 +6647,7 @@
           },
           "group": "threads",
           "name": "Modify thread",
-          "returns": "The modified [thread](/docs/api-reference/threads/object) object matching the specified ID."
+          "returns": "The modified <a href=\"/docs/api-reference/threads/object\">thread</a> object matching the specified ID."
         }
       }
     },
@@ -6656,7 +6656,7 @@
         "operationId": "listMessages",
         "parameters": [
           {
-            "description": "The ID of the [thread](/docs/api-reference/threads) the messages belong to.",
+            "description": "The ID of the <a href=\"/docs/api-reference/threads\">thread</a> the messages belong to.",
             "in": "path",
             "name": "thread_id",
             "required": true,
@@ -6732,14 +6732,14 @@
           },
           "group": "threads",
           "name": "List messages",
-          "returns": "A list of [message](/docs/api-reference/messages) objects."
+          "returns": "A list of <a href=\"/docs/api-reference/messages\">message</a> objects."
         }
       },
       "post": {
         "operationId": "createMessage",
         "parameters": [
           {
-            "description": "The ID of the [thread](/docs/api-reference/threads) to create a message for.",
+            "description": "The ID of the <a href=\"/docs/api-reference/threads\">thread</a> to create a message for.",
             "in": "path",
             "name": "thread_id",
             "required": true,
@@ -6786,7 +6786,7 @@
           },
           "group": "threads",
           "name": "Create message",
-          "returns": "A [message](/docs/api-reference/messages/object) object."
+          "returns": "A <a href=\"/docs/api-reference/messages/object\">message</a> object."
         }
       }
     },
@@ -6795,7 +6795,7 @@
         "operationId": "getMessage",
         "parameters": [
           {
-            "description": "The ID of the [thread](/docs/api-reference/threads) to which this message belongs.",
+            "description": "The ID of the <a href=\"/docs/api-reference/threads\">thread</a> to which this message belongs.",
             "in": "path",
             "name": "thread_id",
             "required": true,
@@ -6841,7 +6841,7 @@
           },
           "group": "threads",
           "name": "Retrieve message",
-          "returns": "The [message](/docs/api-reference/threads/messages/object) object matching the specified ID."
+          "returns": "The <a href=\"/docs/api-reference/threads/messages/object\">message</a> object matching the specified ID."
         }
       },
       "post": {
@@ -6904,7 +6904,7 @@
           },
           "group": "threads",
           "name": "Modify message",
-          "returns": "The modified [message](/docs/api-reference/threads/messages/object) object."
+          "returns": "The modified <a href=\"/docs/api-reference/threads/messages/object\">message</a> object."
         }
       }
     },
@@ -6998,7 +6998,7 @@
           },
           "group": "threads",
           "name": "List message files",
-          "returns": "A list of [message file](/docs/api-reference/messages/file-object) objects."
+          "returns": "A list of <a href=\"/docs/api-reference/messages/file-object\">message file</a> objects."
         }
       }
     },
@@ -7065,7 +7065,7 @@
           },
           "group": "threads",
           "name": "Retrieve message file",
-          "returns": "The [message file](/docs/api-reference/messages/file-object) object."
+          "returns": "The <a href=\"/docs/api-reference/messages/file-object\">message file</a> object."
         }
       }
     },
@@ -7150,7 +7150,7 @@
           },
           "group": "threads",
           "name": "List runs",
-          "returns": "A list of [run](/docs/api-reference/runs/object) objects."
+          "returns": "A list of <a href=\"/docs/api-reference/runs/object\">run</a> objects."
         }
       },
       "post": {
@@ -7204,7 +7204,7 @@
           },
           "group": "threads",
           "name": "Create run",
-          "returns": "A [run](/docs/api-reference/runs/object) object."
+          "returns": "A <a href=\"/docs/api-reference/runs/object\">run</a> object."
         }
       }
     },
@@ -7213,7 +7213,7 @@
         "operationId": "getRun",
         "parameters": [
           {
-            "description": "The ID of the [thread](/docs/api-reference/threads) that was run.",
+            "description": "The ID of the <a href=\"/docs/api-reference/threads\">thread</a> that was run.",
             "in": "path",
             "name": "thread_id",
             "required": true,
@@ -7259,14 +7259,14 @@
           },
           "group": "threads",
           "name": "Retrieve run",
-          "returns": "The [run](/docs/api-reference/runs/object) object matching the specified ID."
+          "returns": "The <a href=\"/docs/api-reference/runs/object\">run</a> object matching the specified ID."
         }
       },
       "post": {
         "operationId": "modifyRun",
         "parameters": [
           {
-            "description": "The ID of the [thread](/docs/api-reference/threads) that was run.",
+            "description": "The ID of the <a href=\"/docs/api-reference/threads\">thread</a> that was run.",
             "in": "path",
             "name": "thread_id",
             "required": true,
@@ -7322,7 +7322,7 @@
           },
           "group": "threads",
           "name": "Modify run",
-          "returns": "The modified [run](/docs/api-reference/runs/object) object matching the specified ID."
+          "returns": "The modified <a href=\"/docs/api-reference/runs/object\">run</a> object matching the specified ID."
         }
       }
     },
@@ -7377,7 +7377,7 @@
           },
           "group": "threads",
           "name": "Cancel a run",
-          "returns": "The modified [run](/docs/api-reference/runs/object) object matching the specified ID."
+          "returns": "The modified <a href=\"/docs/api-reference/runs/object\">run</a> object matching the specified ID."
         }
       }
     },
@@ -7471,7 +7471,7 @@
           },
           "group": "threads",
           "name": "List run steps",
-          "returns": "A list of [run step](/docs/api-reference/runs/step-object) objects."
+          "returns": "A list of <a href=\"/docs/api-reference/runs/step-object\">run step</a> objects."
         }
       }
     },
@@ -7535,7 +7535,7 @@
           },
           "group": "threads",
           "name": "Retrieve run step",
-          "returns": "The [run step](/docs/api-reference/runs/step-object) object matching the specified ID."
+          "returns": "The <a href=\"/docs/api-reference/runs/step-object\">run step</a> object matching the specified ID."
         }
       }
     },
@@ -7544,7 +7544,7 @@
         "operationId": "submitToolOuputsToRun",
         "parameters": [
           {
-            "description": "The ID of the [thread](/docs/api-reference/threads) to which this run belongs.",
+            "description": "The ID of the <a href=\"/docs/api-reference/threads\">thread</a> to which this run belongs.",
             "in": "path",
             "name": "thread_id",
             "required": true,
@@ -7600,7 +7600,7 @@
           },
           "group": "threads",
           "name": "Submit tool outputs to run",
-          "returns": "The modified [run](/docs/api-reference/runs/object) object matching the specified ID."
+          "returns": "The modified <a href=\"/docs/api-reference/runs/object\">run</a> object matching the specified ID."
         }
       }
     }
@@ -7660,7 +7660,7 @@
   "x-oaiMeta": {
     "groups": [
       {
-        "description": "Learn how to turn audio into text or text into audio.\n\nRelated guide: [Speech to text](/docs/guides/speech-to-text)\n",
+        "description": "Learn how to turn audio into text or text into audio.\n\nRelated guide: <a href=\"/docs/guides/speech-to-text\">Speech to text</a>\n",
         "id": "audio",
         "sections": [
           {
@@ -7682,7 +7682,7 @@
         "title": "Audio"
       },
       {
-        "description": "Given a list of messages comprising a conversation, the model will return a response.\n\nRelated guide: [Chat Completions](/docs/guides/text-generation)\n",
+        "description": "Given a list of messages comprising a conversation, the model will return a response.\n\nRelated guide: <a href=\"/docs/guides/text-generation\">Chat Completions</a>\n",
         "id": "chat",
         "sections": [
           {
@@ -7704,7 +7704,7 @@
         "title": "Chat"
       },
       {
-        "description": "Get a vector representation of a given input that can be easily consumed by machine learning models and algorithms.\n\nRelated guide: [Embeddings](/docs/guides/embeddings)\n",
+        "description": "Get a vector representation of a given input that can be easily consumed by machine learning models and algorithms.\n\nRelated guide: <a href=\"/docs/guides/embeddings\">Embeddings</a>\n",
         "id": "embeddings",
         "sections": [
           {
@@ -7721,7 +7721,7 @@
         "title": "Embeddings"
       },
       {
-        "description": "Manage fine-tuning jobs to tailor a model to your specific training data.\n\nRelated guide: [Fine-tune models](/docs/guides/fine-tuning)\n",
+        "description": "Manage fine-tuning jobs to tailor a model to your specific training data.\n\nRelated guide: <a href=\"/docs/guides/fine-tuning\">Fine-tune models</a>\n",
         "id": "fine-tuning",
         "sections": [
           {
@@ -7763,7 +7763,7 @@
         "title": "Fine-tuning"
       },
       {
-        "description": "Files are used to upload documents that can be used with features like [Assistants](/docs/api-reference/assistants) and [Fine-tuning](/docs/api-reference/fine-tuning).\n",
+        "description": "Files are used to upload documents that can be used with features like <a href=\"/docs/api-reference/assistants\">Assistants</a> and <a href=\"/docs/api-reference/fine-tuning\">Fine-tuning</a>.\n",
         "id": "files",
         "sections": [
           {
@@ -7800,7 +7800,7 @@
         "title": "Files"
       },
       {
-        "description": "Given a prompt and/or an input image, the model will generate a new image.\n\nRelated guide: [Image generation](/docs/guides/images)\n",
+        "description": "Given a prompt and/or an input image, the model will generate a new image.\n\nRelated guide: <a href=\"/docs/guides/images\">Image generation</a>\n",
         "id": "images",
         "sections": [
           {
@@ -7827,7 +7827,7 @@
         "title": "Images"
       },
       {
-        "description": "List and describe the various models available in the API. You can refer to the [Models](/docs/models) documentation to understand what models are available and the differences between them.\n",
+        "description": "List and describe the various models available in the API. You can refer to the <a href=\"/docs/models\">Models</a> documentation to understand what models are available and the differences between them.\n",
         "id": "models",
         "sections": [
           {
@@ -7854,7 +7854,7 @@
         "title": "Models"
       },
       {
-        "description": "Given a input text, outputs if the model classifies it as violating OpenAI's content policy.\n\nRelated guide: [Moderations](/docs/guides/moderation)\n",
+        "description": "Given a input text, outputs if the model classifies it as violating OpenAI's content policy.\n\nRelated guide: <a href=\"/docs/guides/moderation\">Moderations</a>\n",
         "id": "moderations",
         "sections": [
           {
@@ -7872,7 +7872,7 @@
       },
       {
         "beta": true,
-        "description": "Build assistants that can call models and use tools to perform tasks.\n\n[Get started with the Assistants API](/docs/assistants)\n",
+        "description": "Build assistants that can call models and use tools to perform tasks.\n\n<a href=\"/docs/assistants\">Get started with the Assistants API</a>\n",
         "id": "assistants",
         "sections": [
           {
@@ -7935,7 +7935,7 @@
       },
       {
         "beta": true,
-        "description": "Create threads that assistants can interact with.\n\nRelated guide: [Assistants](/docs/assistants/overview)\n",
+        "description": "Create threads that assistants can interact with.\n\nRelated guide: <a href=\"/docs/assistants/overview\">Assistants</a>\n",
         "id": "threads",
         "sections": [
           {
@@ -7968,7 +7968,7 @@
       },
       {
         "beta": true,
-        "description": "Create messages within threads\n\nRelated guide: [Assistants](/docs/assistants/overview)\n",
+        "description": "Create messages within threads\n\nRelated guide: <a href=\"/docs/assistants/overview\">Assistants</a>\n",
         "id": "messages",
         "sections": [
           {
@@ -8016,7 +8016,7 @@
       },
       {
         "beta": true,
-        "description": "Represents an execution run on a thread.\n\nRelated guide: [Assistants](/docs/assistants/overview)\n",
+        "description": "Represents an execution run on a thread.\n\nRelated guide: <a href=\"/docs/assistants/overview\">Assistants</a>\n",
         "id": "runs",
         "sections": [
           {
@@ -8078,7 +8078,7 @@
         "title": "Runs"
       },
       {
-        "description": "Given a prompt, the model will return one or more predicted completions along with the probabilities of alternative tokens at each position. Most developer should use our [Chat Completions API](/docs/guides/text-generation/text-generation-models) to leverage our best and newest models. Most models that support the legacy Completions endpoint [will be shut off on January 4th, 2024](/docs/deprecations/2023-07-06-gpt-and-embeddings).\n",
+        "description": "Given a prompt, the model will return one or more predicted completions along with the probabilities of alternative tokens at each position. Most developer should use our <a href=\"/docs/guides/text-generation/text-generation-models\">Chat Completions API</a> to leverage our best and newest models. Most models that support the legacy Completions endpoint [will be shut off on January 4th, 2024](/docs/deprecations/2023-07-06-gpt-and-embeddings).\n",
         "id": "completions",
         "legacy": true,
         "sections": [
