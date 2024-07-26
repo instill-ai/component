@@ -35,20 +35,23 @@ type DocxDocToMarkdownTransformer struct {
 
 func (t DocxDocToMarkdownTransformer) Transform() (string, error) {
 
-	inputTempDecodeFileName := "temp_document." + t.FileExtension
-	tempPDFName := "temp_document.pdf"
+	tempDoc, err := os.CreateTemp("", "temp_document.*."+t.FileExtension)
+	if err != nil {
+		return "", fmt.Errorf("failed to create temporary document: %w", err)
+	}
+	inputTempDecodeFileName := tempDoc.Name()
 	defer os.Remove(inputTempDecodeFileName)
-	defer os.Remove(tempPDFName)
 
-	err := decodeBase64ToFile(t.Base64EncodedText, inputTempDecodeFileName)
+	err = writeDecodeToFile(t.Base64EncodedText, tempDoc)
 	if err != nil {
 		return "", fmt.Errorf("failed to decode base64 to file: %w", err)
 	}
 
-	err = convertToPDF(inputTempDecodeFileName, tempPDFName)
+	tempPDFName, err := convertToPDF(inputTempDecodeFileName)
 	if err != nil {
 		return "", fmt.Errorf("failed to convert file to PDF: %w", err)
 	}
+	defer os.Remove(tempPDFName)
 
 	base64PDF, err := encodeFileToBase64(tempPDFName)
 
@@ -66,20 +69,23 @@ type PptPptxToMarkdownTransformer struct {
 }
 
 func (t PptPptxToMarkdownTransformer) Transform() (string, error) {
-	inputTempDecodeFileName := "temp_document." + t.FileExtension
-	tempPDFName := "temp_document.pdf"
+	tempPpt, err := os.CreateTemp("", "temp_document.*."+t.FileExtension)
+	if err != nil {
+		return "", fmt.Errorf("failed to create temporary document: %w", err)
+	}
+	inputTempDecodeFileName := tempPpt.Name()
 	defer os.Remove(inputTempDecodeFileName)
-	defer os.Remove(tempPDFName)
 
-	err := decodeBase64ToFile(t.Base64EncodedText, inputTempDecodeFileName)
+	err = writeDecodeToFile(t.Base64EncodedText, tempPpt)
 	if err != nil {
 		return "", fmt.Errorf("failed to decode base64 to file: %w", err)
 	}
 
-	err = convertToPDF(inputTempDecodeFileName, tempPDFName)
+	tempPDFName, err := convertToPDF(inputTempDecodeFileName)
 	if err != nil {
 		return "", fmt.Errorf("failed to convert file to PDF: %w", err)
 	}
+	defer os.Remove(tempPDFName)
 
 	base64PDF, err := encodeFileToBase64(tempPDFName)
 
@@ -164,12 +170,13 @@ func extractPDFTextInMarkdownFormat(base64Text string, displayImageTag bool) (st
 	return output.Body, nil
 }
 
-func decodeBase64ToFile(base64Str, tempPDFPath string) error {
+func writeDecodeToFile(base64Str string, file *os.File) error {
 	data, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(base64Str))
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(tempPDFPath, data, 0644)
+	_, err = file.Write(data)
+	return err
 }
 
 func encodeFileToBase64(inputPath string) (string, error) {
@@ -180,23 +187,21 @@ func encodeFileToBase64(inputPath string) (string, error) {
 	return base64.StdEncoding.EncodeToString(data), nil
 }
 
-func convertToPDF(inputPath, outputPath string) error {
+func convertToPDF(inputFileName string) (fileName string, err error) {
 	tempDir, err := os.MkdirTemp("", "libreoffice")
 	if err != nil {
-		return fmt.Errorf("failed to create temporary directory: " + err.Error())
+		return "", fmt.Errorf("failed to create temporary directory: " + err.Error())
 	}
 	defer os.RemoveAll(tempDir)
 
-	cmd := exec.Command("libreoffice", "--headless", "--convert-to", "pdf", "--outdir", "./", inputPath)
+	cmd := exec.Command("libreoffice", "--headless", "--convert-to", "pdf", inputFileName)
 	cmd.Env = append(os.Environ(), "HOME="+tempDir)
 
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to execute LibreOffice command: " + err.Error())
+		return "", fmt.Errorf("failed to execute LibreOffice command: " + err.Error())
 	}
 
-	generatedPDF := strings.TrimSuffix(inputPath, filepath.Ext(inputPath)) + ".pdf"
-	if err := os.Rename(generatedPDF, outputPath); err != nil {
-		return fmt.Errorf("failed to rename output file: " + err.Error())
-	}
-	return nil
+	noPathFileName := filepath.Base(inputFileName)
+	generatedPDF := strings.TrimSuffix(noPathFileName, filepath.Ext(inputFileName)) + ".pdf"
+	return generatedPDF, nil
 }
