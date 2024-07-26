@@ -21,3 +21,10 @@ repos:
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
+  - repo: local
+    hooks:
+      - id: check-mdx-changes
+        name: Check MDX Changes
+        entry: .hooks/check_mdx_changes.sh
+        language: script
+        files: \.(json|mdx)$
