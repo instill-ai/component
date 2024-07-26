@@ -9,6 +9,7 @@
   "public": true,
   "spec": {},
   "title": "Audio",
+  "chineseTitle": "\u9304\u97f3",
   "type": "COMPONENT_TYPE_OPERATOR",
   "uid": "b5c75caa-9261-4757-bfbf-12e908f59f16",
   "version": "0.1.0",

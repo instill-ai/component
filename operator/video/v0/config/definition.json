@@ -9,6 +9,7 @@
   "public": true,
   "spec": {},
   "title": "Video",
+  "chineseTitle": "\u5f71\u7247",
   "type": "COMPONENT_TYPE_OPERATOR",
   "uid": "f0be2fd3-7266-4eeb-88eb-3bbbcc2a6b32",
   "version": "0.1.0",
