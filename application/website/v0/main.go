@@ -5,6 +5,7 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"io"
 	"sync"
 
 	"google.golang.org/protobuf/types/known/structpb"
@@ -14,6 +15,7 @@ import (
 
 const (
 	taskScrapeWebsite = "TASK_SCRAPE_WEBSITE"
+	taskScrapeSitemap = "TASK_SCRAPE_SITEMAP"
 )
 
 var (
@@ -32,6 +34,8 @@ type component struct {
 
 type execution struct {
 	base.ComponentExecution
+	execute        func(*structpb.Struct) (*structpb.Struct, error)
+	externalCaller func(url string) (ioCloser io.ReadCloser, err error)
 }
 
 func Init(bc base.Component) *component {
@@ -46,40 +50,35 @@ func Init(bc base.Component) *component {
 }
 
 func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	return &base.ExecutionWrapper{Execution: &execution{
+	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
-	}}, nil
+	}
+
+	switch task {
+	case taskScrapeWebsite:
+		e.execute = e.Scrape
+	case taskScrapeSitemap:
+		// To make mocking easier
+		e.externalCaller = scrapSitemapCaller
+		e.execute = e.ScrapeSitemap
+	default:
+		return nil, fmt.Errorf(task + " task is not supported.")
+	}
+
+	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-	outputs := []*structpb.Struct{}
+	outputs := make([]*structpb.Struct, len(inputs))
 
-	for _, input := range inputs {
-		switch e.Task {
-		case taskScrapeWebsite:
-			inputStruct := ScrapeWebsiteInput{}
-			err := base.ConvertFromStructpb(input, &inputStruct)
-			if err != nil {
-				return nil, err
-			}
-
-			outputStruct, err := Scrape(inputStruct)
-			if err != nil {
-				return nil, err
-			}
-			output, err := base.ConvertToStructpb(outputStruct)
-			if err != nil {
-				return nil, err
-			}
-			outputs = append(outputs, output)
-		default:
-			return nil, fmt.Errorf("not supported task: %s", e.Task)
+	for i, input := range inputs {
+		output, err := e.execute(input)
+		if err != nil {
+			return nil, err
 		}
+
+		outputs[i] = output
 	}
 
 	return outputs, nil
-}
-
-func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
-	return nil
 }
