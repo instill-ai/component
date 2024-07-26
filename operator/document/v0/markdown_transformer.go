@@ -201,6 +201,9 @@ func convertToPDF(inputFileName string) (fileName string, err error) {
 		return "", fmt.Errorf("failed to execute LibreOffice command: " + err.Error())
 	}
 
+	// LibreOffice is not executed in temp directory like inputFileName.
+	// The generated PDF is not in temp directory.
+	// So, we need to remove the path and keep only the file name.
 	noPathFileName := filepath.Base(inputFileName)
 	generatedPDF := strings.TrimSuffix(noPathFileName, filepath.Ext(inputFileName)) + ".pdf"
 	return generatedPDF, nil
