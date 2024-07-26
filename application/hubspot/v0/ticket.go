@@ -79,7 +79,7 @@ type TaskGetTicketOutput struct {
 	TicketName           string   `json:"ticket-name"`
 	TicketStatus         string   `json:"ticket-status"`
 	Pipeline             string   `json:"pipeline"`
-	Category             []string `json:"category,omitempty"`
+	Category             []string `json:"categories,omitempty"`
 	Priority             string   `json:"priority,omitempty"`
 	Source               string   `json:"source,omitempty"`
 	RecordSource         string   `json:"record-source,omitempty"`
@@ -149,7 +149,7 @@ type TaskCreateTicketInput struct {
 	TicketName                string   `json:"ticket-name"`
 	TicketStatus              string   `json:"ticket-status"`
 	Pipeline                  string   `json:"pipeline"`
-	Category                  []string `json:"category"`
+	Category                  []string `json:"categories"`
 	Priority                  string   `json:"priority"`
 	Source                    string   `json:"source"`
 	CreateContactsAssociation []string `json:"create-contacts-association"`

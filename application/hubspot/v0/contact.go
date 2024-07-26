@@ -77,7 +77,6 @@ func (e *execution) GetContact(input *structpb.Struct) (*structpb.Struct, error)
 
 // Create Contact
 
-// TODO: to future me, dont forget to create association feature in the future
 type TaskCreateContactInput struct {
 	OwnerID                    string   `json:"owner-id"`
 	Email                      string   `json:"email"`

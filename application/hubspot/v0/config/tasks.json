@@ -248,7 +248,7 @@
         "type": "string"
       },
       "ticket-status": {
-        "description": "The pipeline stage that contains this ticket. Default format is number. Example: 1. However, remember to check internal value for custom fields. Note: In Instill, ticket-status is displayed as string because of the possible custom internal value.",
+        "description": "The pipeline stage that contains this ticket. Default format is number. Example: 1. However, remember to check internal value for custom fields. Note: In Instill AI, ticket-status is displayed as string because of the possible custom internal value.",
         "instillUIOrder": 2,
         "title": "Ticket Status",
         "type": "string"
@@ -259,10 +259,10 @@
         "title": "Pipeline",
         "type": "string"
       },
-      "category": {
+      "categories": {
         "description": "The main reason customer reached out for help. Default format is in capital letters. Example: BILLING_ISSUE. However, remember to check internal value for custom fields.",
         "instillUIOrder": 4,
-        "title": "Category",
+        "title": "Categories",
         "type": "array"
       },
       "priority": {
@@ -302,6 +302,7 @@
     "input": {
       "description": "Input contact ID or email",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["contact-id-or-email"],
       "properties": {
         "contact-id-or-email": {
           "description": "Input contact ID or email. If the input has @, it will search the contact using email",
@@ -385,6 +386,12 @@
     "input": {
       "description": "Contact information",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "email",
+        "first-name",
+        "last-name",
+        "phone-number"
+      ],
       "properties": {
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
@@ -480,6 +487,7 @@
     "input": {
       "description": "Input deal ID",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["deal-id"],
       "properties": {
         "deal-id": {
           "description": "Input deal ID",
@@ -554,6 +562,7 @@
     "input": {
       "description": "Deal information",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["deal-name", "pipeline", "deal-stage"],
       "properties": {
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
@@ -629,6 +638,7 @@
     "input": {
       "description": "Input company ID",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["company-id"],
       "properties": {
         "company-id": {
           "description": "Input company ID",
@@ -738,6 +748,12 @@
     "input": {
       "description": "Company information",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "company-name",
+        "company-domain",
+        "description",
+        "phone-number"
+      ],
       "properties": {
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
@@ -855,6 +871,7 @@
     "input": {
       "description": "Input ticket ID",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["ticket-id"],
       "properties": {
         "ticket-id": {
           "description": "Input ticket ID",
@@ -871,7 +888,7 @@
       "type": "object"
     },
     "output": {
-      "description": "Contact information",
+      "description": "Ticket information",
       "instillUIOrder": 0,
       "properties": {
         "owner-id": {
@@ -894,8 +911,8 @@
           "instillFormat": "string",
           "required": []
         },
-        "category": {
-          "$ref": "#/$defs/ticket/category",
+        "categories": {
+          "$ref": "#/$defs/ticket/categories",
           "instillFormat": "array:string",
           "items": {
             "title": "Category Value",
@@ -944,6 +961,7 @@
     "input": {
       "description": "Ticket information",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["ticket-name", "ticket-status", "pipeline"],
       "properties": {
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
@@ -969,8 +987,8 @@
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "reference", "template"]
         },
-        "category": {
-          "$ref": "#/$defs/ticket/category",
+        "categories": {
+          "$ref": "#/$defs/ticket/categories",
           "instillAcceptFormats": ["array:string"],
           "items": {
             "type": "string"
@@ -1021,6 +1039,7 @@
     "input": {
       "description": "Input thread ID",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["thread-id"],
       "properties": {
         "thread-id": {
           "description": "Input thread ID",
@@ -1181,6 +1200,14 @@
     "input": {
       "description": "Input",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "thread-id",
+        "sender-actor-id",
+        "recipients",
+        "channel-account-id",
+        "subject",
+        "text"
+      ],
       "properties": {
         "thread-id": {
           "description": "Input thread ID",
@@ -1273,6 +1300,7 @@
     "input": {
       "description": "Contact ID and object type (CRM objects or Thread)",
       "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["contact-id", "object-type"],
       "properties": {
         "contact-id": {
           "description": "Input contact ID",
@@ -1304,7 +1332,7 @@
         "object-ids": {
           "description": "An array of object ID associated with the contact",
           "instillUIOrder": 0,
-          "instillFormat":"array:string",
+          "instillFormat": "array:string",
           "title": "Object ID Array ",
           "type": "array",
           "items": {
