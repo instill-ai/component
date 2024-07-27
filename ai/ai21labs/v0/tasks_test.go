@@ -406,10 +406,10 @@ func TestTasks(t *testing.T) {
 		}{
 			input: map[string]any{"text": "Hello world!`"},
 			wantResp: TaskGrammarCheckOutput{
-				Suggestions: []string{"ABC"},
-				StartIndexs: []int{0},
-				EndIndexs:   []int{3},
-				Types:       []string{"spelling"},
+				Suggestions:  []string{"ABC"},
+				StartIndexes: []int{0},
+				EndIndexes:   []int{3},
+				Types:        []string{"spelling"},
 			},
 		}
 		setup, err := structpb.NewStruct(map[string]any{
@@ -442,10 +442,10 @@ func TestTasks(t *testing.T) {
 		}{
 			input: map[string]any{"text": "Hello world!`"},
 			wantResp: TaskTextImprovementOutput{
-				Suggestions: []string{"ABC"},
-				StartIndexs: []int{0},
-				EndIndexs:   []int{3},
-				Types:       []string{"fluency"},
+				Suggestions:  []string{"ABC"},
+				StartIndexes: []int{0},
+				EndIndexes:   []int{3},
+				Types:        []string{"fluency"},
 			},
 		}
 		setup, err := structpb.NewStruct(map[string]any{

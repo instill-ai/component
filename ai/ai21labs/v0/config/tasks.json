@@ -828,21 +828,21 @@
             "type": "string"
           }
         },
-        "start-indexs": {
+        "start-indexes": {
           "description": "Start index of the errors",
           "instillUIOrder": 1,
           "instillFormat": "array:number",
-          "title": "Start Indexs",
+          "title": "Start indexes",
           "type": "array",
           "items": {
             "type": "number"
           }
         },
-        "end-indexs": {
+        "end-indexes": {
           "description": "End index of the errors",
           "instillUIOrder": 2,
           "instillFormat": "array:number",
-          "title": "End Indexs",
+          "title": "End indexes",
           "type": "array",
           "items": {
             "type": "number"
@@ -913,21 +913,21 @@
             "type": "string"
           }
         },
-        "start-indexs": {
+        "start-indexes": {
           "description": "Start index of the improvements",
           "instillUIOrder": 1,
           "instillFormat": "array:number",
-          "title": "Start Indexs",
+          "title": "Start indexes",
           "type": "array",
           "items": {
             "type": "number"
           }
         },
-        "end-indexs": {
+        "end-indexes": {
           "description": "End index of the improvements",
           "instillUIOrder": 2,
           "instillFormat": "array:number",
-          "title": "End Indexs",
+          "title": "End indexes",
           "type": "array",
           "items": {
             "type": "number"

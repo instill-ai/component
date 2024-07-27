@@ -154,10 +154,10 @@ type TaskTextImprovementInput struct {
 }
 
 type TaskTextImprovementOutput struct {
-	Suggestions []string `json:"suggestions"`
-	StartIndexs []int    `json:"start-indexs"`
-	EndIndexs   []int    `json:"end-indexs"`
-	Types       []string `json:"types"`
+	Suggestions  []string `json:"suggestions"`
+	StartIndexes []int    `json:"start-indexes"`
+	EndIndexes   []int    `json:"end-indexes"`
+	Types        []string `json:"types"`
 }
 
 func (e *execution) TaskTextImprovement(in *structpb.Struct) (*structpb.Struct, error) {
@@ -189,8 +189,8 @@ func (e *execution) TaskTextImprovement(in *structpb.Struct) (*structpb.Struct, 
 
 	for _, improvement := range resp.Improvements {
 		output.Suggestions = append(output.Suggestions, improvement.Suggestions...)
-		output.StartIndexs = append(output.StartIndexs, improvement.StartIndex)
-		output.EndIndexs = append(output.EndIndexs, improvement.EndIndex)
+		output.StartIndexes = append(output.StartIndexes, improvement.StartIndex)
+		output.EndIndexes = append(output.EndIndexes, improvement.EndIndex)
 		output.Types = append(output.Types, string(improvement.ImprovementType))
 	}
 	return base.ConvertToStructpb(output)
@@ -360,10 +360,10 @@ type TaskGrammarCheckInput struct {
 }
 
 type TaskGrammarCheckOutput struct {
-	Suggestions []string `json:"suggestions"`
-	StartIndexs []int    `json:"start-indexs"`
-	EndIndexs   []int    `json:"end-indexs"`
-	Types       []string `json:"types"`
+	Suggestions  []string `json:"suggestions"`
+	StartIndexes []int    `json:"start-indexes"`
+	EndIndexes   []int    `json:"end-indexes"`
+	Types        []string `json:"types"`
 }
 
 func (e *execution) TaskGrammarCheck(in *structpb.Struct) (*structpb.Struct, error) {
@@ -379,8 +379,8 @@ func (e *execution) TaskGrammarCheck(in *structpb.Struct) (*structpb.Struct, err
 	output := TaskGrammarCheckOutput{}
 	for _, correction := range resp.Corrections {
 		output.Suggestions = append(output.Suggestions, correction.Suggestion)
-		output.StartIndexs = append(output.StartIndexs, correction.StartIndex)
-		output.EndIndexs = append(output.EndIndexs, correction.EndIndex)
+		output.StartIndexes = append(output.StartIndexes, correction.StartIndex)
+		output.EndIndexes = append(output.EndIndexes, correction.EndIndex)
 		output.Types = append(output.Types, string(correction.CorrectionType))
 	}
 	return base.ConvertToStructpb(output)
