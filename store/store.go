@@ -31,6 +31,7 @@ import (
 	"github.com/instill-ai/component/data/pinecone/v0"
 	"github.com/instill-ai/component/data/redis/v0"
 	"github.com/instill-ai/component/data/sql/v0"
+	"github.com/instill-ai/component/data/weaviate/v0"
 	"github.com/instill-ai/component/generic/restapi/v0"
 	"github.com/instill-ai/component/operator/audio/v0"
 	"github.com/instill-ai/component/operator/base64/v0"
@@ -136,6 +137,7 @@ func Init(
 		compStore.Import(pinecone.Init(baseComp))
 		compStore.Import(redis.Init(baseComp))
 		compStore.Import(sql.Init(baseComp))
+		compStore.Import(weaviate.Init(baseComp))
 		compStore.Import(restapi.Init(baseComp))
 		compStore.Import(website.Init(baseComp))
 		compStore.Import(slack.Init(baseComp))
