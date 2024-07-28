@@ -14,6 +14,7 @@ import (
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
 	"github.com/instill-ai/component/ai/mistralai/v0"
+	"github.com/instill-ai/component/ai/ollama/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
 	"github.com/instill-ai/component/application/email/v0"
@@ -139,6 +140,7 @@ func Init(
 		compStore.Import(website.Init(baseComp))
 		compStore.Import(slack.Init(baseComp))
 		compStore.Import(email.Init(baseComp))
+		compStore.Import(ollama.Init(baseComp))
 		compStore.Import(hubspot.Init(baseComp))
 
 	})

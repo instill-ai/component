@@ -1,0 +1,93 @@
+---
+title: "Ollama"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP Ollama component https://github.com/instill-ai/instill-core"
+---
+
+The Ollama component is an AI component that allows users to connect the AI models served with the Ollama library.
+It can carry out the following tasks:
+
+- [Text Generation Chat](#text-generation-chat)
+- [Text Embeddings](#text-embeddings)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/ai/ollama/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Endpoint (required) | `endpoint` | string | Fill in your Ollama hosting endpoint. ### WARNING ###: As of 2024-07-26, the Ollama component does not support authentication methods. To prevent unauthorized access to your Ollama serving resources, please implement additional security measures such as IP whitelisting. |
+| Model Auto-Pull (required) | `auto-pull` | boolean | Automatically pull the requested models from the Ollama server if the model is not found in the local cache. |
+
+
+
+
+## Supported Tasks
+
+### Text Generation Chat
+
+Provide text outputs in response to text/image inputs.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_GENERATION_CHAT` |
+| Model Name (required) | `model` | string | The OSS model to be used, check https://ollama.com/library for list of models available |
+| Prompt (required) | `prompt` | string | The prompt text |
+| System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is set using a generic message as "You are a helpful assistant." |
+| Prompt Images | `prompt-images` | array[string] | The prompt images |
+| Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
+| Seed | `seed` | integer | The seed |
+| Temperature | `temperature` | number | The temperature for sampling |
+| Top K | `top-k` | integer | Top k for sampling |
+| Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Text | `text` | string | Model Output |
+
+
+
+
+
+
+### Text Embeddings
+
+Turn text into a vector of numbers that capture its meaning, unlocking use cases like semantic search.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_EMBEDDINGS` |
+| Model Name (required) | `model` | string | The OSS model to be used, check https://ollama.com/library for list of models available |
+| Text (required) | `text` | string | The text |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Embedding | `embedding` | array[number] | Embedding of the input text |
+
+
+
+
+
+
+
