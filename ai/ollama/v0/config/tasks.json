@@ -289,7 +289,6 @@
           "instillFormat": "array:number",
           "items": {
             "instillFormat": "number",
-            "title": "Embedding",
             "type": "number"
           },
           "type": "array",
