@@ -13,6 +13,7 @@ const (
 	cstAI          ComponentType = "AI"
 	cstApplication ComponentType = "application"
 	cstData        ComponentType = "data"
+	cstGeneric     ComponentType = "generic"
 )
 
 var toComponentType = map[string]ComponentType{
@@ -20,6 +21,7 @@ var toComponentType = map[string]ComponentType{
 	pb.ComponentType_COMPONENT_TYPE_APPLICATION.String(): cstApplication,
 	pb.ComponentType_COMPONENT_TYPE_DATA.String():        cstData,
 	pb.ComponentType_COMPONENT_TYPE_OPERATOR.String():    cstOperator,
+	pb.ComponentType_COMPONENT_TYPE_GENERIC.String():     cstGeneric,
 }
 
 var modifiesArticle = map[ComponentType]bool{

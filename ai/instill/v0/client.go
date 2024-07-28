@@ -78,6 +78,7 @@ func trigger(gRPCClient modelPB.ModelPublicServiceClient, vars map[string]any, m
 			Version:    nameSplits[5],
 		}
 
+		//nolint:staticcheck
 		res, err := gRPCClient.TriggerUserModel(ctx, &req)
 		if err != nil || res == nil {
 			return nil, err
@@ -90,6 +91,7 @@ func trigger(gRPCClient modelPB.ModelPublicServiceClient, vars map[string]any, m
 			Version:    nameSplits[5],
 		}
 
+		//nolint:staticcheck
 		res, err := gRPCClient.TriggerOrganizationModel(ctx, &req)
 		if err != nil || res == nil {
 			return nil, err

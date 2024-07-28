@@ -9,6 +9,7 @@ The Document component is an operator component that allows users to manipulate 
 It can carry out the following tasks:
 
 - [Convert To Markdown](#convert-to-markdown)
+- [Convert To Text](#convert-to-text)
 
 
 
@@ -30,13 +31,13 @@ The component configuration is defined and maintained [here](https://github.com/
 
 ### Convert To Markdown
 
-Convert PDF to Markdown format.
+Convert document to text in Markdown format.
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CONVERT_TO_MARKDOWN` |
-| Document (required) | `pdf` | string | Base64 encoded PDF to be converted to Markdown |
+| Document (required) | `document` | string | Base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML to be converted to text in Markdown format |
 | Display image tag | `display-image-tag` | boolean | Choose if the result displays image tags |
 
 
@@ -44,6 +45,30 @@ Convert PDF to Markdown format.
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Body | `body` | string | Markdown text converted from the PDF document |
+
+
+
+
+
+
+### Convert To Text
+
+Convert document to text.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CONVERT_TO_TEXT` |
+| Document (required) | `doc` | string | Base64 encoded document (PDF, DOC, DOCX, XML, HTML, RTF, etc.) to be converted to plain text |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Body | `body` | string | Plain text converted from the document |
+| Meta | `meta` | object | Metadata extracted from the document |
+| MSecs | `msecs` | number | Time taken to convert the document |
+| Error | `error` | string | Error message if any during the conversion process |
 
 
 

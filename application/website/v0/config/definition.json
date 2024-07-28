@@ -1,6 +1,7 @@
 {
   "availableTasks": [
-    "TASK_SCRAPE_WEBSITE"
+    "TASK_SCRAPE_WEBSITE",
+    "TASK_SCRAPE_SITEMAP"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/application/website",
