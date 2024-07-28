@@ -418,10 +418,19 @@
                 "description": "The ending position of the chunk in the original text",
                 "instillFormat": "integer",
                 "type": "integer"
+              },
+              "token-count": {
+                "title": "Token Count",
+                "description": "Count of tokens in a chunk",
+                "instillFormat": "integer",
+                "type": "integer"
               }
             },
             "required": [
-              "text"
+              "text",
+              "start-position",
+              "end-position",
+              "token-count"
             ],
             "instillUIMultiline": true,
             "type": "object"
@@ -430,16 +439,25 @@
           "type": "array"
         },
         "token-count": {
-          "description": "Total count of tokens in the input text",
+          "description": "Total count of tokens in the original input text",
           "instillUIOrder": 0,
           "instillFormat": "integer",
           "title": "Token Count",
+          "type": "integer"
+        },
+        "chunks-token-count": {
+          "description": "Total count of tokens in the output text chunks",
+          "instillUIOrder": 3,
+          "instillFormat": "integer",
+          "title": "Token Count Chunks",
           "type": "integer"
         }
       },
       "required": [
         "text-chunks",
-        "chunk-num"
+        "chunk-num",
+        "token-count",
+        "chunks-token-count"
       ],
       "title": "Output",
       "type": "object"

@@ -22,9 +22,9 @@ func TestChunkText(t *testing.T) {
 				Text: "Hello world.",
 				Strategy: Strategy{
 					Setting: Setting{
-						ChunkMethod:    "Token",
-						ChunkSize:      512,
-						ModelName:      "gpt-3.5-turbo",
+						ChunkMethod: "Token",
+						ChunkSize:   512,
+						ModelName:   "gpt-3.5-turbo",
 					},
 				},
 			},
@@ -34,10 +34,12 @@ func TestChunkText(t *testing.T) {
 						Text:          "Hello world.",
 						StartPosition: 0,
 						EndPosition:   11,
+						TokenCount:    3,
 					},
 				},
-				ChunkNum:   1,
-				TokenCount: 3,
+				ChunkNum:         1,
+				TokenCount:       3,
+				ChunksTokenCount: 3,
 			},
 		},
 		{
@@ -46,34 +48,9 @@ func TestChunkText(t *testing.T) {
 				Text: "Hello world.",
 				Strategy: Strategy{
 					Setting: Setting{
-						ChunkMethod:    "Markdown",
-						ModelName:      "gpt-3.5-turbo",
-						ChunkSize:      5,
-					},
-				},
-			},
-			output: ChunkTextOutput{
-				TextChunks: []TextChunk{
-					{
-						Text:          "Hello world.",
-						StartPosition: 0,
-						EndPosition:   11,
-					},
-				},
-				ChunkNum:   1,
-				TokenCount: 3,
-			},
-		},
-		{
-			name: "chunk text by recursive",
-			input: ChunkTextInput{
-				Text: "Hello world.",
-				Strategy: Strategy{
-					Setting: Setting{
-						ChunkMethod:    "Recursive",
-						ModelName:      "gpt-3.5-turbo",
-						ChunkSize:      5,
-						Separators:     []string{" ", "."},
+						ChunkMethod: "Markdown",
+						ModelName:   "gpt-3.5-turbo",
+						ChunkSize:   5,
 					},
 				},
 			},
@@ -83,15 +60,51 @@ func TestChunkText(t *testing.T) {
 						Text:          "Hello",
 						StartPosition: 0,
 						EndPosition:   4,
+						TokenCount:    1,
+					},
+					{
+						Text:          "world.",
+						StartPosition: 6,
+						EndPosition:   11,
+						TokenCount:    2,
+					},
+				},
+				ChunkNum:         2,
+				TokenCount:       3,
+				ChunksTokenCount: 3,
+			},
+		},
+		{
+			name: "chunk text by recursive",
+			input: ChunkTextInput{
+				Text: "Hello world.",
+				Strategy: Strategy{
+					Setting: Setting{
+						ChunkMethod: "Recursive",
+						ModelName:   "gpt-3.5-turbo",
+						ChunkSize:   5,
+						Separators:  []string{" ", "."},
+					},
+				},
+			},
+			output: ChunkTextOutput{
+				TextChunks: []TextChunk{
+					{
+						Text:          "Hello",
+						StartPosition: 0,
+						EndPosition:   4,
+						TokenCount:    1,
 					},
 					{
 						Text:          "world",
 						StartPosition: 6,
 						EndPosition:   10,
+						TokenCount:    1,
 					},
 				},
-				ChunkNum:   2,
-				TokenCount: 3,
+				ChunkNum:         2,
+				TokenCount:       3,
+				ChunksTokenCount: 2,
 			},
 		},
 	}

@@ -149,5 +149,84 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_SCRAPE_SITEMAP": {
+    "instillShortDescription": "Scrape the sitemap information",
+    "input": {
+      "description": "The URL contains sitemap",
+      "instillUIOrder": 0,
+      "properties": {
+        "url": {
+          "description": "The URL of the sitemap to scrape",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Sitemap URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "list": {
+          "description": "The list of information in a sitemap",
+          "instillFormat": "array:semi-structured/json",
+          "instillUIOrder": 0,
+          "items": {
+            "properties": {
+              "loc": {
+                "description": "The URL of the webpage",
+                "instillFormat": "string",
+                "title": "URL",
+                "type": "string"
+              },
+              "lastmod": {
+                "description": "The last modified time of the webpage with ISO 8601 format",
+                "instillFormat": "string",
+                "title": "Last Modified",
+                "type": "string"
+              },
+              "changefreq": {
+                "description": "The change frequency of the webpage",
+                "instillFormat": "string",
+                "title": "Change Frequency",
+                "type": "string"
+              },
+              "priority": {
+                "description": "The priority of the webpage",
+                "instillFormat": "number",
+                "title": "Priority",
+                "type": "number"
+              }
+            },
+            "required": [
+              "loc",
+              "lastmod"
+            ],
+            "title": "List",
+            "instillFormat": "semi-structured/json"
+          },
+          "title": "List",
+          "type": "array"
+        }
+      },
+      "required": [
+        "list"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
   }
 }

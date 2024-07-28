@@ -47,6 +47,13 @@ func TestOperator_Execute(t *testing.T) {
 			wantJSON: json.RawMessage(asJSON),
 		},
 		{
+			name: "ok - marshal string",
+
+			task:     taskMarshal,
+			in:       map[string]any{"json": "dos"},
+			wantJSON: json.RawMessage(`"dos"`),
+		},
+		{
 			name: "ok - marshal array",
 
 			task:     taskMarshal,
@@ -186,7 +193,7 @@ func TestOperator_Execute(t *testing.T) {
 			if tc.wantJSON != nil {
 				// Check JSON in the output string.
 				b := got[0].Fields["string"].GetStringValue()
-				c.Check([]byte(b), qt.JSONEquals, tc.wantJSON, qt.Commentf(string(b)+" vs "+string(tc.wantJSON)))
+				c.Check([]byte(b), qt.JSONEquals, tc.wantJSON)
 				return
 			}
 

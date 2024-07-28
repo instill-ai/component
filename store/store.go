@@ -20,6 +20,7 @@ import (
 	"github.com/instill-ai/component/application/email/v0"
 	"github.com/instill-ai/component/application/github/v0"
 	"github.com/instill-ai/component/application/googlesearch/v0"
+	"github.com/instill-ai/component/application/hubspot/v0"
 
 	"github.com/instill-ai/component/application/numbers/v0"
 	"github.com/instill-ai/component/application/restapi/v0"
@@ -30,11 +31,14 @@ import (
 	"github.com/instill-ai/component/data/googlecloudstorage/v0"
 	"github.com/instill-ai/component/data/pinecone/v0"
 	"github.com/instill-ai/component/data/redis/v0"
+	"github.com/instill-ai/component/data/sql/v0"
+	"github.com/instill-ai/component/operator/audio/v0"
 	"github.com/instill-ai/component/operator/base64/v0"
 	"github.com/instill-ai/component/operator/document/v0"
 	"github.com/instill-ai/component/operator/image/v0"
 	"github.com/instill-ai/component/operator/json/v0"
 	"github.com/instill-ai/component/operator/text/v0"
+	"github.com/instill-ai/component/operator/video/v0"
 
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -83,6 +87,8 @@ func Init(
 		compStore.Import(image.Init(baseComp))
 		compStore.Import(text.Init(baseComp))
 		compStore.Import(document.Init(baseComp))
+		compStore.Import(audio.Init(baseComp))
+		compStore.Import(video.Init(baseComp))
 
 		compStore.Import(github.Init(baseComp))
 		{
@@ -129,11 +135,13 @@ func Init(
 		compStore.Import(googlesearch.Init(baseComp))
 		compStore.Import(pinecone.Init(baseComp))
 		compStore.Import(redis.Init(baseComp))
+		compStore.Import(sql.Init(baseComp))
 		compStore.Import(restapi.Init(baseComp))
 		compStore.Import(website.Init(baseComp))
 		compStore.Import(slack.Init(baseComp))
 		compStore.Import(email.Init(baseComp))
 		compStore.Import(ollama.Init(baseComp))
+		compStore.Import(hubspot.Init(baseComp))
 
 	})
 	return compStore
