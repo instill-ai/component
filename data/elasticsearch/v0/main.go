@@ -19,6 +19,7 @@ const (
 	TaskSearch       = "TASK_SEARCH"
 	TaskVectorSearch = "TASK_VECTOR_SEARCH"
 	TaskIndex        = "TASK_INDEX"
+	TaskMultiIndex   = "TASK_MULTI_INDEX"
 	TaskUpdate       = "TASK_UPDATE"
 	TaskDelete       = "TASK_DELETE"
 	TaskCreateIndex  = "TASK_CREATE_INDEX"
@@ -56,6 +57,7 @@ type ESClient struct {
 	createIndexClient  esapi.IndicesCreate
 	deleteIndexClient  esapi.IndicesDelete
 	sqlTranslateClient esapi.SQLTranslate
+	bulkClient         esapi.Bulk
 }
 
 type ESSearch func(o ...func(*esapi.SearchRequest)) (*esapi.Response, error)
@@ -73,6 +75,8 @@ type ESDeleteIndex func(index []string, o ...func(*esapi.IndicesDeleteRequest)) 
 type ESCount func(o ...func(*esapi.CountRequest)) (*esapi.Response, error)
 
 type ESSQLTranslate func(body io.Reader, o ...func(*esapi.SQLTranslateRequest)) (*esapi.Response, error)
+
+type ESBulk func(body io.Reader, o ...func(*esapi.BulkRequest)) (*esapi.Response, error)
 
 // Init returns an implementation of IConnector that interacts with Elasticsearch.
 func Init(bc base.Component) *component {
@@ -108,6 +112,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.createIndex
 	case TaskDeleteIndex:
 		e.execute = e.deleteIndex
+	case TaskMultiIndex:
+		e.execute = e.multiIndex
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),

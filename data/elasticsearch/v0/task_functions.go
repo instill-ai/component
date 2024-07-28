@@ -21,6 +21,15 @@ type IndexOutput struct {
 	Status string `json:"status"`
 }
 
+type MultiIndexInput struct {
+	ArrayData []map[string]any `json:"array-data"`
+	IndexName string           `json:"index-name"`
+}
+
+type MultiIndexOutput struct {
+	Status string `json:"status"`
+}
+
 type UpdateInput struct {
 	Update    map[string]any `json:"update"`
 	Filter    map[string]any `json:"filter"`
@@ -34,14 +43,14 @@ type UpdateOutput struct {
 }
 
 type SearchInput struct {
-	Fields    []string       `json:"fields"`
-	Mode      string         `json:"mode"`
-	MinScore  float64        `json:"min-score"`
-	Filter    map[string]any `json:"filter"`
-	FilterSQL string         `json:"filter-sql"`
-	Query     string         `json:"query"`
-	IndexName string         `json:"index-name"`
-	Size      int            `json:"size"`
+	Fields     []string       `json:"fields"`
+	SourceOnly bool           `json:"source-only"`
+	MinScore   float64        `json:"min-score"`
+	Filter     map[string]any `json:"filter"`
+	FilterSQL  string         `json:"filter-sql"`
+	Query      string         `json:"query"`
+	IndexName  string         `json:"index-name"`
+	Size       int            `json:"size"`
 }
 
 type SearchOutput struct {
@@ -50,7 +59,7 @@ type SearchOutput struct {
 }
 
 type VectorSearchInput struct {
-	Mode          string         `json:"mode"`
+	SourceOnly    bool           `json:"source-only"`
 	Filter        map[string]any `json:"filter"`
 	FilterSQL     string         `json:"filter-sql"`
 	IndexName     string         `json:"index-name"`
@@ -79,6 +88,20 @@ type SearchResponse struct {
 		MaxScore float64 `json:"max_score"`
 		Hits     []Hit   `json:"hits"`
 	} `json:"hits"`
+}
+
+type DeleteUpdateResponse struct {
+	Took     int  `json:"took"`
+	TimedOut bool `json:"timed_out"`
+	Total    int  `json:"total"`
+	Deleted  int  `json:"deleted"`
+	Updated  int  `json:"updated"`
+}
+
+type MultiIndexResponse struct {
+	Errors bool  `json:"errors"`
+	Items  []any `json:"items"`
+	Took   int   `json:"took"`
 }
 
 type Hit struct {
@@ -160,23 +183,67 @@ func IndexDocument(es *esapi.Index, indexName string, data map[string]any) error
 
 	esClient := ESIndex(*es)
 
-	res, err := esClient(indexName, bytes.NewReader(dataJSON), func(r *esapi.IndexRequest) {
+	_, err = esClient(indexName, bytes.NewReader(dataJSON), func(r *esapi.IndexRequest) {
 		r.Refresh = "true"
 	})
-
 	if err != nil {
 		return err
-	}
-	defer res.Body.Close()
-
-	if res.IsError() {
-		return fmt.Errorf("error indexing document: %s", res.Status())
 	}
 
 	return nil
 }
 
+func MultiIndexDocument(es *esapi.Bulk, indexName string, data []map[string]any) (int, error) {
+	var dataJSON strings.Builder
+	for _, doc := range data {
+		metaData := map[string]any{
+			"index": map[string]any{
+				"_index": indexName,
+			},
+		}
+		metaDataJSON, err := json.Marshal(metaData)
+		if err != nil {
+			return 0, err
+		}
+		dataJSON.WriteString(string(metaDataJSON))
+		dataJSON.WriteString("\n")
+
+		docJSON, err := json.Marshal(doc)
+		if err != nil {
+			return 0, err
+		}
+		dataJSON.WriteString(string(docJSON))
+		dataJSON.WriteString("\n")
+	}
+
+	esClient := ESBulk(*es)
+
+	res, err := esClient(strings.NewReader(dataJSON.String()), func(r *esapi.BulkRequest) {
+		r.Refresh = "true"
+	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	if res.IsError() {
+		return 0, fmt.Errorf("error indexing document: %s", res.Status())
+	}
+	defer res.Body.Close()
+
+	var response MultiIndexResponse
+	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
+		return 0, err
+	}
+
+	return len(response.Items), nil
+}
+
 // size is optional, empty means all documents
+// source-only, if true will return only source of documents, if false will return all fields (_id, _index, _score, _source)
+// min-score is optional, empty means no minimum score
+// fields is optional, empty means all fields
+// filter is optional, empty means no filter
 func SearchDocument(es *esapi.Search, esSQLTranslate *esapi.SQLTranslate, inputStruct SearchInput) ([]Hit, error) {
 	indexName := inputStruct.IndexName
 	query := inputStruct.Query
@@ -240,7 +307,11 @@ func SearchDocument(es *esapi.Search, esSQLTranslate *esapi.SQLTranslate, inputS
 }
 
 // Only support vector search for now, for semantic search, we can use external model on other component combined with vector search
-// Can support up to more than 1 vector similarity fields, overall result will then be combined
+// size is optional, empty means all documents
+// source-only, if true will return only source of documents, if false will return all fields (_id, _index, _score, _source)
+// min-score is optional, empty means no minimum score
+// fields is optional, empty means all fields
+// filter is optional, empty means no filter
 func VectorSearchDocument(es *esapi.Search, esSQLTranslate *esapi.SQLTranslate, inputStruct VectorSearchInput) ([]Hit, error) {
 	indexName := inputStruct.IndexName
 	field := inputStruct.Field
@@ -315,7 +386,7 @@ func VectorSearchDocument(es *esapi.Search, esSQLTranslate *esapi.SQLTranslate, 
 	return response.Hits.Hits, nil
 }
 
-func UpdateDocument(es *esapi.UpdateByQuery, esSQLTranslate *esapi.SQLTranslate, inputStruct UpdateInput) error {
+func UpdateDocument(es *esapi.UpdateByQuery, esSQLTranslate *esapi.SQLTranslate, inputStruct UpdateInput) (int, error) {
 	indexName := inputStruct.IndexName
 	query := inputStruct.Query
 	filter := inputStruct.Filter
@@ -325,7 +396,7 @@ func UpdateDocument(es *esapi.UpdateByQuery, esSQLTranslate *esapi.SQLTranslate,
 	if filterSQL != "" && filter == nil {
 		translatedQuery, err := translateSQLQuery(esSQLTranslate, filterSQL, indexName)
 		if err != nil {
-			return err
+			return 0, err
 		}
 		filter = translatedQuery
 	}
@@ -345,7 +416,7 @@ func UpdateDocument(es *esapi.UpdateByQuery, esSQLTranslate *esapi.SQLTranslate,
 	if filter != nil {
 		updateJSON, err := json.Marshal(updateByQueryReq)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		body = strings.NewReader(string(updateJSON))
@@ -360,18 +431,22 @@ func UpdateDocument(es *esapi.UpdateByQuery, esSQLTranslate *esapi.SQLTranslate,
 	})
 
 	if err != nil {
-		return err
+		return 0, err
+	}
+	if res.IsError() {
+		return 0, fmt.Errorf("error indexing document: %s", res.Status())
 	}
 	defer res.Body.Close()
 
-	if res.IsError() {
-		return fmt.Errorf("error updating documents: %s", res.Status())
+	var response DeleteUpdateResponse
+	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
+		return 0, err
 	}
 
-	return nil
+	return response.Updated, nil
 }
 
-func DeleteDocument(es *esapi.DeleteByQuery, esSQLTranslate *esapi.SQLTranslate, inputStruct DeleteInput) error {
+func DeleteDocument(es *esapi.DeleteByQuery, esSQLTranslate *esapi.SQLTranslate, inputStruct DeleteInput) (int, error) {
 	indexName := inputStruct.IndexName
 	query := inputStruct.Query
 	filter := inputStruct.Filter
@@ -380,7 +455,7 @@ func DeleteDocument(es *esapi.DeleteByQuery, esSQLTranslate *esapi.SQLTranslate,
 	if filterSQL != "" && filter == nil {
 		translatedQuery, err := translateSQLQuery(esSQLTranslate, filterSQL, indexName)
 		if err != nil {
-			return err
+			return 0, err
 		}
 		filter = translatedQuery
 	}
@@ -392,7 +467,7 @@ func DeleteDocument(es *esapi.DeleteByQuery, esSQLTranslate *esapi.SQLTranslate,
 	if filter != nil {
 		filterJSON, err := json.Marshal(deleteByQueryReq)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		body = bytes.NewReader(filterJSON)
@@ -405,36 +480,35 @@ func DeleteDocument(es *esapi.DeleteByQuery, esSQLTranslate *esapi.SQLTranslate,
 		r.Refresh = esapi.BoolPtr(true)
 	})
 	if err != nil {
-		return err
+		return 0, err
+	}
+	if res.IsError() {
+		return 0, fmt.Errorf("error indexing document: %s", res.Status())
 	}
 	defer res.Body.Close()
 
-	if res.IsError() {
-		return fmt.Errorf("error deleting documents: %s", res.Status())
+	var response DeleteUpdateResponse
+	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
+		return 0, err
 	}
 
-	return nil
+	return response.Deleted, nil
 }
 
 func DeleteIndex(es *esapi.IndicesDelete, indexName string) error {
 	esClient := ESDeleteIndex(*es)
 
-	res, err := esClient([]string{indexName})
+	_, err := esClient([]string{indexName})
 
 	if err != nil {
 		return err
-	}
-	defer res.Body.Close()
-
-	if res.IsError() {
-		return fmt.Errorf("error deleting index: %s", res.Status())
 	}
 
 	return nil
 }
 
 // mappings refer to elasticsearch documentation for more information, use dense_vector type with similarity and dims fields
-// pre-defined mappings is mandatory for vector search, if index isnt created with mappings, vector search will not work as dense_vector type doesnt explicitly defined
+// pre-defined mappings is mandatory for vector search, if index isnt created with mappings, vector search will not work as dense_vector type doesn't explicitly defined
 func CreateIndex(es *esapi.IndicesCreate, indexName string, mappings map[string]any) error {
 	createIndexReq := map[string]map[string]any{
 		"mappings": {
@@ -449,20 +523,15 @@ func CreateIndex(es *esapi.IndicesCreate, indexName string, mappings map[string]
 
 	esClient := ESCreateIndex(*es)
 
-	res, err := esClient(indexName, func(r *esapi.IndicesCreateRequest) {
+	_, err = esClient(indexName, func(r *esapi.IndicesCreateRequest) {
 		r.Body = strings.NewReader(string(createIndexJSON))
 	})
 
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
 
-	if res.IsError() {
-		return fmt.Errorf("error creating index: %s", res.Status())
-	}
-
-	return nil
+	return err
 }
 
 func (e *execution) index(in *structpb.Struct) (*structpb.Struct, error) {
@@ -478,7 +547,7 @@ func (e *execution) index(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	outputStruct := IndexOutput{
-		Status: "Successfully indexed document",
+		Status: "Successfully indexed 1 document",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -495,13 +564,13 @@ func (e *execution) update(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = UpdateDocument(&e.client.updateClient, &e.client.sqlTranslateClient, inputStruct)
+	lenDocuments, err := UpdateDocument(&e.client.updateClient, &e.client.sqlTranslateClient, inputStruct)
 	if err != nil {
 		return nil, err
 	}
 
 	outputStruct := UpdateOutput{
-		Status: "Successfully updated document",
+		Status: fmt.Sprintf("Successfully updated %d documents", lenDocuments),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -525,7 +594,7 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	var result []map[string]any
-	if inputStruct.Mode == "Source Only" {
+	if inputStruct.SourceOnly {
 		for _, hit := range resultTemp {
 			result = append(result, hit.Source)
 		}
@@ -542,7 +611,7 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 
 	outputStruct := SearchOutput{
 		Documents: result,
-		Status:    "Successfully searched document",
+		Status:    fmt.Sprintf("Successfully searched %d documents", len(result)),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -566,7 +635,7 @@ func (e *execution) vectorSearch(in *structpb.Struct) (*structpb.Struct, error) 
 	}
 
 	var result []map[string]any
-	if inputStruct.Mode == "Source Only" {
+	if inputStruct.SourceOnly {
 		for _, hit := range resultTemp {
 			result = append(result, hit.Source)
 		}
@@ -583,7 +652,7 @@ func (e *execution) vectorSearch(in *structpb.Struct) (*structpb.Struct, error) 
 
 	outputStruct := SearchOutput{
 		Documents: result,
-		Status:    "Successfully vector searched document",
+		Status:    fmt.Sprintf("Successfully vector searched %d documents", len(result)),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -600,13 +669,13 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = DeleteDocument(&e.client.deleteClient, &e.client.sqlTranslateClient, inputStruct)
+	lenDocuments, err := DeleteDocument(&e.client.deleteClient, &e.client.sqlTranslateClient, inputStruct)
 	if err != nil {
 		return nil, err
 	}
 
 	outputStruct := DeleteOutput{
-		Status: "Successfully deleted document",
+		Status: fmt.Sprintf("Successfully deleted %d documents", lenDocuments),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -629,7 +698,7 @@ func (e *execution) createIndex(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	outputStruct := CreateIndexOutput{
-		Status: "Successfully created index",
+		Status: "Successfully created 1 index",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -652,7 +721,30 @@ func (e *execution) deleteIndex(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	outputStruct := DeleteIndexOutput{
-		Status: "Successfully deleted index",
+		Status: "Successfully deleted 1 index",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (e *execution) multiIndex(in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct MultiIndexInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	lenDocuments, err := MultiIndexDocument(&e.client.bulkClient, inputStruct.IndexName, inputStruct.ArrayData)
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := MultiIndexOutput{
+		Status: fmt.Sprintf("Successfully indexed %d documents", lenDocuments),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)

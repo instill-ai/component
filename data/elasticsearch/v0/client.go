@@ -21,6 +21,7 @@ func newClient(setup *structpb.Struct) *ESClient {
 		createIndexClient:  es.Indices.Create,
 		deleteIndexClient:  es.Indices.Delete,
 		sqlTranslateClient: es.SQL.Translate,
+		bulkClient:         es.Bulk,
 	}
 }
 

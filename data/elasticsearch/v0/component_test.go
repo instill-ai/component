@@ -20,8 +20,6 @@ func MockESSearch(wantResp SearchOutput) *esapi.Response {
 	_ = json.Unmarshal(documentsBytes, &Hits)
 
 	resp := SearchResponse{
-		Took:     1,
-		TimedOut: false,
 		Shards: struct {
 			Total      int `json:"total"`
 			Successful int `json:"successful"`
@@ -71,8 +69,22 @@ func MockESIndex(wantResp IndexOutput) *esapi.Response {
 	}
 }
 
+func MockESMultiIndex(wantResp MultiIndexOutput) *esapi.Response {
+	resp := MultiIndexResponse{
+		Items: []any{"mockItem1", "mockItem2"},
+	}
+	b, _ := json.Marshal(resp)
+	return &esapi.Response{
+		StatusCode: 200,
+		Body:       io.NopCloser(bytes.NewReader(b)),
+		Header:     make(map[string][]string),
+	}
+}
+
 func MockESUpdate(wantResp UpdateOutput) *esapi.Response {
-	resp := map[string]string{"status": wantResp.Status}
+	resp := DeleteUpdateResponse{
+		Updated: 1,
+	}
 	b, _ := json.Marshal(resp)
 	return &esapi.Response{
 		StatusCode: 200,
@@ -82,7 +94,9 @@ func MockESUpdate(wantResp UpdateOutput) *esapi.Response {
 }
 
 func MockESDelete(wantResp DeleteOutput) *esapi.Response {
-	resp := map[string]string{"status": wantResp.Status}
+	resp := DeleteUpdateResponse{
+		Deleted: 1,
+	}
 	b, _ := json.Marshal(resp)
 	return &esapi.Response{
 		StatusCode: 200,
@@ -137,13 +151,13 @@ func TestComponent_ExecuteSearchTask(t *testing.T) {
 		{
 			name: "ok to search",
 			input: SearchInput{
-				Mode:      "Hits",
-				IndexName: "index_name",
-				FilterSQL: "city = 'New York'",
-				Size:      0,
+				SourceOnly: false,
+				IndexName:  "index_name",
+				FilterSQL:  "city = 'New York'",
+				Size:       0,
 			},
 			wantResp: SearchOutput{
-				Status: "Successfully searched document",
+				Status: "Successfully searched 2 documents",
 				Documents: []map[string]any{
 					{
 						"_index":  "index_name",
@@ -220,14 +234,14 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 		{
 			name: "ok to vector search",
 			input: VectorSearchInput{
-				Mode:        "Hits",
+				SourceOnly:  false,
 				IndexName:   "index_name",
 				FilterSQL:   "name = 'a'",
 				QueryVector: []float64{0.1, 0.2},
 				K:           2,
 			},
 			wantResp: SearchOutput{
-				Status: "Successfully vector searched document",
+				Status: "Successfully vector searched 2 documents",
 				Documents: []map[string]any{
 					{
 						"_index":  "index_name",
@@ -306,7 +320,7 @@ func TestComponent_ExecuteIndexTask(t *testing.T) {
 				Data:      map[string]any{"name": "John Doe", "email": "john@example.com"},
 			},
 			wantResp: IndexOutput{
-				Status: "Successfully indexed document",
+				Status: "Successfully indexed 1 document",
 			},
 		},
 	}
@@ -348,6 +362,70 @@ func TestComponent_ExecuteIndexTask(t *testing.T) {
 	}
 }
 
+func TestComponent_ExecuteMultiIndexTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    MultiIndexInput
+		wantResp MultiIndexOutput
+		wantErr  string
+	}{
+		{
+			name: "ok to multi index",
+			input: MultiIndexInput{
+				IndexName: "index_name",
+				ArrayData: []map[string]any{
+					{"name": "John Doe", "email": "john@example.com"},
+					{"name": "Jane Smith", "email": "jane@example.com"},
+				},
+			},
+			wantResp: MultiIndexOutput{
+				Status: "Successfully indexed 2 documents",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"api-key":  "mock-api",
+				"cloud-id": "mock-cloud-id",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskMultiIndex},
+				client: ESClient{
+					bulkClient: func(body io.Reader, o ...func(*esapi.BulkRequest)) (*esapi.Response, error) {
+						return MockESMultiIndex(tc.wantResp), nil
+					},
+				},
+			}
+
+			e.execute = e.multiIndex
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
 func TestComponent_ExecuteUpdateTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
@@ -368,7 +446,7 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 				Update:    map[string]any{"name": "Pablo Vereira", "city": "Los Angeles"},
 			},
 			wantResp: UpdateOutput{
-				Status: "Successfully updated document",
+				Status: "Successfully updated 1 documents",
 			},
 		},
 	}
@@ -433,7 +511,7 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 				FilterSQL: "name = 'John Doe' AND city = 'New York'",
 			},
 			wantResp: DeleteOutput{
-				Status: "Successfully deleted document",
+				Status: "Successfully deleted 1 documents",
 			},
 		},
 	}
@@ -497,7 +575,7 @@ func TestComponent_ExecuteCreateIndexTask(t *testing.T) {
 				Mappings:  map[string]any{"name": "text", "email": "text", "vector": map[string]any{"type": "dense_vector", "dims": 2}},
 			},
 			wantResp: CreateIndexOutput{
-				Status: "Successfully created index",
+				Status: "Successfully created 1 index",
 			},
 		},
 	}
@@ -557,7 +635,7 @@ func TestComponent_ExecuteDeleteIndexTask(t *testing.T) {
 				IndexName: "index_name",
 			},
 			wantResp: DeleteIndexOutput{
-				Status: "Successfully deleted index",
+				Status: "Successfully deleted 1 index",
 			},
 		},
 	}
