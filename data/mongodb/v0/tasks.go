@@ -12,17 +12,31 @@ import (
 )
 
 type InsertInput struct {
-	Data map[string]any `json:"data"`
+	DatabaseName   string         `json:"database-name"`
+	CollectionName string         `json:"collection-name"`
+	Data           map[string]any `json:"data"`
 }
 
 type InsertOutput struct {
 	Status string `json:"status"`
 }
 
+type InsertManyInput struct {
+	DatabaseName   string           `json:"database-name"`
+	CollectionName string           `json:"collection-name"`
+	ArrayData      []map[string]any `json:"array-data"`
+}
+
+type InsertManyOutput struct {
+	Status string `json:"status"`
+}
+
 type FindInput struct {
-	Filter map[string]any `json:"filter"`
-	Limit  int            `json:"limit"`
-	Fields []string       `json:"fields"`
+	DatabaseName   string         `json:"database-name"`
+	CollectionName string         `json:"collection-name"`
+	Filter         map[string]any `json:"filter"`
+	Limit          int            `json:"limit"`
+	Fields         []string       `json:"fields"`
 }
 
 type FindOutput struct {
@@ -31,8 +45,10 @@ type FindOutput struct {
 }
 
 type UpdateInput struct {
-	Filter     map[string]any `json:"filter"`
-	UpdateData map[string]any `json:"update-data"`
+	DatabaseName   string         `json:"database-name"`
+	CollectionName string         `json:"collection-name"`
+	Filter         map[string]any `json:"filter"`
+	UpdateData     map[string]any `json:"update-data"`
 }
 
 type UpdateOutput struct {
@@ -40,7 +56,9 @@ type UpdateOutput struct {
 }
 
 type DeleteInput struct {
-	Filter map[string]any `json:"filter"`
+	DatabaseName   string         `json:"database-name"`
+	CollectionName string         `json:"collection-name"`
+	Filter         map[string]any `json:"filter"`
 }
 
 type DeleteOutput struct {
@@ -48,6 +66,7 @@ type DeleteOutput struct {
 }
 
 type DropCollectionInput struct {
+	DatabaseName   string `json:"database-name"`
 	CollectionName string `json:"collection-name"`
 }
 
@@ -64,9 +83,11 @@ type DropDatabaseOutput struct {
 }
 
 type CreateSearchIndexInput struct {
-	IndexName string         `json:"index-name"`
-	IndexType string         `json:"index-type"`
-	Syntax    map[string]any `json:"syntax"`
+	DatabaseName   string         `json:"database-name"`
+	CollectionName string         `json:"collection-name"`
+	IndexName      string         `json:"index-name"`
+	IndexType      string         `json:"index-type"`
+	Syntax         map[string]any `json:"syntax"`
 }
 
 type CreateSearchIndexOutput struct {
@@ -74,7 +95,9 @@ type CreateSearchIndexOutput struct {
 }
 
 type DropSearchIndexInput struct {
-	IndexName string `json:"index-name"`
+	DatabaseName   string `json:"database-name"`
+	CollectionName string `json:"collection-name"`
+	IndexName      string `json:"index-name"`
 }
 
 type DropSearchIndexOutput struct {
@@ -82,14 +105,16 @@ type DropSearchIndexOutput struct {
 }
 
 type VectorSearchInput struct {
-	Exact         bool           `json:"exact"`
-	Filter        map[string]any `json:"filter"`
-	IndexName     string         `json:"index-name"`
-	Limit         int            `json:"limit"`
-	NumCandidates int            `json:"num-candidates"`
-	Path          string         `json:"path"`
-	QueryVector   []float64      `json:"query-vector"`
-	Fields        []string       `json:"fields"`
+	DatabaseName   string         `json:"database-name"`
+	CollectionName string         `json:"collection-name"`
+	Exact          bool           `json:"exact"`
+	Filter         map[string]any `json:"filter"`
+	IndexName      string         `json:"index-name"`
+	Limit          int            `json:"limit"`
+	NumCandidates  int            `json:"num-candidates"`
+	Path           string         `json:"path"`
+	QueryVector    []float64      `json:"query-vector"`
+	Fields         []string       `json:"fields"`
 }
 
 type VectorSearchOutput struct {
@@ -104,6 +129,20 @@ func (e *execution) insert(ctx context.Context, in *structpb.Struct) (*structpb.
 		return nil, err
 	}
 
+	client := newClient(ctx, e.Setup)
+
+	var db *mongo.Database
+	if e.client.databaseClient == nil {
+		db = client.Database(inputStruct.DatabaseName)
+		e.client.databaseClient = db
+	}
+
+	if e.client.collectionClient == nil {
+		collection := db.Collection(inputStruct.CollectionName)
+		e.client.collectionClient = collection
+		e.client.searchIndexClient = collection.SearchIndexes()
+	}
+
 	data := inputStruct.Data
 
 	_, err = e.client.collectionClient.InsertOne(ctx, data)
@@ -112,7 +151,51 @@ func (e *execution) insert(ctx context.Context, in *structpb.Struct) (*structpb.
 	}
 
 	outputStruct := InsertOutput{
-		Status: "Successfully inserted document",
+		Status: "Successfully inserted 1 document",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
+func (e *execution) insertMany(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct InsertManyInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	client := newClient(ctx, e.Setup)
+
+	var db *mongo.Database
+	if e.client.databaseClient == nil {
+		db = client.Database(inputStruct.DatabaseName)
+		e.client.databaseClient = db
+	}
+
+	if e.client.collectionClient == nil {
+		collection := db.Collection(inputStruct.CollectionName)
+		e.client.collectionClient = collection
+		e.client.searchIndexClient = collection.SearchIndexes()
+	}
+
+	arrayData := inputStruct.ArrayData
+
+	var anyArrayData []any
+	for _, data := range arrayData {
+		anyArrayData = append(anyArrayData, data)
+	}
+
+	res, err := e.client.collectionClient.InsertMany(ctx, anyArrayData)
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := InsertManyOutput{
+		Status: fmt.Sprintf("Successfully inserted %v documents", len(res.InsertedIDs)),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -128,6 +211,20 @@ func (e *execution) find(ctx context.Context, in *structpb.Struct) (*structpb.St
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, err
+	}
+
+	client := newClient(ctx, e.Setup)
+
+	var db *mongo.Database
+	if e.client.databaseClient == nil {
+		db = client.Database(inputStruct.DatabaseName)
+		e.client.databaseClient = db
+	}
+
+	if e.client.collectionClient == nil {
+		collection := db.Collection(inputStruct.CollectionName)
+		e.client.collectionClient = collection
+		e.client.searchIndexClient = collection.SearchIndexes()
 	}
 
 	filter := inputStruct.Filter
@@ -173,7 +270,7 @@ func (e *execution) find(ctx context.Context, in *structpb.Struct) (*structpb.St
 	}
 
 	outputStruct := FindOutput{
-		Status:    "Successfully found documents",
+		Status:    fmt.Sprintf("Successfully found %v documents", len(documents)),
 		Documents: documents,
 	}
 
@@ -191,12 +288,22 @@ func (e *execution) update(ctx context.Context, in *structpb.Struct) (*structpb.
 		return nil, err
 	}
 
+	client := newClient(ctx, e.Setup)
+
+	var db *mongo.Database
+	if e.client.databaseClient == nil {
+		db = client.Database(inputStruct.DatabaseName)
+		e.client.databaseClient = db
+	}
+
+	if e.client.collectionClient == nil {
+		collection := db.Collection(inputStruct.CollectionName)
+		e.client.collectionClient = collection
+		e.client.searchIndexClient = collection.SearchIndexes()
+	}
+
 	filter := inputStruct.Filter
 	updateFields := inputStruct.UpdateData
-
-	if err != nil {
-		return nil, err
-	}
 
 	setFields := bson.M{}
 
@@ -213,13 +320,13 @@ func (e *execution) update(ctx context.Context, in *structpb.Struct) (*structpb.
 		return nil, fmt.Errorf("no valid update operations found")
 	}
 
-	_, err = e.client.collectionClient.UpdateMany(ctx, filter, updateDoc)
+	res, err := e.client.collectionClient.UpdateMany(ctx, filter, updateDoc)
 	if err != nil {
 		return nil, err
 	}
 
 	outputStruct := UpdateOutput{
-		Status: "Successfully updated documents",
+		Status: fmt.Sprintf("Successfully updated %v documents", res.ModifiedCount),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -236,15 +343,29 @@ func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.
 		return nil, err
 	}
 
+	client := newClient(ctx, e.Setup)
+
+	var db *mongo.Database
+	if e.client.databaseClient == nil {
+		db = client.Database(inputStruct.DatabaseName)
+		e.client.databaseClient = db
+	}
+
+	if e.client.collectionClient == nil {
+		collection := db.Collection(inputStruct.CollectionName)
+		e.client.collectionClient = collection
+		e.client.searchIndexClient = collection.SearchIndexes()
+	}
+
 	filter := inputStruct.Filter
 
-	_, err = e.client.collectionClient.DeleteMany(ctx, filter)
+	res, err := e.client.collectionClient.DeleteMany(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
 
 	outputStruct := DeleteOutput{
-		Status: "Successfully deleted documents",
+		Status: fmt.Sprintf("Successfully deleted %v documents", res.DeletedCount),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -255,14 +376,33 @@ func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.
 }
 
 func (e *execution) dropCollection(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct DropCollectionInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
 
-	err := e.client.collectionClient.Drop(ctx)
+	client := newClient(ctx, e.Setup)
+
+	var db *mongo.Database
+	if e.client.databaseClient == nil {
+		db = client.Database(inputStruct.DatabaseName)
+		e.client.databaseClient = db
+	}
+
+	if e.client.collectionClient == nil {
+		collection := db.Collection(inputStruct.CollectionName)
+		e.client.collectionClient = collection
+		e.client.searchIndexClient = collection.SearchIndexes()
+	}
+
+	err = e.client.collectionClient.Drop(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	outputStruct := DropCollectionOutput{
-		Status: "Successfully dropped collection",
+		Status: "Successfully dropped 1 collection",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -273,14 +413,27 @@ func (e *execution) dropCollection(ctx context.Context, in *structpb.Struct) (*s
 }
 
 func (e *execution) dropDatabase(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct DropDatabaseInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
 
-	err := e.client.databaseClient.Drop(ctx)
+	client := newClient(ctx, e.Setup)
+
+	var db *mongo.Database
+	if e.client.databaseClient == nil {
+		db = client.Database(inputStruct.DatabaseName)
+		e.client.databaseClient = db
+	}
+
+	err = e.client.databaseClient.Drop(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	outputStruct := DropDatabaseOutput{
-		Status: "Successfully dropped database",
+		Status: "Successfully dropped 1 database",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -295,6 +448,20 @@ func (e *execution) createSearchIndex(ctx context.Context, in *structpb.Struct) 
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, err
+	}
+
+	client := newClient(ctx, e.Setup)
+
+	var db *mongo.Database
+	if e.client.databaseClient == nil {
+		db = client.Database(inputStruct.DatabaseName)
+		e.client.databaseClient = db
+	}
+
+	if e.client.collectionClient == nil {
+		collection := db.Collection(inputStruct.CollectionName)
+		e.client.collectionClient = collection
+		e.client.searchIndexClient = collection.SearchIndexes()
 	}
 
 	syntax := inputStruct.Syntax
@@ -313,7 +480,7 @@ func (e *execution) createSearchIndex(ctx context.Context, in *structpb.Struct) 
 	}
 
 	outputStruct := CreateSearchIndexOutput{
-		Status: "Successfully created search index",
+		Status: "Successfully created 1 search index",
 	}
 
 	// Convert the output structure to Structpb
@@ -331,6 +498,20 @@ func (e *execution) dropSearchIndex(ctx context.Context, in *structpb.Struct) (*
 		return nil, err
 	}
 
+	client := newClient(ctx, e.Setup)
+
+	var db *mongo.Database
+	if e.client.databaseClient == nil {
+		db = client.Database(inputStruct.DatabaseName)
+		e.client.databaseClient = db
+	}
+
+	if e.client.collectionClient == nil {
+		collection := db.Collection(inputStruct.CollectionName)
+		e.client.collectionClient = collection
+		e.client.searchIndexClient = collection.SearchIndexes()
+	}
+
 	indexName := inputStruct.IndexName
 
 	err = e.client.searchIndexClient.DropOne(ctx, indexName)
@@ -339,7 +520,7 @@ func (e *execution) dropSearchIndex(ctx context.Context, in *structpb.Struct) (*
 	}
 
 	outputStruct := DropSearchIndexOutput{
-		Status: "Successfully dropped search index",
+		Status: "Successfully dropped 1 search index",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -349,11 +530,27 @@ func (e *execution) dropSearchIndex(ctx context.Context, in *structpb.Struct) (*
 	return output, nil
 }
 
+// Exact is optional (default is false), false means ANN search, true means exact search
+// numCandidates is optional (default is 3 * limit)
 func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct VectorSearchInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
 	if err != nil {
 		return nil, err
+	}
+
+	client := newClient(ctx, e.Setup)
+
+	var db *mongo.Database
+	if e.client.databaseClient == nil {
+		db = client.Database(inputStruct.DatabaseName)
+		e.client.databaseClient = db
+	}
+
+	if e.client.collectionClient == nil {
+		collection := db.Collection(inputStruct.CollectionName)
+		e.client.collectionClient = collection
+		e.client.searchIndexClient = collection.SearchIndexes()
 	}
 
 	exact := inputStruct.Exact
@@ -424,7 +621,7 @@ func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*str
 	}
 
 	outputStruct := VectorSearchOutput{
-		Status:    "Successfully found documents",
+		Status:    fmt.Sprintf("Successfully found %v documents", len(documents)),
 		Documents: documents,
 	}
 

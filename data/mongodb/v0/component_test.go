@@ -16,19 +16,26 @@ import (
 
 type MockMongoClient struct{}
 
-func (m *MockMongoClient) InsertOne(ctx context.Context, document interface{}, opts ...*options.InsertOneOptions) (*mongo.InsertOneResult, error) {
+func (m *MockMongoClient) InsertOne(ctx context.Context, document any, opts ...*options.InsertOneOptions) (*mongo.InsertOneResult, error) {
 	mockResult := &mongo.InsertOneResult{
 		InsertedID: "mockID",
 	}
 	return mockResult, nil
 }
 
-func (m *MockMongoClient) Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (*mongo.Cursor, error) {
+func (m *MockMongoClient) InsertMany(ctx context.Context, documents []any, opts ...*options.InsertManyOptions) (*mongo.InsertManyResult, error) {
+	mockResult := &mongo.InsertManyResult{
+		InsertedIDs: []any{"mockID1", "mockID2"},
+	}
+	return mockResult, nil
+}
+
+func (m *MockMongoClient) Find(ctx context.Context, filter any, opts ...*options.FindOptions) (*mongo.Cursor, error) {
 	mockDocs := []bson.M{
 		{"_id": "mockID1", "name": "John Doe", "email": "john@example.com"},
 		{"_id": "mockID2", "name": "Jane Smith", "email": "jane@example.com"},
 	}
-	var docs []interface{}
+	var docs []any
 	for _, doc := range mockDocs {
 		docs = append(docs, doc)
 	}
@@ -39,7 +46,7 @@ func (m *MockMongoClient) Find(ctx context.Context, filter interface{}, opts ...
 	return mockCursor, nil
 }
 
-func (m *MockMongoClient) UpdateMany(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
+func (m *MockMongoClient) UpdateMany(ctx context.Context, filter any, update any, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	mockResult := &mongo.UpdateResult{
 		MatchedCount:  1,
 		ModifiedCount: 1,
@@ -47,7 +54,7 @@ func (m *MockMongoClient) UpdateMany(ctx context.Context, filter interface{}, up
 	return mockResult, nil
 }
 
-func (m *MockMongoClient) DeleteMany(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error) {
+func (m *MockMongoClient) DeleteMany(ctx context.Context, filter any, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error) {
 	mockResult := &mongo.DeleteResult{
 		DeletedCount: 1,
 	}
@@ -70,12 +77,12 @@ func (m *MockMongoClient) DropOne(ctx context.Context, name string, _ ...*option
 	return nil
 }
 
-func (m *MockMongoClient) Aggregate(ctx context.Context, pipeline interface{}, opts ...*options.AggregateOptions) (*mongo.Cursor, error) {
+func (m *MockMongoClient) Aggregate(ctx context.Context, pipeline any, opts ...*options.AggregateOptions) (*mongo.Cursor, error) {
 	mockDocs := []bson.M{
 		{"vector": []float64{0.1, 0.2}, "name": "test"},
 	}
 
-	var docs []interface{}
+	var docs []any
 	for _, doc := range mockDocs {
 		docs = append(docs, doc)
 	}
@@ -86,7 +93,7 @@ func (m *MockMongoClient) Aggregate(ctx context.Context, pipeline interface{}, o
 	return mockCursor, nil
 }
 
-func TestComponent_ExecuteInsertTask(t *testing.T) {
+func TestComponent_ExecuteInsertOneTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
@@ -105,7 +112,7 @@ func TestComponent_ExecuteInsertTask(t *testing.T) {
 				Data: map[string]any{"name": "test", "email": "test@example.com"},
 			},
 			wantResp: InsertOutput{
-				Status: "Successfully inserted document",
+				Status: "Successfully inserted 1 document",
 			},
 		},
 	}
@@ -164,7 +171,7 @@ func TestComponent_ExecuteFindTask(t *testing.T) {
 				Limit:  0,
 			},
 			wantResp: FindOutput{
-				Status: "Successfully found documents",
+				Status: "Successfully found 2 documents",
 				Documents: []map[string]any{
 					{"_id": "mockID1", "name": "John Doe", "email": "john@example.com"},
 					{"_id": "mockID2", "name": "Jane Smith", "email": "jane@example.com"},
@@ -227,7 +234,7 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 				UpdateData: map[string]any{"name": "test2"},
 			},
 			wantResp: UpdateOutput{
-				Status: "Successfully updated documents",
+				Status: "Successfully updated 1 documents",
 			},
 		},
 	}
@@ -285,7 +292,7 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 				Filter: map[string]any{"name": "test"},
 			},
 			wantResp: DeleteOutput{
-				Status: "Successfully deleted documents",
+				Status: "Successfully deleted 1 documents",
 			},
 		},
 	}
@@ -325,7 +332,7 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 	}
 }
 
-func TestComponent_ExecuteDeleteCollectionTask(t *testing.T) {
+func TestComponent_ExecuteDropCollectionTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
@@ -338,12 +345,12 @@ func TestComponent_ExecuteDeleteCollectionTask(t *testing.T) {
 		wantErr  string
 	}{
 		{
-			name: "ok to delete collection",
+			name: "ok to drop collection",
 			input: DropCollectionInput{
 				CollectionName: "test_coll",
 			},
 			wantResp: DropCollectionOutput{
-				Status: "Successfully dropped collection",
+				Status: "Successfully dropped 1 collection",
 			},
 		},
 	}
@@ -383,7 +390,7 @@ func TestComponent_ExecuteDeleteCollectionTask(t *testing.T) {
 	}
 }
 
-func TestComponent_ExecuteDeleteDatabaseTask(t *testing.T) {
+func TestComponent_ExecuteDropDatabaseTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
@@ -396,12 +403,12 @@ func TestComponent_ExecuteDeleteDatabaseTask(t *testing.T) {
 		wantErr  string
 	}{
 		{
-			name: "ok to delete database",
+			name: "ok to drop database",
 			input: DropDatabaseInput{
 				DatabaseName: "test_db",
 			},
 			wantResp: DropDatabaseOutput{
-				Status: "Successfully dropped database",
+				Status: "Successfully dropped 1 database",
 			},
 		},
 	}
@@ -467,7 +474,7 @@ func TestComponent_ExecuteCreateSearchIndexTask(t *testing.T) {
 				},
 			},
 			wantResp: CreateSearchIndexOutput{
-				Status: "Successfully created search index",
+				Status: "Successfully created 1 search index",
 			},
 		},
 	}
@@ -526,7 +533,7 @@ func TestComponent_ExecuteDropSearchIndexTask(t *testing.T) {
 				IndexName: "index_name",
 			},
 			wantResp: DropSearchIndexOutput{
-				Status: "Successfully dropped search index",
+				Status: "Successfully dropped 1 search index",
 			},
 		},
 	}
@@ -591,7 +598,7 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 				Filter:        map[string]any{"name": "test"},
 			},
 			wantResp: VectorSearchOutput{
-				Status: "Successfully found documents",
+				Status: "Successfully found 1 documents",
 				Documents: []map[string]any{
 					{"vector": []float64{0.1, 0.2}, "name": "test"},
 				},
@@ -615,6 +622,67 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 				},
 			}
 			e.execute = e.vectorSearch
+			exec := &base.ExecutionWrapper{Execution: e}
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestComponent_ExecuteInsertManyTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    InsertManyInput
+		wantResp InsertManyOutput
+		wantErr  string
+	}{
+		{
+			name: "ok to insert many",
+			input: InsertManyInput{
+				ArrayData: []map[string]any{
+					{"name": "test1", "email": "test1@example.com"},
+					{"name": "test2", "email": "test2@example.com"},
+				},
+			},
+			wantResp: InsertManyOutput{
+				Status: "Successfully inserted 2 documents",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"name":            "test",
+				"collection-name": "test_coll",
+				"uri":             "mongodb://localhost:27017",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskInsertMany},
+				client: &MongoClient{
+					collectionClient: &MockMongoClient{},
+				},
+			}
+			e.execute = e.insertMany
 			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)

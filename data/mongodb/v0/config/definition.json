@@ -1,6 +1,7 @@
 {
   "availableTasks": [
     "TASK_INSERT",
+    "TASK_INSERT_MANY",
     "TASK_FIND",
     "TASK_UPDATE",
     "TASK_DELETE",

@@ -9,6 +9,7 @@ The MongoDB component is a data component that allows users to access the MongoD
 It can carry out the following tasks:
 
 - [Insert](#insert)
+- [Insert Many](#insert-many)
 - [Find](#find)
 - [Update](#update)
 - [Delete](#delete)
@@ -55,13 +56,36 @@ Perform an insert operation
 | Task ID (required) | `task` | string | `TASK_INSERT` |
 | Database Name (required) | `database-name` | string | The name of the database in MongoDB |
 | Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
-| Data (required) | `data` | semi-structured/json | The data to be inserted |
+| Data (required) | `data` | object | The data to be inserted |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Insert status |
+
+
+
+
+
+
+### Insert Many
+
+Perform an insert many operation
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_INSERT_MANY` |
+| Database Name (required) | `database-name` | string | The name of the database in MongoDB |
+| Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
+| Data (required) | `array-data` | array[object] | The array data to be inserted |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Insert many status |
 
 
 
@@ -78,7 +102,7 @@ Perform a find operation
 | Task ID (required) | `task` | string | `TASK_FIND` |
 | Database Name (required) | `database-name` | string | The name of the database in MongoDB |
 | Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
-| Filter | `filter` | semi-structured/json | The filter to find documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned |
+| Filter | `filter` | object | The filter to find documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned |
 | Limit | `limit` | integer | The number of documents to return. If empty then all documents will be returned |
 | Fields | `fields` | array[string] | The fields to return in the documents. If empty then all fields will be returned |
 
@@ -104,8 +128,8 @@ Perform an update operation
 | Task ID (required) | `task` | string | `TASK_UPDATE` |
 | Database Name (required) | `database-name` | string | The name of the database in MongoDB |
 | Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
-| Filter (required) | `filter` | semi-structured/json | The filter to update documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned |
-| Update (required) | `update-data` | semi-structured/json | The updated data to be applied to the documents |
+| Filter (required) | `filter` | object | The filter to update documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned |
+| Update (required) | `update-data` | object | The updated data to be applied to the documents |
 
 
 
@@ -128,7 +152,7 @@ Perform a delete operation
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Database Name (required) | `database-name` | string | The name of the database in MongoDB |
 | Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
-| Filter (required) | `filter` | semi-structured/json | The filter to delete documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned |
+| Filter (required) | `filter` | object | The filter to delete documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned |
 
 
 
@@ -186,7 +210,7 @@ Delete the database
 
 ### Create Search Index
 
-Create a search index
+Create a search index, only works for M10 or larger clusters
 
 
 | Input | ID | Type | Description |
@@ -196,7 +220,7 @@ Create a search index
 | Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
 | Index Name (required) | `index-name` | string | The name of the index to be created |
 | Index Type (required) | `index-type` | string | The type of the index to be created |
-| Syntax (required) | `syntax` | semi-structured/json | The syntax structure of the search index, please refer to the MongoDB documentation for more information. search https://www.mongodb.com/docs/atlas/atlas-search/create-index/. vectorSearch https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-type/ |
+| Syntax (required) | `syntax` | object | The syntax structure of the search index, please refer to the MongoDB documentation for more information. search https://www.mongodb.com/docs/atlas/atlas-search/create-index/. vectorSearch https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-type/ |
 
 
 
@@ -248,7 +272,7 @@ Perform a vector search operation
 | Limit (required) | `limit` | integer | Limit the documents to be returned |
 | Number of Candidates | `num-candidates` | integer | The number of candidates to the field to be used for vector search. Default to 3 times limit |
 | Path (required) | `path` | string | The path to the field to be used for vector search |
-| Filter | `filter` | semi-structured/json | The filter to be used for vector search, need to first create filter vectorSearch search index, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned to be used for vector search |
+| Filter | `filter` | object | The filter to be used for vector search, need to first create filter vectorSearch search index, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned to be used for vector search |
 | Fields | `fields` | array[string] | The fields to return in the documents. If empty then all fields will be returned |
 
 

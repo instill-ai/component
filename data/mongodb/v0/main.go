@@ -16,6 +16,7 @@ import (
 
 const (
 	TaskInsert            = "TASK_INSERT"
+	TaskInsertMany        = "TASK_INSERT_MANY"
 	TaskFind              = "TASK_FIND"
 	TaskUpdate            = "TASK_UPDATE"
 	TaskDelete            = "TASK_DELETE"
@@ -45,6 +46,7 @@ type component struct {
 type MongoCollectionClient interface {
 	Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (cur *mongo.Cursor, err error)
 	InsertOne(ctx context.Context, document interface{}, opts ...*options.InsertOneOptions) (*mongo.InsertOneResult, error)
+	InsertMany(ctx context.Context, documents []interface{}, opts ...*options.InsertManyOptions) (*mongo.InsertManyResult, error)
 	UpdateMany(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
 	DeleteMany(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (*mongo.DeleteResult, error)
 	Drop(ctx context.Context) error
@@ -99,6 +101,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	switch task {
 	case TaskInsert:
 		e.execute = e.insert
+	case TaskInsertMany:
+		e.execute = e.insertMany
 	case TaskFind:
 		e.execute = e.find
 	case TaskUpdate:
@@ -125,37 +129,13 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
-type Destination struct {
-	DatabaseName   string `json:"database-name"`
-	CollectionName string `json:"collection-name"`
-}
-
 // dbClient wont be nil on component test (use mock dbClient)
 // collectionClient wont be nil on component test (use mock collectionClient)
 // collectionClient will be nil on task DropDatabase
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
-	client := newClient(ctx, e.Setup)
 
 	for i, input := range inputs {
-		var inputStruct Destination
-		err := base.ConvertFromStructpb(input, &inputStruct)
-		if err != nil {
-			return nil, err
-		}
-
-		var db *mongo.Database
-		if e.client.databaseClient == nil {
-			db = client.Database(inputStruct.DatabaseName)
-			e.client.databaseClient = db
-		}
-
-		if e.Task != TaskDropDatabase && e.client.collectionClient == nil {
-			collection := db.Collection(inputStruct.CollectionName)
-			e.client.collectionClient = collection
-			e.client.searchIndexClient = collection.SearchIndexes()
-		}
-
 		output, err := e.execute(ctx, input)
 		if err != nil {
 			return nil, err
