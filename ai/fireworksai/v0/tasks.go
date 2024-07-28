@@ -12,7 +12,7 @@ const (
 type TaskTextGenerationChatInput struct {
 	ChatHistory  []ChatMessage `json:"chat-history"`
 	MaxNewTokens int           `json:"max-new-tokens"`
-	ModelName    string        `json:"model-name"`
+	Model        string        `json:"model"`
 	Prompt       string        `json:"prompt"`
 	PromptImages []string      `json:"prompt-images"`
 	Seed         int           `json:"seed"`
@@ -67,11 +67,19 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 	for _, msg := range input.ChatHistory {
 		contents := []FireworksMultiModalContent{}
 		for _, c := range msg.Content {
-			contents = append(contents, FireworksMultiModalContent{
-				ImageURL: FireworksURL{URL: c.ImageURL.URL},
-				Text:     c.Text,
-				Type:     FireworksContentType(c.Type),
-			})
+			if c.ImageURL.URL != "" {
+				contents = append(contents, FireworksMultiModalContent{
+					ImageURL: FireworksURL{URL: c.ImageURL.URL},
+					Type:     FireworksContentTypeImageURL,
+				})
+				continue
+			}
+			if c.Text != "" {
+				contents = append(contents, FireworksMultiModalContent{
+					Text: c.Text,
+					Type: FireworksContentTypeText,
+				})
+			}
 		}
 		messages = append(messages, FireworksChatRequestMessage{
 			Role:    FireworksChatMessageRole(msg.Role),
@@ -101,7 +109,7 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 
 	req := ChatRequest{
 		Messages:    messages,
-		Model:       chatModelPrefix + input.ModelName,
+		Model:       chatModelPrefix + input.Model,
 		Tools:       nil,
 		MaxTokens:   input.MaxNewTokens,
 		Temperature: input.Temperature,
@@ -131,8 +139,8 @@ type TaskTextEmbeddingsUsage struct {
 }
 
 type TaskTextEmbeddingsInput struct {
-	Text      string `json:"text"`
-	ModelName string `json:"model-name"`
+	Text  string `json:"text"`
+	Model string `json:"model"`
 }
 
 type TaskTextEmbeddingsOutput struct {
@@ -148,7 +156,7 @@ func (e *execution) TaskTextEmbeddings(in *structpb.Struct) (*structpb.Struct, e
 
 	req := EmbedRequest{
 		Input: input.Text,
-		Model: input.ModelName,
+		Model: input.Model,
 	}
 
 	resp, err := e.client.Embed(req)
