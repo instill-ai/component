@@ -272,7 +272,7 @@
         },
         "top-k": {
           "default": 10,
-          "description": "Integer to define the top tokens considered within the sample operation to create new text (Note: The Mistral models does not support top-k sampling)",
+          "description": "Integer to define the top tokens considered within the sample operation to create new text",
           "instillAcceptFormats": [
             "integer"
           ],
@@ -345,8 +345,8 @@
             "thenlper/gte-large",
             "thenlper/gte-base"
           ],
-          "example": "mistral-embed",
-          "description": "The Mistral embed model to be used",
+          "example": "nomic-ai/nomic-embed-text-v1.5",
+          "description": "The OSS embedding model to be used",
           "instillAcceptFormats": [
             "string"
           ],
