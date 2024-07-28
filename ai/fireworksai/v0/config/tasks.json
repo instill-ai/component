@@ -113,7 +113,7 @@
       "description": "Input",
       "instillEditOnNodeFields": [
         "prompt",
-        "model-name"
+        "model"
       ],
       "instillUIOrder": 0,
       "properties": {
@@ -147,7 +147,7 @@
           "title": "Max new tokens",
           "type": "integer"
         },
-        "model-name": {
+        "model": {
           "enum": [
             "llama-v3p1-405b-instruct",
             "llama-v3p1-70b-instruct",
@@ -303,7 +303,7 @@
       },
       "required": [
         "prompt",
-        "model-name"
+        "model"
       ],
       "title": "Input",
       "type": "object"
@@ -337,7 +337,7 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "model-name": {
+        "model": {
           "enum": [
             "nomic-ai/nomic-embed-text-v1.5",
             "nomic-ai/nomic-embed-text-v1",
@@ -389,11 +389,11 @@
       },
       "required": [
         "text",
-        "model-name"
+        "model"
       ],
       "instillEditOnNodeFields": [
         "text",
-        "model-name"
+        "model"
       ],
       "title": "Input",
       "type": "object"

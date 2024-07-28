@@ -38,8 +38,17 @@ func TestComponent_Tasks(t *testing.T) {
 			Model:   "accounts/fireworks/models/llama-v3p1-405b-instruct",
 			Object:  FireworksResponseObjectChatCompletion,
 			Created: 0,
-			Choices: []FireWorksChoice{},
-			Usage:   FireworksChatUsage{PromptTokens: 10, CompletionTokens: 18, TotalTokens: 28},
+			Choices: []FireWorksChoice{
+				{
+					Index:        0,
+					FinishReason: FireworksFinishReasonStop,
+					Message: FireworksChatResponseMessage{
+						Role:    FireworksChatMessageRoleAssistant,
+						Content: "\nWhy did the tomato turn red?\nAnswer: Because it saw the salad dressing",
+					},
+				},
+			},
+			Usage: FireworksChatUsage{PromptTokens: 10, CompletionTokens: 18, TotalTokens: 28},
 		}, nil)
 	FireworksClientMock.ChatMock.
 		When(ChatRequest{
@@ -82,7 +91,7 @@ func TestComponent_Tasks(t *testing.T) {
 		e.execute = e.TaskTextGenerationChat
 		exec := &base.ExecutionWrapper{Execution: e}
 
-		pbIn, err := base.ConvertToStructpb(map[string]any{"model-name": "llama-v3p1-405b-instruct", "prompt": "Tell me a joke"})
+		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "llama-v3p1-405b-instruct", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
 		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
@@ -103,11 +112,11 @@ func TestComponent_Tasks(t *testing.T) {
 		e.execute = e.TaskTextGenerationChat
 		exec := &base.ExecutionWrapper{Execution: e}
 
-		pbIn, err := base.ConvertToStructpb(map[string]any{"model-name": "gemini-1.5-pro", "prompt": "Tell me a joke"})
+		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "gemini-1.5-pro", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
 		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
-		c.Assert(err, qt.ErrorMatches, `error when sending chat request model unsuccessful HTTP response`)
+		c.Assert(err, qt.ErrorMatches, `error when sending chat request unsuccessful HTTP response`)
 	})
 
 	c.Run("ok - task embedding", func(c *qt.C) {
@@ -120,13 +129,13 @@ func TestComponent_Tasks(t *testing.T) {
 		e.execute = e.TaskTextEmbeddings
 		exec := &base.ExecutionWrapper{Execution: e}
 
-		pbIn, err := base.ConvertToStructpb(map[string]any{"model-name": "snowflake-arctic-embed:22m", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
+		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "nomic-ai/nomic-embed-text-v1.5", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
 		c.Assert(err, qt.IsNil)
 
 		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(TaskTextEmbeddingsOutput{Embedding: []float32{0.1, 0.2, 0.3, 0.4, 0.5}})
+		wantJSON, err := json.Marshal(TaskTextEmbeddingsOutput{Embedding: []float32{0.1, 0.2, 0.3}, Usage: TaskTextEmbeddingsUsage{Tokens: 10}})
 		c.Assert(err, qt.IsNil)
 		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
@@ -141,11 +150,11 @@ func TestComponent_Tasks(t *testing.T) {
 		e.execute = e.TaskTextEmbeddings
 		exec := &base.ExecutionWrapper{Execution: e}
 
-		pbIn, err := base.ConvertToStructpb(map[string]any{"model-name": "snowflake-arctic-embed:23m", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
+		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "nomic-ai/nomic-embed-text-v1.87", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
 		c.Assert(err, qt.IsNil)
 
 		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
-		c.Assert(err, qt.ErrorMatches, `error when sending embeddings unsuccessful HTTP response`)
+		c.Assert(err, qt.ErrorMatches, `error when sending embeddings request unsuccessful HTTP response`)
 	})
 
 }
