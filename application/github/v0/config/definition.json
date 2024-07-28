@@ -11,7 +11,7 @@
     "TASK_CREATE_WEBHOOK"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/github",
-  "icon": "assets/Github.svg",
+  "icon": "assets/github.svg",
   "id": "github",
   "public": true,
   "title": "GitHub",

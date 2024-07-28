@@ -7,7 +7,7 @@
     "TASK_GET_SPRINT"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/jira",
-  "icon": "assets/Jira.svg",
+  "icon": "assets/jira.svg",
   "id": "jira",
   "public": true,
   "title": "Jira",

@@ -13,7 +13,7 @@
     "TASK_RETRIEVE_ASSOCIATION"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/hubspot",
-  "icon": "assets/HubSpot.svg",
+  "icon": "assets/hubspot.svg",
   "id": "hubspot",
   "public": true,
   "title": "HubSpot",
