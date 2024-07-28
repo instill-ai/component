@@ -9,6 +9,7 @@ The Website component is an application component that allows users to scrape we
 It can carry out the following tasks:
 
 - [Scrape Website](#scrape-website)
+- [Scrape Sitemap](#scrape-sitemap)
 
 
 
@@ -47,6 +48,27 @@ Scrape the website contents.
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Pages | `pages` | array[object] | The scraped webpages |
+
+
+
+
+
+
+### Scrape Sitemap
+
+Scrape the sitemap information
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_SCRAPE_SITEMAP` |
+| Sitemap URL (required) | `url` | string | The URL of the sitemap to scrape |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| List | `list` | array | The list of information in a sitemap |
 
 
 

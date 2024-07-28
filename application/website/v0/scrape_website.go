@@ -8,8 +8,10 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/gocolly/colly/v2"
+	colly "github.com/gocolly/colly/v2"
+	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type PageInfo struct {
@@ -93,26 +95,33 @@ func getHTMLPageDoc(url string) (*goquery.Document, error) {
 }
 
 // Scrape crawls a webpage and returns a slice of PageInfo
-func Scrape(input ScrapeWebsiteInput) (ScrapeWebsiteOutput, error) {
+func (e *execution) Scrape(input *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := ScrapeWebsiteInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("error converting input to struct: %v", err)
+	}
+
 	output := ScrapeWebsiteOutput{}
 
-	if input.IncludeLinkHTML == nil {
+	if inputStruct.IncludeLinkHTML == nil {
 		b := false
-		input.IncludeLinkHTML = &b
+		inputStruct.IncludeLinkHTML = &b
 	}
-	if input.IncludeLinkText == nil {
+	if inputStruct.IncludeLinkText == nil {
 		b := false
-		input.IncludeLinkText = &b
+		inputStruct.IncludeLinkText = &b
 	}
-	if input.MaxK < 0 {
-		input.MaxK = 0
+	if inputStruct.MaxK < 0 {
+		inputStruct.MaxK = 0
 	}
 
 	pageLinks := []string{}
 
 	c := colly.NewCollector()
-	if len(input.AllowedDomains) > 0 {
-		c.AllowedDomains = input.AllowedDomains
+	if len(inputStruct.AllowedDomains) > 0 {
+		c.AllowedDomains = inputStruct.AllowedDomains
 	}
 	c.AllowURLRevisit = false
 
@@ -130,7 +139,7 @@ func Scrape(input ScrapeWebsiteInput) (ScrapeWebsiteOutput, error) {
 
 	c.OnRequest(func(r *colly.Request) {
 
-		if input.MaxK > 0 && len(output.Pages) >= input.MaxK {
+		if inputStruct.MaxK > 0 && len(output.Pages) >= inputStruct.MaxK {
 			r.Abort()
 			return
 		}
@@ -154,18 +163,18 @@ func Scrape(input ScrapeWebsiteInput) (ScrapeWebsiteOutput, error) {
 			page.Title = title
 			page.Link = strippedURL.String()
 
-			if *input.IncludeLinkHTML || *input.IncludeLinkText {
+			if *inputStruct.IncludeLinkHTML || *inputStruct.IncludeLinkText {
 				html, err := util.ScrapeWebpageHTML(doc)
 				if err != nil {
 					fmt.Printf("Error scraping HTML from %s: %v", strippedURL.String(), err)
 					return
 				}
 
-				if *input.IncludeLinkHTML {
+				if *inputStruct.IncludeLinkHTML {
 					page.LinkHTML = html
 				}
 
-				if *input.IncludeLinkText {
+				if *inputStruct.IncludeLinkText {
 					markdown, err := util.ScrapeWebpageHTMLToMarkdown(html)
 					if err != nil {
 						fmt.Printf("Error scraping text from %s: %v", strippedURL.String(), err)
@@ -179,10 +188,16 @@ func Scrape(input ScrapeWebsiteInput) (ScrapeWebsiteOutput, error) {
 	})
 
 	// Start scraping
-	if !strings.HasPrefix(input.TargetURL, "http://") && !strings.HasPrefix(input.TargetURL, "https://") {
-		input.TargetURL = "https://" + input.TargetURL
+	if !strings.HasPrefix(inputStruct.TargetURL, "http://") && !strings.HasPrefix(inputStruct.TargetURL, "https://") {
+		inputStruct.TargetURL = "https://" + inputStruct.TargetURL
 	}
-	_ = c.Visit(input.TargetURL)
+	_ = c.Visit(inputStruct.TargetURL)
 
-	return output, nil
+	outputStruct, err := base.ConvertToStructpb(output)
+	if err != nil {
+		return nil, fmt.Errorf("error converting output to struct: %v", err)
+	}
+
+	return outputStruct, nil
+
 }
