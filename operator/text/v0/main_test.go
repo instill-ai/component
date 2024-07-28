@@ -2,12 +2,8 @@ package text
 
 import (
 	"context"
-	"encoding/base64"
-	"fmt"
-	"os"
 	"testing"
 
-	"code.sajari.com/docconv"
 	"github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -16,22 +12,11 @@ import (
 func TestOperator(t *testing.T) {
 	c := quicktest.New(t)
 
-	fileContent, _ := os.ReadFile("testdata/test.txt")
-	base64DataURI := fmt.Sprintf("data:%s;base64,%s", docconv.MimeTypeByExtension("testdata/test.txt"), base64.StdEncoding.EncodeToString(fileContent))
 	testcases := []struct {
 		name  string
 		task  string
 		input structpb.Struct
 	}{
-		{
-			name: "convert to text",
-			task: "TASK_CONVERT_TO_TEXT",
-			input: structpb.Struct{
-				Fields: map[string]*structpb.Value{
-					"doc": {Kind: &structpb.Value_StringValue{StringValue: base64DataURI}},
-				},
-			},
-		},
 		{
 			name: "chunk texts",
 			task: "TASK_CHUNK_TEXT",

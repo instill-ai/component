@@ -39,12 +39,15 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         },
         "data": {
           "description": "The data to be inserted",
           "instillAcceptFormats": [
-            "semi-structured/*","structured/*","object","array"
+            "semi-structured/*",
+            "structured/*",
+            "object",
+            "array"
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
@@ -126,7 +129,7 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         },
         "filter": {
           "instillShortDescription": "The filter to be applied to the data",
@@ -137,7 +140,7 @@
             "template",
             "value"
           ],
-          "instillAcceptFormats":[
+          "instillAcceptFormats": [
             "string"
           ],
           "title": "Filter",
@@ -146,7 +149,10 @@
         "update-data": {
           "description": "The new data to be updated to",
           "instillAcceptFormats": [
-            "semi-structured/*","structured/*","object","array"
+            "semi-structured/*",
+            "structured/*",
+            "object",
+            "array"
           ],
           "instillUIOrder": 3,
           "instillUpstreamTypes": [
@@ -189,7 +195,7 @@
       "type": "object"
     }
   },
-  "TASK_SELECT":{
+  "TASK_SELECT": {
     "instillShortDescription": "Perform a select operation based on specified filter",
     "input": {
       "instillUIOrder": 0,
@@ -229,7 +235,7 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         },
         "filter": {
           "instillShortDescription": "The filter to be applied to the data. If empty, then all rows will be updated",
@@ -240,7 +246,7 @@
             "template",
             "value"
           ],
-          "instillAcceptFormats":[
+          "instillAcceptFormats": [
             "string"
           ],
           "title": "Filter",
@@ -259,9 +265,9 @@
             "value"
           ],
           "title": "Limit",
-          "type":"integer"
+          "type": "integer"
         },
-        "columns":{
+        "columns": {
           "description": "The columns to return in the rows. If empty then all columns will be returned",
           "instillAcceptFormats": [
             "array:string"
@@ -274,9 +280,9 @@
             "value"
           ],
           "title": "Columns",
-          "type":"array",
+          "type": "array",
           "items": {
-            "title":"Column",
+            "title": "Column",
             "type": "string"
           }
         }
@@ -370,7 +376,7 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         },
         "filter": {
           "instillShortDescription": "The filter to be applied to the data",
@@ -381,7 +387,7 @@
             "template",
             "value"
           ],
-          "instillAcceptFormats":[
+          "instillAcceptFormats": [
             "string"
           ],
           "title": "Filter",
@@ -415,7 +421,7 @@
       "type": "object"
     }
   },
-  "TASK_CREATE_TABLE":{
+  "TASK_CREATE_TABLE": {
     "instillShortDescription": "Create a table in the database",
     "input": {
       "instillUIOrder": 0,
@@ -455,12 +461,14 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         },
         "columns-structure": {
           "description": "The columns structure to be created in the table, json with value string, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
           "instillAcceptFormats": [
-            "semi-structured/*","structured/*","object"
+            "semi-structured/*",
+            "structured/*",
+            "object"
           ],
           "instillShortDescription": "Columns Structure, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
           "instillUIOrder": 2,
@@ -499,7 +507,7 @@
       "type": "object"
     }
   },
-  "TASK_DROP_TABLE":{
+  "TASK_DROP_TABLE": {
     "instillShortDescription": "Drop a table in the database",
     "input": {
       "instillUIOrder": 0,
@@ -539,7 +547,7 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         }
       },
       "required": [
