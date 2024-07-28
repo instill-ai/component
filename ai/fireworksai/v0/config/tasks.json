@@ -158,6 +158,8 @@
             "firefunction-v2",
             "deepseek-coder-v2-instruct",
             "deepseek-coder-v2-lite-instruct",
+            "starcoder-16b",
+            "starcoder-7b",
             "phi-3-vision-128k-instruct",
             "qwen2-72b-instruct",
             "mythomax-l2-13b"
@@ -184,7 +186,8 @@
               "firefunction-v2",
               "deepseek-coder-v2-instruct",
               "deepseek-coder-v2-lite-instruct",
-              "gemma2-9b-it",
+              "starcoder-16b",
+              "starcoder-7b",
               "phi-3-vision-128k-instruct",
               "qwen2-72b-instruct",
               "mythomax-l2-13b"
