@@ -35,7 +35,7 @@ The component configuration is defined and maintained [here](https://github.com/
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Token (required) | `token` | string | Fill in your Jira API token. You can generate one from your Jira account "settings > security > API tokens". |
-| Base URL (required) | `base-url` | string | Fill in your Jira base URL. For example, if your Jira URL is https://mycompany.atlassian.net, then your base URL is https://mycompany.atlassian.net. |
+| Base URL (required) | `base-url` | string | Fill in your Jira base URL. For example, if your Jira URL is "https://mycompany.atlassian.net/...", then your base URL is https://mycompany.atlassian.net. |
 | Email (required) | `email` | string | Fill in your Jira email address. |
 
 
@@ -80,7 +80,7 @@ List issues in Jira
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_LIST_ISSUES` |
-| Board ID (required) | `board-id` | integer | The ID of the board |
+| Board Name (required) | `board-name` | string | The name of the board |
 | Range | `range` | object | Choose the range of issues to return. Default is `all` |
 | Start At | `start-at` | integer | The starting index of the returned boards. Base index: 0. Default is 0 |
 | Max Results | `max-results` | integer | The maximum number of boards to return. Default is 50 |
@@ -133,15 +133,15 @@ Get an issue in Jira
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_ISSUE` |
-| Issue ID or Key (required) | `issue-id-or-key` | string | The ID or key of the issue |
-| Update History | `update-history` | boolean | Whether the project in which the issue is created is added to the user's Recently viewed project list, as shown under Projects in Jira. |
+| Issue Key (required) | `issue-key` | string | The key of the issue, e.g. `JRA-1330` |
+| Update History | `update-history` | boolean | Whether the action taken is added to the user's Recent history, as shown under `Your Work` in Jira. |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | ID | `id` | string | The ID of the issue |
-| Key | `key` | string | The key of the issue |
+| Key | `key` | string | The key of the issue, e.g. `JRA-1330` |
 | Self | `self` | string | The URL of the issue |
 | Fields | `fields` | object | The fields of the issue. All navigable and Agile fields are returned |
 | Issue Type (optional) | `issue-type` | string | The type of the issue, can be: `Task`, `Epic` |

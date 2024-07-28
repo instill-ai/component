@@ -1,4 +1,4 @@
-package text
+package document
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 
 	"code.sajari.com/docconv"
 	"github.com/frankban/quicktest"
+	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -70,8 +71,10 @@ func TestConvertToText(t *testing.T) {
 		},
 	}
 
+	bc := base.Component{}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			component := Init(bc)
 			// Read the fileContent content
 			fileContent, err := os.ReadFile(test.filepath)
 			c.Assert(err, quicktest.IsNil)
@@ -87,8 +90,8 @@ func TestConvertToText(t *testing.T) {
 				input,
 			}
 
-			e := &execution{}
-			e.Task = "TASK_CONVERT_TO_TEXT"
+			e, err := component.CreateExecution(map[string]any{}, nil, "TASK_CONVERT_TO_TEXT")
+			c.Assert(err, quicktest.IsNil)
 
 			if test.name == "Convert xlsx file" {
 				_, err := e.Execute(context.Background(), inputs)

@@ -253,9 +253,9 @@ Get ticket information using ticket ID
 | :--- | :--- | :--- | :--- |
 | Owner ID (optional) | `owner-id` | string | The user who is assigned to the object |
 | Ticket Name | `ticket-name` | string | Ticket name |
-| Ticket Status | `ticket-status` | string | The pipeline stage that contains this ticket. Default format is number. Example: 1. However, remember to check internal value for custom fields. Note: In Instill, ticket-status is displayed as string because of the possible custom internal value. |
+| Ticket Status | `ticket-status` | string | The pipeline stage that contains this ticket. Default format is number. Example: 1. However, remember to check internal value for custom fields. Note: In Instill AI, ticket-status is displayed as string because of the possible custom internal value. |
 | Pipeline | `pipeline` | string | A pipeline organizes and tracks the progression of tickets through various stages of resolution within your support process. HubSpot uses interval value rather than the name displayed in the view |
-| Category (optional) | `category` | array[string] | The main reason customer reached out for help. Default format is in capital letters. Example: BILLING_ISSUE. However, remember to check internal value for custom fields. |
+| Categories (optional) | `categories` | array[string] | The main reason customer reached out for help. Default format is in capital letters. Example: BILLING_ISSUE. However, remember to check internal value for custom fields. |
 | Priority (optional) | `priority` | string | The level of attention needed on the ticket. Default format is in capital letters. Example: MEDIUM. However, remember to check internal value for custom fields. |
 | Source (optional) | `source` | string | Channel where ticket was originally submitted. Default format is in capital letters. Example: EMAIL |
 | Record Source (optional) | `record-source` | string | How this record was created. |
@@ -278,9 +278,9 @@ Create new ticket
 | Task ID (required) | `task` | string | `TASK_CREATE_TICKET` |
 | Owner ID | `owner-id` | string | The user who is assigned to the object |
 | Ticket Name (required) | `ticket-name` | string | Ticket name |
-| Ticket Status (required) | `ticket-status` | string | The pipeline stage that contains this ticket. Default format is number. Example: 1. However, remember to check internal value for custom fields. Note: In Instill, ticket-status is displayed as string because of the possible custom internal value. |
+| Ticket Status (required) | `ticket-status` | string | The pipeline stage that contains this ticket. Default format is number. Example: 1. However, remember to check internal value for custom fields. Note: In Instill AI, ticket-status is displayed as string because of the possible custom internal value. |
 | Pipeline (required) | `pipeline` | string | A pipeline organizes and tracks the progression of tickets through various stages of resolution within your support process. HubSpot uses interval value rather than the name displayed in the view |
-| Category | `category` | array[string] | The main reason customer reached out for help. Default format is in capital letters. Example: BILLING_ISSUE. However, remember to check internal value for custom fields. |
+| Categories | `categories` | array[string] | The main reason customer reached out for help. Default format is in capital letters. Example: BILLING_ISSUE. However, remember to check internal value for custom fields. |
 | Priority | `priority` | string | The level of attention needed on the ticket. Default format is in capital letters. Example: MEDIUM. However, remember to check internal value for custom fields. |
 | Source | `source` | string | Channel where ticket was originally submitted. Default format is in capital letters. Example: EMAIL |
 | Create Object -> Contact Association using contact IDs | `create-contacts-association` | array[string] | Existing contact IDs to be associated with the object |

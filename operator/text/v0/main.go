@@ -14,8 +14,7 @@ import (
 )
 
 const (
-	taskConvertToText string = "TASK_CONVERT_TO_TEXT"
-	taskChunkText     string = "TASK_CHUNK_TEXT"
+	taskChunkText string = "TASK_CHUNK_TEXT"
 )
 
 var (
@@ -61,21 +60,6 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 	for _, input := range inputs {
 		switch e.Task {
-		case taskConvertToText:
-			inputStruct := ConvertToTextInput{}
-			err := base.ConvertFromStructpb(input, &inputStruct)
-			if err != nil {
-				return nil, err
-			}
-			outputStruct, err := convertToText(inputStruct)
-			if err != nil {
-				return nil, err
-			}
-			output, err := base.ConvertToStructpb(outputStruct)
-			if err != nil {
-				return nil, err
-			}
-			outputs = append(outputs, output)
 		case taskChunkText:
 			inputStruct := ChunkTextInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)

@@ -23,41 +23,61 @@
         "description": "Existing contact IDs to be associated with the object",
         "title": "Create Object -> Contact Association using contact IDs",
         "type": "array",
-        "instillAcceptFormats": ["array:string"],
+        "instillAcceptFormats": [
+          "array:string"
+        ],
         "items": {
           "type": "string"
         },
-        "instillUpstreamTypes": ["value", "reference"]
+        "instillUpstreamTypes": [
+          "value",
+          "reference"
+        ]
       },
       "create-deals-association": {
         "description": "Existing deal IDs to be associated with the object",
         "title": "Create Object -> Deal Association using deal IDs",
         "type": "array",
-        "instillAcceptFormats": ["array:string"],
+        "instillAcceptFormats": [
+          "array:string"
+        ],
         "items": {
           "type": "string"
         },
-        "instillUpstreamTypes": ["value", "reference"]
+        "instillUpstreamTypes": [
+          "value",
+          "reference"
+        ]
       },
       "create-companies-association": {
         "description": "Existing company IDs to be associated with the object",
         "title": "Create Object -> Company Association using company IDs",
         "type": "array",
-        "instillAcceptFormats": ["array:string"],
+        "instillAcceptFormats": [
+          "array:string"
+        ],
         "items": {
           "type": "string"
         },
-        "instillUpstreamTypes": ["value", "reference"]
+        "instillUpstreamTypes": [
+          "value",
+          "reference"
+        ]
       },
       "create-tickets-association": {
         "description": "Existing ticket IDs to be associated with the object",
         "title": "Create Object -> Ticket Association using ticket IDs",
         "type": "array",
-        "instillAcceptFormats": ["array:string"],
+        "instillAcceptFormats": [
+          "array:string"
+        ],
         "items": {
           "type": "string"
         },
-        "instillUpstreamTypes": ["value", "reference"]
+        "instillUpstreamTypes": [
+          "value",
+          "reference"
+        ]
       }
     },
     "contact": {
@@ -302,19 +322,29 @@
     "input": {
       "description": "Input contact ID or email",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": ["contact-id-or-email"],
+      "instillEditOnNodeFields": [
+        "contact-id-or-email"
+      ],
       "properties": {
         "contact-id-or-email": {
           "description": "Input contact ID or email. If the input has @, it will search the contact using email",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 0,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Contact ID or Email",
           "type": "string"
         }
       },
-      "required": ["contact-id-or-email"],
+      "required": [
+        "contact-id-or-email"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -376,7 +406,9 @@
           "instillFormat": "string"
         }
       },
-      "required": ["contact-id"],
+      "required": [
+        "contact-id"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -395,57 +427,111 @@
       "properties": {
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "email": {
           "$ref": "#/$defs/contact/email",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "first-name": {
           "$ref": "#/$defs/contact/first-name",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "last-name": {
           "$ref": "#/$defs/contact/last-name",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "phone-number": {
           "$ref": "#/$defs/contact/phone-number",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "company": {
           "$ref": "#/$defs/contact/company",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "job-title": {
           "$ref": "#/$defs/contact/job-title",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "lifecycle-stage": {
           "$ref": "#/$defs/contact/lifecycle-stage",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "lead-status": {
           "$ref": "#/$defs/contact/lead-status",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "create-deals-association": {
           "$ref": "#/$defs/common/create-deals-association",
@@ -460,7 +546,9 @@
           "instillUIOrder": 11
         }
       },
-      "required": ["email"],
+      "required": [
+        "email"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -477,7 +565,9 @@
           "instillFormat": "string"
         }
       },
-      "required": ["contact-id"],
+      "required": [
+        "contact-id"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -487,19 +577,29 @@
     "input": {
       "description": "Input deal ID",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": ["deal-id"],
+      "instillEditOnNodeFields": [
+        "deal-id"
+      ],
       "properties": {
         "deal-id": {
           "description": "Input deal ID",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 0,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Deal ID",
           "type": "string"
         }
       },
-      "required": ["deal-id"],
+      "required": [
+        "deal-id"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -552,7 +652,11 @@
           "instillUIorder": 8
         }
       },
-      "required": ["deal-name", "pipeline", "deal-stage"],
+      "required": [
+        "deal-name",
+        "pipeline",
+        "deal-stage"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -562,56 +666,106 @@
     "input": {
       "description": "Deal information",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": ["deal-name", "pipeline", "deal-stage"],
+      "instillEditOnNodeFields": [
+        "deal-name",
+        "pipeline",
+        "deal-stage"
+      ],
       "properties": {
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "deal-name": {
           "$ref": "#/$defs/deal/deal-name",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "pipeline": {
           "$ref": "#/$defs/deal/pipeline",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "deal-stage": {
           "$ref": "#/$defs/deal/deal-stage",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "amount": {
           "$ref": "#/$defs/deal/amount",
-          "instillAcceptFormats": ["number"],
+          "instillAcceptFormats": [
+            "number"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "deal-type": {
           "$ref": "#/$defs/deal/deal-type",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "close-date": {
           "$ref": "#/$defs/deal/close-date",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "create-contacts-association": {
           "$ref": "#/$defs/common/create-contacts-association",
           "instillUIOrder": 7
         }
       },
-      "required": ["deal-name", "pipeline", "deal-stage"],
+      "required": [
+        "deal-name",
+        "pipeline",
+        "deal-stage"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -628,7 +782,9 @@
           "instillFormat": "string"
         }
       },
-      "required": ["deal-id"],
+      "required": [
+        "deal-id"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -638,19 +794,29 @@
     "input": {
       "description": "Input company ID",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": ["company-id"],
+      "instillEditOnNodeFields": [
+        "company-id"
+      ],
       "properties": {
         "company-id": {
           "description": "Input company ID",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 0,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Company ID",
           "type": "string"
         }
       },
-      "required": ["company-id"],
+      "required": [
+        "company-id"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -757,94 +923,180 @@
       "properties": {
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "company-name": {
           "$ref": "#/$defs/company/company-name",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "company-domain": {
           "$ref": "#/$defs/company/company-domain",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "description": {
           "$ref": "#/$defs/company/description",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "phone-number": {
           "$ref": "#/$defs/company/phone-number",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "industry": {
           "$ref": "#/$defs/company/industry",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "company-type": {
           "$ref": "#/$defs/company/company-type",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "city": {
           "$ref": "#/$defs/company/city",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "state": {
           "$ref": "#/$defs/company/state",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "country": {
           "$ref": "#/$defs/company/country",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "postal-code,": {
           "$ref": "#/$defs/company/postal-code",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "time-zone": {
           "$ref": "#/$defs/company/time-zone",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "annual-revenue": {
           "$ref": "#/$defs/company/annual-revenue",
-          "instillAcceptFormats": ["number"],
+          "instillAcceptFormats": [
+            "number"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "linkedin-page": {
           "$ref": "#/$defs/company/linkedin-page",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "create-contacts-association": {
           "$ref": "#/$defs/common/create-contacts-association",
           "instillUIOrder": 15
         }
       },
-      "required": ["company-domain"],
+      "required": [
+        "company-domain"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -861,7 +1113,9 @@
           "instillFormat": "string"
         }
       },
-      "required": ["company-id"],
+      "required": [
+        "company-id"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -871,19 +1125,29 @@
     "input": {
       "description": "Input ticket ID",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": ["ticket-id"],
+      "instillEditOnNodeFields": [
+        "ticket-id"
+      ],
       "properties": {
         "ticket-id": {
           "description": "Input ticket ID",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 0,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Ticket ID",
           "type": "string"
         }
       },
-      "required": ["ticket-id"],
+      "required": [
+        "ticket-id"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -951,7 +1215,11 @@
           "instillUIorder": 10
         }
       },
-      "required": ["ticket-name", "ticket-status", "pipeline"],
+      "required": [
+        "ticket-name",
+        "ticket-status",
+        "pipeline"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -961,58 +1229,107 @@
     "input": {
       "description": "Ticket information",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": ["ticket-name", "ticket-status", "pipeline"],
+      "instillEditOnNodeFields": [
+        "ticket-name",
+        "ticket-status",
+        "pipeline"
+      ],
       "properties": {
         "owner-id": {
           "$ref": "#/$defs/common/owner-id",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "ticket-name": {
           "$ref": "#/$defs/ticket/ticket-name",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "ticket-status": {
           "$ref": "#/$defs/ticket/ticket-status",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "pipeline": {
           "$ref": "#/$defs/ticket/pipeline",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "categories": {
           "$ref": "#/$defs/ticket/categories",
-          "instillAcceptFormats": ["array:string"],
+          "instillAcceptFormats": [
+            "array:string"
+          ],
           "items": {
             "type": "string"
           },
-          "instillUpstreamTypes": ["value", "reference"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ]
         },
         "priority": {
           "$ref": "#/$defs/ticket/priority",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "source": {
           "$ref": "#/$defs/ticket/source",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"]
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ]
         },
         "create-contacts-association": {
           "$ref": "#/$defs/common/create-contacts-association",
           "instillUIOrder": 7
         }
       },
-      "required": ["ticket-name", "ticket-status", "pipeline"],
+      "required": [
+        "ticket-name",
+        "ticket-status",
+        "pipeline"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -1029,7 +1346,9 @@
           "instillFormat": "string"
         }
       },
-      "required": ["ticket-id"],
+      "required": [
+        "ticket-id"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -1039,19 +1358,29 @@
     "input": {
       "description": "Input thread ID",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": ["thread-id"],
+      "instillEditOnNodeFields": [
+        "thread-id"
+      ],
       "properties": {
         "thread-id": {
           "description": "Input thread ID",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 0,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Thread ID",
           "type": "string"
         }
       },
-      "required": ["thread-id"],
+      "required": [
+        "thread-id"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -1111,7 +1440,9 @@
                     "type": "string"
                   }
                 },
-                "required": ["sender-actor-id"]
+                "required": [
+                  "sender-actor-id"
+                ]
               },
               "recipients": {
                 "description": "Recipients' information",
@@ -1190,7 +1521,9 @@
           }
         }
       },
-      "required": ["results"],
+      "required": [
+        "results"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -1211,19 +1544,31 @@
       "properties": {
         "thread-id": {
           "description": "Input thread ID",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 0,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Thread ID",
           "type": "string"
         },
         "sender-actor-id": {
           "description": "Input sender actor id. Example: A-12345678. To obtain this, it is recommended to use and copy the 'Get Thread task' sender output. For more information about actor id: https://developers.hubspot.com/beta-docs/guides/api/conversations/inbox-and-messages#get-actors",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 1,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Sender Actor ID",
           "type": "string"
         },
@@ -1231,37 +1576,60 @@
           "description": "Recipients of the message",
           "title": "Recipients",
           "type": "array",
-          "instillAcceptFormats": ["array:string"],
+          "instillAcceptFormats": [
+            "array:string"
+          ],
           "instillUIOrder": 2,
-          "instillUpstreamTypes": ["value", "reference"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
           "items": {
             "type": "string"
           }
         },
         "channel-account-id": {
           "description": "The ID of an account that is part of the channel-id channel. On an existing thread, it is recommended to copy channel-account-id of the most recent message on the thread.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 3,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Channel Account ID",
           "type": "string"
         },
         "subject": {
           "description": "The subject of the message",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
           "instillUIOrder": 4,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Subject",
           "type": "string"
         },
         "text": {
           "description": "The body of the message",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
           "instillUIOrder": 5,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Text",
           "type": "string"
         }
@@ -1290,7 +1658,9 @@
           "instillFormat": "string"
         }
       },
-      "required": ["status"],
+      "required": [
+        "status"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -1300,28 +1670,46 @@
     "input": {
       "description": "Contact ID and object type (CRM objects or Thread)",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": ["contact-id", "object-type"],
+      "instillEditOnNodeFields": [
+        "contact-id",
+        "object-type"
+      ],
       "properties": {
         "contact-id": {
           "description": "Input contact ID",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 0,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Contact ID",
           "type": "string"
         },
         "object-type": {
           "description": "Input object type (CRM objects or 'Threads'). Note: CRM objects include 'Deals', 'Companies', 'Tickets', etc",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 1,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Object Type",
           "type": "string"
         }
       },
-      "required": ["contact-id", "object-type"],
+      "required": [
+        "contact-id",
+        "object-type"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -1342,7 +1730,9 @@
           }
         }
       },
-      "required": ["object-ids"],
+      "required": [
+        "object-ids"
+      ],
       "title": "Output",
       "type": "object"
     }
