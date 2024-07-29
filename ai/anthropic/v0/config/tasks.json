@@ -7,7 +7,7 @@
           "image-url": {
             "properties": {
               "url": {
-                "description": "Either a URL of the image or the base64 encoded image data.",
+                "description": "Either a URL of the image or the base64 encoded image data. this is test",
                 "type": "string"
               }
             },
