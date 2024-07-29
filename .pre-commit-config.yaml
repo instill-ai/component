@@ -23,8 +23,8 @@ repos:
         stages: [commit-msg]
   - repo: local
     hooks:
-      - id: check-mdx-changes
-        name: Check MDX Changes
-        entry: .hooks/check_mdx_changes.sh
-        language: script
+      - id: generate-docs
+        name: Generate Docs
+        entry: bash -c 'make build-doc && make gen-doc'
+        language: system
         files: \.(json|mdx)$
