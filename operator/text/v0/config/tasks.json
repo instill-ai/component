@@ -94,81 +94,6 @@
       "type": "string"
     }
   },
-  "TASK_CONVERT_TO_TEXT": {
-    "instillShortDescription": "Convert document to text.",
-    "input": {
-      "description": "Input",
-      "instillEditOnNodeFields": [
-        "doc"
-      ],
-      "instillUIOrder": 0,
-      "properties": {
-        "doc": {
-          "description": "Base64 encoded document (PDF, DOC, DOCX, XML, HTML, RTF, etc.) to be converted to plain text",
-          "instillAcceptFormats": [
-            "*/*"
-          ],
-          "instillUIMultiline": true,
-          "instillUIOrder": 0,
-          "instillUpstreamTypes": [
-            "reference"
-          ],
-          "title": "Document",
-          "type": "string"
-        }
-      },
-      "required": [
-        "doc"
-      ],
-      "title": "Input",
-      "type": "object"
-    },
-    "output": {
-      "description": "Output",
-      "instillUIOrder": 0,
-      "properties": {
-        "body": {
-          "description": "Plain text converted from the document",
-          "instillFormat": "string",
-          "instillUIMultiline": true,
-          "instillUIOrder": 0,
-          "title": "Body",
-          "type": "string"
-        },
-        "error": {
-          "description": "Error message if any during the conversion process",
-          "instillFormat": "string",
-          "instillUIMultiline": true,
-          "instillUIOrder": 3,
-          "title": "Error",
-          "type": "string"
-        },
-        "meta": {
-          "description": "Metadata extracted from the document",
-          "instillFormat": "semi-structured/object",
-          "instillUIOrder": 1,
-          "required": [],
-          "title": "Meta",
-          "type": "object"
-        },
-        "msecs": {
-          "description": "Time taken to convert the document",
-          "instillFormat": "number",
-          "instillUIOrder": 2,
-          "title": "MSecs",
-          "type": "number"
-        }
-      },
-      "required": [
-        "body",
-        "meta",
-        "msecs",
-        "error"
-      ],
-      "title": "Output",
-      "type": "object"
-    }
-  },
   "TASK_CHUNK_TEXT": {
     "instillShortDescription": "Chunk text with different strategies",
     "input": {
@@ -418,10 +343,19 @@
                 "description": "The ending position of the chunk in the original text",
                 "instillFormat": "integer",
                 "type": "integer"
+              },
+              "token-count": {
+                "title": "Token Count",
+                "description": "Count of tokens in a chunk",
+                "instillFormat": "integer",
+                "type": "integer"
               }
             },
             "required": [
-              "text"
+              "text",
+              "start-position",
+              "end-position",
+              "token-count"
             ],
             "instillUIMultiline": true,
             "type": "object"
@@ -430,16 +364,25 @@
           "type": "array"
         },
         "token-count": {
-          "description": "Total count of tokens in the input text",
+          "description": "Total count of tokens in the original input text",
           "instillUIOrder": 0,
           "instillFormat": "integer",
           "title": "Token Count",
+          "type": "integer"
+        },
+        "chunks-token-count": {
+          "description": "Total count of tokens in the output text chunks",
+          "instillUIOrder": 3,
+          "instillFormat": "integer",
+          "title": "Token Count Chunks",
           "type": "integer"
         }
       },
       "required": [
         "text-chunks",
-        "chunk-num"
+        "chunk-num",
+        "token-count",
+        "chunks-token-count"
       ],
       "title": "Output",
       "type": "object"

@@ -1,6 +1,5 @@
 {
   "availableTasks": [
-    "TASK_CONVERT_TO_TEXT",
     "TASK_CHUNK_TEXT"
   ],
   "custom": false,

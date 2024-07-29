@@ -3,7 +3,7 @@
   "additionalProperties": true,
   "properties": {
     "api-key": {
-      "description": "Fill in your Hugging face API token. To find your token, visit https://huggingface.co/settings/tokens.",
+      "description": "Fill in your Hugging face API token. To find your token, visit <a href=\"https://huggingface.co/settings/tokens\">here</a>",
       "instillUpstreamTypes": [
         "reference"
       ],
@@ -17,7 +17,7 @@
     },
     "base-url": {
       "default": "https://api-inference.huggingface.co",
-      "description": "Hostname for the endpoint. To use Inference API set to https://api-inference.huggingface.co, for Inference Endpoint set to your custom endpoint.",
+      "description": "Hostname for the endpoint. To use Inference API set to <a href=\"https://api-inference.huggingface.co\">here</a>, for Inference Endpoint set to your custom endpoint.",
       "instillUpstreamTypes": [
         "value"
       ],

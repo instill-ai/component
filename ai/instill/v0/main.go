@@ -249,6 +249,7 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 		go func(m *modelPB.Model) {
 			var versions []*modelPB.ModelVersion
 			if strings.HasPrefix(m.Name, "organizations") {
+				//nolint:staticcheck
 				resp, err := gRPCCLient.ListOrganizationModelVersions(ctx, &modelPB.ListOrganizationModelVersionsRequest{Name: m.Name, PageSize: &pageSize})
 				if err != nil {
 					ch <- nil
@@ -256,6 +257,7 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 				}
 				versions = resp.Versions
 			} else {
+				//nolint:staticcheck
 				resp, err := gRPCCLient.ListUserModelVersions(ctx, &modelPB.ListUserModelVersionsRequest{Name: m.Name, PageSize: &pageSize})
 				if err != nil {
 					ch <- nil
