@@ -1,6 +1,6 @@
 {
   "TASK_INSERT": {
-    "instillShortDescription": "Perform an insert operation based on specified filter",
+    "instillShortDescription": "Perform insert operation",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -44,7 +44,7 @@
         "data": {
           "description": "The data to be inserted",
           "instillAcceptFormats": [
-            "semi-structured/*","structured/*","object","array"
+            "semi-structured/*","object"
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
@@ -56,7 +56,9 @@
             "title": "Object",
             "instillFormat": "semi-structured/json"
           },
-          "title": "Data"
+          "title": "Data",
+          "type": "object",
+          "required": []
         }
       },
       "required": [
@@ -86,8 +88,99 @@
       "type": "object"
     }
   },
+  "TASK_INSERT_MANY":{
+    "instillShortDescription": "Perform insert operation with multiple rows",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "engine": {
+          "description": "Choose the engine of your database",
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "title": "Engine",
+          "enum": [
+            "MySQL",
+            "PostgreSQL",
+            "SQL Server",
+            "Oracle",
+            "MariaDB",
+            "Firebird"
+          ],
+          "type": "string"
+        },
+        "table-name": {
+          "description": "The table name in the database to insert data into",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "Database Table Name",
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Table Name",
+          "type":"string"
+        },
+        "array-data": {
+          "description": "The array data to be inserted",
+          "instillAcceptFormats": [
+            "array:semi-structured/*","array:object"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Data",
+          "type":"array",
+          "items": {
+            "description": "The data to be inserted",
+            "title": "Data",
+            "type": "object",
+            "required": []
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "engine",
+        "array-data",
+        "table-name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Insert many status",
+          "instillFormat": "string",
+          "required": [],
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
   "TASK_UPDATE": {
-    "instillShortDescription": "Perform an update operation based on specified filter",
+    "instillShortDescription": "Perform update operation",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -146,7 +239,7 @@
         "update-data": {
           "description": "The new data to be updated to",
           "instillAcceptFormats": [
-            "semi-structured/*","structured/*","object","array"
+            "semi-structured/*","object"
           ],
           "instillUIOrder": 3,
           "instillUpstreamTypes": [
@@ -158,7 +251,9 @@
             "title": "Object",
             "instillFormat": "semi-structured/json"
           },
-          "title": "Update"
+          "title": "Update",
+          "type": "object",
+          "required": []
         }
       },
       "required": [
@@ -190,7 +285,7 @@
     }
   },
   "TASK_SELECT":{
-    "instillShortDescription": "Perform a select operation based on specified filter",
+    "instillShortDescription": "Perform select operation",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -278,7 +373,8 @@
           "items": {
             "title":"Column",
             "type": "string"
-          }
+          },
+          "minItems": 1
         }
       },
       "required": [
@@ -309,7 +405,7 @@
           "type": "array",
           "instillFormat": "array:semi-structured/json",
           "items": {
-            "title": "Result",
+            "title": "Row",
             "instillFormat": "semi-structured/json"
           }
         },
@@ -331,7 +427,7 @@
     }
   },
   "TASK_DELETE": {
-    "instillShortDescription": "Perform a delete operation based on specified filter",
+    "instillShortDescription": "Perform delete operation",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -460,7 +556,7 @@
         "columns-structure": {
           "description": "The columns structure to be created in the table, json with value string, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
           "instillAcceptFormats": [
-            "semi-structured/*","structured/*","object"
+            "semi-structured/*","object"
           ],
           "instillShortDescription": "Columns Structure, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
           "instillUIOrder": 2,
@@ -469,7 +565,9 @@
             "template",
             "value"
           ],
-          "title": "Columns"
+          "title": "Columns",
+          "type": "object",
+          "required": []
         }
       },
       "required": [
