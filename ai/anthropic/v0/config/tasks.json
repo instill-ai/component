@@ -7,7 +7,7 @@
           "image-url": {
             "properties": {
               "url": {
-                "description": "Either a URL of the image or the base64 encoded image data. this is test",
+                "description": "Either a URL of the image or the base64 encoded image data.",
                 "type": "string"
               }
             },
@@ -137,7 +137,7 @@
             "claude-3-haiku-20240307"
           ],
           "example": "claude-3-5-sonnet-20240620",
-          "description": "The Anthropic model to be used",
+          "description": "The Anthropic model to be used, this is test",
           "instillAcceptFormats": [
             "string"
           ],
