@@ -1,12 +1,12 @@
 package base
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
-
 	"github.com/lestrrat-go/jsref/provider"
 	"go.uber.org/zap"
 	"golang.org/x/text/cases"
@@ -83,6 +83,11 @@ type IComponent interface {
 
 	IsSecretField(target string) bool
 
+	// Note: These two functions are for the pipeline run-on-event feature,
+	// which is still experimental and may change at any time.
+	HandleVerificationEvent(header map[string][]string, req *structpb.Struct, setup map[string]any) (isVerification bool, resp *structpb.Struct, err error)
+	ParseEvent(ctx context.Context, req *structpb.Struct, setup map[string]any) (parsed *structpb.Struct, err error)
+
 	UsageHandlerCreator() UsageHandlerCreator
 }
 
@@ -96,6 +101,14 @@ type Component struct {
 
 	definition   *pb.ComponentDefinition
 	secretFields []string
+}
+
+func (c *Component) HandleVerificationEvent(header map[string][]string, req *structpb.Struct, setup map[string]any) (isVerification bool, resp *structpb.Struct, err error) {
+	return false, nil, nil
+}
+
+func (c *Component) ParseEvent(ctx context.Context, req *structpb.Struct, setup map[string]any) (parsed *structpb.Struct, err error) {
+	return req, nil
 }
 
 func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
