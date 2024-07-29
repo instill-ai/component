@@ -103,3 +103,23 @@ func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 
 	return nil
 }
+
+func (c *component) HandleVerificationEvent(header map[string][]string, req *structpb.Struct, setup map[string]any) (isVerification bool, resp *structpb.Struct, err error) {
+
+	switch event := req.GetFields()["type"].GetStringValue(); event {
+	case "url_verification":
+		resp, _ := structpb.NewStruct(map[string]any{
+			"challenge": req.GetFields()["challenge"].GetStringValue(),
+		})
+		return true, resp, nil
+	default:
+		return false, nil, nil
+
+	}
+
+}
+
+func (c *component) ParseEvent(ctx context.Context, req *structpb.Struct, setup map[string]any) (parsed *structpb.Struct, err error) {
+	// TODO: parse and validate event
+	return req, nil
+}
