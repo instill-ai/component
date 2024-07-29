@@ -39,14 +39,16 @@ type locationObject struct {
 
 type interactiveObject struct {
 	Type   string      `json:"type"`
-	Header interface{} `json:"header"`
+	Header interface{} `json:"header,omitempty"`
 	Body   struct {
 		Text string `json:"text"`
 	} `json:"body"`
-	Footer struct {
-		Text string `json:"text"`
-	} `json:"footer"`
-	Action actionObject `json:"action"`
+	Footer *footerObject `json:"footer,omitempty"`
+	Action actionObject  `json:"action"`
+}
+
+type footerObject struct {
+	Text string `json:"text"`
 }
 
 type actionObject struct {
@@ -54,7 +56,7 @@ type actionObject struct {
 	Parameter struct {
 		DisplayText string `json:"display_text"`
 		URL         string `json:"url"`
-	} `json:"parameters,omitempty"` //I also don't know why the json is parameters instead of parameter, but the API works only when it is parameters
+	} `json:"parameters"` //I also don't know why the json is parameters instead of parameter, but the API works only when it is parameters
 }
 
 type mediaObject struct {
@@ -83,7 +85,7 @@ type componentObject struct {
 	ButtonIndex   string        `json:"index,omitempty"`    // only used when the type is button. Refers to the position index of the button
 }
 
-type contactsObject struct {
+type contactObject struct {
 	Name     nameObject    `json:"name"`
 	Phones   []phoneObject `json:"phones,omitempty"`
 	Emails   []emailObject `json:"emails,omitempty"`
@@ -212,7 +214,7 @@ func (e *execution) SendTextMessage(in *structpb.Struct) (*structpb.Struct, erro
 	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to do API request: %v", err)
+		return nil, err
 	}
 
 	respStruct := resp.(*TaskSendMessageResp)
@@ -244,13 +246,13 @@ type TaskSendMediaMessageInput struct {
 }
 
 type TaskSendMediaMessageReq struct {
-	MessagingProduct string      `json:"messaging_product"`
-	To               string      `json:"to"`
-	Type             string      `json:"type"`
-	Document         mediaObject `json:"document,omitempty,"`
-	Audio            mediaObject `json:"audio,omitempty"`
-	Image            mediaObject `json:"image,omitempty"`
-	Video            mediaObject `json:"video,omitempty"`
+	MessagingProduct string       `json:"messaging_product"`
+	To               string       `json:"to"`
+	Type             string       `json:"type"`
+	Document         *mediaObject `json:"document,omitempty,"`
+	Audio            *mediaObject `json:"audio,omitempty"`
+	Image            *mediaObject `json:"image,omitempty"`
+	Video            *mediaObject `json:"video,omitempty"`
 }
 
 func (e *execution) TaskSendMediaMessage(in *structpb.Struct) (*structpb.Struct, error) {
@@ -277,7 +279,7 @@ func (e *execution) TaskSendMediaMessage(in *structpb.Struct) (*structpb.Struct,
 	switch inputStruct.MediaType {
 	case "document":
 		req.Type = "document"
-		req.Document = mediaObject{
+		req.Document = &mediaObject{
 			ID:       id,
 			Link:     link,
 			Caption:  inputStruct.Caption,
@@ -285,20 +287,20 @@ func (e *execution) TaskSendMediaMessage(in *structpb.Struct) (*structpb.Struct,
 		}
 	case "audio":
 		req.Type = "audio"
-		req.Audio = mediaObject{
+		req.Audio = &mediaObject{
 			ID:   id,
 			Link: link,
 		}
 	case "image":
 		req.Type = "image"
-		req.Image = mediaObject{
+		req.Image = &mediaObject{
 			ID:      id,
 			Link:    link,
 			Caption: inputStruct.Caption,
 		}
 	case "video":
 		req.Type = "video"
-		req.Video = mediaObject{
+		req.Video = &mediaObject{
 			ID:      id,
 			Link:    link,
 			Caption: inputStruct.Caption,
@@ -310,7 +312,7 @@ func (e *execution) TaskSendMediaMessage(in *structpb.Struct) (*structpb.Struct,
 	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to do API request: %v", err)
+		return nil, err
 	}
 
 	respStruct := resp.(*TaskSendMessageResp)
@@ -369,7 +371,7 @@ func (e *execution) TaskSendLocationMessage(in *structpb.Struct) (*structpb.Stru
 	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to do API request: %v", err)
+		return nil, err
 	}
 
 	respStruct := resp.(*TaskSendMessageResp)
@@ -403,10 +405,10 @@ type TaskSendContactMessageInput struct {
 }
 
 type TaskSendContactMessageReq struct {
-	MessagingProduct string         `json:"messaging_product"`
-	To               string         `json:"to"`
-	Type             string         `json:"type"`
-	Contacts         contactsObject `json:"contacts"`
+	MessagingProduct string          `json:"messaging_product"`
+	To               string          `json:"to"`
+	Type             string          `json:"type"`
+	Contacts         []contactObject `json:"contacts"`
 }
 
 func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struct, error) {
@@ -424,27 +426,31 @@ func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struc
 		formattedName = fmt.Sprintf("%s %s", inputStruct.FirstName, inputStruct.LastName)
 	} else if inputStruct.LastName == "" {
 		formattedName = fmt.Sprintf("%s %s", inputStruct.FirstName, inputStruct.MiddleName)
+	} else {
+		formattedName = fmt.Sprintf("%s %s %s", inputStruct.FirstName, inputStruct.MiddleName, inputStruct.LastName)
+	}
+
+	contact := contactObject{
+		Name: nameObject{
+			FormattedName: formattedName,
+			FirstName:     inputStruct.FirstName,
+			MiddleName:    inputStruct.MiddleName,
+			LastName:      inputStruct.LastName,
+		},
+		Emails: []emailObject{
+			{
+				Email: inputStruct.Email,
+				Type:  inputStruct.EmailType,
+			},
+		},
+		Birthday: inputStruct.Birthdate,
 	}
 
 	req := TaskSendContactMessageReq{
 		MessagingProduct: "whatsapp",
 		To:               inputStruct.To,
 		Type:             "contacts",
-		Contacts: contactsObject{
-			Name: nameObject{
-				FormattedName: formattedName,
-				FirstName:     inputStruct.FirstName,
-				MiddleName:    inputStruct.MiddleName,
-				LastName:      inputStruct.LastName,
-			},
-			Emails: []emailObject{
-				{
-					Email: inputStruct.Email,
-					Type:  inputStruct.EmailType,
-				},
-			},
-			Birthday: inputStruct.Birthdate,
-		},
+		Contacts:         []contactObject{contact},
 	}
 
 	if inputStruct.PhoneNumber != "" {
@@ -452,7 +458,7 @@ func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struc
 			return nil, fmt.Errorf("you forgot to set the phone number type")
 		}
 
-		req.Contacts.Phones = append(req.Contacts.Phones, phoneObject{
+		req.Contacts[0].Phones = append(req.Contacts[0].Phones, phoneObject{
 			Phone: inputStruct.PhoneNumber,
 			Type:  inputStruct.PhoneNumberType,
 		})
@@ -464,7 +470,7 @@ func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struc
 			return nil, fmt.Errorf("you forgot to set the email type")
 		}
 
-		req.Contacts.Emails = append(req.Contacts.Emails, emailObject{
+		req.Contacts[0].Emails = append(req.Contacts[0].Emails, emailObject{
 			Email: inputStruct.Email,
 			Type:  inputStruct.EmailType,
 		})
@@ -473,7 +479,7 @@ func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struc
 	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to do API request: %v", err)
+		return nil, err
 	}
 
 	respStruct := resp.(*TaskSendMessageResp)
@@ -526,19 +532,10 @@ func (e *execution) TaskSendInteractiveCTAURLButtonMessage(in *structpb.Struct) 
 		Type:             "interactive",
 		Interactive: interactiveObject{
 			Type: "cta_url",
-			Header: textParameter{
-				Type: "text",
-				Text: inputStruct.HeaderText,
-			},
 			Body: struct {
 				Text string `json:"text"`
 			}{
 				Text: inputStruct.BodyText,
-			},
-			Footer: struct {
-				Text string `json:"text"`
-			}{
-				Text: inputStruct.FooterText,
 			},
 			Action: actionObject{
 				Name: "cta_url",
@@ -553,10 +550,23 @@ func (e *execution) TaskSendInteractiveCTAURLButtonMessage(in *structpb.Struct) 
 		},
 	}
 
+	if inputStruct.HeaderText != "" {
+		req.Interactive.Header = textParameter{
+			Type: "text",
+			Text: inputStruct.HeaderText,
+		}
+	}
+
+	if inputStruct.FooterText != "" {
+		req.Interactive.Footer = &footerObject{
+			Text: inputStruct.FooterText,
+		}
+	}
+
 	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to do API request: %v", err)
+		return nil, err
 	}
 
 	respStruct := resp.(*TaskSendMessageResp)

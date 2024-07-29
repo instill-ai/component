@@ -2,7 +2,6 @@ package whatsapp
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/instill-ai/component/base"
@@ -114,24 +113,28 @@ func (e *execution) SendTextBasedTemplateMessage(in *structpb.Struct) (*structpb
 	// create button component if there is any
 	// one parameter -> one button component
 
-	for index, value := range inputStruct.ButtonParameters {
+	for _, value := range inputStruct.ButtonParameters {
 		splitParam := strings.Split(value, ";")
 
-		if len(splitParam) != 2 {
-			return nil, fmt.Errorf("format is wrong, it must be 'button_type;value_of_the_parameter'. Example: quick_reply;randomvalue")
+		if len(splitParam) != 3 {
+			return nil, fmt.Errorf("format is wrong, it must be 'button_index;button_type;value_of_the_parameter'. Example: 0;quick_reply;randomvalue")
+		}
+
+		if splitParam[1] == "copy_code" && len(splitParam[2]) > 15 {
+			return nil, fmt.Errorf("copy code button value cannot be more than 15 characters. It is now %d characters", len(splitParam[2]))
 		}
 
 		var param buttonParameter
-		if splitParam[0] == "quick_reply" || splitParam[0] == "copy_code" {
+		if splitParam[1] == "quick_reply" || splitParam[1] == "copy_code" {
 			param = buttonParameter{
 				Type:    "payload",
-				Payload: splitParam[1],
+				Payload: splitParam[2],
 			}
 
-		} else if splitParam[0] == "url" {
+		} else if splitParam[1] == "url" {
 			param = buttonParameter{
 				Type: "text",
-				Text: splitParam[1],
+				Text: splitParam[2],
 			}
 
 		} else {
@@ -140,8 +143,8 @@ func (e *execution) SendTextBasedTemplateMessage(in *structpb.Struct) (*structpb
 
 		buttonComponent := componentObject{
 			Type:          "button",
-			ButtonSubType: splitParam[0],
-			ButtonIndex:   strconv.Itoa(index),
+			ButtonSubType: splitParam[1],
+			ButtonIndex:   splitParam[0],
 		}
 
 		buttonComponent.Parameters = append(buttonComponent.Parameters, param)
@@ -152,7 +155,7 @@ func (e *execution) SendTextBasedTemplateMessage(in *structpb.Struct) (*structpb
 	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to do API request: %v", err)
+		return nil, err
 	}
 
 	respStruct := resp.(*TaskSendTemplateMessageResp)
@@ -300,24 +303,28 @@ func (e *execution) SendMediaBasedTemplateMessage(in *structpb.Struct) (*structp
 	// create button component if there is any
 	// one parameter -> one button component
 
-	for index, value := range inputStruct.ButtonParameters {
+	for _, value := range inputStruct.ButtonParameters {
 		splitParam := strings.Split(value, ";")
 
-		if len(splitParam) != 2 {
-			return nil, fmt.Errorf("format is wrong, it must be 'button_type;value_of_the_parameter'. Example: quick_reply;randomvalue")
+		if len(splitParam) != 3 {
+			return nil, fmt.Errorf("format is wrong, it must be 'button_index;button_type;value_of_the_parameter'. Example: 0;quick_reply;randomvalue")
+		}
+
+		if splitParam[1] == "copy_code" && len(splitParam[2]) > 15 {
+			return nil, fmt.Errorf("copy code button value cannot be more than 15 characters. It is now %d characters", len(splitParam[2]))
 		}
 
 		var param buttonParameter
-		if splitParam[0] == "quick_reply" || splitParam[0] == "copy_code" {
+		if splitParam[1] == "quick_reply" || splitParam[1] == "copy_code" {
 			param = buttonParameter{
 				Type:    "payload",
-				Payload: splitParam[1],
+				Payload: splitParam[2],
 			}
 
-		} else if splitParam[0] == "url" {
+		} else if splitParam[1] == "url" {
 			param = buttonParameter{
 				Type: "text",
-				Text: splitParam[1],
+				Text: splitParam[2],
 			}
 
 		} else {
@@ -326,8 +333,8 @@ func (e *execution) SendMediaBasedTemplateMessage(in *structpb.Struct) (*structp
 
 		buttonComponent := componentObject{
 			Type:          "button",
-			ButtonSubType: splitParam[0],
-			ButtonIndex:   strconv.Itoa(index),
+			ButtonSubType: splitParam[1],
+			ButtonIndex:   splitParam[0],
 		}
 
 		buttonComponent.Parameters = append(buttonComponent.Parameters, param)
@@ -338,7 +345,7 @@ func (e *execution) SendMediaBasedTemplateMessage(in *structpb.Struct) (*structp
 	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to do API request: %v", err)
+		return nil, err
 	}
 
 	respStruct := resp.(*TaskSendTemplateMessageResp)
@@ -437,24 +444,28 @@ func (e *execution) SendLocationBasedTemplateMessage(in *structpb.Struct) (*stru
 	// create button component if there is any
 	// one parameter -> one button component
 
-	for index, value := range inputStruct.ButtonParameters {
+	for _, value := range inputStruct.ButtonParameters {
 		splitParam := strings.Split(value, ";")
 
-		if len(splitParam) != 2 {
-			return nil, fmt.Errorf("format is wrong, it must be 'button_type;value_of_the_parameter'. Example: quick_reply;randomvalue")
+		if len(splitParam) != 3 {
+			return nil, fmt.Errorf("format is wrong, it must be 'button_index;button_type;value_of_the_parameter'. Example: 0;quick_reply;randomvalue")
+		}
+
+		if splitParam[1] == "copy_code" && len(splitParam[2]) > 15 {
+			return nil, fmt.Errorf("copy code button value cannot be more than 15 characters. It is now %d characters", len(splitParam[2]))
 		}
 
 		var param buttonParameter
-		if splitParam[0] == "quick_reply" || splitParam[0] == "copy_code" {
+		if splitParam[1] == "quick_reply" || splitParam[1] == "copy_code" {
 			param = buttonParameter{
 				Type:    "payload",
-				Payload: splitParam[1],
+				Payload: splitParam[2],
 			}
 
-		} else if splitParam[0] == "url" {
+		} else if splitParam[1] == "url" {
 			param = buttonParameter{
 				Type: "text",
-				Text: splitParam[1],
+				Text: splitParam[2],
 			}
 
 		} else {
@@ -463,8 +474,8 @@ func (e *execution) SendLocationBasedTemplateMessage(in *structpb.Struct) (*stru
 
 		buttonComponent := componentObject{
 			Type:          "button",
-			ButtonSubType: splitParam[0],
-			ButtonIndex:   strconv.Itoa(index),
+			ButtonSubType: splitParam[1],
+			ButtonIndex:   splitParam[0],
 		}
 
 		buttonComponent.Parameters = append(buttonComponent.Parameters, param)
@@ -475,7 +486,7 @@ func (e *execution) SendLocationBasedTemplateMessage(in *structpb.Struct) (*stru
 	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to do API request: %v", err)
+		return nil, err
 	}
 
 	respStruct := resp.(*TaskSendTemplateMessageResp)
@@ -564,7 +575,7 @@ func (e *execution) SendAuthenticationTemplateMessage(in *structpb.Struct) (*str
 	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to do API request: %v", err)
+		return nil, err
 	}
 
 	respStruct := resp.(*TaskSendTemplateMessageResp)

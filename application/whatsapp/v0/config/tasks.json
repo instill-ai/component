@@ -49,7 +49,7 @@
           }
         },
         "button-parameters": {
-          "description": "Specify the parameters for button(s). Leave this blank if there is no parameter. Follow this format or it won't work: button_type;value_of_the_parameter. The seperator is a semicolon. Example: quick_reply;randomvalue. Note: This button parameter only support three types 'quick_reply', 'url' and 'copy_code'.",
+          "description": "Specify the parameters for button(s). Leave this blank if there is no parameter. Follow this format or it won't work: button_index;button_type;value_of_the_parameter. The seperator is a semicolon. button_index starts at 0. Example: 0;quick_reply;randomvalue. Note: This button parameter only support three types 'quick_reply', 'url' and 'copy_code'.",
           "title": "Button Parameters",
           "type": "array",
           "instillFormat": "array:string",
@@ -217,7 +217,7 @@
     },
     "output": {
       "description": "API response",
-      "instillUIOrder": 0,
+      "instillUIOrder": 0,  
       "properties": {
         "recipient-wa-id": {
           "$ref": "#/$defs/output/recipient-wa-id"
@@ -435,11 +435,15 @@
           "$ref": "#/$defs/input/template/name",
           "instillUIOrder": 2
         },
+        "language-code": {
+          "$ref": "#/$defs/input/template/language-code",
+          "instillUIOrder": 3
+        },
         "one-time-password":{
           "description": "One-time password to be sent to the recipient. Maximum 15 characters.",
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": false,
-          "instillUIOrder": 3,
+          "instillUIOrder": 4,
           "instillUpstreamTypes": ["value", "reference", "template"],
           "title": "One-Time Password",
           "type": "string"
@@ -605,7 +609,7 @@
         "to",
         "latitude",
         "longitude",
-        "name",
+        "location-name",
         "address"
       ],
       "properties": {
@@ -795,7 +799,7 @@
         "header-text",
         "body-text",
         "footer-text",
-        "button-text",
+        "button-display-text",
         "button-url"
       ],
       "properties": {
@@ -855,7 +859,7 @@
         "phone-number-id",
         "to",
         "body-text",
-        "button-text",
+        "button-display-text",
         "button-url"
       ],
       "title": "Input",
