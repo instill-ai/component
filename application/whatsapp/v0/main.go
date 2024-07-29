@@ -13,15 +13,16 @@ import (
 )
 
 const (
-	taskSendTextBasedTemplateMessage      = "TASK_SEND_TEXT_BASED_TEMPLATE_MESSAGE"
-	taskSendMediaBasedTemplateMessage     = "TASK_SEND_MEDIA_BASED_TEMPLATE_MESSAGE"
-	taskSendLocationBasedTemplateMessage  = "TASK_SEND_LOCATION_BASED_TEMPLATE_MESSAGE"
-	taskSendAuthenticationTemplateMessage = "TASK_SEND_AUTHENTICATION_TEMPLATE_MESSAGE"
-	taskSendTemplateMessage               = "TASK_SEND_TEMPLATE_MESSAGE"
-	taskSendTextMessage                   = "TASK_SEND_TEXT_MESSAGE"
-	taskSendMediaMessage                  = "TASK_SEND_MEDIA_MESSAGE"
-	taskSendLocationMessage               = "TASK_SEND_LOCATION_MESSAGE"
-	taskSendContactMessage                = "TASK_SEND_CONTACT_MESSAGE"
+	taskSendTextBasedTemplateMessage       = "TASK_SEND_TEXT_BASED_TEMPLATE_MESSAGE"
+	taskSendMediaBasedTemplateMessage      = "TASK_SEND_MEDIA_BASED_TEMPLATE_MESSAGE"
+	taskSendLocationBasedTemplateMessage   = "TASK_SEND_LOCATION_BASED_TEMPLATE_MESSAGE"
+	taskSendAuthenticationTemplateMessage  = "TASK_SEND_AUTHENTICATION_TEMPLATE_MESSAGE"
+	taskSendTemplateMessage                = "TASK_SEND_TEMPLATE_MESSAGE"
+	taskSendTextMessage                    = "TASK_SEND_TEXT_MESSAGE"
+	taskSendMediaMessage                   = "TASK_SEND_MEDIA_MESSAGE"
+	taskSendLocationMessage                = "TASK_SEND_LOCATION_MESSAGE"
+	taskSendContactMessage                 = "TASK_SEND_CONTACT_MESSAGE"
+	taskSendInteractiveCTAURLButtonMessage = "TASK_SEND_INTERACTIVE_CTA_URL_BUTTON_MESSAGE"
 
 	basePath = "https://graph.facebook.com"
 	version  = "v20.0"
@@ -85,6 +86,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.TaskSendLocationMessage
 	case taskSendContactMessage:
 		e.execute = e.TaskSendContactMessage
+	case taskSendInteractiveCTAURLButtonMessage:
+		e.execute = e.TaskSendInteractiveCTAURLButtonMessage
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}

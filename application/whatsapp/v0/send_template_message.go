@@ -20,46 +20,7 @@ import (
 // Note1: in this documentation API, there is interactive message template, which is not listed in the above supported tasks file. However,  all tasks mentioned above actually supported interactive template message as well. Interactive message template is basically template with buttons, which is supported in all the tasks.
 // Note2: Send Catalog Template is not supported yet due to the lack of real phone number to test the API.
 
-// parameters for Component object (these parameters are only used in send template task)
-
-// used when the header type is text (also used for body)
-type textParameter struct {
-	Type string `json:"type"`
-	Text string `json:"text"`
-}
-
-// used when the header type is image
-type imageParameter struct {
-	Type  string      `json:"type"`
-	Image mediaObject `json:"image"`
-}
-
-// used when the header type is video
-type videoParameter struct {
-	Type  string      `json:"type"`
-	Video mediaObject `json:"video"`
-}
-
-// used when the header type is document
-type documentParameter struct {
-	Type     string      `json:"type"`
-	Document mediaObject `json:"document"`
-}
-
-// used when the header type is location
-type locationParameter struct {
-	Type     string         `json:"type"`
-	Location locationObject `json:"location"`
-}
-
-// used for button component
-type buttonParameter struct {
-	Type    string `json:"type"`
-	Payload string `json:"payload,omitempty"`
-	Text    string `json:"text,omitempty"`
-}
-
-// Send Template Message Request and Response.
+// Send Template Message Request, Response and Output.
 // Used in all the tasks in this file.
 
 type TaskSendTemplateMessageReq struct {
@@ -75,6 +36,14 @@ type TaskSendTemplateMessageResp struct {
 	Messages         []message `json:"messages"`
 }
 
+type TaskSendTemplateMessageOutput struct {
+	WaID          string `json:"recipient-wa-id"`
+	ID            string `json:"message-id"`
+	MessageStatus string `json:"message-status,omitempty"`
+}
+
+// ----------------------- Tasks -----------------------
+
 // Task 1: Send Text-Based Template Message
 
 type TaskSendTextBasedTemplateMessageInput struct {
@@ -86,12 +55,6 @@ type TaskSendTextBasedTemplateMessageInput struct {
 	HeaderParameters []string `json:"header-parameters"`
 	BodyParameters   []string `json:"body-parameters"`
 	ButtonParameters []string `json:"button-parameters"`
-}
-
-type TaskSendTextBasedTemplateMessageOutput struct {
-	WaID          string `json:"recipient-wa-id"`
-	ID            string `json:"message-id"`
-	MessageStatus string `json:"message-status,omitempty"`
 }
 
 func (e *execution) SendTextBasedTemplateMessage(in *structpb.Struct) (*structpb.Struct, error) {
@@ -195,7 +158,7 @@ func (e *execution) SendTextBasedTemplateMessage(in *structpb.Struct) (*structpb
 	respStruct := resp.(*TaskSendTemplateMessageResp)
 
 	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
-	outputStruct := TaskSendTextBasedTemplateMessageOutput{
+	outputStruct := TaskSendTemplateMessageOutput{
 		WaID:          respStruct.Contacts[0].WaID,
 		ID:            respStruct.Messages[0].ID,
 		MessageStatus: respStruct.Messages[0].MessageStatus,
@@ -223,12 +186,6 @@ type TaskSendMediaBasedTemplateMessageInput struct {
 	Filename         string   `json:"filename"` //only for document
 	BodyParameters   []string `json:"body-parameters"`
 	ButtonParameters []string `json:"button-parameters"`
-}
-
-type TaskSendMediaBasedTemplateMessageOutput struct {
-	WaID          string `json:"recipient-wa-id"`
-	ID            string `json:"message-id"`
-	MessageStatus string `json:"message-status,omitempty"`
 }
 
 func (e *execution) SendMediaBasedTemplateMessage(in *structpb.Struct) (*structpb.Struct, error) {
@@ -387,7 +344,7 @@ func (e *execution) SendMediaBasedTemplateMessage(in *structpb.Struct) (*structp
 	respStruct := resp.(*TaskSendTemplateMessageResp)
 
 	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
-	outputStruct := TaskSendMediaBasedTemplateMessageOutput{
+	outputStruct := TaskSendTemplateMessageOutput{
 		WaID:          respStruct.Contacts[0].WaID,
 		ID:            respStruct.Messages[0].ID,
 		MessageStatus: respStruct.Messages[0].MessageStatus,
@@ -415,12 +372,6 @@ type TaskSendLocationBasedTemplateMessageInput struct {
 	Address          string   `json:"address"`
 	BodyParameters   []string `json:"body-parameters"`
 	ButtonParameters []string `json:"button-parameters"`
-}
-
-type TaskSendLocationBasedTemplateMessageOutput struct {
-	WaID          string `json:"recipient-wa-id"`
-	ID            string `json:"message-id"`
-	MessageStatus string `json:"message-status,omitempty"`
 }
 
 func (e *execution) SendLocationBasedTemplateMessage(in *structpb.Struct) (*structpb.Struct, error) {
@@ -530,7 +481,7 @@ func (e *execution) SendLocationBasedTemplateMessage(in *structpb.Struct) (*stru
 	respStruct := resp.(*TaskSendTemplateMessageResp)
 
 	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
-	outputStruct := TaskSendLocationBasedTemplateMessageOutput{
+	outputStruct := TaskSendTemplateMessageOutput{
 		WaID:          respStruct.Contacts[0].WaID,
 		ID:            respStruct.Messages[0].ID,
 		MessageStatus: respStruct.Messages[0].MessageStatus,
@@ -555,12 +506,6 @@ type TaskSendAuthenticationTemplateMessageInput struct {
 	OneTimePassword string `json:"one-time-password"`
 }
 
-type TaskSendAuthenticationTemplateMessageOutput struct {
-	WaID          string `json:"recipient-wa-id"`
-	ID            string `json:"message-id"`
-	MessageStatus string `json:"message-status,omitempty"`
-}
-
 func (e *execution) SendAuthenticationTemplateMessage(in *structpb.Struct) (*structpb.Struct, error) {
 
 	inputStruct := TaskSendAuthenticationTemplateMessageInput{}
@@ -568,6 +513,10 @@ func (e *execution) SendAuthenticationTemplateMessage(in *structpb.Struct) (*str
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	if len(inputStruct.OneTimePassword) > 15 {
+		return nil, fmt.Errorf("one-time password characters cannot be more than 15. It is now %d characters", len(inputStruct.OneTimePassword))
 	}
 
 	req := TaskSendTemplateMessageReq{
@@ -621,7 +570,7 @@ func (e *execution) SendAuthenticationTemplateMessage(in *structpb.Struct) (*str
 	respStruct := resp.(*TaskSendTemplateMessageResp)
 
 	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
-	outputStruct := TaskSendAuthenticationTemplateMessageOutput{
+	outputStruct := TaskSendTemplateMessageOutput{
 		WaID:          respStruct.Contacts[0].WaID,
 		ID:            respStruct.Messages[0].ID,
 		MessageStatus: respStruct.Messages[0].MessageStatus,

@@ -29,7 +29,7 @@
           "type": "string"
         },
         "language-code": {
-          "description": "The code of the language or locale to use. Supported languages: https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages",
+          "description": "The code of the language in which the template is used. Supported languages: https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages",
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": false,
           "instillUpstreamTypes": ["value", "reference", "template"],
@@ -147,7 +147,7 @@
         "instillFormat": "string"
       },
       "message-status": {
-        "description": "The status of the message. It is not always available. Example: when sending authentication template, it won't show up.",
+        "description": "The status of the message.",
         "instillUIOrder": 2,
         "title": "Message Status",
         "type": "string",
@@ -165,7 +165,8 @@
         "to",
         "name",
         "language-code",
-        "header-parameters"
+        "header-parameters",
+        "body-parameters"
       ],
       "properties": {
         "phone-number-id": {
@@ -245,7 +246,8 @@
         "language-code",
         "media-type",
         "id-or-link",
-        "filename"
+        "filename",
+        "body-parameters"
       ],
       "properties": {
         "phone-number-id": {
@@ -334,7 +336,8 @@
         "latitude",
         "longitude",
         "location-name",
-        "address"
+        "address",
+        "body-parameters"
       ],
       "properties": {
         "phone-number-id": {
@@ -366,6 +369,14 @@
         "address": {
           "$ref": "#/$defs/input/location/address",
           "instillUIOrder": 7
+        },
+        "body-parameters":{
+          "$ref": "#/$defs/input/template/body-parameters",
+          "instillUIOrder": 8
+        },
+        "button-parameters": {
+          "$ref": "#/$defs/input/template/button-parameters",
+          "instillUIOrder": 9
         }
         
       },
@@ -425,7 +436,7 @@
           "instillUIOrder": 2
         },
         "one-time-password":{
-          "description": "One-time password to be sent to the recipient",
+          "description": "One-time password to be sent to the recipient. Maximum 15 characters.",
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": false,
           "instillUIOrder": 3,
@@ -753,6 +764,99 @@
         "phone-number-id",
         "to",
         "first-name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "API response",
+      "instillUIOrder": 0,
+      "properties": {
+        "recipient-wa-id": {
+          "$ref": "#/$defs/output/recipient-wa-id"
+        },
+        "message-id": {
+          "$ref": "#/$defs/output/message-id"
+        }
+      },
+      "required": ["recipient-wa-id", "message-id"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_SEND_INTERACTIVE_CTA_URL_BUTTON_MESSAGE":{
+    "instillShortDescription": "Send interactive Call-To-Action URL button message. Note: Message can only be sent when the 24-hour customer service window is open. For more information: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows ",
+    "input": {
+      "description": "Interactive CTA URL button input",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "phone-number-id",
+        "to",
+        "header-text",
+        "body-text",
+        "footer-text",
+        "button-text",
+        "button-url"
+      ],
+      "properties": {
+        "phone-number-id": {
+          "$ref": "#/$defs/input/phone-number-id"
+        },
+        "to": {
+          "$ref": "#/$defs/input/to"
+        },
+        "header-text": {
+          "description": "Message header text.",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Header Text",
+          "type": "string"
+        },
+        "body-text": {
+          "description": "Message body text.",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Body Text",
+          "type": "string"
+        },
+        "footer-text": {
+          "description": "Message footer text.",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Footer Text",
+          "type": "string"
+        },
+        "button-display-text": {
+          "description": "The text displayed on the button",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": false,
+          "instillUIOrder": 5,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Button Display Text",
+          "type": "string"
+        },
+        "button-url": {
+          "description": "URL to load when the user tapped the button",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUIOrder": 6,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Button URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone-number-id",
+        "to",
+        "body-text",
+        "button-text",
+        "button-url"
       ],
       "title": "Input",
       "type": "object"

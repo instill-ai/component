@@ -7,7 +7,8 @@
     "TASK_SEND_TEXT_MESSAGE",
     "TASK_SEND_MEDIA_MESSAGE",
     "TASK_SEND_LOCATION_MESSAGE",
-    "TASK_SEND_CONTACT_MESSAGE"
+    "TASK_SEND_CONTACT_MESSAGE",
+    "TASK_SEND_INTERACTIVE_CTA_URL_BUTTON_MESSAGE"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/whatsapp",
   "icon": "assets/whatsapp.svg",

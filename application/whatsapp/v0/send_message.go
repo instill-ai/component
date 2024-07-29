@@ -8,13 +8,14 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-// this file is used to handle 4 send tasks
+// this file is used to handle 6 send tasks
 
 // Tasks:
 // 1. Send Text Message
 // 2. Send Media Message
 // 3. Send Location Message
 // 4. Send Contact Message
+// 5. Send Interactive CTA URL Button Message
 
 // types of messages: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages
 
@@ -36,6 +37,26 @@ type locationObject struct {
 	Address   string `json:"address"`
 }
 
+type interactiveObject struct {
+	Type   string      `json:"type"`
+	Header interface{} `json:"header"`
+	Body   struct {
+		Text string `json:"text"`
+	} `json:"body"`
+	Footer struct {
+		Text string `json:"text"`
+	} `json:"footer"`
+	Action actionObject `json:"action"`
+}
+
+type actionObject struct {
+	Name      string `json:"name,omitempty"`
+	Parameter struct {
+		DisplayText string `json:"display_text"`
+		URL         string `json:"url"`
+	} `json:"parameters,omitempty"` //I also don't know why the json is parameters instead of parameter, but the API works only when it is parameters
+}
+
 type mediaObject struct {
 	ID       string `json:"id,omitempty"`
 	Link     string `json:"link,omitempty"`     // if id is used, no need link.
@@ -49,12 +70,11 @@ type templateObject struct {
 	Components []componentObject `json:"components,omitempty"`
 }
 
-// Component type is either header, body or button
+// Component type is either header, body or button (footer doesn't have any parameter)
 // Note:
-// footer cannot have any parameters.
 // header can have various parameters: text, image, location, document and video
-// body support text parameters (along with currency and date time), but for our implementation, we will only do text parameter (for simplification). User can actually just input currency and date time as text as well, so it is not a big deal.
-// button type is quick reply and call to action. Can either specify payload or text as the parameter for button.
+// body support text parameters
+// button type is quick_reply, url and copy_code.
 
 type componentObject struct {
 	Type          string        `json:"type"`
@@ -87,7 +107,46 @@ type phoneObject struct {
 	Type  string `json:"type,omitempty"`
 }
 
-// structs that are part of API response (used in multiple task)
+// Header Parameters (can be used in componentObject and interactiveObject)
+
+// used when the header type is text (also used for body)
+type textParameter struct {
+	Type string `json:"type"`
+	Text string `json:"text"`
+}
+
+// used when the header type is image
+type imageParameter struct {
+	Type  string      `json:"type"`
+	Image mediaObject `json:"image"`
+}
+
+// used when the header type is video
+type videoParameter struct {
+	Type  string      `json:"type"`
+	Video mediaObject `json:"video"`
+}
+
+// used when the header type is document
+type documentParameter struct {
+	Type     string      `json:"type"`
+	Document mediaObject `json:"document"`
+}
+
+// used when the header type is location
+type locationParameter struct {
+	Type     string         `json:"type"`
+	Location locationObject `json:"location"`
+}
+
+// used for button component
+type buttonParameter struct {
+	Type    string `json:"type"`
+	Payload string `json:"payload,omitempty"`
+	Text    string `json:"text,omitempty"`
+}
+
+// structs that are part of API response (used in all tasks)
 
 type contact struct {
 	Input string `json:"input"`
@@ -98,6 +157,23 @@ type message struct {
 	ID            string `json:"id"`
 	MessageStatus string `json:"message_status,omitempty"`
 }
+
+// Send Message Response and Output.
+// Used in all the tasks in this file.
+
+type TaskSendMessageResp struct {
+	MessagingProduct string    `json:"messaging_product"`
+	Contacts         []contact `json:"contacts"`
+	Messages         []message `json:"messages"`
+}
+
+// No message status in normal send message tasks
+type TaskSendMessageOutput struct {
+	WaID string `json:"recipient-wa-id"`
+	ID   string `json:"message-id"`
+}
+
+// ----------------------- Tasks -----------------------
 
 // Task 1: Send Text Message Task
 
@@ -113,19 +189,6 @@ type TaskSendTextMessageReq struct {
 	To               string     `json:"to"`
 	Type             string     `json:"type"`
 	Text             textObject `json:"text"`
-}
-
-type TaskSendTextMessageResp struct {
-	MessagingProduct string    `json:"messaging_product"`
-	Contacts         []contact `json:"contacts"`
-	Messages         []message `json:"messages"`
-}
-
-// Note: no message status in the output struct because it is not returned in the response
-
-type TaskSendTextMessageOutput struct {
-	WaID string `json:"recipient-wa-id"`
-	ID   string `json:"message-id"`
 }
 
 func (e *execution) SendTextMessage(in *structpb.Struct) (*structpb.Struct, error) {
@@ -146,15 +209,15 @@ func (e *execution) SendTextMessage(in *structpb.Struct) (*structpb.Struct, erro
 		},
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendTextMessageResp{}, inputStruct.PhoneNumberID)
+	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to do API request: %v", err)
 	}
 
-	respStruct := resp.(*TaskSendTextMessageResp)
+	respStruct := resp.(*TaskSendMessageResp)
 
-	outputStruct := TaskSendTextMessageOutput{
+	outputStruct := TaskSendMessageOutput{
 		WaID: respStruct.Contacts[0].WaID,
 		ID:   respStruct.Messages[0].ID,
 	}
@@ -188,17 +251,6 @@ type TaskSendMediaMessageReq struct {
 	Audio            mediaObject `json:"audio,omitempty"`
 	Image            mediaObject `json:"image,omitempty"`
 	Video            mediaObject `json:"video,omitempty"`
-}
-
-type TaskSendMediaMessageResp struct {
-	MessagingProduct string    `json:"messaging_product"`
-	Contacts         []contact `json:"contacts"`
-	Messages         []message `json:"messages"`
-}
-
-type TaskSendMediaMessageOutput struct {
-	WaID string `json:"recipient-wa-id"`
-	ID   string `json:"message-id"`
 }
 
 func (e *execution) TaskSendMediaMessage(in *structpb.Struct) (*structpb.Struct, error) {
@@ -255,15 +307,15 @@ func (e *execution) TaskSendMediaMessage(in *structpb.Struct) (*structpb.Struct,
 		return nil, fmt.Errorf("unsupported media type")
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendMediaMessageResp{}, inputStruct.PhoneNumberID)
+	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to do API request: %v", err)
 	}
 
-	respStruct := resp.(*TaskSendMediaMessageResp)
+	respStruct := resp.(*TaskSendMessageResp)
 
-	outputStruct := TaskSendMediaBasedTemplateMessageOutput{
+	outputStruct := TaskSendMessageOutput{
 		WaID: respStruct.Contacts[0].WaID,
 		ID:   respStruct.Messages[0].ID,
 	}
@@ -294,17 +346,6 @@ type TaskSendLocationMessageReq struct {
 	Location         locationObject `json:"location"`
 }
 
-type TaskSendLocationMessageResp struct {
-	MessagingProduct string    `json:"messaging_product"`
-	Contacts         []contact `json:"contacts"`
-	Messages         []message `json:"messages"`
-}
-
-type TaskSendLocationMessageOutput struct {
-	WaID string `json:"recipient-wa-id"`
-	ID   string `json:"message-id"`
-}
-
 func (e *execution) TaskSendLocationMessage(in *structpb.Struct) (*structpb.Struct, error) {
 	inputStruct := TaskSendLocationMessageInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
@@ -325,15 +366,15 @@ func (e *execution) TaskSendLocationMessage(in *structpb.Struct) (*structpb.Stru
 		},
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendLocationMessageResp{}, inputStruct.PhoneNumberID)
+	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to do API request: %v", err)
 	}
 
-	respStruct := resp.(*TaskSendLocationMessageResp)
+	respStruct := resp.(*TaskSendMessageResp)
 
-	outputStruct := TaskSendLocationMessageOutput{
+	outputStruct := TaskSendMessageOutput{
 		WaID: respStruct.Contacts[0].WaID,
 		ID:   respStruct.Messages[0].ID,
 	}
@@ -366,17 +407,6 @@ type TaskSendContactMessageReq struct {
 	To               string         `json:"to"`
 	Type             string         `json:"type"`
 	Contacts         contactsObject `json:"contacts"`
-}
-
-type TaskSendContactMessageResp struct {
-	MessagingProduct string    `json:"messaging_product"`
-	Contacts         []contact `json:"contacts"`
-	Messages         []message `json:"messages"`
-}
-
-type TaskSendContactMessageOutput struct {
-	WaID string `json:"recipient-wa-id"`
-	ID   string `json:"message-id"`
 }
 
 func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struct, error) {
@@ -440,15 +470,15 @@ func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struc
 		})
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendContactMessageResp{}, inputStruct.PhoneNumberID)
+	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to do API request: %v", err)
 	}
 
-	respStruct := resp.(*TaskSendContactMessageResp)
+	respStruct := resp.(*TaskSendMessageResp)
 
-	outputStruct := TaskSendContactMessageOutput{
+	outputStruct := TaskSendMessageOutput{
 		WaID: respStruct.Contacts[0].WaID,
 		ID:   respStruct.Messages[0].ID,
 	}
@@ -461,4 +491,86 @@ func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struc
 
 	return output, nil
 
+}
+
+// Task 5: Send Interactive CTA URL Button Message Task
+
+type TaskSendInteractiveCTAURLButtonMessageInput struct {
+	PhoneNumberID     string `json:"phone-number-id"`
+	To                string `json:"to"`
+	HeaderText        string `json:"header-text"`
+	BodyText          string `json:"body-text"`
+	FooterText        string `json:"footer-text"`
+	ButtonDisplayText string `json:"button-display-text"`
+	ButtonURL         string `json:"button-url"`
+}
+
+type TaskSendInteractiveCTAURLButtonMessageReq struct {
+	MessagingProduct string            `json:"messaging_product"`
+	To               string            `json:"to"`
+	Type             string            `json:"type"`
+	Interactive      interactiveObject `json:"interactive"`
+}
+
+func (e *execution) TaskSendInteractiveCTAURLButtonMessage(in *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := TaskSendInteractiveCTAURLButtonMessageInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	req := TaskSendInteractiveCTAURLButtonMessageReq{
+		MessagingProduct: "whatsapp",
+		To:               inputStruct.To,
+		Type:             "interactive",
+		Interactive: interactiveObject{
+			Type: "cta_url",
+			Header: textParameter{
+				Type: "text",
+				Text: inputStruct.HeaderText,
+			},
+			Body: struct {
+				Text string `json:"text"`
+			}{
+				Text: inputStruct.BodyText,
+			},
+			Footer: struct {
+				Text string `json:"text"`
+			}{
+				Text: inputStruct.FooterText,
+			},
+			Action: actionObject{
+				Name: "cta_url",
+				Parameter: struct {
+					DisplayText string `json:"display_text"`
+					URL         string `json:"url"`
+				}{
+					DisplayText: inputStruct.ButtonDisplayText,
+					URL:         inputStruct.ButtonURL,
+				},
+			},
+		},
+	}
+
+	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to do API request: %v", err)
+	}
+
+	respStruct := resp.(*TaskSendMessageResp)
+
+	outputStruct := TaskSendMessageOutput{
+		WaID: respStruct.Contacts[0].WaID,
+		ID:   respStruct.Messages[0].ID,
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
+	}
+
+	return output, nil
 }
