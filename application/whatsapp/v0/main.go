@@ -13,7 +13,15 @@ import (
 )
 
 const (
-	taskSendTemplateMessage = "TASK_SEND_TEMPLATE_MESSAGE"
+	taskSendTextBasedTemplateMessage      = "TASK_SEND_TEXT_BASED_TEMPLATE_MESSAGE"
+	taskSendMediaBasedTemplateMessage     = "TASK_SEND_MEDIA_BASED_TEMPLATE_MESSAGE"
+	taskSendLocationBasedTemplateMessage  = "TASK_SEND_LOCATION_BASED_TEMPLATE_MESSAGE"
+	taskSendAuthenticationTemplateMessage = "TASK_SEND_AUTHENTICATION_TEMPLATE_MESSAGE"
+	taskSendTemplateMessage               = "TASK_SEND_TEMPLATE_MESSAGE"
+	taskSendTextMessage                   = "TASK_SEND_TEXT_MESSAGE"
+	taskSendMediaMessage                  = "TASK_SEND_MEDIA_MESSAGE"
+	taskSendLocationMessage               = "TASK_SEND_LOCATION_MESSAGE"
+	taskSendContactMessage                = "TASK_SEND_CONTACT_MESSAGE"
 
 	basePath = "https://graph.facebook.com"
 	version  = "v20.0"
@@ -61,8 +69,22 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	}
 
 	switch task {
-	case taskSendTemplateMessage:
-		e.execute = e.SendTemplateMessage
+	case taskSendTextBasedTemplateMessage:
+		e.execute = e.SendTextBasedTemplateMessage
+	case taskSendMediaBasedTemplateMessage:
+		e.execute = e.SendMediaBasedTemplateMessage
+	case taskSendLocationBasedTemplateMessage:
+		e.execute = e.SendLocationBasedTemplateMessage
+	case taskSendAuthenticationTemplateMessage:
+		e.execute = e.SendAuthenticationTemplateMessage
+	case taskSendTextMessage:
+		e.execute = e.SendTextMessage
+	case taskSendMediaMessage:
+		e.execute = e.TaskSendMediaMessage
+	case taskSendLocationMessage:
+		e.execute = e.TaskSendLocationMessage
+	case taskSendContactMessage:
+		e.execute = e.TaskSendContactMessage
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}

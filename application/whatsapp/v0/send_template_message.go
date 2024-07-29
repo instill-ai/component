@@ -9,8 +9,16 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-// this file is used to handle send template task
+// this file is used to handle send template message. Send template message will be divided into 4 tasks:
+// 1. Send Text-Based Template Message
+// 2. Send Media-Based Template Message
+// 3. Send Location-Based Template Message
+// 4. Send Authentication Template Message
+
+// Documentation API
 // send template task: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates
+// Note1: in this documentation API, there is interactive message template, which is not listed in the above supported tasks file. However,  all tasks mentioned above actually supported interactive template message as well. Interactive message template is basically template with buttons, which is supported in all the tasks.
+// Note2: Send Catalog Template is not supported yet due to the lack of real phone number to test the API.
 
 // parameters for Component object (these parameters are only used in send template task)
 
@@ -51,18 +59,8 @@ type buttonParameter struct {
 	Text    string `json:"text,omitempty"`
 }
 
-// Send Template Message task
-
-type TaskSendTemplateMessageInput struct {
-	PhoneNumberID    string   `json:"phone-number-id"`
-	To               string   `json:"to"`
-	HeaderType       string   `json:"header-type"`
-	TemplateName     string   `json:"name"`
-	LanguageCode     string   `json:"language-code"`
-	HeaderParameters []string `json:"header-parameters"`
-	BodyParameters   []string `json:"body-parameters"`
-	ButtonParameters []string `json:"button-parameters"`
-}
+// Send Template Message Request and Response.
+// Used in all the tasks in this file.
 
 type TaskSendTemplateMessageReq struct {
 	MessagingProduct string         `json:"messaging_product"`
@@ -77,15 +75,27 @@ type TaskSendTemplateMessageResp struct {
 	Messages         []message `json:"messages"`
 }
 
-type TaskSendTemplateMessageOutput struct {
+// Task 1: Send Text-Based Template Message
+
+type TaskSendTextBasedTemplateMessageInput struct {
+	PhoneNumberID    string   `json:"phone-number-id"`
+	To               string   `json:"to"`
+	HeaderType       string   `json:"header-type"`
+	TemplateName     string   `json:"name"`
+	LanguageCode     string   `json:"language-code"`
+	HeaderParameters []string `json:"header-parameters"`
+	BodyParameters   []string `json:"body-parameters"`
+	ButtonParameters []string `json:"button-parameters"`
+}
+
+type TaskSendTextBasedTemplateMessageOutput struct {
 	WaID          string `json:"recipient-wa-id"`
 	ID            string `json:"message-id"`
 	MessageStatus string `json:"message-status,omitempty"`
 }
 
-func (e *execution) SendTemplateMessage(in *structpb.Struct) (*structpb.Struct, error) {
-
-	inputStruct := TaskSendTemplateMessageInput{}
+func (e *execution) SendTextBasedTemplateMessage(in *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := TaskSendTextBasedTemplateMessageInput{}
 	err := base.ConvertFromStructpb(in, &inputStruct)
 
 	if err != nil {
@@ -104,173 +114,38 @@ func (e *execution) SendTemplateMessage(in *structpb.Struct) (*structpb.Struct, 
 		},
 	}
 
-	// to assign HeaderParameters
-	// Header can have 6 types: none, text, image, video, document & location.
-
-	// create a header component
-
-	switch inputStruct.HeaderType {
-	case "text":
-		// the text header type can have 0 parameter, so there is no need to have an error message if there is no parameter
-		if len(inputStruct.HeaderParameters) != 0 {
-			component := componentObject{
-				Type:       "header",
-				Parameters: make([]interface{}, len(inputStruct.HeaderParameters)),
-			}
-
-			for index, value := range inputStruct.HeaderParameters {
-				component.Parameters[index] = textParameter{
-					Type: "text",
-					Text: value,
-				}
-			}
-			req.Template.Components = append(req.Template.Components, component)
+	// the text header type can have 0 parameter, so there is no need to have an error message if there is no parameter
+	if len(inputStruct.HeaderParameters) != 0 {
+		headerComponent := componentObject{
+			Type:       "header",
+			Parameters: make([]interface{}, len(inputStruct.HeaderParameters)),
 		}
 
-	case "image":
-
-		// the image header type only has 1 parameter, which is the id/link of the image
-		if len(inputStruct.HeaderParameters) == 1 {
-
-			component := componentObject{
-				Type:       "header",
-				Parameters: make([]interface{}, 1),
+		for index, value := range inputStruct.HeaderParameters {
+			headerComponent.Parameters[index] = textParameter{
+				Type: "text",
+				Text: value,
 			}
-
-			firstParam := inputStruct.HeaderParameters[0]
-			if strings.Contains(firstParam, "http") {
-				component.Parameters[0] = imageParameter{
-					Type: "image",
-					Image: mediaObject{
-						Link: firstParam,
-					},
-				}
-			} else {
-				component.Parameters[0] = imageParameter{
-					Type: "image",
-					Image: mediaObject{
-						ID: firstParam,
-					},
-				}
-			}
-			req.Template.Components = append(req.Template.Components, component)
-		} else {
-			return nil, fmt.Errorf("the image header type requires one parameter (in the header parameters), which is the id/link of the image. format: [id/link]")
 		}
-
-	case "video":
-		// the video header type only has 1 parameter, which is the id/link of the video
-
-		if len(inputStruct.HeaderParameters) == 1 {
-			component := componentObject{
-				Type:       "header",
-				Parameters: make([]interface{}, 1),
-			}
-
-			firstParam := inputStruct.HeaderParameters[0]
-			if strings.Contains(firstParam, "http") {
-				component.Parameters[0] = videoParameter{
-					Type: "video",
-					Video: mediaObject{
-						Link: firstParam,
-					},
-				}
-			} else {
-				component.Parameters[0] = videoParameter{
-					Type: "video",
-					Video: mediaObject{
-						ID: firstParam,
-					},
-				}
-			}
-			req.Template.Components = append(req.Template.Components, component)
-		} else {
-			return nil, fmt.Errorf("the video header type requires one parameter (in the header parameters), which is the id/link of the video. format: [id/link]")
-		}
-
-	case "document":
-
-		if len(inputStruct.HeaderParameters) == 1 || len(inputStruct.HeaderParameters) == 2 {
-
-			component := componentObject{
-				Type: "header",
-			}
-
-			firstParam := inputStruct.HeaderParameters[0]
-
-			var secondParam string
-			if len(inputStruct.HeaderParameters) > 1 {
-				secondParam = inputStruct.HeaderParameters[1]
-				component.Parameters = make([]interface{}, 2)
-			} else {
-				component.Parameters = make([]interface{}, 1)
-			}
-
-			if strings.Contains(firstParam, "http") {
-				component.Parameters[0] = documentParameter{
-					Type: "document",
-					Document: mediaObject{
-						Link:     firstParam,
-						Filename: secondParam,
-					},
-				}
-			} else {
-				component.Parameters[0] = documentParameter{
-					Type: "document",
-					Document: mediaObject{
-						ID:       firstParam,
-						Filename: secondParam,
-					},
-				}
-			}
-			req.Template.Components = append(req.Template.Components, component)
-		} else {
-			return nil, fmt.Errorf("the document header type requires one or two parameter (in the header parameters). The first parameter is the id/link of the document (required), and the second parameter is the filename which can be used to specify the extension of the file as well (optional). format: [id/link, filename]")
-		}
-
-	case "location":
-
-		if len(inputStruct.HeaderParameters) == 4 {
-
-			component := componentObject{
-				Type:       "header",
-				Parameters: make([]interface{}, 1),
-			}
-
-			component.Parameters[0] =
-				locationParameter{
-					Type: "location",
-					Location: locationObject{
-						Latitude:  inputStruct.HeaderParameters[0],
-						Longitude: inputStruct.HeaderParameters[1],
-						Name:      inputStruct.HeaderParameters[2],
-						Address:   inputStruct.HeaderParameters[3],
-					},
-				}
-
-			req.Template.Components = append(req.Template.Components, component)
-		} else {
-			return nil, fmt.Errorf("the location header type requires 4 parameters which are: latitude, longitude, name, address. format: [latitude, longitude, name, address]")
-		}
-
+		req.Template.Components = append(req.Template.Components, headerComponent)
 	}
 
 	// create a body component if there is any body parameters
 
 	if len(inputStruct.BodyParameters) != 0 {
-		component := componentObject{
+		bodyComponent := componentObject{
 			Type:       "body",
 			Parameters: make([]interface{}, len(inputStruct.BodyParameters)),
 		}
 
 		for index, value := range inputStruct.BodyParameters {
-			component.Parameters[index] = textParameter{
+			bodyComponent.Parameters[index] = textParameter{
 				Type: "text",
 				Text: value,
 			}
 		}
 
-		req.Template.Components = append(req.Template.Components, component)
+		req.Template.Components = append(req.Template.Components, bodyComponent)
 	}
 
 	// create button component if there is any
@@ -300,15 +175,15 @@ func (e *execution) SendTemplateMessage(in *structpb.Struct) (*structpb.Struct, 
 			return nil, fmt.Errorf("wrong button_type. button_type is either 'quick_reply', 'url' or 'copy_code'")
 		}
 
-		component := componentObject{
+		buttonComponent := componentObject{
 			Type:          "button",
 			ButtonSubType: splitParam[0],
 			ButtonIndex:   strconv.Itoa(index),
 		}
 
-		component.Parameters = append(component.Parameters, param)
+		buttonComponent.Parameters = append(buttonComponent.Parameters, param)
 
-		req.Template.Components = append(req.Template.Components, component)
+		req.Template.Components = append(req.Template.Components, buttonComponent)
 	}
 
 	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
@@ -320,7 +195,433 @@ func (e *execution) SendTemplateMessage(in *structpb.Struct) (*structpb.Struct, 
 	respStruct := resp.(*TaskSendTemplateMessageResp)
 
 	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
-	outputStruct := TaskSendTemplateMessageOutput{
+	outputStruct := TaskSendTextBasedTemplateMessageOutput{
+		WaID:          respStruct.Contacts[0].WaID,
+		ID:            respStruct.Messages[0].ID,
+		MessageStatus: respStruct.Messages[0].MessageStatus,
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
+	}
+
+	return output, nil
+
+}
+
+// Task 2: Send Media-Based Template Message
+
+type TaskSendMediaBasedTemplateMessageInput struct {
+	PhoneNumberID    string   `json:"phone-number-id"`
+	To               string   `json:"to"`
+	TemplateName     string   `json:"name"`
+	LanguageCode     string   `json:"language-code"`
+	MediaType        string   `json:"media-type"`
+	IDOrLink         string   `json:"id-or-link"`
+	Filename         string   `json:"filename"` //only for document
+	BodyParameters   []string `json:"body-parameters"`
+	ButtonParameters []string `json:"button-parameters"`
+}
+
+type TaskSendMediaBasedTemplateMessageOutput struct {
+	WaID          string `json:"recipient-wa-id"`
+	ID            string `json:"message-id"`
+	MessageStatus string `json:"message-status,omitempty"`
+}
+
+func (e *execution) SendMediaBasedTemplateMessage(in *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := TaskSendMediaBasedTemplateMessageInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	req := TaskSendTemplateMessageReq{
+		MessagingProduct: "whatsapp",
+		To:               inputStruct.To,
+		Type:             "template",
+		Template: templateObject{
+			Name: inputStruct.TemplateName,
+			Language: languageObject{
+				Code: inputStruct.LanguageCode,
+			},
+		},
+	}
+
+	// to assign HeaderParameters
+
+	// create a header component
+
+	headerComponent := componentObject{
+		Type:       "header",
+		Parameters: make([]interface{}, 1),
+	}
+
+	switch inputStruct.MediaType {
+	case "image":
+
+		if strings.Contains(inputStruct.IDOrLink, "http") {
+			headerComponent.Parameters[0] = imageParameter{
+				Type: "image",
+				Image: mediaObject{
+					Link: inputStruct.IDOrLink,
+				},
+			}
+		} else {
+			headerComponent.Parameters[0] = imageParameter{
+				Type: "image",
+				Image: mediaObject{
+					ID: inputStruct.IDOrLink,
+				},
+			}
+		}
+		req.Template.Components = append(req.Template.Components, headerComponent)
+
+	case "video":
+
+		if strings.Contains(inputStruct.IDOrLink, "http") {
+			headerComponent.Parameters[0] = videoParameter{
+				Type: "video",
+				Video: mediaObject{
+					Link: inputStruct.IDOrLink,
+				},
+			}
+		} else {
+			headerComponent.Parameters[0] = videoParameter{
+				Type: "video",
+				Video: mediaObject{
+					ID: inputStruct.IDOrLink,
+				},
+			}
+		}
+		req.Template.Components = append(req.Template.Components, headerComponent)
+
+	case "document":
+
+		if strings.Contains(inputStruct.IDOrLink, "http") {
+			headerComponent.Parameters[0] = documentParameter{
+				Type: "document",
+				Document: mediaObject{
+					Link:     inputStruct.IDOrLink,
+					Filename: inputStruct.Filename,
+				},
+			}
+		} else {
+			headerComponent.Parameters[0] = documentParameter{
+				Type: "document",
+				Document: mediaObject{
+					ID:       inputStruct.IDOrLink,
+					Filename: inputStruct.Filename,
+				},
+			}
+		}
+		req.Template.Components = append(req.Template.Components, headerComponent)
+
+	}
+
+	// create a body component if there is any body parameters
+
+	if len(inputStruct.BodyParameters) != 0 {
+		bodyComponent := componentObject{
+			Type:       "body",
+			Parameters: make([]interface{}, len(inputStruct.BodyParameters)),
+		}
+
+		for index, value := range inputStruct.BodyParameters {
+			bodyComponent.Parameters[index] = textParameter{
+				Type: "text",
+				Text: value,
+			}
+		}
+
+		req.Template.Components = append(req.Template.Components, bodyComponent)
+	}
+
+	// create button component if there is any
+	// one parameter -> one button component
+
+	for index, value := range inputStruct.ButtonParameters {
+		splitParam := strings.Split(value, ";")
+
+		if len(splitParam) != 2 {
+			return nil, fmt.Errorf("format is wrong, it must be 'button_type;value_of_the_parameter'. Example: quick_reply;randomvalue")
+		}
+
+		var param buttonParameter
+		if splitParam[0] == "quick_reply" || splitParam[0] == "copy_code" {
+			param = buttonParameter{
+				Type:    "payload",
+				Payload: splitParam[1],
+			}
+
+		} else if splitParam[0] == "url" {
+			param = buttonParameter{
+				Type: "text",
+				Text: splitParam[1],
+			}
+
+		} else {
+			return nil, fmt.Errorf("wrong button_type. button_type is either 'quick_reply', 'url' or 'copy_code'")
+		}
+
+		buttonComponent := componentObject{
+			Type:          "button",
+			ButtonSubType: splitParam[0],
+			ButtonIndex:   strconv.Itoa(index),
+		}
+
+		buttonComponent.Parameters = append(buttonComponent.Parameters, param)
+
+		req.Template.Components = append(req.Template.Components, buttonComponent)
+	}
+
+	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to do API request: %v", err)
+	}
+
+	respStruct := resp.(*TaskSendTemplateMessageResp)
+
+	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
+	outputStruct := TaskSendMediaBasedTemplateMessageOutput{
+		WaID:          respStruct.Contacts[0].WaID,
+		ID:            respStruct.Messages[0].ID,
+		MessageStatus: respStruct.Messages[0].MessageStatus,
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
+	}
+
+	return output, nil
+}
+
+// Task 3: Send Location-Based Template Message
+
+type TaskSendLocationBasedTemplateMessageInput struct {
+	PhoneNumberID    string   `json:"phone-number-id"`
+	To               string   `json:"to"`
+	TemplateName     string   `json:"name"`
+	LanguageCode     string   `json:"language-code"`
+	Latitude         float64  `json:"latitude"`
+	Longitude        float64  `json:"longitude"`
+	LocationName     string   `json:"location-name"`
+	Address          string   `json:"address"`
+	BodyParameters   []string `json:"body-parameters"`
+	ButtonParameters []string `json:"button-parameters"`
+}
+
+type TaskSendLocationBasedTemplateMessageOutput struct {
+	WaID          string `json:"recipient-wa-id"`
+	ID            string `json:"message-id"`
+	MessageStatus string `json:"message-status,omitempty"`
+}
+
+func (e *execution) SendLocationBasedTemplateMessage(in *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := TaskSendLocationBasedTemplateMessageInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	req := TaskSendTemplateMessageReq{
+		MessagingProduct: "whatsapp",
+		To:               inputStruct.To,
+		Type:             "template",
+		Template: templateObject{
+			Name: inputStruct.TemplateName,
+			Language: languageObject{
+				Code: inputStruct.LanguageCode,
+			},
+		},
+	}
+
+	// to assign HeaderParameters
+
+	// create a header component
+
+	headerComponent := componentObject{
+		Type:       "header",
+		Parameters: make([]interface{}, 1),
+	}
+
+	headerComponent.Parameters[0] =
+		locationParameter{
+			Type: "location",
+			Location: locationObject{
+				Latitude:  fmt.Sprintf("%f", inputStruct.Latitude),
+				Longitude: fmt.Sprintf("%f", inputStruct.Longitude),
+				Name:      inputStruct.LocationName,
+				Address:   inputStruct.Address,
+			},
+		}
+
+	req.Template.Components = append(req.Template.Components, headerComponent)
+
+	// create a body component if there is any body parameters
+
+	if len(inputStruct.BodyParameters) != 0 {
+		bodyComponent := componentObject{
+			Type:       "body",
+			Parameters: make([]interface{}, len(inputStruct.BodyParameters)),
+		}
+
+		for index, value := range inputStruct.BodyParameters {
+			bodyComponent.Parameters[index] = textParameter{
+				Type: "text",
+				Text: value,
+			}
+		}
+
+		req.Template.Components = append(req.Template.Components, bodyComponent)
+	}
+
+	// create button component if there is any
+	// one parameter -> one button component
+
+	for index, value := range inputStruct.ButtonParameters {
+		splitParam := strings.Split(value, ";")
+
+		if len(splitParam) != 2 {
+			return nil, fmt.Errorf("format is wrong, it must be 'button_type;value_of_the_parameter'. Example: quick_reply;randomvalue")
+		}
+
+		var param buttonParameter
+		if splitParam[0] == "quick_reply" || splitParam[0] == "copy_code" {
+			param = buttonParameter{
+				Type:    "payload",
+				Payload: splitParam[1],
+			}
+
+		} else if splitParam[0] == "url" {
+			param = buttonParameter{
+				Type: "text",
+				Text: splitParam[1],
+			}
+
+		} else {
+			return nil, fmt.Errorf("wrong button_type. button_type is either 'quick_reply', 'url' or 'copy_code'")
+		}
+
+		buttonComponent := componentObject{
+			Type:          "button",
+			ButtonSubType: splitParam[0],
+			ButtonIndex:   strconv.Itoa(index),
+		}
+
+		buttonComponent.Parameters = append(buttonComponent.Parameters, param)
+
+		req.Template.Components = append(req.Template.Components, buttonComponent)
+	}
+
+	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to do API request: %v", err)
+	}
+
+	respStruct := resp.(*TaskSendTemplateMessageResp)
+
+	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
+	outputStruct := TaskSendLocationBasedTemplateMessageOutput{
+		WaID:          respStruct.Contacts[0].WaID,
+		ID:            respStruct.Messages[0].ID,
+		MessageStatus: respStruct.Messages[0].MessageStatus,
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
+	}
+
+	return output, nil
+}
+
+// Task 4: Send Authentication Template Message
+
+type TaskSendAuthenticationTemplateMessageInput struct {
+	PhoneNumberID   string `json:"phone-number-id"`
+	To              string `json:"to"`
+	TemplateName    string `json:"name"`
+	LanguageCode    string `json:"language-code"`
+	OneTimePassword string `json:"one-time-password"`
+}
+
+type TaskSendAuthenticationTemplateMessageOutput struct {
+	WaID          string `json:"recipient-wa-id"`
+	ID            string `json:"message-id"`
+	MessageStatus string `json:"message-status,omitempty"`
+}
+
+func (e *execution) SendAuthenticationTemplateMessage(in *structpb.Struct) (*structpb.Struct, error) {
+
+	inputStruct := TaskSendAuthenticationTemplateMessageInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	req := TaskSendTemplateMessageReq{
+		MessagingProduct: "whatsapp",
+		To:               inputStruct.To,
+		Type:             "template",
+		Template: templateObject{
+			Name: inputStruct.TemplateName,
+			Language: languageObject{
+				Code: inputStruct.LanguageCode,
+			},
+		},
+	}
+
+	// authentication template has one body parameter, the one-time password
+
+	bodyComponent := componentObject{
+		Type: "body",
+		Parameters: []interface{}{
+			textParameter{
+				Type: "text",
+				Text: inputStruct.OneTimePassword,
+			},
+		},
+	}
+
+	req.Template.Components = append(req.Template.Components, bodyComponent)
+
+	// authentication template has one button, used to copy the code
+
+	buttonComponent := componentObject{
+		Type:          "button",
+		ButtonSubType: "url",
+		ButtonIndex:   "0",
+		Parameters: []interface{}{
+			buttonParameter{
+				Type: "text",
+				Text: inputStruct.OneTimePassword,
+			},
+		},
+	}
+
+	req.Template.Components = append(req.Template.Components, buttonComponent)
+
+	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to do API request: %v", err)
+	}
+
+	respStruct := resp.(*TaskSendTemplateMessageResp)
+
+	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
+	outputStruct := TaskSendAuthenticationTemplateMessageOutput{
 		WaID:          respStruct.Contacts[0].WaID,
 		ID:            respStruct.Messages[0].ID,
 		MessageStatus: respStruct.Messages[0].MessageStatus,
