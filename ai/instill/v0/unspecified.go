@@ -7,9 +7,9 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-func (e *execution) executeUnspecified(grpcClient modelPB.ModelPublicServiceClient, modelName string, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) executeUnspecified(grpcClient modelPB.ModelPublicServiceClient, nsID string, modelID string, version string, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	if len(inputs) <= 0 {
-		return nil, fmt.Errorf("invalid input: %v for model: %s", inputs, modelName)
+		return nil, fmt.Errorf("invalid input: %v for model: %s/%s", inputs, nsID, modelID)
 	}
 	//TODO: figure out what to do here?
 	/*
