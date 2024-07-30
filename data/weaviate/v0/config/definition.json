@@ -1,7 +1,10 @@
 {
   "availableTasks": [
     "TASK_VECTOR_SEARCH",
-    "TASK_UPSERT"
+    "TASK_BATCH_INSERT",
+    "TASK_INSERT",
+    "TASK_DELETE",
+    "TASK_DELETE_COLLECTION"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/data/weaviate",
   "icon": "assets/weaviate.svg",

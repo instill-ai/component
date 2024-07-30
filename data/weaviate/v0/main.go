@@ -14,8 +14,11 @@ import (
 )
 
 const (
-	TaskVectorSearch = "TASK_VECTOR_SEARCH"
-	TaskUpsert       = "TASK_UPSERT"
+	TaskVectorSearch     = "TASK_VECTOR_SEARCH"
+	TaskInsert           = "TASK_INSERT"
+	TaskDelete           = "TASK_DELETE"
+	TaskBatchInsert      = "TASK_BATCH_INSERT"
+	TaskDeleteCollection = "TASK_DELETE_COLLECTION"
 )
 
 //go:embed config/definition.json
@@ -65,8 +68,14 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	switch task {
 	case TaskVectorSearch:
 		e.execute = e.vectorSearch
-	case TaskUpsert:
-		e.execute = e.upsert
+	case TaskInsert:
+		e.execute = e.insert
+	case TaskDelete:
+		e.execute = e.delete
+	case TaskBatchInsert:
+		e.execute = e.batchInsert
+	case TaskDeleteCollection:
+		e.execute = e.deleteCollection
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", task),
@@ -77,24 +86,10 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	return &base.ExecutionWrapper{Execution: e}, nil
 }
 
-type Destination struct {
-	DatabaseName   string `json:"database-name"`
-	CollectionName string `json:"collection-name"`
-}
-
-// dbClient wont be nil on component test (use mock dbClient)
-// collectionClient wont be nil on component test (use mock collectionClient)
-// collectionClient will be nil on task DropDatabase
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	for i, input := range inputs {
-		var inputStruct Destination
-		err := base.ConvertFromStructpb(input, &inputStruct)
-		if err != nil {
-			return nil, err
-		}
-
 		output, err := e.execute(ctx, input)
 		if err != nil {
 			return nil, err

@@ -1,0 +1,251 @@
+[33mcommit be4fe3530344577b9a0d863a246e2b58980264c2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Yazidane <zidanehakimgt@gmail.com>
+Date:   Sat Jul 27 21:12:29 2024 +0800
+
+    Revert
+
+[33mcommit 7e16b2b7f494acccad06fd5f43fd2667d8eeadbb[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: 楊竣凱 <85488391+YCK1130@users.noreply.github.com>
+Date:   Fri Jul 26 16:03:04 2024 +0100
+
+    fix: change md format to html tag for correct frontend link (#240)
+    
+    Because
+    
+    - Most frontend links are broken now, and some text is out of box.
+    - Change to HTML <a> tag can render a proper hyperlink
+    
+    This commit
+    
+    - Change markdown format link in .json file to HTML <a> tag
+    
+    ### Important Note:
+    Most links that refer to our own documentation are dead. Maybe we should
+    merge this PR after fixing it.
+
+[33mcommit b3936a84dac53562f6d50506918a2d98341ea7c6[m
+Author: Amelia C <71268735+AmeliaCelline@users.noreply.github.com>
+Date:   Fri Jul 26 22:59:46 2024 +0800
+
+    feat: add HubSpot component (#199)
+    
+    Because
+    
+    - Add HubSpot component for user story
+    
+    This commit
+    
+    - Created various tasks for HubSpot component which are:
+    
+    1. Get Contact
+    2. Create Contact
+    3. Get Deal
+    4. Create Deal
+    5. Get Thread
+    6. Retrieve association
+    
+    For more information about the task and using it in local VDP
+    environment:
+    
+    https://docs.google.com/document/d/1dP4cDxdPQfGu48oY5fFq9AlirP-osdRVJmulZ_1Ib1M/edit?usp=sharing
+    
+    TODO:
+    - [x] Create testing for the six tasks mentioned above
+    - [x] Ticket task (Get Ticket, Create Ticket)
+    - [x] Company task (Get Company, Create Company)
+    - [x] Create testing for ticket and company tasks
+    
+    After PR
+    - [x] Insert message task
+    - [x] Rewrite the code structure
+    
+    ---------
+    
+    Co-authored-by: Chang, Hui-Tang <huitang.chang@instill.tech>
+
+[33mcommit 1d9c42d70487d96324ef095c8abc4158479b7b76[m
+Author: ChunHao <64747455+chuang8511@users.noreply.github.com>
+Date:   Fri Jul 26 15:54:33 2024 +0100
+
+    fix: revert the alias because they are same as package name (#243)
+    
+    Because
+    
+    - package name is same as alias
+    
+    This commit
+    
+    - revert the alias
+
+[33mcommit 2932db94abec9e3bca768cc31c02ecf8b24622c1[m
+Author: ChunHao <64747455+chuang8511@users.noreply.github.com>
+Date:   Fri Jul 26 14:51:27 2024 +0100
+
+    feat(document): add docx doc pptx ppt html to transform to text in markdown format (#232)
+    
+    Because
+    
+    - we want to handle more types of unstructured data
+    
+    This commit
+    
+    - add the transformer for docx doc pptx ppt html to markdown
+    
+    In high level, we do
+    - judge what file extensions
+      - If it is pdf, directly use pdfplumber to convert pdf to markdown
+    - If it is docx / doc / ppt / pptx, transform the document to pdf by
+    libreoffice, convert pdf to markdown with pdfplumber.
+    - If it is html, transform it to markdown with html-to-markdown package
+    
+    The reason we separate docx/doc & ppt/pptx is they are essentially
+    different for users according to use cases.
+    It will differentiate the pdf to markdown logic. So, we divide them
+    first.
+
+[33mcommit a1459d709f3abbe2b746070647cb4667612df4b1[m
+Author: ChunHao <64747455+chuang8511@users.noreply.github.com>
+Date:   Fri Jul 26 14:45:08 2024 +0100
+
+    feat: add video operator to fulfil unstructured data process (#238)
+    
+    Because
+    
+    - we want to make vdp process all types of unstructured data
+    
+    This commit
+    
+    - add video operator to subsample video to video or images for different
+    use cases
+
+[33mcommit 86483265e6dfb16245563937a5c08deeeceebc7b[m
+Author: ChunHao <64747455+chuang8511@users.noreply.github.com>
+Date:   Fri Jul 26 14:03:08 2024 +0100
+
+    feat(website): add scrape sitemap function (#239)
+    
+    Because
+    
+    - we want website component to improve better scrap function
+    
+    This commit
+    
+    - add sitemap task in website component
+
+[33mcommit fe8abff3525528772005da193ee49f5b3dd7c9ed[m
+Author: ChunHao <64747455+chuang8511@users.noreply.github.com>
+Date:   Fri Jul 26 11:52:38 2024 +0100
+
+    feat: add audio operator (#236)
+    
+    Because
+    
+    - we want to handle all unstructured data
+    
+    This commit
+    
+    - add audio operator to chunk & split audio data
+    - we skip test code first because it needs a longer time to investigate
+    how to build the integration test env in component
+
+[33mcommit 9a373f3f84cf53bea6d4847a7afdf6349a7d63d2[m
+Author: Zoodane <138553907+zidanehakim@users.noreply.github.com>
+Date:   Fri Jul 26 16:26:38 2024 +0800
+
+    feat: add sql component (#193)
+    
+    Because
+    
+    - We need to integrate sql into our data pipeline.
+    - This will allow us to cover data movement user stories
+    
+    This commit
+    
+    - Allow client to connect to their sql database through VDP
+    - Create execution function to handle following SQL tasks
+    
+    - [x] TASK_INSERT
+    - [x] TASK_UPDATE
+    - [x] TASK_SELECT
+    - [x] TASK_DELETE
+    - [x] TASK_CREATE_TABLE
+    - [x] TASK_DROP_TABLE
+
+[33mcommit bb691049863fe0474f3975474e673cc51bef8d16[m
+Author: ChunHao <64747455+chuang8511@users.noreply.github.com>
+Date:   Fri Jul 26 09:22:52 2024 +0100
+
+    feat: add token count for each chunk (#235)
+    
+    Because
+    
+    - to build RAG, it is crucial to know the token count for each chunk
+    - it is good to analyse the raw text with the token count
+    
+    This commit
+    
+    - add token count for each chunk
+    - differentiate two token count between sum up token counts in chunks
+    and raw text token count
+
+[33mcommit dcad3f013263a5b8c2649d96431fb929b69e4d98[m
+Author: 楊竣凱 <85488391+YCK1130@users.noreply.github.com>
+Date:   Fri Jul 26 07:46:59 2024 +0100
+
+    feat: add handler to auto-fill missing default values (#210)
+    
+    Because:
+    - Request from frontend and direct API calls may miss some optional
+    fields
+    - The underlying meaning of default is that if no value is provided, we
+    will use this value instead.
+    
+    This commit
+    
+    - Implement a function in the `base` package for all components to use
+    - The function supports filling fields with primitive types, including
+    string, integer, number, boolean, and array of them.
+    - Support allOf, anyOf, oneOf fields
+    - Recursively fill in multi-layer object value
+
+[33mcommit 451c6193c071acd0ca5c5c578434a28fb5bb2496[m
+Author: Instill AI Bot <70758845+droplet-bot@users.noreply.github.com>
+Date:   Fri Jul 19 14:00:25 2024 +0530
+
+    chore(main): release 0.23.0-beta (#225)
+    
+    :robot: I have created a release *beep* *boop*
+    ---
+    
+    
+    ##
+    [0.23.0-beta](https://github.com/instill-ai/component/compare/v0.22.0-beta...v0.23.0-beta)
+    (2024-07-19)
+    
+    
+    ### Features
+    
+    * add new models in open ai
+    ([#229](https://github.com/instill-ai/component/issues/229))
+    ([b8e39ae](https://github.com/instill-ai/component/commit/b8e39ae535b2a795295c191ff810898791ceaa3b))
+    
+    
+    ### Bug Fixes
+    
+    * fix markdown chunking bugs
+    ([#228](https://github.com/instill-ai/component/issues/228))
+    ([2194773](https://github.com/instill-ai/component/commit/21947732e259ea471d654c1041eef5e360f247ff))
+    * **github:** patch missing fields
+    ([#227](https://github.com/instill-ai/component/issues/227))
+    ([c61b134](https://github.com/instill-ai/component/commit/c61b13495fe73c4c52aae863528e59588227209e))
+    * **restapi:** fix response body missing problem
+    ([#222](https://github.com/instill-ai/component/issues/222))
+    ([47a28dd](https://github.com/instill-ai/component/commit/47a28dd52521ac3bb2480dc9eed0e6548136245d))
+    * **text:** fix bug and replace markdown chunking
+    ([#221](https://github.com/instill-ai/component/issues/221))
+    ([298c91a](https://github.com/instill-ai/component/commit/298c91a474314301dd5982aaf5cc60cb1229c7e9))
+    
+    ---
+    This PR was generated with [Release
+    Please](https://github.com/googleapis/release-please). See
+    [documentation](https://github.com/googleapis/relea
