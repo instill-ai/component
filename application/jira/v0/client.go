@@ -10,6 +10,7 @@ import (
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -30,7 +31,7 @@ type AuthConfig struct {
 	BaseURL string `json:"base-url"`
 }
 
-func newClient(_ context.Context, setup *structpb.Struct) (*Client, error) {
+func newClient(_ context.Context, setup *structpb.Struct, logger *zap.Logger) (*Client, error) {
 	var authConfig AuthConfig
 	if err := base.ConvertFromStructpb(setup, &authConfig); err != nil {
 		return nil, err
@@ -59,6 +60,7 @@ func newClient(_ context.Context, setup *structpb.Struct) (*Client, error) {
 	jiraClient := httpclient.New(
 		"Jira-Client",
 		baseURL,
+		httpclient.WithLogger(logger),
 		httpclient.WithEndUserError(new(errBody)),
 	)
 	jiraClient.
