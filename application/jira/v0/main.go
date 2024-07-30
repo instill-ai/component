@@ -58,18 +58,18 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	ctx := context.Background()
-	jiraClient, err := newClient(ctx, setup)
+	jiraClient, err := newClient(ctx, x.Setup)
 	if err != nil {
 		return nil, err
 	}
 	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
+		ComponentExecution: x,
 		client:             *jiraClient,
 	}
 	// docs: https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro/#about
-	switch task {
+	switch x.Task {
 	case taskListBoards:
 		e.execute = e.client.listBoardsTask
 	case taskListIssues:
@@ -82,8 +82,8 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.client.getSprintTask
 	default:
 		return nil, errmsg.AddMessage(
-			fmt.Errorf("not supported task: %s", task),
-			fmt.Sprintf("%s task is not supported.", task),
+			fmt.Errorf("not supported task: %s", x.Task),
+			fmt.Sprintf("%s task is not supported.", x.Task),
 		)
 	}
 

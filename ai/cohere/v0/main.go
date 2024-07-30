@@ -68,17 +68,21 @@ func (c *component) WithInstillCredentials(s map[string]any) *component {
 	return c
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
-	resolvedSetup, resolved, err := c.resolveSetup(setup)
+// CreateExecution initializes a connector executor that can be used in a
+// pipeline trigger.
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
+	resolvedSetup, resolved, err := c.resolveSetup(x.Setup)
 	if err != nil {
 		return nil, err
 	}
+
+	x.Setup = resolvedSetup
 	e := &execution{
-		ComponentExecution:     base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: resolvedSetup},
+		ComponentExecution:     x,
 		client:                 newClient(getAPIKey(resolvedSetup), c.GetLogger()),
 		usesInstillCredentials: resolved,
 	}
-	switch task {
+	switch x.Task {
 	case TextGenerationTask:
 		e.execute = e.taskTextGeneration
 	case TextEmbeddingTask:

@@ -452,9 +452,9 @@ Pipeline communicates with components through the `IComponent` interface,
 defined in the [`base`](../base) package. This package also defines base
 implementations for these interfaces, so the `hello` component will only need to
 override the following methods:
-- `CreateExecution(vars map[string]any, setup *structpb.Struct, task string)
+- `CreateExecution(ComponentExecution)
   (IExecution, error)` will return an implementation of the `IExecution`
-  interface. A base execution implementation can be used in order to define only
+  interface. A base execution implementation is passed in order to define only
   the behaviour of the `Execute` method.
 - `Execute(context.Context []*structpb.Struct) ([]*structpb.Struct, error)` is
   the most important function in the component. All the data manipulation will
@@ -512,12 +512,10 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
-	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
-	}
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
+	e := &execution{ ComponentExecution: x }
 
-	if task != taskGreet {
+	if x.Task != taskGreet {
 		return nil, fmt.Errorf("unsupported task")
 	}
 
@@ -542,20 +540,19 @@ type execution struct {
 	execute func(*structpb.Struct) (*structpb.Struct, error)
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
-	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
-	}
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
+	e := &execution{ ComponentExecution: x }
 
 	// A simple if statement would be enough in a component with a single task.
 	// If the number of task grows, here is where the execution task would be
 	// selected.
-	switch task {
+	switch x.Task {
 	case taskGreet:
 		e.execute = e.greet
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
+
 	return e, nil
 }
 
@@ -628,12 +625,14 @@ behaviour. The following covers the newly added logic by replicating how the
 package hello
 
 import (
-    "testing"
+	"context"
+	"testing"
 
-    "go.uber.org/zap"
-    "google.golang.org/protobuf/types/known/structpb"
+	"go.uber.org/zap"
+	"google.golang.org/protobuf/types/known/structpb"
 
-    qt "github.com/frankban/quicktest"
+	qt "github.com/frankban/quicktest"
+	"github.com/instill-ai/component/base"
 )
 
 func TestOperator_Execute(t *testing.T) {
@@ -644,7 +643,10 @@ func TestOperator_Execute(t *testing.T) {
 	component := Init(bc)
 
 	c.Run("ok - greet", func(c *qt.C) {
-		exec, err := component.CreateExecution(nil, nil, taskGreet)
+		exec, err := component.CreateExecution(base.ComponentExecution{
+			Component: component,
+			Task:      taskGreet,
+		})
 		c.Assert(err, qt.IsNil)
 
 		pbIn, err := structpb.NewStruct(map[string]any{"target": "bolero-wombat"})
@@ -669,7 +671,10 @@ func TestOperator_CreateExecution(t *testing.T) {
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 
-		_, err := operator.CreateExecution(nil, nil, task)
+		_, err := operator.CreateExecution(base.ComponentExecution{
+			Component: component,
+			Task: task,
+		})
 		c.Check(err, qt.ErrorMatches, "unsupported task")
 	})
 }

@@ -46,18 +46,18 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
-	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
-	}
+// CreateExecution initializes a connector executor that can be used in a
+// pipeline trigger.
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
+	e := &execution{ComponentExecution: x}
 
-	switch task {
+	switch x.Task {
 	case taskChunkAudios:
 		e.execute = chunkAudios
 	case taskSliceAudio:
 		e.execute = sliceAudio
 	default:
-		return nil, fmt.Errorf(task + " task is not supported.")
+		return nil, fmt.Errorf(x.Task + " task is not supported.")
 	}
 
 	return e, nil

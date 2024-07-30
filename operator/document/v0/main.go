@@ -68,19 +68,21 @@ func (e *execution) convertToText(input *structpb.Struct) (*structpb.Struct, err
 	return output, nil
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
+// CreateExecution initializes a connector executor that can be used in a
+// pipeline trigger.
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	e := &execution{
-		ComponentExecution:     base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
+		ComponentExecution:     x,
 		getMarkdownTransformer: getMarkdownTransformer,
 	}
 
-	switch task {
+	switch x.Task {
 	case taskConvertToMarkdown:
 		e.execute = e.convertDocumentToMarkdown
 	case taskConvertToText:
 		e.execute = e.convertToText
 	default:
-		return nil, fmt.Errorf(fmt.Sprintf("%s task is not supported.", task))
+		return nil, fmt.Errorf(fmt.Sprintf("%s task is not supported.", x.Task))
 	}
 
 	return e, nil

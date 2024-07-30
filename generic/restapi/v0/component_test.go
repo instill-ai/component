@@ -31,7 +31,7 @@ func TestComponent_Execute(t *testing.T) {
 	ctx := context.Background()
 
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 	reqBody := map[string]any{
 		"title": "Be the wheel",
 	}
@@ -39,7 +39,11 @@ func TestComponent_Execute(t *testing.T) {
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 
-		exec, err := connector.CreateExecution(nil, cfg(noAuthType), task)
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     cfg(noAuthType),
+			Task:      task,
+		})
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
@@ -73,7 +77,11 @@ func TestComponent_Execute(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		exec, err := connector.CreateExecution(nil, cfg(basicAuthType), taskPost)
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     cfg(basicAuthType),
+			Task:      taskPost,
+		})
 		c.Assert(err, qt.IsNil)
 
 		pbIn, err := base.ConvertToStructpb(TaskInput{
@@ -103,7 +111,11 @@ func TestComponent_Execute(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		exec, err := connector.CreateExecution(nil, cfg(apiKeyType), taskPut)
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     cfg(apiKeyType),
+			Task:      taskPut,
+		})
 		c.Assert(err, qt.IsNil)
 
 		pbIn, err := base.ConvertToStructpb(TaskInput{
@@ -135,7 +147,11 @@ func TestComponent_Execute(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		exec, err := connector.CreateExecution(nil, cfg(bearerTokenType), taskGet)
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     cfg(bearerTokenType),
+			Task:      taskGet,
+		})
 		c.Assert(err, qt.IsNil)
 
 		pbIn, err := base.ConvertToStructpb(TaskInput{
@@ -157,7 +173,7 @@ func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	c.Run("ok - connected (even with non-2xx status", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -171,7 +187,7 @@ func TestComponent_Test(t *testing.T) {
 		srv := httptest.NewServer(h)
 		c.Cleanup(srv.Close)
 
-		err := connector.Test(nil, cfg(noAuthType))
+		err := cmp.Test(nil, cfg(noAuthType))
 		c.Check(err, qt.IsNil)
 	})
 }

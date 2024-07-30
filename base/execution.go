@@ -22,6 +22,7 @@ type IExecution interface {
 	GetTaskOutputSchema() string
 	GetSystemVariables() map[string]any
 	GetComponent() IComponent
+	GetComponentID() string
 	UsesInstillCredentials() bool
 
 	Execute(context.Context, []*structpb.Struct) ([]*structpb.Struct, error)
@@ -29,7 +30,21 @@ type IExecution interface {
 
 // ComponentExecution implements the common methods for component execution.
 type ComponentExecution struct {
-	Component       IComponent
+	Component IComponent
+
+	// Component ID is the ID of the component *as defined in the recipe*. This
+	// identifies an instance of a component, which holds a given configuration
+	// (task, setup, input parameters, etc.).
+	//
+	// NOTE: this is a property of the component not of the execution. However,
+	// right now components are being created on startup and only executions
+	// are created every time a pipeline is triggered. Therefore, at the moment
+	// there's no intermediate entity reflecting "a component within a
+	// pipeline". Since we need to access the component ID for e.g. logging /
+	// metric collection purposes, for now this information will live in the
+	// execution, but note that several executions might have the same
+	// component ID.
+	ComponentID     string
 	SystemVariables map[string]any
 	Setup           *structpb.Struct
 	Task            string
@@ -37,6 +52,9 @@ type ComponentExecution struct {
 
 // GetComponent returns the component interface that is triggering the execution.
 func (e *ComponentExecution) GetComponent() IComponent { return e.Component }
+
+// GetComponentID returns the ID of the component that's being executed.
+func (e *ComponentExecution) GetComponentID() string { return e.ComponentID }
 
 func (e *ComponentExecution) GetTask() string                    { return e.Task }
 func (e *ComponentExecution) GetSetup() *structpb.Struct         { return e.Setup }

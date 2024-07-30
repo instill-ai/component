@@ -21,31 +21,43 @@ func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	c.Run("ok - supported task", func(c *qt.C) {
 		task := TextGenerationTask
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.IsNil)
 	})
 	c.Run("ok - supported task", func(c *qt.C) {
 		task := TextEmbeddingTask
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.IsNil)
 	})
 	c.Run("ok - supported task", func(c *qt.C) {
 		task := TextRerankTask
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.IsNil)
 	})
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.ErrorMatches, "unsupported task")
 	})
 
@@ -55,7 +67,7 @@ func TestComponent_Tasks(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
-	connector := Init(bc)
+	cmp := Init(bc)
 	ctx := context.Background()
 
 	commandTc := struct {
@@ -72,7 +84,7 @@ func TestComponent_Tasks(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 		exec := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextGenerationTask},
+			ComponentExecution: base.ComponentExecution{Component: cmp, SystemVariables: nil, Setup: setup, Task: TextGenerationTask},
 			client:             &MockCohereClient{},
 		}
 		exec.execute = exec.taskTextGeneration
@@ -103,7 +115,7 @@ func TestComponent_Tasks(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 		exec := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
+			ComponentExecution: base.ComponentExecution{Component: cmp, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
 			client:             &MockCohereClient{},
 		}
 		exec.execute = exec.taskEmbedding
@@ -133,7 +145,7 @@ func TestComponent_Tasks(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 		exec := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
+			ComponentExecution: base.ComponentExecution{Component: cmp, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
 			client:             &MockCohereClient{},
 		}
 		exec.execute = exec.taskEmbedding
@@ -162,7 +174,7 @@ func TestComponent_Tasks(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 		exec := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextRerankTask},
+			ComponentExecution: base.ComponentExecution{Component: cmp, SystemVariables: nil, Setup: setup, Task: TextRerankTask},
 			client:             &MockCohereClient{},
 		}
 		exec.execute = exec.taskRerank

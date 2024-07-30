@@ -56,9 +56,9 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	return &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
+		ComponentExecution: x,
 	}, nil
 }
 

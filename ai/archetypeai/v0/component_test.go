@@ -262,7 +262,11 @@ func TestComponent_Execute(t *testing.T) {
 				"api-key":   apiKey,
 			})
 
-			exec, err := component.CreateExecution(nil, setup, tc.task)
+			exec, err := component.CreateExecution(base.ComponentExecution{
+				Component: component,
+				Setup:     setup,
+				Task:      tc.task,
+			})
 			c.Assert(err, qt.IsNil)
 
 			pbIn, err := base.ConvertToStructpb(tc.in)
@@ -294,7 +298,11 @@ func TestComponent_CreateExecution(t *testing.T) {
 		task := "FOOBAR"
 		want := fmt.Sprintf("%s task is not supported.", task)
 
-		_, err := component.CreateExecution(nil, new(structpb.Struct), task)
+		_, err := component.CreateExecution(base.ComponentExecution{
+			Component: component,
+			Setup:     new(structpb.Struct),
+			Task:      task,
+		})
 		c.Check(err, qt.IsNotNil)
 		c.Check(errmsg.Message(err), qt.Equals, want)
 	})

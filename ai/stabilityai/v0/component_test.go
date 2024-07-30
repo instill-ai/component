@@ -47,7 +47,7 @@ func TestComponent_ExecuteImageFromText(t *testing.T) {
 	engine := "engine"
 
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	testcases := []struct {
 		name      string
@@ -96,7 +96,11 @@ func TestComponent_ExecuteImageFromText(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(nil, setup, TextToImageTask)
+			exec, err := cmp.CreateExecution(base.ComponentExecution{
+				Component: cmp,
+				Setup:     setup,
+				Task:      TextToImageTask,
+			})
 			c.Assert(err, qt.IsNil)
 
 			weights := []float64{weight}
@@ -121,7 +125,11 @@ func TestComponent_ExecuteImageFromText(t *testing.T) {
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
-		exec, err := connector.CreateExecution(nil, new(structpb.Struct), task)
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     new(structpb.Struct),
+			Task:      task,
+		})
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
@@ -142,7 +150,7 @@ func TestComponent_ExecuteImageFromImage(t *testing.T) {
 	engine := "engine"
 
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	testcases := []struct {
 		name      string
@@ -191,7 +199,11 @@ func TestComponent_ExecuteImageFromImage(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(nil, setup, ImageToImageTask)
+			exec, err := cmp.CreateExecution(base.ComponentExecution{
+				Component: cmp,
+				Setup:     setup,
+				Task:      ImageToImageTask,
+			})
 			c.Assert(err, qt.IsNil)
 
 			weights := []float64{weight}
@@ -216,7 +228,11 @@ func TestComponent_ExecuteImageFromImage(t *testing.T) {
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
-		exec, err := connector.CreateExecution(nil, new(structpb.Struct), task)
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     new(structpb.Struct),
+			Task:      task,
+		})
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
@@ -232,7 +248,7 @@ func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -252,7 +268,7 @@ func TestComponent_Test(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, setup)
+		err = cmp.Test(nil, setup)
 		c.Check(err, qt.IsNotNil)
 
 		wantMsg := "Stability AI responded with a 401 status code. Incorrect API key provided"
@@ -276,7 +292,7 @@ func TestComponent_Test(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, setup)
+		err = cmp.Test(nil, setup)
 		c.Check(err, qt.IsNotNil)
 	})
 
@@ -297,7 +313,7 @@ func TestComponent_Test(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, setup)
+		err = cmp.Test(nil, setup)
 		c.Check(err, qt.IsNil)
 	})
 }

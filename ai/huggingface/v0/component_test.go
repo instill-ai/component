@@ -221,7 +221,7 @@ func TestComponent_ExecuteSpeechRecognition(t *testing.T) {
 
 func testTask(c *qt.C, p taskParams) {
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 	ctx := context.Background()
 
 	c.Run("nok - HTTP client error - "+p.task, func(c *qt.C) {
@@ -232,7 +232,11 @@ func testTask(c *qt.C, p taskParams) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := connector.CreateExecution(nil, setup, p.task)
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     setup,
+			Task:      p.task,
+		})
 		c.Assert(err, qt.IsNil)
 
 		pbIn, err := base.ConvertToStructpb(p.input)
@@ -320,7 +324,11 @@ func testTask(c *qt.C, p taskParams) {
 				"is-custom-endpoint": tc.customEndpoint,
 			})
 
-			exec, err := connector.CreateExecution(nil, setup, p.task)
+			exec, err := cmp.CreateExecution(base.ComponentExecution{
+				Component: cmp,
+				Setup:     setup,
+				Task:      p.task,
+			})
 			c.Assert(err, qt.IsNil)
 
 			pbIn, err := base.ConvertToStructpb(p.input)

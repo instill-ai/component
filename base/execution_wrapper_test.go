@@ -26,7 +26,10 @@ func TestExecutionWrapper_GetComponent(t *testing.T) {
 		map[string][]byte{"additional.json": connectorAdditionalJSON})
 	c.Assert(err, qt.IsNil)
 
-	x, err := cmp.CreateExecution(nil, nil, "TASK_TEXT_EMBEDDINGS")
+	x, err := cmp.CreateExecution(ComponentExecution{
+		Component: cmp,
+		Task:      "TASK_TEXT_EMBEDDINGS",
+	})
 	c.Assert(err, qt.IsNil)
 
 	got := x.GetComponent()
@@ -108,7 +111,10 @@ func TestExecutionWrapper_Execute(t *testing.T) {
 				map[string][]byte{"additional.json": connectorAdditionalJSON})
 			c.Assert(err, qt.IsNil)
 
-			x, err := cmp.CreateExecution(nil, nil, "TASK_TEXT_EMBEDDINGS")
+			x, err := cmp.CreateExecution(ComponentExecution{
+				Component: cmp,
+				Task:      "TASK_TEXT_EMBEDDINGS",
+			})
 			c.Assert(err, qt.IsNil)
 
 			xw := &ExecutionWrapper{x}
@@ -165,13 +171,7 @@ type testComp struct {
 	xErr error
 }
 
-func (c *testComp) CreateExecution(vars map[string]any, setup *structpb.Struct, task string) (IExecution, error) {
-	x := ComponentExecution{
-		Component:       c,
-		SystemVariables: vars,
-		Setup:           setup,
-		Task:            task,
-	}
+func (c *testComp) CreateExecution(x ComponentExecution) (IExecution, error) {
 	return &testExec{
 		ComponentExecution: x,
 

@@ -77,7 +77,10 @@ type IComponent interface {
 	// by sysVars or component setting.
 	GetDefinition(sysVars map[string]any, compConfig *ComponentConfig) (*pb.ComponentDefinition, error)
 
-	CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (IExecution, error)
+	// CreateExecution takes a ComponentExecution that can be used to compose
+	// the core component behaviour with the particular business logic in the
+	// implmentation.
+	CreateExecution(base ComponentExecution) (IExecution, error)
 	Test(sysVars map[string]any, config *structpb.Struct) error
 
 	IsSecretField(target string) bool

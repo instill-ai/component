@@ -192,7 +192,7 @@ func TestComponent_Execute(t *testing.T) {
 	}
 
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
@@ -225,7 +225,11 @@ func TestComponent_Execute(t *testing.T) {
 				"url":     pineconeServer.URL,
 			})
 
-			exec, err := connector.CreateExecution(nil, setup, tc.task)
+			exec, err := cmp.CreateExecution(base.ComponentExecution{
+				Component: cmp,
+				Setup:     setup,
+				Task:      tc.task,
+			})
 			c.Assert(err, qt.IsNil)
 
 			pbIn, err := base.ConvertToStructpb(tc.execIn)
@@ -255,7 +259,11 @@ func TestComponent_Execute(t *testing.T) {
 			"url": pineconeServer.URL,
 		})
 
-		exec, err := connector.CreateExecution(nil, setup, taskUpsert)
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     setup,
+			Task:      taskUpsert,
+		})
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
@@ -271,7 +279,11 @@ func TestComponent_Execute(t *testing.T) {
 			"url": "http://no-such.host",
 		})
 
-		exec, err := connector.CreateExecution(nil, setup, taskUpsert)
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     setup,
+			Task:      taskUpsert,
+		})
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)

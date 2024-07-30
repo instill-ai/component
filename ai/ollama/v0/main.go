@@ -77,17 +77,17 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	setupStruct := &OllamaSetup{}
-	if err := base.ConvertFromStructpb(setup, setupStruct); err != nil {
+	if err := base.ConvertFromStructpb(x.Setup, setupStruct); err != nil {
 		return nil, fmt.Errorf("error parsing setup, %v", err)
 	}
 
 	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: setup},
+		ComponentExecution: x,
 		client:             NewClient(setupStruct.Endpoint, setupStruct.AutoPull, c.Logger),
 	}
-	switch task {
+	switch x.Task {
 	case TaskTextGenerationChat:
 		e.execute = e.TaskTextGenerationChat
 	case TaskTextEmbeddings:
