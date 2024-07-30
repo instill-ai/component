@@ -7,12 +7,11 @@ import (
 
 	_ "embed"
 
-	"google.golang.org/protobuf/types/known/structpb"
-
 	qt "github.com/frankban/quicktest"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
-func TestComponentExecution_GetComponent(t *testing.T) {
+func TestExecutionWrapper_GetComponent(t *testing.T) {
 	c := qt.New(t)
 
 	cmp := &testComp{
@@ -112,7 +111,7 @@ func TestExecutionWrapper_Execute(t *testing.T) {
 			x, err := cmp.CreateExecution(nil, nil, "TASK_TEXT_EMBEDDINGS")
 			c.Assert(err, qt.IsNil)
 
-			xw := &ExecutionWrapper{Execution: x}
+			xw := &ExecutionWrapper{x}
 
 			pbin, err := structpb.NewStruct(tc.in)
 			c.Assert(err, qt.IsNil)
@@ -166,8 +165,13 @@ type testComp struct {
 	xErr error
 }
 
-func (c *testComp) CreateExecution(_ map[string]any, _ *structpb.Struct, task string) (IExecution, error) {
-	x := ComponentExecution{Component: c, Task: task}
+func (c *testComp) CreateExecution(vars map[string]any, setup *structpb.Struct, task string) (IExecution, error) {
+	x := ComponentExecution{
+		Component:       c,
+		SystemVariables: vars,
+		Setup:           setup,
+		Task:            task,
+	}
 	return &testExec{
 		ComponentExecution: x,
 

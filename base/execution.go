@@ -14,12 +14,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-// ExecutionWrapper performs validation and usage collection around the
-// execution of a component.
-type ExecutionWrapper struct {
-	Execution IExecution
-}
-
 // IExecution allows components to be executed.
 type IExecution interface {
 	GetTask() string
@@ -33,6 +27,46 @@ type IExecution interface {
 	UsesInstillCredentials() bool
 
 	Execute(context.Context, []*structpb.Struct) ([]*structpb.Struct, error)
+}
+
+var _ IExecution = &ExecutionWrapper{}
+
+// ExecutionWrapper performs validation and usage collection around the
+// execution of a component.
+type ExecutionWrapper struct {
+	IExecution
+}
+
+// Execute wraps the execution method with validation and usage collection.
+func (e *ExecutionWrapper) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+	if err := Validate(inputs, e.GetTaskInputSchema(), "inputs"); err != nil {
+		return nil, err
+	}
+
+	newUH := e.GetComponent().UsageHandlerCreator()
+	h, err := newUH(e)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := h.Check(ctx, inputs); err != nil {
+		return nil, err
+	}
+
+	outputs, err := e.IExecution.Execute(ctx, inputs)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := Validate(outputs, e.GetTaskOutputSchema(), "outputs"); err != nil {
+		return nil, err
+	}
+
+	if err := h.Collect(ctx, inputs, outputs); err != nil {
+		return nil, err
+	}
+
+	return outputs, err
 }
 
 func FormatErrors(inputPath string, e jsonschema.Detailed, errors *[]string) {
@@ -115,38 +149,6 @@ func Validate(data []*structpb.Struct, jsonSchema string, target string) error {
 	}
 
 	return nil
-}
-
-// Execute wraps the execution method with validation and usage collection.
-func (e *ExecutionWrapper) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-	if err := Validate(inputs, e.Execution.GetTaskInputSchema(), "inputs"); err != nil {
-		return nil, err
-	}
-
-	newUH := e.Execution.GetComponent().UsageHandlerCreator()
-	h, err := newUH(e.Execution)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := h.Check(ctx, inputs); err != nil {
-		return nil, err
-	}
-
-	outputs, err := e.Execution.Execute(ctx, inputs)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := Validate(outputs, e.Execution.GetTaskOutputSchema(), "outputs"); err != nil {
-		return nil, err
-	}
-
-	if err := h.Collect(ctx, inputs, outputs); err != nil {
-		return nil, err
-	}
-
-	return outputs, err
 }
 
 // SecretKeyword is a keyword to reference a secret in a component

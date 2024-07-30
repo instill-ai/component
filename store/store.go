@@ -168,7 +168,7 @@ func (s *Store) CreateExecution(defUID uuid.UUID, sysVars map[string]any, setup 
 		return nil, fmt.Errorf("creating component execution: %w", err)
 	}
 
-	return &base.ExecutionWrapper{Execution: x}, nil
+	return &base.ExecutionWrapper{IExecution: x}, nil
 }
 
 func (s *Store) HandleVerificationEvent(defID string, header map[string][]string, req *structpb.Struct, setup map[string]any) (bool, *structpb.Struct, error) {
