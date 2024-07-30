@@ -62,15 +62,10 @@ func extractIssue(issue *Issue) *Issue {
 }
 
 func (jiraClient *Client) getIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug DebugSession
-	debug.SessionStart("getIssueTask", StaticVerboseLevel)
-	defer debug.SessionEnd()
-
 	var opt GetIssueInput
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err
 	}
-	debug.AddMessage(fmt.Sprintf("GetIssueInput: %+v", opt))
 
 	apiEndpoint := fmt.Sprintf("rest/agile/1.0/issue/%s", opt.IssueKey)
 	req := jiraClient.Client.R().SetResult(&Issue{})
@@ -93,10 +88,6 @@ func (jiraClient *Client) getIssueTask(ctx context.Context, props *structpb.Stru
 			err.Error(), errmsg.Message(err),
 		)
 	}
-	debug.AddMessage("GET", apiEndpoint)
-	debug.AddMapMessage("QueryParam", resp.Request.QueryParam)
-	debug.AddMessage("Status", resp.Status())
-	debug.AddMapMessage("resp.Result()", resp.Result())
 	issue, ok := resp.Result().(*Issue)
 	if !ok {
 		return nil, errmsg.AddMessage(
@@ -137,11 +128,6 @@ type ListIssuesOutput struct {
 }
 
 func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug DebugSession
-	debug.SessionStart("listIssuesTask", DevelopVerboseLevel)
-	defer debug.SessionEnd()
-
-	debug.AddMapMessage("props", props)
 	var (
 		opt ListIssuesInput
 		jql string
@@ -166,7 +152,6 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 			fmt.Sprintf("multiple boards are found with the partial name \"%s\". Please provide a more specific name", opt.BoardName),
 		)
 	}
-	debug.AddMapMessage("boards", boards)
 	board := boards.Values[0]
 
 	boardDetails, err := jiraClient.getBoard(ctx, board.ID)
@@ -234,7 +219,6 @@ func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.St
 	if err != nil {
 		return nil, err
 	}
-	debug.AddMessage("Status", resp.Status())
 
 	issues, ok := resp.Result().(*ListIssuesResp)
 	if !ok {
@@ -273,12 +257,7 @@ type nextGenSearchRequest struct {
 // https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-search/#api-rest-api-2-search-get
 // https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issue-search/#api-rest-api-2-search-post
 func (jiraClient *Client) nextGenIssuesSearch(_ context.Context, opt nextGenSearchRequest) (*resty.Response, error) {
-	var debug DebugSession
-	debug.SessionStart("nextGenIssuesSearch", StaticVerboseLevel)
-	defer debug.SessionEnd()
 
-	debug.AddMessage("opt:")
-	debug.AddRawMessage(opt)
 	var err error
 	apiEndpoint := "/rest/api/2/search"
 
@@ -298,7 +277,5 @@ func (jiraClient *Client) nextGenIssuesSearch(_ context.Context, opt nextGenSear
 	if err != nil {
 		return nil, err
 	}
-	debug.AddMapMessage("Query", req.QueryParam)
-	debug.AddMessage("Status", resp.Status())
 	return resp, nil
 }
