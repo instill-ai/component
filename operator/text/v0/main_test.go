@@ -55,7 +55,7 @@ func TestOperator(t *testing.T) {
 
 			input := []*structpb.Struct{&tc.input}
 
-			outputs, err := execution.Execution.Execute(ctx, input)
+			outputs, err := execution.Execute(ctx, input)
 
 			if tc.name == "error case" {
 				c.Assert(err, quicktest.ErrorMatches, "not supported task: FAKE_TASK")

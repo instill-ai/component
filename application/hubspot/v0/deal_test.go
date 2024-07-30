@@ -89,7 +89,7 @@ func TestComponent_ExecuteGetDealTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.GetDeal
-		exec := &base.ExecutionWrapper{Execution: e}
+		
 
 		pbInput, err := structpb.NewStruct(map[string]any{
 			"deal-id": tc.input,
@@ -97,7 +97,7 @@ func TestComponent_ExecuteGetDealTask(t *testing.T) {
 
 		c.Assert(err, qt.IsNil)
 
-		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+		res, err := e.Execute(ctx, []*structpb.Struct{pbInput})
 		c.Assert(err, qt.IsNil)
 
 		resJSON, err := protojson.Marshal(res[0])
@@ -139,13 +139,13 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.CreateDeal
-		exec := &base.ExecutionWrapper{Execution: e}
+		
 
 		pbInput, err := base.ConvertToStructpb(tc.inputDeal)
 
 		c.Assert(err, qt.IsNil)
 
-		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+		res, err := e.Execute(ctx, []*structpb.Struct{pbInput})
 		c.Assert(err, qt.IsNil)
 
 		resString := res[0].Fields["deal-id"].GetStringValue()

@@ -453,10 +453,9 @@ defined in the [`base`](../base) package. This package also defines base
 implementations for these interfaces, so the `hello` component will only need to
 override the following methods:
 - `CreateExecution(vars map[string]any, setup *structpb.Struct, task string)
-  (*ExecutionWrapper, error)` will return an object that implements the
-  `Execute` method.
-  - `ExecutionWrapper` will wrap the execution call with the input and output
-    schema validation.
+  (IExecution, error)` will return an implementation of the `IExecution`
+  interface. A base execution implementation can be used in order to define only
+  the behaviour of the `Execute` method.
 - `Execute(context.Context []*structpb.Struct) ([]*structpb.Struct, error)` is
   the most important function in the component. All the data manipulation will
   take place here.
@@ -513,7 +512,7 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
 	}
@@ -522,7 +521,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		return nil, fmt.Errorf("unsupported task")
 	}
 
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 func (e *execution) Execute(context.Context, []*structpb.Struct) ([]*structpb.Struct, error) {
@@ -543,7 +542,7 @@ type execution struct {
 	execute func(*structpb.Struct) (*structpb.Struct, error)
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
 	}
@@ -557,7 +556,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {

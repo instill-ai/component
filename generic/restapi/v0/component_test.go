@@ -43,7 +43,7 @@ func TestComponent_Execute(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -82,7 +82,7 @@ func TestComponent_Execute(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()
@@ -113,7 +113,7 @@ func TestComponent_Execute(t *testing.T) {
 
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()
@@ -144,7 +144,7 @@ func TestComponent_Execute(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNil)
 
 		resp := got[0].AsMap()

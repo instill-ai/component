@@ -554,12 +554,12 @@ func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType],
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(nil, setup, task)
+			e, err := connector.CreateExecution(nil, setup, task)
 			c.Assert(err, qt.IsNil)
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return

@@ -181,7 +181,7 @@ func TestOperator_Execute(t *testing.T) {
 			pbIn, err := structpb.NewStruct(tc.in)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Check(errmsg.Message(err), qt.Matches, tc.wantErr)
 				return

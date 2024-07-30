@@ -78,7 +78,7 @@ func TestComponent_Execute(t *testing.T) {
 			c.Assert(err, qt.IsNil)
 
 			pbIn := new(structpb.Struct)
-			_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
 			c.Check(err, qt.IsNotNil)
 
 			want := "Anthropic responded with a 401 status code. Incorrect API key provided."
@@ -205,17 +205,16 @@ func TestComponent_Generation(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		e := &execution{
+		exec := &execution{
 			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextGenerationTask},
 			client:             &MockAnthropicClient{},
 		}
-		e.execute = e.generateText
-		exec := &base.ExecutionWrapper{Execution: e}
+		exec.execute = exec.generateText
 
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)

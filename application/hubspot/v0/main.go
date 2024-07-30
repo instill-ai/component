@@ -75,7 +75,7 @@ func hubspotNewCustomClient(setup *structpb.Struct) *CustomClient {
 	return client
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
 
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
@@ -109,7 +109,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		return nil, fmt.Errorf("unsupported task")
 	}
 
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {

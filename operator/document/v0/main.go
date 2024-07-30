@@ -68,7 +68,7 @@ func (e *execution) convertToText(input *structpb.Struct) (*structpb.Struct, err
 	return output, nil
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
 	e := &execution{
 		ComponentExecution:     base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 		getMarkdownTransformer: getMarkdownTransformer,
@@ -83,7 +83,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		return nil, fmt.Errorf(fmt.Sprintf("%s task is not supported.", task))
 	}
 
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {

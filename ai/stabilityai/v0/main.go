@@ -82,13 +82,13 @@ func (c *component) resolveSetup(setup *structpb.Struct) (*structpb.Struct, bool
 
 // CreateExecution initializes a connector executor that can be used in a
 // pipeline trigger.
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
 	resolvedSetup, resolved, err := c.resolveSetup(setup)
 	if err != nil {
 		return nil, err
 	}
 
-	return &base.ExecutionWrapper{Execution: &execution{
+	return &execution{
 		ComponentExecution: base.ComponentExecution{
 			Component:       c,
 			SystemVariables: sysVars,
@@ -96,7 +96,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 			Task:            task,
 		},
 		usesInstillCredentials: resolved,
-	}}, nil
+	}, nil
 }
 
 type execution struct {

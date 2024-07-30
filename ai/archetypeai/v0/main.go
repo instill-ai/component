@@ -60,7 +60,7 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 		client:             newClient(setup, c.GetLogger()),
@@ -80,7 +80,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		)
 	}
 
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 // Execute performs calls the Archetype AI API to execute a task.

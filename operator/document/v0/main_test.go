@@ -48,7 +48,7 @@ func TestOperator(t *testing.T) {
 
 			input := []*structpb.Struct{&tc.input}
 
-			outputs, err := execution.Execution.Execute(ctx, input)
+			outputs, err := execution.Execute(ctx, input)
 
 			c.Assert(err, quicktest.IsNil)
 			c.Assert(outputs, quicktest.HasLen, 1)

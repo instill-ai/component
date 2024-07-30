@@ -77,7 +77,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	return outputs, nil
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
 	setupStruct := &OllamaSetup{}
 	if err := base.ConvertFromStructpb(setup, setupStruct); err != nil {
 		return nil, fmt.Errorf("error parsing setup, %v", err)
@@ -95,5 +95,5 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }

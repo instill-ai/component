@@ -231,7 +231,7 @@ func TestComponent_Execute(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.execIn)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 			c.Check(err, qt.IsNil)
 
 			c.Assert(got, qt.HasLen, 1)
@@ -259,7 +259,7 @@ func TestComponent_Execute(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "Pinecone responded with a 400 status code. Cannot provide both ID and vector at the same time."
@@ -275,7 +275,7 @@ func TestComponent_Execute(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "Failed to call http://no-such.host/.*. Please check that the connector configuration is correct."

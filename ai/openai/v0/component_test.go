@@ -106,7 +106,7 @@ func TestComponent_Execute(t *testing.T) {
 			c.Assert(err, qt.IsNil)
 
 			pbIn := new(structpb.Struct)
-			_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
 			c.Check(err, qt.IsNotNil)
 
 			want := "OpenAI responded with a 401 status code. Incorrect API key provided."
@@ -120,7 +120,7 @@ func TestComponent_Execute(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -222,7 +222,7 @@ func TestComponent_WithConfig(t *testing.T) {
 
 		exec, err := connector.CreateExecution(nil, setup, task)
 		c.Assert(err, qt.IsNil)
-		c.Check(exec.Execution.UsesInstillCredentials(), qt.IsFalse)
+		c.Check(exec.UsesInstillCredentials(), qt.IsFalse)
 	})
 
 	c.Run("ok - with secret", func(c *qt.C) {
@@ -239,7 +239,7 @@ func TestComponent_WithConfig(t *testing.T) {
 
 		exec, err := connector.CreateExecution(nil, setup, task)
 		c.Assert(err, qt.IsNil)
-		c.Check(exec.Execution.UsesInstillCredentials(), qt.IsTrue)
+		c.Check(exec.UsesInstillCredentials(), qt.IsTrue)
 	})
 
 	c.Run("nok - secret not injected", func(c *qt.C) {

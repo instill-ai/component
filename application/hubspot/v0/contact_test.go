@@ -126,7 +126,6 @@ func TestComponent_ExecuteGetContactTask(t *testing.T) {
 		}
 
 		e.execute = e.GetContact
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbInput, err := structpb.NewStruct(map[string]any{
 			"contact-id-or-email": tc.input,
@@ -134,7 +133,7 @@ func TestComponent_ExecuteGetContactTask(t *testing.T) {
 
 		c.Assert(err, qt.IsNil)
 
-		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+		res, err := e.Execute(ctx, []*structpb.Struct{pbInput})
 
 		c.Assert(err, qt.IsNil)
 
@@ -177,13 +176,12 @@ func TestComponent_ExecuteCreateContactTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.CreateContact
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbInput, err := base.ConvertToStructpb(tc.input)
 
 		c.Assert(err, qt.IsNil)
 
-		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+		res, err := e.Execute(ctx, []*structpb.Struct{pbInput})
 		c.Assert(err, qt.IsNil)
 
 		resString := res[0].Fields["contact-id"].GetStringValue()

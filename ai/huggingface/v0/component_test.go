@@ -239,7 +239,7 @@ func testTask(c *qt.C, p taskParams) {
 		c.Assert(err, qt.IsNil)
 		pbIn.Fields["model"] = structpb.NewStringValue(model)
 
-		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 		c.Check(err, qt.ErrorMatches, ".*no such host")
 		c.Check(errmsg.Message(err), qt.Matches, "Failed to call .*check that the connector configuration is correct.")
@@ -327,7 +327,7 @@ func testTask(c *qt.C, p taskParams) {
 			c.Assert(err, qt.IsNil)
 			pbIn.Fields["model"] = structpb.NewStringValue(model)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Check(err, qt.IsNotNil)
 				c.Check(errmsg.Message(err), qt.Equals, tc.wantErr)

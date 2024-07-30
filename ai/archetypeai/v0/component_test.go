@@ -268,7 +268,7 @@ func TestComponent_Execute(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.in)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Check(errmsg.Message(err), qt.Matches, tc.wantErr)
 				return

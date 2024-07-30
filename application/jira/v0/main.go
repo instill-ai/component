@@ -58,7 +58,7 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
 	ctx := context.Background()
 	jiraClient, err := newClient(ctx, setup)
 	if err != nil {
@@ -87,7 +87,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		)
 	}
 
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 func (e *execution) getInputSchemaJSON(task string) (map[string]interface{}, error) {

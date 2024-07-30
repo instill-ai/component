@@ -120,12 +120,11 @@ func TestComponent_Tasks(t *testing.T) {
 			client:             MistralClient{sdkClient: &MockMistralClient{}, logger: nil},
 		}
 		e.execute = e.taskTextGeneration
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(chatTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(chatTc.wantResp)
@@ -151,12 +150,11 @@ func TestComponent_Tasks(t *testing.T) {
 			client:             MistralClient{sdkClient: &MockMistralClient{}, logger: nil},
 		}
 		e.execute = e.taskTextEmbedding
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(embeddingTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(embeddingTc.wantResp)

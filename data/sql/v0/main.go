@@ -62,7 +62,7 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (base.IExecution, error) {
 	e := &execution{
 		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
 	}
@@ -86,7 +86,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 			fmt.Sprintf("%s task is not supported.", task),
 		)
 	}
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 type Engine struct {
