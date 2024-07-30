@@ -21,56 +21,191 @@ type IExecution interface {
 	GetTaskInputSchema() string
 	GetTaskOutputSchema() string
 	GetSystemVariables() map[string]any
-
 	GetComponent() IComponent
-
 	UsesInstillCredentials() bool
 
 	Execute(context.Context, []*structpb.Struct) ([]*structpb.Struct, error)
 }
 
-var _ IExecution = &ExecutionWrapper{}
-
-// ExecutionWrapper performs validation and usage collection around the
-// execution of a component.
-type ExecutionWrapper struct {
-	IExecution
+// ComponentExecution implements the common methods for component execution.
+type ComponentExecution struct {
+	Component       IComponent
+	SystemVariables map[string]any
+	Setup           *structpb.Struct
+	Task            string
 }
 
-// Execute wraps the execution method with validation and usage collection.
-func (e *ExecutionWrapper) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-	if err := Validate(inputs, e.GetTaskInputSchema(), "inputs"); err != nil {
-		return nil, err
-	}
+// GetComponent returns the component interface that is triggering the execution.
+func (e *ComponentExecution) GetComponent() IComponent { return e.Component }
 
-	newUH := e.GetComponent().UsageHandlerCreator()
-	h, err := newUH(e)
+func (e *ComponentExecution) GetTask() string                    { return e.Task }
+func (e *ComponentExecution) GetSetup() *structpb.Struct         { return e.Setup }
+func (e *ComponentExecution) GetSystemVariables() map[string]any { return e.SystemVariables }
+func (e *ComponentExecution) GetLogger() *zap.Logger             { return e.Component.GetLogger() }
+
+func (e *ComponentExecution) GetTaskInputSchema() string {
+	return e.Component.GetTaskInputSchemas()[e.Task]
+}
+func (e *ComponentExecution) GetTaskOutputSchema() string {
+	return e.Component.GetTaskOutputSchemas()[e.Task]
+}
+
+// UsesInstillCredentials indicates wether the component setup includes the use
+// of global secrets (as opposed to a bring-your-own-key configuration) to
+// connect to external services. Components should override this method when
+// they have the ability to read global secrets and be executed without
+// explicit credentials.
+func (e *ComponentExecution) UsesInstillCredentials() bool { return false }
+
+func (e *ComponentExecution) getInputSchemaJSON(task string) (map[string]interface{}, error) {
+	taskSpec, ok := e.Component.GetTaskInputSchemas()[task]
+	if !ok {
+		return nil, errmsg.AddMessage(
+			fmt.Errorf("task %s not found", task),
+			fmt.Sprintf("Task %s not found", task),
+		)
+	}
+	var taskSpecMap map[string]interface{}
+	err := json.Unmarshal([]byte(taskSpec), &taskSpecMap)
+	if err != nil {
+		return nil, errmsg.AddMessage(
+			err,
+			"Failed to unmarshal input",
+		)
+	}
+	inputMap := taskSpecMap["properties"].(map[string]interface{})
+	return inputMap, nil
+}
+func (e *ComponentExecution) FillInDefaultValues(input *structpb.Struct) (*structpb.Struct, error) {
+	inputMap, err := e.getInputSchemaJSON(e.Task)
 	if err != nil {
 		return nil, err
 	}
-
-	if err := h.Check(ctx, inputs); err != nil {
-		return nil, err
+	return e.fillInDefaultValuesWithReference(input, inputMap)
+}
+func hasNextLevel(valueMap map[string]interface{}) bool {
+	if valType, ok := valueMap["type"]; ok {
+		if valType != "object" {
+			return false
+		}
 	}
-
-	outputs, err := e.IExecution.Execute(ctx, inputs)
-	if err != nil {
-		return nil, err
+	if _, ok := valueMap["properties"]; ok {
+		return true
 	}
-
-	if err := Validate(outputs, e.GetTaskOutputSchema(), "outputs"); err != nil {
-		return nil, err
+	for _, target := range []string{"allOf", "anyOf", "oneOf"} {
+		if _, ok := valueMap[target]; ok {
+			items := valueMap[target].([]interface{})
+			for _, v := range items {
+				if _, ok := v.(map[string]interface{})["properties"].(map[string]interface{}); ok {
+					return true
+				}
+			}
+		}
 	}
-
-	if err := h.Collect(ctx, inputs, outputs); err != nil {
-		return nil, err
+	return false
+}
+func optionMatch(valueMap *structpb.Struct, reference map[string]interface{}, checkFields []string) bool {
+	for _, checkField := range checkFields {
+		if _, ok := valueMap.GetFields()[checkField]; !ok {
+			return false
+		}
+		if val, ok := reference[checkField].(map[string]interface{})["const"]; ok {
+			if valueMap.GetFields()[checkField].GetStringValue() != val {
+				return false
+			}
+		}
 	}
-
-	return outputs, err
+	return true
+}
+func (e *ComponentExecution) fillInDefaultValuesWithReference(input *structpb.Struct, reference map[string]interface{}) (*structpb.Struct, error) {
+	for key, value := range reference {
+		valueMap, ok := value.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if _, ok := valueMap["default"]; !ok {
+			if !hasNextLevel(valueMap) {
+				continue
+			}
+			if _, ok := input.GetFields()[key]; !ok {
+				input.GetFields()[key] = structpb.NewStructValue(&structpb.Struct{Fields: make(map[string]*structpb.Value)})
+			}
+			var properties map[string]interface{}
+			if _, ok := valueMap["properties"]; !ok {
+				var requiredFieldsRaw []interface{}
+				if requiredFieldsRaw, ok = valueMap["required"].([]interface{}); !ok {
+					continue
+				}
+				requiredFields := make([]string, len(requiredFieldsRaw))
+				for idx, v := range requiredFieldsRaw {
+					requiredFields[idx] = fmt.Sprintf("%v", v)
+				}
+				for _, target := range []string{"allOf", "anyOf", "oneOf"} {
+					var items []interface{}
+					if items, ok = valueMap[target].([]interface{}); !ok {
+						continue
+					}
+					for _, v := range items {
+						if properties, ok = v.(map[string]interface{})["properties"].(map[string]interface{}); !ok {
+							continue
+						}
+						inputSubField := input.GetFields()[key].GetStructValue()
+						if target == "oneOf" && !optionMatch(inputSubField, properties, requiredFields) {
+							continue
+						}
+						subField, err := e.fillInDefaultValuesWithReference(inputSubField, properties)
+						if err != nil {
+							return nil, err
+						}
+						input.GetFields()[key] = structpb.NewStructValue(subField)
+					}
+				}
+			} else {
+				if properties, ok = valueMap["properties"].(map[string]interface{}); !ok {
+					continue
+				}
+				subField, err := e.fillInDefaultValuesWithReference(input.GetFields()[key].GetStructValue(), properties)
+				if err != nil {
+					return nil, err
+				}
+				input.GetFields()[key] = structpb.NewStructValue(subField)
+			}
+			continue
+		}
+		if _, ok := input.GetFields()[key]; ok {
+			continue
+		}
+		defaultValue := valueMap["default"]
+		typeValue := valueMap["type"]
+		switch typeValue {
+		case "string", "integer", "number", "boolean":
+			val, err := structpb.NewValue(defaultValue)
+			if err != nil {
+				continue
+			}
+			input.GetFields()[key] = val
+		case "array":
+			tempArray := &structpb.ListValue{Values: []*structpb.Value{}}
+			itemType := valueMap["items"].(map[string]interface{})["type"]
+			switch itemType {
+			case "string", "integer", "number", "boolean":
+				for _, v := range defaultValue.([]interface{}) {
+					val, err := structpb.NewValue(v)
+					if err != nil {
+						continue
+					}
+					tempArray.Values = append(tempArray.Values, val)
+				}
+			default:
+				continue
+			}
+			input.GetFields()[key] = structpb.NewListValue(tempArray)
+		}
+	}
+	return input, nil
 }
 
 func FormatErrors(inputPath string, e jsonschema.Detailed, errors *[]string) {
-
 	path := inputPath + e.InstanceLocation
 
 	pathItems := strings.Split(path, "/")
@@ -84,7 +219,6 @@ func FormatErrors(inputPath string, e jsonschema.Detailed, errors *[]string) {
 
 	}
 	*errors = append(*errors, fmt.Sprintf("%s: %s", formatedPath, e.Error))
-
 }
 
 // Validate the input and output format
