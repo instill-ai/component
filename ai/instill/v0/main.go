@@ -197,7 +197,7 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 	pageSize := int32(100)
 	modelNameMap := map[string]*structpb.ListValue{}
 	for {
-		resp, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{PageToken: &pageToken, PageSize: &pageSize, View: modelPB.View_VIEW_FULL.Enum()})
+		resp, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{PageToken: &pageToken, PageSize: &pageSize, View: modelPB.View_VIEW_BASIC.Enum()})
 		if err != nil {
 			return def, nil
 		}
