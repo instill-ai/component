@@ -24,7 +24,12 @@
         "chunk-count": {
           "description": "Number of chunks to equally split the audio into",
           "instillAcceptFormats": [
-            "integer"
+            "integer",
+            "number"
+          ],
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
           ],
           "instillUIOrder": 1,
           "title": "Chunk count",
@@ -86,7 +91,12 @@
         "start-time": {
           "description": "Start time of the slice in seconds",
           "instillAcceptFormats": [
-            "integer"
+            "integer",
+            "number"
+          ],
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
           ],
           "instillUIOrder": 1,
           "title": "Start time",
@@ -95,7 +105,12 @@
         "end-time": {
           "description": "End time of the slice in seconds",
           "instillAcceptFormats": [
-            "integer"
+            "integer",
+            "number"
+          ],
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
           ],
           "instillUIOrder": 2,
           "title": "End time",
