@@ -30,7 +30,9 @@
       "instillUIOrder": 0,
       "properties": {
         "audio": {
-          "$ref": "openai.json#/components/schemas/CreateTranscriptionRequest/properties/file",
+          "description": "The audio file object (not file name) to transcribe, in one of these formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, or webm.\n",
+          "format": "binary",
+          "type": "string",
           "instillAcceptFormats": [
             "audio/*"
           ],
@@ -41,7 +43,8 @@
           "title": "Audio"
         },
         "language": {
-          "$ref": "openai.json#/components/schemas/CreateTranscriptionRequest/properties/language",
+          "description": "The language of the input audio. Supplying the input language in <a href=\"https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes\">ISO-639-1</a> format will improve accuracy and latency.\n",
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
@@ -55,7 +58,12 @@
           "title": "Language"
         },
         "model": {
-          "$ref": "openai.json#/components/schemas/CreateTranscriptionRequest/properties/model",
+          "description": "ID of the model to use. Only `whisper-1` is currently available.\n",
+          "enum": [
+            "whisper-1"
+          ],
+          "example": "whisper-1",
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
@@ -77,7 +85,8 @@
           "title": "Model"
         },
         "prompt": {
-          "$ref": "openai.json#/components/schemas/CreateTranscriptionRequest/properties/prompt",
+          "description": "An optional text to guide the model's style or continue a previous audio segment. The prompt should match the audio language.\n",
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
@@ -92,7 +101,9 @@
           "title": "Prompt"
         },
         "temperature": {
-          "$ref": "openai.json#/components/schemas/CreateTranscriptionRequest/properties/temperature",
+          "default": 0,
+          "description": "The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use <a href=\"https://en.wikipedia.org/wiki/Log_probability\">log probability</a> to automatically increase the temperature until certain thresholds are hit.\n",
+          "type": "number",
           "instillAcceptFormats": [
             "number",
             "integer"
@@ -117,7 +128,7 @@
       "instillUIOrder": 0,
       "properties": {
         "text": {
-          "$ref": "openai.json#/components/schemas/CreateTranscriptionResponse/properties/text",
+          "type": "string",
           "description": "Generated text",
           "instillFormat": "string",
           "instillUIOrder": 0,
@@ -137,7 +148,14 @@
       "instillUIOrder": 0,
       "properties": {
         "model": {
-          "$ref": "openai.json#/components/schemas/CreateEmbeddingRequest/properties/model",
+          "description": "ID of the model to use.",
+          "enum": [
+            "text-embedding-ada-002",
+            "text-embedding-3-small",
+            "text-embedding-3-large"
+          ],
+          "example": "text-embedding-3-small",
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
@@ -236,7 +254,12 @@
           "type": "array"
         },
         "frequency-penalty": {
-          "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/frequency_penalty",
+          "default": 0,
+          "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.",
+          "maximum": 2,
+          "minimum": -2,
+          "nullable": true,
+          "type": "number",
           "instillAcceptFormats": [
             "number",
             "integer"
@@ -266,11 +289,13 @@
           "type": "array"
         },
         "max-tokens": {
-          "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/max_tokens",
+          "description": "The maximum number of tokens that can be generated in the chat completion.\n\nThe total length of input tokens and generated tokens is limited by the model's context length.",
+          "nullable": true,
+          "type": "integer",
           "instillAcceptFormats": [
             "integer"
           ],
-          "instillShortDescription": "The maximum number of <a href=\"https://platform.openai.com/tokenizer\">tokens</a> to generate in the chat completion.",
+          "instillShortDescription": "The maximum number of tokens to generate in the chat completion.",
           "instillUIOrder": 7,
           "instillUpstreamTypes": [
             "value",
@@ -279,7 +304,33 @@
           "title": "Max Tokens"
         },
         "model": {
-          "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/model",
+          "description": "ID of the model to use.",
+          "enum": [
+            "gpt-4o-mini",
+            "gpt-4o",
+            "gpt-4o-2024-05-13",
+            "gpt-4-turbo",
+            "gpt-4-turbo-2024-04-09",
+            "gpt-4-0125-preview",
+            "gpt-4-turbo-preview",
+            "gpt-4-1106-preview",
+            "gpt-4-vision-preview",
+            "gpt-4",
+            "gpt-4-0314",
+            "gpt-4-0613",
+            "gpt-4-32k",
+            "gpt-4-32k-0314",
+            "gpt-4-32k-0613",
+            "gpt-3.5-turbo",
+            "gpt-3.5-turbo-16k",
+            "gpt-3.5-turbo-0301",
+            "gpt-3.5-turbo-0613",
+            "gpt-3.5-turbo-1106",
+            "gpt-3.5-turbo-0125",
+            "gpt-3.5-turbo-16k-0613"
+          ],
+          "example": "gpt-3.5-turbo",
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
@@ -307,7 +358,13 @@
           "title": "Model"
         },
         "n": {
-          "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/n",
+          "default": 1,
+          "description": "How many chat completion choices to generate for each input message. Note that you will be charged based on the number of generated tokens across all of the choices. Keep `n` as `1` to minimize costs.",
+          "example": 1,
+          "maximum": 128,
+          "minimum": 1,
+          "nullable": true,
+          "type": "integer",
           "instillAcceptFormats": [
             "integer"
           ],
@@ -319,7 +376,12 @@
           "title": "N"
         },
         "presence-penalty": {
-          "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/presence_penalty",
+          "default": 0,
+          "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.",
+          "maximum": 2,
+          "minimum": -2,
+          "nullable": true,
+          "type": "number",
           "instillAcceptFormats": [
             "number",
             "integer"
@@ -353,7 +415,13 @@
           "instillUIOrder": 8,
           "properties": {
             "type": {
-              "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/response_format/properties/type",
+              "default": "text",
+              "description": "Must be one of `text` or `json_object`.",
+              "enum": [
+                "text",
+                "json_object"
+              ],
+              "type": "string",
               "instillAcceptFormats": [
                 "string"
               ],
@@ -391,7 +459,13 @@
           "type": "string"
         },
         "temperature": {
-          "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/temperature",
+          "default": 1,
+          "description": "What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.\n\nWe generally recommend altering this or `top-p` but not both.\n",
+          "example": 1,
+          "maximum": 2,
+          "minimum": 0,
+          "nullable": true,
+          "type": "number",
           "instillAcceptFormats": [
             "number",
             "integer"
@@ -405,7 +479,13 @@
           "title": "Temperature"
         },
         "top-p": {
-          "$ref": "openai.json#/components/schemas/CreateChatCompletionRequest/properties/top_p",
+          "default": 1,
+          "description": "An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.\n\nWe generally recommend altering this or `temperature` but not both.\n",
+          "example": 1,
+          "maximum": 1,
+          "minimum": 0,
+          "nullable": true,
+          "type": "number",
           "instillAcceptFormats": [
             "number",
             "integer"
@@ -485,7 +565,15 @@
       "instillUIOrder": 0,
       "properties": {
         "model": {
-          "$ref": "openai.json#/components/schemas/CreateImageRequest/properties/model",
+          "default": "dall-e-2",
+          "description": "The model to use for image generation.",
+          "enum": [
+            "dall-e-2",
+            "dall-e-3"
+          ],
+          "example": "dall-e-3",
+          "nullable": true,
+          "type": "string",
           "instillCredentialMap": {
             "values": [
               "dall-e-3"
@@ -507,7 +595,13 @@
           "title": "Model"
         },
         "n": {
-          "$ref": "openai.json#/components/schemas/CreateImageRequest/properties/n",
+          "default": 1,
+          "description": "The number of images to generate. Must be between 1 and 10. For `dall-e-3`, only `n=1` is supported.",
+          "example": 1,
+          "maximum": 10,
+          "minimum": 1,
+          "nullable": true,
+          "type": "integer",
           "instillAcceptFormats": [
             "integer"
           ],
@@ -519,7 +613,9 @@
           "title": "N"
         },
         "prompt": {
-          "$ref": "openai.json#/components/schemas/CreateImageRequest/properties/prompt",
+          "description": "A text description of the desired image(s). The maximum length is 1000 characters for `dall-e-2` and 4000 characters for `dall-e-3`.",
+          "example": "A cute baby sea otter",
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
@@ -534,7 +630,14 @@
           "title": "Prompt"
         },
         "quality": {
-          "$ref": "openai.json#/components/schemas/CreateImageRequest/properties/quality",
+          "default": "standard",
+          "description": "The quality of the image that will be generated. `hd` creates images with finer details and greater consistency across the image. This param is only supported for `dall-e-3`.",
+          "enum": [
+            "standard",
+            "hd"
+          ],
+          "example": "standard",
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
@@ -547,7 +650,18 @@
           "title": "Quality"
         },
         "size": {
-          "$ref": "openai.json#/components/schemas/CreateImageRequest/properties/size",
+          "default": "1024x1024",
+          "description": "The size of the generated images. Must be one of `256x256`, `512x512`, or `1024x1024` for `dall-e-2`. Must be one of `1024x1024`, `1792x1024`, or `1024x1792` for `dall-e-3` models.",
+          "enum": [
+            "256x256",
+            "512x512",
+            "1024x1024",
+            "1792x1024",
+            "1024x1792"
+          ],
+          "example": "1024x1024",
+          "nullable": true,
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
@@ -560,7 +674,15 @@
           "title": "Size"
         },
         "style": {
-          "$ref": "openai.json#/components/schemas/CreateImageRequest/properties/style",
+          "default": "vivid",
+          "description": "The style of the generated images. Must be one of `vivid` or `natural`. Vivid causes the model to lean towards generating hyper-real and dramatic images. Natural causes the model to produce more natural, less hyper-real looking images. This param is only supported for `dall-e-3`.",
+          "enum": [
+            "vivid",
+            "natural"
+          ],
+          "example": "vivid",
+          "nullable": true,
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
@@ -627,7 +749,7 @@
       "instillUIOrder": 0,
       "properties": {
         "model": {
-          "$ref": "openai.json#/components/schemas/CreateSpeechRequest/properties/model",
+          "description": "One of the available TTS models: `tts-1` or `tts-1-hd`\n",
           "default": "tts-1",
           "enum": [
             "tts-1",
@@ -656,7 +778,15 @@
           "type": "string"
         },
         "response-format": {
-          "$ref": "openai.json#/components/schemas/CreateSpeechRequest/properties/response_format",
+          "default": "mp3",
+          "description": "The format to audio in. Supported formats are `mp3`, `opus`, `aac`, and `flac`.",
+          "enum": [
+            "mp3",
+            "opus",
+            "aac",
+            "flac"
+          ],
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
@@ -669,7 +799,11 @@
           "title": "Response Format"
         },
         "speed": {
-          "$ref": "openai.json#/components/schemas/CreateSpeechRequest/properties/speed",
+          "default": 1,
+          "description": "The speed of the generated audio. Select a value from `0.25` to `4.0`. `1.0` is the default.",
+          "maximum": 4,
+          "minimum": 0.25,
+          "type": "number",
           "instillAcceptFormats": [
             "number"
           ],
@@ -682,7 +816,9 @@
           "title": "Speed"
         },
         "text": {
-          "$ref": "openai.json#/components/schemas/CreateSpeechRequest/properties/input",
+          "description": "The text to generate audio for. The maximum length is 4096 characters.",
+          "maxLength": 4096,
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
@@ -696,7 +832,16 @@
           "title": "Text"
         },
         "voice": {
-          "$ref": "openai.json#/components/schemas/CreateSpeechRequest/properties/voice",
+          "description": "The voice to use when generating the audio. Supported voices are `alloy`, `echo`, `fable`, `onyx`, `nova`, and `shimmer`.",
+          "enum": [
+            "alloy",
+            "echo",
+            "fable",
+            "onyx",
+            "nova",
+            "shimmer"
+          ],
+          "type": "string",
           "instillAcceptFormats": [
             "string"
           ],
