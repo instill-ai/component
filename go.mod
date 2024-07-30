@@ -50,6 +50,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/tmc/langchaingo v0.1.10
 	github.com/u2takey/ffmpeg-go v0.5.0
+	github.com/weaviate/weaviate v1.26.0-rc.1
 	go.uber.org/zap v1.24.0
 	golang.org/x/image v0.18.0
 	golang.org/x/oauth2 v0.21.0
@@ -82,7 +83,6 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	github.com/weaviate/weaviate v1.26.0-rc.1 // indirect
 	go.mongodb.org/mongo-driver v1.14.0 // indirect
 )
 
