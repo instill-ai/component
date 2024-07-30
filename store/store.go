@@ -156,9 +156,10 @@ func (s *Store) Import(comp base.IComponent) {
 	s.componentUIDs = append(s.componentUIDs, comp.GetDefinitionUID())
 }
 
-// CreateExecution initializes the execution of a component given its UID.
-func (s *Store) CreateExecution(defUID uuid.UUID, sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	c, ok := s.componentUIDMap[defUID]
+// CreateExecution initializes the execution of a component given its
+// definition ID.
+func (s *Store) CreateExecution(defID string, sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+	c, ok := s.componentIDMap[defID]
 	if !ok {
 		return nil, fmt.Errorf("component definition not found")
 	}
