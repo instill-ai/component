@@ -94,7 +94,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 // with the secret credential values.
 func (c *component) resolveSetup(setup *structpb.Struct) (*structpb.Struct, bool, error) {
 	apiKey := setup.GetFields()[cfgAPIKey].GetStringValue()
-	if apiKey != base.SecretKeyword { // TODO use empty instead of secret keyword
+	if apiKey != base.SecretKeyword {
 		return setup, false, nil
 	}
 
