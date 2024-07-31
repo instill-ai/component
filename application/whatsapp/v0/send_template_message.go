@@ -48,7 +48,6 @@ type TaskSendTemplateMessageOutput struct {
 type TaskSendTextBasedTemplateMessageInput struct {
 	PhoneNumberID    string   `json:"phone-number-id"`
 	To               string   `json:"to"`
-	HeaderType       string   `json:"header-type"`
 	TemplateName     string   `json:"name"`
 	LanguageCode     string   `json:"language-code"`
 	HeaderParameters []string `json:"header-parameters"`

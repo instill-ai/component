@@ -1,6 +1,6 @@
 {
   "$defs": {
-    "input": {
+    "def-input": {
       "phone-number-id": {
         "description": "Phone Number ID. Obtainable through the app dashboard.",
         "instillAcceptFormats": ["string"],
@@ -62,37 +62,25 @@
         }
       },
       "media":{
-        "media-type": {
-          "enum": ["image", "audio", "document", "video"],
-          "example": "image",
-          "description": "Specify what media to send.",
-          "instillAcceptFormats": ["string"],
-          "instillUpstreamTypes": ["value", "reference", "template"],
-          "title": "Media Type",
-          "type": "string"
-        },
         "id-or-link": {
           "description": "Input either ID or link of the media. If the input has 'http', it will be considered as a link.",
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "reference", "template"],
-          "title": "ID Or Link",
           "type": "string"
         },
         "caption": {
-          "description": "Media asset caption. Description of the media. This property cannot be used when the media type is audio.",
+          "description": "Media asset caption. Description of the media. This property cannot be used when the media type is audio. If audio tried to use this property, it will be ignored.",
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "reference", "template"],
-          "title": "Caption",
           "type": "string"
         },
         "filename": {
-          "description": "Describe the filename of the document. Only document can use this property. This property will specify what format the document is displayed as in WhatsApp.",
+          "description": "The filename of the document. Only document can use this property. This property will specify what format the document is displayed as in WhatsApp. If other media type tried to use this property, it will be ignored.",
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "reference", "template"],
-          "title": "Filename",
           "type": "string"
         }
       },
@@ -102,7 +90,6 @@
           "instillAcceptFormats": ["number"],
           "instillUIMultiline": false,
           "instillUpstreamTypes": ["value", "reference", "template"],
-          "title": "Latitude",
           "type": "number"
         },
         "longitude": {
@@ -110,7 +97,6 @@
           "instillAcceptFormats": ["number"],
           "instillUIMultiline": false,
           "instillUpstreamTypes": ["value", "reference", "template"],
-          "title": "Longitude",
           "type": "number"
         },
         "location-name": {
@@ -118,7 +104,6 @@
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "reference", "template"],
-          "title": "Name",
           "type": "string"
         },
         "address": {
@@ -126,12 +111,11 @@
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "reference", "template"],
-          "title": "Address",
           "type": "string"
         }
       }
     },
-    "output": {
+    "def-output": {
       "recipient-wa-id": {
         "description": "The WhatsApp ID of the recipient. Most likely the same with their phone number.",
         "instillUIOrder": 0,
@@ -170,17 +154,17 @@
       ],
       "properties": {
         "phone-number-id": {
-          "$ref": "#/$defs/input/phone-number-id"
+          "$ref": "#/$defs/def-input/phone-number-id"
         },
         "to": {
-          "$ref": "#/$defs/input/to"
+          "$ref": "#/$defs/def-input/to"
         },
         "name": {
-          "$ref": "#/$defs/input/template/name",
+          "$ref": "#/$defs/def-input/template/name",
           "instillUIOrder": 2
         },
         "language-code": {
-          "$ref": "#/$defs/input/template/language-code",
+          "$ref": "#/$defs/def-input/template/language-code",
           "instillUIOrder": 3
         },
         "header-parameters": {
@@ -197,12 +181,12 @@
           }
         },
         "body-parameters": {
-          "$ref": "#/$defs/input/template/body-parameters",
+          "$ref": "#/$defs/def-input/template/body-parameters",
           "instillUIOrder": 5
 
         },
         "button-parameters": {
-          "$ref": "#/$defs/input/template/button-parameters",
+          "$ref": "#/$defs/def-input/template/button-parameters",
           "instillUIOrder": 6
         }
       },
@@ -220,13 +204,13 @@
       "instillUIOrder": 0,  
       "properties": {
         "recipient-wa-id": {
-          "$ref": "#/$defs/output/recipient-wa-id"
+          "$ref": "#/$defs/def-output/recipient-wa-id"
         },
         "message-id": {
-          "$ref": "#/$defs/output/message-id"
+          "$ref": "#/$defs/def-output/message-id"
         },
         "message-status": {
-          "$ref": "#/$defs/output/message-status"
+          "$ref": "#/$defs/def-output/message-status"
         }
       },
       "required": ["recipient-wa-id", "message-id", "message-status"],
@@ -251,17 +235,17 @@
       ],
       "properties": {
         "phone-number-id": {
-          "$ref": "#/$defs/input/phone-number-id"
+          "$ref": "#/$defs/def-input/phone-number-id"
         },
         "to": {
-          "$ref": "#/$defs/input/to"
+          "$ref": "#/$defs/def-input/to"
         },
         "name": {
-          "$ref": "#/$defs/input/template/name",
+          "$ref": "#/$defs/def-input/template/name",
           "instillUIOrder": 2
         },
         "language-code": {
-          "$ref": "#/$defs/input/template/language-code",
+          "$ref": "#/$defs/def-input/template/language-code",
           "instillUIOrder": 3
         },
         "media-type": {
@@ -275,20 +259,22 @@
           "type": "string"
         },
         "id-or-link": {
-          "$ref": "#/$defs/input/media/id-or-link",
+          "title": "ID Or Link (Header Parameter)",
+          "$ref": "#/$defs/def-input/media/id-or-link",
           "instillUIOrder": 5
         },
         "filename": {
-          "$ref": "#/$defs/input/media/filename",
+          "title": "Filename (Header Parameter)",
+          "$ref": "#/$defs/def-input/media/filename",
           "instillUIOrder": 6
         },
         "body-parameters": {
-          "$ref": "#/$defs/input/template/body-parameters",
+          "$ref": "#/$defs/def-input/template/body-parameters",
           "instillUIOrder": 7
 
         },
         "button-parameters": {
-          "$ref": "#/$defs/input/template/button-parameters",
+          "$ref": "#/$defs/def-input/template/button-parameters",
           "instillUIOrder": 8
         }
       },
@@ -309,13 +295,13 @@
       "instillUIOrder": 0,
       "properties": {
         "recipient-wa-id": {
-          "$ref": "#/$defs/output/recipient-wa-id"
+          "$ref": "#/$defs/def-output/recipient-wa-id"
         },
         "message-id": {
-          "$ref": "#/$defs/output/message-id"
+          "$ref": "#/$defs/def-output/message-id"
         },
         "message-status": {
-          "$ref": "#/$defs/output/message-status"
+          "$ref": "#/$defs/def-output/message-status"
         }
       },
       "required": ["recipient-wa-id", "message-id", "message-status"],
@@ -341,41 +327,45 @@
       ],
       "properties": {
         "phone-number-id": {
-          "$ref": "#/$defs/input/phone-number-id"
+          "$ref": "#/$defs/def-input/phone-number-id"
         },
         "to": {
-          "$ref": "#/$defs/input/to"
+          "$ref": "#/$defs/def-input/to"
         },
         "name": {
-          "$ref": "#/$defs/input/template/name",
+          "$ref": "#/$defs/def-input/template/name",
           "instillUIOrder": 2
         },
         "language-code": {
-          "$ref": "#/$defs/input/template/language-code",
+          "$ref": "#/$defs/def-input/template/language-code",
           "instillUIOrder": 3
         },
         "latitude": {
-          "$ref": "#/$defs/input/location/latitude",
+          "title": "Latitude (Header Parameter)",
+          "$ref": "#/$defs/def-input/location/latitude",
           "instillUIOrder": 4
         },
         "longitude": {
-          "$ref": "#/$defs/input/location/longitude",
+          "title": "Longitude (Header Parameter)",
+          "$ref": "#/$defs/def-input/location/longitude",
           "instillUIOrder": 5
         },
         "location-name": {
-          "$ref": "#/$defs/input/location/location-name",
+          "title": "Location Name (Header Parameter)",
+          "$ref": "#/$defs/def-input/location/location-name",
           "instillUIOrder": 6
         },
         "address": {
-          "$ref": "#/$defs/input/location/address",
+          "title": "Location Address (Header Parameter)",
+          "$ref": "#/$defs/def-input/location/address",
           "instillUIOrder": 7
         },
         "body-parameters":{
-          "$ref": "#/$defs/input/template/body-parameters",
+          "$ref": "#/$defs/def-input/template/body-parameters",
           "instillUIOrder": 8
         },
         "button-parameters": {
-          "$ref": "#/$defs/input/template/button-parameters",
+          "$ref": "#/$defs/def-input/template/button-parameters",
           "instillUIOrder": 9
         }
         
@@ -398,13 +388,13 @@
       "instillUIOrder": 0,
       "properties": {
         "recipient-wa-id": {
-          "$ref": "#/$defs/output/recipient-wa-id"
+          "$ref": "#/$defs/def-output/recipient-wa-id"
         },
         "message-id": {
-          "$ref": "#/$defs/output/message-id"
+          "$ref": "#/$defs/def-output/message-id"
         },
         "message-status": {
-          "$ref": "#/$defs/output/message-status"
+          "$ref": "#/$defs/def-output/message-status"
         }
       },
       "required": ["recipient-wa-id", "message-id", "message-status"],
@@ -426,17 +416,17 @@
       ],
       "properties": {
         "phone-number-id": {
-          "$ref": "#/$defs/input/phone-number-id"
+          "$ref": "#/$defs/def-input/phone-number-id"
         },
         "to": {
-          "$ref": "#/$defs/input/to"
+          "$ref": "#/$defs/def-input/to"
         },
         "name": {
-          "$ref": "#/$defs/input/template/name",
+          "$ref": "#/$defs/def-input/template/name",
           "instillUIOrder": 2
         },
         "language-code": {
-          "$ref": "#/$defs/input/template/language-code",
+          "$ref": "#/$defs/def-input/template/language-code",
           "instillUIOrder": 3
         },
         "one-time-password":{
@@ -464,13 +454,13 @@
       "instillUIOrder": 0,
       "properties": {
         "recipient-wa-id": {
-          "$ref": "#/$defs/output/recipient-wa-id"
+          "$ref": "#/$defs/def-output/recipient-wa-id"
         },
         "message-id": {
-          "$ref": "#/$defs/output/message-id"
+          "$ref": "#/$defs/def-output/message-id"
         },
         "message-status": {
-          "$ref": "#/$defs/output/message-status"
+          "$ref": "#/$defs/def-output/message-status"
         }
       },
       "required": ["recipient-wa-id", "message-id", "message-status"],
@@ -491,10 +481,10 @@
       ],
       "properties": {
         "phone-number-id": {
-          "$ref": "#/$defs/input/phone-number-id"
+          "$ref": "#/$defs/def-input/phone-number-id"
         },
         "to": {
-          "$ref": "#/$defs/input/to"
+          "$ref": "#/$defs/def-input/to"
         },
         "body": {
           "description": "Body of the message",
@@ -525,10 +515,10 @@
       "instillUIOrder": 0,
       "properties": {
         "recipient-wa-id": {
-          "$ref": "#/$defs/output/recipient-wa-id"
+          "$ref": "#/$defs/def-output/recipient-wa-id"
         },
         "message-id": {
-          "$ref": "#/$defs/output/message-id"
+          "$ref": "#/$defs/def-output/message-id"
         }
       },
       "required": ["recipient-wa-id", "message-id"],
@@ -551,10 +541,10 @@
       ],
       "properties": {
         "phone-number-id": {
-          "$ref": "#/$defs/input/phone-number-id"
+          "$ref": "#/$defs/def-input/phone-number-id"
         },
         "to": {
-          "$ref": "#/$defs/input/to"
+          "$ref": "#/$defs/def-input/to"
         },
         "media-type": {
           "enum": ["image", "audio", "document", "video"],
@@ -567,15 +557,18 @@
           "type": "string"
         },
         "id-or-link": {
-          "$ref": "#/$defs/input/media/id-or-link",
+          "title": "ID Or Link",
+          "$ref": "#/$defs/def-input/media/id-or-link",
           "instillUIOrder": 3
         },
         "caption": {
-          "$ref": "#/$defs/input/media/caption",
+          "title": "Caption",
+          "$ref": "#/$defs/def-input/media/caption",
           "instillUIOrder": 4
         },
         "filename": {
-          "$ref": "#/$defs/input/media/filename",
+          "title": "Filename",
+          "$ref": "#/$defs/def-input/media/filename",
           "instillUIOrder": 5
         }
       },
@@ -588,10 +581,10 @@
       "instillUIOrder": 0,
       "properties": {
         "recipient-wa-id": {
-          "$ref": "#/$defs/output/recipient-wa-id"
+          "$ref": "#/$defs/def-output/recipient-wa-id"
         },
         "message-id": {
-          "$ref": "#/$defs/output/message-id"
+          "$ref": "#/$defs/def-output/message-id"
         }
       },
       "required": ["recipient-wa-id", "message-id"],
@@ -614,25 +607,29 @@
       ],
       "properties": {
         "phone-number-id": {
-          "$ref": "#/$defs/input/phone-number-id"
+          "$ref": "#/$defs/def-input/phone-number-id"
         },
         "to": {
-          "$ref": "#/$defs/input/to"
+          "$ref": "#/$defs/def-input/to"
         },
         "latitude": {
-          "$ref": "#/$defs/input/location/latitude",
+          "title": "Latitude",
+          "$ref": "#/$defs/def-input/location/latitude",
           "instillUIOrder": 2
         },
         "longitude": {
-          "$ref": "#/$defs/input/location/longitude",
+          "title": "Longitude",
+          "$ref": "#/$defs/def-input/location/longitude",
           "instillUIOrder": 3
         },
         "location-name": {
-          "$ref": "#/$defs/input/location/location-name",
+          "title": "Location Name",
+          "$ref": "#/$defs/def-input/location/location-name",
           "instillUIOrder": 4
         },
         "address": {
-          "$ref": "#/$defs/input/location/address",
+          "title": "Location Address",
+          "$ref": "#/$defs/def-input/location/address",
           "instillUIOrder": 5
         }
       },
@@ -652,10 +649,10 @@
       "instillUIOrder": 0,
       "properties": {
         "recipient-wa-id": {
-          "$ref": "#/$defs/output/recipient-wa-id"
+          "$ref": "#/$defs/def-output/recipient-wa-id"
         },
         "message-id": {
-          "$ref": "#/$defs/output/message-id"
+          "$ref": "#/$defs/def-output/message-id"
         }
       },
       "required": ["recipient-wa-id", "message-id"],
@@ -682,10 +679,10 @@
       ],
       "properties": {
         "phone-number-id": {
-          "$ref": "#/$defs/input/phone-number-id"
+          "$ref": "#/$defs/def-input/phone-number-id"
         },
         "to": {
-          "$ref": "#/$defs/input/to"
+          "$ref": "#/$defs/def-input/to"
         },
         "first-name": {
           "description": "First name of the contact",
@@ -777,10 +774,10 @@
       "instillUIOrder": 0,
       "properties": {
         "recipient-wa-id": {
-          "$ref": "#/$defs/output/recipient-wa-id"
+          "$ref": "#/$defs/def-output/recipient-wa-id"
         },
         "message-id": {
-          "$ref": "#/$defs/output/message-id"
+          "$ref": "#/$defs/def-output/message-id"
         }
       },
       "required": ["recipient-wa-id", "message-id"],
@@ -788,7 +785,7 @@
       "type": "object"
     }
   },
-  "TASK_SEND_INTERACTIVE_CTA_URL_BUTTON_MESSAGE":{
+  "TASK_SEND_INTERACTIVE_CALL_TO_ACTION_URL_BUTTON_MESSAGE":{
     "instillShortDescription": "Send interactive Call-To-Action URL button message. Note: Message can only be sent when the 24-hour customer service window is open. For more information: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows ",
     "input": {
       "description": "Interactive CTA URL button input",
@@ -804,10 +801,10 @@
       ],
       "properties": {
         "phone-number-id": {
-          "$ref": "#/$defs/input/phone-number-id"
+          "$ref": "#/$defs/def-input/phone-number-id"
         },
         "to": {
-          "$ref": "#/$defs/input/to"
+          "$ref": "#/$defs/def-input/to"
         },
         "header-text": {
           "description": "Message header text.",
@@ -870,10 +867,10 @@
       "instillUIOrder": 0,
       "properties": {
         "recipient-wa-id": {
-          "$ref": "#/$defs/output/recipient-wa-id"
+          "$ref": "#/$defs/def-output/recipient-wa-id"
         },
         "message-id": {
-          "$ref": "#/$defs/output/message-id"
+          "$ref": "#/$defs/def-output/message-id"
         }
       },
       "required": ["recipient-wa-id", "message-id"],

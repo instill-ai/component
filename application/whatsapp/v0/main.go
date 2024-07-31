@@ -1,3 +1,5 @@
+//go:generate compogen readme ./config ./README.mdx
+
 package whatsapp
 
 import (
@@ -22,7 +24,7 @@ const (
 	taskSendMediaMessage                   = "TASK_SEND_MEDIA_MESSAGE"
 	taskSendLocationMessage                = "TASK_SEND_LOCATION_MESSAGE"
 	taskSendContactMessage                 = "TASK_SEND_CONTACT_MESSAGE"
-	taskSendInteractiveCTAURLButtonMessage = "TASK_SEND_INTERACTIVE_CTA_URL_BUTTON_MESSAGE"
+	taskSendInteractiveCTAURLButtonMessage = "TASK_SEND_INTERACTIVE_CALL_TO_ACTION_URL_BUTTON_MESSAGE"
 
 	basePath = "https://graph.facebook.com"
 	version  = "v20.0"
