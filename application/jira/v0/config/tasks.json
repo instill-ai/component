@@ -1061,6 +1061,9 @@
           "additionalProperties": true,
           "instillFormat": "object",
           "type": "object",
+          "required": [
+            "update"
+          ],
           "oneOf": [
             {
               "properties": {
@@ -1120,7 +1123,17 @@
                     "type": "object"
                   }
                 }
-              }
+              },
+              "required": [
+                "update",
+                "update-fields"
+              ],
+              "instillEditOnNodeFields": [
+                "update",
+                "update-fields"
+              ],
+              "instillFormat": "object",
+              "type": "object"
             },
             {
               "properties": {
@@ -1144,7 +1157,17 @@
                   ],
                   "type": "string"
                 }
-              }
+              },
+              "required": [
+                "update",
+                "epic-key"
+              ],
+              "instillEditOnNodeFields": [
+                "update",
+                "epic-key"
+              ],
+              "instillFormat": "object",
+              "type": "object"
             }
           ]
         }
@@ -1496,6 +1519,9 @@
           "type": "boolean"
         }
       },
+      "required": [
+        "success"
+      ],
       "title": "Output",
       "type": "object"
     }
