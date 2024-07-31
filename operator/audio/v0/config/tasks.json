@@ -12,7 +12,8 @@
         "audio": {
           "description": "Base64 encoded audio file to be split",
           "instillAcceptFormats": [
-            "audio/*"
+            "audio/*",
+            "application/octet-stream"
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
@@ -79,7 +80,8 @@
         "audio": {
           "description": "Base64 encoded audio file to be sliced",
           "instillAcceptFormats": [
-            "audio/*"
+            "audio/*",
+            "application/octet-stream"
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
