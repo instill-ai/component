@@ -57,10 +57,19 @@
           "type": "string"
         },
         "key": {
+          "title": "Key",
           "description": "The key of the issue, e.g. `JRA-1330`",
+          "instillShortDescription": "The key of the issue",
           "instillUIOrder": 1,
           "instillFormat": "string",
-          "title": "Key",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "type": "string"
         },
         "self": {
@@ -801,6 +810,692 @@
       "instillUIOrder": 0,
       "$ref": "#/$defs/sprint",
       "required": [],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_ISSUE": {
+    "description": "Create an issue in Jira",
+    "instillShortDescription": "Create an issue in Jira",
+    "input": {
+      "description": "Create an issue in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "project-key",
+        "issue-type",
+        "status",
+        "summary",
+        "description"
+      ],
+      "properties": {
+        "project-key": {
+          "title": "Project Key",
+          "description": "The key of the project, e.g. `INS`",
+          "instillShortDescription": "The key of the project",
+          "instillUIOrder": 0,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "issue-type": {
+          "title": "Issue Type",
+          "description": "The type of the issue, can be: `Task`, `Epic`, `Subtask`, etc.",
+          "instillUIOrder": 1,
+          "additionalProperties": true,
+          "instillFormat": "object",
+          "type": "object",
+          "required": [
+            "issue-type"
+          ],
+          "oneOf": [
+            {
+              "properties": {
+                "issue-type": {
+                  "const": "Epic",
+                  "type": "string"
+                }
+              },
+              "instillEditOnNodeFields": [
+                "issue-type"
+              ],
+              "required": [
+                "issue-type"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            },
+            {
+              "properties": {
+                "issue-type": {
+                  "const": "Task",
+                  "type": "string"
+                }
+              },
+              "instillEditOnNodeFields": [
+                "issue-type"
+              ],
+              "required": [
+                "issue-type"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            },
+            {
+              "properties": {
+                "issue-type": {
+                  "const": "Subtask",
+                  "type": "string"
+                },
+                "parent-key": {
+                  "title": "Parent Key",
+                  "description": "The key of the parent issue, e.g. `JRA-1330`",
+                  "instillShortDescription": "The key of the parent issue",
+                  "instillUIOrder": 10,
+                  "instillFormat": "string",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "type": "string"
+                }
+              },
+              "instillEditOnNodeFields": [
+                "issue-type",
+                "parent-key"
+              ],
+              "required": [
+                "issue-type",
+                "parent-key"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            },
+            {
+              "properties": {
+                "issue-type": {
+                  "const": "Other",
+                  "type": "string"
+                },
+                "custom-issue-type": {
+                  "title": "Issue Type",
+                  "description": "The type of the issue, can be: `Task`, `Epic`, `Subtask`, etc.",
+                  "instillShortDescription": "The type of the issue",
+                  "instillUIOrder": 1,
+                  "instillFormat": "string",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "type": "string"
+                }
+              },
+              "instillEditOnNodeFields": [
+                "issue-type",
+                "custom-issue-type"
+              ],
+              "required": [
+                "issue-type",
+                "custom-issue-type"
+              ],
+              "instillFormat": "object",
+              "type": "object"
+            }
+          ]
+        },
+        "status": {
+          "title": "Status",
+          "description": "The status of the issue, can be: `To Do`, `In Progress`, `Done`",
+          "instillShortDescription": "The status of the issue",
+          "instillUIOrder": 4,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "description": "The summary of the issue",
+          "instillShortDescription": "The summary of the issue",
+          "instillUIOrder": 2,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "description": "The description of the issue",
+          "instillShortDescription": "The description of the issue",
+          "instillUIOrder": 3,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "assignee": {
+          "title": "Assignee",
+          "description": "The assignee of the issue",
+          "instillShortDescription": "The assignee of the issue",
+          "instillUIOrder": 5,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "project-key",
+        "issue-type",
+        "status"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Create an issue in Jira",
+      "instillUIOrder": 0,
+      "$ref": "#/$defs/issue",
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_UPDATE_ISSUE": {
+    "description": "Update an issue in Jira",
+    "instillShortDescription": "Update an issue in Jira",
+    "input": {
+      "description": "Update an issue in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "issue-key",
+        "update"
+      ],
+      "properties": {
+        "issue-key": {
+          "$ref": "#/$defs/issue/properties/key",
+          "title": "Issue Key",
+          "instillUIOrder": 0
+        },
+        "update": {
+          "title": "Update",
+          "description": "Update an issue in Jira",
+          "instillUIOrder": 1,
+          "additionalProperties": true,
+          "instillFormat": "object",
+          "type": "object",
+          "oneOf": [
+            {
+              "properties": {
+                "update": {
+                  "const": "Custom Update",
+                  "type": "string"
+                },
+                "update-fields": {
+                  "title": "Update Fields",
+                  "description": "The fields to update",
+                  "instillFormat": "array:structured/update-field",
+                  "instillAcceptFormats": [
+                    "array:structured/update-field"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "type": "array",
+                  "items": {
+                    "instillFormat": "structured/update-field",
+                    "properties": {
+                      "action": {
+                        "description": "The action to perform, can be: `add`, `copy`, `edit`, `remove`, `set`",
+                        "enum": [
+                          "add",
+                          "copy",
+                          "edit",
+                          "remove",
+                          "set"
+                        ],
+                        "instillUIOrder": 3,
+                        "instillFormat": "string",
+                        "type": "string",
+                        "title": "Action"
+                      },
+                      "field-name": {
+                        "description": "The name of the field to update",
+                        "instillUIOrder": 4,
+                        "instillFormat": "string",
+                        "type": "string",
+                        "title": "Field Name"
+                      },
+                      "value": {
+                        "description": "The value of the field to update",
+                        "instillUIOrder": 5,
+                        "instillFormat": "string",
+                        "type": "string",
+                        "title": "Value"
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "field-name"
+                    ],
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "update": {
+                  "const": "Move Issue to Epic",
+                  "type": "string"
+                },
+                "epic-key": {
+                  "title": "Epic Key",
+                  "description": "The key of the epic, e.g. `JRA-1330`",
+                  "instillShortDescription": "The key of the epic",
+                  "instillUIOrder": 11,
+                  "instillFormat": "string",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "issue-key"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Create an issue in Jira",
+      "instillUIOrder": 0,
+      "$ref": "#/$defs/issue",
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_SPRINT": {
+    "description": "Create a sprint in Jira",
+    "instillShortDescription": "Create a sprint in Jira",
+    "input": {
+      "description": "Create a sprint in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "board-id",
+        "name",
+        "goal",
+        "start-date",
+        "end-date"
+      ],
+      "properties": {
+        "board-name": {
+          "title": "Board Name",
+          "description": "The name of the board",
+          "instillShortDescription": "The name of the board",
+          "instillUIOrder": 0,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "description": "The name of the sprint",
+          "instillShortDescription": "The name of the sprint",
+          "instillUIOrder": 1,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "goal": {
+          "title": "Goal",
+          "description": "The goal of the sprint",
+          "instillShortDescription": "The goal of the sprint",
+          "instillUIOrder": 2,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "start-date": {
+          "title": "Start Date",
+          "description": "The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "instillShortDescription": "The start date of the sprint",
+          "instillUIOrder": 3,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "end-date": {
+          "title": "End Date",
+          "description": "The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "instillShortDescription": "The end date of the sprint",
+          "instillUIOrder": 4,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "board-id",
+        "name",
+        "goal",
+        "start-date",
+        "end-date"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Create a sprint in Jira",
+      "instillUIOrder": 0,
+      "$ref": "#/$defs/sprint",
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_UPDATE_SPRINT": {
+    "description": "Update a sprint in Jira",
+    "instillShortDescription": "Update a sprint in Jira",
+    "input": {
+      "description": "Update a sprint in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "sprint-key",
+        "name",
+        "goal",
+        "start-date",
+        "end-date",
+        "complete-date"
+      ],
+      "properties": {
+        "sprint-key": {
+          "title": "Sprint Key",
+          "description": "The key of the sprint",
+          "instillShortDescription": "The key of the sprint",
+          "instillUIOrder": 0,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "description": "The name of the sprint",
+          "instillShortDescription": "The name of the sprint",
+          "instillUIOrder": 1,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "goal": {
+          "title": "Goal",
+          "description": "The goal of the sprint",
+          "instillShortDescription": "The goal of the sprint",
+          "instillUIOrder": 2,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "start-date": {
+          "title": "Start Date",
+          "description": "The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "instillShortDescription": "The start date of the sprint",
+          "instillUIOrder": 3,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "end-date": {
+          "title": "End Date",
+          "description": "The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "instillShortDescription": "The end date of the sprint",
+          "instillUIOrder": 4,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "complete-date": {
+          "title": "Complete Date",
+          "description": "The complete date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "instillShortDescription": "The complete date of the sprint",
+          "instillUIOrder": 5,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "sprint-key"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Create a sprint in Jira",
+      "instillUIOrder": 0,
+      "$ref": "#/$defs/sprint",
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_RANK_EPIC": {
+    "description": "Rank an epic in Jira",
+    "instillShortDescription": "Rank an epic in Jira",
+    "input": {
+      "description": "Rank an epic in Jira",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "epic-key",
+        "rank"
+      ],
+      "properties": {
+        "epic-key": {
+          "title": "Epic Key",
+          "description": "The key of the epic, e.g. `JRA-1330`",
+          "instillShortDescription": "The key of the epic",
+          "instillUIOrder": 0,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "after": {
+          "title": "Rank After Epic",
+          "description": "The key of the epic to rank after",
+          "instillShortDescription": "The key of the epic to rank after",
+          "instillUIOrder": 1,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "before": {
+          "title": "Rank Before Epic",
+          "description": "The key of the epic to rank before",
+          "instillShortDescription": "The key of the epic to rank before",
+          "instillUIOrder": 2,
+          "instillFormat": "string",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "string"
+        },
+        "rank": {
+          "title": "Rank",
+          "description": "The custom rank field ID of the epic",
+          "instillShortDescription": "The custom rank field ID of the epic",
+          "instillUIOrder": 3,
+          "instillFormat": "integer",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "type": "integer"
+        }
+      },
+      "required": [
+        "epic-key",
+        "rank"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Rank an epic in Jira",
+      "instillUIOrder": 0,
+      "properties": {
+        "success": {
+          "description": "Whether the epic is ranked",
+          "instillUIOrder": 0,
+          "title": "Success",
+          "instillFormat": "boolean",
+          "type": "boolean"
+        }
+      },
       "title": "Output",
       "type": "object"
     }
