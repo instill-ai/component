@@ -1,0 +1,162 @@
+---
+title: "Weaviate"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP Weaviate component https://github.com/instill-ai/instill-core"
+---
+
+The Weaviate component is a data component that allows users to build and search vector datasets.
+It can carry out the following tasks:
+
+- [Vector Search](#vector-search)
+- [Batch Insert](#batch-insert)
+- [Insert](#insert)
+- [Delete](#delete)
+- [Delete Collection](#delete-collection)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/weaviate/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| API Key (required) | `api-key` | string | Fill in your Weaviate AI API key. Please refer to clusters in Weaviate Console |
+| Weaviate URL Endpoint (required) | `url` | string | Fill in your Weaviate base URL without https:// or http://. Please refer to clusters in Weaviate Console |
+
+
+
+
+## Supported Tasks
+
+### Vector Search
+
+Perform a vector search on a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_VECTOR_SEARCH` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to perform vector search on |
+| Vector (required) | `vector` | array[number] | An array of dimensions for the vector query |
+| Limit | `limit` | integer | The limit of objects, empty for all objects |
+| Fields | `fields` | array[string] | The fields to return in the objects. If empty then all fields will be returned |
+| Filter | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters |
+| With Additional | `with-additional` | boolean | Whether to include the additional field in the results |
+| Tenant | `tenant` | string | The tenant to perform the vector search on |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Result | `result` | object | Result of the vector search operation |
+| Status | `status` | string | Upsert status |
+
+
+
+
+
+
+### Batch Insert
+
+Insert multiple vector objects into a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_BATCH_INSERT` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to upsert the object into |
+| Array Properties (required) | `array-metadata` | array[object] | The array of vector metadata properties |
+| Array Vector (required) | `array-vector` | array[array] | The array of vector values |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Batch insert status |
+
+
+
+
+
+
+### Insert
+
+Insert a vector object into a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_INSERT` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to upsert the object into |
+| Vector (required) | `vector` | array[number] | An array of dimensions for the vector value |
+| Metadata (required) | `metadata` | object | The vector metadata properties |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Upsert status |
+
+
+
+
+
+
+### Delete
+
+Delete vector objects from a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DELETE` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to delete the object from |
+| Filter (required) | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Delete status |
+
+
+
+
+
+
+### Delete Collection
+
+Delete a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DELETE_COLLECTION` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to delete |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Delete collection status |
+
+
+
+
+
+
+

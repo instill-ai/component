@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/instill-ai/component/base"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/fault"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/filters"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/graphql"
@@ -52,6 +51,10 @@ type DeleteInput struct {
 	Filter         map[string]any `json:"filter"`
 }
 
+type DeleteOutput struct {
+	Status string `json:"status"`
+}
+
 type BatchInsertInput struct {
 	CollectionName string           `json:"collection-name"`
 	ArrayMetadata  []map[string]any `json:"array-metadata"`
@@ -66,7 +69,7 @@ type DeleteCollectionInput struct {
 	CollectionName string `json:"collection-name"`
 }
 
-type DeleteOutput struct {
+type DeleteCollectionOutput struct {
 	Status string `json:"status"`
 }
 
@@ -150,8 +153,8 @@ func jsonToWhereBuilder(jsonWhere *map[string]any) (*filters.WhereBuilder, error
 	return where, nil
 }
 
-func getAllFields(ctx context.Context, client *weaviate.Client, collectionName string) ([]string, error) {
-	res, err := client.Schema().ClassGetter().WithClassName(collectionName).Do(ctx)
+func getAllFields(ctx context.Context, client WeaviateSchemaAPIClassGetterClient, collectionName string) ([]string, error) {
+	res, err := client.WithClassName(collectionName).Do(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +191,7 @@ func getAllFields(ctx context.Context, client *weaviate.Client, collectionName s
 	return fields, nil
 }
 
-func VectorSearch(ctx context.Context, client *weaviate.Client, inputStruct VectorSearchInput) ([]map[string]any, error) {
+func VectorSearch(ctx context.Context, client WeaviateClient, inputStruct VectorSearchInput) ([]map[string]any, error) {
 	collectionName := inputStruct.CollectionName
 	filter := inputStruct.Filter
 	limit := inputStruct.Limit
@@ -196,11 +199,10 @@ func VectorSearch(ctx context.Context, client *weaviate.Client, inputStruct Vect
 	vector := inputStruct.Vector
 	tenant := inputStruct.Tenant
 
-	nearVector := client.GraphQL().
-		NearVectorArgBuilder().
+	nearVector := client.graphQLNearVectorArgumentBuilder.
 		WithVector(vector)
 
-	withBuilder := client.GraphQL().Get().
+	withBuilder := client.graphQLAPIGetClient.
 		WithClassName(collectionName).
 		WithNearVector(nearVector)
 
@@ -220,7 +222,7 @@ func VectorSearch(ctx context.Context, client *weaviate.Client, inputStruct Vect
 		{Name: "vector"},
 	}}}
 	if len(rawFields) == 0 || rawFields == nil {
-		allFields, err := getAllFields(ctx, client, collectionName)
+		allFields, err := getAllFields(ctx, client.schemaAPIClassGetterClient, collectionName)
 		if err != nil {
 			return nil, err
 		}
@@ -275,7 +277,7 @@ func (e *execution) insert(ctx context.Context, in *structpb.Struct) (*structpb.
 		return nil, err
 	}
 
-	_, err = e.client.Data().Creator().
+	_, err = e.client.dataAPICreatorClient.
 		WithClassName(inputStruct.CollectionName).
 		WithVector(inputStruct.Vector).
 		WithProperties(inputStruct.Metadata).
@@ -302,7 +304,7 @@ func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*str
 		return nil, err
 	}
 
-	res, err := VectorSearch(ctx, e.client, inputStruct)
+	res, err := VectorSearch(ctx, *e.client, inputStruct)
 	if err != nil {
 		return nil, err
 	}
@@ -368,7 +370,7 @@ func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.
 		return nil, err
 	}
 
-	res, err := e.client.Batch().ObjectsBatchDeleter().
+	res, err := e.client.batchAPIDeleterClient.
 		WithClassName(collectionName).
 		WithWhere(where).
 		Do(ctx)
@@ -399,7 +401,7 @@ func (e *execution) batchInsert(ctx context.Context, in *structpb.Struct) (*stru
 	arrayProperties := inputStruct.ArrayMetadata
 	arrayVector := inputStruct.ArrayVector
 
-	batcher := e.client.Batch().ObjectsBatcher()
+	batcher := e.client.batchAPIBatcherClient
 	for i, properties := range arrayProperties {
 		batcher.WithObjects(&models.Object{
 			Class:      collectionName,
@@ -407,7 +409,11 @@ func (e *execution) batchInsert(ctx context.Context, in *structpb.Struct) (*stru
 			Vector:     arrayVector[i],
 		})
 	}
-	batcher.Do(ctx)
+	_, err = batcher.Do(ctx)
+
+	if err != nil {
+		return nil, err
+	}
 
 	outputStruct := BatchInsertOutput{
 		Status: fmt.Sprintf("Successfully batch inserted %d objects", len(arrayProperties)),
@@ -429,7 +435,7 @@ func (e *execution) deleteCollection(ctx context.Context, in *structpb.Struct) (
 
 	collectionName := inputStruct.CollectionName
 
-	if err := e.client.Schema().ClassDeleter().
+	if err := e.client.schemaAPIDeleterClient.
 		WithClassName(collectionName).
 		Do(context.Background()); err != nil {
 		if status, ok := err.(*fault.WeaviateClientError); ok && status.StatusCode != http.StatusBadRequest {
@@ -437,7 +443,7 @@ func (e *execution) deleteCollection(ctx context.Context, in *structpb.Struct) (
 		}
 	}
 
-	outputStruct := DeleteOutput{
+	outputStruct := DeleteCollectionOutput{
 		Status: "Successfully deleted 1 collection",
 	}
 
