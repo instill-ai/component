@@ -54,6 +54,7 @@ func trigger(gRPCClient modelPB.ModelPublicServiceClient, vars map[string]any, n
 		NamespaceId: nsID,
 		ModelId:     modelID,
 		Version:     version,
+		TaskInputs:  taskInputs,
 	})
 	if err != nil || res == nil {
 		return nil, err
