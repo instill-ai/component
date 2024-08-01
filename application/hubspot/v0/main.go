@@ -27,6 +27,7 @@ const (
 	taskGetThread           = "TASK_GET_THREAD"
 	taskInsertMessage       = "TASK_INSERT_MESSAGE"
 	taskRetrieveAssociation = "TASK_RETRIEVE_ASSOCIATION"
+	taskGetOwner            = "TASK_GET_OWNER"
 )
 
 var (
@@ -111,6 +112,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.InsertMessage
 	case taskRetrieveAssociation:
 		e.execute = e.RetrieveAssociation
+	case taskGetOwner:
+		e.execute = e.GetOwner
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}

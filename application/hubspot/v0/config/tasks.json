@@ -1137,7 +1137,12 @@
     "input": {
       "description": "Ticket information",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": ["ticket-id", "ticket-name", "ticket-status", "pipeline"],
+      "instillEditOnNodeFields": [
+        "ticket-id",
+        "ticket-name",
+        "ticket-status",
+        "pipeline"
+      ],
       "properties": {
         "ticket-id": {
           "description": "Input ticket ID",
@@ -1528,6 +1533,155 @@
         }
       },
       "required": ["object-ids"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_OWNER": {
+    "instillShortDescription": "Get information about HubSpot owner using either owner ID or user ID. For more information about owner, please go to: https://developers.hubspot.com/docs/api/crm/owners",
+    "input": {
+      "description": "Owner information and type",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["id-type", "id"],
+      "properties": {
+        "id-type": {
+          "enum": ["Owner ID", "User ID"],
+          "example": "Owner ID",
+          "description": "Specify the type of ID you will use to get owner's information.",
+          "instillAcceptFormats": ["string"],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "ID Type",
+          "type": "string"
+        },
+        "id": {
+          "description": "Can either be owner ID or user ID; according to the ID type you selected.",
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": ["id-type", "id"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Owner's detailed information",
+      "instillUIOrder": 0,
+      "properties": {
+        "first-name": {
+          "description": "First name",
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "First Name",
+          "type": "string",
+          "instillFormat": "string"
+        },
+        "last-name": {
+          "description": "Last name",
+          "instillUIOrder": 1,
+          "required": [],
+          "title": "Last Name",
+          "type": "string",
+          "instillFormat": "string"
+        },
+        "email": {
+          "description": "Email",
+          "instillUIOrder": 2,
+          "required": [],
+          "title": "Email",
+          "type": "string",
+          "instillFormat": "string"
+        },
+        "owner-id": {
+          "description": "Owner ID. Usually used to associate the owner with other objects.",
+          "instillUIOrder": 3,
+          "required": [],
+          "title": "Owner ID",
+          "type": "string",
+          "instillFormat": "string"
+        },
+        "user-id": {
+          "description": "User ID. Usually used to indicate the owner who performed the action. User ID can be seen in Update Deal task output.",
+          "instillUIOrder": 4,
+          "required": [],
+          "title": "User ID",
+          "type": "string",
+          "instillFormat": "string"
+        },
+        "teams": {
+          "description": "The owner's teams information",
+          "instillFormat": "array",
+          "instillUIOrder": 5,
+          "title": "Teams",
+          "type": "array",
+          "items": {
+            "title": "The owner's team information",
+            "type": "object",
+            "properties": {
+              "team-name": {
+                "description": "The name of the team",
+                "instillFormat": "string",
+                "instillUIOrder": 0,
+                "title": "Team Name",
+                "type": "string"
+              },
+              "team-id": {
+                "description": "The ID of the team",
+                "instillFormat": "string",
+                "instillUIOrder": 1,
+                "title": "Team ID",
+                "type": "string"
+              },
+              "team-primary": {
+                "description": "Indicate whether this team is the primary team of the owner",
+                "instillFormat": "boolean",
+                "instillUIOrder": 2,
+                "title": "Team Primary",
+                "type": "boolean"
+              }
+            },
+            "required": ["team-name", "team-id", "team-primary"]
+          }
+        },
+        "created-at": {
+          "description": "Created at",
+          "instillUIOrder": 6,
+          "required": [],
+          "title": "Created At",
+          "type": "string",
+          "instillFormat": "string"
+        },
+        "updated-at": {
+          "description": "Updated at",
+          "instillUIOrder": 7,
+          "required": [],
+          "title": "Updated At",
+          "type": "string",
+          "instillFormat": "string"
+        },
+        "archived": {
+          "description": "Archived",
+          "instillUIOrder": 8,
+          "required": [],
+          "title": "Archived",
+          "type": "boolean",
+          "instillFormat": "boolean"
+        }
+      },
+      "required": [
+        "first-name",
+        "last-name",
+        "email",
+        "owner-id",
+        "user-id",
+        "created-at",
+        "updated-at",
+        "archived"
+      ],
       "title": "Output",
       "type": "object"
     }

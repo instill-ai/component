@@ -12,7 +12,8 @@
     "TASK_UPDATE_TICKET",
     "TASK_GET_THREAD",
     "TASK_INSERT_MESSAGE",
-    "TASK_RETRIEVE_ASSOCIATION"
+    "TASK_RETRIEVE_ASSOCIATION",
+    "TASK_GET_OWNER"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/hubspot",
   "icon": "assets/hubspot.svg",
