@@ -191,6 +191,11 @@ func getAllFields(ctx context.Context, client *schema.ClassGetter, collectionNam
 	return fields, nil
 }
 
+// vector is optional, nil will return all objects
+// fields is optional, nil will return all objects
+// limit is optional, 0 will return all objects
+// tenant is optional, required for multi-tenancy
+// filter is optional, nil will have no filter
 func VectorSearch(ctx context.Context, client weaviate.Client, inputStruct VectorSearchInput) ([]map[string]any, error) {
 	collectionName := inputStruct.CollectionName
 	filter := inputStruct.Filter
@@ -199,13 +204,15 @@ func VectorSearch(ctx context.Context, client weaviate.Client, inputStruct Vecto
 	vector := inputStruct.Vector
 	tenant := inputStruct.Tenant
 
-	nearVector := client.GraphQL().NearVectorArgBuilder().
-		WithVector(vector)
-
 	withBuilder := client.GraphQL().Get().
-		WithClassName(collectionName).
-		WithNearVector(nearVector)
+		WithClassName(collectionName)
 
+	if vector != nil {
+		nearVector := client.GraphQL().NearVectorArgBuilder().
+			WithVector(vector)
+
+		withBuilder.WithNearVector(nearVector)
+	}
 	if filter != nil {
 		where, err := jsonToWhereBuilder(&filter)
 		if err != nil {

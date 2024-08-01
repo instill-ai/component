@@ -18,7 +18,7 @@
           "type": "string"
         },
         "vector": {
-          "description": "An array of dimensions for the vector query",
+          "description": "An array of dimensions for the vector query, optional. If not provided, all objects will be returned",
           "instillAcceptFormats": [
             "array:number",
             "array:integer"
@@ -114,8 +114,7 @@
         }
       },
       "required": [
-        "collection-name",
-        "vector"
+        "collection-name"
       ],
       "instillEditOnNodeFields": [
         "collection-name",
