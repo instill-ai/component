@@ -60,14 +60,16 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+// CreateExecution initializes a connector executor that can be used in a
+// pipeline trigger.
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	ctx := context.Background()
-	githubClient := newClient(ctx, setup)
+	githubClient := newClient(ctx, x.Setup)
 	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
+		ComponentExecution: x,
 		client:             githubClient,
 	}
-	switch task {
+	switch x.Task {
 	case taskListPRs:
 		e.execute = e.client.listPullRequestsTask
 	case taskGetPR:
@@ -88,12 +90,12 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.client.createWebhookTask
 	default:
 		return nil, errmsg.AddMessage(
-			fmt.Errorf("not supported task: %s", task),
-			fmt.Sprintf("%s task is not supported.", task),
+			fmt.Errorf("not supported task: %s", x.Task),
+			fmt.Sprintf("%s task is not supported.", x.Task),
 		)
 	}
 
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {

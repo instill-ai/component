@@ -2,7 +2,7 @@
 
 package ollama
 
-//go:generate minimock -i github.com/instill-ai/component/ai/ollama/v0.OllamaClientInterface -o ollama_client_interface_mock_test.go -n OllamaClientInterfaceMock -p ollama
+//go:generate minimock -i github.com/instill-ai/component/ai/ollama/v0.OllamaClientInterface -o ollama_client_interface_mock.gen.go -n OllamaClientInterfaceMock -p ollama
 
 import (
 	_ "embed"

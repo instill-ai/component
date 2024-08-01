@@ -24,7 +24,7 @@ require (
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/gofrs/uuid v4.4.0+incompatible
-	github.com/gojuno/minimock/v3 v3.3.6
+	github.com/gojuno/minimock/v3 v3.3.13
 	github.com/google/go-github/v62 v62.0.0
 	github.com/google/uuid v1.6.0
 	github.com/h2non/filetype v1.1.3

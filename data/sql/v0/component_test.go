@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"strings"
 	"testing"
 
@@ -37,8 +36,7 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 	defer mockDB.Close()
 
 	if strings.Contains(query, "INSERT") {
-		fmt.Print(arg)
-		arg = map[string]interface{}{
+		insertArg := map[string]interface{}{
 			"id":   "1",
 			"name": "John Doe",
 		}
@@ -46,18 +44,18 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 		mock.ExpectExec("INSERT INTO users \\(id, name\\) VALUES \\(\\?, \\?\\)").
 			WithArgs("1", "John Doe").WillReturnResult(sqlmock.NewResult(1, 1))
 
-		return sqlxDB.NamedExec("INSERT INTO users (id, name) VALUES (:id, :name)", arg)
+		return sqlxDB.NamedExec("INSERT INTO users (id, name) VALUES (:id, :name)", insertArg)
 	} else if strings.Contains(query, "INSERT INTO usersMany") {
-		arg = []map[string]interface{}{
+		insertManyArg := []map[string]interface{}{
 			{"id": "1", "name": "John Doe"},
 		}
 
 		mock.ExpectExec("INSERT INTO usersMany \\(id, name\\) VALUES \\(\\?, \\?\\), \\(\\?, \\?\\)").
 			WithArgs("1", "John Doe", "2", "Jane Doe").WillReturnResult(sqlmock.NewResult(1, 1))
 
-		return sqlxDB.NamedExec("INSERT INTO usersMany (id, name) VALUES (:id, :name), (:id, :name)", arg)
+		return sqlxDB.NamedExec("INSERT INTO usersMany (id, name) VALUES (:id, :name), (:id, :name)", insertManyArg)
 	} else if strings.Contains(query, "DELETE") {
-		arg = map[string]interface{}{
+		deleteArg := map[string]interface{}{
 			"id":   "1",
 			"name": "john",
 		}
@@ -65,9 +63,9 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 		mock.ExpectExec("DELETE FROM users WHERE id = \\? AND name = \\?").
 			WithArgs("1", "john").WillReturnResult(sqlmock.NewResult(1, 1))
 
-		return sqlxDB.NamedExec("DELETE FROM users WHERE id = :id AND name = :name", arg)
+		return sqlxDB.NamedExec("DELETE FROM users WHERE id = :id AND name = :name", deleteArg)
 	} else if strings.Contains(query, "UPDATE") {
-		arg = map[string]interface{}{
+		updateArg := map[string]interface{}{
 			"id":   "1",
 			"name": "John Doe Updated",
 		}
@@ -75,9 +73,9 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 		mock.ExpectExec("UPDATE users SET id = \\?, name = \\? WHERE id = \\? AND name = \\?").
 			WithArgs("1", "John Doe Updated", "1", "John Doe Updated").WillReturnResult(sqlmock.NewResult(1, 1))
 
-		return sqlxDB.NamedExec("UPDATE users SET id = :id, name = :name WHERE id = :id AND name = :name", arg)
+		return sqlxDB.NamedExec("UPDATE users SET id = :id, name = :name WHERE id = :id AND name = :name", updateArg)
 	} else if strings.Contains(query, "CREATE") {
-		arg = map[string]interface{}{
+		createArg := map[string]interface{}{
 			"id":   "INT",
 			"name": "VARCHAR(255)",
 		}
@@ -85,14 +83,14 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 		mock.ExpectExec("CREATE TABLE users \\(id INT, name VARCHAR\\(255\\)\\)").
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
-		return sqlxDB.NamedExec("CREATE TABLE users (id INT, name VARCHAR(255))", arg)
+		return sqlxDB.NamedExec("CREATE TABLE users (id INT, name VARCHAR(255))", createArg)
 	} else if strings.Contains(query, "DROP") {
-		arg = map[string]interface{}{}
+		dropArg := map[string]interface{}{}
 
 		mock.ExpectExec("DROP TABLE users").
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
-		return sqlxDB.NamedExec("DROP TABLE users", arg)
+		return sqlxDB.NamedExec("DROP TABLE users", dropArg)
 	}
 
 	return nil, nil
@@ -142,12 +140,11 @@ func TestComponent_ExecuteInsertTask(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.insert
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -204,12 +201,11 @@ func TestComponent_ExecuteInsertManyTask(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.insertMany
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -268,12 +264,11 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.update
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -332,12 +327,11 @@ func TestComponent_ExecuteSelectTask(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.selects
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -392,12 +386,11 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.delete
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -455,12 +448,11 @@ func TestComponent_ExecuteCreateTableTask(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.createTable
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -514,12 +506,11 @@ func TestComponent_ExecuteDropTableTask(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.dropTable
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
