@@ -1,0 +1,202 @@
+---
+title: "Artifact"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP Artifact component https://github.com/instill-ai/instill-core"
+---
+
+The Artifact component is a data component that allows users to manipulate and smart search files and data in the artifact store.
+It can carry out the following tasks:
+
+- [Upload Files](#upload-files)
+- [Get Files Metadata](#get-files-metadata)
+- [Get Chunks Metadata](#get-chunks-metadata)
+- [Get File In Markdown](#get-file-in-markdown)
+- [Match File Status](#match-file-status)
+- [Search Chunks](#search-chunks)
+- [Reply Question](#reply-question)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/artifact/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| API Token (required) | `token` | string | Fill in your API token, you can get token through Console > Settings > API Tokens > Create Token |
+| Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
+
+
+
+
+## Supported Tasks
+
+### Upload Files
+
+Upload and process the files into chunks into Catalog
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPLOAD_FILES` |
+| Option (required) | `option` | object | Choose to upload the files to existing catalog or create a new catalog |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Files | `files` | array[object] | Result of uploading files into catalog |
+
+
+
+
+
+
+### Get Files Metadata
+
+get the metadata of the files in the catalog
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_FILES_METADATA` |
+| Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Files | `files` | array[object] | Files metadata in catalog |
+
+
+
+
+
+
+### Get Chunks Metadata
+
+get the metadata of the chunks from a file in the catalog
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_CHUNKS_METADATA` |
+| Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
+| File UID | `file-uid` | string | The unique identifier of the file |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Chunks | `chunks` | array[object] | Chunks metadata of the file in catalog |
+
+
+
+
+
+
+### Get File In Markdown
+
+get the file content in markdown format
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_FILE_IN_MARKDOWN` |
+| Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
+| File UID | `file-uid` | string | The unique identifier of the file |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| File Texts (optional) | `file-texts` | array[object] | File content in markdown format |
+
+
+
+
+
+
+### Match File Status
+
+Check if the specified file's processing status is done
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_MATCH_FILE_STATUS` |
+| Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to check files' processing status in the Catalog |
+| File UID (required) | `file-uid` | string | The unique identifier of the file |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `succeeded` | boolean | The status of the file processing, if succeeded, return true |
+
+
+
+
+
+
+### Search Chunks
+
+search the chunks in the catalog
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_SEARCH_CHUNKS` |
+| Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
+| Text Prompt (required) | `text-prompt` | string | The prompt string to search the chunks |
+| Top K | `top-k` | integer | The number of top chunks to return |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Chunks | `chunks` | array[object] | Chunks data from smart search |
+
+
+
+
+
+
+### Reply Question
+
+Reply the questions based on the files in the catalog
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_REPLY_QUESTION` |
+| Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
+| Question (required) | `question` | string | The question to reply |
+| Top K | `top-k` | integer | The number of top answers to return |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Answer | `answer` | string | Answers data from smart search |
+| Chunks (optional) | `chunks` | array[object] | Chunks data to answer question |
+
+
+
+
+
+
+

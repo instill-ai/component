@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "token": {
+      "description": "Fill in your API token, you can get token through Console > Settings > API Tokens > Create Token",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": true,
+      "instillUIOrder": 0,
+      "title": "API Token",
+      "type": "string"
+    },
+    "namespace": {
+      "description": "Fill in your namespace, you can get namespace through the tab of switching namespace",
+      "instillUpstreamTypes": [
+        "reference",
+        "value"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 1,
+      "title": "Namespace",
+      "type": "string"
+    }
+  },
+  "required": [
+    "token",
+    "namespace"
+  ],
+  "instillEditOnNodeFields": [
+    "token",
+    "namespace"
+  ],
+  "title": "Artifact Setup",
+  "type": "object"
+}
