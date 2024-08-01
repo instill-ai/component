@@ -99,7 +99,7 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	// API calls to retrieve association for Threads and CRM objects are different
@@ -151,7 +151,7 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil

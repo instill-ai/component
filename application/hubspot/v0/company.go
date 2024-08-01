@@ -1,7 +1,9 @@
 package hubspot
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 
 	hubspot "github.com/belong-inc/go-hubspot"
 	"github.com/instill-ai/component/base"
@@ -56,13 +58,17 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	res, err := e.client.CRM.Company.Get(inputStruct.CompanyID, &TaskGetCompanyResp{}, &hubspot.RequestQueryOption{Associations: []string{"contacts"}})
 
 	if err != nil {
-		return nil, err
+		if strings.Contains(err.Error(), "404") {
+			return nil, fmt.Errorf("404: unable to read response from hubspot: no company was found")
+		} else {
+			return nil, err
+		}
 	}
 
 	companyInfo := res.Properties.(*TaskGetCompanyResp)
@@ -123,7 +129,7 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil
@@ -176,7 +182,7 @@ func (e *execution) CreateCompany(input *structpb.Struct) (*structpb.Struct, err
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	var annualRevenue string
@@ -215,7 +221,7 @@ func (e *execution) CreateCompany(input *structpb.Struct) (*structpb.Struct, err
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	// This section is for creating associations (company -> object)

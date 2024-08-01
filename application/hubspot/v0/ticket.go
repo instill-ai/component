@@ -1,6 +1,7 @@
 package hubspot
 
 import (
+	"fmt"
 	"strings"
 
 	hubspot "github.com/belong-inc/go-hubspot"
@@ -95,12 +96,16 @@ func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) 
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	res, err := e.client.Ticket.Get(inputStruct.TicketID)
 	if err != nil {
-		return nil, err
+		if strings.Contains(err.Error(), "404") {
+			return nil, fmt.Errorf("404: unable to read response from hubspot: no ticket was found")
+		} else {
+			return nil, err
+		}
 	}
 
 	ticketInfo := res.Properties.(*TaskGetTicketResp)
@@ -137,7 +142,7 @@ func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) 
 
 	output, err := base.ConvertToStructpb(outputStruct)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil
@@ -176,7 +181,7 @@ func (e *execution) CreateTicket(input *structpb.Struct) (*structpb.Struct, erro
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	req := TaskCreateTicketReq{
@@ -203,7 +208,7 @@ func (e *execution) CreateTicket(input *structpb.Struct) (*structpb.Struct, erro
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	// This section is for creating associations (ticket -> object)

@@ -113,7 +113,7 @@ func (e *execution) GetThread(input *structpb.Struct) (*structpb.Struct, error) 
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	res, err := e.client.Thread.Get(inputStruct.ThreadID)
@@ -171,7 +171,7 @@ func (e *execution) GetThread(input *structpb.Struct) (*structpb.Struct, error) 
 
 	output, err := base.ConvertToStructpb(outputStruct)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil
@@ -234,7 +234,7 @@ func (e *execution) InsertMessage(input *structpb.Struct) (*structpb.Struct, err
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	recipients := make([]taskInsertMessageReqRecipient, len(inputStruct.Recipients))
@@ -275,7 +275,7 @@ func (e *execution) InsertMessage(input *structpb.Struct) (*structpb.Struct, err
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil

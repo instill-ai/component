@@ -1,7 +1,9 @@
 package hubspot
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 
 	hubspot "github.com/belong-inc/go-hubspot"
 	"github.com/instill-ai/component/base"
@@ -43,7 +45,7 @@ func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	// get deal information
@@ -51,7 +53,11 @@ func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
 	res, err := e.client.CRM.Deal.Get(inputStruct.DealID, &TaskGetDealResp{}, &hubspot.RequestQueryOption{Associations: []string{"contacts"}})
 
 	if err != nil {
-		return nil, err
+		if strings.Contains(err.Error(), "404") {
+			return nil, fmt.Errorf("404: unable to read response from hubspot: no deal was found")
+		} else {
+			return nil, err
+		}
 	}
 
 	dealInfo := res.Properties.(*TaskGetDealResp)
@@ -95,7 +101,7 @@ func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil
@@ -135,7 +141,7 @@ func (e *execution) CreateDeal(input *structpb.Struct) (*structpb.Struct, error)
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	var amount string
@@ -167,7 +173,7 @@ func (e *execution) CreateDeal(input *structpb.Struct) (*structpb.Struct, error)
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	// This section is for creating associations (deal -> object)
