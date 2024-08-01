@@ -115,7 +115,7 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 		}
 
 		if len(res.Results) == 0 {
-			return nil, fmt.Errorf("no object ID (%s) found associated with contact ID %s", inputStruct.ObjectType, inputStruct.ContactID)
+			return nil, fmt.Errorf("no object ID (%s) is found to be associated with contact ID %s", inputStruct.ObjectType, inputStruct.ContactID)
 		}
 
 		objectIDs = make([]string, len(res.Results))
@@ -133,7 +133,7 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 		}
 
 		if len(res.Results) == 0 {
-			return nil, fmt.Errorf("no object ID (%s) found associated with contact ID %s", inputStruct.ObjectType, inputStruct.ContactID)
+			return nil, fmt.Errorf("no object ID (%s) is found to be associated with contact ID %s", inputStruct.ObjectType, inputStruct.ContactID)
 		}
 
 		// only take the first Result, because the input is only one contact id
