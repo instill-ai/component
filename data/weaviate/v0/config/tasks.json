@@ -11,8 +11,9 @@
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "title": "Collection Name",
           "type": "string"
@@ -25,7 +26,9 @@
           ],
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "items": {
             "description": "A dimension of the vector",
@@ -78,7 +81,9 @@
           ],
           "instillUIOrder": 4,
           "instillUpstreamTypes": [
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "title": "Filter",
           "type": "object",
@@ -106,8 +111,9 @@
           ],
           "instillUIOrder": 6,
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "title": "Tenant",
           "type": "string"
@@ -211,8 +217,9 @@
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "title": "Collection Name",
           "type": "string"
@@ -225,7 +232,9 @@
           ],
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "items": {
             "description": "A dimension of the vector",
@@ -243,7 +252,9 @@
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "title": "Metadata",
           "type": "object",
@@ -288,8 +299,9 @@
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "title": "Collection Name",
           "type": "string"
@@ -302,7 +314,9 @@
           "instillShortDescription": "The vector metadata properties",
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "minItems": 1,
           "title": "Array Metadata",
@@ -322,7 +336,9 @@
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "items": {
             "description": "An array of dimensions for the vector value",
@@ -380,8 +396,9 @@
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "title": "Collection Name",
           "type": "string"
@@ -393,7 +410,9 @@
           ],
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "title": "Filter",
           "type": "object",
@@ -437,8 +456,9 @@
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
-            "value",
-            "reference"
+            "reference",
+            "template",
+            "value"
           ],
           "title": "Collection Name",
           "type": "string"
