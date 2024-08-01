@@ -37,8 +37,6 @@ var (
 	setupJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
-	//go:embed config/openai.json
-	openAIJSON []byte
 
 	once sync.Once
 	comp *component
@@ -55,7 +53,7 @@ type component struct {
 func Init(bc base.Component) *component {
 	once.Do(func() {
 		comp = &component{Component: bc}
-		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, map[string][]byte{"openai.json": openAIJSON})
+		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}

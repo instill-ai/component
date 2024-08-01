@@ -12,7 +12,8 @@
         "video": {
           "description": "Base64 encoded video",
           "instillAcceptFormats": [
-            "video/*"
+            "video/*",
+            "application/octet-stream"
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
@@ -100,7 +101,8 @@
         "video": {
           "description": "Base64 encoded video",
           "instillAcceptFormats": [
-            "video/*"
+            "video/*",
+            "application/octet-stream"
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
@@ -162,7 +164,7 @@
       "properties": {
         "frames": {
           "description": "Base64 encoded sub-sampled frames",
-          "instillFormat": "image/*",
+          "instillFormat": "array:image/*",
           "instillUIOrder": 0,
           "items": {
             "type": "string",

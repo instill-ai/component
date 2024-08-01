@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/instill-ai/component/base"
@@ -59,8 +58,6 @@ func subsampleVideo(input *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("error in decoding for inner: %s", err)
 	}
 
-	videoPrefix := strings.Split(base64Video, ",")[0]
-
 	// TODO: chuang8511 map the file extension to the correct format
 	tempInputFile, err := os.CreateTemp("", "temp.*.mp4")
 
@@ -92,7 +89,7 @@ func subsampleVideo(input *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	byOut, _ := os.ReadFile(tempOutputFileName)
-	base64Subsample := videoPrefix + "," + base64.StdEncoding.EncodeToString(byOut)
+	base64Subsample := "data:video/mp4;base64," + base64.StdEncoding.EncodeToString(byOut)
 
 	output := SubsampleVideoOutput{
 		Video: Video(base64Subsample),
@@ -109,6 +106,10 @@ func getKwArgs(inputStruct SubsampleVideoInput) ffmpeg.KwArgs {
 	if inputStruct.Duration != "" {
 		kwArgs["t"] = inputStruct.Duration
 	}
+	// Set yuv420p to ensure video compatibility across various operating
+	// systems video viewer.
+	kwArgs["pix_fmt"] = "yuv420p"
+
 	return kwArgs
 }
 

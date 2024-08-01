@@ -9,9 +9,9 @@ import (
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
 )
 
-func (e *execution) executeTextGeneration(grpcClient modelPB.ModelPublicServiceClient, modelName string, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) executeTextGeneration(grpcClient modelPB.ModelPublicServiceClient, nsID string, modelID string, version string, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	if len(inputs) <= 0 {
-		return nil, fmt.Errorf("invalid input: %v for model: %s", inputs, modelName)
+		return nil, fmt.Errorf("invalid input: %v for model: %s/%s/%s", inputs, nsID, modelID, version)
 	}
 
 	if grpcClient == nil {
@@ -38,17 +38,17 @@ func (e *execution) executeTextGeneration(grpcClient modelPB.ModelPublicServiceC
 		}
 
 		// only support batch 1
-		taskOutputs, err := trigger(grpcClient, e.SystemVariables, modelName, []*modelPB.TaskInput{{Input: taskInput}})
+		taskOutputs, err := trigger(grpcClient, e.SystemVariables, nsID, modelID, version, []*modelPB.TaskInput{{Input: taskInput}})
 		if err != nil {
 			return nil, err
 		}
 		if len(taskOutputs) <= 0 {
-			return nil, fmt.Errorf("invalid output: %v for model: %s", taskOutputs, modelName)
+			return nil, fmt.Errorf("invalid output: %v for model: %s/%s/%s", taskOutputs, nsID, modelID, version)
 		}
 
 		textGenOutput := taskOutputs[0].GetTextGeneration()
 		if textGenOutput == nil {
-			return nil, fmt.Errorf("invalid output: %v for model: %s", textGenOutput, modelName)
+			return nil, fmt.Errorf("invalid output: %v for model: %s/%s/%s", textGenOutput, nsID, modelID, version)
 		}
 		outputJSON, err := protojson.MarshalOptions{
 			UseProtoNames:   true,

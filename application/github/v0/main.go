@@ -113,3 +113,15 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 
 	return outputs, nil
 }
+
+func (c *component) HandleVerificationEvent(header map[string][]string, req *structpb.Struct, setup map[string]any) (isVerification bool, resp *structpb.Struct, err error) {
+	if len(header["x-github-event"]) > 0 && header["x-github-event"][0] == "ping" {
+		return true, nil, nil
+	}
+	return false, nil, nil
+}
+
+func (c *component) ParseEvent(ctx context.Context, req *structpb.Struct, setup map[string]any) (parsed *structpb.Struct, err error) {
+	// TODO: parse and validate event
+	return req, nil
+}

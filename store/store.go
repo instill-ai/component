@@ -164,6 +164,13 @@ func (s *Store) CreateExecution(defUID uuid.UUID, sysVars map[string]any, setup 
 	return nil, fmt.Errorf("component definition not found")
 }
 
+func (s *Store) HandleVerificationEvent(defID string, header map[string][]string, req *structpb.Struct, setup map[string]any) (bool, *structpb.Struct, error) {
+	if c, ok := s.componentIDMap[defID]; ok {
+		return c.comp.HandleVerificationEvent(header, req, setup)
+	}
+	return false, nil, fmt.Errorf("component definition not found")
+}
+
 // GetDefinitionByUID returns a component definition by its UID.
 func (s *Store) GetDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
 	if c, ok := s.componentUIDMap[defUID]; ok {
