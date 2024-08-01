@@ -53,7 +53,7 @@ Search for documents in Elasticsearch
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEARCH` |
-| Source Only | `source-only` | boolean | If true source only will return only documents, if false returns documents with (_id, _index, _score), default to false |
+| Source Only | `source-only` | boolean | If true source only will return only documents, if false returns documents with (_id, _index, _score), default to true |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
 | Query | `query` | string | Full text search query for search task, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
 | Filter | `filter` | object | The query dsl filter which starts with "query" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html |
@@ -97,8 +97,8 @@ Search for vector similarity search in Elasticsearch with CosineSimilarity algor
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Documents | `documents` | array | Search result documents |
 | Status | `status` | string | Search operation status |
+| Result | `result` | object | Result of the vector search operation |
 
 
 

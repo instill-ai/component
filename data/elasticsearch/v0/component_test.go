@@ -59,6 +59,51 @@ func MockESSearch(wantResp SearchOutput) *esapi.Response {
 	}
 }
 
+func MockESVectorSearch(wantResp VectorSearchOutput) *esapi.Response {
+	var Hits []Hit
+	documentsBytes, _ := json.Marshal(wantResp.Result.Documents)
+	_ = json.Unmarshal(documentsBytes, &Hits)
+
+	resp := SearchResponse{
+		Shards: struct {
+			Total      int `json:"total"`
+			Successful int `json:"successful"`
+			Skipped    int `json:"skipped"`
+			Failed     int `json:"failed"`
+		}{
+			Total:      1,
+			Successful: 1,
+			Skipped:    0,
+			Failed:     0,
+		},
+		Hits: struct {
+			Total struct {
+				Value    int    `json:"value"`
+				Relation string `json:"relation"`
+			} `json:"total"`
+			MaxScore float64 `json:"max_score"`
+			Hits     []Hit   `json:"hits"`
+		}{
+			Total: struct {
+				Value    int    `json:"value"`
+				Relation string `json:"relation"`
+			}{
+				Value:    len(wantResp.Result.Documents),
+				Relation: "eq",
+			},
+			MaxScore: 2,
+			Hits:     Hits,
+		},
+	}
+
+	b, _ := json.Marshal(resp)
+	return &esapi.Response{
+		StatusCode: 200,
+		Body:       io.NopCloser(bytes.NewReader(b)),
+		Header:     make(map[string][]string),
+	}
+}
+
 func MockESIndex(wantResp IndexOutput) *esapi.Response {
 	resp := map[string]string{"status": wantResp.Status}
 	b, _ := json.Marshal(resp)
@@ -225,7 +270,7 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 	testcases := []struct {
 		name     string
 		input    VectorSearchInput
-		wantResp SearchOutput
+		wantResp VectorSearchOutput
 		wantErr  string
 		task     string
 		count    int
@@ -238,21 +283,29 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 				FilterSQL:   "name = 'a'",
 				QueryVector: []float64{0.1, 0.2},
 				K:           2,
+				Field:       "vector",
 			},
-			wantResp: SearchOutput{
+			wantResp: VectorSearchOutput{
 				Status: "Successfully vector searched 2 documents",
-				Documents: []map[string]any{
-					{
-						"_index":  "index_name",
-						"_id":     "mockID1",
-						"_score":  1,
-						"_source": map[string]any{"name": "a", "vector": []float32{0.1, 0.2}},
+				Result: Result{
+					Documents: []map[string]any{
+						{
+							"_index":  "index_name",
+							"_id":     "mockID1",
+							"_score":  1,
+							"_source": map[string]any{"name": "a", "vector": []float64{0.1, 0.2}},
+						},
+						{
+							"_index":  "index_name",
+							"_id":     "mockID2",
+							"_score":  0.5,
+							"_source": map[string]any{"name": "b", "vector": []float64{0.2, 0.3}},
+						},
 					},
-					{
-						"_index":  "index_name",
-						"_id":     "mockID2",
-						"_score":  0.5,
-						"_source": map[string]any{"name": "b", "vector": []float32{0.2, 0.3}},
+					Vectors: [][]float64{{0.1, 0.2}, {0.2, 0.3}},
+					Metadata: []map[string]any{
+						{"name": "a"},
+						{"name": "b"},
 					},
 				},
 			},
@@ -272,7 +325,7 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: tc.task},
 				client: ESClient{
 					searchClient: func(o ...func(*esapi.SearchRequest)) (*esapi.Response, error) {
-						return MockESSearch(tc.wantResp), nil
+						return MockESVectorSearch(tc.wantResp), nil
 					},
 					sqlTranslateClient: func(body io.Reader, o ...func(*esapi.SQLTranslateRequest)) (*esapi.Response, error) {
 						return MockESSQLTranslate(), nil

@@ -71,6 +71,17 @@ type VectorSearchInput struct {
 	MinScore      float64        `json:"min-score"`
 }
 
+type Result struct {
+	Documents []map[string]any `json:"documents"`
+	Vectors   [][]float64      `json:"vectors"`
+	Metadata  []map[string]any `json:"metadata"`
+}
+
+type VectorSearchOutput struct {
+	Status string `json:"status"`
+	Result Result `json:"result"`
+}
+
 type SearchResponse struct {
 	Took     int  `json:"took"`
 	TimedOut bool `json:"timed_out"`
@@ -634,25 +645,45 @@ func (e *execution) vectorSearch(in *structpb.Struct) (*structpb.Struct, error) 
 		return nil, err
 	}
 
-	var result []map[string]any
-	if inputStruct.SourceOnly {
-		for _, hit := range resultTemp {
-			result = append(result, hit.Source)
+	var documents []map[string]any
+	var vectors [][]float64
+	var metadata []map[string]any
+
+	for _, hit := range resultTemp {
+		vector, _ := hit.Source[inputStruct.Field].([]any)
+		vectorFloat := make([]float64, len(vector))
+		for i, v := range vector {
+			vectorFloat[i] = v.(float64)
 		}
-	} else {
-		for _, hit := range resultTemp {
+		vectors = append(vectors, vectorFloat)
+
+		if inputStruct.SourceOnly {
+			documents = append(documents, hit.Source)
+		} else {
 			hitMap := make(map[string]any)
 			hitMap["_index"] = hit.Index
 			hitMap["_id"] = hit.ID
 			hitMap["_score"] = hit.Score
 			hitMap["_source"] = hit.Source
-			result = append(result, hitMap)
+			documents = append(documents, hitMap)
 		}
+
+		metadatum := make(map[string]any)
+		for key, value := range hit.Source {
+			if key != inputStruct.Field {
+				metadatum[key] = value
+			}
+		}
+		metadata = append(metadata, metadatum)
 	}
 
-	outputStruct := SearchOutput{
-		Documents: result,
-		Status:    fmt.Sprintf("Successfully vector searched %d documents", len(result)),
+	outputStruct := VectorSearchOutput{
+		Result: Result{
+			Documents: documents,
+			Vectors:   vectors,
+			Metadata:  metadata,
+		},
+		Status: fmt.Sprintf("Successfully vector searched %d documents", len(documents)),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
