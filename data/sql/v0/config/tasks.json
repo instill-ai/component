@@ -133,7 +133,7 @@
         "array-data": {
           "description": "The array data to be inserted",
           "instillAcceptFormats": [
-            "array:semi-structured/*","array:object"
+            "array:semi-structured/*","array:semi-structured/json","array:semi-structured/object", "array:object"
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
@@ -406,7 +406,9 @@
           "instillFormat": "array:semi-structured/json",
           "items": {
             "title": "Row",
-            "instillFormat": "semi-structured/json"
+            "instillFormat": "semi-structured/json",
+            "type": "object",
+            "required": []
           }
         },
         "status": {
