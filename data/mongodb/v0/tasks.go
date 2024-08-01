@@ -117,9 +117,15 @@ type VectorSearchInput struct {
 	Fields         []string       `json:"fields"`
 }
 
-type VectorSearchOutput struct {
-	Status    string           `json:"status"`
+type Result struct {
 	Documents []map[string]any `json:"documents"`
+	Vectors   [][]float64      `json:"vectors"`
+	Metadata  []map[string]any `json:"metadata"`
+}
+
+type VectorSearchOutput struct {
+	Status string `json:"status"`
+	Result Result `json:"result"`
 }
 
 func (e *execution) insert(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
@@ -611,6 +617,8 @@ func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*str
 	}
 
 	var documents []map[string]any
+	var vectors [][]float64
+	var metadata []map[string]any
 	for cursor.Next(ctx) {
 		var document map[string]any
 		err := cursor.Decode(&document)
@@ -618,11 +626,31 @@ func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*str
 			return nil, err
 		}
 		documents = append(documents, document)
+		vector, ok := document[path].(bson.A)
+		if !ok {
+			return nil, fmt.Errorf("unexpected type for vector")
+		}
+		var vectorData []float64
+		for _, v := range vector {
+			vectorData = append(vectorData, v.(float64))
+		}
+		vectors = append(vectors, vectorData)
+		metadatum := make(map[string]any)
+		for key, value := range document {
+			if key != path && key != "score" && key != "_id" {
+				metadatum[key] = value
+			}
+		}
+		metadata = append(metadata, metadatum)
 	}
 
 	outputStruct := VectorSearchOutput{
-		Status:    fmt.Sprintf("Successfully found %v documents", len(documents)),
-		Documents: documents,
+		Status: fmt.Sprintf("Successfully found %v documents", len(documents)),
+		Result: Result{
+			Documents: documents,
+			Vectors:   vectors,
+			Metadata:  metadata,
+		},
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)

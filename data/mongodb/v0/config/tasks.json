@@ -111,7 +111,7 @@
         "array-data": {
           "description": "The array data to be inserted",
           "instillAcceptFormats": [
-            "array:semi-structured/*","array:object"
+            "array:semi-structured/*","array:semi-structured/json","array:semi-structured/object","array:object"
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
@@ -931,23 +931,66 @@
           "title": "Status",
           "type": "string"
         },
-        "documents": {
-          "description": "The documents returned from the vector search operation",
-          "instillEditOnNodeFields": [],
+        "result": {
+          "description": "Result of the vector search operation",
           "instillUIOrder": 0,
-          "required": [],
-          "title": "Documents",
-          "type": "array",
-          "instillFormat": "array:semi-structured/json",
-          "items": {
-            "title": "Document",
-            "instillFormat": "semi-structured/json"
-          }
+          "title": "Result",
+          "type": "object",
+          "properties": {
+            "documents": {
+              "description": "The documents returned from the vector search operation",
+              "instillUIOrder": 0,
+              "required": [],
+              "title": "Documents",
+              "type": "array",
+              "instillFormat": "array:semi-structured/json",
+              "items": {
+                "title": "Document",
+                "format": "semi-structured/json",
+                "type": "object",
+                "required": []
+              }
+            },
+            "vectors": {
+              "description": "The vectors returned from the vector search operation",
+              "instillUIOrder": 1,
+              "title": "Vectors",
+              "type": "array",
+              "required":[],
+              "instillFormat": "array:array",
+              "items": {
+                "description": "The vector from array vectors",
+                "type": "array",
+                "instillFormat": "array",
+                "required":[],
+                "items": {
+                  "description": "A dimension of the vector",
+                  "example": 0.8167237,
+                  "type": "number"
+                }
+              }
+            },
+            "metadata": {
+              "description": "The metadata returned from the vector search operation",
+              "instillUIOrder": 2,
+              "title": "Metadata",
+              "type": "array",
+              "required": [],
+              "instillFormat": "array:semi-structured/json",
+              "items": {
+                "title": "Metadatum",
+                "format": "semi-structured/json",
+                "type": "object",
+                "required": []
+              }
+            }
+          },
+          "required": []
         }
       },
       "required": [
         "status",
-        "documents"
+        "result"
       ],
       "title": "Output",
       "type": "object"

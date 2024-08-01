@@ -79,7 +79,7 @@ func (m *MockMongoClient) DropOne(ctx context.Context, name string, _ ...*option
 
 func (m *MockMongoClient) Aggregate(ctx context.Context, pipeline any, opts ...*options.AggregateOptions) (*mongo.Cursor, error) {
 	mockDocs := []bson.M{
-		{"vector": []float64{0.1, 0.2}, "name": "test"},
+		{"vector": []float64{0.1, 0.2}, "name": "test", "score": 0.0},
 	}
 
 	var docs []any
@@ -133,12 +133,11 @@ func TestComponent_ExecuteInsertOneTask(t *testing.T) {
 				},
 			}
 			e.execute = e.insert
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -196,12 +195,11 @@ func TestComponent_ExecuteFindTask(t *testing.T) {
 				},
 			}
 			e.execute = e.find
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -255,12 +253,11 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 				},
 			}
 			e.execute = e.update
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -313,12 +310,11 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 				},
 			}
 			e.execute = e.delete
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -371,12 +367,11 @@ func TestComponent_ExecuteDropCollectionTask(t *testing.T) {
 				},
 			}
 			e.execute = e.dropCollection
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -429,12 +424,11 @@ func TestComponent_ExecuteDropDatabaseTask(t *testing.T) {
 				},
 			}
 			e.execute = e.dropDatabase
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -496,12 +490,11 @@ func TestComponent_ExecuteCreateSearchIndexTask(t *testing.T) {
 				},
 			}
 			e.execute = e.createSearchIndex
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -555,12 +548,11 @@ func TestComponent_ExecuteDropSearchIndexTask(t *testing.T) {
 				},
 			}
 			e.execute = e.dropSearchIndex
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -599,8 +591,12 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 			},
 			wantResp: VectorSearchOutput{
 				Status: "Successfully found 1 documents",
-				Documents: []map[string]any{
-					{"vector": []float64{0.1, 0.2}, "name": "test"},
+				Result: Result{
+					Documents: []map[string]any{
+						{"vector": []float64{0.1, 0.2}, "name": "test", "score": 0.0},
+					},
+					Vectors:  [][]float64{{0.1, 0.2}},
+					Metadata: []map[string]any{{"name": "test"}},
 				},
 			},
 		},
@@ -622,12 +618,11 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 				},
 			}
 			e.execute = e.vectorSearch
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -683,12 +678,11 @@ func TestComponent_ExecuteInsertManyTask(t *testing.T) {
 				},
 			}
 			e.execute = e.insertMany
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
