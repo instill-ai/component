@@ -62,13 +62,13 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
-		client:             newClient(setup),
+		ComponentExecution: x,
+		client:             newClient(x.Setup),
 	}
 
-	switch task {
+	switch x.Task {
 	case TaskVectorSearch:
 		e.execute = e.vectorSearch
 	case TaskInsert:
@@ -81,12 +81,12 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.deleteCollection
 	default:
 		return nil, errmsg.AddMessage(
-			fmt.Errorf("not supported task: %s", task),
-			fmt.Sprintf("%s task is not supported.", task),
+			fmt.Errorf("not supported task: %s", x.Task),
+			fmt.Sprintf("%s task is not supported.", x.Task),
 		)
 	}
 
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {

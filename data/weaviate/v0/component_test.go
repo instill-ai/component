@@ -49,12 +49,11 @@ func TestComponent_ExecuteInsertTask(t *testing.T) {
 				mockClient:         &MockWeaviateClient{},
 			}
 			e.execute = e.insert
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -109,12 +108,11 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 				},
 			}
 			e.execute = e.delete
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -164,12 +162,11 @@ func TestComponent_ExecuteDeleteCollectionTask(t *testing.T) {
 				mockClient:         &MockWeaviateClient{},
 			}
 			e.execute = e.deleteCollection
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -236,12 +233,11 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 				},
 			}
 			e.execute = e.vectorSearch
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -303,12 +299,11 @@ func TestComponent_ExecuteBatchInsertTask(t *testing.T) {
 				},
 			}
 			e.execute = e.batchInsert
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
