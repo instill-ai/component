@@ -72,21 +72,18 @@ func (c *component) WithInstillCredentials(s map[string]any) *component {
 
 // CreateExecution initializes a connector executor that can be used in a
 // pipeline trigger.
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	resolvedSetup, resolved, err := c.resolveSetup(setup)
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
+	resolvedSetup, resolved, err := c.resolveSetup(x.Setup)
 	if err != nil {
 		return nil, err
 	}
 
-	return &base.ExecutionWrapper{Execution: &execution{
-		ComponentExecution: base.ComponentExecution{
-			Component:       c,
-			SystemVariables: sysVars,
-			Setup:           resolvedSetup,
-			Task:            task,
-		},
+	x.Setup = resolvedSetup
+
+	return &execution{
+		ComponentExecution:     x,
 		usesInstillCredentials: resolved,
-	}}, nil
+	}, nil
 }
 
 // resolveSetup checks whether the component is configured to use the Instill
@@ -94,7 +91,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 // with the secret credential values.
 func (c *component) resolveSetup(setup *structpb.Struct) (*structpb.Struct, bool, error) {
 	apiKey := setup.GetFields()[cfgAPIKey].GetStringValue()
-	if apiKey != base.SecretKeyword { // TODO use empty instead of secret keyword
+	if apiKey != base.SecretKeyword {
 		return setup, false, nil
 	}
 

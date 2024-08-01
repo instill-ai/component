@@ -8,13 +8,14 @@ import (
 	"testing"
 
 	"code.sajari.com/docconv"
-	"github.com/frankban/quicktest"
-	"github.com/instill-ai/component/base"
+	qt "github.com/frankban/quicktest"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 func TestOperator(t *testing.T) {
-	c := quicktest.New(t)
+	c := qt.New(t)
 
 	fileContent, _ := os.ReadFile("testdata/test.txt")
 	base64DataURI := fmt.Sprintf("data:%s;base64,%s", docconv.MimeTypeByExtension("testdata/test.txt"), base64.StdEncoding.EncodeToString(fileContent))
@@ -38,21 +39,23 @@ func TestOperator(t *testing.T) {
 	ctx := context.Background()
 	for i := range testcases {
 		tc := &testcases[i]
-		c.Run(tc.name, func(c *quicktest.C) {
+		c.Run(tc.name, func(c *qt.C) {
 			component := Init(bc)
-			c.Assert(component, quicktest.IsNotNil)
+			c.Assert(component, qt.IsNotNil)
 
-			execution, err := component.CreateExecution(map[string]any{}, nil, tc.task)
-			c.Assert(err, quicktest.IsNil)
-			c.Assert(execution, quicktest.IsNotNil)
+			execution, err := component.CreateExecution(base.ComponentExecution{
+				Component: component,
+				Task:      tc.task,
+			})
+			c.Assert(err, qt.IsNil)
+			c.Assert(execution, qt.IsNotNil)
 
 			input := []*structpb.Struct{&tc.input}
 
-			outputs, err := execution.Execution.Execute(ctx, input)
+			outputs, err := execution.Execute(ctx, input)
 
-			c.Assert(err, quicktest.IsNil)
-			c.Assert(outputs, quicktest.HasLen, 1)
-
+			c.Assert(err, qt.IsNil)
+			c.Assert(outputs, qt.HasLen, 1)
 		})
 	}
 }

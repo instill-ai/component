@@ -80,7 +80,7 @@ func TestComponent_ExecuteGetTicketTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.GetTicket
-		exec := &base.ExecutionWrapper{Execution: e}
+		
 
 		pbInput, err := structpb.NewStruct(map[string]any{
 			"ticket-id": tc.input,
@@ -88,7 +88,7 @@ func TestComponent_ExecuteGetTicketTask(t *testing.T) {
 
 		c.Assert(err, qt.IsNil)
 
-		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+		res, err := e.Execute(ctx, []*structpb.Struct{pbInput})
 
 		c.Assert(err, qt.IsNil)
 
@@ -132,13 +132,13 @@ func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.CreateTicket
-		exec := &base.ExecutionWrapper{Execution: e}
+		
 
 		pbInput, err := base.ConvertToStructpb(tc.inputTicket)
 
 		c.Assert(err, qt.IsNil)
 
-		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+		res, err := e.Execute(ctx, []*structpb.Struct{pbInput})
 		c.Assert(err, qt.IsNil)
 
 		resString := res[0].Fields["ticket-id"].GetStringValue()

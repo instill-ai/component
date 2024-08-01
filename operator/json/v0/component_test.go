@@ -171,17 +171,20 @@ func TestOperator_Execute(t *testing.T) {
 	}
 
 	bo := base.Component{}
-	operator := Init(bo)
+	cmp := Init(bo)
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
-			exec, err := operator.CreateExecution(nil, nil, tc.task)
+			exec, err := cmp.CreateExecution(base.ComponentExecution{
+				Component: cmp,
+				Task:      tc.task,
+			})
 			c.Assert(err, qt.IsNil)
 
 			pbIn, err := structpb.NewStruct(tc.in)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Check(errmsg.Message(err), qt.Matches, tc.wantErr)
 				return
@@ -208,13 +211,16 @@ func TestOperator_CreateExecution(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{}
-	operator := Init(bc)
+	cmp := Init(bc)
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 		want := fmt.Sprintf("%s task is not supported.", task)
 
-		_, err := operator.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.IsNotNil)
 		c.Check(errmsg.Message(err), qt.Equals, want)
 	})

@@ -813,12 +813,11 @@ func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType],
 			default:
 				c.Fatalf("not supported testing task: %s", task)
 			}
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return

@@ -33,7 +33,7 @@ func TestComponent_Execute(t *testing.T) {
 	ctx := context.Background()
 
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	testcases := []struct {
 		name        string
@@ -102,11 +102,15 @@ func TestComponent_Execute(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(nil, setup, tc.task)
+			x, err := cmp.CreateExecution(base.ComponentExecution{
+				Component: cmp,
+				Setup:     setup,
+				Task:      tc.task,
+			})
 			c.Assert(err, qt.IsNil)
 
 			pbIn := new(structpb.Struct)
-			_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			_, err = x.Execute(ctx, []*structpb.Struct{pbIn})
 			c.Check(err, qt.IsNotNil)
 
 			want := "OpenAI responded with a 401 status code. Incorrect API key provided."
@@ -116,11 +120,14 @@ func TestComponent_Execute(t *testing.T) {
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
-		exec, err := connector.CreateExecution(nil, new(structpb.Struct), task)
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -132,7 +139,7 @@ func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -152,7 +159,7 @@ func TestComponent_Test(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, setup)
+		err = cmp.Test(nil, setup)
 		c.Check(err, qt.IsNotNil)
 
 		wantMsg := "OpenAI responded with a 401 status code. Incorrect API key provided."
@@ -176,7 +183,7 @@ func TestComponent_Test(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, setup)
+		err = cmp.Test(nil, setup)
 		c.Check(err, qt.IsNotNil)
 	})
 
@@ -197,7 +204,7 @@ func TestComponent_Test(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, setup)
+		err = cmp.Test(nil, setup)
 		c.Check(err, qt.IsNil)
 	})
 }
@@ -212,7 +219,7 @@ func TestComponent_WithConfig(t *testing.T) {
 	c.Run("ok - without secret", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
 
-		connector := Init(bc)
+		cmp := Init(bc)
 
 		setup, err := structpb.NewStruct(map[string]any{
 			"base-path": "foo/bar",
@@ -220,16 +227,20 @@ func TestComponent_WithConfig(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := connector.CreateExecution(nil, setup, task)
+		x, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     setup,
+			Task:      task,
+		})
 		c.Assert(err, qt.IsNil)
-		c.Check(exec.Execution.UsesInstillCredentials(), qt.IsFalse)
+		c.Check(x.UsesInstillCredentials(), qt.IsFalse)
 	})
 
 	c.Run("ok - with secret", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
 
 		secrets := map[string]any{"apikey": apiKey}
-		connector := Init(bc).WithInstillCredentials(secrets)
+		cmp := Init(bc).WithInstillCredentials(secrets)
 
 		setup, err := structpb.NewStruct(map[string]any{
 			"base-path": "foo/bar",
@@ -237,21 +248,29 @@ func TestComponent_WithConfig(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := connector.CreateExecution(nil, setup, task)
+		x, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     setup,
+			Task:      task,
+		})
 		c.Assert(err, qt.IsNil)
-		c.Check(exec.Execution.UsesInstillCredentials(), qt.IsTrue)
+		c.Check(x.UsesInstillCredentials(), qt.IsTrue)
 	})
 
 	c.Run("nok - secret not injected", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
 
-		connector := Init(bc)
+		cmp := Init(bc)
 		setup, err := structpb.NewStruct(map[string]any{
 			"api-key": "__INSTILL_SECRET",
 		})
 		c.Assert(err, qt.IsNil)
 
-		_, err = connector.CreateExecution(nil, setup, task)
+		_, err = cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     setup,
+			Task:      task,
+		})
 		c.Check(err, qt.IsNotNil)
 		c.Check(err, qt.ErrorMatches, "unresolved global credential")
 		c.Check(errmsg.Message(err), qt.Matches, "The configuration field api-key references a global secret but.*")

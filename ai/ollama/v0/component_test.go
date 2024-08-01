@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
 	"github.com/gojuno/minimock/v3"
-	"github.com/instill-ai/component/base"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/base"
 )
 
 func TestComponent_Tasks(t *testing.T) {
@@ -71,12 +73,11 @@ func TestComponent_Tasks(t *testing.T) {
 			client:             OllamaClientMock,
 		}
 		e.execute = e.TaskTextGenerationChat
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "moondream", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(TaskTextGenerationChatOuput{Text: "\nWhy did the tomato turn red?\nAnswer: Because it saw the salad dressing"})
@@ -95,12 +96,11 @@ func TestComponent_Tasks(t *testing.T) {
 			client:             OllamaClientMock,
 		}
 		e.execute = e.TaskTextGenerationChat
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "gemini", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
-		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		_, err = e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.ErrorMatches, `error when sending chat request model "gemini" not found, try pulling it first`)
 	})
 
@@ -115,12 +115,11 @@ func TestComponent_Tasks(t *testing.T) {
 			client:             OllamaClientMock,
 		}
 		e.execute = e.TaskTextEmbeddings
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "snowflake-arctic-embed:22m", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(TaskTextEmbeddingsOutput{Embedding: []float32{0.1, 0.2, 0.3, 0.4, 0.5}})
@@ -139,12 +138,11 @@ func TestComponent_Tasks(t *testing.T) {
 			client:             OllamaClientMock,
 		}
 		e.execute = e.TaskTextEmbeddings
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "snowflake-arctic-embed:23m", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
 		c.Assert(err, qt.IsNil)
 
-		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		_, err = e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.ErrorMatches, `error when sending embeddings request model "snowflake-arctic-embed:23m" not found, try pulling it first`)
 	})
 

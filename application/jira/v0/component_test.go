@@ -496,7 +496,7 @@ func TestComponent_ListSprintsTask(t *testing.T) {
 func TestAuth_nok(t *testing.T) {
 	c := qt.New(t)
 	bc := base.Component{Logger: zap.NewNop()}
-	connector := Init(bc)
+	cmp := Init(bc)
 	c.Run("nok-empty token", func(c *qt.C) {
 		setup, err := structpb.NewStruct(map[string]any{
 			"token":    "",
@@ -504,7 +504,11 @@ func TestAuth_nok(t *testing.T) {
 			"base-url": "url",
 		})
 		c.Assert(err, qt.IsNil)
-		_, err = connector.CreateExecution(nil, setup, "invalid")
+		_, err = cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     setup,
+			Task:      "invalid",
+		})
 		c.Assert(err, qt.ErrorMatches, "token not provided")
 	})
 	c.Run("nok-empty email", func(c *qt.C) {
@@ -514,7 +518,11 @@ func TestAuth_nok(t *testing.T) {
 			"base-url": "url",
 		})
 		c.Assert(err, qt.IsNil)
-		_, err = connector.CreateExecution(nil, setup, "invalid")
+		_, err = cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Setup:     setup,
+			Task:      "invalid",
+		})
 		c.Assert(err, qt.ErrorMatches, "email not provided")
 	})
 }
@@ -523,7 +531,7 @@ func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType],
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	for _, tc := range testcases {
 		c.Run(tc._type+`-`+tc.name, func(c *qt.C) {
@@ -554,12 +562,16 @@ func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType],
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(nil, setup, task)
+			e, err := cmp.CreateExecution(base.ComponentExecution{
+				Component: cmp,
+				Setup:     setup,
+				Task:      task,
+			})
 			c.Assert(err, qt.IsNil)
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return

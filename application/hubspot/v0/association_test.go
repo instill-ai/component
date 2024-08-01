@@ -101,13 +101,12 @@ func TestComponent_ExecuteRetrieveAssociationTask(t *testing.T) {
 				client:             createMockClient(),
 			}
 			e.execute = e.RetrieveAssociation
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbInput, err := base.ConvertToStructpb(tc.input)
 
 			c.Assert(err, qt.IsNil)
 
-			res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+			res, err := e.Execute(ctx, []*structpb.Struct{pbInput})
 			c.Assert(err, qt.IsNil)
 
 			resJSON, err := protojson.Marshal(res[0])

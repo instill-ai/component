@@ -21,31 +21,43 @@ func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	c.Run("ok - supported task", func(c *qt.C) {
 		task := TextGenerationTask
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.IsNil)
 	})
 	c.Run("ok - supported task", func(c *qt.C) {
 		task := TextEmbeddingTask
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.IsNil)
 	})
 	c.Run("ok - supported task", func(c *qt.C) {
 		task := TextRerankTask
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.IsNil)
 	})
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.ErrorMatches, "unsupported task")
 	})
 
@@ -55,7 +67,7 @@ func TestComponent_Tasks(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
-	connector := Init(bc)
+	cmp := Init(bc)
 	ctx := context.Background()
 
 	commandTc := struct {
@@ -71,17 +83,16 @@ func TestComponent_Tasks(t *testing.T) {
 			"api-key": apiKey,
 		})
 		c.Assert(err, qt.IsNil)
-		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextGenerationTask},
+		exec := &execution{
+			ComponentExecution: base.ComponentExecution{Component: cmp, SystemVariables: nil, Setup: setup, Task: TextGenerationTask},
 			client:             &MockCohereClient{},
 		}
-		e.execute = e.taskTextGeneration
-		exec := &base.ExecutionWrapper{Execution: e}
+		exec.execute = exec.taskTextGeneration
 
 		pbIn, err := base.ConvertToStructpb(commandTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(commandTc.wantResp)
@@ -103,17 +114,16 @@ func TestComponent_Tasks(t *testing.T) {
 			"api-key": apiKey,
 		})
 		c.Assert(err, qt.IsNil)
-		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
+		exec := &execution{
+			ComponentExecution: base.ComponentExecution{Component: cmp, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
 			client:             &MockCohereClient{},
 		}
-		e.execute = e.taskEmbedding
-		exec := &base.ExecutionWrapper{Execution: e}
+		exec.execute = exec.taskEmbedding
 
 		pbIn, err := base.ConvertToStructpb(embedFloatTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(embedFloatTc.wantResp)
@@ -134,17 +144,16 @@ func TestComponent_Tasks(t *testing.T) {
 			"api-key": apiKey,
 		})
 		c.Assert(err, qt.IsNil)
-		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
+		exec := &execution{
+			ComponentExecution: base.ComponentExecution{Component: cmp, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
 			client:             &MockCohereClient{},
 		}
-		e.execute = e.taskEmbedding
-		exec := &base.ExecutionWrapper{Execution: e}
+		exec.execute = exec.taskEmbedding
 
 		pbIn, err := base.ConvertToStructpb(embedIntTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(embedIntTc.wantResp)
@@ -164,17 +173,16 @@ func TestComponent_Tasks(t *testing.T) {
 			"api-key": apiKey,
 		})
 		c.Assert(err, qt.IsNil)
-		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextRerankTask},
+		exec := &execution{
+			ComponentExecution: base.ComponentExecution{Component: cmp, SystemVariables: nil, Setup: setup, Task: TextRerankTask},
 			client:             &MockCohereClient{},
 		}
-		e.execute = e.taskRerank
-		exec := &base.ExecutionWrapper{Execution: e}
+		exec.execute = exec.taskRerank
 
 		pbIn, err := base.ConvertToStructpb(rerankTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(rerankTc.wantResp)

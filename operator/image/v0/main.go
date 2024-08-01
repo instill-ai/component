@@ -50,10 +50,10 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	return &base.ExecutionWrapper{Execution: &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
-	}}, nil
+// CreateExecution initializes a connector executor that can be used in a
+// pipeline trigger.
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
+	return &execution{ComponentExecution: x}, nil
 }
 
 // Execute executes the derived execution
