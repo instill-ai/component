@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/instill-ai/component/base"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/fault"
+	"github.com/weaviate/weaviate-go-client/v4/weaviate"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/filters"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/graphql"
+	"github.com/weaviate/weaviate-go-client/v4/weaviate/schema"
 	"github.com/weaviate/weaviate/entities/models"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -153,7 +153,7 @@ func jsonToWhereBuilder(jsonWhere *map[string]any) (*filters.WhereBuilder, error
 	return where, nil
 }
 
-func getAllFields(ctx context.Context, client WeaviateSchemaAPIClassGetterClient, collectionName string) ([]string, error) {
+func getAllFields(ctx context.Context, client *schema.ClassGetter, collectionName string) ([]string, error) {
 	res, err := client.WithClassName(collectionName).Do(ctx)
 	if err != nil {
 		return nil, err
@@ -191,7 +191,7 @@ func getAllFields(ctx context.Context, client WeaviateSchemaAPIClassGetterClient
 	return fields, nil
 }
 
-func VectorSearch(ctx context.Context, client WeaviateClient, inputStruct VectorSearchInput) ([]map[string]any, error) {
+func VectorSearch(ctx context.Context, client weaviate.Client, inputStruct VectorSearchInput) ([]map[string]any, error) {
 	collectionName := inputStruct.CollectionName
 	filter := inputStruct.Filter
 	limit := inputStruct.Limit
@@ -199,10 +199,10 @@ func VectorSearch(ctx context.Context, client WeaviateClient, inputStruct Vector
 	vector := inputStruct.Vector
 	tenant := inputStruct.Tenant
 
-	nearVector := client.graphQLNearVectorArgumentBuilder.
+	nearVector := client.GraphQL().NearVectorArgBuilder().
 		WithVector(vector)
 
-	withBuilder := client.graphQLAPIGetClient.
+	withBuilder := client.GraphQL().Get().
 		WithClassName(collectionName).
 		WithNearVector(nearVector)
 
@@ -222,7 +222,7 @@ func VectorSearch(ctx context.Context, client WeaviateClient, inputStruct Vector
 		{Name: "vector"},
 	}}}
 	if len(rawFields) == 0 || rawFields == nil {
-		allFields, err := getAllFields(ctx, client.schemaAPIClassGetterClient, collectionName)
+		allFields, err := getAllFields(ctx, client.Schema().ClassGetter(), collectionName)
 		if err != nil {
 			return nil, err
 		}
@@ -277,13 +277,15 @@ func (e *execution) insert(ctx context.Context, in *structpb.Struct) (*structpb.
 		return nil, err
 	}
 
-	_, err = e.client.dataAPICreatorClient.
-		WithClassName(inputStruct.CollectionName).
-		WithVector(inputStruct.Vector).
-		WithProperties(inputStruct.Metadata).
-		Do(ctx)
-	if err != nil {
-		return nil, err
+	if e.mockClient == nil {
+		_, err = e.client.Data().Creator().
+			WithClassName(inputStruct.CollectionName).
+			WithVector(inputStruct.Vector).
+			WithProperties(inputStruct.Metadata).
+			Do(ctx)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	outputStruct := InsertOutput{
@@ -304,48 +306,58 @@ func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*str
 		return nil, err
 	}
 
-	res, err := VectorSearch(ctx, *e.client, inputStruct)
-	if err != nil {
-		return nil, err
-	}
-
-	var objects []map[string]any
-	var vectors [][]float32
-	var metadata []map[string]any
-
-	for _, item := range res {
-		vector, ok := item["_additional"].(map[string]any)["vector"].([]any)
-		if !ok {
-			return nil, fmt.Errorf("unexpected type for vector")
-		}
-		vectorFloat := make([]float32, len(vector))
-		for i, v := range vector {
-			vectorFloat[i] = float32(v.(float64))
+	var result Result
+	var successful int
+	if e.mockClient == nil {
+		res, err := VectorSearch(ctx, *e.client, inputStruct)
+		if err != nil {
+			return nil, err
 		}
 
-		vectors = append(vectors, vectorFloat)
-		tempProperties := make(map[string]any)
-		if !inputStruct.WithAdditional {
-			delete(item, "_additional")
-			metadata = append(metadata, item)
-		} else {
-			for key, value := range item {
-				if key != "_additional" {
-					tempProperties[key] = value
-				}
+		var objects []map[string]any
+		var vectors [][]float32
+		var metadata []map[string]any
+
+		for _, item := range res {
+			vector, ok := item["_additional"].(map[string]any)["vector"].([]any)
+			if !ok {
+				return nil, fmt.Errorf("unexpected type for vector")
 			}
-			metadata = append(metadata, tempProperties)
-		}
-		objects = append(objects, item)
-	}
+			vectorFloat := make([]float32, len(vector))
+			for i, v := range vector {
+				vectorFloat[i] = float32(v.(float64))
+			}
 
-	outputStruct := VectorSearchOutput{
-		Status: fmt.Sprintf("Successfully found %d objects", len(objects)),
-		Result: Result{
+			vectors = append(vectors, vectorFloat)
+			tempProperties := make(map[string]any)
+			if !inputStruct.WithAdditional {
+				delete(item, "_additional")
+				metadata = append(metadata, item)
+			} else {
+				for key, value := range item {
+					if key != "_additional" {
+						tempProperties[key] = value
+					}
+				}
+				metadata = append(metadata, tempProperties)
+			}
+			objects = append(objects, item)
+		}
+
+		result = Result{
 			Objects:  objects,
 			Vectors:  vectors,
 			Metadata: metadata,
-		},
+		}
+		successful = len(objects)
+	} else {
+		result = e.mockClient.VectorSearch
+		successful = e.mockClient.Successful
+	}
+
+	outputStruct := VectorSearchOutput{
+		Status: fmt.Sprintf("Successfully found %d objects", successful),
+		Result: result,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -370,17 +382,25 @@ func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.
 		return nil, err
 	}
 
-	res, err := e.client.batchAPIDeleterClient.
-		WithClassName(collectionName).
-		WithWhere(where).
-		Do(ctx)
+	var res *models.BatchDeleteResponse
+	var successful int
+	if e.mockClient == nil {
+		res, err = e.client.Batch().ObjectsBatchDeleter().
+			WithClassName(collectionName).
+			WithWhere(where).
+			Do(ctx)
 
-	if err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		}
+
+		successful = int(res.Results.Successful)
+	} else {
+		successful = e.mockClient.Successful
 	}
 
 	outputStruct := DeleteOutput{
-		Status: fmt.Sprintf("Successfully deleted %d objects", res.Results.Successful),
+		Status: fmt.Sprintf("Successfully deleted %d objects", successful),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -401,22 +421,29 @@ func (e *execution) batchInsert(ctx context.Context, in *structpb.Struct) (*stru
 	arrayProperties := inputStruct.ArrayMetadata
 	arrayVector := inputStruct.ArrayVector
 
-	batcher := e.client.batchAPIBatcherClient
-	for i, properties := range arrayProperties {
-		batcher.WithObjects(&models.Object{
-			Class:      collectionName,
-			Properties: properties,
-			Vector:     arrayVector[i],
-		})
-	}
-	_, err = batcher.Do(ctx)
+	var successful int
+	if e.mockClient == nil {
+		batcher := e.client.Batch().ObjectsBatcher()
+		for i, properties := range arrayProperties {
+			batcher.WithObjects(&models.Object{
+				Class:      collectionName,
+				Properties: properties,
+				Vector:     arrayVector[i],
+			})
+		}
+		_, err = batcher.Do(ctx)
 
-	if err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		}
+
+		successful = len(arrayProperties)
+	} else {
+		successful = e.mockClient.Successful
 	}
 
 	outputStruct := BatchInsertOutput{
-		Status: fmt.Sprintf("Successfully batch inserted %d objects", len(arrayProperties)),
+		Status: fmt.Sprintf("Successfully batch inserted %d objects", successful),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -435,11 +462,13 @@ func (e *execution) deleteCollection(ctx context.Context, in *structpb.Struct) (
 
 	collectionName := inputStruct.CollectionName
 
-	if err := e.client.schemaAPIDeleterClient.
-		WithClassName(collectionName).
-		Do(context.Background()); err != nil {
-		if status, ok := err.(*fault.WeaviateClientError); ok && status.StatusCode != http.StatusBadRequest {
-			panic(err)
+	if e.mockClient == nil {
+		err = e.client.Schema().ClassDeleter().
+			WithClassName(collectionName).
+			Do(ctx)
+
+		if err != nil {
+			return nil, err
 		}
 	}
 
@@ -454,135 +483,3 @@ func (e *execution) deleteCollection(ctx context.Context, in *structpb.Struct) (
 
 	return output, nil
 }
-
-// // Limit is optional (default is 0)
-// func (e *execution) find(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
-// 	var inputStruct FindInput
-// 	err := base.ConvertFromStructpb(in, &inputStruct)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	filter := inputStruct.Filter
-// 	limit := inputStruct.Limit
-// 	fields := inputStruct.Fields
-
-// 	realFilter := bson.M{}
-// 	for key, value := range filter {
-// 		if value != nil {
-// 			realFilter[key] = value
-// 		}
-// 	}
-
-// 	findOptions := options.Find()
-
-// 	if limit > 0 {
-// 		findOptions.SetLimit(int64(limit))
-// 	}
-
-// 	var cursor *mongo.Cursor
-// 	if len(fields) > 0 {
-// 		projection := bson.M{}
-// 		projection["_id"] = 0
-// 		for _, field := range fields {
-// 			projection[field] = 1
-// 		}
-// 		findOptions.SetProjection(projection)
-// 	}
-// 	cursor, err = e.client.collectionClient.Find(ctx, realFilter, findOptions)
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	var objects []map[string]any
-// 	for cursor.Next(ctx) {
-// 		var object map[string]any
-// 		err := cursor.Decode(&object)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		objects = append(objects, object)
-// 	}
-
-// 	outputStruct := FindOutput{
-// 		Status:    "Successfully found objects",
-// 		objects: objects,
-// 	}
-
-// 	output, err := base.ConvertToStructpb(outputStruct)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return output, nil
-// }
-
-// func (e *execution) update(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
-// 	var inputStruct UpdateInput
-// 	err := base.ConvertFromStructpb(in, &inputStruct)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	filter := inputStruct.Filter
-// 	updateFields := inputStruct.UpdateData
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	setFields := bson.M{}
-
-// 	for key, value := range updateFields {
-// 		setFields[key] = value
-// 	}
-
-// 	updateDoc := bson.M{}
-// 	if len(setFields) > 0 {
-// 		updateDoc["$set"] = setFields
-// 	}
-
-// 	if len(updateDoc) == 0 {
-// 		return nil, fmt.Errorf("no valid update operations found")
-// 	}
-
-// 	_, err = e.client.collectionClient.UpdateMany(ctx, filter, updateDoc)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	outputStruct := UpdateOutput{
-// 		Status: "Successfully updated objects",
-// 	}
-
-// 	output, err := base.ConvertToStructpb(outputStruct)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return output, nil
-// }
-
-// func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
-// 	var inputStruct DeleteInput
-// 	err := base.ConvertFromStructpb(in, &inputStruct)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	filter := inputStruct.Filter
-
-// 	_, err = e.client.collectionClient.DeleteMany(ctx, filter)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	outputStruct := DeleteOutput{
-// 		Status: "Successfully deleted objects",
-// 	}
-
-// 	output, err := base.ConvertToStructpb(outputStruct)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return output, nil
-// }

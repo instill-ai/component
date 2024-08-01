@@ -7,120 +7,9 @@ import (
 
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/batch"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/data"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/filters"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/graphql"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/schema"
-	"github.com/weaviate/weaviate/entities/models"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
-
-type MockWeaviateBatchAPIDeleterClient struct{}
-type MockWeaviateBatchAPIBatcherClient struct{}
-type MockWeaviateDataAPICreatorClient struct{}
-type MockWeaviateGraphQLAPIGetClient struct{}
-type MockWeaviateSchemaAPIDeleterClient struct{}
-type MockWeaviateSchemaAPIClassGetterClient struct{}
-type MockWeaviateGraphQLNearVectorArgumentBuilder struct{}
-
-func (ob *MockWeaviateBatchAPIDeleterClient) WithClassName(className string) *batch.ObjectsBatchDeleter {
-	return nil
-}
-func (ob *MockWeaviateBatchAPIDeleterClient) WithWhere(whereFilter *filters.WhereBuilder) *batch.ObjectsBatchDeleter {
-	return nil
-}
-func (ob *MockWeaviateBatchAPIDeleterClient) Do(ctx context.Context) (*models.BatchDeleteResponse, error) {
-	result := models.BatchDeleteResponseResults{
-		Successful: 1,
-	}
-
-	return &models.BatchDeleteResponse{
-		Results: &result,
-	}, nil
-}
-
-func (ob *MockWeaviateBatchAPIBatcherClient) WithClassName(className string) *batch.ObjectsBatcher {
-	return nil
-}
-func (ob *MockWeaviateBatchAPIBatcherClient) WithObjects(object ...*models.Object) *batch.ObjectsBatcher {
-	return nil
-}
-func (ob *MockWeaviateBatchAPIBatcherClient) Do(ctx context.Context) ([]models.ObjectsGetResponse, error) {
-	stringStatus := "SUCCESS"
-	result := models.ObjectsGetResponseAO2Result{
-		Status: &stringStatus,
-	}
-
-	return []models.ObjectsGetResponse{
-		{
-			Result: &result,
-		},
-	}, nil
-}
-
-func (ob *MockWeaviateSchemaAPIClassGetterClient) WithClassName(className string) *schema.ClassGetter {
-	return nil
-}
-func (ob *MockWeaviateSchemaAPIClassGetterClient) Do(ctx context.Context) (*models.Class, error) {
-	return &models.Class{
-		Class: "test_coll",
-	}, nil
-}
-
-func (ob *MockWeaviateSchemaAPIDeleterClient) WithClassName(className string) *schema.ClassDeleter {
-	return nil
-}
-func (ob *MockWeaviateSchemaAPIDeleterClient) Do(ctx context.Context) error {
-	return nil
-}
-
-func (ob *MockWeaviateDataAPICreatorClient) WithClassName(name string) *data.Creator {
-	return nil
-}
-func (ob *MockWeaviateDataAPICreatorClient) WithProperties(propertySchema models.PropertySchema) *data.Creator {
-	return nil
-}
-func (ob *MockWeaviateDataAPICreatorClient) WithVector(vector []float32) *data.Creator {
-	return nil
-}
-func (ob *MockWeaviateDataAPICreatorClient) Do(ctx context.Context) (*data.ObjectWrapper, error) {
-	return &data.ObjectWrapper{
-		Object: &models.Object{
-			Class: "test_coll",
-			ID:    "test_id",
-		},
-	}, nil
-}
-
-func (ob *MockWeaviateGraphQLAPIGetClient) WithClassName(name string) *graphql.GetBuilder {
-	return nil
-}
-func (ob *MockWeaviateGraphQLAPIGetClient) WithFields(fields ...graphql.Field) *graphql.GetBuilder {
-	return nil
-}
-func (ob *MockWeaviateGraphQLAPIGetClient) WithLimit(limit int) *graphql.GetBuilder {
-	return nil
-}
-func (ob *MockWeaviateGraphQLAPIGetClient) WithNearVector(nearVector *graphql.NearVectorArgumentBuilder) *graphql.GetBuilder {
-	return nil
-}
-func (ob *MockWeaviateGraphQLAPIGetClient) WithTenant(tenant string) *graphql.GetBuilder {
-	return nil
-}
-func (ob *MockWeaviateGraphQLAPIGetClient) WithWhere(where *filters.WhereBuilder) *graphql.GetBuilder {
-	return nil
-}
-func (ob *MockWeaviateGraphQLAPIGetClient) Do(ctx context.Context) (*models.GraphQLResponse, error) {
-	return &models.GraphQLResponse{
-		Data: map[string]models.JSONObject{},
-	}, nil
-}
-
-func (ob *MockWeaviateGraphQLNearVectorArgumentBuilder) WithVector(vector []float32) *graphql.NearVectorArgumentBuilder {
-	return nil
-}
 
 func TestComponent_ExecuteInsertTask(t *testing.T) {
 	c := qt.New(t)
@@ -157,9 +46,7 @@ func TestComponent_ExecuteInsertTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskInsert},
-				client: &WeaviateClient{
-					dataAPICreatorClient: &MockWeaviateDataAPICreatorClient{},
-				},
+				mockClient:         &MockWeaviateClient{},
 			}
 			e.execute = e.insert
 			exec := &base.ExecutionWrapper{Execution: e}
@@ -188,10 +75,11 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 	connector := Init(bc)
 
 	testcases := []struct {
-		name     string
-		input    DeleteInput
-		wantResp DeleteOutput
-		wantErr  string
+		name       string
+		input      DeleteInput
+		wantResp   DeleteOutput
+		wantErr    string
+		Successful int
 	}{
 		{
 			name: "ok to delete",
@@ -200,8 +88,9 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 				Filter:         map[string]any{"path": "text", "operator": "Equal", "valueText": "test"},
 			},
 			wantResp: DeleteOutput{
-				Status: "Successfully deleted 1 documents",
+				Status: "Successfully deleted 1 objects",
 			},
+			Successful: 1,
 		},
 	}
 
@@ -215,10 +104,8 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDelete},
-				client: &WeaviateClient{
-					batchAPIDeleterClient:            &MockWeaviateBatchAPIDeleterClient{},
-					graphQLNearVectorArgumentBuilder: &MockWeaviateGraphQLNearVectorArgumentBuilder{},
-					graphQLAPIGetClient:              &MockWeaviateGraphQLAPIGetClient{},
+				mockClient: &MockWeaviateClient{
+					Successful: tc.Successful,
 				},
 			}
 			e.execute = e.delete
@@ -259,7 +146,7 @@ func TestComponent_ExecuteDeleteCollectionTask(t *testing.T) {
 				CollectionName: "test_coll",
 			},
 			wantResp: DeleteCollectionOutput{
-				Status: "Successfully dropped 1 collection",
+				Status: "Successfully deleted 1 collection",
 			},
 		},
 	}
@@ -274,9 +161,7 @@ func TestComponent_ExecuteDeleteCollectionTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskDeleteCollection},
-				client: &WeaviateClient{
-					schemaAPIDeleterClient: &MockWeaviateSchemaAPIDeleterClient{},
-				},
+				mockClient:         &MockWeaviateClient{},
 			}
 			e.execute = e.deleteCollection
 			exec := &base.ExecutionWrapper{Execution: e}
@@ -305,10 +190,11 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 	connector := Init(bc)
 
 	testcases := []struct {
-		name     string
-		input    VectorSearchInput
-		wantResp VectorSearchOutput
-		wantErr  string
+		name       string
+		input      VectorSearchInput
+		wantResp   VectorSearchOutput
+		wantErr    string
+		Successful int
 	}{
 		{
 			name: "ok to vector search",
@@ -323,13 +209,14 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 				},
 			},
 			wantResp: VectorSearchOutput{
-				Status: "Successfully found 1 documents",
+				Status: "Successfully found 1 objects",
 				Result: Result{
 					Vectors:  [][]float32{{0.1, 0.2}},
 					Metadata: []map[string]any{{"name": "test"}},
 					Objects:  []map[string]any{{"name": "test", "_additional": map[string]any{"vector": []float32{0.1, 0.2}}}},
 				},
 			},
+			Successful: 1,
 		},
 	}
 
@@ -343,10 +230,9 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskVectorSearch},
-				client: &WeaviateClient{
-					graphQLAPIGetClient:              &MockWeaviateGraphQLAPIGetClient{},
-					schemaAPIClassGetterClient:       &MockWeaviateSchemaAPIClassGetterClient{},
-					graphQLNearVectorArgumentBuilder: &MockWeaviateGraphQLNearVectorArgumentBuilder{},
+				mockClient: &MockWeaviateClient{
+					VectorSearch: tc.wantResp.Result,
+					Successful:   tc.Successful,
 				},
 			}
 			e.execute = e.vectorSearch
@@ -376,10 +262,11 @@ func TestComponent_ExecuteBatchInsertTask(t *testing.T) {
 	connector := Init(bc)
 
 	testcases := []struct {
-		name     string
-		input    BatchInsertInput
-		wantResp BatchInsertOutput
-		wantErr  string
+		name       string
+		input      BatchInsertInput
+		wantResp   BatchInsertOutput
+		wantErr    string
+		Successful int
 	}{
 		{
 			name: "ok to insert many",
@@ -397,6 +284,7 @@ func TestComponent_ExecuteBatchInsertTask(t *testing.T) {
 			wantResp: BatchInsertOutput{
 				Status: "Successfully batch inserted 2 objects",
 			},
+			Successful: 2,
 		},
 	}
 
@@ -410,8 +298,8 @@ func TestComponent_ExecuteBatchInsertTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskBatchInsert},
-				client: &WeaviateClient{
-					batchAPIBatcherClient: &MockWeaviateBatchAPIBatcherClient{},
+				mockClient: &MockWeaviateClient{
+					Successful: tc.Successful,
 				},
 			}
 			e.execute = e.batchInsert

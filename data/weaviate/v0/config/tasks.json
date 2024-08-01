@@ -161,11 +161,11 @@
               "title": "Vectors",
               "type": "array",
               "required":[],
-              "instillFormat": "array:array:number",
+              "instillFormat": "array:array",
               "items": {
                 "description": "The vector from array vectors",
                 "type": "array",
-                "instillFormat": "array:number",
+                "instillFormat": "array",
                 "required":[],
                 "items": {
                   "description": "A dimension of the vector",
@@ -298,7 +298,7 @@
         "array-metadata": {
           "description": "The array of vector metadata properties",
           "instillAcceptFormats": [
-            "array:semi-structured/*", "array:object"
+            "array:semi-structured/*","array:semi-structured/json","array:semi-structured/object", "array:object"
           ],
           "instillShortDescription": "The vector metadata properties",
           "instillUIOrder": 1,
@@ -306,11 +306,11 @@
             "reference"
           ],
           "minItems": 1,
-          "title": "Array Properties",
+          "title": "Array Metadata",
           "type": "array",
           "items": {
             "description": "The vector metadata properties",
-            "title": "Properties",
+            "title": "Metadatum",
             "type": "object",
             "required":[]
           }
@@ -318,8 +318,8 @@
         "array-vector": {
           "description": "The array of vector values",
           "instillAcceptFormats": [
-            "array:array:number",
-            "array:array:integer"
+            "array:array",
+            "array:array"
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
@@ -345,8 +345,8 @@
       },
       "required": [
         "collection-name",
-        "array-vector",
-        "array-metadata"
+        "array-metadata",
+        "array-vector"
       ],
       "title": "Input",
       "type": "object"

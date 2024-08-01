@@ -9,12 +9,7 @@ import (
 
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/x/errmsg"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/batch"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/data"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/filters"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/graphql"
-	"github.com/weaviate/weaviate-go-client/v4/weaviate/schema"
-	"github.com/weaviate/weaviate/entities/models"
+	"github.com/weaviate/weaviate-go-client/v4/weaviate"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -45,60 +40,14 @@ type component struct {
 type execution struct {
 	base.ComponentExecution
 
-	execute func(context.Context, *structpb.Struct) (*structpb.Struct, error)
-	client  *WeaviateClient
+	execute    func(context.Context, *structpb.Struct) (*structpb.Struct, error)
+	client     *weaviate.Client
+	mockClient *MockWeaviateClient
 }
 
-type WeaviateDataAPICreatorClient interface {
-	WithClassName(name string) *data.Creator
-	WithVector(vector []float32) *data.Creator
-	WithProperties(propertySchema models.PropertySchema) *data.Creator
-	Do(ctx context.Context) (*data.ObjectWrapper, error)
-}
-
-type WeaviateGraphQLAPIGetClient interface {
-	WithClassName(name string) *graphql.GetBuilder
-	WithWhere(where *filters.WhereBuilder) *graphql.GetBuilder
-	WithNearVector(nearVector *graphql.NearVectorArgumentBuilder) *graphql.GetBuilder
-	WithLimit(limit int) *graphql.GetBuilder
-	WithFields(fields ...graphql.Field) *graphql.GetBuilder
-	WithTenant(tenant string) *graphql.GetBuilder
-	Do(ctx context.Context) (*models.GraphQLResponse, error)
-}
-
-type WeaviateBatchAPIDeleterClient interface {
-	WithClassName(className string) *batch.ObjectsBatchDeleter
-	WithWhere(whereFilter *filters.WhereBuilder) *batch.ObjectsBatchDeleter
-	Do(ctx context.Context) (*models.BatchDeleteResponse, error)
-}
-
-type WeaviateBatchAPIBatcherClient interface {
-	WithObjects(object ...*models.Object) *batch.ObjectsBatcher
-	Do(ctx context.Context) ([]models.ObjectsGetResponse, error)
-}
-
-type WeaviateSchemaAPIDeleterClient interface {
-	WithClassName(className string) *schema.ClassDeleter
-	Do(ctx context.Context) error
-}
-
-type WeaviateSchemaAPIClassGetterClient interface {
-	WithClassName(className string) *schema.ClassGetter
-	Do(ctx context.Context) (*models.Class, error)
-}
-
-type WeaviateGraphQLNearVectorArgumentBuilder interface {
-	WithVector(vector []float32) *graphql.NearVectorArgumentBuilder
-}
-
-type WeaviateClient struct {
-	dataAPICreatorClient             WeaviateDataAPICreatorClient
-	graphQLAPIGetClient              WeaviateGraphQLAPIGetClient
-	batchAPIDeleterClient            WeaviateBatchAPIDeleterClient
-	batchAPIBatcherClient            WeaviateBatchAPIBatcherClient
-	schemaAPIDeleterClient           WeaviateSchemaAPIDeleterClient
-	schemaAPIClassGetterClient       WeaviateSchemaAPIClassGetterClient
-	graphQLNearVectorArgumentBuilder WeaviateGraphQLNearVectorArgumentBuilder
+type MockWeaviateClient struct {
+	Successful   int
+	VectorSearch Result
 }
 
 func Init(bc base.Component) *component {

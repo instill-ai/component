@@ -6,7 +6,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-func newClient(setup *structpb.Struct) *WeaviateClient {
+func newClient(setup *structpb.Struct) *weaviate.Client {
 	cfg := weaviate.Config{
 		Host:       getURL(setup),
 		Scheme:     "https",
@@ -16,18 +16,10 @@ func newClient(setup *structpb.Struct) *WeaviateClient {
 
 	client, err := weaviate.NewClient(cfg)
 	if err != nil {
-		return &WeaviateClient{}
+		return nil
 	}
 
-	return &WeaviateClient{
-		dataAPICreatorClient:             client.Data().Creator(),
-		graphQLAPIGetClient:              client.GraphQL().Get(),
-		batchAPIDeleterClient:            client.Batch().ObjectsBatchDeleter(),
-		batchAPIBatcherClient:            client.Batch().ObjectsBatcher(),
-		schemaAPIDeleterClient:           client.Schema().ClassDeleter(),
-		schemaAPIClassGetterClient:       client.Schema().ClassGetter(),
-		graphQLNearVectorArgumentBuilder: client.GraphQL().NearVectorArgBuilder(),
-	}
+	return client
 }
 
 func getURL(setup *structpb.Struct) string {
