@@ -2,21 +2,21 @@ package document
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"os"
 	"testing"
 
-	"encoding/base64"
-
 	"code.sajari.com/docconv"
-	"github.com/frankban/quicktest"
-	"github.com/instill-ai/component/base"
+	qt "github.com/frankban/quicktest"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 // TestConvertToText tests the convert to text task
 func TestConvertToText(t *testing.T) {
-	c := quicktest.New(t)
+	c := qt.New(t)
 	tests := []struct {
 		name     string
 		filepath string
@@ -73,11 +73,11 @@ func TestConvertToText(t *testing.T) {
 
 	bc := base.Component{}
 	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
+		c.Run(test.name, func(c *qt.C) {
 			component := Init(bc)
 			// Read the fileContent content
 			fileContent, err := os.ReadFile(test.filepath)
-			c.Assert(err, quicktest.IsNil)
+			c.Assert(err, qt.IsNil)
 
 			base64DataURI := fmt.Sprintf("data:%s;base64,%s", docconv.MimeTypeByExtension(test.filepath), base64.StdEncoding.EncodeToString(fileContent))
 
@@ -90,23 +90,22 @@ func TestConvertToText(t *testing.T) {
 				input,
 			}
 
-			e, err := component.CreateExecution(map[string]any{}, nil, "TASK_CONVERT_TO_TEXT")
-			c.Assert(err, quicktest.IsNil)
+			e, err := component.CreateExecution(base.ComponentExecution{
+				Component: component,
+				Task:      "TASK_CONVERT_TO_TEXT",
+			})
+			c.Assert(err, qt.IsNil)
 
 			if test.name == "Convert xlsx file" {
 				_, err := e.Execute(context.Background(), inputs)
-				c.Assert(err, quicktest.ErrorMatches, "unsupported content type")
+				c.Assert(err, qt.ErrorMatches, "unsupported content type")
 				return
 			}
 
-			if outputs, err := e.Execute(context.Background(), inputs); err != nil {
-				t.Fatalf("convertToText returned an error: %v", err)
-			} else if outputs[0].Fields["body"].GetStringValue() == "" {
-				t.Fatal("convertToText returned an empty body")
-			} else if outputs[0].Fields["meta"].GetStructValue() == nil {
-				t.Fatal("convertToText returned a nil meta")
-			}
-
+			outputs, err := e.Execute(context.Background(), inputs)
+			c.Assert(err, qt.IsNil)
+			c.Assert(outputs[0].Fields["body"].GetStringValue(), qt.Not(qt.Equals), "")
+			c.Assert(outputs[0].Fields["meta"].GetStructValue(), qt.IsNotNil)
 		})
 	}
 

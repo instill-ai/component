@@ -16,7 +16,6 @@ import (
 	"github.com/instill-ai/component/base"
 
 	commonPB "github.com/instill-ai/protogen-go/common/task/v1alpha"
-	mgmtPB "github.com/instill-ai/protogen-go/core/mgmt/v1beta"
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -52,10 +51,10 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	return &base.ExecutionWrapper{Execution: &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
-	}}, nil
+// CreateExecution initializes a connector executor that can be used in a
+// pipeline trigger.
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
+	return &execution{ComponentExecution: x}, nil
 }
 
 func getHeaderAuthorization(vars map[string]any) string {
@@ -74,13 +73,6 @@ func getInstillRequesterUID(vars map[string]any) string {
 
 func getModelServerURL(vars map[string]any) string {
 	if v, ok := vars["__MODEL_BACKEND"]; ok {
-		return v.(string)
-	}
-	return ""
-}
-
-func getMgmtServerURL(vars map[string]any) string {
-	if v, ok := vars["__MGMT_BACKEND"]; ok {
 		return v.(string)
 	}
 	return ""
@@ -112,57 +104,38 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 	if gRPCCientConn != nil {
 		defer gRPCCientConn.Close()
 	}
-	mgmtGRPCCLient, mgmtGRPCCLientConn := initMgmtPublicServiceClient(getMgmtServerURL(e.SystemVariables))
-	if mgmtGRPCCLientConn != nil {
-		defer mgmtGRPCCLientConn.Close()
-	}
 
 	modelNameSplits := strings.Split(inputs[0].GetFields()["model-name"].GetStringValue(), "/")
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Minute)
-	defer cancel()
 
-	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
-	nsResp, err := mgmtGRPCCLient.CheckNamespace(ctx, &mgmtPB.CheckNamespaceRequest{
-		Id: modelNameSplits[0],
-	})
-	if err != nil {
-		return nil, err
-	}
-	nsType := ""
-	if nsResp.Type == mgmtPB.CheckNamespaceResponse_NAMESPACE_ORGANIZATION {
-		nsType = "organizations"
-	} else {
-		nsType = "users"
-	}
-
-	modelName := fmt.Sprintf("%s/%s/models/%s/versions/%s", nsType, modelNameSplits[0], modelNameSplits[1], modelNameSplits[2])
-
+	nsID := modelNameSplits[0]
+	modelID := modelNameSplits[1]
+	version := modelNameSplits[2]
 	var result []*structpb.Struct
 	switch e.Task {
 	case commonPB.Task_TASK_UNSPECIFIED.String():
-		result, err = e.executeUnspecified(gRPCClient, modelName, inputs)
+		result, err = e.executeUnspecified(gRPCClient, nsID, modelID, version, inputs)
 	case commonPB.Task_TASK_CLASSIFICATION.String():
-		result, err = e.executeImageClassification(gRPCClient, modelName, inputs)
+		result, err = e.executeImageClassification(gRPCClient, nsID, modelID, version, inputs)
 	case commonPB.Task_TASK_DETECTION.String():
-		result, err = e.executeObjectDetection(gRPCClient, modelName, inputs)
+		result, err = e.executeObjectDetection(gRPCClient, nsID, modelID, version, inputs)
 	case commonPB.Task_TASK_KEYPOINT.String():
-		result, err = e.executeKeyPointDetection(gRPCClient, modelName, inputs)
+		result, err = e.executeKeyPointDetection(gRPCClient, nsID, modelID, version, inputs)
 	case commonPB.Task_TASK_OCR.String():
-		result, err = e.executeOCR(gRPCClient, modelName, inputs)
+		result, err = e.executeOCR(gRPCClient, nsID, modelID, version, inputs)
 	case commonPB.Task_TASK_INSTANCE_SEGMENTATION.String():
-		result, err = e.executeInstanceSegmentation(gRPCClient, modelName, inputs)
+		result, err = e.executeInstanceSegmentation(gRPCClient, nsID, modelID, version, inputs)
 	case commonPB.Task_TASK_SEMANTIC_SEGMENTATION.String():
-		result, err = e.executeSemanticSegmentation(gRPCClient, modelName, inputs)
+		result, err = e.executeSemanticSegmentation(gRPCClient, nsID, modelID, version, inputs)
 	case commonPB.Task_TASK_TEXT_TO_IMAGE.String():
-		result, err = e.executeTextToImage(gRPCClient, modelName, inputs)
+		result, err = e.executeTextToImage(gRPCClient, nsID, modelID, version, inputs)
 	case commonPB.Task_TASK_TEXT_GENERATION.String():
-		result, err = e.executeTextGeneration(gRPCClient, modelName, inputs)
+		result, err = e.executeTextGeneration(gRPCClient, nsID, modelID, version, inputs)
 	case commonPB.Task_TASK_TEXT_GENERATION_CHAT.String():
-		result, err = e.executeTextGenerationChat(gRPCClient, modelName, inputs)
+		result, err = e.executeTextGenerationChat(gRPCClient, nsID, modelID, version, inputs)
 	case commonPB.Task_TASK_VISUAL_QUESTION_ANSWERING.String():
-		result, err = e.executeVisualQuestionAnswering(gRPCClient, modelName, inputs)
+		result, err = e.executeVisualQuestionAnswering(gRPCClient, nsID, modelID, version, inputs)
 	case commonPB.Task_TASK_IMAGE_TO_IMAGE.String():
-		result, err = e.executeImageToImage(gRPCClient, modelName, inputs)
+		result, err = e.executeImageToImage(gRPCClient, nsID, modelID, version, inputs)
 	default:
 		return inputs, fmt.Errorf("unsupported task: %s", e.Task)
 	}
@@ -194,11 +167,6 @@ type ModelsResp struct {
 	} `json:"models"`
 }
 
-type taskModelNames struct {
-	task       string
-	modelNames []*structpb.Value
-}
-
 // Generate the `model_name` enum based on the task.
 func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.ComponentConfig) (*pb.ComponentDefinition, error) {
 
@@ -227,65 +195,25 @@ func (c *component) GetDefinition(sysVars map[string]any, compConfig *base.Compo
 
 	pageToken := ""
 	pageSize := int32(100)
-	models := []*modelPB.Model{}
+	modelNameMap := map[string]*structpb.ListValue{}
 	for {
-		resp, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{PageToken: &pageToken, PageSize: &pageSize})
+		resp, err := gRPCCLient.ListModels(ctx, &modelPB.ListModelsRequest{PageToken: &pageToken, PageSize: &pageSize, View: modelPB.View_VIEW_BASIC.Enum()})
 		if err != nil {
-
 			return def, nil
 		}
-		models = append(models, resp.Models...)
+		for _, m := range resp.Models {
+			if _, ok := modelNameMap[m.Task.String()]; !ok {
+				modelNameMap[m.Task.String()] = &structpb.ListValue{}
+			}
+			namePaths := strings.Split(m.Name, "/")
+			for _, v := range m.Versions {
+				modelNameMap[m.Task.String()].Values = append(modelNameMap[m.Task.String()].Values, structpb.NewStringValue(fmt.Sprintf("%s/%s/%s", namePaths[1], namePaths[3], v)))
+			}
+		}
+
 		pageToken = resp.NextPageToken
 		if pageToken == "" {
 			break
-		}
-	}
-
-	modelNameMap := map[string]*structpb.ListValue{}
-
-	ch := make(chan *taskModelNames)
-	for _, model := range models {
-
-		go func(m *modelPB.Model) {
-			var versions []*modelPB.ModelVersion
-			if strings.HasPrefix(m.Name, "organizations") {
-				//nolint:staticcheck
-				resp, err := gRPCCLient.ListOrganizationModelVersions(ctx, &modelPB.ListOrganizationModelVersionsRequest{Name: m.Name, PageSize: &pageSize})
-				if err != nil {
-					ch <- nil
-					return
-				}
-				versions = resp.Versions
-			} else {
-				//nolint:staticcheck
-				resp, err := gRPCCLient.ListUserModelVersions(ctx, &modelPB.ListUserModelVersionsRequest{Name: m.Name, PageSize: &pageSize})
-				if err != nil {
-					ch <- nil
-					return
-				}
-				versions = resp.Versions
-			}
-
-			t := &taskModelNames{}
-			t.task = m.Task.String()
-
-			for _, version := range versions {
-				namePaths := strings.Split(version.Name, "/")
-				t.modelNames = append(t.modelNames, structpb.NewStringValue(fmt.Sprintf("%s/%s/%s", namePaths[1], namePaths[3], namePaths[5])))
-			}
-
-			ch <- t
-
-		}(model)
-	}
-
-	for range models {
-		m := <-ch
-		if m != nil {
-			if _, ok := modelNameMap[m.task]; !ok {
-				modelNameMap[m.task] = &structpb.ListValue{}
-			}
-			modelNameMap[m.task].Values = append(modelNameMap[m.task].Values, m.modelNames...)
 		}
 	}
 

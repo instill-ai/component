@@ -12,7 +12,8 @@
         "audio": {
           "description": "Base64 encoded audio file to be split",
           "instillAcceptFormats": [
-            "audio/*"
+            "audio/*",
+            "application/octet-stream"
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
@@ -24,7 +25,12 @@
         "chunk-count": {
           "description": "Number of chunks to equally split the audio into",
           "instillAcceptFormats": [
-            "integer"
+            "integer",
+            "number"
+          ],
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
           ],
           "instillUIOrder": 1,
           "title": "Chunk count",
@@ -74,7 +80,8 @@
         "audio": {
           "description": "Base64 encoded audio file to be sliced",
           "instillAcceptFormats": [
-            "audio/*"
+            "audio/*",
+            "application/octet-stream"
           ],
           "instillUIOrder": 0,
           "instillUpstreamTypes": [
@@ -86,7 +93,12 @@
         "start-time": {
           "description": "Start time of the slice in seconds",
           "instillAcceptFormats": [
-            "integer"
+            "integer",
+            "number"
+          ],
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
           ],
           "instillUIOrder": 1,
           "title": "Start time",
@@ -95,7 +107,12 @@
         "end-time": {
           "description": "End time of the slice in seconds",
           "instillAcceptFormats": [
-            "integer"
+            "integer",
+            "number"
+          ],
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
           ],
           "instillUIOrder": 2,
           "title": "End time",

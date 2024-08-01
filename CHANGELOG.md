@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.24.0-beta](https://github.com/instill-ai/component/compare/v0.23.0-beta...v0.24.0-beta) (2024-07-31)
+
+
+### Features
+
+* add audio operator ([#236](https://github.com/instill-ai/component/issues/236)) ([fe8abff](https://github.com/instill-ai/component/commit/fe8abff3525528772005da193ee49f5b3dd7c9ed))
+* add handler to auto-fill missing default values ([#210](https://github.com/instill-ai/component/issues/210)) ([dcad3f0](https://github.com/instill-ai/component/commit/dcad3f013263a5b8c2649d96431fb929b69e4d98))
+* add HubSpot component ([#199](https://github.com/instill-ai/component/issues/199)) ([b3936a8](https://github.com/instill-ai/component/commit/b3936a84dac53562f6d50506918a2d98341ea7c6))
+* add Jira component ([#205](https://github.com/instill-ai/component/issues/205)) ([51f3ed7](https://github.com/instill-ai/component/commit/51f3ed78470ab5a82a200953d15e9abe5338dcee))
+* add Ollama component ([#224](https://github.com/instill-ai/component/issues/224)) ([810f850](https://github.com/instill-ai/component/commit/810f85080c8f7297db38c8187919430e85365765))
+* add sql component ([#193](https://github.com/instill-ai/component/issues/193)) ([9a373f3](https://github.com/instill-ai/component/commit/9a373f3f84cf53bea6d4847a7afdf6349a7d63d2))
+* add token count for each chunk ([#235](https://github.com/instill-ai/component/issues/235)) ([bb69104](https://github.com/instill-ai/component/commit/bb691049863fe0474f3975474e673cc51bef8d16))
+* add video operator to fulfil unstructured data process ([#238](https://github.com/instill-ai/component/issues/238)) ([a1459d7](https://github.com/instill-ai/component/commit/a1459d709f3abbe2b746070647cb4667612df4b1))
+* **document:** add docx doc pptx ppt html to transform to text in markdown format ([#232](https://github.com/instill-ai/component/issues/232)) ([2932db9](https://github.com/instill-ai/component/commit/2932db94abec9e3bca768cc31c02ecf8b24622c1))
+* **document:** move ConvertToText task from text operator to document operator ([#248](https://github.com/instill-ai/component/issues/248)) ([699ca70](https://github.com/instill-ai/component/commit/699ca70b2474e0e985d14cac9bf6498b79dbdc86))
+* introduce event handler interface ([#253](https://github.com/instill-ai/component/issues/253)) ([9599b42](https://github.com/instill-ai/component/commit/9599b4246e4253938a8a2299116ab433ae3b9e6c))
+* **restapi:** recategorize the restapi component as a generic component ([#249](https://github.com/instill-ai/component/issues/249)) ([fbfc3a3](https://github.com/instill-ai/component/commit/fbfc3a312734e6b90a45cd5fe62e24b2ba2e7471))
+* **website:** add scrape sitemap function ([#239](https://github.com/instill-ai/component/issues/239)) ([8648326](https://github.com/instill-ai/component/commit/86483265e6dfb16245563937a5c08deeeceebc7b))
+
+
+### Bug Fixes
+
+* bug of duplicate document ([#256](https://github.com/instill-ai/component/issues/256)) ([e028a6e](https://github.com/instill-ai/component/commit/e028a6e2eed230616dfc23619f544820320c29ac))
+* bug of json without setting array for images ([#259](https://github.com/instill-ai/component/issues/259)) ([4aeae69](https://github.com/instill-ai/component/commit/4aeae6975fc82bbed8455d318d4c1b56fc2748e8))
+* change md format to html tag for correct frontend link ([#240](https://github.com/instill-ai/component/issues/240)) ([7e16b2b](https://github.com/instill-ai/component/commit/7e16b2b7f494acccad06fd5f43fd2667d8eeadbb))
+* revert the alias because they are same as package name ([#243](https://github.com/instill-ai/component/issues/243)) ([1d9c42d](https://github.com/instill-ai/component/commit/1d9c42d70487d96324ef095c8abc4158479b7b76))
+
 ## [0.23.0-beta](https://github.com/instill-ai/component/compare/v0.22.0-beta...v0.23.0-beta) (2024-07-19)
 
 

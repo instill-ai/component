@@ -49,22 +49,24 @@ func TestOperator(t *testing.T) {
 			component := Init(bc)
 			c.Assert(component, quicktest.IsNotNil)
 
-			execution, err := component.CreateExecution(map[string]any{}, nil, tc.task)
+			execution, err := component.CreateExecution(base.ComponentExecution{
+				Component: component,
+				Task:      tc.task,
+			})
 			c.Assert(err, quicktest.IsNil)
 			c.Assert(execution, quicktest.IsNotNil)
 
 			input := []*structpb.Struct{&tc.input}
 
-			outputs, err := execution.Execution.Execute(ctx, input)
+			outputs, err := execution.Execute(ctx, input)
 
 			if tc.name == "error case" {
 				c.Assert(err, quicktest.ErrorMatches, "not supported task: FAKE_TASK")
 				c.Assert(outputs, quicktest.IsNil)
 				return
-			} else {
-				c.Assert(err, quicktest.IsNil)
-				c.Assert(outputs, quicktest.HasLen, 1)
 			}
+			c.Assert(err, quicktest.IsNil)
+			c.Assert(outputs, quicktest.HasLen, 1)
 		})
 	}
 }

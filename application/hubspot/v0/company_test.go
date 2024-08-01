@@ -95,7 +95,6 @@ func TestComponent_ExecuteGetCompanyTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.GetCompany
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbInput, err := structpb.NewStruct(map[string]any{
 			"company-id": tc.input,
@@ -103,7 +102,7 @@ func TestComponent_ExecuteGetCompanyTask(t *testing.T) {
 
 		c.Assert(err, qt.IsNil)
 
-		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+		res, err := e.Execute(ctx, []*structpb.Struct{pbInput})
 
 		c.Assert(err, qt.IsNil)
 
@@ -146,13 +145,12 @@ func TestComponent_ExecuteCreateCompanyTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.CreateCompany
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbInput, err := base.ConvertToStructpb(tc.inputCompany)
 
 		c.Assert(err, qt.IsNil)
 
-		res, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbInput})
+		res, err := e.Execute(ctx, []*structpb.Struct{pbInput})
 		c.Assert(err, qt.IsNil)
 
 		resString := res[0].Fields["company-id"].GetStringValue()

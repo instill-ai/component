@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"strings"
 	"testing"
 
@@ -31,14 +30,14 @@ func (m *MockSQLClient) Queryx(query string, args ...interface{}) (*sqlx.Rows, e
 	return sqlxDB.Queryx("SELECT id, name, email FROM users WHERE id = ? AND name = ? AND email = ? LIMIT ? OFFSET ?", "1", "john", "john@example.com", 1, 0)
 }
 
-func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, error) {
-	if strings.Contains(query, "INSERT") {
+func (m *MockSQLClient) NamedExec(query string, _ interface{}) (sql.Result, error) {
+	switch {
+	case strings.Contains(query, "INSERT"):
 		mockDB, mock, _ := sqlmock.New()
 		defer mockDB.Close()
 
 		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
-		fmt.Print(arg)
-		arg = map[string]interface{}{
+		arg := map[string]interface{}{
 			"id":   "1",
 			"name": "John Doe",
 		}
@@ -47,12 +46,12 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 			WithArgs("1", "John Doe").WillReturnResult(sqlmock.NewResult(1, 1))
 
 		return sqlxDB.NamedExec("INSERT INTO users (id, name) VALUES (:id, :name)", arg)
-	} else if strings.Contains(query, "DELETE") {
+	case strings.Contains(query, "DELETE"):
 		mockDB, mock, _ := sqlmock.New()
 		defer mockDB.Close()
 
 		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
-		arg = map[string]interface{}{
+		arg := map[string]interface{}{
 			"id":   "1",
 			"name": "john",
 		}
@@ -61,12 +60,12 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 			WithArgs("1", "john").WillReturnResult(sqlmock.NewResult(1, 1))
 
 		return sqlxDB.NamedExec("DELETE FROM users WHERE id = :id AND name = :name", arg)
-	} else if strings.Contains(query, "UPDATE") {
+	case strings.Contains(query, "UPDATE"):
 		mockDB, mock, _ := sqlmock.New()
 		defer mockDB.Close()
 
 		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
-		arg = map[string]interface{}{
+		arg := map[string]interface{}{
 			"id":   "1",
 			"name": "John Doe Updated",
 		}
@@ -75,12 +74,12 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 			WithArgs("1", "John Doe Updated", "1", "John Doe Updated").WillReturnResult(sqlmock.NewResult(1, 1))
 
 		return sqlxDB.NamedExec("UPDATE users SET id = :id, name = :name WHERE id = :id AND name = :name", arg)
-	} else if strings.Contains(query, "CREATE") {
+	case strings.Contains(query, "CREATE"):
 		mockDB, mock, _ := sqlmock.New()
 		defer mockDB.Close()
 
 		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
-		arg = map[string]interface{}{
+		arg := map[string]interface{}{
 			"id":   "INT",
 			"name": "VARCHAR(255)",
 		}
@@ -89,12 +88,12 @@ func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, er
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
 		return sqlxDB.NamedExec("CREATE TABLE users (id INT, name VARCHAR(255))", arg)
-	} else if strings.Contains(query, "DROP") {
+	case strings.Contains(query, "DROP"):
 		mockDB, mock, _ := sqlmock.New()
 		defer mockDB.Close()
 
 		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
-		arg = map[string]interface{}{}
+		arg := map[string]interface{}{}
 
 		mock.ExpectExec("DROP TABLE users").
 			WillReturnResult(sqlmock.NewResult(1, 1))
@@ -151,12 +150,11 @@ func TestInsertUser(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.insert
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -217,12 +215,11 @@ func TestUpdateUser(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.update
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -283,12 +280,11 @@ func TestSelectUser(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.selects
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -345,12 +341,11 @@ func TestDeleteUser(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.delete
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -409,12 +404,11 @@ func TestCreateTable(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.createTable
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -468,12 +462,11 @@ func TestDropTable(t *testing.T) {
 				client:             &MockSQLClient{},
 			}
 			e.execute = e.dropTable
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
