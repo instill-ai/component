@@ -14,8 +14,7 @@ import (
 )
 
 const (
-	taskConvertToText string = "TASK_CONVERT_TO_TEXT"
-	taskChunkText     string = "TASK_CHUNK_TEXT"
+	taskChunkText string = "TASK_CHUNK_TEXT"
 )
 
 var (
@@ -49,10 +48,10 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	return &base.ExecutionWrapper{Execution: &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
-	}}, nil
+// CreateExecution initializes a connector executor that can be used in a
+// pipeline trigger.
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
+	return &execution{ComponentExecution: x}, nil
 }
 
 // Execute executes the derived execution
@@ -61,21 +60,6 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 	for _, input := range inputs {
 		switch e.Task {
-		case taskConvertToText:
-			inputStruct := ConvertToTextInput{}
-			err := base.ConvertFromStructpb(input, &inputStruct)
-			if err != nil {
-				return nil, err
-			}
-			outputStruct, err := convertToText(inputStruct)
-			if err != nil {
-				return nil, err
-			}
-			output, err := base.ConvertToStructpb(outputStruct)
-			if err != nil {
-				return nil, err
-			}
-			outputs = append(outputs, output)
 		case taskChunkText:
 			inputStruct := ChunkTextInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)

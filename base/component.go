@@ -1,12 +1,12 @@
 package base
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/gofrs/uuid"
-
 	"github.com/lestrrat-go/jsref/provider"
 	"go.uber.org/zap"
 	"golang.org/x/text/cases"
@@ -77,10 +77,18 @@ type IComponent interface {
 	// by sysVars or component setting.
 	GetDefinition(sysVars map[string]any, compConfig *ComponentConfig) (*pb.ComponentDefinition, error)
 
-	CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*ExecutionWrapper, error)
+	// CreateExecution takes a ComponentExecution that can be used to compose
+	// the core component behaviour with the particular business logic in the
+	// implmentation.
+	CreateExecution(base ComponentExecution) (IExecution, error)
 	Test(sysVars map[string]any, config *structpb.Struct) error
 
 	IsSecretField(target string) bool
+
+	// Note: These two functions are for the pipeline run-on-event feature,
+	// which is still experimental and may change at any time.
+	HandleVerificationEvent(header map[string][]string, req *structpb.Struct, setup map[string]any) (isVerification bool, resp *structpb.Struct, err error)
+	ParseEvent(ctx context.Context, req *structpb.Struct, setup map[string]any) (parsed *structpb.Struct, err error)
 
 	UsageHandlerCreator() UsageHandlerCreator
 }
@@ -95,6 +103,14 @@ type Component struct {
 
 	definition   *pb.ComponentDefinition
 	secretFields []string
+}
+
+func (c *Component) HandleVerificationEvent(header map[string][]string, req *structpb.Struct, setup map[string]any) (isVerification bool, resp *structpb.Struct, err error) {
+	return false, nil, nil
+}
+
+func (c *Component) ParseEvent(ctx context.Context, req *structpb.Struct, setup map[string]any) (parsed *structpb.Struct, err error) {
+	return req, nil
 }
 
 func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
@@ -270,10 +286,6 @@ func generateComponentSpec(title string, tasks []*pb.ComponentTask, taskStructs 
 	componentSpec.Fields["title"] = structpb.NewStringValue(fmt.Sprintf("%s Component", title))
 	componentSpec.Fields["type"] = structpb.NewStringValue("object")
 
-	if err != nil {
-		return nil, err
-	}
-
 	oneOfList := &structpb.ListValue{
 		Values: []*structpb.Value{},
 	}
@@ -309,9 +321,7 @@ func generateComponentSpec(title string, tasks []*pb.ComponentTask, taskStructs 
 		condition := &structpb.Struct{}
 		err = protojson.Unmarshal([]byte(conditionJSON), condition)
 		if err != nil {
-			if err != nil {
-				panic(err)
-			}
+			panic(err)
 		}
 		oneOf.Fields["properties"].GetStructValue().Fields["condition"] = structpb.NewStructValue(condition)
 		oneOf.Fields["properties"].GetStructValue().Fields["input"] = structpb.NewStructValue(compInputStruct)
@@ -821,37 +831,6 @@ func (c *Component) UsageHandlerCreator() UsageHandlerCreator {
 func (c *Component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 	return nil
 }
-
-// ComponentExecution implements the common methods for component
-// execution.
-type ComponentExecution struct {
-	Component       IComponent
-	SystemVariables map[string]any
-	Setup           *structpb.Struct
-	Task            string
-}
-
-// GetComponent returns the component interface that is triggering the execution.
-func (e *ComponentExecution) GetComponent() IComponent { return e.Component }
-
-func (e *ComponentExecution) GetTask() string                    { return e.Task }
-func (e *ComponentExecution) GetSetup() *structpb.Struct         { return e.Setup }
-func (e *ComponentExecution) GetSystemVariables() map[string]any { return e.SystemVariables }
-func (e *ComponentExecution) GetLogger() *zap.Logger             { return e.Component.GetLogger() }
-
-func (e *ComponentExecution) GetTaskInputSchema() string {
-	return e.Component.GetTaskInputSchemas()[e.Task]
-}
-func (e *ComponentExecution) GetTaskOutputSchema() string {
-	return e.Component.GetTaskOutputSchemas()[e.Task]
-}
-
-// UsesInstillCredentials indicates wether the component setup includes the use
-// of global secrets (as opposed to a bring-your-own-key configuration) to
-// connect to external services. Components should override this method when
-// they have the ability to read global secrets and be executed without
-// explicit credentials.
-func (e *ComponentExecution) UsesInstillCredentials() bool { return false }
 
 // ReadFromGlobalConfig looks up a component credential field from a secret map
 // that comes from the environment variable configuration.

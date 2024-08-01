@@ -72,25 +72,34 @@ func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	c.Run("ok - supported task", func(c *qt.C) {
 		task := TextGenerationTask
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.IsNil)
 	})
 	c.Run("ok - supported task", func(c *qt.C) {
 		task := TextEmbeddingTask
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.IsNil)
 	})
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.ErrorMatches, "unsupported task")
 	})
 }
@@ -99,7 +108,7 @@ func TestComponent_Tasks(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
-	connector := Init(bc)
+	cmp := Init(bc)
 	ctx := context.Background()
 
 	chatTc := struct {
@@ -116,16 +125,15 @@ func TestComponent_Tasks(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextGenerationTask},
+			ComponentExecution: base.ComponentExecution{Component: cmp, SystemVariables: nil, Setup: setup, Task: TextGenerationTask},
 			client:             MistralClient{sdkClient: &MockMistralClient{}, logger: nil},
 		}
 		e.execute = e.taskTextGeneration
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(chatTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(chatTc.wantResp)
@@ -147,16 +155,15 @@ func TestComponent_Tasks(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
+			ComponentExecution: base.ComponentExecution{Component: cmp, SystemVariables: nil, Setup: setup, Task: TextEmbeddingTask},
 			client:             MistralClient{sdkClient: &MockMistralClient{}, logger: nil},
 		}
 		e.execute = e.taskTextEmbedding
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(embeddingTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(embeddingTc.wantResp)

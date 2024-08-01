@@ -65,7 +65,7 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to apply. You can use vector metadata to limit your search. See https://www.pinecone.io/docs/metadata-filtering/.",
+          "description": "The filter to apply. You can use vector metadata to limit your search. See more details <a href=\"https://www.pinecone.io/docs/metadata-filtering/\">here</a>.",
           "instillAcceptFormats": [
             "semi-structured/object"
           ],

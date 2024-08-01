@@ -6,7 +6,7 @@ require (
 	github.com/frankban/quicktest v1.14.6
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/instill-ai/component v0.20.2-beta
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240620151439-31aafaea1fc9
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240728054535-94bc4482c55d
 	github.com/rogpeppe/go-internal v1.12.0
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/spf13/cobra v1.8.0

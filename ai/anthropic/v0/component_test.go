@@ -31,7 +31,7 @@ func TestComponent_Execute(t *testing.T) {
 	ctx := context.Background()
 
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	testcases := []struct {
 		name        string
@@ -74,11 +74,15 @@ func TestComponent_Execute(t *testing.T) {
 			})
 			c.Assert(err, qt.IsNil)
 
-			exec, err := connector.CreateExecution(nil, setup, tc.task)
+			exec, err := cmp.CreateExecution(base.ComponentExecution{
+				Component: cmp,
+				Setup:     setup,
+				Task:      tc.task,
+			})
 			c.Assert(err, qt.IsNil)
 
 			pbIn := new(structpb.Struct)
-			_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
 			c.Check(err, qt.IsNotNil)
 
 			want := "Anthropic responded with a 401 status code. Incorrect API key provided."
@@ -88,7 +92,10 @@ func TestComponent_Execute(t *testing.T) {
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
 
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.ErrorMatches, "unsupported task")
 	})
 }
@@ -97,7 +104,7 @@ func TestComponent_Connection(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	c.Run("nok - error", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -150,7 +157,7 @@ func TestComponent_Connection(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		err = connector.Test(nil, setup)
+		err = cmp.Test(nil, setup)
 		c.Check(err, qt.IsNil)
 	})
 }
@@ -178,7 +185,7 @@ func TestComponent_Generation(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	mockHistory := []message{
 		{Role: "user", Content: []content{{Type: "text", Text: "Answer the following question in traditional chinses"}}},
@@ -205,17 +212,16 @@ func TestComponent_Generation(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TextGenerationTask},
+		exec := &execution{
+			ComponentExecution: base.ComponentExecution{Component: cmp, SystemVariables: nil, Setup: setup, Task: TextGenerationTask},
 			client:             &MockAnthropicClient{},
 		}
-		e.execute = e.generateText
-		exec := &base.ExecutionWrapper{Execution: e}
+		exec.execute = exec.generateText
 
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)

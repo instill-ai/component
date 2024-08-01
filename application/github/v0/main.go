@@ -4,7 +4,6 @@ package github
 import (
 	"context"
 	_ "embed"
-	"encoding/json"
 	"fmt"
 	"sync"
 
@@ -61,14 +60,16 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+// CreateExecution initializes a connector executor that can be used in a
+// pipeline trigger.
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	ctx := context.Background()
-	githubClient := newClient(ctx, setup)
+	githubClient := newClient(ctx, x.Setup)
 	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
+		ComponentExecution: x,
 		client:             githubClient,
 	}
-	switch task {
+	switch x.Task {
 	case taskListPRs:
 		e.execute = e.client.listPullRequestsTask
 	case taskGetPR:
@@ -89,75 +90,19 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		e.execute = e.client.createWebhookTask
 	default:
 		return nil, errmsg.AddMessage(
-			fmt.Errorf("not supported task: %s", task),
-			fmt.Sprintf("%s task is not supported.", task),
+			fmt.Errorf("not supported task: %s", x.Task),
+			fmt.Sprintf("%s task is not supported.", x.Task),
 		)
 	}
 
-	return &base.ExecutionWrapper{Execution: e}, nil
-}
-
-func (e *execution) fillInDefaultValues(input *structpb.Struct) (*structpb.Struct, error) {
-	task := e.Task
-	taskSpec, ok := e.Component.GetTaskInputSchemas()[task]
-	if !ok {
-		return nil, errmsg.AddMessage(
-			fmt.Errorf("task %s not found", task),
-			fmt.Sprintf("Task %s not found", task),
-		)
-	}
-	var taskSpecMap map[string]interface{}
-	err := json.Unmarshal([]byte(taskSpec), &taskSpecMap)
-	if err != nil {
-		return nil, errmsg.AddMessage(
-			err,
-			"Failed to unmarshal input",
-		)
-	}
-	inputMap := taskSpecMap["properties"].(map[string]interface{})
-	for key, value := range inputMap {
-		valueMap, ok := value.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		if _, ok := valueMap["default"]; !ok {
-			continue
-		}
-		if _, ok := input.GetFields()[key]; ok {
-			continue
-		}
-		defaultValue := valueMap["default"]
-		typeValue := valueMap["type"]
-		switch typeValue {
-		case "string":
-			input.GetFields()[key] = &structpb.Value{
-				Kind: &structpb.Value_StringValue{
-					StringValue: fmt.Sprintf("%v", defaultValue),
-				},
-			}
-		case "integer", "number":
-			input.GetFields()[key] = &structpb.Value{
-				Kind: &structpb.Value_NumberValue{
-					NumberValue: defaultValue.(float64),
-				},
-			}
-		case "boolean":
-			input.GetFields()[key] = &structpb.Value{
-				Kind: &structpb.Value_BoolValue{
-					BoolValue: defaultValue.(bool),
-				},
-			}
-		}
-	}
-	return input, nil
+	return e, nil
 }
 
 func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	for i, input := range inputs {
-		input, err := e.fillInDefaultValues(input)
-		if err != nil {
+		if _, err := e.FillInDefaultValues(input); err != nil {
 			return nil, err
 		}
 		output, err := e.execute(ctx, input)
@@ -169,4 +114,16 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 	}
 
 	return outputs, nil
+}
+
+func (c *component) HandleVerificationEvent(header map[string][]string, req *structpb.Struct, setup map[string]any) (isVerification bool, resp *structpb.Struct, err error) {
+	if len(header["x-github-event"]) > 0 && header["x-github-event"][0] == "ping" {
+		return true, nil, nil
+	}
+	return false, nil, nil
+}
+
+func (c *component) ParseEvent(ctx context.Context, req *structpb.Struct, setup map[string]any) (parsed *structpb.Struct, err error) {
+	// TODO: parse and validate event
+	return req, nil
 }

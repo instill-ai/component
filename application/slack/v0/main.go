@@ -63,25 +63,25 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Setup: setup, Task: task},
-		client:             newClient(setup),
+		ComponentExecution: x,
+		client:             newClient(x.Setup),
 	}
 
-	switch task {
+	switch x.Task {
 	case taskWriteMessage:
 		e.execute = e.sendMessage
 	case taskReadMessage:
 		e.execute = e.readMessage
 	default:
 		return nil, errmsg.AddMessage(
-			fmt.Errorf("not supported task: %s", task),
-			fmt.Sprintf("%s task is not supported.", task),
+			fmt.Errorf("not supported task: %s", x.Task),
+			fmt.Sprintf("%s task is not supported.", x.Task),
 		)
 	}
 
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
@@ -102,4 +102,24 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
 
 	return nil
+}
+
+func (c *component) HandleVerificationEvent(header map[string][]string, req *structpb.Struct, setup map[string]any) (isVerification bool, resp *structpb.Struct, err error) {
+
+	switch event := req.GetFields()["type"].GetStringValue(); event {
+	case "url_verification":
+		resp, _ := structpb.NewStruct(map[string]any{
+			"challenge": req.GetFields()["challenge"].GetStringValue(),
+		})
+		return true, resp, nil
+	default:
+		return false, nil, nil
+
+	}
+
+}
+
+func (c *component) ParseEvent(ctx context.Context, req *structpb.Struct, setup map[string]any) (parsed *structpb.Struct, err error) {
+	// TODO: parse and validate event
+	return req, nil
 }

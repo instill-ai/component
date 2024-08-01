@@ -5,6 +5,10 @@ gen-doc:
 	@rm -f $$(find . -name README.mdx | paste -d ' ' -s -)
 	@go generate -run compogen ./...
 
+gen-mock:
+	@go install github.com/gojuno/minimock/v3/cmd/minimock@v3.3.13
+	@go generate -run minimock ./...
+
 test:
 # Install tesseract via `brew install tesseract`
 # Setup `export LIBRARY_PATH="/opt/homebrew/lib"` `export CPATH="/opt/homebrew/include"`

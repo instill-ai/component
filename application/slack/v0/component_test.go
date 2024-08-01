@@ -146,12 +146,12 @@ func TestComponent_ExecuteWriteTask(t *testing.T) {
 				client:             &MockSlackClient{},
 			}
 			e.execute = e.sendMessage
-			exec := &base.ExecutionWrapper{Execution: e}
+			
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -230,12 +230,12 @@ func TestComponent_ExecuteReadTask(t *testing.T) {
 				client:             &MockSlackClient{},
 			}
 			e.execute = e.readMessage
-			exec := &base.ExecutionWrapper{Execution: e}
+			
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)

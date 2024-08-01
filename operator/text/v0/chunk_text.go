@@ -33,15 +33,17 @@ type Setting struct {
 }
 
 type ChunkTextOutput struct {
-	ChunkNum   int         `json:"chunk-num"`
-	TextChunks []TextChunk `json:"text-chunks"`
-	TokenCount int         `json:"token-count,omitempty"`
+	ChunkNum         int         `json:"chunk-num"`
+	TextChunks       []TextChunk `json:"text-chunks"`
+	TokenCount       int         `json:"token-count"`
+	ChunksTokenCount int         `json:"chunks-token-count"`
 }
 
 type TextChunk struct {
 	Text          string `json:"text"`
 	StartPosition int    `json:"start-position"`
 	EndPosition   int    `json:"end-position"`
+	TokenCount    int    `json:"token-count"`
 }
 
 func (s *Setting) SetDefault() {
@@ -110,19 +112,18 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		)
 	}
 
-	tkm, err := tiktoken.EncodingForModel(setting.ModelName)
-	if err != nil {
-		return output, err
-	}
-	token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
-	output.TokenCount = len(token)
-
 	chunks, err := split.SplitText(input.Text)
 	if err != nil {
 		return output, err
 	}
 	output.ChunkNum = len(chunks)
 
+	tkm, err := tiktoken.EncodingForModel(setting.ModelName)
+	if err != nil {
+		return output, err
+	}
+
+	totalTokenCount := 0
 	startScanPosition := 0
 	rawRunes := []rune(input.Text)
 	for i, chunk := range chunks {
@@ -139,22 +140,35 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 			continue
 		}
 
+		token := tkm.Encode(chunk, setting.AllowedSpecial, setting.DisallowedSpecial)
+
 		output.TextChunks = append(output.TextChunks, TextChunk{
 			Text:          chunk,
 			StartPosition: startPosition,
 			EndPosition:   endPosition,
+			TokenCount:    len(token),
 		})
+		totalTokenCount += len(token)
 		startScanPosition = startPosition + 1
 	}
 
 	if len(output.TextChunks) == 0 {
+		token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
+
 		output.TextChunks = append(output.TextChunks, TextChunk{
 			Text:          input.Text,
 			StartPosition: 0,
 			EndPosition:   len(rawRunes) - 1,
+			TokenCount:    len(token),
 		})
 		output.ChunkNum = 1
+		totalTokenCount = len(token)
 	}
+
+	originalTextToken := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
+	output.TokenCount = len(originalTextToken)
+	output.ChunksTokenCount = totalTokenCount
+
 	return output, nil
 }
 

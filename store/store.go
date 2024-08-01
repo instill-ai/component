@@ -14,14 +14,15 @@ import (
 	"github.com/instill-ai/component/ai/huggingface/v0"
 	"github.com/instill-ai/component/ai/instill/v0"
 	"github.com/instill-ai/component/ai/mistralai/v0"
+	"github.com/instill-ai/component/ai/ollama/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
 	"github.com/instill-ai/component/application/email/v0"
 	"github.com/instill-ai/component/application/github/v0"
 	"github.com/instill-ai/component/application/googlesearch/v0"
-
+	"github.com/instill-ai/component/application/hubspot/v0"
+	"github.com/instill-ai/component/application/jira/v0"
 	"github.com/instill-ai/component/application/numbers/v0"
-	"github.com/instill-ai/component/application/restapi/v0"
 	"github.com/instill-ai/component/application/slack/v0"
 	"github.com/instill-ai/component/application/website/v0"
 	"github.com/instill-ai/component/base"
@@ -30,11 +31,15 @@ import (
 	"github.com/instill-ai/component/data/googlecloudstorage/v0"
 	"github.com/instill-ai/component/data/pinecone/v0"
 	"github.com/instill-ai/component/data/redis/v0"
+	"github.com/instill-ai/component/data/sql/v0"
+	"github.com/instill-ai/component/generic/restapi/v0"
+	"github.com/instill-ai/component/operator/audio/v0"
 	"github.com/instill-ai/component/operator/base64/v0"
 	"github.com/instill-ai/component/operator/document/v0"
 	"github.com/instill-ai/component/operator/image/v0"
 	"github.com/instill-ai/component/operator/json/v0"
 	"github.com/instill-ai/component/operator/text/v0"
+	"github.com/instill-ai/component/operator/video/v0"
 
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -83,6 +88,8 @@ func Init(
 		compStore.Import(image.Init(baseComp))
 		compStore.Import(text.Init(baseComp))
 		compStore.Import(document.Init(baseComp))
+		compStore.Import(audio.Init(baseComp))
+		compStore.Import(video.Init(baseComp))
 
 		compStore.Import(github.Init(baseComp))
 		{
@@ -130,10 +137,14 @@ func Init(
 		compStore.Import(pinecone.Init(baseComp))
 		compStore.Import(redis.Init(baseComp))
 		compStore.Import(elasticsearch.Init(baseComp))
+		compStore.Import(sql.Init(baseComp))
 		compStore.Import(restapi.Init(baseComp))
 		compStore.Import(website.Init(baseComp))
 		compStore.Import(slack.Init(baseComp))
 		compStore.Import(email.Init(baseComp))
+		compStore.Import(jira.Init(baseComp))
+		compStore.Import(ollama.Init(baseComp))
+		compStore.Import(hubspot.Init(baseComp))
 
 	})
 	return compStore
@@ -147,12 +158,53 @@ func (s *Store) Import(comp base.IComponent) {
 	s.componentUIDs = append(s.componentUIDs, comp.GetDefinitionUID())
 }
 
-// CreateExecution initializes the execution of a component given its UID.
-func (s *Store) CreateExecution(defUID uuid.UUID, sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	if c, ok := s.componentUIDMap[defUID]; ok {
-		return c.comp.CreateExecution(sysVars, setup, task)
+// ExecutionParams contains the information needed to execute a
+// component.
+type ExecutionParams struct {
+	// Component ID is the ID of the component *as defined in the recipe*.
+	ComponentID string
+
+	// ComponentDefinitionID determines the type of component to be executed.
+	ComponentDefinitionID string
+
+	// SystemVariables contains information about the pipeline trigger in which
+	// the component is being executed.
+	SystemVariables map[string]any
+
+	// Setup may contain the configuration to connect to an external service.
+	Setup *structpb.Struct
+
+	// Task determines the task that the execution will carry out. It defines
+	// the input and output of the execution.
+	Task string
+}
+
+// CreateExecution initializes the execution of a component.
+func (s *Store) CreateExecution(p ExecutionParams) (*base.ExecutionWrapper, error) {
+	c, ok := s.componentIDMap[p.ComponentDefinitionID]
+	if !ok {
+		return nil, fmt.Errorf("component definition not found")
 	}
-	return nil, fmt.Errorf("component definition not found")
+
+	x, err := c.comp.CreateExecution(base.ComponentExecution{
+		Component:       c.comp,
+		ComponentID:     p.ComponentID,
+		SystemVariables: p.SystemVariables,
+		Setup:           p.Setup,
+		Task:            p.Task,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("creating component execution: %w", err)
+	}
+
+	return &base.ExecutionWrapper{IExecution: x}, nil
+}
+
+func (s *Store) HandleVerificationEvent(defID string, header map[string][]string, req *structpb.Struct, setup map[string]any) (bool, *structpb.Struct, error) {
+	if c, ok := s.componentIDMap[defID]; ok {
+		return c.comp.HandleVerificationEvent(header, req, setup)
+	}
+	return false, nil, fmt.Errorf("component definition not found")
 }
 
 // GetDefinitionByUID returns a component definition by its UID.
