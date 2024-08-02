@@ -1,6 +1,10 @@
 package text
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/pkoukk/tiktoken-go"
+)
 
 type Tokenizer interface {
 	Encode(chunks []TextChunk) (map[int]int, error)
@@ -8,39 +12,87 @@ type Tokenizer interface {
 	// EncodeTokenChunk(chunks string) ([]string, error)
 }
 
-type OpenAITokenizer struct{}
-type MistralTokenizer struct{}
-type CohereTokenizer struct{}
-type EncodingTokenizer struct{}
-type HuggingFaceTokenizer struct{}
+type OpenAITokenizer struct {
+	model string
+}
+type MistralTokenizer struct {
+	model string
+}
+type CohereTokenizer struct {
+	model string
+}
+type EncodingTokenizer struct {
+	encoding string
+}
+type HuggingFaceTokenizer struct {
+	model string
+}
 
 func (choice Choice) GetTokenizer() (Tokenizer, error) {
 	switch choice.TokenizationMethod {
 	case "Model":
 		return getModelTokenizer(choice.Model)
 	case "Encoding":
-		return EncodingTokenizer{}, nil
+		return EncodingTokenizer{
+			encoding: choice.Encoding,
+		}, nil
 	case "HuggingFace":
-		return HuggingFaceTokenizer{}, nil
+		return HuggingFaceTokenizer{
+			model: choice.HuggingFaceModel,
+		}, nil
 	}
 	return nil, fmt.Errorf("Tokenization method %s not found", choice.TokenizationMethod)
 }
 
 func getModelTokenizer(model string) (Tokenizer, error) {
 	if modelInList(model, MistralModels) {
-		return MistralTokenizer{}, nil
+		return MistralTokenizer{
+			model: model,
+		}, nil
 	}
 	if modelInList(model, OpenAIModels) {
-		return OpenAITokenizer{}, nil
+		return OpenAITokenizer{
+			model: model,
+		}, nil
 	}
 	if modelInList(model, CohereModels) {
-		return CohereTokenizer{}, nil
+		return CohereTokenizer{
+			model: model,
+		}, nil
 	}
 	return nil, fmt.Errorf("Model %s not found", model)
 }
 
 func (t OpenAITokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
-	return map[int]int{}, nil
+	tke, err := tiktoken.EncodingForModel(t.model)
+	if err != nil {
+		return map[int]int{}, fmt.Errorf("Failed to get encoding by model name %s: %w", t.model, err)
+	}
+
+	tokenIdxCountMap := make(map[int]int)
+
+	for i, textChunk := range textChunks {
+		tokenCount := len(tke.Encode(textChunk.Text, nil, nil))
+		tokenIdxCountMap[i] = tokenCount
+	}
+
+	return tokenIdxCountMap, nil
+}
+
+func (t EncodingTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
+	tke, err := tiktoken.GetEncoding(t.encoding)
+	if err != nil {
+		return map[int]int{}, fmt.Errorf("Failed to get encoding by encoding name %s: %w", t.encoding, err)
+	}
+
+	tokenIdxCountMap := make(map[int]int)
+
+	for i, textChunk := range textChunks {
+		tokenCount := len(tke.Encode(textChunk.Text, nil, nil))
+		tokenIdxCountMap[i] = tokenCount
+	}
+
+	return tokenIdxCountMap, nil
 }
 
 func (t MistralTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
@@ -48,10 +100,6 @@ func (t MistralTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
 }
 
 func (t CohereTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
-	return map[int]int{}, nil
-}
-
-func (t EncodingTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
 	return map[int]int{}, nil
 }
 
