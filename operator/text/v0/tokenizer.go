@@ -9,7 +9,7 @@ import (
 )
 
 type Tokenizer interface {
-	Encode(chunks []TextChunk) (map[int]int, error)
+	Encode(chunks []TextChunk) ([]int, error)
 	// TODO: chuang8511 need to add encode for token chunk strategy
 	// EncodeTokenChunk(chunks string) ([]string, error)
 }
@@ -65,13 +65,13 @@ func getModelTokenizer(model string) (Tokenizer, error) {
 	return nil, fmt.Errorf("Model %s not found", model)
 }
 
-func (t OpenAITokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
+func (t OpenAITokenizer) Encode(textChunks []TextChunk) ([]int, error) {
 	tke, err := tiktoken.EncodingForModel(t.model)
 	if err != nil {
-		return map[int]int{}, fmt.Errorf("Failed to get encoding by model name %s: %w", t.model, err)
+		return []int{}, fmt.Errorf("Failed to get encoding by model name %s: %w", t.model, err)
 	}
 
-	tokenIdxCountMap := make(map[int]int)
+	tokenIdxCountMap := make([]int, len(textChunks))
 
 	for i, textChunk := range textChunks {
 		tokenCount := len(tke.Encode(textChunk.Text, nil, nil))
@@ -81,13 +81,13 @@ func (t OpenAITokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
 	return tokenIdxCountMap, nil
 }
 
-func (t EncodingTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
+func (t EncodingTokenizer) Encode(textChunks []TextChunk) ([]int, error) {
 	tke, err := tiktoken.GetEncoding(t.encoding)
 	if err != nil {
-		return map[int]int{}, fmt.Errorf("Failed to get encoding by encoding name %s: %w", t.encoding, err)
+		return []int{}, fmt.Errorf("Failed to get encoding by encoding name %s: %w", t.encoding, err)
 	}
 
-	tokenIdxCountMap := make(map[int]int)
+	tokenIdxCountMap := make([]int, len(textChunks))
 
 	for i, textChunk := range textChunks {
 		tokenCount := len(tke.Encode(textChunk.Text, nil, nil))
@@ -97,15 +97,15 @@ func (t EncodingTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
 	return tokenIdxCountMap, nil
 }
 
-func (t MistralTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
+func (t MistralTokenizer) Encode(textChunks []TextChunk) ([]int, error) {
 	return executePythonCode(mistralTokenizer, textChunks, t.model)
 }
 
-func (t CohereTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
+func (t CohereTokenizer) Encode(textChunks []TextChunk) ([]int, error) {
 	return executePythonCode(cohereTokenizer, textChunks, t.model)
 }
 
-func (t HuggingFaceTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
+func (t HuggingFaceTokenizer) Encode(textChunks []TextChunk) ([]int, error) {
 	return executePythonCode(huggingfaceTokenizer, textChunks, t.model)
 }
 
@@ -153,12 +153,12 @@ func (output *ChunkTextOutput) setFileTokenCount(choice Choice, rawText string) 
 }
 
 type pythonRunnerOutput struct {
-	TokenCountMap map[int]int `json:"token_count_map"`
+	TokenCountMap []int `json:"token_count_map"`
 }
 
-func executePythonCode(pythonCode string, textChunks []TextChunk, model string) (map[int]int, error) {
+func executePythonCode(pythonCode string, textChunks []TextChunk, model string) ([]int, error) {
 
-	chunkIdxTokenCountMap := make(map[int]int)
+	chunkIdxTokenCountMap := make([]int, len(textChunks))
 	params := make(map[string]interface{})
 	for _, textChunk := range textChunks {
 		params["text_chunks"] = append(params["text_chunks"].([]string), textChunk.Text)
