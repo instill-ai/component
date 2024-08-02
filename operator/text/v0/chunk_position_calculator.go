@@ -8,8 +8,9 @@ type ChunkPositionCalculator interface {
 type PositionCalculator struct{}
 type MarkdownPositionCalculator struct{}
 
-func (output *ChunkTextOutput) setChunksWithPosition(chunks []string, rawRunes []rune, chunkMethod string) {
+func (output *ChunkTextOutput) setChunksWithPosition(chunks []string, rawText, chunkMethod string) {
 
+	rawRunes := []rune(rawText)
 	var positionCalculator ChunkPositionCalculator
 
 	switch chunkMethod {
@@ -41,6 +42,15 @@ func (output *ChunkTextOutput) setChunksWithPosition(chunks []string, rawRunes [
 			EndPosition:   endPosition,
 		})
 		startScanPosition = startPosition + 1
+	}
+
+	// TODO: chuang8511, check why there is no chunks
+	if len(output.TextChunks) == 0 {
+		output.TextChunks = append(output.TextChunks, TextChunk{
+			Text:          rawText,
+			StartPosition: 0,
+			EndPosition:   len(rawRunes) - 1,
+		})
 	}
 }
 
