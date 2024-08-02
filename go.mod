@@ -42,7 +42,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/nakagami/firebirdsql v0.9.10
 	github.com/pkg/errors v0.9.1
-	github.com/pkoukk/tiktoken-go v0.1.6
+	github.com/pkoukk/tiktoken-go v0.1.7
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.0
 	github.com/sijms/go-ora/v2 v2.8.19
