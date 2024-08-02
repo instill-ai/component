@@ -65,13 +65,13 @@ func Init(bc base.Component) *component {
 	return comp
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	e := &execution{
-		ComponentExecution: base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task},
-		client:             newClient(setup, c.GetLogger()),
+		ComponentExecution: x,
+		client:             newClient(x.Setup, c.GetLogger()),
 	}
 
-	switch task {
+	switch x.Task {
 	case taskSendTextBasedTemplateMessage:
 		e.execute = e.SendTextBasedTemplateMessage
 	case taskSendMediaBasedTemplateMessage:
@@ -94,7 +94,7 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		return nil, fmt.Errorf("unsupported task")
 	}
 
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {

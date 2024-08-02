@@ -151,19 +151,18 @@ func TestComponent_ExecuteSendMessageTask(t *testing.T) {
 			case taskSendInteractiveCTAURLButtonMessage:
 				e.execute = e.TaskSendInteractiveCTAURLButtonMessage
 			}
-			exec := &base.ExecutionWrapper{Execution: e}
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			pbOut, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			pbOut, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			c.Assert(err, qt.IsNil)
 
-			outJson, err := protojson.Marshal(pbOut[0])
+			outJSON, err := protojson.Marshal(pbOut[0])
 			c.Assert(err, qt.IsNil)
 
-			c.Check(outJson, qt.JSONEquals, tc.wantOutput)
+			c.Check(outJSON, qt.JSONEquals, tc.wantOutput)
 		})
 	}
 }

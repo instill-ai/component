@@ -165,12 +165,10 @@ func TestComponent_ExecuteSendTemplateMessageTask(t *testing.T) {
 				e.execute = e.SendAuthenticationTemplateMessage
 			}
 
-			exec := &base.ExecutionWrapper{Execution: e}
-
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			pbOut, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+			pbOut, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -179,10 +177,10 @@ func TestComponent_ExecuteSendTemplateMessageTask(t *testing.T) {
 
 			c.Assert(err, qt.IsNil)
 
-			outJson, err := protojson.Marshal(pbOut[0])
+			outJSON, err := protojson.Marshal(pbOut[0])
 			c.Assert(err, qt.IsNil)
 
-			c.Check(outJson, qt.JSONEquals, tc.wantOutput)
+			c.Check(outJSON, qt.JSONEquals, tc.wantOutput)
 		})
 	}
 }
