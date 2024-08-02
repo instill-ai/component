@@ -14,12 +14,10 @@ func (output *ChunkTextOutput) setChunksWithPosition(chunks []string, rawText, c
 	var positionCalculator ChunkPositionCalculator
 
 	switch chunkMethod {
-	case "Token":
+	case "Token", "Recursive":
 		positionCalculator = PositionCalculator{}
 	case "Markdown":
 		positionCalculator = MarkdownPositionCalculator{}
-	case "Recursive":
-		positionCalculator = PositionCalculator{}
 	}
 
 	startScanPosition := 0
