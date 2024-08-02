@@ -14,7 +14,8 @@ import (
 )
 
 const (
-	taskChunkText string = "TASK_CHUNK_TEXT"
+	taskChunkText     string = "TASK_CHUNK_TEXT"
+	pythonInterpreter string = "/opt/venv/bin/python"
 )
 
 var (
@@ -24,6 +25,13 @@ var (
 	tasksJSON []byte
 	once      sync.Once
 	comp      *component
+
+	//go:embed python/cohere_tokenizer.py
+	cohereTokenizer string
+	//go:embed python/huggingface_tokenizer.py
+	huggingfaceTokenizer string
+	//go:embed python/mistral_tokenizer.py
+	mistralTokenizer string
 )
 
 // Operator is the derived operator

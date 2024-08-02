@@ -1,7 +1,9 @@
 package text
 
 import (
+	"encoding/json"
 	"fmt"
+	"os/exec"
 
 	"github.com/pkoukk/tiktoken-go"
 )
@@ -96,15 +98,15 @@ func (t EncodingTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
 }
 
 func (t MistralTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
-	return map[int]int{}, nil
+	return executePythonCode(mistralTokenizer, textChunks, t.model)
 }
 
 func (t CohereTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
-	return map[int]int{}, nil
+	return executePythonCode(cohereTokenizer, textChunks, t.model)
 }
 
 func (t HuggingFaceTokenizer) Encode(textChunks []TextChunk) (map[int]int, error) {
-	return map[int]int{}, nil
+	return executePythonCode(huggingfaceTokenizer, textChunks, t.model)
 }
 
 func (output *ChunkTextOutput) setTokenizeChunks(choice Choice) error {
@@ -148,6 +150,63 @@ func (output *ChunkTextOutput) setFileTokenCount(choice Choice, rawText string) 
 	output.TokenCount = tokenMap[0]
 
 	return nil
+}
+
+type pythonRunnerOutput struct {
+	TokenCountMap map[int]int `json:"token_count_map"`
+}
+
+func executePythonCode(pythonCode string, textChunks []TextChunk, model string) (map[int]int, error) {
+
+	chunkIdxTokenCountMap := make(map[int]int)
+	params := make(map[string]interface{})
+	for _, textChunk := range textChunks {
+		params["text_chunks"] = append(params["text_chunks"].([]string), textChunk.Text)
+	}
+
+	params["model"] = model
+
+	paramsJSON, err := json.Marshal(params)
+
+	if err != nil {
+		return chunkIdxTokenCountMap, fmt.Errorf("Failed to marshal chunk map: %w", err)
+	}
+
+	cmdRunner := exec.Command(pythonInterpreter, "-c", pythonCode)
+	stdin, err := cmdRunner.StdinPipe()
+
+	if err != nil {
+		return chunkIdxTokenCountMap, fmt.Errorf("Failed to get stdin pipe: %w", err)
+	}
+
+	errChan := make(chan error, 1)
+	go func() {
+		defer stdin.Close()
+		_, err := stdin.Write(paramsJSON)
+		if err != nil {
+			errChan <- err
+			return
+		}
+		errChan <- nil
+	}()
+
+	outputBytes, err := cmdRunner.CombinedOutput()
+	if err != nil {
+		return chunkIdxTokenCountMap, fmt.Errorf("Failed to get combined output: %w", err)
+	}
+
+	writeErr := <-errChan
+	if writeErr != nil {
+		return chunkIdxTokenCountMap, fmt.Errorf("Failed to write to stdin: %w", writeErr)
+	}
+
+	var output pythonRunnerOutput
+	err = json.Unmarshal(outputBytes, &output)
+	if err != nil {
+		return chunkIdxTokenCountMap, fmt.Errorf("Failed to unmarshal output: %w", err)
+	}
+
+	return output.TokenCountMap, nil
 }
 
 var OpenAIModels = []string{
