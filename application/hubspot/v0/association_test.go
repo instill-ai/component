@@ -17,7 +17,7 @@ import (
 
 type MockRetrieveAssociation struct{}
 
-func (s *MockRetrieveAssociation) GetThreadID(contactID string) (*TaskRetrieveAssociationThreadResp, error) {
+func (s *MockRetrieveAssociation) GetThreadID(contactID string, paging bool, pagingPath string) (*TaskRetrieveAssociationThreadResp, error) {
 
 	var fakeThreadID TaskRetrieveAssociationThreadResp
 	if contactID == "32027696539" {
@@ -32,7 +32,7 @@ func (s *MockRetrieveAssociation) GetThreadID(contactID string) (*TaskRetrieveAs
 	return &fakeThreadID, nil
 }
 
-func (s *MockRetrieveAssociation) GetCrmID(contactID string, objectType string) (*TaskRetrieveAssociationCrmResp, error) {
+func (s *MockRetrieveAssociation) GetCrmID(contactID string, objectType string, paging bool, pagingPath string) (interface{}, error) {
 
 	var fakeCrmID TaskRetrieveAssociationCrmResp
 	if contactID == "32027696539" {
@@ -73,6 +73,7 @@ func TestComponent_ExecuteRetrieveAssociationTask(t *testing.T) {
 				ObjectIDs: []string{
 					"7509711154",
 				},
+				ObjectIDsLength: 1,
 			},
 		},
 		{
@@ -85,6 +86,7 @@ func TestComponent_ExecuteRetrieveAssociationTask(t *testing.T) {
 				ObjectIDs: []string{
 					"12345678900",
 				},
+				ObjectIDsLength: 1,
 			},
 		},
 	}

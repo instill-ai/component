@@ -1486,7 +1486,7 @@
     }
   },
   "TASK_RETRIEVE_ASSOCIATION": {
-    "instillShortDescription": "Get the object IDs associated with contact ID (contact->objects). If you are trying to do the opposite (object->contacts), it is possible using the other tasks. Example: Go to get deal task to obtain deal->contacts",
+    "instillShortDescription": "Get the object IDs associated with contact ID (contact->objects). If you are trying to do the opposite (object->contacts), it is possible using the other tasks. Example: Go to get deal task to obtain deal->contacts. Remember to check that the contact ID you input exists, because there won't be an error message if the contact ID doesn't exist.",
     "input": {
       "description": "Contact ID and object type (CRM objects or Thread)",
       "instillUIOrder": 0,
@@ -1502,9 +1502,15 @@
           "type": "string"
         },
         "object-type": {
+          "enum": [
+            "Deals",
+            "Companies",
+            "Tickets",
+            "Threads"
+          ],
+          "example": "Deals",
           "description": "Input object type (CRM objects or 'Threads'). Note: CRM objects include 'Deals', 'Companies', 'Tickets', etc",
           "instillAcceptFormats": ["string"],
-          "instillUIMultiline": false,
           "instillUIOrder": 1,
           "instillUpstreamTypes": ["value", "reference", "template"],
           "title": "Object Type",
@@ -1530,9 +1536,17 @@
             "type": "string",
             "description": "The object ID associated with the contact"
           }
+        },
+        "object-ids-length": {
+          "description": "The number of object IDs",
+          "instillUIOrder": 1,
+          "required": [],
+          "title": "Object IDs Length",
+          "type": "integer",
+          "instillFormat": "integer"
         }
       },
-      "required": ["object-ids"],
+      "required": ["object-ids", "object-ids-length"],
       "title": "Output",
       "type": "object"
     }
@@ -1742,7 +1756,7 @@
           "instillFormat": "integer"
         }
       },
-      "required": ["object-ids"],
+      "required": ["object-ids", "object-ids-length"],
       "title": "Output",
       "type": "object"
     }

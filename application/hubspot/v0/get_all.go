@@ -80,7 +80,7 @@ func (e *execution) GetAll(input *structpb.Struct) (*structpb.Struct, error) {
 
 	outputStruct := TaskGetAllOutput{}
 
-	var param string
+	var param, tempParam string
 	// need to use for loop because each API call can only retrieve 10 objects. So need to do multiple API calls to get all objects if it is more than 10.
 	for {
 		res, err := e.client.GetAll.Get(inputStruct.ObjectType, param)
@@ -93,14 +93,16 @@ func (e *execution) GetAll(input *structpb.Struct) (*structpb.Struct, error) {
 			outputStruct.ObjectIDs = append(outputStruct.ObjectIDs, result.ID)
 		}
 
-		if res.Paging == nil {
-			if len(res.Results) == 0 {
+		// res.Paging.Next.After == tempParam is purely for Threads because for some reason, the API still return paging even though there is no more data/ next page
+		if res.Paging == nil || res.Paging.Next.After == tempParam {
+			if len(outputStruct.ObjectIDs) == 0 {
 				outputStruct.ObjectIDs = []string{}
 			}
 			break
 		}
 
 		param = fmt.Sprintf("?after=%s", res.Paging.Next.After)
+		tempParam = res.Paging.Next.After
 	}
 
 	outputStruct.ObjectIDsLength = len(outputStruct.ObjectIDs)
