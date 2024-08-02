@@ -119,7 +119,6 @@
         "gpt-4o",
         "gpt-4",
         "gpt-3.5-turbo",
-
         "open-mixtral-8x22b",
         "open-mixtral-8x7b",
         "open-mistral-7b",
@@ -127,7 +126,6 @@
         "mistral-small-latest",
         "codestral-latest",
         "mistral-embed",
-
         "command-r-plus",
         "command-r",
         "command",
@@ -138,7 +136,6 @@
         "embed-multilingual-v3.0",
         "embed-english-light-v3.0",
         "embed-multilingual-light-v3.0",
-
         "text-davinci-003",
         "text-davinci-002",
         "text-davinci-001",
@@ -396,52 +393,53 @@
                 {
                   "properties": {
                     "tokenization-method": {
-                      "const": "Model Name",
+                      "const": "Model",
                       "type": "string",
                       "title": "Choose by Model Name"
                     },
-                    "model-name": {
-                      "$ref": "#/$defs/model-name"
+                    "model": {
+                      "$ref": "#/$defs/tokenization-model"
                     }
                   },
                   "required": [
-                    "tokenization-method"
+                    "tokenization-method",
+                    "model"
                   ],
                   "instillEditOnNodeFields": [
                     "tokenization-method",
-                    "model-name"
+                    "model"
                   ],
                   "type": "object"
                 },
                 {
                   "properties": {
                     "tokenization-method": {
-                      "const": "Encoding Name",
+                      "const": "Encoding",
                       "type": "string",
                       "title": "Choose by Encoding Name"
                     },
-                    "encoding-name": {
+                    "encoding": {
                       "$ref": "#/$defs/encoding-name"
                     }
                   },
                   "required": [
                     "tokenization-method",
-                    "encoding-name"
+                    "encoding"
                   ],
                   "instillEditOnNodeFields": [
                     "tokenization-method",
-                    "encoding-name"
+                    "encoding"
                   ],
                   "type": "object"
                 },
                 {
                   "properties": {
                     "tokenization-method": {
-                      "const": "Hugging Face",
+                      "const": "HuggingFace",
                       "type": "string",
                       "title": "Input Hugging Face Model Name"
                     },
-                    "hugging-face-model-name": {
+                    "hugging-face-model": {
                       "description": "The name of the Hugging Face model used for tokenization.",
                       "instillAcceptFormats": [
                         "string"
@@ -457,11 +455,11 @@
                   },
                   "required": [
                     "tokenization-method",
-                    "hugging-face-model-name"
+                    "hugging-face-model"
                   ],
                   "instillEditOnNodeFields": [
                     "tokenization-method",
-                    "hugging-face-model-name"
+                    "hugging-face-model"
                   ],
                   "type": "object"
                 }

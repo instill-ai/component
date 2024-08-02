@@ -38,10 +38,10 @@ type Tokenization struct {
 }
 
 type Choice struct {
-	TokenizationMethod   string `json:"tokenization-method"`
-	ModelName            string `json:"model-name,omitempty"`
-	EncodingName         string `json:"encoding-name,omitempty"`
-	HuggingFaceModelName string `json:"hugging-face-model-name,omitempty"`
+	TokenizationMethod string `json:"tokenization-method"`
+	Model              string `json:"model,omitempty"`
+	Encoding           string `json:"encoding,omitempty"`
+	HuggingFaceModel   string `json:"hugging-face-model,omitempty"`
 }
 
 type ChunkTextOutput struct {
@@ -83,12 +83,7 @@ type TextSplitter interface {
 	SplitText(text string) ([]string, error)
 }
 
-// ChunkText do 3 blocks of work:
-// 1. Split Text
-// 2. Positioning the chunks
-// 3. Tokenize the chunks
-// Because we will need to tokenize the chunks with Python code,
-// it will be better to pass whole chunks to Python code and tokenize them there.
+
 func chunkText(inputPb *structpb.Struct) (*structpb.Struct, error) {
 	input := ChunkTextInput{}
 
@@ -98,18 +93,18 @@ func chunkText(inputPb *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	var split TextSplitter
+	var output ChunkTextOutput
+
 	setting := input.Strategy.Setting
 	// TODO: Take this out when we fix the error in frontend side.
 	// Bug: The default value is not set from frontend side.
 	setting.SetDefault()
 
-	var output ChunkTextOutput
 	switch setting.ChunkMethod {
 	case "Token":
 		if setting.ChunkOverlap >= setting.ChunkSize {
 			return nil, fmt.Errorf("ChunkOverlap must be less than ChunkSize when using Token method")
 		}
-
 		split = textsplitter.NewTokenSplitter(
 			textsplitter.WithChunkSize(setting.ChunkSize),
 			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
@@ -139,10 +134,18 @@ func chunkText(inputPb *structpb.Struct) (*structpb.Struct, error) {
 	output.setChunksWithPosition(chunks, input.Text, setting.ChunkMethod)
 	output.ChunkNum = len(output.TextChunks)
 
-	// TODO: chung8511, implement the tokenizer in Python code.
-	// originalTextToken := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
-	// output.TokenCount = len(originalTextToken)
-	// output.ChunksTokenCount = totalTokenCount
+	choice := input.Tokenization.Choice
+	err = output.setTokenizeChunks(choice)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to tokenize chunks: \n%w", err)
+	}
+
+	err = output.setFileTokenCount(choice, input.Text)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to set file token count: \n%w", err)
+	}
 
 	outputPb, err := base.ConvertToStructpb(output)
 	if err != nil {
