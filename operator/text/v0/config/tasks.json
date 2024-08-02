@@ -92,6 +92,26 @@
       ],
       "title": "Model",
       "type": "string"
+    },
+    "encoding-name": {
+      "description": "The name of the encoding used to convert text into tokens.",
+      "enum": [
+        "o200k_base",
+        "cl100k_base",
+        "p50k_base",
+        "r50k_base",
+        "p50k_edit"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 3,
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "title": "Encoding Name",
+      "type": "string"
     }
   },
   "TASK_CHUNK_TEXT": {
@@ -100,7 +120,8 @@
       "description": "Input",
       "instillEditOnNodeFields": [
         "text",
-        "strategy"
+        "strategy",
+        "tokenization"
       ],
       "instillUIOrder": 0,
       "properties": {
@@ -198,9 +219,6 @@
                     "chunk-overlap": {
                       "$ref": "#/$defs/chunk-overlap"
                     },
-                    "model-name": {
-                      "$ref": "#/$defs/model-name"
-                    },
                     "separators": {
                       "default": [],
                       "description": "A list of strings representing the separators used to split the text.",
@@ -242,7 +260,6 @@
                     "chunk-method",
                     "chunk-size",
                     "chunk-overlap",
-                    "model-name",
                     "separators",
                     "keep-separator"
                   ],
@@ -259,9 +276,6 @@
                     },
                     "chunk-overlap": {
                       "$ref": "#/$defs/chunk-overlap"
-                    },
-                    "model-name": {
-                      "$ref": "#/$defs/model-name"
                     },
                     "code-blocks": {
                       "description": "A flag indicating whether code blocks should be treated as a single unit",
@@ -285,7 +299,6 @@
                     "chunk-method",
                     "chunk-size",
                     "chunk-overlap",
-                    "model-name",
                     "code-blocks"
                   ],
                   "type": "object"
@@ -293,7 +306,100 @@
               ]
             }
           },
-          "title": "Strategy",
+          "title": "Chunk Strategy",
+          "required": [
+            "setting"
+          ],
+          "type": "object"
+        },
+        "tokenization": {
+          "description": "Tokenization settings",
+          "instillUIOrder": 2,
+          "properties": {
+            "setting": {
+              "description": "Tokenization setting",
+              "additionalProperties": true,
+              "type": "object",
+              "required": [
+                "tokenization-method"
+              ],
+              "oneOf": [
+                {
+                  "properties": {
+                    "tokenization-method": {
+                      "const": "Model Name",
+                      "type": "string",
+                      "title": "Choose by Model Name"
+                    },
+                    "model-name": {
+                      "$ref": "#/$defs/model-name"
+                    }
+                  },
+                  "required": [
+                    "tokenization-method"
+                  ],
+                  "instillEditOnNodeFields": [
+                    "tokenization-method",
+                    "model-name"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "tokenization-method": {
+                      "const": "Encoding Name",
+                      "type": "string",
+                      "title": "Choose by Encoding Name"
+                    },
+                    "encoding-name": {
+                      "$ref": "#/$defs/encoding-name"
+                    }
+                  },
+                  "required": [
+                    "tokenization-method",
+                    "encoding-name"
+                  ],
+                  "instillEditOnNodeFields": [
+                    "tokenization-method",
+                    "encoding-name"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "tokenization-method": {
+                      "const": "Hugging Face",
+                      "type": "string",
+                      "title": "Input Hugging Face Model Name"
+                    },
+                    "hugging-face-model-name": {
+                      "description": "The name of the Hugging Face model used for tokenization.",
+                      "instillAcceptFormats": [
+                        "string"
+                      ],
+                      "instillUIOrder": 1,
+                      "instillUpstreamTypes": [
+                        "value",
+                        "reference"
+                      ],
+                      "title": "Hugging Face Model Name",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "tokenization-method",
+                    "hugging-face-model-name"
+                  ],
+                  "instillEditOnNodeFields": [
+                    "tokenization-method",
+                    "hugging-face-model-name"
+                  ],
+                  "type": "object"
+                }
+              ]
+            }
+          },
+          "title": "Tokenization",
           "required": [
             "setting"
           ],
@@ -302,7 +408,8 @@
       },
       "required": [
         "text",
-        "strategy"
+        "strategy",
+        "tokenization"
       ],
       "title": "Input",
       "type": "object"
