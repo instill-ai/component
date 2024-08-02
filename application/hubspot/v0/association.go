@@ -192,7 +192,7 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 					objectIDs = append(objectIDs, value.ID)
 				}
 
-				if crmPagingRes.Paging == nil {
+				if crmPagingRes.Paging == nil || len(crmPagingRes.Results) == 0 {
 					break
 				}
 			}
@@ -203,6 +203,10 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 
 		if err != nil {
 			return nil, err
+		}
+
+		if len(res.Results) == 0 {
+			break
 		}
 
 		objectIDs = make([]string, len(res.Results))
@@ -225,7 +229,7 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 					objectIDs = append(objectIDs, value.ID)
 				}
 
-				if res.Paging == nil {
+				if res.Paging == nil || len(res.Results) == 0 {
 					break
 				}
 			}

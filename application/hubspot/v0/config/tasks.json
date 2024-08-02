@@ -1378,9 +1378,17 @@
               "channel-account-id"
             ]
           }
+        },
+        "no-of-messages": {
+          "description": "The number of messages in a thread",
+          "instillUIOrder": 1,
+          "required": [],
+          "title": "Number of Messages",
+          "type": "integer",
+          "instillFormat": "integer"
         }
       },
-      "required": ["results"],
+      "required": ["results", "no-of-messages"],
       "title": "Output",
       "type": "object"
     }
@@ -1502,12 +1510,7 @@
           "type": "string"
         },
         "object-type": {
-          "enum": [
-            "Deals",
-            "Companies",
-            "Tickets",
-            "Threads"
-          ],
+          "enum": ["Deals", "Companies", "Tickets", "Threads"],
           "example": "Deals",
           "description": "Input object type (CRM objects or 'Threads'). Note: CRM objects include 'Deals', 'Companies', 'Tickets', etc",
           "instillAcceptFormats": ["string"],
@@ -1725,9 +1728,7 @@
           "type": "string"
         }
       },
-      "required": [
-        "object-type"
-      ],
+      "required": ["object-type"],
       "title": "Input",
       "type": "object"
     },
