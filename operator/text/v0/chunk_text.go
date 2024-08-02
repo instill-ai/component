@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/instill-ai/component/base"
 	tiktoken "github.com/pkoukk/tiktoken-go"
 	"github.com/tmc/langchaingo/textsplitter"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type ChunkTextInput struct {
-	Text     string   `json:"text"`
-	Strategy Strategy `json:"strategy"`
+	Text         string       `json:"text"`
+	Strategy     Strategy     `json:"strategy"`
+	Tokenization Tokenization `json:"tokenization"`
 }
 
 type Strategy struct {
@@ -30,6 +33,17 @@ type Setting struct {
 	// TODO: Add SecondSplitter, which is to set the details about how to chunk the paragraphs in Markdown format.
 	// https://pkg.go.dev/github.com/tmc/langchaingo@v0.1.10/textsplitter#MarkdownTextSplitter
 	// secondSplitter textsplitter.TextSplitter
+}
+
+type Tokenization struct {
+	Choice Choice `json:"choice"`
+}
+
+type Choice struct {
+	TokenizationMethod   string `json:"tokenization-method"`
+	ModelName            string `json:"model-name,omitempty"`
+	EncodingName         string `json:"encoding-name,omitempty"`
+	HuggingFaceModelName string `json:"hugging-face-model-name,omitempty"`
 }
 
 type ChunkTextOutput struct {
@@ -71,7 +85,18 @@ type TextSplitter interface {
 	SplitText(text string) ([]string, error)
 }
 
-func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
+type Tokenizer interface {
+	Encode(text string, allowedSpecial, disallowedSpecial []string) []string
+}
+
+func chunkText(inputPb *structpb.Struct) (*structpb.Struct, error) {
+	input := ChunkTextInput{}
+
+	err := base.ConvertFromStructpb(inputPb, &input)
+	if err != nil {
+		return nil, err
+	}
+
 	var split TextSplitter
 	setting := input.Strategy.Setting
 	// TODO: Take this out when we fix the error in frontend side.
@@ -85,8 +110,7 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	case "Token":
 		positionCalculator = PositionCalculator{}
 		if setting.ChunkOverlap >= setting.ChunkSize {
-			err := fmt.Errorf("ChunkOverlap must be less than ChunkSize when using Token method")
-			return output, err
+			return nil, fmt.Errorf("ChunkOverlap must be less than ChunkSize when using Token method")
 		}
 
 		split = textsplitter.NewTokenSplitter(
@@ -114,13 +138,13 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 
 	chunks, err := split.SplitText(input.Text)
 	if err != nil {
-		return output, err
+		return nil, fmt.Errorf("failed to split text: %w", err)
 	}
 	output.ChunkNum = len(chunks)
 
 	tkm, err := tiktoken.EncodingForModel(setting.ModelName)
 	if err != nil {
-		return output, err
+		return nil, fmt.Errorf("failed to get token model: %w", err)
 	}
 
 	totalTokenCount := 0
@@ -169,7 +193,12 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	output.TokenCount = len(originalTextToken)
 	output.ChunksTokenCount = totalTokenCount
 
-	return output, nil
+	outputPb, err := base.ConvertToStructpb(output)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to structpb: %w", err)
+	}
+
+	return outputPb, nil
 }
 
 func shouldScanRawTextFromPreviousChunk(startPosition, endPosition int) bool {

@@ -313,11 +313,11 @@
           "type": "object"
         },
         "tokenization": {
-          "description": "Tokenization settings",
+          "description": "Tokenization choices",
           "instillUIOrder": 2,
           "properties": {
-            "setting": {
-              "description": "Tokenization setting",
+            "choice": {
+              "description": "Tokenization choice",
               "additionalProperties": true,
               "type": "object",
               "required": [
@@ -401,7 +401,7 @@
           },
           "title": "Tokenization",
           "required": [
-            "setting"
+            "choice"
           ],
           "type": "object"
         }
