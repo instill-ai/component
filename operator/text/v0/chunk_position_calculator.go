@@ -42,7 +42,6 @@ func (output *ChunkTextOutput) setChunksWithPosition(chunks []string, rawText, c
 		startScanPosition = startPosition + 1
 	}
 
-	// TODO: chuang8511, check why there is no chunks
 	if len(output.TextChunks) == 0 {
 		output.TextChunks = append(output.TextChunks, TextChunk{
 			Text:          rawText,
