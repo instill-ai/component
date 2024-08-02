@@ -1685,5 +1685,66 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_GET_ALL": {
+    "instillShortDescription": "Get all the IDs for a specific object (e.g. all contact IDs)",
+    "input": {
+      "description": "Input",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["object-type"],
+      "properties": {
+        "object-type": {
+          "enum": [
+            "Contacts",
+            "Deals",
+            "Companies",
+            "Tickets",
+            "Threads",
+            "Owners"
+          ],
+          "example": "Contacts",
+          "description": "The object which you want to get all IDs for",
+          "instillAcceptFormats": ["string"],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": ["value", "reference", "template"],
+          "title": "Object Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object-type"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "All the IDs of the object",
+      "instillUIOrder": 0,
+      "properties": {
+        "object-ids": {
+          "description": "An array of object ID",
+          "instillUIOrder": 0,
+          "instillFormat": "array:string",
+          "title": "Object ID Array ",
+          "type": "array",
+          "items": {
+            "title": "Object ID",
+            "type": "string",
+            "description": "Object ID"
+          }
+        },
+        "object-ids-length": {
+          "description": "The number of object IDs",
+          "instillUIOrder": 1,
+          "required": [],
+          "title": "Object IDs Length",
+          "type": "integer",
+          "instillFormat": "integer"
+        }
+      },
+      "required": ["object-ids"],
+      "title": "Output",
+      "type": "object"
+    }
   }
 }

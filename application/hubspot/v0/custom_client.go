@@ -12,6 +12,7 @@ type CustomClient struct {
 	RetrieveAssociation RetrieveAssociationService
 	Ticket              TicketService
 	Owner               OwnerService
+	GetAll              GetAllService
 }
 
 func NewCustomClient(setAuthMethod hubspot.AuthMethod, opts ...hubspot.Option) (*CustomClient, error) {
@@ -41,6 +42,9 @@ func NewCustomClient(setAuthMethod hubspot.AuthMethod, opts ...hubspot.Option) (
 		Owner: &OwnerServiceOp{
 			ownerPath: "crm/v3/owners",
 			client:    c,
+		},
+		GetAll: &GetAllServiceOp{
+			client: c,
 		},
 	}
 
