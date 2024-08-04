@@ -11,6 +11,7 @@ import (
 type convertDocumentToMarkdownInput struct {
 	Document        string `json:"document"`
 	DisplayImageTag bool   `json:"display-image-tag"`
+	Converter       string `json:"converter"`
 }
 
 type convertDocumentToMarkdownOutput struct {
@@ -64,24 +65,28 @@ func getMarkdownTransformer(fileExtension string, inputStruct convertDocumentToM
 			Base64EncodedText: inputStruct.Document,
 			FileExtension:     fileExtension,
 			DisplayImageTag:   inputStruct.DisplayImageTag,
+			Converter:         inputStruct.Converter,
 		}, nil
 	case "doc", "docx":
 		return DocxDocToMarkdownTransformer{
 			Base64EncodedText: inputStruct.Document,
 			FileExtension:     fileExtension,
 			DisplayImageTag:   inputStruct.DisplayImageTag,
+			Converter:         inputStruct.Converter,
 		}, nil
 	case "ppt", "pptx":
 		return PptPptxToMarkdownTransformer{
 			Base64EncodedText: inputStruct.Document,
 			FileExtension:     fileExtension,
 			DisplayImageTag:   inputStruct.DisplayImageTag,
+			Converter:         inputStruct.Converter,
 		}, nil
 	case "html":
 		return HTMLToMarkdownTransformer{
 			Base64EncodedText: inputStruct.Document,
 			FileExtension:     fileExtension,
 			DisplayImageTag:   inputStruct.DisplayImageTag,
+			Converter:         inputStruct.Converter,
 		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported file type")

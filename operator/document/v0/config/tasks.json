@@ -20,20 +20,6 @@
           ],
           "title": "Document",
           "type": "string"
-        },
-        "display-image-tag": {
-          "description": "Choose if the result displays image tags",
-          "instillAcceptFormats": [
-            "boolean"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "instillUIOrder": 1,
-          "title": "Display image tag",
-          "type": "boolean"
         }
       },
       "required": [
