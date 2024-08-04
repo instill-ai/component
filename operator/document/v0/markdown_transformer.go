@@ -4,8 +4,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -21,16 +23,22 @@ type PDFToMarkdownTransformer struct {
 	Base64EncodedText string
 	FileExtension     string
 	DisplayImageTag   bool
+	Converter         string
 }
 
 func (t PDFToMarkdownTransformer) Transform() (string, error) {
-	return extractPDFTextInMarkdownFormat(t.Base64EncodedText, t.DisplayImageTag)
+	if false {
+		return extractPDFTextInMarkdownFormatDeprecate(t.Base64EncodedText, t.DisplayImageTag)
+	} else {
+		return extractPDFTextInMarkdownFormat(t.Base64EncodedText, t.DisplayImageTag)
+	}
 }
 
 type DocxDocToMarkdownTransformer struct {
 	Base64EncodedText string
 	FileExtension     string
 	DisplayImageTag   bool
+	Converter         string
 }
 
 func (t DocxDocToMarkdownTransformer) Transform() (string, error) {
@@ -59,13 +67,18 @@ func (t DocxDocToMarkdownTransformer) Transform() (string, error) {
 		return "", fmt.Errorf("failed to encode file to base64: %w", err)
 	}
 
-	return extractPDFTextInMarkdownFormat(base64PDF, t.DisplayImageTag)
+	if false {
+		return extractPDFTextInMarkdownFormatDeprecate(base64PDF, t.DisplayImageTag)
+	} else {
+		return extractPDFTextInMarkdownFormat(base64PDF, t.DisplayImageTag)
+	}
 }
 
 type PptPptxToMarkdownTransformer struct {
 	Base64EncodedText string
 	FileExtension     string
 	DisplayImageTag   bool
+	Converter         string
 }
 
 func (t PptPptxToMarkdownTransformer) Transform() (string, error) {
@@ -93,13 +106,18 @@ func (t PptPptxToMarkdownTransformer) Transform() (string, error) {
 		return "", fmt.Errorf("failed to encode file to base64: %w", err)
 	}
 
-	return extractPDFTextInMarkdownFormat(base64PDF, t.DisplayImageTag)
+	if false {
+		return extractPDFTextInMarkdownFormatDeprecate(base64PDF, t.DisplayImageTag)
+	} else {
+		return extractPDFTextInMarkdownFormat(base64PDF, t.DisplayImageTag)
+	}
 }
 
 type HTMLToMarkdownTransformer struct {
 	Base64EncodedText string
 	FileExtension     string
 	DisplayImageTag   bool
+	Converter         string
 }
 
 func (t HTMLToMarkdownTransformer) Transform() (string, error) {
@@ -124,7 +142,7 @@ type pythonRunnerOutput struct {
 	Body string `json:"body"`
 }
 
-func extractPDFTextInMarkdownFormat(base64Text string, displayImageTag bool) (string, error) {
+func extractPDFTextInMarkdownFormatDeprecate(base64Text string, displayImageTag bool) (string, error) {
 
 	paramsJSON, err := json.Marshal(map[string]interface{}{
 		"PDF":               base.TrimBase64Mime(base64Text),
@@ -168,6 +186,40 @@ func extractPDFTextInMarkdownFormat(base64Text string, displayImageTag bool) (st
 		return "", err
 	}
 	return output.Body, nil
+}
+
+func extractPDFTextInMarkdownFormat(base64Text string, displayImageTag bool) (string, error) {
+	inputDir, err := os.MkdirTemp(os.TempDir(), "pdf")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.RemoveAll(inputDir)
+	outputDir, err := os.MkdirTemp(os.TempDir(), "pdf")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.RemoveAll(outputDir)
+
+	inputBytes, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(base64Text))
+	if err != nil {
+		return "", err
+	}
+	err = os.WriteFile(path.Join(inputDir, "document.pdf"), inputBytes, 0644)
+	if err != nil {
+		return "", err
+	}
+	cmdRunner := exec.Command("pdf2md", fmt.Sprintf("--inputFolderPath=%s", inputDir), fmt.Sprintf("--outputFolderPath=%s", outputDir))
+	err = cmdRunner.Run()
+	if err != nil {
+		return "", err
+	}
+
+	outputBytes, err := os.ReadFile(path.Join(outputDir, "document.md"))
+	if err != nil {
+		return "", err
+	}
+
+	return string(outputBytes), nil
 }
 
 func writeDecodeToFile(base64Str string, file *os.File) error {
