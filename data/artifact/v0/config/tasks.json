@@ -617,7 +617,7 @@
       "type": "object"
     }
   },
-  "TASK_REPLY_QUESTION": {
+  "TASK_QUERY": {
     "instillShortDescription": "Reply the questions based on the files in the catalog",
     "input": {
       "instillUIOrder": 0,

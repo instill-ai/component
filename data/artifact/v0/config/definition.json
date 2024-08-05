@@ -6,7 +6,7 @@
     "TASK_GET_FILE_IN_MARKDOWN",
     "TASK_MATCH_FILE_STATUS",
     "TASK_SEARCH_CHUNKS",
-    "TASK_REPLY_QUESTION"
+    "TASK_QUERY"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/data/artifact",
   "icon": "assets/artifact.svg",
