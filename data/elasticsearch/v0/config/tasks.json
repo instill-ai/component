@@ -18,12 +18,26 @@
           "title": "Index Name",
           "type": "string"
         },
+        "id": {
+          "description": "The ID of the document",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "ID",
+          "type": "string"
+        },
         "data": {
           "description": "Data to be indexed",
           "instillAcceptFormats": [
             "semi-structured/*","object"
           ],
-          "instillUIOrder": 1,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -79,18 +93,38 @@
           "title": "Index Name",
           "type": "string"
         },
+        "array-id": {
+          "description": "The array of id",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "items": {
+            "description": "An id of the point",
+            "type":"string",
+            "example": 1
+          },
+          "minItems": 1,
+          "title": "Array ID",
+          "type": "array"
+        },
         "array-data": {
           "description": "Array data to be indexed",
           "instillAcceptFormats": [
             "array:semi-structured/*","array:semi-structured/json","array:semi-structured/object","array:object"
           ],
-          "instillUIOrder": 1,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "value",
             "reference",
             "template"
           ],
-          "title": "Data",
+          "title": "Array Data",
           "type": "array",
           "items": {
             "description": "The data to be inserted",
@@ -146,13 +180,27 @@
           "title": "Index Name",
           "type": "string"
         },
+        "id": {
+          "description": "The ID of the point",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "ID",
+          "type": "string"
+        },
         "query": {
           "description": "Full text search query for update task, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Full text search query, (empty for all documents)",
-          "instillUIOrder": 1,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -166,7 +214,7 @@
           "instillAcceptFormats": [
             "semi-structured/*","object"
           ],
-          "instillUIOrder": 2,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -179,7 +227,7 @@
         "filter-sql": {
           "instillShortDescription": "The filter sql to be applied to the data, if filter is provided, this field will be ignored",
           "description": "The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for no filter",
-          "instillUIOrder": 3,
+          "instillUIOrder": 4,
           "instillAcceptFormats": [
             "string"
           ],
@@ -239,7 +287,7 @@
     }
   },
   "TASK_SEARCH": {
-    "instillShortDescription": "Search for documents in Elasticsearch",
+    "instillShortDescription": "Search for documents in Elasticsearch, support full text search",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -272,13 +320,27 @@
           "title": "Index Name",
           "type": "string"
         },
+        "id": {
+          "description": "The ID of the point",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "ID",
+          "type": "string"
+        },
         "query": {
           "description": "Full text search query for search task, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Full text search query, (empty for all documents)",
-          "instillUIOrder": 2,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -292,7 +354,7 @@
           "instillAcceptFormats": [
             "semi-structured/*","object"
           ],
-          "instillUIOrder": 3,
+          "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -305,7 +367,7 @@
         "filter-sql": {
           "instillShortDescription": "The filter sql to be applied to the data, if filter is provided, this field will be ignored",
           "description": "The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for no filter",
-          "instillUIOrder": 4,
+          "instillUIOrder": 5,
           "instillAcceptFormats": [
             "string"
           ],
@@ -323,7 +385,7 @@
             "integer"
           ],
           "instillShortDescription": "Size of documents to return, (empty for all documents)",
-          "instillUIOrder": 5,
+          "instillUIOrder": 6,
           "instillUpstreamTypes": [
             "value",
             "reference"
@@ -337,7 +399,7 @@
             "array:string"
           ],
           "instillShortDescription": "Fields to be returned, empty for all fields",
-          "instillUIOrder": 6,
+          "instillUIOrder": 7,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -357,7 +419,7 @@
             "number"
           ],
           "instillShortDescription": "Minimum Score",
-          "instillUIOrder": 7,
+          "instillUIOrder": 8,
           "instillUpstreamTypes": [
             "value",
             "reference"
@@ -408,7 +470,7 @@
     }
   },
   "TASK_VECTOR_SEARCH": {
-    "instillShortDescription": "Search for vector similarity search in Elasticsearch with CosineSimilarity algorithm",
+    "instillShortDescription": "Search for vector similarity search in Elasticsearch",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -599,9 +661,22 @@
           "title": "Result",
           "type": "object",
           "properties": {
+            "ids":{
+              "description": "The ids returned from the vector search operation",
+              "instillUIOrder": 0,
+              "title": "IDs",
+              "type": "array",
+              "required":[],
+              "instillFormat": "array:string",
+              "items": {
+                "description": "An id of the point",
+                "type": "string",
+                "example": "c8faa-4b3b-4b3b-4b3b"
+              }
+            },
             "documents": {
               "description": "The documents returned from the vector search operation",
-              "instillUIOrder": 0,
+              "instillUIOrder": 1,
               "required": [],
               "title": "Documents",
               "type": "array",
@@ -615,7 +690,7 @@
             },
             "vectors": {
               "description": "The vectors returned from the vector search operation",
-              "instillUIOrder": 1,
+              "instillUIOrder": 2,
               "title": "Vectors",
               "type": "array",
               "required":[],
@@ -634,7 +709,7 @@
             },
             "metadata": {
               "description": "The metadata returned from the vector search operation",
-              "instillUIOrder": 2,
+              "instillUIOrder": 3,
               "title": "Metadata",
               "type": "array",
               "required": [],
@@ -677,13 +752,27 @@
           "title": "Index Name",
           "type": "string"
         },
+        "id": {
+          "description": "The ID of the point",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "ID",
+          "type": "string"
+        },
         "query": {
           "description": "Full text search query for delete task, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Full text search query, (empty for all documents)",
-          "instillUIOrder": 1,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "value",
             "reference",
@@ -697,7 +786,7 @@
           "instillAcceptFormats": [
             "semi-structured/*","object"
           ],
-          "instillUIOrder": 2,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -710,7 +799,7 @@
         "filter-sql": {
           "instillShortDescription": "The filter sql to be applied to the data, if filter is provided, this field will be ignored",
           "description": "The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for no filter",
-          "instillUIOrder": 3,
+          "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "reference",
             "template",

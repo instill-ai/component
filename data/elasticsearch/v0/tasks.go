@@ -13,6 +13,7 @@ import (
 )
 
 type IndexInput struct {
+	ID        string         `json:"id"`
 	Data      map[string]any `json:"data"`
 	IndexName string         `json:"index-name"`
 }
@@ -22,6 +23,7 @@ type IndexOutput struct {
 }
 
 type MultiIndexInput struct {
+	ArrayID   []string         `json:"array-id"`
 	ArrayData []map[string]any `json:"array-data"`
 	IndexName string           `json:"index-name"`
 }
@@ -31,6 +33,7 @@ type MultiIndexOutput struct {
 }
 
 type UpdateInput struct {
+	ID        string         `json:"id"`
 	Update    map[string]any `json:"update"`
 	Filter    map[string]any `json:"filter"`
 	FilterSQL string         `json:"filter-sql"`
@@ -43,6 +46,7 @@ type UpdateOutput struct {
 }
 
 type SearchInput struct {
+	ID         string         `json:"id"`
 	Fields     []string       `json:"fields"`
 	SourceOnly bool           `json:"source-only"`
 	MinScore   float64        `json:"min-score"`
@@ -72,6 +76,7 @@ type VectorSearchInput struct {
 }
 
 type Result struct {
+	IDs       []string         `json:"ids"`
 	Documents []map[string]any `json:"documents"`
 	Vectors   [][]float64      `json:"vectors"`
 	Metadata  []map[string]any `json:"metadata"`
@@ -123,6 +128,7 @@ type Hit struct {
 }
 
 type DeleteInput struct {
+	ID        string         `json:"id"`
 	Filter    map[string]any `json:"filter"`
 	FilterSQL string         `json:"filter-sql"`
 	Query     string         `json:"query"`
@@ -186,7 +192,11 @@ func translateSQLQuery(es *esapi.SQLTranslate, query string, indexName string) (
 	return translatedQuery.(map[string]any), nil
 }
 
-func IndexDocument(es *esapi.Index, indexName string, data map[string]any) error {
+func IndexDocument(es *esapi.Index, inputStruct IndexInput) error {
+	indexName := inputStruct.IndexName
+	id := inputStruct.ID
+	data := inputStruct.Data
+
 	dataJSON, err := json.Marshal(data)
 	if err != nil {
 		return err
@@ -195,6 +205,7 @@ func IndexDocument(es *esapi.Index, indexName string, data map[string]any) error
 	esClient := ESIndex(*es)
 
 	_, err = esClient(indexName, bytes.NewReader(dataJSON), func(r *esapi.IndexRequest) {
+		r.DocumentID = id
 		r.Refresh = "true"
 	})
 	if err != nil {
@@ -204,14 +215,24 @@ func IndexDocument(es *esapi.Index, indexName string, data map[string]any) error
 	return nil
 }
 
-func MultiIndexDocument(es *esapi.Bulk, indexName string, data []map[string]any) (int, error) {
+func MultiIndexDocument(es *esapi.Bulk, inputStruct MultiIndexInput) (int, error) {
+	indexName := inputStruct.IndexName
+	data := inputStruct.ArrayData
+	id := inputStruct.ArrayID
+
 	var dataJSON strings.Builder
-	for _, doc := range data {
-		metaData := map[string]any{
-			"index": map[string]any{
-				"_index": indexName,
-			},
+
+	for i, doc := range data {
+		innerMetadata := map[string]any{"_index": indexName}
+		if len(id) == len(data) {
+			innerMetadata["_id"] = id[i]
+		} else if id != nil {
+			return 0, fmt.Errorf("id length must be equal to data length")
 		}
+		metaData := map[string]any{
+			"index": innerMetadata,
+		}
+
 		metaDataJSON, err := json.Marshal(metaData)
 		if err != nil {
 			return 0, err
@@ -230,6 +251,7 @@ func MultiIndexDocument(es *esapi.Bulk, indexName string, data []map[string]any)
 	esClient := ESBulk(*es)
 
 	res, err := esClient(strings.NewReader(dataJSON.String()), func(r *esapi.BulkRequest) {
+		r.Index = indexName
 		r.Refresh = "true"
 	})
 
@@ -263,13 +285,16 @@ func SearchDocument(es *esapi.Search, esSQLTranslate *esapi.SQLTranslate, inputS
 	filterSQL := inputStruct.FilterSQL
 	size := inputStruct.Size
 	fields := inputStruct.Fields
+	id := inputStruct.ID
 
 	queryJSON := map[string]any{}
 
 	if minScore > 0 {
 		queryJSON["min_score"] = minScore
 	}
-	if filterSQL != "" && filter == nil {
+	if id != "" {
+		queryJSON["query"] = map[string]any{"ids": map[string]any{"values": []string{id}}}
+	} else if filterSQL != "" && filter == nil {
 		translatedQuery, err := translateSQLQuery(esSQLTranslate, filterSQL, indexName)
 		if err != nil {
 			return nil, err
@@ -278,6 +303,7 @@ func SearchDocument(es *esapi.Search, esSQLTranslate *esapi.SQLTranslate, inputS
 	} else if filter != nil {
 		queryJSON["query"] = filter
 	}
+
 	if len(fields) > 0 {
 		queryJSON["_source"] = fields
 	}
@@ -403,12 +429,16 @@ func UpdateDocument(es *esapi.UpdateByQuery, esSQLTranslate *esapi.SQLTranslate,
 	filter := inputStruct.Filter
 	filterSQL := inputStruct.FilterSQL
 	update := inputStruct.Update
+	id := inputStruct.ID
 
-	if filterSQL != "" && filter == nil {
+	if id != "" {
+		filter = map[string]any{"ids": map[string]any{"values": []string{id}}}
+	} else if filterSQL != "" && filter == nil {
 		translatedQuery, err := translateSQLQuery(esSQLTranslate, filterSQL, indexName)
 		if err != nil {
 			return 0, err
 		}
+
 		filter = translatedQuery
 	}
 
@@ -462,12 +492,16 @@ func DeleteDocument(es *esapi.DeleteByQuery, esSQLTranslate *esapi.SQLTranslate,
 	query := inputStruct.Query
 	filter := inputStruct.Filter
 	filterSQL := inputStruct.FilterSQL
+	id := inputStruct.ID
 
-	if filterSQL != "" && filter == nil {
+	if id != "" {
+		filter = map[string]any{"ids": map[string]any{"values": []string{id}}}
+	} else if filterSQL != "" && filter == nil {
 		translatedQuery, err := translateSQLQuery(esSQLTranslate, filterSQL, indexName)
 		if err != nil {
 			return 0, err
 		}
+
 		filter = translatedQuery
 	}
 	deleteByQueryReq := map[string]any{
@@ -552,7 +586,7 @@ func (e *execution) index(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	err = IndexDocument(&e.client.indexClient, inputStruct.IndexName, inputStruct.Data)
+	err = IndexDocument(&e.client.indexClient, inputStruct)
 	if err != nil {
 		return nil, err
 	}
@@ -645,6 +679,7 @@ func (e *execution) vectorSearch(in *structpb.Struct) (*structpb.Struct, error) 
 		return nil, err
 	}
 
+	var ids []string
 	var documents []map[string]any
 	var vectors [][]float64
 	var metadata []map[string]any
@@ -675,10 +710,12 @@ func (e *execution) vectorSearch(in *structpb.Struct) (*structpb.Struct, error) 
 			}
 		}
 		metadata = append(metadata, metadatum)
+		ids = append(ids, hit.ID)
 	}
 
 	outputStruct := VectorSearchOutput{
 		Result: Result{
+			IDs:       ids,
 			Documents: documents,
 			Vectors:   vectors,
 			Metadata:  metadata,
@@ -769,7 +806,7 @@ func (e *execution) multiIndex(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	lenDocuments, err := MultiIndexDocument(&e.client.bulkClient, inputStruct.IndexName, inputStruct.ArrayData)
+	lenDocuments, err := MultiIndexDocument(&e.client.bulkClient, inputStruct)
 	if err != nil {
 		return nil, err
 	}
