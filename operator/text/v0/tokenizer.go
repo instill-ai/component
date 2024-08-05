@@ -10,8 +10,6 @@ import (
 
 type Tokenizer interface {
 	Encode(chunks []TextChunk) ([]int, error)
-	// TODO: chuang8511 need to add encode for token chunk strategy
-	// EncodeTokenChunk(chunks string) ([]string, error)
 }
 
 type OpenAITokenizer struct {
@@ -43,7 +41,7 @@ func (choice Choice) GetTokenizer() (Tokenizer, error) {
 			model: choice.HuggingFaceModel,
 		}, nil
 	}
-	return nil, fmt.Errorf("Tokenization method %s not found", choice.TokenizationMethod)
+	return nil, fmt.Errorf("tokenization method %s not found", choice.TokenizationMethod)
 }
 
 func getModelTokenizer(model string) (Tokenizer, error) {
@@ -62,13 +60,13 @@ func getModelTokenizer(model string) (Tokenizer, error) {
 			model: model,
 		}, nil
 	}
-	return nil, fmt.Errorf("Model %s not found", model)
+	return nil, fmt.Errorf("model %s not found", model)
 }
 
 func (t OpenAITokenizer) Encode(textChunks []TextChunk) ([]int, error) {
 	tke, err := tiktoken.EncodingForModel(t.model)
 	if err != nil {
-		return []int{}, fmt.Errorf("Failed to get encoding by model name %s: %w", t.model, err)
+		return []int{}, fmt.Errorf("failed to get encoding by model name %s: %w", t.model, err)
 	}
 
 	tokenIdxCountMap := make([]int, len(textChunks))
@@ -84,7 +82,7 @@ func (t OpenAITokenizer) Encode(textChunks []TextChunk) ([]int, error) {
 func (t EncodingTokenizer) Encode(textChunks []TextChunk) ([]int, error) {
 	tke, err := tiktoken.GetEncoding(t.encoding)
 	if err != nil {
-		return []int{}, fmt.Errorf("Failed to get encoding by encoding name %s: %w", t.encoding, err)
+		return []int{}, fmt.Errorf("failed to get encoding by encoding name %s: %w", t.encoding, err)
 	}
 
 	tokenIdxCountMap := make([]int, len(textChunks))
@@ -113,13 +111,13 @@ func (output *ChunkTextOutput) setTokenizeChunks(choice Choice) error {
 	tokenizer, err := choice.GetTokenizer()
 
 	if err != nil {
-		return fmt.Errorf("Failed to get tokenizer: %w", err)
+		return fmt.Errorf("failed to get tokenizer: %w", err)
 	}
 
 	tokenMap, err := tokenizer.Encode(output.TextChunks)
 
 	if err != nil {
-		return fmt.Errorf("Failed to encode text: %w", err)
+		return fmt.Errorf("failed to encode text: %w", err)
 	}
 
 	for i, tokenCount := range tokenMap {
@@ -134,7 +132,7 @@ func (output *ChunkTextOutput) setFileTokenCount(choice Choice, rawText string) 
 	tokenizer, err := choice.GetTokenizer()
 
 	if err != nil {
-		return fmt.Errorf("Failed to get tokenizer: %w", err)
+		return fmt.Errorf("failed to get tokenizer: %w", err)
 	}
 
 	tokenMap, err := tokenizer.Encode([]TextChunk{
@@ -144,7 +142,7 @@ func (output *ChunkTextOutput) setFileTokenCount(choice Choice, rawText string) 
 	})
 
 	if err != nil {
-		return fmt.Errorf("Failed to encode text: %w", err)
+		return fmt.Errorf("failed to encode text: %w", err)
 	}
 
 	output.TokenCount = tokenMap[0]
@@ -169,14 +167,14 @@ func executePythonCode(pythonCode string, textChunks []TextChunk, model string) 
 	paramsJSON, err := json.Marshal(params)
 
 	if err != nil {
-		return chunkIdxTokenCountMap, fmt.Errorf("Failed to marshal chunk map: %w", err)
+		return chunkIdxTokenCountMap, fmt.Errorf("failed to marshal chunk map: %w", err)
 	}
 
 	cmdRunner := exec.Command(pythonInterpreter, "-c", pythonCode)
 	stdin, err := cmdRunner.StdinPipe()
 
 	if err != nil {
-		return chunkIdxTokenCountMap, fmt.Errorf("Failed to get stdin pipe: %w", err)
+		return chunkIdxTokenCountMap, fmt.Errorf("failed to get stdin pipe: %w", err)
 	}
 
 	errChan := make(chan error, 1)
@@ -192,18 +190,18 @@ func executePythonCode(pythonCode string, textChunks []TextChunk, model string) 
 
 	outputBytes, err := cmdRunner.CombinedOutput()
 	if err != nil {
-		return chunkIdxTokenCountMap, fmt.Errorf("Failed to get combined output: %w", err)
+		return chunkIdxTokenCountMap, fmt.Errorf("failed to get combined output: %w", err)
 	}
 
 	writeErr := <-errChan
 	if writeErr != nil {
-		return chunkIdxTokenCountMap, fmt.Errorf("Failed to write to stdin: %w", writeErr)
+		return chunkIdxTokenCountMap, fmt.Errorf("failed to write to stdin: %w", writeErr)
 	}
 
 	var output pythonRunnerOutput
 	err = json.Unmarshal(outputBytes, &output)
 	if err != nil {
-		return chunkIdxTokenCountMap, fmt.Errorf("Failed to unmarshal output: %w", err)
+		return chunkIdxTokenCountMap, fmt.Errorf("failed to unmarshal output: %w", err)
 	}
 
 	return output.TokenCountMap, nil
