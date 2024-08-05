@@ -15,10 +15,10 @@ params = json.loads(json_str)
 
 tokenizer = AutoTokenizer.from_pretrained(params["model"])
 
-output = { "token_count_map": [] }
+output = { "toke_count": [] }
 
 for i, chunk in enumerate(params["text_chunks"]):
     encoding = tokenizer(chunk)
-    output["token_count_map"][i] = len(encoding["input_ids"])
+    output["toke_count"][i] = len(encoding["input_ids"])
 
 print(json.dumps(output))
