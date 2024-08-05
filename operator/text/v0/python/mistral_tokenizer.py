@@ -17,7 +17,7 @@ params = json.loads(json_str)
 
 tokenizer = MistralTokenizer.from_model(params["model"])
 
-output = { "toke_count": [] }
+output = { "toke_count": [0] * len(params["text_chunks"]) }
 
 for i, chunk in enumerate(params["text_chunks"]):
     res = tokenizer.encode_chat_completion(

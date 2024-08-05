@@ -1,6 +1,7 @@
 package text
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os/exec"
@@ -156,7 +157,7 @@ type pythonRunnerOutput struct {
 
 func executePythonCode(pythonCode string, textChunks []TextChunk, model string) ([]int, error) {
 
-	chunkIdxTokenCountMap := make([]int, len(textChunks))
+	tokenCounts := make([]int, len(textChunks))
 	params := make(map[string]interface{})
 	params["text_chunks"] = make([]string, 0)
 	for _, textChunk := range textChunks {
@@ -168,14 +169,14 @@ func executePythonCode(pythonCode string, textChunks []TextChunk, model string) 
 	paramsJSON, err := json.Marshal(params)
 
 	if err != nil {
-		return chunkIdxTokenCountMap, fmt.Errorf("failed to marshal chunk map: %w", err)
+		return tokenCounts, fmt.Errorf("failed to marshal chunk map: %w", err)
 	}
 
 	cmdRunner := exec.Command(pythonInterpreter, "-c", pythonCode)
 	stdin, err := cmdRunner.StdinPipe()
 
 	if err != nil {
-		return chunkIdxTokenCountMap, fmt.Errorf("failed to get stdin pipe: %w", err)
+		return tokenCounts, fmt.Errorf("failed to get stdin pipe: %w", err)
 	}
 
 	errChan := make(chan error, 1)
@@ -189,20 +190,31 @@ func executePythonCode(pythonCode string, textChunks []TextChunk, model string) 
 		errChan <- nil
 	}()
 
-	outputBytes, err := cmdRunner.CombinedOutput()
+	var stdoutStderr bytes.Buffer
+	cmdRunner.Stdout = &stdoutStderr
+	cmdRunner.Stderr = &stdoutStderr
+
+	err = cmdRunner.Start()
 	if err != nil {
-		return chunkIdxTokenCountMap, fmt.Errorf("failed to get combined output: %w", err)
+		return tokenCounts, fmt.Errorf("error starting command: %v", err)
 	}
 
-	writeErr := <-errChan
-	if writeErr != nil {
-		return chunkIdxTokenCountMap, fmt.Errorf("failed to write to stdin: %w", writeErr)
+	err = <-errChan
+	if err != nil {
+		return tokenCounts, fmt.Errorf("error writing to stdin: %v", err)
 	}
+
+	err = cmdRunner.Wait()
+	if err != nil {
+		return tokenCounts, fmt.Errorf("failed to wait for command: %w, \nOutput: %s", err, stdoutStderr.String())
+	}
+
+	outputBytes := stdoutStderr.Bytes()
 
 	var output pythonRunnerOutput
 	err = json.Unmarshal(outputBytes, &output)
 	if err != nil {
-		return chunkIdxTokenCountMap, fmt.Errorf("failed to unmarshal output: %w", err)
+		return tokenCounts, fmt.Errorf("failed to unmarshal output: %w", err)
 	}
 
 	return output.TokenCountMap, nil
@@ -250,7 +262,7 @@ var MistralModels = []string{
 	"open-mistral-7b",
 	"mistral-large-latest",
 	"mistral-small-latest",
-	"codestral-latest",
+	"codestral-22b",
 	"mistral-embed",
 }
 
