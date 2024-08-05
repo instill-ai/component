@@ -14,8 +14,8 @@ json_str = sys.stdin.buffer.read().decode('utf-8')
 # }
 params = json.loads(json_str)
 
-
-url = f"https://api.cohere.com/v1/models/{params["model"]}"
+model = params["model"]
+url = f"https://api.cohere.com/v1/models/{model}"
 
 headers = {
     "accept": "application/json",
@@ -31,7 +31,7 @@ response = requests.get(tokenizer_url)
 
 tokenizer = Tokenizer.from_str(response.text)
 
-output = { "toke_count": [] }
+output = { "toke_count": [0] * len(params["text_chunks"]) }
 
 for i, chunk in enumerate(params["text_chunks"]):
     result = tokenizer.encode(sequence=chunk, add_special_tokens=False)
