@@ -55,7 +55,7 @@ Search for documents in Elasticsearch, support full text search
 | Task ID (required) | `task` | string | `TASK_SEARCH` |
 | Source Only | `source-only` | boolean | If true source only will return only documents, if false returns documents with (_id, _index, _score), default to true |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
-| ID | `id` | string | The ID of the point |
+| ID | `id` | string | The ID of the document |
 | Query | `query` | string | Full text search query for search task, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
 | Filter | `filter` | object | The query dsl filter which starts with "query" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html |
 | Filter SQL | `filter-sql` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for no filter |
@@ -115,7 +115,7 @@ Index a document into Elasticsearch
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_INDEX` |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
-| ID | `id` | string | The ID of the point |
+| ID | `id` | string | The ID of the document |
 | Data (required) | `data` | object | Data to be indexed |
 
 
@@ -161,11 +161,11 @@ Update a document in Elasticsearch
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UPDATE` |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
-| ID | `id` | string | The ID of the point |
+| ID | `id` | string | The ID of the document |
 | Query | `query` | string | Full text search query for update task, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
 | Filter | `filter` | object | The query dsl filter which starts with "query" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html |
 | Filter SQL | `filter-sql` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for no filter |
-| Update (required) | `update` | object | Update data |
+| Update (required) | `update-data` | object | Update data |
 
 
 
@@ -187,7 +187,7 @@ Delete documents from Elasticsearch
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
-| ID | `id` | string | The ID of the point |
+| ID | `id` | string | The ID of the document |
 | Query | `query` | string | Full text search query for delete task, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
 | Filter | `filter` | object | The query dsl filter which starts with "query" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html |
 | Filter SQL | `filter-sql` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for no filter |

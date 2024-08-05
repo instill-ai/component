@@ -34,7 +34,7 @@ type MultiIndexOutput struct {
 
 type UpdateInput struct {
 	ID        string         `json:"id"`
-	Update    map[string]any `json:"update"`
+	Update    map[string]any `json:"update-data"`
 	Filter    map[string]any `json:"filter"`
 	FilterSQL string         `json:"filter-sql"`
 	Query     string         `json:"query"`
