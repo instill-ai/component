@@ -288,6 +288,7 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 			wantResp: VectorSearchOutput{
 				Status: "Successfully vector searched 2 documents",
 				Result: Result{
+					IDs: []string{"mockID1", "mockID2"},
 					Documents: []map[string]any{
 						{
 							"_index":  "index_name",
