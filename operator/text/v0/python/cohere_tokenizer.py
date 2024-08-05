@@ -27,14 +27,14 @@ json_response = json.loads(response.text)
 
 tokenizer_url = json_response["tokenizer_url"]
 
-response = requests.get(tokenizer_url)  
+response = requests.get(tokenizer_url)
 
 tokenizer = Tokenizer.from_str(response.text)
 
-output = { "token_count_map": [] }
+output = { "toke_count": [] }
 
 for i, chunk in enumerate(params["text_chunks"]):
     result = tokenizer.encode(sequence=chunk, add_special_tokens=False)
-    output["token_count_map"][i] = len(result.ids)
+    output["toke_count"][i] = len(result.ids)
 
 print(json.dumps(output))

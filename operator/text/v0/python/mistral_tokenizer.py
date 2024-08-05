@@ -17,12 +17,12 @@ params = json.loads(json_str)
 
 tokenizer = MistralTokenizer.from_model(params["model"])
 
-output = { "token_count_map": [] }
+output = { "toke_count": [] }
 
 for i, chunk in enumerate(params["text_chunks"]):
     res = tokenizer.encode_chat_completion(
         ChatCompletionRequest(messages=[UserMessage(content=chunk)])
     )
-    output["token_count_map"][i] = len(res.tokens)
-    
+    output["toke_count"][i] = len(res.tokens)
+
 print(json.dumps(output))

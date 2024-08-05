@@ -114,13 +114,13 @@ func (output *ChunkTextOutput) setTokenizeChunks(choice Choice) error {
 		return fmt.Errorf("failed to get tokenizer: %w", err)
 	}
 
-	tokenMap, err := tokenizer.Encode(output.TextChunks)
+	tokens, err := tokenizer.Encode(output.TextChunks)
 
 	if err != nil {
 		return fmt.Errorf("failed to encode text: %w", err)
 	}
 
-	for i, tokenCount := range tokenMap {
+	for i, tokenCount := range tokens {
 		output.TextChunks[i].TokenCount = tokenCount
 		output.ChunksTokenCount += tokenCount
 	}
@@ -151,13 +151,14 @@ func (output *ChunkTextOutput) setFileTokenCount(choice Choice, rawText string) 
 }
 
 type pythonRunnerOutput struct {
-	TokenCountMap []int `json:"token_count_map"`
+	TokenCountMap []int `json:"toke_count"`
 }
 
 func executePythonCode(pythonCode string, textChunks []TextChunk, model string) ([]int, error) {
 
 	chunkIdxTokenCountMap := make([]int, len(textChunks))
 	params := make(map[string]interface{})
+	params["text_chunks"] = make([]string, 0)
 	for _, textChunk := range textChunks {
 		params["text_chunks"] = append(params["text_chunks"].([]string), textChunk.Text)
 	}
