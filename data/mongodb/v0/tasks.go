@@ -6,12 +6,14 @@ import (
 
 	"github.com/instill-ai/component/base"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type InsertInput struct {
+	ID             string         `json:"id"`
 	DatabaseName   string         `json:"database-name"`
 	CollectionName string         `json:"collection-name"`
 	Data           map[string]any `json:"data"`
@@ -22,6 +24,7 @@ type InsertOutput struct {
 }
 
 type InsertManyInput struct {
+	ArrayID        []string         `json:"array-id"`
 	DatabaseName   string           `json:"database-name"`
 	CollectionName string           `json:"collection-name"`
 	ArrayData      []map[string]any `json:"array-data"`
@@ -32,6 +35,7 @@ type InsertManyOutput struct {
 }
 
 type FindInput struct {
+	ID             string         `json:"id"`
 	DatabaseName   string         `json:"database-name"`
 	CollectionName string         `json:"collection-name"`
 	Filter         map[string]any `json:"filter"`
@@ -45,6 +49,7 @@ type FindOutput struct {
 }
 
 type UpdateInput struct {
+	ID             string         `json:"id"`
 	DatabaseName   string         `json:"database-name"`
 	CollectionName string         `json:"collection-name"`
 	Filter         map[string]any `json:"filter"`
@@ -56,6 +61,7 @@ type UpdateOutput struct {
 }
 
 type DeleteInput struct {
+	ID             string         `json:"id"`
 	DatabaseName   string         `json:"database-name"`
 	CollectionName string         `json:"collection-name"`
 	Filter         map[string]any `json:"filter"`
@@ -118,6 +124,7 @@ type VectorSearchInput struct {
 }
 
 type Result struct {
+	IDs       []string         `json:"ids"`
 	Documents []map[string]any `json:"documents"`
 	Vectors   [][]float64      `json:"vectors"`
 	Metadata  []map[string]any `json:"metadata"`
@@ -150,6 +157,15 @@ func (e *execution) insert(ctx context.Context, in *structpb.Struct) (*structpb.
 	}
 
 	data := inputStruct.Data
+
+	if inputStruct.ID != "" {
+		id, err := primitive.ObjectIDFromHex(inputStruct.ID)
+		if err != nil {
+			data["_id"] = inputStruct.ID
+		} else {
+			data["_id"] = id
+		}
+	}
 
 	_, err = e.client.collectionClient.InsertOne(ctx, data)
 	if err != nil {
@@ -188,10 +204,19 @@ func (e *execution) insertMany(ctx context.Context, in *structpb.Struct) (*struc
 		e.client.searchIndexClient = collection.SearchIndexes()
 	}
 
-	arrayData := inputStruct.ArrayData
-
 	var anyArrayData []any
-	for _, data := range arrayData {
+	idAllow := inputStruct.ArrayID != nil && len(inputStruct.ArrayID) == len(inputStruct.ArrayData)
+	for i, data := range inputStruct.ArrayData {
+		if idAllow {
+			id, err := primitive.ObjectIDFromHex(inputStruct.ArrayID[i])
+			if err != nil {
+				data["_id"] = inputStruct.ArrayID[i]
+			} else {
+				data["_id"] = id
+			}
+		} else if inputStruct.ArrayID != nil && len(inputStruct.ArrayID) != len(inputStruct.ArrayData) {
+			return nil, fmt.Errorf("arrayID and arrayData length mismatch")
+		}
 		anyArrayData = append(anyArrayData, data)
 	}
 
@@ -208,6 +233,7 @@ func (e *execution) insertMany(ctx context.Context, in *structpb.Struct) (*struc
 	if err != nil {
 		return nil, err
 	}
+
 	return output, nil
 }
 
@@ -233,15 +259,19 @@ func (e *execution) find(ctx context.Context, in *structpb.Struct) (*structpb.St
 		e.client.searchIndexClient = collection.SearchIndexes()
 	}
 
-	filter := inputStruct.Filter
 	limit := inputStruct.Limit
 	fields := inputStruct.Fields
+	var filter map[string]any
 
-	realFilter := bson.M{}
-	for key, value := range filter {
-		if value != nil {
-			realFilter[key] = value
+	if inputStruct.ID != "" {
+		id, err := primitive.ObjectIDFromHex(inputStruct.ID)
+		if err != nil {
+			filter = bson.M{"_id": inputStruct.ID}
+		} else {
+			filter = bson.M{"_id": id}
 		}
+	} else {
+		filter = inputStruct.Filter
 	}
 
 	findOptions := options.Find()
@@ -259,7 +289,7 @@ func (e *execution) find(ctx context.Context, in *structpb.Struct) (*structpb.St
 		}
 		findOptions.SetProjection(projection)
 	}
-	cursor, err = e.client.collectionClient.Find(ctx, realFilter, findOptions)
+	cursor, err = e.client.collectionClient.Find(ctx, filter, findOptions)
 
 	if err != nil {
 		return nil, err
@@ -308,8 +338,19 @@ func (e *execution) update(ctx context.Context, in *structpb.Struct) (*structpb.
 		e.client.searchIndexClient = collection.SearchIndexes()
 	}
 
-	filter := inputStruct.Filter
 	updateFields := inputStruct.UpdateData
+	var filter map[string]any
+
+	if inputStruct.ID != "" {
+		id, err := primitive.ObjectIDFromHex(inputStruct.ID)
+		if err != nil {
+			filter = bson.M{"_id": inputStruct.ID}
+		} else {
+			filter = bson.M{"_id": id}
+		}
+	} else {
+		filter = inputStruct.Filter
+	}
 
 	setFields := bson.M{}
 
@@ -363,7 +404,18 @@ func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.
 		e.client.searchIndexClient = collection.SearchIndexes()
 	}
 
-	filter := inputStruct.Filter
+	var filter map[string]any
+
+	if inputStruct.ID != "" {
+		id, err := primitive.ObjectIDFromHex(inputStruct.ID)
+		if err != nil {
+			filter = bson.M{"_id": inputStruct.ID}
+		} else {
+			filter = bson.M{"_id": id}
+		}
+	} else {
+		filter = inputStruct.Filter
+	}
 
 	res, err := e.client.collectionClient.DeleteMany(ctx, filter)
 	if err != nil {
@@ -616,6 +668,7 @@ func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*str
 		return nil, err
 	}
 
+	var ids []string
 	var documents []map[string]any
 	var vectors [][]float64
 	var metadata []map[string]any
@@ -642,11 +695,19 @@ func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*str
 			}
 		}
 		metadata = append(metadata, metadatum)
+
+		id, ok := document["_id"].(primitive.ObjectID)
+		if !ok {
+			ids = append(ids, document["_id"].(string))
+		} else {
+			ids = append(ids, id.Hex())
+		}
 	}
 
 	outputStruct := VectorSearchOutput{
 		Status: fmt.Sprintf("Successfully found %v documents", len(documents)),
 		Result: Result{
+			IDs:       ids,
 			Documents: documents,
 			Vectors:   vectors,
 			Metadata:  metadata,

@@ -32,12 +32,26 @@
           "title": "Collection Name",
           "type": "string"
         },
+        "id": {
+          "description": "The ID of the point",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "ID",
+          "type": "string"
+        },
         "data": {
           "description": "The data to be inserted",
           "instillAcceptFormats": [
             "semi-structured/*","object"
           ],
-          "instillUIOrder": 2,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -108,12 +122,32 @@
           "title": "Collection Name",
           "type": "string"
         },
+        "array-id": {
+          "description": "The array of id",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "items": {
+            "description": "An id of the point",
+            "type":"string",
+            "example": 1
+          },
+          "minItems": 1,
+          "title": "Array ID",
+          "type": "array"
+        },
         "array-data": {
           "description": "The array data to be inserted",
           "instillAcceptFormats": [
             "array:semi-structured/*","array:semi-structured/json","array:semi-structured/object","array:object"
           ],
-          "instillUIOrder": 2,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -189,13 +223,27 @@
           "title": "Collection Name",
           "type": "string"
         },
+        "id": {
+          "description": "The ID of the point. Fill empty object on filter to use the id",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "ID",
+          "type": "string"
+        },
         "filter": {
           "description": "The filter to find documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned",
           "instillAcceptFormats": [
             "semi-structured/*","object"
           ],
           "instillShortDescription": "The mongodb language query to filter the documents, empty for no filter",
-          "instillUIOrder": 2,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -211,7 +259,7 @@
             "integer"
           ],
           "instillShortDescription": "Limit the documents, empty for all documents",
-          "instillUIOrder": 3,
+          "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "reference",
             "value"
@@ -225,7 +273,7 @@
             "array:string"
           ],
           "instillShortDescription": "Fields to be returned, empty for all fields",
-          "instillUIOrder": 4,
+          "instillUIOrder": 5,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -318,13 +366,27 @@
           "title": "Collection Name",
           "type": "string"
         },
+        "id": {
+          "description": "The ID of the point. Fill empty object on filter to use the id",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "ID",
+          "type": "string"
+        },
         "filter": {
           "description": "The filter to update documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned",
           "instillAcceptFormats": [
             "semi-structured/*","object"
           ],
           "instillShortDescription": "The mongodb language query to filter the documents",
-          "instillUIOrder": 2,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -339,7 +401,7 @@
           "instillAcceptFormats": [
             "semi-structured/*","object"
           ],
-          "instillUIOrder": 3,
+          "instillUIOrder": 4,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -411,13 +473,27 @@
           "title": "Collection Name",
           "type": "string"
         },
+        "id": {
+          "description": "The ID of the point. Fill empty object on filter to use the id",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "ID",
+          "type": "string"
+        },
         "filter": {
           "description": "The filter to delete documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned",
           "instillAcceptFormats": [
             "semi-structured/*","object"
           ],
           "instillShortDescription": "The mongodb language query to filter the documents",
-          "instillUIOrder": 2,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -671,7 +747,7 @@
     }
   },
   "TASK_DROP_SEARCH_INDEX":{
-    "instillShortDescription": "Drop a search index",
+    "instillShortDescription": "Drop a search index, only works for M10 or larger clusters",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -937,9 +1013,22 @@
           "title": "Result",
           "type": "object",
           "properties": {
+            "ids":{
+              "description": "The ids returned from the vector search operation",
+              "instillUIOrder": 0,
+              "title": "IDs",
+              "type": "array",
+              "required":[],
+              "instillFormat": "array:string",
+              "items": {
+                "description": "An id of the point",
+                "type": "string",
+                "example": "c8faa-4b3b-4b3b-4b3b"
+              }
+            },
             "documents": {
               "description": "The documents returned from the vector search operation",
-              "instillUIOrder": 0,
+              "instillUIOrder": 1,
               "required": [],
               "title": "Documents",
               "type": "array",
@@ -953,7 +1042,7 @@
             },
             "vectors": {
               "description": "The vectors returned from the vector search operation",
-              "instillUIOrder": 1,
+              "instillUIOrder": 2,
               "title": "Vectors",
               "type": "array",
               "required":[],
@@ -972,7 +1061,7 @@
             },
             "metadata": {
               "description": "The metadata returned from the vector search operation",
-              "instillUIOrder": 2,
+              "instillUIOrder": 3,
               "title": "Metadata",
               "type": "array",
               "required": [],

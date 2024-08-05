@@ -79,7 +79,7 @@ func (m *MockMongoClient) DropOne(ctx context.Context, name string, _ ...*option
 
 func (m *MockMongoClient) Aggregate(ctx context.Context, pipeline any, opts ...*options.AggregateOptions) (*mongo.Cursor, error) {
 	mockDocs := []bson.M{
-		{"vector": []float64{0.1, 0.2}, "name": "test", "score": 0.0},
+		{"_id": "mockID1", "vector": []float64{0.1, 0.2}, "name": "test", "score": 0.0},
 	}
 
 	var docs []any
@@ -592,8 +592,9 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 			wantResp: VectorSearchOutput{
 				Status: "Successfully found 1 documents",
 				Result: Result{
+					IDs: []string{"mockID1"},
 					Documents: []map[string]any{
-						{"vector": []float64{0.1, 0.2}, "name": "test", "score": 0.0},
+						{"_id": "mockID1", "vector": []float64{0.1, 0.2}, "name": "test", "score": 0.0},
 					},
 					Vectors:  [][]float64{{0.1, 0.2}},
 					Metadata: []map[string]any{{"name": "test"}},
