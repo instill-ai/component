@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/pkoukk/tiktoken-go"
@@ -97,15 +98,15 @@ func (t EncodingTokenizer) Encode(textChunks []TextChunk) ([]int, error) {
 }
 
 func (t MistralTokenizer) Encode(textChunks []TextChunk) ([]int, error) {
-	return executePythonCode(mistralTokenizer, textChunks, t.model)
+	return executePythonCode(mistralTokenizer, textChunks, t.model, false)
 }
 
 func (t CohereTokenizer) Encode(textChunks []TextChunk) ([]int, error) {
-	return executePythonCode(cohereTokenizer, textChunks, t.model)
+	return executePythonCode(cohereTokenizer, textChunks, t.model, false)
 }
 
 func (t HuggingFaceTokenizer) Encode(textChunks []TextChunk) ([]int, error) {
-	return executePythonCode(huggingfaceTokenizer, textChunks, t.model)
+	return executePythonCode(huggingfaceTokenizer, textChunks, t.model, true)
 }
 
 func (output *ChunkTextOutput) setTokenizeChunks(choice Choice) error {
@@ -155,7 +156,7 @@ type pythonRunnerOutput struct {
 	TokenCountMap []int `json:"toke_count"`
 }
 
-func executePythonCode(pythonCode string, textChunks []TextChunk, model string) ([]int, error) {
+func executePythonCode(pythonCode string, textChunks []TextChunk, model string, needTempDir bool) ([]int, error) {
 
 	tokenCounts := make([]int, len(textChunks))
 	params := make(map[string]interface{})
@@ -173,6 +174,13 @@ func executePythonCode(pythonCode string, textChunks []TextChunk, model string) 
 	}
 
 	cmdRunner := exec.Command(pythonInterpreter, "-c", pythonCode)
+
+	if needTempDir {
+		tempDir, _ := os.MkdirTemp("", "downloaded-models")
+		defer os.RemoveAll(tempDir)
+		cmdRunner.Env = append(os.Environ(), "HOME="+tempDir)
+	}
+
 	stdin, err := cmdRunner.StdinPipe()
 
 	if err != nil {
@@ -214,7 +222,7 @@ func executePythonCode(pythonCode string, textChunks []TextChunk, model string) 
 	var output pythonRunnerOutput
 	err = json.Unmarshal(outputBytes, &output)
 	if err != nil {
-		return tokenCounts, fmt.Errorf("failed to unmarshal output: %w", err)
+		return tokenCounts, fmt.Errorf("failed to unmarshal output: %s", string(outputBytes))
 	}
 
 	return output.TokenCountMap, nil
