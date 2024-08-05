@@ -124,7 +124,7 @@
         "open-mistral-7b",
         "mistral-large-latest",
         "mistral-small-latest",
-        "codestral-latest",
+        "codestral-22b",
         "mistral-embed",
         "command-r-plus",
         "command-r",
