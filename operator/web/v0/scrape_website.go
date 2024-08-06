@@ -175,7 +175,12 @@ func (e *execution) Scrape(input *structpb.Struct) (*structpb.Struct, error) {
 				}
 
 				if *inputStruct.IncludeLinkText {
-					markdown, err := util.ScrapeWebpageHTMLToMarkdown(html)
+					domain, err := util.GetDomainFromURL(strippedURL.String())
+					if err != nil {
+						fmt.Printf("Error getting domain from %s: %v", strippedURL.String(), err)
+						return
+					}
+					markdown, err := util.ScrapeWebpageHTMLToMarkdown(html, domain)
 					if err != nil {
 						fmt.Printf("Error scraping text from %s: %v", strippedURL.String(), err)
 						return
