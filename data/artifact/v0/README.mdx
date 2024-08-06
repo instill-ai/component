@@ -14,7 +14,7 @@ It can carry out the following tasks:
 - [Get File In Markdown](#get-file-in-markdown)
 - [Match File Status](#match-file-status)
 - [Search Chunks](#search-chunks)
-- [Reply Question](#reply-question)
+- [Query](#query)
 
 
 
@@ -28,16 +28,6 @@ It can carry out the following tasks:
 
 The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/artifact/v0/config/definition.json).
 
-
-
-
-## Setup
-
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| API Token (required) | `token` | string | Fill in your API token, you can get token through Console > Settings > API Tokens > Create Token |
-| Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 
 
 
@@ -73,6 +63,7 @@ get the metadata of the files in the catalog
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_FILES_METADATA` |
+| Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
 
 
@@ -95,6 +86,7 @@ get the metadata of the chunks from a file in the catalog
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_CHUNKS_METADATA` |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
+| Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | File UID | `file-uid` | string | The unique identifier of the file |
 
 
@@ -117,6 +109,7 @@ get the file content in markdown format
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_FILE_IN_MARKDOWN` |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
+| Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | File UID | `file-uid` | string | The unique identifier of the file |
 
 
@@ -139,6 +132,7 @@ Check if the specified file's processing status is done
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_MATCH_FILE_STATUS` |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to check files' processing status in the Catalog |
+| Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | File UID (required) | `file-uid` | string | The unique identifier of the file |
 
 
@@ -161,6 +155,7 @@ search the chunks in the catalog
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEARCH_CHUNKS` |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
+| Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | Text Prompt (required) | `text-prompt` | string | The prompt string to search the chunks |
 | Top K | `top-k` | integer | The number of top chunks to return |
 
@@ -175,7 +170,7 @@ search the chunks in the catalog
 
 
 
-### Reply Question
+### Query
 
 Reply the questions based on the files in the catalog
 
@@ -184,6 +179,7 @@ Reply the questions based on the files in the catalog
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_QUERY` |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
+| Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | Question (required) | `question` | string | The question to reply |
 | Top K | `top-k` | integer | The number of top answers to return |
 
