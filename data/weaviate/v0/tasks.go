@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/go-openapi/strfmt"
 	"github.com/instill-ai/component/base"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
 	"github.com/weaviate/weaviate-go-client/v4/weaviate/filters"
@@ -16,6 +17,7 @@ import (
 )
 
 type InsertInput struct {
+	ID             string         `json:"id"`
 	CollectionName string         `json:"collection-name"`
 	Vector         []float32      `json:"vector"`
 	Metadata       map[string]any `json:"metadata"`
@@ -31,11 +33,11 @@ type VectorSearchInput struct {
 	Filter         map[string]any `json:"filter"`
 	Limit          int            `json:"limit"`
 	Fields         []string       `json:"fields"`
-	WithAdditional bool           `json:"with-additional"`
 	Tenant         string         `json:"tenant"`
 }
 
 type Result struct {
+	IDs      []string         `json:"ids"`
 	Objects  []map[string]any `json:"objects"`
 	Vectors  [][]float32      `json:"vectors"`
 	Metadata []map[string]any `json:"metadata"`
@@ -46,7 +48,19 @@ type VectorSearchOutput struct {
 	Result Result `json:"result"`
 }
 
+type UpdateInput struct {
+	ID             string         `json:"id"`
+	CollectionName string         `json:"collection-name"`
+	Metadata       map[string]any `json:"update-metadata"`
+	Vector         []float32      `json:"update-vector"`
+}
+
+type UpdateOutput struct {
+	Status string `json:"status"`
+}
+
 type DeleteInput struct {
+	ID             string         `json:"id"`
 	CollectionName string         `json:"collection-name"`
 	Filter         map[string]any `json:"filter"`
 }
@@ -56,6 +70,7 @@ type DeleteOutput struct {
 }
 
 type BatchInsertInput struct {
+	ArrayID        []string         `json:"array-id"`
 	CollectionName string           `json:"collection-name"`
 	ArrayMetadata  []map[string]any `json:"array-metadata"`
 	ArrayVector    [][]float32      `json:"array-vector"`
@@ -127,7 +142,7 @@ func jsonToWhereBuilder(jsonWhere *map[string]any) (*filters.WhereBuilder, error
 					return nil, fmt.Errorf("unknown operator: %s", operator)
 				}
 			case "valueInt":
-				val := int64(value.(float64))
+				val := int64(value.(int))
 				where.WithValueInt(val)
 			case "valueBoolean":
 				val := value.(bool)
@@ -285,11 +300,16 @@ func (e *execution) insert(ctx context.Context, in *structpb.Struct) (*structpb.
 	}
 
 	if e.mockClient == nil {
-		_, err = e.client.Data().Creator().
+		creator := e.client.Data().Creator().
 			WithClassName(inputStruct.CollectionName).
 			WithVector(inputStruct.Vector).
-			WithProperties(inputStruct.Metadata).
-			Do(ctx)
+			WithProperties(inputStruct.Metadata)
+
+		if inputStruct.ID != "" {
+			creator.WithID(inputStruct.ID)
+		}
+
+		_, err = creator.Do(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -321,6 +341,7 @@ func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*str
 			return nil, err
 		}
 
+		var ids []string
 		var objects []map[string]any
 		var vectors [][]float32
 		var metadata []map[string]any
@@ -335,23 +356,27 @@ func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*str
 				vectorFloat[i] = float32(v.(float64))
 			}
 
+			id, ok := item["_additional"].(map[string]any)["id"].(string)
+			if !ok {
+				return nil, fmt.Errorf("unexpected type for id")
+			}
+
 			vectors = append(vectors, vectorFloat)
 			tempProperties := make(map[string]any)
-			if !inputStruct.WithAdditional {
-				delete(item, "_additional")
-				metadata = append(metadata, item)
-			} else {
-				for key, value := range item {
-					if key != "_additional" {
-						tempProperties[key] = value
-					}
+
+			for key, value := range item {
+				if key != "_additional" {
+					tempProperties[key] = value
 				}
-				metadata = append(metadata, tempProperties)
 			}
+			metadata = append(metadata, tempProperties)
+
 			objects = append(objects, item)
+			ids = append(ids, id)
 		}
 
 		result = Result{
+			IDs:      ids,
 			Objects:  objects,
 			Vectors:  vectors,
 			Metadata: metadata,
@@ -374,6 +399,42 @@ func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*str
 	return output, nil
 }
 
+func (e *execution) update(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
+	var inputStruct UpdateInput
+	err := base.ConvertFromStructpb(in, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	if inputStruct.Vector == nil && inputStruct.Metadata == nil {
+		return nil, fmt.Errorf("either vector or metadata must be provided")
+	}
+
+	if e.mockClient == nil {
+		updater := e.client.Data().Updater().
+			WithMerge().
+			WithClassName(inputStruct.CollectionName).
+			WithID(inputStruct.ID).
+			WithProperties(inputStruct.Metadata).
+			WithVector(inputStruct.Vector)
+
+		err = updater.Do(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	outputStruct := UpdateOutput{
+		Status: "Successfully updated 1 object",
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
+}
+
 func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
 	var inputStruct DeleteInput
 	err := base.ConvertFromStructpb(in, &inputStruct)
@@ -383,6 +444,11 @@ func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.
 
 	filter := inputStruct.Filter
 	collectionName := inputStruct.CollectionName
+	id := inputStruct.ID
+
+	if id == "" && filter == nil {
+		return nil, fmt.Errorf("either id or filter must be provided")
+	}
 
 	where, err := jsonToWhereBuilder(&filter)
 	if err != nil {
@@ -392,16 +458,24 @@ func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.
 	var res *models.BatchDeleteResponse
 	var successful int
 	if e.mockClient == nil {
-		res, err = e.client.Batch().ObjectsBatchDeleter().
-			WithClassName(collectionName).
-			WithWhere(where).
-			Do(ctx)
+		if inputStruct.ID != "" {
+			err = e.client.Data().Deleter().WithClassName(collectionName).WithID(id).Do(ctx)
+			if err != nil {
+				return nil, err
+			}
 
-		if err != nil {
-			return nil, err
+			successful = int(1)
+		} else {
+			res, err = e.client.Batch().ObjectsBatchDeleter().
+				WithClassName(collectionName).
+				WithWhere(where).
+				Do(ctx)
+			if err != nil {
+				return nil, err
+			}
+
+			successful = int(res.Results.Successful)
 		}
-
-		successful = int(res.Results.Successful)
 	} else {
 		successful = e.mockClient.Successful
 	}
@@ -425,18 +499,26 @@ func (e *execution) batchInsert(ctx context.Context, in *structpb.Struct) (*stru
 	}
 
 	collectionName := inputStruct.CollectionName
-	arrayProperties := inputStruct.ArrayMetadata
+	arrayMetadata := inputStruct.ArrayMetadata
 	arrayVector := inputStruct.ArrayVector
+	arrayID := inputStruct.ArrayID
 
 	var successful int
 	if e.mockClient == nil {
 		batcher := e.client.Batch().ObjectsBatcher()
-		for i, properties := range arrayProperties {
-			batcher.WithObjects(&models.Object{
+		for i, properties := range arrayMetadata {
+			modelsObject := &models.Object{
 				Class:      collectionName,
 				Properties: properties,
 				Vector:     arrayVector[i],
-			})
+			}
+			if len(arrayID) == len(arrayMetadata) {
+				modelsObject.ID = strfmt.UUID(arrayID[i])
+			} else if arrayID != nil {
+				return nil, fmt.Errorf("array-id and array-metadata must have the same length")
+			}
+
+			batcher = batcher.WithObjects(modelsObject)
 		}
 		_, err = batcher.Do(ctx)
 
@@ -444,7 +526,7 @@ func (e *execution) batchInsert(ctx context.Context, in *structpb.Struct) (*stru
 			return nil, err
 		}
 
-		successful = len(arrayProperties)
+		successful = len(arrayMetadata)
 	} else {
 		successful = e.mockClient.Successful
 	}

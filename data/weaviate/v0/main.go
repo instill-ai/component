@@ -16,6 +16,7 @@ import (
 const (
 	TaskVectorSearch     = "TASK_VECTOR_SEARCH"
 	TaskInsert           = "TASK_INSERT"
+	TaskUpdate           = "TASK_UPDATE"
 	TaskDelete           = "TASK_DELETE"
 	TaskBatchInsert      = "TASK_BATCH_INSERT"
 	TaskDeleteCollection = "TASK_DELETE_COLLECTION"
@@ -73,6 +74,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.vectorSearch
 	case TaskInsert:
 		e.execute = e.insert
+	case TaskUpdate:
+		e.execute = e.update
 	case TaskDelete:
 		e.execute = e.delete
 	case TaskBatchInsert:

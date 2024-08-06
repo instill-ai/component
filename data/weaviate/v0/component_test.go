@@ -316,3 +316,60 @@ func TestComponent_ExecuteBatchInsertTask(t *testing.T) {
 		})
 	}
 }
+
+func TestComponent_ExecuteUpdateTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    UpdateInput
+		wantResp UpdateOutput
+		wantErr  string
+	}{
+		{
+			name: "ok to update",
+			input: UpdateInput{
+				CollectionName: "test_coll",
+				ID:             "test-id",
+				Vector:         []float32{0.1, 0.2},
+				Metadata:       map[string]any{"name": "test"},
+			},
+			wantResp: UpdateOutput{
+				Status: "Successfully updated 1 object",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"url":     "mock-url",
+				"api-key": "mock-api-key",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskUpdate},
+				mockClient:         &MockWeaviateClient{},
+			}
+			e.execute = e.update
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}

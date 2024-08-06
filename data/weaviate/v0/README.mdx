@@ -11,6 +11,7 @@ It can carry out the following tasks:
 - [Vector Search](#vector-search)
 - [Batch Insert](#batch-insert)
 - [Insert](#insert)
+- [Update](#update)
 - [Delete](#delete)
 - [Delete Collection](#delete-collection)
 
@@ -34,7 +35,7 @@ The component configuration is defined and maintained [here](https://github.com/
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Weaviate AI API key. Please refer to clusters in Weaviate Console |
+| API Key (required) | `api-key` | string | Fill in your Weaviate API key. Please refer to clusters in Weaviate Console |
 | Weaviate URL Endpoint (required) | `url` | string | Fill in your Weaviate base URL without https:// or http://. Please refer to clusters in Weaviate Console |
 
 
@@ -55,7 +56,6 @@ Perform a vector search on a collection
 | Limit | `limit` | integer | The limit of objects, empty for all objects |
 | Fields | `fields` | array[string] | The fields to return in the objects. If empty then all fields will be returned |
 | Filter | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters |
-| With Additional | `with-additional` | boolean | Whether to include the additional field in the results |
 | Tenant | `tenant` | string | The tenant to perform the vector search on |
 
 
@@ -79,6 +79,7 @@ Insert multiple vector objects into a collection
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_BATCH_INSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the object into |
+| Array ID | `array-id` | array[string] | The array of id |
 | Array Metadata (required) | `array-metadata` | array[object] | The array of vector metadata properties |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
 
@@ -102,6 +103,7 @@ Insert a vector object into a collection
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_INSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the object into |
+| ID | `id` | string | The ID of the object |
 | Vector (required) | `vector` | array[number] | An array of dimensions for the vector value |
 | Metadata (required) | `metadata` | object | The vector metadata properties |
 
@@ -110,6 +112,30 @@ Insert a vector object into a collection
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
+
+
+
+
+
+
+### Update
+
+Update vector object in a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPDATE` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to update the object in |
+| ID (required) | `id` | string | The ID of the object |
+| Update Vector | `update-vector` | array[number] | The updated vector value, optional |
+| Update Metadata | `update-metadata` | object | The updated vector metadata properties, optional |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Update status |
 
 
 
@@ -125,7 +151,8 @@ Delete vector objects from a collection
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to delete the object from |
-| Filter (required) | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters |
+| ID | `id` | string | The ID of the object |
+| Filter | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters |
 
 
 
