@@ -74,7 +74,7 @@ func (e *execution) batchUpsert(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	outputStruct := BatchUpsertOutput{
-		Status: fmt.Sprintf("Successfully batch upserted %d points", len(inputStruct.ArrayID)),
+		Status: fmt.Sprintf("Successfully batch upserted %d points", len(inputStruct.ArrayVector)),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)

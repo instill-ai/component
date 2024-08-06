@@ -40,6 +40,10 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
+	if inputStruct.ID == "" && inputStruct.Filter == nil {
+		return nil, fmt.Errorf("either ID or Filter is required")
+	}
+
 	resp := DeleteResp{}
 
 	reqParams := DeleteReq{}

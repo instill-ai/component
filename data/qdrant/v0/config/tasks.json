@@ -487,7 +487,7 @@
           "type": "string"
         },
         "id": {
-          "description": "The ID of the point to delete. Fill empty object on filter to use the id",
+          "description": "The ID of the point",
           "instillAcceptFormats": [
             "string"
           ],
@@ -537,6 +537,9 @@
         }
       },
       "required": [
+        "collection-name"
+      ],
+      "instillEditOnNodeFields": [
         "collection-name",
         "filter"
       ],
