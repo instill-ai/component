@@ -54,8 +54,6 @@ func (e *execution) ScrapeWebpage(input *structpb.Struct) (*structpb.Struct, err
 
 	html := getRemovedTagsHTML(doc, inputStruct)
 
-	fmt.Println(html)
-
 	err = setOutput(&output, inputStruct, doc, html)
 
 	if err != nil {
@@ -64,6 +62,22 @@ func (e *execution) ScrapeWebpage(input *structpb.Struct) (*structpb.Struct, err
 
 	return base.ConvertToStructpb(output)
 
+}
+
+func httpRequest(url string) (*goquery.Document, error) {
+	client := &http.Client{}
+	res, err := client.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("failed to make request to %s: %v", url, err)
+	}
+	defer res.Body.Close()
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse HTML from %s: %v", url, err)
+	}
+
+	return doc, nil
 }
 
 func getRemovedTagsHTML(doc *goquery.Document, input ScrapeWebpageInput) string {
@@ -102,22 +116,6 @@ func getRemovedTagsHTML(doc *goquery.Document, input ScrapeWebpageInput) string 
 	})
 
 	return combinedHTML
-}
-
-func httpRequest(url string) (*goquery.Document, error) {
-	client := &http.Client{}
-	res, err := client.Get(url)
-	if err != nil {
-		return nil, fmt.Errorf("failed to make request to %s: %v", url, err)
-	}
-	defer res.Body.Close()
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse HTML from %s: %v", url, err)
-	}
-
-	return doc, nil
 }
 
 func buildTags(tags []string) string {
