@@ -118,6 +118,19 @@
       ],
       "title": "Chunk",
       "type": "object"
+    },
+    "namespace": {
+      "description": "Fill in your namespace, you can get namespace through the tab of switching namespace",
+      "instillUpstreamTypes": [
+        "reference",
+        "value"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 0,
+      "title": "Namespace",
+      "type": "string"
     }
   },
   "TASK_UPLOAD_FILES": {
@@ -149,6 +162,9 @@
                   "type": "string",
                   "title": "Existing Catalog"
                 },
+                "namespace": {
+                  "$ref": "#/$defs/namespace"
+                },
                 "catalog-id": {
                   "description": "Catalog ID that you input in the Catalog",
                   "instillUIOrder": 1,
@@ -168,11 +184,13 @@
               },
               "required": [
                 "option",
+                "namespace",
                 "catalog-id",
                 "files"
               ],
               "instillEditOnNodeFields": [
                 "option",
+                "namespace",
                 "catalog-id",
                 "files"
               ],
@@ -184,6 +202,9 @@
                   "const": "create new catalog",
                   "type": "string",
                   "title": "Create New Catalog"
+                },
+                "namespace": {
+                  "$ref": "#/$defs/namespace"
                 },
                 "catalog-id": {
                   "description": "Catalog ID for new catalog you want to create",
@@ -234,11 +255,13 @@
               },
               "required": [
                 "option",
+                "namespace",
                 "catalog-id",
                 "files"
               ],
               "instillEditOnNodeFields": [
                 "option",
+                "namespace",
                 "catalog-id",
                 "files",
                 "description",
@@ -281,6 +304,9 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "namespace": {
+          "$ref": "#/$defs/namespace"
+        },
         "catalog-id": {
           "description": "Catalog ID that you input to search files in the Catalog",
           "instillUIOrder": 1,
@@ -296,9 +322,11 @@
         }
       },
       "required": [
+        "namespace",
         "catalog-id"
       ],
       "instillEditOnNodeFields": [
+        "namespace",
         "catalog-id"
       ],
       "title": "Input",
@@ -331,6 +359,9 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "namespace": {
+          "$ref": "#/$defs/namespace"
+        },
         "catalog-id": {
           "description": "Catalog ID that you input to search files in the Catalog",
           "instillUIOrder": 0,
@@ -359,6 +390,11 @@
         }
       },
       "required": [
+        "namespace",
+        "catalog-id"
+      ],
+      "instillEditOnNodeFields": [
+        "namespace",
         "catalog-id"
       ],
       "title": "Input",
@@ -452,6 +488,9 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "namespace": {
+          "$ref": "#/$defs/namespace"
+        },
         "catalog-id": {
           "description": "Catalog ID that you input to search files in the Catalog",
           "instillUIOrder": 0,
@@ -480,6 +519,11 @@
         }
       },
       "required": [
+        "namespace",
+        "catalog-id"
+      ],
+      "instillEditOnNodeFields": [
+        "namespace",
         "catalog-id"
       ],
       "title": "Input",
@@ -547,6 +591,9 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "namespace": {
+          "$ref": "#/$defs/namespace"
+        },
         "catalog-id": {
           "description": "Catalog ID that you input to search files in the Catalog",
           "instillUIOrder": 0,
@@ -590,6 +637,12 @@
         }
       },
       "required": [
+        "namespace",
+        "catalog-id",
+        "text-prompt"
+      ],
+      "instillEditOnNodeFields": [
+        "namespace",
         "catalog-id",
         "text-prompt"
       ],
@@ -622,6 +675,9 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "namespace": {
+          "$ref": "#/$defs/namespace"
+        },
         "catalog-id": {
           "description": "Catalog ID that you input to search files in the Catalog",
           "instillUIOrder": 0,
@@ -665,6 +721,12 @@
         }
       },
       "required": [
+        "namespace",
+        "catalog-id",
+        "question"
+      ],
+      "instillEditOnNodeFields": [
+        "namespace",
         "catalog-id",
         "question"
       ],
@@ -704,6 +766,9 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
+        "namespace": {
+          "$ref": "#/$defs/namespace"
+        },
         "catalog-id": {
           "description": "Catalog ID that you input to check files' processing status in the Catalog",
           "instillUIOrder": 0,
@@ -732,6 +797,12 @@
         }
       },
       "required": [
+        "namespace",
+        "catalog-id",
+        "file-uid"
+      ],
+      "instillEditOnNodeFields": [
+        "namespace",
         "catalog-id",
         "file-uid"
       ],
