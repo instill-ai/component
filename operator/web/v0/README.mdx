@@ -10,6 +10,7 @@ It can carry out the following tasks:
 
 - [Scrape Website](#scrape-website)
 - [Scrape Sitemap](#scrape-sitemap)
+- [Scrape Webpage](#scrape-webpage)
 
 
 
@@ -69,6 +70,35 @@ Scrape the sitemap information
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | List | `list` | array | The list of information in a sitemap |
+
+
+
+
+
+
+### Scrape Webpage
+
+Scrape the webpage contents and manipulate html with jquery command. The sequence of jquery commands will be executed in the order of only-main-content, remove-tags, and only-include-tags.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_SCRAPE_WEBPAGE` |
+| URL (required) | `url` | string | The URL to be scrape the webpage contents |
+| Include HTML | `include-html` | boolean | Indicate whether to include the raw HTML of the webpage in the output |
+| Only Main Content | `only-main-content` | boolean | Only return the main content of the page excluding header, nav, footer. |
+| Remove Tags | `remove-tags` | array[string] | A list of tags, classes, and ids to remove from the output. If empty, no tags will be removed. Example: 'script, .ad, #footer' |
+| Only Include Tags | `only-include-tags` | array[string] | A list of tags, classes, and ids to include in the output. If empty, all tags will be included. Example: 'script, .ad, #footer' |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Content | `content` | string | The scraped plain content without html tags of the webpage |
+| Markdown | `markdown` | string | The scraped markdown of the webpage |
+| HTML (optional) | `html` | string | The scraped html of the webpage |
+| Metadata (optional) | `metadata` | object | The metadata of the webpage |
+| Links on Page (optional) | `links-on-page` | array[string] | The list of links on the webpage |
 
 
 
