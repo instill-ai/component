@@ -95,7 +95,7 @@
       "description": "Input",
       "instillEditOnNodeFields": [
         "prompt",
-        "model-name"
+        "model"
       ],
       "instillUIOrder": 0,
       "properties": {
@@ -129,7 +129,7 @@
           "title": "Max new tokens",
           "type": "integer"
         },
-        "model-name": {
+        "model": {
           "enum": [
             "llama-3.1-405b-reasoning",
             "llama-3.1-70b-versatile",
@@ -164,7 +164,7 @@
               "setup.api-key"
             ]
           },
-          "title": "Model Name",
+          "title": "Model",
           "type": "string"
         },
         "prompt": {
@@ -271,23 +271,25 @@
           "title": "Top P",
           "type": "number"
         },
-        "safe": {
-          "description": "Safe generation mode",
+        "user": {
+          "default": "instill",
+          "description": "The user name passed to GroqPlatform",
           "instillAcceptFormats": [
-            "boolean"
+            "string"
           ],
+          "instillShortDescription": "A unique identifier representing your end-user, which can help Groq monitor and detect abuse.",
           "instillUIOrder": 7,
           "instillUpstreamTypes": [
             "value",
             "reference"
           ],
-          "title": "Safe",
-          "type": "boolean"
+          "title": "User",
+          "type": "string"
         }
       },
       "required": [
         "prompt",
-        "model-name"
+        "model"
       ],
       "title": "Input",
       "type": "object"
