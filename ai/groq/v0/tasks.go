@@ -1,6 +1,8 @@
 package groq
 
 import (
+	"fmt"
+
 	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -99,6 +101,8 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 		Stop:        []string{},
 		User:        input.User,
 	}
+
+	fmt.Printf("%#v\n", request)
 
 	response, err := e.client.Chat(request)
 	if err != nil {
