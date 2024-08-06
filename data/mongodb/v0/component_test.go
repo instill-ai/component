@@ -171,9 +171,16 @@ func TestComponent_ExecuteFindTask(t *testing.T) {
 			},
 			wantResp: FindOutput{
 				Status: "Successfully found 2 documents",
-				Documents: []map[string]any{
-					{"_id": "mockID1", "name": "John Doe", "email": "john@example.com"},
-					{"_id": "mockID2", "name": "Jane Smith", "email": "jane@example.com"},
+				Result: FindResult{
+					IDs: []string{"mockID1", "mockID2"},
+					Documents: []map[string]any{
+						{"_id": "mockID1", "name": "John Doe", "email": "john@example.com"},
+						{"_id": "mockID2", "name": "Jane Smith", "email": "jane@example.com"},
+					},
+					Data: []map[string]any{
+						{"name": "John Doe", "email": "john@example.com"},
+						{"name": "Jane Smith", "email": "jane@example.com"},
+					},
 				},
 			},
 		},
@@ -591,7 +598,7 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 			},
 			wantResp: VectorSearchOutput{
 				Status: "Successfully found 1 documents",
-				Result: Result{
+				Result: VectorResult{
 					IDs: []string{"mockID1"},
 					Documents: []map[string]any{
 						{"_id": "mockID1", "vector": []float64{0.1, 0.2}, "name": "test", "score": 0.0},

@@ -56,7 +56,7 @@ Perform an insert operation
 | Task ID (required) | `task` | string | `TASK_INSERT` |
 | Database Name (required) | `database-name` | string | The name of the database in MongoDB |
 | Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
-| ID | `id` | string | The ID of the point |
+| ID | `id` | string | The ID of the document |
 | Data (required) | `data` | object | The data to be inserted |
 
 
@@ -104,7 +104,7 @@ Perform a find operation
 | Task ID (required) | `task` | string | `TASK_FIND` |
 | Database Name (required) | `database-name` | string | The name of the database in MongoDB |
 | Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
-| ID | `id` | string | The ID of the point. Fill empty object on filter to use the id |
+| ID | `id` | string | The ID of the document |
 | Filter | `filter` | object | The filter to find documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned |
 | Limit | `limit` | integer | The number of documents to return. If empty then all documents will be returned |
 | Fields | `fields` | array[string] | The fields to return in the documents. If empty then all fields will be returned |
@@ -113,7 +113,7 @@ Perform a find operation
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Documents | `documents` | array | The documents returned from the find operation |
+| Result | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Find status |
 
 
@@ -131,8 +131,8 @@ Perform an update operation
 | Task ID (required) | `task` | string | `TASK_UPDATE` |
 | Database Name (required) | `database-name` | string | The name of the database in MongoDB |
 | Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
-| ID | `id` | string | The ID of the point. Fill empty object on filter to use the id |
-| Filter (required) | `filter` | object | The filter to update documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned |
+| ID | `id` | string | The ID of the document |
+| Filter | `filter` | object | The filter to update documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned |
 | Update (required) | `update-data` | object | The updated data to be applied to the documents |
 
 
@@ -156,8 +156,8 @@ Perform a delete operation
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Database Name (required) | `database-name` | string | The name of the database in MongoDB |
 | Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
-| ID | `id` | string | The ID of the point. Fill empty object on filter to use the id |
-| Filter (required) | `filter` | object | The filter to delete documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned |
+| ID | `id` | string | The ID of the document |
+| Filter | `filter` | object | The filter to delete documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned |
 
 
 

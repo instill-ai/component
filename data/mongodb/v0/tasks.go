@@ -44,8 +44,8 @@ type FindInput struct {
 }
 
 type FindOutput struct {
-	Status    string           `json:"status"`
-	Documents []map[string]any `json:"documents"`
+	Status string     `json:"status"`
+	Result FindResult `json:"result"`
 }
 
 type UpdateInput struct {
@@ -123,16 +123,22 @@ type VectorSearchInput struct {
 	Fields         []string       `json:"fields"`
 }
 
-type Result struct {
+type VectorResult struct {
 	IDs       []string         `json:"ids"`
 	Documents []map[string]any `json:"documents"`
 	Vectors   [][]float64      `json:"vectors"`
 	Metadata  []map[string]any `json:"metadata"`
 }
 
+type FindResult struct {
+	IDs       []string         `json:"ids"`
+	Documents []map[string]any `json:"documents"`
+	Data      []map[string]any `json:"data"`
+}
+
 type VectorSearchOutput struct {
-	Status string `json:"status"`
-	Result Result `json:"result"`
+	Status string       `json:"status"`
+	Result VectorResult `json:"result"`
 }
 
 func (e *execution) insert(ctx context.Context, in *structpb.Struct) (*structpb.Struct, error) {
@@ -295,7 +301,9 @@ func (e *execution) find(ctx context.Context, in *structpb.Struct) (*structpb.St
 		return nil, err
 	}
 
+	var ids []string
 	var documents []map[string]any
+	var data []map[string]any
 	for cursor.Next(ctx) {
 		var document map[string]any
 		err := cursor.Decode(&document)
@@ -303,11 +311,30 @@ func (e *execution) find(ctx context.Context, in *structpb.Struct) (*structpb.St
 			return nil, err
 		}
 		documents = append(documents, document)
+
+		datum := make(map[string]any)
+		for key, value := range document {
+			if key != "_id" {
+				datum[key] = value
+			}
+		}
+		data = append(data, datum)
+
+		id, ok := document["_id"].(primitive.ObjectID)
+		if !ok {
+			ids = append(ids, document["_id"].(string))
+		} else {
+			ids = append(ids, id.Hex())
+		}
 	}
 
 	outputStruct := FindOutput{
-		Status:    fmt.Sprintf("Successfully found %v documents", len(documents)),
-		Documents: documents,
+		Status: fmt.Sprintf("Successfully found %v documents", len(documents)),
+		Result: FindResult{
+			IDs:       ids,
+			Documents: documents,
+			Data:      data,
+		},
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -340,6 +367,10 @@ func (e *execution) update(ctx context.Context, in *structpb.Struct) (*structpb.
 
 	updateFields := inputStruct.UpdateData
 	var filter map[string]any
+
+	if inputStruct.ID == "" && inputStruct.Filter == nil {
+		return nil, fmt.Errorf("either id or filter must be provided")
+	}
 
 	if inputStruct.ID != "" {
 		id, err := primitive.ObjectIDFromHex(inputStruct.ID)
@@ -405,6 +436,10 @@ func (e *execution) delete(ctx context.Context, in *structpb.Struct) (*structpb.
 	}
 
 	var filter map[string]any
+
+	if inputStruct.ID == "" && inputStruct.Filter == nil {
+		return nil, fmt.Errorf("either id or filter must be provided")
+	}
 
 	if inputStruct.ID != "" {
 		id, err := primitive.ObjectIDFromHex(inputStruct.ID)
@@ -706,7 +741,7 @@ func (e *execution) vectorSearch(ctx context.Context, in *structpb.Struct) (*str
 
 	outputStruct := VectorSearchOutput{
 		Status: fmt.Sprintf("Successfully found %v documents", len(documents)),
-		Result: Result{
+		Result: VectorResult{
 			IDs:       ids,
 			Documents: documents,
 			Vectors:   vectors,

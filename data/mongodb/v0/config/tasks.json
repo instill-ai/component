@@ -33,7 +33,7 @@
           "type": "string"
         },
         "id": {
-          "description": "The ID of the point",
+          "description": "The ID of the document",
           "instillAcceptFormats": [
             "string"
           ],
@@ -134,7 +134,7 @@
             "value"
           ],
           "items": {
-            "description": "An id of the point",
+            "description": "An id of the document",
             "type":"string",
             "example": 1
           },
@@ -224,7 +224,7 @@
           "type": "string"
         },
         "id": {
-          "description": "The ID of the point. Fill empty object on filter to use the id",
+          "description": "The ID of the document",
           "instillAcceptFormats": [
             "string"
           ],
@@ -311,23 +311,60 @@
           "title": "Status",
           "type": "string"
         },
-        "documents": {
-          "description": "The documents returned from the find operation",
-          "instillEditOnNodeFields": [],
+        "result": {
+          "description": "Result of the vector search operation",
           "instillUIOrder": 0,
-          "required": [],
-          "title": "Documents",
-          "type": "array",
-          "instillFormat": "array:semi-structured/json",
-          "items": {
-            "title": "Document",
-            "instillFormat": "semi-structured/json"
-          }
+          "title": "Result",
+          "type": "object",
+          "properties": {
+            "ids":{
+              "description": "The ids returned from the vector search operation",
+              "instillUIOrder": 0,
+              "title": "IDs",
+              "type": "array",
+              "required":[],
+              "instillFormat": "array:string",
+              "items": {
+                "description": "An id of the document",
+                "type": "string",
+                "example": "c8faa-4b3b-4b3b-4b3b"
+              }
+            },
+            "documents": {
+              "description": "The documents returned from the vector search operation",
+              "instillUIOrder": 1,
+              "required": [],
+              "title": "Documents",
+              "type": "array",
+              "instillFormat": "array:semi-structured/json",
+              "items": {
+                "title": "Document",
+                "format": "semi-structured/json",
+                "type": "object",
+                "required": []
+              }
+            },
+            "data": {
+              "description": "The data returned from the vector search operation",
+              "instillUIOrder": 2,
+              "title": "Metadata",
+              "type": "array",
+              "required": [],
+              "instillFormat": "array:semi-structured/json",
+              "items": {
+                "title": "Datum",
+                "format": "semi-structured/json",
+                "type": "object",
+                "required": []
+              }
+            }
+          },
+          "required": []
         }
       },
       "required": [
         "status",
-        "documents"
+        "result"
       ],
       "title": "Output",
       "type": "object"
@@ -367,7 +404,7 @@
           "type": "string"
         },
         "id": {
-          "description": "The ID of the point. Fill empty object on filter to use the id",
+          "description": "The ID of the document",
           "instillAcceptFormats": [
             "string"
           ],
@@ -415,8 +452,12 @@
       "required": [
         "database-name",
         "collection-name",
-        "filter",
         "update-data"
+      ],
+      "instillEditOnNodeFields":[
+        "database-name",
+        "collection-name",
+        "filter"
       ],
       "title": "Input",
       "type": "object"
@@ -474,7 +515,7 @@
           "type": "string"
         },
         "id": {
-          "description": "The ID of the point. Fill empty object on filter to use the id",
+          "description": "The ID of the document",
           "instillAcceptFormats": [
             "string"
           ],
@@ -505,6 +546,10 @@
         }
       },
       "required": [
+        "database-name",
+        "collection-name"
+      ],
+      "instillEditOnNodeFields":[
         "database-name",
         "collection-name",
         "filter"
@@ -1021,7 +1066,7 @@
               "required":[],
               "instillFormat": "array:string",
               "items": {
-                "description": "An id of the point",
+                "description": "An id of the document",
                 "type": "string",
                 "example": "c8faa-4b3b-4b3b-4b3b"
               }
