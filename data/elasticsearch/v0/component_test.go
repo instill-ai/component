@@ -16,7 +16,7 @@ import (
 
 func MockESSearch(wantResp SearchOutput) *esapi.Response {
 	var Hits []Hit
-	documentsBytes, _ := json.Marshal(wantResp.Documents)
+	documentsBytes, _ := json.Marshal(wantResp.Result.Documents)
 	_ = json.Unmarshal(documentsBytes, &Hits)
 
 	resp := SearchResponse{
@@ -43,7 +43,7 @@ func MockESSearch(wantResp SearchOutput) *esapi.Response {
 				Value    int    `json:"value"`
 				Relation string `json:"relation"`
 			}{
-				Value:    len(wantResp.Documents),
+				Value:    len(wantResp.Result.Documents),
 				Relation: "eq",
 			},
 			MaxScore: 2,
@@ -196,25 +196,21 @@ func TestComponent_ExecuteSearchTask(t *testing.T) {
 		{
 			name: "ok to search",
 			input: SearchInput{
-				SourceOnly: false,
-				IndexName:  "index_name",
-				FilterSQL:  "city = 'New York'",
-				Size:       0,
+				IndexName: "index_name",
+				FilterSQL: "city = 'New York'",
+				Size:      0,
 			},
 			wantResp: SearchOutput{
 				Status: "Successfully searched 2 documents",
-				Documents: []map[string]any{
-					{
-						"_index":  "index_name",
-						"_id":     "mockID1",
-						"_score":  0,
-						"_source": map[string]any{"name": "John Doe", "email": "john@example.com", "city": "New York"},
+				Result: SearchResult{
+					IDs: []string{"mockID1", "mockID2"},
+					Documents: []map[string]any{
+						{"_id": "mockID1", "_index": "index_name", "_score": 1, "_source": map[string]any{"name": "John Doe", "email": "john@example.com"}},
+						{"_id": "mockID2", "_index": "index_name", "_score": 0.5, "_source": map[string]any{"name": "Jane Smith", "email": "jane@example.com"}},
 					},
-					{
-						"_index":  "index_name",
-						"_id":     "mockID2",
-						"_score":  0,
-						"_source": map[string]any{"name": "Jane Smith", "email": "jane@example.com", "city": "New York"},
+					Data: []map[string]any{
+						{"name": "John Doe", "email": "john@example.com"},
+						{"name": "Jane Smith", "email": "jane@example.com"},
 					},
 				},
 			},
@@ -278,7 +274,6 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 		{
 			name: "ok to vector search",
 			input: VectorSearchInput{
-				SourceOnly:  false,
 				IndexName:   "index_name",
 				FilterSQL:   "name = 'a'",
 				QueryVector: []float64{0.1, 0.2},
@@ -287,7 +282,7 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 			},
 			wantResp: VectorSearchOutput{
 				Status: "Successfully vector searched 2 documents",
-				Result: Result{
+				Result: VectorResult{
 					IDs: []string{"mockID1", "mockID2"},
 					Documents: []map[string]any{
 						{

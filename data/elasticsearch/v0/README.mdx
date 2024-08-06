@@ -53,7 +53,6 @@ Search for documents in Elasticsearch, support full text search
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEARCH` |
-| Source Only | `source-only` | boolean | If true source only will return only documents, if false returns documents with (_id, _index, _score), default to true |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
 | ID | `id` | string | The ID of the document |
 | Query | `query` | string | Full text search query for search task, query will be prioritised over filter if both are provided, if both query and filter are not provided, all documents will be selected |
@@ -67,8 +66,8 @@ Search for documents in Elasticsearch, support full text search
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Documents | `documents` | array | Search result documents |
 | Status | `status` | string | Search operation status |
+| Result | `result` | object | Result of the search operation |
 
 
 
@@ -83,7 +82,6 @@ Search for vector similarity search in Elasticsearch
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_VECTOR_SEARCH` |
-| Source Only | `source-only` | boolean | If true source only will return only documents, if false returns documents with (_id, _index, _score), default to false |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
 | Field (required) | `field` | string | Field name of the vector to search for similar vectors |
 | Query Vector | `query-vector` | array[number] | Query vector to search for similar vectors |

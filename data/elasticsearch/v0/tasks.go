@@ -46,24 +46,22 @@ type UpdateOutput struct {
 }
 
 type SearchInput struct {
-	ID         string         `json:"id"`
-	Fields     []string       `json:"fields"`
-	SourceOnly bool           `json:"source-only"`
-	MinScore   float64        `json:"min-score"`
-	Filter     map[string]any `json:"filter"`
-	FilterSQL  string         `json:"filter-sql"`
-	Query      string         `json:"query"`
-	IndexName  string         `json:"index-name"`
-	Size       int            `json:"size"`
+	ID        string         `json:"id"`
+	Fields    []string       `json:"fields"`
+	MinScore  float64        `json:"min-score"`
+	Filter    map[string]any `json:"filter"`
+	FilterSQL string         `json:"filter-sql"`
+	Query     string         `json:"query"`
+	IndexName string         `json:"index-name"`
+	Size      int            `json:"size"`
 }
 
 type SearchOutput struct {
-	Documents []map[string]any `json:"documents"`
-	Status    string           `json:"status"`
+	Result SearchResult `json:"result"`
+	Status string       `json:"status"`
 }
 
 type VectorSearchInput struct {
-	SourceOnly    bool           `json:"source-only"`
 	Filter        map[string]any `json:"filter"`
 	FilterSQL     string         `json:"filter-sql"`
 	IndexName     string         `json:"index-name"`
@@ -75,7 +73,13 @@ type VectorSearchInput struct {
 	MinScore      float64        `json:"min-score"`
 }
 
-type Result struct {
+type SearchResult struct {
+	IDs       []string         `json:"ids"`
+	Documents []map[string]any `json:"documents"`
+	Data      []map[string]any `json:"data"`
+}
+
+type VectorResult struct {
 	IDs       []string         `json:"ids"`
 	Documents []map[string]any `json:"documents"`
 	Vectors   [][]float64      `json:"vectors"`
@@ -83,8 +87,8 @@ type Result struct {
 }
 
 type VectorSearchOutput struct {
-	Status string `json:"status"`
-	Result Result `json:"result"`
+	Status string       `json:"status"`
+	Result VectorResult `json:"result"`
 }
 
 type SearchResponse struct {
@@ -431,6 +435,10 @@ func UpdateDocument(es *esapi.UpdateByQuery, esSQLTranslate *esapi.SQLTranslate,
 	update := inputStruct.Update
 	id := inputStruct.ID
 
+	if id == "" && filter == nil && filterSQL == "" {
+		return 0, fmt.Errorf("id, filter, or filter-sql must be provided")
+	}
+
 	if id != "" {
 		filter = map[string]any{"ids": map[string]any{"values": []string{id}}}
 	} else if filterSQL != "" && filter == nil {
@@ -493,6 +501,10 @@ func DeleteDocument(es *esapi.DeleteByQuery, esSQLTranslate *esapi.SQLTranslate,
 	filter := inputStruct.Filter
 	filterSQL := inputStruct.FilterSQL
 	id := inputStruct.ID
+
+	if id == "" && filter == nil && filterSQL == "" {
+		return 0, fmt.Errorf("id, filter, or filter-sql must be provided")
+	}
 
 	if id != "" {
 		filter = map[string]any{"ids": map[string]any{"values": []string{id}}}
@@ -638,25 +650,35 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, err
 	}
 
-	var result []map[string]any
-	if inputStruct.SourceOnly {
-		for _, hit := range resultTemp {
-			result = append(result, hit.Source)
+	var ids []string
+	var documents []map[string]any
+	var data []map[string]any
+
+	for _, hit := range resultTemp {
+		hitMap := make(map[string]any)
+		hitMap["_index"] = hit.Index
+		hitMap["_id"] = hit.ID
+		hitMap["_score"] = hit.Score
+		hitMap["_source"] = hit.Source
+		documents = append(documents, hitMap)
+
+		datum := make(map[string]any)
+		for key, value := range hit.Source {
+
+			datum[key] = value
+
 		}
-	} else {
-		for _, hit := range resultTemp {
-			hitMap := make(map[string]any)
-			hitMap["_index"] = hit.Index
-			hitMap["_id"] = hit.ID
-			hitMap["_score"] = hit.Score
-			hitMap["_source"] = hit.Source
-			result = append(result, hitMap)
-		}
+		data = append(data, datum)
+		ids = append(ids, hit.ID)
 	}
 
 	outputStruct := SearchOutput{
-		Documents: result,
-		Status:    fmt.Sprintf("Successfully searched %d documents", len(result)),
+		Result: SearchResult{
+			IDs:       ids,
+			Documents: documents,
+			Data:      data,
+		},
+		Status: fmt.Sprintf("Successfully searched %d documents", len(documents)),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -692,16 +714,12 @@ func (e *execution) vectorSearch(in *structpb.Struct) (*structpb.Struct, error) 
 		}
 		vectors = append(vectors, vectorFloat)
 
-		if inputStruct.SourceOnly {
-			documents = append(documents, hit.Source)
-		} else {
-			hitMap := make(map[string]any)
-			hitMap["_index"] = hit.Index
-			hitMap["_id"] = hit.ID
-			hitMap["_score"] = hit.Score
-			hitMap["_source"] = hit.Source
-			documents = append(documents, hitMap)
-		}
+		hitMap := make(map[string]any)
+		hitMap["_index"] = hit.Index
+		hitMap["_id"] = hit.ID
+		hitMap["_score"] = hit.Score
+		hitMap["_source"] = hit.Source
+		documents = append(documents, hitMap)
 
 		metadatum := make(map[string]any)
 		for key, value := range hit.Source {
@@ -714,7 +732,7 @@ func (e *execution) vectorSearch(in *structpb.Struct) (*structpb.Struct, error) 
 	}
 
 	outputStruct := VectorSearchOutput{
-		Result: Result{
+		Result: VectorResult{
 			IDs:       ids,
 			Documents: documents,
 			Vectors:   vectors,

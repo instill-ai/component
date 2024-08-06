@@ -291,21 +291,6 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "source-only": {
-          "description": "If true source only will return only documents, if false returns documents with (_id, _index, _score), default to true",
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "instillAcceptFormats": [
-            "boolean"
-          ],
-          "default": true,
-          "instillUIOrder": 0,
-          "title": "Source Only",
-          "type": "boolean"
-        },
         "index-name": {
           "description": "Name of the Elasticsearch index",
           "instillAcceptFormats": [
@@ -441,17 +426,6 @@
     "output": {
       "instillUIOrder": 0,
       "properties": {
-        "documents": {
-          "description": "Search result documents",
-          "instillUIOrder": 0,
-          "title": "Documents",
-          "type": "array",
-          "instillFormat": "array:semi-structured/json",
-          "items": {
-            "title": "Object",
-            "instillFormat": "semi-structured/json"
-          }
-        },
         "status": {
           "description": "Search operation status",
           "instillFormat": "string",
@@ -459,10 +433,60 @@
           "instillUIOrder": 0,
           "title": "Status",
           "type": "string"
+        },
+        "result": {
+          "description": "Result of the search operation",
+          "instillUIOrder": 1,
+          "title": "Result",
+          "type": "object",
+          "properties": {
+            "ids":{
+              "description": "The ids returned from the search operation",
+              "instillUIOrder": 0,
+              "title": "IDs",
+              "type": "array",
+              "required":[],
+              "instillFormat": "array:string",
+              "items": {
+                "description": "An id of the document",
+                "type": "string",
+                "example": "c8faa-4b3b-4b3b-4b3b"
+              }
+            },
+            "documents": {
+              "description": "The documents returned from the search operation",
+              "instillUIOrder": 1,
+              "required": [],
+              "title": "Documents",
+              "type": "array",
+              "instillFormat": "array:semi-structured/json",
+              "items": {
+                "title": "Document",
+                "format": "semi-structured/json",
+                "type": "object",
+                "required": []
+              }
+            },
+            "data": {
+              "description": "The data returned from the search operation",
+              "instillUIOrder": 2,
+              "title": "Data",
+              "type": "array",
+              "required": [],
+              "instillFormat": "array:semi-structured/json",
+              "items": {
+                "title": "Datum",
+                "format": "semi-structured/json",
+                "type": "object",
+                "required": []
+              }
+            }
+          },
+          "required": []
         }
       },
       "required": [
-        "documents",
+        "result",
         "status"
       ],
       "title": "Output",
@@ -474,21 +498,6 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "source-only": {
-          "description": "If true source only will return only documents, if false returns documents with (_id, _index, _score), default to false",
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "instillAcceptFormats": [
-            "boolean"
-          ],
-          "default": false,
-          "instillUIOrder": 0,
-          "title": "Source Only",
-          "type": "boolean"
-        },
         "index-name": {
           "description": "Name of the Elasticsearch index",
           "instillAcceptFormats": [
