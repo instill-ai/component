@@ -312,13 +312,13 @@
           "type": "string"
         },
         "result": {
-          "description": "Result of the vector search operation",
+          "description": "Result of the find operation",
           "instillUIOrder": 0,
           "title": "Result",
           "type": "object",
           "properties": {
             "ids":{
-              "description": "The ids returned from the vector search operation",
+              "description": "The ids returned from the find operation",
               "instillUIOrder": 0,
               "title": "IDs",
               "type": "array",
@@ -331,7 +331,7 @@
               }
             },
             "documents": {
-              "description": "The documents returned from the vector search operation",
+              "description": "The documents returned from the find operation",
               "instillUIOrder": 1,
               "required": [],
               "title": "Documents",
@@ -345,7 +345,7 @@
               }
             },
             "data": {
-              "description": "The data returned from the vector search operation",
+              "description": "The data returned from the find operation",
               "instillUIOrder": 2,
               "title": "Metadata",
               "type": "array",
