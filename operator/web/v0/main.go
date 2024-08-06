@@ -1,5 +1,5 @@
 //go:generate compogen readme ./config ./README.mdx
-package website
+package web
 
 import (
 	"context"
