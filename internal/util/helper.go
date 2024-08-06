@@ -53,6 +53,20 @@ func ScrapeWebpageTitle(doc *goquery.Document) string {
 	return strings.TrimSpace(title)
 }
 
+// ScrapeWebpageDescription extracts and returns the description from the *goquery.Document.
+// If the description does not exist, an empty string is returned
+// The description is found by looking for the meta tag with the name "description"
+// and returning the content attribute
+func ScrapeWebpageDescription(doc *goquery.Document) string {
+	// Find the meta tag with the description name
+	description, ok := doc.Find(`meta[name="description"]`).Attr("content")
+	if !ok {
+		return ""
+	}
+	// Return the trimmed description
+	return strings.TrimSpace(description)
+}
+
 // ScrapeWebpageHTMLToMarkdown converts an HTML string to Markdown format
 func ScrapeWebpageHTMLToMarkdown(html, domain string) (string, error) {
 	// Initialize the markdown converter

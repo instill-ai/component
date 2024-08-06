@@ -362,7 +362,8 @@
             }
           },
           "required": [
-            "title"
+            "title",
+            "source-url"
           ],
           "title": "Metadata",
           "type": "object"

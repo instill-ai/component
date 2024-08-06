@@ -5,11 +5,12 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
 )
 
-func TestScrapSiteMap(t *testing.T) {
+func TestScrapeSiteMap(t *testing.T) {
 	c := quicktest.New(t)
 
 	c.Run("ScrapeSitemap", func(c *quicktest.C) {
@@ -17,7 +18,7 @@ func TestScrapSiteMap(t *testing.T) {
 
 		e := &execution{
 			ComponentExecution: base.ComponentExecution{Component: component, SystemVariables: nil, Setup: nil, Task: taskScrapeSitemap},
-			externalCaller:     fakeScrapSitemapCaller,
+			externalCaller:     fakeScrapeSitemapCaller,
 		}
 
 		e.execute = e.ScrapeSitemap
@@ -47,7 +48,7 @@ func TestScrapSiteMap(t *testing.T) {
 	})
 }
 
-func fakeScrapSitemapCaller(url string) (ioCloser io.ReadCloser, err error) {
+func fakeScrapeSitemapCaller(url string) (ioCloser io.ReadCloser, err error) {
 
 	xml := `<?xml version="1.0" encoding="UTF-8"?>`
 	xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`
@@ -59,4 +60,54 @@ func fakeScrapSitemapCaller(url string) (ioCloser io.ReadCloser, err error) {
 	xml += `</url>`
 	xml += `</urlset>`
 	return io.NopCloser(strings.NewReader(xml)), nil
+}
+
+func TestScrapeWebpage(t *testing.T) {
+	c := quicktest.New(t)
+
+	c.Run("ScrapeWebpage", func(c *quicktest.C) {
+		component := Init(base.Component{})
+		e := &execution{
+			ComponentExecution: base.ComponentExecution{Component: component, SystemVariables: nil, Setup: nil, Task: taskScrapeWebpage},
+			request:            fakeHTTPRequest,
+		}
+
+		e.execute = e.ScrapeWebpage
+
+		input := &ScrapeWebpageInput{
+			URL: "https://www.example.com",
+		}
+
+		inputStruct, err := base.ConvertToStructpb(input)
+		c.Assert(err, quicktest.IsNil)
+
+		output, err := e.execute(inputStruct)
+		c.Assert(err, quicktest.IsNil)
+
+		var outputStruct ScrapeWebpageOutput
+		err = base.ConvertFromStructpb(output, &outputStruct)
+		c.Assert(err, quicktest.IsNil)
+
+		c.Assert(outputStruct.Metadata.Title, quicktest.Equals, "Test")
+		c.Assert(outputStruct.Metadata.Description, quicktest.Equals, "")
+		c.Assert(outputStruct.Metadata.SourceURL, quicktest.Equals, "https://www.example.com")
+
+	})
+}
+
+func fakeHTTPRequest(url string) (*goquery.Document, error) {
+	html := `
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<title>Test</title>
+	</head>
+	<body>
+
+	<h1>Test</h1>
+	<p>Test</p>
+	</body>
+	</html>
+	`
+	return goquery.NewDocumentFromReader(strings.NewReader(html))
 }
