@@ -69,12 +69,13 @@ func TestComponent_ExecuteGetTicketTask(t *testing.T) {
 		name:  "ok - get ticket",
 		input: "2865646368",
 		wantResp: TaskGetTicketOutput{
-			TicketName:       "HubSpot - New Query (Sample Query)",
-			TicketStatus:     "1",
-			Pipeline:         "0",
-			Category:         []string{"PRODUCT_ISSUE", "BILLING_ISSUE"},
-			CreateDate:       "2024-07-09 00:00:00 +0000 UTC",
-			LastModifiedDate: "2024-07-09 00:00:00 +0000 UTC",
+			TicketName:           "HubSpot - New Query (Sample Query)",
+			TicketStatus:         "1",
+			Pipeline:             "0",
+			Category:             []string{"PRODUCT_ISSUE", "BILLING_ISSUE"},
+			CreateDate:           "2024-07-09 00:00:00 +0000 UTC",
+			LastModifiedDate:     "2024-07-09 00:00:00 +0000 UTC",
+			AssociatedContactIDs: []string{},
 		},
 	}
 
@@ -89,7 +90,6 @@ func TestComponent_ExecuteGetTicketTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.GetTicket
-		
 
 		pbInput, err := structpb.NewStruct(map[string]any{
 			"ticket-id": tc.input,
@@ -141,7 +141,6 @@ func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.CreateTicket
-		
 
 		pbInput, err := base.ConvertToStructpb(tc.inputTicket)
 

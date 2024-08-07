@@ -73,10 +73,11 @@ func TestComponent_ExecuteGetDealTask(t *testing.T) {
 		name:  "ok - get deal",
 		input: "20620806729",
 		wantResp: TaskGetDealOutput{
-			DealName:   "Fake deal",
-			Pipeline:   "default",
-			DealStage:  "qualifiedtobuy",
-			CreateDate: "2024-07-09 00:00:00 +0000 UTC",
+			DealName:             "Fake deal",
+			Pipeline:             "default",
+			DealStage:            "qualifiedtobuy",
+			CreateDate:           "2024-07-09 00:00:00 +0000 UTC",
+			AssociatedContactIDs: []string{},
 		},
 	}
 
@@ -91,7 +92,6 @@ func TestComponent_ExecuteGetDealTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.GetDeal
-		
 
 		pbInput, err := structpb.NewStruct(map[string]any{
 			"deal-id": tc.input,
@@ -141,7 +141,6 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.CreateDeal
-		
 
 		pbInput, err := base.ConvertToStructpb(tc.inputDeal)
 
