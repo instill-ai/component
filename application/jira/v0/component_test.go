@@ -548,6 +548,60 @@ func TestComponent_CreateIssueTask(t *testing.T) {
 	taskTesting(testcases, taskCreateIssue, t)
 }
 
+func TestComponent_UpdateIssueTask(t *testing.T) {
+	testcases := []TaskCase[UpdateIssueInput, UpdateIssueOutput]{
+		{
+			_type: "ok",
+			name:  "update issue",
+			input: UpdateIssueInput{
+				IssueKey: "TST-1",
+				Update: map[string][]AdditionalFields{
+					"summary": {
+						{
+							Set: "Test issue 1 updated",
+						},
+					},
+					"description": {
+						{
+							Set: "Test description 1 updated",
+						},
+					},
+				},
+			},
+			wantResp: UpdateIssueOutput{
+				Issue{
+					ID:  "1",
+					Key: "TST-1",
+					Fields: map[string]interface{}{
+						"summary":     "Test issue 1 updated",
+						"description": "Test description 1 updated",
+						"status": map[string]interface{}{
+							"name": "To Do",
+						},
+						"issuetype": map[string]interface{}{
+							"name": "Task",
+						},
+					},
+					Self:        "https://test.atlassian.net/rest/agile/1.0/issue/1",
+					Summary:     "Test issue 1 updated",
+					Status:      "To Do",
+					Description: "Test description 1 updated",
+					IssueType:   "Task",
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name:  "400 - Bad Request",
+			input: UpdateIssueInput{
+				IssueKey: "INVALID",
+			},
+			wantErr: "unsuccessful HTTP response.*",
+		},
+	}
+	taskTesting(testcases, taskUpdateIssue, t)
+}
+
 func TestAuth_nok(t *testing.T) {
 	c := qt.New(t)
 	bc := base.Component{Logger: zap.NewNop()}

@@ -8,13 +8,6 @@ import (
 	"github.com/instill-ai/component/tools/logger"
 )
 
-type AdditionalFields struct {
-	Add    map[string]interface{} `json:"add,omitempty"`
-	Copy   map[string]interface{} `json:"copy,omitempty"`
-	Set    map[string]interface{} `json:"set,omitempty"`
-	Edit   map[string]interface{} `json:"edit,omitempty"`
-	Remove map[string]interface{} `json:"remove,omitempty"`
-}
 type mockCreateIssueRequest struct {
 	Fields map[string]interface{}        `json:"fields"`
 	Update map[string][]AdditionalFields `json:"update"`

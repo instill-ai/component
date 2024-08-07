@@ -1054,6 +1054,21 @@
           "title": "Issue Key",
           "instillUIOrder": 0
         },
+        "notify-users": {
+          "title": "Notify Users",
+          "description": "Whether to notify users",
+          "instillUIOrder": 1,
+          "instillFormat": "boolean",
+          "instillAcceptFormats": [
+            "boolean"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "type": "boolean"
+        },
         "update": {
           "title": "Update",
           "description": "Update an issue in Jira",

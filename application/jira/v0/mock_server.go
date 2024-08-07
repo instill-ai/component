@@ -35,6 +35,7 @@ func router(middlewares ...func(http.Handler) http.Handler) http.Handler {
 	r.Get("/rest/api/2/search", mockIssuesSearch)
 	r.Post("/rest/api/2/search", mockIssuesSearch)
 
+	r.Post("/rest/api/2/issue/{issue-key}", mockUpdateIssue)
 	r.Post("/rest/api/2/issue", mockCreateIssueTask)
 	return r
 }

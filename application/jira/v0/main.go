@@ -23,6 +23,7 @@ const (
 	taskGetIssue    = "TASK_GET_ISSUE"
 	taskGetSprint   = "TASK_GET_SPRINT"
 	taskCreateIssue = "TASK_CREATE_ISSUE"
+	taskUpdateIssue = "TASK_UPDATE_ISSUE"
 )
 
 var (
@@ -84,6 +85,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.client.getSprintTask
 	case taskCreateIssue:
 		e.execute = e.client.createIssueTask
+	case taskUpdateIssue:
+		e.execute = e.client.updateIssueTask
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", x.Task),

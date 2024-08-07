@@ -283,10 +283,17 @@ func (jiraClient *Client) nextGenIssuesSearch(_ context.Context, opt nextGenSear
 	return resp, nil
 }
 
+type AdditionalFields struct {
+	Add    string `json:"add,omitempty"`
+	Copy   string `json:"copy,omitempty"`
+	Set    string `json:"set,omitempty"`
+	Edit   string `json:"edit,omitempty"`
+	Remove string `json:"remove,omitempty"`
+}
 type CreateIssueInput struct {
-	UpdateHistory bool   `json:"updateHistory"`
-	ProjectKey    string `json:"projectKey"`
-	IssueType     string `json:"issueType"`
+	UpdateHistory bool   `json:"update-history"`
+	ProjectKey    string `json:"project-key"`
+	IssueType     string `json:"issue-type"`
 	Status        string `json:"status"`
 	Summary       string `json:"summary"`
 	Description   string `json:"description"`
@@ -377,4 +384,77 @@ func (jiraClient *Client) createIssueTask(ctx context.Context, props *structpb.S
 		return nil, err
 	}
 	return base.ConvertToStructpb(issueOutput)
+}
+
+type UpdateIssueInput struct {
+	IssueKey    string                        `json:"issue-key"`
+	Update      map[string][]AdditionalFields `json:"update"`
+	NotifyUsers bool                          `json:"notify-users" api:"notifyUsers"`
+}
+type UpdateIssueRequset struct {
+	Body struct {
+		Update map[string][]AdditionalFields `json:"update"`
+	}
+	Query struct {
+		NotifyUsers bool `json:"notify-users" api:"notifyUsers"`
+		ReturnIssue bool `json:"return-issue" api:"returnIssue"`
+	}
+}
+type UpdateIssueResp struct {
+	Issue
+}
+
+type UpdateIssueOutput struct {
+	Issue
+}
+
+func (jiraClient *Client) updateIssueTask(_ context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+	var debug logger.Session
+	defer debug.SessionStart("UpdateIssueTask", logger.Develop).SessionEnd()
+
+	var input UpdateIssueInput
+	if err := base.ConvertFromStructpb(props, &input); err != nil {
+		return nil, err
+	}
+
+	apiEndpoint := "rest/api/2/issue/" + input.IssueKey
+	request := UpdateIssueRequset{
+		Body: struct {
+			Update map[string][]AdditionalFields `json:"update"`
+		}{
+			Update: input.Update,
+		},
+		Query: struct {
+			NotifyUsers bool `json:"notify-users" api:"notifyUsers"`
+			ReturnIssue bool `json:"return-issue" api:"returnIssue"`
+		}{
+			NotifyUsers: input.NotifyUsers,
+			ReturnIssue: true,
+		},
+	}
+	req := jiraClient.Client.R().SetResult(&UpdateIssueResp{}).SetBody(request.Body)
+
+	err := addQueryOptions(req, request.Query)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := req.Post(apiEndpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedIssue, ok := resp.Result().(*UpdateIssueResp)
+
+	if !ok {
+		return nil, errmsg.AddMessage(
+			fmt.Errorf("failed to convert response to `Update Issue` Output"),
+			fmt.Sprintf("failed to convert %v to `Update Issue` Output", resp.Result()),
+		)
+	}
+	debug.Info("Updated Issue: ", updatedIssue)
+	out, err := base.ConvertToStructpb(UpdateIssueOutput{Issue: updatedIssue.Issue})
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
