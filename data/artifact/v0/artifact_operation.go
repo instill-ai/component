@@ -138,26 +138,358 @@ func (e *execution) uploadFiles(input *structpb.Struct) (*structpb.Struct, error
 	return base.ConvertToStructpb(output)
 }
 
+type GetFilesMetadataInput struct {
+	Namespace string `json:"namespace"`
+	CatalogID string `json:"catalog-id"`
+}
+
+type GetFilesMetadataOutput struct {
+	Files []FileOutput `json:"files"`
+}
+
 func (e *execution) getFilesMetadata(input *structpb.Struct) (*structpb.Struct, error) {
-	return nil, nil
+
+	inputStruct := GetFilesMetadataInput{}
+
+	err := base.ConvertFromStructpb(input, &inputStruct)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
+	}
+
+	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
+	}
+	defer connection.(Connection).Close()
+
+	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
+	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
+
+	filesRes, err := artifactClient.ListCatalogFiles(ctx, &artifactPB.ListCatalogFilesRequest{
+		NamespaceId: inputStruct.Namespace,
+		CatalogId:   inputStruct.CatalogID,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to list catalog files: %w", err)
+	}
+
+	output := GetFilesMetadataOutput{
+		Files: []FileOutput{},
+	}
+
+	for _, filePB := range filesRes.Files {
+		output.Files = append(output.Files, FileOutput{
+			FileUID:    filePB.FileUid,
+			FileName:   filePB.Name,
+			FileType:   artifactPB.FileType_name[int32(filePB.Type)],
+			CreateTime: filePB.CreateTime.AsTime().Format(time.RFC3339),
+			UpdateTime: filePB.UpdateTime.AsTime().Format(time.RFC3339),
+			Size:       filePB.Size,
+			CatalogID:  inputStruct.CatalogID,
+		})
+	}
+
+	return base.ConvertToStructpb(output)
+
+}
+
+type GetChunksMetadataInput struct {
+	Namespace string `json:"namespace"`
+	CatalogID string `json:"catalog-id"`
+	FileUID   string `json:"file-uid"`
+}
+
+type GetChunksMetadataOutput struct {
+	Chunks []ChunkOutput `json:"chunks"`
+}
+
+type ChunkOutput struct {
+	ChunkUID        string `json:"chunk-uid"`
+	Retrievable     bool   `json:"retrievable"`
+	StartPosition   uint32 `json:"start-position"`
+	EndPosition     uint32 `json:"end-position"`
+	TokenCount      uint32 `json:"token-count"`
+	CreateTime      string `json:"create-time"`
+	OriginalFileUID string `json:"original-file-uid"`
 }
 
 func (e *execution) getChunksMetadata(input *structpb.Struct) (*structpb.Struct, error) {
-	return nil, nil
+
+	inputStruct := GetChunksMetadataInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
+	}
+
+	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
+	}
+	defer connection.(Connection).Close()
+
+	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
+
+	chunksRes, err := artifactClient.ListChunks(ctx, &artifactPB.ListChunksRequest{
+		NamespaceId: inputStruct.Namespace,
+		CatalogId:   inputStruct.CatalogID,
+		FileUid:     inputStruct.FileUID,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to list chunks: %w", err)
+	}
+
+	output := GetChunksMetadataOutput{
+		Chunks: []ChunkOutput{},
+	}
+
+	for _, chunkPB := range chunksRes.Chunks {
+		output.Chunks = append(output.Chunks, ChunkOutput{
+			ChunkUID:        chunkPB.ChunkUid,
+			Retrievable:     chunkPB.Retrievable,
+			StartPosition:   chunkPB.StartPos,
+			EndPosition:     chunkPB.EndPos,
+			TokenCount:      chunkPB.Tokens,
+			CreateTime:      chunkPB.CreateTime.AsTime().Format(time.RFC3339),
+			OriginalFileUID: chunkPB.OriginalFileUid,
+		})
+	}
+
+	return base.ConvertToStructpb(output)
+}
+
+type GetFileInMarkdownInput struct {
+	Namespace string `json:"namespace"`
+	CatalogID string `json:"catalog-id"`
+	FileUID   string `json:"file-uid"`
+}
+
+type GetFileInMarkdownOutput struct {
+	OriginalFileUID string `json:"original-file-uid"`
+	Content         string `json:"content"`
+	CreateTime      string `json:"create-time"`
+	UpdateTime      string `json:"update-time"`
 }
 
 func (e *execution) getFileInMarkdown(input *structpb.Struct) (*structpb.Struct, error) {
-	return nil, nil
+
+	inputStruct := GetFileInMarkdownInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
+	}
+
+	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
+	}
+	defer connection.(Connection).Close()
+
+	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
+
+	fileTextsRes, err := artifactClient.GetSourceFile(ctx, &artifactPB.GetSourceFileRequest{
+		NamespaceId: inputStruct.Namespace,
+		CatalogId:   inputStruct.CatalogID,
+		FileUid:     inputStruct.FileUID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get source file: %w", err)
+	}
+
+	output := GetFileInMarkdownOutput{
+		OriginalFileUID: fileTextsRes.SourceFile.OriginalFileUid,
+		Content:         fileTextsRes.SourceFile.Content,
+		CreateTime:      fileTextsRes.SourceFile.CreateTime.AsTime().Format(time.RFC3339),
+		UpdateTime:      fileTextsRes.SourceFile.UpdateTime.AsTime().Format(time.RFC3339),
+	}
+
+	return base.ConvertToStructpb(output)
 }
 
-func (e *execution) matchFileStatus(input *structpb.Struct) (*structpb.Struct, error) {
-	return nil, nil
+type SearchChunksInput struct {
+	Namespace  string `json:"namespace"`
+	CatalogID  string `json:"catalog-id"`
+	TextPrompt string `json:"text-prompt"`
+	TopK       uint32 `json:"top-k"`
+}
+
+type SearchChunksOutput struct {
+	Chunks []SimilarityChunk `json:"chunks"`
+}
+
+type SimilarityChunk struct {
+	ChunkUID        string  `json:"chunk-uid"`
+	SimilarityScore float32 `json:"similarity-score"`
+	TextContent     string  `json:"text-content"`
+	SourceFileName  string  `json:"source-file-name"`
 }
 
 func (e *execution) searchChunks(input *structpb.Struct) (*structpb.Struct, error) {
-	return nil, nil
+
+	inputStruct := SearchChunksInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
+	}
+
+	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
+	}
+	defer connection.(Connection).Close()
+
+	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
+
+	searchRes, err := artifactClient.SimilarityChunksSearch(ctx, &artifactPB.SimilarityChunksSearchRequest{
+		NamespaceId: inputStruct.Namespace,
+		CatalogId:   inputStruct.CatalogID,
+		TextPrompt:  inputStruct.TextPrompt,
+		TopK:        inputStruct.TopK,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to search chunks: %w", err)
+	}
+
+	output := SearchChunksOutput{
+		Chunks: []SimilarityChunk{},
+	}
+
+	for _, chunkPB := range searchRes.SimilarChunks {
+		output.Chunks = append(output.Chunks, SimilarityChunk{
+			ChunkUID:        chunkPB.ChunkUid,
+			SimilarityScore: chunkPB.SimilarityScore,
+			TextContent:     chunkPB.TextContent,
+			SourceFileName:  chunkPB.SourceFile,
+		})
+	}
+
+	return base.ConvertToStructpb(output)
+}
+
+type QueryInput struct {
+	Namespace string `json:"namespace"`
+	CatalogID string `json:"catalog-id"`
+	Question  string `json:"question"`
+	TopK      int32  `json:"top-k"`
+}
+
+type QueryOutput struct {
+	Answer string            `json:"answer"`
+	Chunks []SimilarityChunk `json:"chunks"`
 }
 
 func (e *execution) query(input *structpb.Struct) (*structpb.Struct, error) {
-	return nil, nil
+
+	inputStruct := QueryInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
+	}
+
+	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
+	}
+	defer connection.(Connection).Close()
+
+	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
+
+	queryRes, err := artifactClient.QuestionAnswering(ctx, &artifactPB.QuestionAnsweringRequest{
+		NamespaceId: inputStruct.Namespace,
+		CatalogId:   inputStruct.CatalogID,
+		Question:    inputStruct.Question,
+		TopK:        inputStruct.TopK,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to question answering: %w", err)
+	}
+
+	output := QueryOutput{
+		Answer: queryRes.Answer,
+		Chunks: []SimilarityChunk{},
+	}
+
+	for _, chunkPB := range queryRes.SimilarChunks {
+		output.Chunks = append(output.Chunks, SimilarityChunk{
+			ChunkUID:        chunkPB.ChunkUid,
+			SimilarityScore: chunkPB.SimilarityScore,
+			TextContent:     chunkPB.TextContent,
+			SourceFileName:  chunkPB.SourceFile,
+		})
+	}
+
+	return base.ConvertToStructpb(output)
+}
+
+type MatchFileStatusInput struct {
+	Namespace string `json:"namespace"`
+	CatalogID string `json:"catalog-id"`
+	FileUID   string `json:"file-uid"`
+}
+
+type MatchFileStatusOutput struct {
+	Succeeded bool `json:"succeeded"`
+}
+
+func (e *execution) matchFileStatus(input *structpb.Struct) (*structpb.Struct, error) {
+
+	inputStruct := MatchFileStatusInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
+	}
+
+	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
+	if err != nil {
+		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
+	}
+	defer connection.(Connection).Close()
+
+	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
+
+	for {
+		matchRes, err := artifactClient.ListCatalogFiles(ctx, &artifactPB.ListCatalogFilesRequest{
+			NamespaceId: inputStruct.Namespace,
+			CatalogId:   inputStruct.CatalogID,
+			Filter: &artifactPB.ListCatalogFilesFilter{
+				FileUids: []string{inputStruct.FileUID},
+			},
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to match file status: %w", err)
+		}
+
+		if matchRes.Files[0].ProcessStatus == artifactPB.FileProcessStatus_FILE_PROCESS_STATUS_COMPLETED {
+			return base.ConvertToStructpb(MatchFileStatusOutput{
+				Succeeded: true,
+			})
+		}
+
+		if matchRes.Files[0].ProcessStatus == artifactPB.FileProcessStatus_FILE_PROCESS_STATUS_FAILED {
+			return base.ConvertToStructpb(MatchFileStatusOutput{
+				Succeeded: false,
+			})
+		}
+	}
+
 }

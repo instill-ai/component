@@ -423,11 +423,13 @@
       },
       "required": [
         "namespace",
-        "catalog-id"
+        "catalog-id",
+        "file-uid"
       ],
       "instillEditOnNodeFields": [
         "namespace",
-        "catalog-id"
+        "catalog-id",
+        "file-uid"
       ],
       "title": "Input",
       "type": "object"
@@ -552,11 +554,13 @@
       },
       "required": [
         "namespace",
-        "catalog-id"
+        "catalog-id",
+        "file-uid"
       ],
       "instillEditOnNodeFields": [
         "namespace",
-        "catalog-id"
+        "catalog-id",
+        "file-uid"
       ],
       "title": "Input",
       "type": "object"
@@ -565,55 +569,41 @@
       "description": "File content in markdown format",
       "instillUIOrder": 1,
       "properties": {
-        "file-texts": {
-          "description": "File content in markdown format",
+        "original-file-uid": {
+          "description": "The unique identifier of the file",
+          "instillFormat": "string",
           "instillUIOrder": 0,
-          "items": {
-            "properties": {
-              "original-file-uid": {
-                "description": "The unique identifier of the file",
-                "instillFormat": "string",
-                "instillUIOrder": 0,
-                "title": "File UID",
-                "type": "string"
-              },
-              "content": {
-                "description": "The content of the file in markdown format",
-                "instillFormat": "string",
-                "instillUIOrder": 1,
-                "title": "Content",
-                "type": "string"
-              },
-              "create-time": {
-                "description": "TThe creation time of the source file in ISO 8601 format",
-                "instillFormat": "string",
-                "instillUIOrder": 2,
-                "title": "Create Time",
-                "type": "string"
-              },
-              "update-time": {
-                "description": "The update time of the source file in ISO 8601 format",
-                "instillFormat": "string",
-                "instillUIOrder": 3,
-                "title": "Update Time",
-                "type": "string"
-              }
-            },
-            "required": [
-              "original-file-uid",
-              "content",
-              "create-time",
-              "update-time"
-            ],
-            "title": "File Text",
-            "type": "object"
-          },
-          "instillFormat": "array:object",
-          "title": "File Texts",
-          "type": "array"
+          "title": "File UID",
+          "type": "string"
+        },
+        "content": {
+          "description": "The content of the file in markdown format",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "create-time": {
+          "description": "TThe creation time of the source file in ISO 8601 format",
+          "instillFormat": "string",
+          "instillUIOrder": 2,
+          "title": "Create Time",
+          "type": "string"
+        },
+        "update-time": {
+          "description": "The update time of the source file in ISO 8601 format",
+          "instillFormat": "string",
+          "instillUIOrder": 3,
+          "title": "Update Time",
+          "type": "string"
         }
       },
-      "required": [],
+      "required": [
+        "original-file-uid",
+        "content",
+        "create-time",
+        "update-time"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -653,7 +643,7 @@
           "type": "string"
         },
         "top-k": {
-          "description": "The number of top chunks to return",
+          "description": "The number of top chunks to return. The range is from 1~20, and default is 5",
           "default": 5,
           "instillUIOrder": 2,
           "instillAcceptFormats": [
@@ -737,7 +727,7 @@
           "type": "string"
         },
         "top-k": {
-          "description": "The number of top answers to return",
+          "description": "The number of top answers to return. The range is from 1~20, and default is 5",
           "default": 5,
           "instillUIOrder": 2,
           "instillAcceptFormats": [
