@@ -8,7 +8,7 @@ description: "Learn about how to set up a VDP Artifact component https://github.
 The Artifact component is a data component that allows users to manipulate and smart search files and data in the artifact store.
 It can carry out the following tasks:
 
-- [Upload Files](#upload-files)
+- [Upload File](#upload-file)
 - [Get Files Metadata](#get-files-metadata)
 - [Get Chunks Metadata](#get-chunks-metadata)
 - [Get File In Markdown](#get-file-in-markdown)
@@ -34,21 +34,22 @@ The component configuration is defined and maintained [here](https://github.com/
 
 ## Supported Tasks
 
-### Upload Files
+### Upload File
 
 Upload and process the files into chunks into Catalog
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_UPLOAD_FILES` |
-| Option (required) | `option` | object | Choose to upload the files to existing catalog or create a new catalog |
+| Task ID (required) | `task` | string | `TASK_UPLOAD_FILE` |
+| Options (required) | `options` | object | Choose to upload the files to existing catalog or create a new catalog |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Files | `files` | array[object] | Result of uploading files into catalog |
+| File | `file` | object | Result of uploading files into catalog |
+| Status | `status` | boolean | The status of trigger file processing, if succeeded, return true |
 
 
 

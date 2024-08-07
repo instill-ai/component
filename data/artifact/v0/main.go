@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	taskUploadFiles       string = "TASK_UPLOAD_FILES"
+	taskUploadFile        string = "TASK_UPLOAD_FILE"
 	taskGetFilesMetadata  string = "TASK_GET_FILES_METADATA"
 	taskGetChunksMetadata string = "TASK_GET_CHUNKS_METADATA"
 	taskGetFileInMarkdown string = "TASK_GET_FILE_IN_MARKDOWN"
@@ -38,7 +38,8 @@ type component struct {
 type execution struct {
 	base.ComponentExecution
 
-	execute func(*structpb.Struct) (*structpb.Struct, error)
+	execute    func(*structpb.Struct) (*structpb.Struct, error)
+	initClient func(string) (interface{}, interface{}, error)
 }
 
 func Init(bc base.Component) *component {
@@ -55,21 +56,22 @@ func Init(bc base.Component) *component {
 func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	e := &execution{ComponentExecution: x}
 
+	e.initClient = initArtifactClient
 	switch x.Task {
-	case taskUploadFiles:
-		e.execute = uploadFiles
+	case taskUploadFile:
+		e.execute = e.uploadFiles
 	case taskGetFilesMetadata:
-		e.execute = getFilesMetadata
+		e.execute = e.getFilesMetadata
 	case taskGetChunksMetadata:
-		e.execute = getChunksMetadata
+		e.execute = e.getChunksMetadata
 	case taskGetFileInMarkdown:
-		e.execute = getFileInMarkdown
+		e.execute = e.getFileInMarkdown
 	case taskMatchFileStatus:
-		e.execute = matchFileStatus
+		e.execute = e.matchFileStatus
 	case taskSearchChunks:
-		e.execute = searchChunks
+		e.execute = e.searchChunks
 	case taskQuery:
-		e.execute = query
+		e.execute = e.query
 	default:
 		return nil, fmt.Errorf(x.Task + " task is not supported.")
 	}

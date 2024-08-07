@@ -85,6 +85,10 @@ func GetContentTypeFromBase64(base64String string) (string, error) {
 	return parts[0], nil
 }
 
+func GetFileBase64Content(base64String string) string {
+	return strings.SplitN(base64String, ",", 2)[1]
+}
+
 func TransformContentTypeToFileExtension(contentType string) string {
 	// https://gist.github.com/AshHeskes/6038140
 	// We can integrate more Content-Type to file extension mappings in the future
