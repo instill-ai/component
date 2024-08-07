@@ -1,0 +1,210 @@
+{
+"$defs": {
+    "ticket":{
+        "subject":{
+            "description": "Subject of the ticket",
+            "title": "Subject",
+            "type": "string",
+            "instillUIOrder": 0
+        },
+        "description-text":{
+            "description": "Content of the ticket",
+            "title": "Description Text",
+            "type": "string",
+            "instillUIOrder": 1
+        },
+        "source":{
+            "description": "Source of the ticket. Eg: Email",
+            "title": "Source",
+            "type": "string",
+            "instillUIOrder": 2
+        },
+        "status":{
+            "description": "Status of the ticket. Eg: Pending",
+            "title": "Status",
+            "type": "string",
+            "instillUIOrder": 3
+
+        },
+        "priority":{
+            "description": "Priority of the ticket. Eg: Medium",
+            "title": "Priority",
+            "type": "string",
+            "instillUIOrder": 4
+        },
+        "association-type":{
+            "description": "Used to determine whether a ticket is a parent, child, tracker or related ticket",
+            "title": "Association Type",
+            "type": "string",
+            "instillUIOrder": 5
+        },
+        "associated-ticket-list":{
+            "description": "List of associated ticket IDs",
+            "title": "Associated Ticket List",
+            "type": "array:integer",
+            "instillUIOrder": 6
+        },
+        "tags":{
+            "description": "Tags associated with the ticket",
+            "title": "Tags",
+            "type": "array:string",
+            "instillUIOrder": 7
+        },
+        "cc-emails":{
+            "description": "Email addresses added in the 'cc' field of the incoming ticket email",
+            "title": "CC Emails",
+            "type": "array:string",
+            "instillUIOrder": 8
+        },
+        "forward-emails":{
+            "description": "Email addresses added while forwarding a ticket",
+            "title": "Forward Emails",
+            "type": "array:string",
+            "instillUIOrder": 9
+        },
+        "reply-cc-emails":{
+            "description": "Email addresses added while replying to a ticket",
+            "title": "Reply CC Emails",
+            "type": "array:string",
+            "instillUIOrder": 10
+        },
+        "requester-id":{
+            "description": "ID of the requester",
+            "title": "Requester ID",
+            "type": "integer",
+            "instillUIOrder": 11
+        },
+        "responder-id":{
+            "description": "ID of the agent to whom the ticket has been assigned",
+            "title": "Responder ID",
+            "type": "integer",
+            "instillUIOrder": 12
+        },
+        "company-id":{
+            "description": "ID of the company to which this ticket belongs",
+            "title": "Company ID",
+            "type": "integer",
+            "instillUIOrder": 13
+        },
+        "group-id":{
+            "description": "ID of the group to which the ticket has been assigned",
+            "title": "Group ID",
+            "type": "integer",
+            "instillUIOrder": 14
+        },
+        "product-id":{
+            "description": "ID of the product to which the ticket is associated",
+            "title": "Product ID",
+            "type": "integer",
+            "instillUIOrder": 15
+        },
+        "support-email":{
+            "description": "Support email address. You can find it in admin -> email (under channel).",
+            "title": "Support Email",
+            "type": "string",
+            "instillUIOrder": 16
+        },
+        "to-emails":{
+            "description": "Email addresses to which the ticket was originally sent",
+            "title": "To Emails",
+            "type": "array:string",
+            "instillUIOrder": 17
+        },
+        "spam":{
+            "description": "Set to true if the ticket is marked as spam",
+            "title": "Spam",
+            "type": "boolean",
+            "instillUIOrder": 18
+        },
+        "is-escalated":{
+            "description": "Set to true if the ticket has been escalated",
+            "title": "Is Escalated",
+            "type": "boolean",
+            "instillUIOrder": 19
+        },
+        "first-response-due-by":{
+            "description": "Timestamp that denotes when the first response is due. You can adjust this by going to admin -> SLA policy (under Workflows).",
+            "title": "First Response Due By",
+            "type": "string",
+            "instillUIOrder": 20
+        },
+        "first-response-escalated":{
+            "description": "Set to true if the ticket has been escalated as the result of first response time being breached",
+            "title": "First Response Escalated",
+            "type": "boolean",
+            "instillUIOrder": 21
+        },
+        "next-response-due-by":{
+            "description": "Timestamp that denotes when the next response is due. You can adjust this by going to admin -> SLA policy (under Workflows).",
+            "title": "Next Response Due By",
+            "type": "string",
+            "instillUIOrder": 22
+        },
+        "next-response-escalated":{
+            "description": "Set to true if the ticket has been escalated as the result of next response time being breached",
+            "title": "Next Response Escalated",
+            "type": "boolean",
+            "instillUIOrder": 23
+        },
+        "created-at":{
+            "description": "Timestamp that denotes when the ticket was created",
+            "title": "Created At",
+            "type": "string",
+            "instillUIOrder": 24
+        },
+        "updated-at":{
+            "description": "Timestamp that denotes when the ticket was last updated",
+            "title": "Updated At",
+            "type": "string",
+            "instillUIOrder": 25
+        },
+        "attachments":{
+            "description": "Ticket attachments (cannot be more than 20MB)",
+            "title": "Attachments",
+            "type": "array:object",
+            "instillUIOrder": 26
+        }
+    }
+},
+  "TASK_GET_TICKET": {
+    "instillShortDescription": "Get ticket using ID",
+    "input": {
+      "description": "Ticket ID",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "ticket-id"
+      ],
+      "properties": {
+        "ticket-id": {
+          "description": "The ID of the ticket",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillUIMultiline": false,
+          "instillUIOrder": 0,
+          "title": "Ticket ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticket-id"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Ticket information",
+      "instillUIOrder": 0,
+      "properties": {
+        
+      },
+      "required": [],
+      "title": "Output",
+      "type": "object"
+    }
+  }
+}
