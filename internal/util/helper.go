@@ -105,11 +105,24 @@ func TransformContentTypeToFileExtension(contentType string) string {
 	return ""
 }
 
-
 func StripProtocolFromURL(url string) string {
 	index := strings.Index(url, "://")
 	if index > 0 {
 		return url[strings.Index(url, "://")+3:]
 	}
 	return url
+}
+
+func GetHeaderAuthorization(vars map[string]any) string {
+	if v, ok := vars["__PIPELINE_HEADER_AUTHORIZATION"]; ok {
+		return v.(string)
+	}
+	return ""
+}
+func GetInstillUserUID(vars map[string]any) string {
+	return vars["__PIPELINE_USER_UID"].(string)
+}
+
+func GetInstillRequesterUID(vars map[string]any) string {
+	return vars["__PIPELINE_REQUESTER_UID"].(string)
 }
