@@ -16,14 +16,16 @@ import (
 )
 
 const (
-	apiBaseURL      = "https://api.atlassian.com"
-	taskListBoards  = "TASK_LIST_BOARDS"
-	taskListIssues  = "TASK_LIST_ISSUES"
-	taskListSprints = "TASK_LIST_SPRINTS"
-	taskGetIssue    = "TASK_GET_ISSUE"
-	taskGetSprint   = "TASK_GET_SPRINT"
-	taskCreateIssue = "TASK_CREATE_ISSUE"
-	taskUpdateIssue = "TASK_UPDATE_ISSUE"
+	apiBaseURL       = "https://api.atlassian.com"
+	taskListBoards   = "TASK_LIST_BOARDS"
+	taskListIssues   = "TASK_LIST_ISSUES"
+	taskListSprints  = "TASK_LIST_SPRINTS"
+	taskGetIssue     = "TASK_GET_ISSUE"
+	taskGetSprint    = "TASK_GET_SPRINT"
+	taskCreateIssue  = "TASK_CREATE_ISSUE"
+	taskUpdateIssue  = "TASK_UPDATE_ISSUE"
+	taskCreateSprint = "TASK_CREATE_SPRINT"
+	taskUpdateSprint = "TASK_UPDATE_SPRINT"
 )
 
 var (
@@ -87,6 +89,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.client.createIssueTask
 	case taskUpdateIssue:
 		e.execute = e.client.updateIssueTask
+	case taskCreateSprint:
+		e.execute = e.client.createSprintTask
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", x.Task),

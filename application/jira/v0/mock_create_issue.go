@@ -26,7 +26,7 @@ type mockCreateIssueResponse struct {
 	}
 }
 
-func mockCreateIssueTask(res http.ResponseWriter, req *http.Request) {
+func mockCreateIssue(res http.ResponseWriter, req *http.Request) {
 	var debug logger.Session
 	defer debug.SessionStart("MockCreateIssueTask", logger.Develop).SessionEnd()
 

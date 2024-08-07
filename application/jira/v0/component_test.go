@@ -602,6 +602,43 @@ func TestComponent_UpdateIssueTask(t *testing.T) {
 	taskTesting(testcases, taskUpdateIssue, t)
 }
 
+func TestComponent_CreateSprintTask(t *testing.T) {
+	testcases := []TaskCase[CreateSprintInput, CreateSprintOutput]{
+		{
+			_type: "ok",
+			name:  "create sprint",
+			input: CreateSprintInput{
+				Name:      "Test Sprint",
+				Goal:      "Sprint goal",
+				StartDate: "2021-01-01T00:00:00.000Z",
+				EndDate:   "2021-01-15T00:00:00.000Z",
+				BoardName: "TST",
+			},
+			wantResp: CreateSprintOutput{
+				ID:            1,
+				Self:          "https://test.atlassian.net/rest/agile/1.0/sprint/1",
+				State:         "active",
+				Name:          "Test Sprint",
+				StartDate:     "2021-01-01T00:00:00.000Z",
+				EndDate:       "2021-01-15T00:00:00.000Z",
+				CompleteDate:  "",
+				OriginBoardID: 3,
+				Goal:          "Sprint goal",
+			},
+		},
+		{
+			_type: "nok",
+			name:  "400 - Bad Request",
+			input: CreateSprintInput{
+				Name:      "Test Sprint",
+				BoardName: "INVALID",
+			},
+			wantErr: "board not found",
+		},
+	}
+	taskTesting(testcases, taskCreateSprint, t)
+}
+
 func TestAuth_nok(t *testing.T) {
 	c := qt.New(t)
 	bc := base.Component{Logger: zap.NewNop()}
