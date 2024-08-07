@@ -104,3 +104,12 @@ func TransformContentTypeToFileExtension(contentType string) string {
 	}
 	return ""
 }
+
+
+func StripProtocolFromURL(url string) string {
+	index := strings.Index(url, "://")
+	if index > 0 {
+		return url[strings.Index(url, "://")+3:]
+	}
+	return url
+}
