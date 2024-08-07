@@ -36,7 +36,7 @@ type TaskGetDealOutput struct {
 	DealType             string   `json:"deal-type,omitempty"`
 	CreateDate           string   `json:"create-date"`
 	CloseDate            string   `json:"close-date,omitempty"`
-	AssociatedContactIDs []string `json:"associated-contact-ids,omitempty"`
+	AssociatedContactIDs []string `json:"associated-contact-ids"`
 }
 
 func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
@@ -71,6 +71,8 @@ func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
 		for index, value := range dealContactAssociation {
 			dealContactList[index] = value.ID
 		}
+	} else {
+		dealContactList = []string{}
 	}
 
 	// convert to outputStruct
@@ -107,7 +109,6 @@ func (e *execution) GetDeal(input *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}

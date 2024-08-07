@@ -49,7 +49,7 @@ type TaskGetCompanyOutput struct {
 	AnnualRevenue        float64  `json:"annual-revenue,omitempty"`
 	TotalRevenue         float64  `json:"total-revenue,omitempty"`
 	LinkedinPage         string   `json:"linkedin-page,omitempty"`
-	AssociatedContactIDs []string `json:"associated-contact-ids,omitempty"`
+	AssociatedContactIDs []string `json:"associated-contact-ids"`
 }
 
 func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error) {
@@ -89,6 +89,8 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 				companyContactList = append(companyContactList, value.ID)
 			}
 		}
+	} else {
+		companyContactList = []string{}
 	}
 
 	// convert to outputStruct

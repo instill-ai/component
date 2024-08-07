@@ -96,7 +96,7 @@ type TaskGetTicketOutput struct {
 	RecordSource         string   `json:"record-source,omitempty"`
 	CreateDate           string   `json:"create-date"`
 	LastModifiedDate     string   `json:"last-modified-date"`
-	AssociatedContactIDs []string `json:"associated-contact-ids,omitempty"`
+	AssociatedContactIDs []string `json:"associated-contact-ids"`
 }
 
 func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) {
@@ -129,6 +129,8 @@ func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) 
 		for index, value := range ticketContactAssociation {
 			ticketContactList[index] = value.ID
 		}
+	} else {
+		ticketContactList = []string{}
 	}
 
 	var categoryValues []string
