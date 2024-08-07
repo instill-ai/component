@@ -77,11 +77,17 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 
 	var companyContactList []string
 	if res.Associations != nil {
-		companyContactAssociation := res.Associations.Contacts.Results
-		companyContactList = make([]string, len(companyContactAssociation))
+		// for company, it is possible to have duplicate contacts, so need to remove all the duplicates.
 
-		for index, value := range companyContactAssociation {
-			companyContactList[index] = value.ID
+		hash := make(map[string]bool)
+
+		companyContactAssociation := res.Associations.Contacts.Results
+
+		for _, value := range companyContactAssociation {
+			if _, ok := hash[value.ID]; !ok {
+				hash[value.ID] = true
+				companyContactList = append(companyContactList, value.ID)
+			}
 		}
 	}
 
