@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/tools/logger"
 	"github.com/instill-ai/x/errmsg"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -62,6 +63,7 @@ func extractIssue(issue *Issue) *Issue {
 }
 
 func (jiraClient *Client) getIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+
 	var opt GetIssueInput
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err
@@ -128,6 +130,7 @@ type ListIssuesOutput struct {
 }
 
 func (jiraClient *Client) listIssuesTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+
 	var (
 		opt ListIssuesInput
 		jql string
@@ -278,4 +281,100 @@ func (jiraClient *Client) nextGenIssuesSearch(_ context.Context, opt nextGenSear
 		return nil, err
 	}
 	return resp, nil
+}
+
+type CreateIssueInput struct {
+	UpdateHistory bool   `json:"updateHistory"`
+	ProjectKey    string `json:"projectKey"`
+	IssueType     string `json:"issueType"`
+	Status        string `json:"status"`
+	Summary       string `json:"summary"`
+	Description   string `json:"description"`
+	Assignee      string `json:"assignee"`
+}
+type CreateIssueRequset struct {
+	Fields map[string]interface{}        `json:"fields"`
+	Update map[string][]AdditionalFields `json:"update"`
+}
+type CreateIssueResp struct {
+	ID         string `json:"id"`
+	Key        string `json:"key"`
+	Self       string `json:"self"`
+	Transition struct {
+		Status          string `json:"status"`
+		ErrorCollection struct {
+			ErrorMessages []string               `json:"errorMessages"`
+			Errors        map[string]interface{} `json:"errors"`
+		} `json:"errorCollection"`
+	} `json:"transition"`
+}
+
+type CreateIssueOutput struct {
+	Issue
+}
+
+func convertCreateIssueRequest(issue *CreateIssueInput) *CreateIssueRequset {
+	return &CreateIssueRequset{
+		Fields: map[string]interface{}{
+			"project": map[string]interface{}{
+				"key": issue.ProjectKey,
+			},
+			"issuetype": map[string]interface{}{
+				"name": issue.IssueType,
+			},
+			"status": map[string]interface{}{
+				"name": issue.Status,
+			},
+			"summary":     issue.Summary,
+			"description": issue.Description,
+			"assignee": map[string]interface{}{
+				"name": issue.Assignee,
+			},
+		},
+	}
+}
+
+func (jiraClient *Client) createIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+	var debug logger.Session
+	defer debug.SessionStart("CreateIssueTask", logger.Develop).SessionEnd()
+
+	var issue CreateIssueInput
+	if err := base.ConvertFromStructpb(props, &issue); err != nil {
+		return nil, err
+	}
+
+	apiEndpoint := "rest/api/2/issue"
+	req := jiraClient.Client.R().SetResult(&CreateIssueResp{}).SetBody(convertCreateIssueRequest(&issue))
+	err := addQueryOptions(req, map[string]interface{}{"updateHistory": issue.UpdateHistory})
+	if err != nil {
+		return nil, err
+	}
+	resp, err := req.Post(apiEndpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	createdResult, ok := resp.Result().(*CreateIssueResp)
+
+	if !ok {
+		return nil, errmsg.AddMessage(
+			fmt.Errorf("failed to convert response to `Create Issue` Output"),
+			fmt.Sprintf("failed to convert %v to `Create Issue` Output", resp.Result()),
+		)
+	}
+	debug.Info("Created Issue: ", createdResult)
+
+	getIssueInput, err := base.ConvertToStructpb(GetIssueInput{IssueKey: createdResult.Key, UpdateHistory: issue.UpdateHistory})
+	if err != nil {
+		return nil, err
+	}
+	getIssueOutput, err := jiraClient.getIssueTask(ctx, getIssueInput)
+	if err != nil {
+		return nil, err
+	}
+	var issueOutput CreateIssueOutput
+	if err := base.ConvertFromStructpb(getIssueOutput, &issueOutput); err != nil {
+		return nil, err
+	}
+	return base.ConvertToStructpb(issueOutput)
 }

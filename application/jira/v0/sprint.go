@@ -97,7 +97,6 @@ type ListSprintsOutput struct {
 }
 
 func (jiraClient *Client) listSprintsTask(_ context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-
 	var opt ListSprintInput
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err

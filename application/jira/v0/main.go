@@ -11,6 +11,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/tools/logger"
 	"github.com/instill-ai/x/errmsg"
 )
 
@@ -21,6 +22,7 @@ const (
 	taskListSprints = "TASK_LIST_SPRINTS"
 	taskGetIssue    = "TASK_GET_ISSUE"
 	taskGetSprint   = "TASK_GET_SPRINT"
+	taskCreateIssue = "TASK_CREATE_ISSUE"
 )
 
 var (
@@ -80,6 +82,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.client.getIssueTask
 	case taskGetSprint:
 		e.execute = e.client.getSprintTask
+	case taskCreateIssue:
+		e.execute = e.client.createIssueTask
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", x.Task),
