@@ -12,6 +12,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 )
 
 // TestConvertToText tests the convert to text task
@@ -97,15 +98,28 @@ func TestConvertToText(t *testing.T) {
 			c.Assert(err, qt.IsNil)
 
 			if test.name == "Convert xlsx file" {
-				_, err := e.Execute(context.Background(), inputs)
+
+				ir := mock.NewInputReaderMock(c)
+				ow := mock.NewOutputWriterMock(c)
+				ir.ReadMock.Return(inputs, nil)
+				ow.WriteMock.Optional().Return(nil)
+				err = e.Execute(context.Background(), ir, ow)
 				c.Assert(err, qt.ErrorMatches, "unsupported content type")
 				return
 			}
 
-			outputs, err := e.Execute(context.Background(), inputs)
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return(inputs, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs[0].Fields["body"].GetStringValue(), qt.Not(qt.Equals), "")
+				c.Assert(outputs[0].Fields["meta"].GetStructValue(), qt.IsNotNil)
+				return nil
+			})
+
+			err = e.Execute(context.Background(), ir, ow)
 			c.Assert(err, qt.IsNil)
-			c.Assert(outputs[0].Fields["body"].GetStringValue(), qt.Not(qt.Equals), "")
-			c.Assert(outputs[0].Fields["meta"].GetStructValue(), qt.IsNotNil)
+
 		})
 	}
 

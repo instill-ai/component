@@ -25,7 +25,14 @@ type IExecution interface {
 	GetComponentID() string
 	UsesInstillCredentials() bool
 
-	Execute(context.Context, []*structpb.Struct) ([]*structpb.Struct, error)
+	Execute(context.Context, InputReader, OutputWriter) error
+}
+
+type InputReader interface {
+	Read(ctx context.Context) (inputs []*structpb.Struct, err error)
+}
+type OutputWriter interface {
+	Write(ctx context.Context, outputs []*structpb.Struct) (err error)
 }
 
 // ComponentExecution implements the common methods for component execution.

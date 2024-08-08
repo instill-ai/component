@@ -69,11 +69,15 @@ func getSearchEngineID(setup *structpb.Struct) string {
 	return setup.GetFields()["cse-id"].GetStringValue()
 }
 
-func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 
 	service, err := NewService(getAPIKey(e.Setup))
 	if err != nil || service == nil {
-		return nil, fmt.Errorf("error creating Google custom search service: %v", err)
+		return fmt.Errorf("error creating Google custom search service: %v", err)
 	}
 	cseListCall := service.Cse.List().Cx(getSearchEngineID(e.Setup))
 
@@ -86,33 +90,33 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 			inputStruct := SearchInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			// Make the search request
 			outputStruct, err := search(cseListCall, inputStruct)
 
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputJSON, err := json.Marshal(outputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			output := structpb.Struct{}
 			err = json.Unmarshal(outputJSON, &output)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputs = append(outputs, &output)
 
 		default:
-			return nil, fmt.Errorf("not supported task: %s", e.Task)
+			return fmt.Errorf("not supported task: %s", e.Task)
 		}
 	}
 
-	return outputs, nil
+	return out.Write(ctx, outputs)
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {

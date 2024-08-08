@@ -7,6 +7,7 @@ import (
 
 	_ "embed" // embed
 
+	"github.com/instill-ai/component/internal/mock"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -50,7 +51,12 @@ func TestDrawClassification(t *testing.T) {
 	e := &execution{}
 	e.Task = "TASK_DRAW_CLASSIFICATION"
 
-	if _, err := e.Execute(context.Background(), inputs); err != nil {
+	ir := mock.NewInputReaderMock(t)
+	ow := mock.NewOutputWriterMock(t)
+	ir.ReadMock.Return(inputs, nil)
+	ow.WriteMock.Optional().Return(nil)
+
+	if err := e.Execute(context.Background(), ir, ow); err != nil {
 		t.Fatalf("drawClassification returned an error: %v", err)
 	}
 }
@@ -80,7 +86,11 @@ func TestDrawDetection(t *testing.T) {
 	e := &execution{}
 	e.Task = "TASK_DRAW_DETECTION"
 
-	if _, err := e.Execute(context.Background(), inputs); err != nil {
+	ir := mock.NewInputReaderMock(t)
+	ow := mock.NewOutputWriterMock(t)
+	ir.ReadMock.Return(inputs, nil)
+	ow.WriteMock.Optional().Return(nil)
+	if err := e.Execute(context.Background(), ir, ow); err != nil {
 		t.Fatalf("drawDetection returned an error: %v", err)
 	}
 }
@@ -110,7 +120,11 @@ func TestDrawKeypoint(t *testing.T) {
 	e := &execution{}
 	e.Task = "TASK_DRAW_KEYPOINT"
 
-	if _, err := e.Execute(context.Background(), inputs); err != nil {
+	ir := mock.NewInputReaderMock(t)
+	ow := mock.NewOutputWriterMock(t)
+	ir.ReadMock.Return(inputs, nil)
+	ow.WriteMock.Optional().Return(nil)
+	if err := e.Execute(context.Background(), ir, ow); err != nil {
 		t.Fatalf("drawKeypoint returned an error: %v", err)
 	}
 }
@@ -139,7 +153,11 @@ func TestDrawOCR(t *testing.T) {
 	e := &execution{}
 	e.Task = "TASK_DRAW_OCR"
 
-	if _, err := e.Execute(context.Background(), inputs); err != nil {
+	ir := mock.NewInputReaderMock(t)
+	ow := mock.NewOutputWriterMock(t)
+	ir.ReadMock.Return(inputs, nil)
+	ow.WriteMock.Optional().Return(nil)
+	if err := e.Execute(context.Background(), ir, ow); err != nil {
 		t.Fatalf("drawKeypoint returned an error: %v", err)
 	}
 }
@@ -177,7 +195,11 @@ func TestDrawInstanceSegmentation(t *testing.T) {
 	e := &execution{}
 	e.Task = "TASK_DRAW_INSTANCE_SEGMENTATION"
 
-	if _, err := e.Execute(context.Background(), inputs); err != nil {
+	ir := mock.NewInputReaderMock(t)
+	ow := mock.NewOutputWriterMock(t)
+	ir.ReadMock.Return(inputs, nil)
+	ow.WriteMock.Optional().Return(nil)
+	if err := e.Execute(context.Background(), ir, ow); err != nil {
 		t.Fatalf("drawInstanceSegmentation returned an error: %v", err)
 	}
 }
@@ -199,7 +221,12 @@ func TestDrawSemanticSegmentation(t *testing.T) {
 	e := &execution{}
 	e.Task = "TASK_DRAW_SEMANTIC_SEGMENTATION"
 
-	if _, err := e.Execute(context.Background(), inputs); err != nil {
+	ir := mock.NewInputReaderMock(t)
+	ow := mock.NewOutputWriterMock(t)
+	ir.ReadMock.Return(inputs, nil)
+	ow.WriteMock.Optional().Return(nil)
+
+	if err := e.Execute(context.Background(), ir, ow); err != nil {
 		t.Fatalf("drawSemanticSegmentation returned an error: %v", err)
 	}
 }

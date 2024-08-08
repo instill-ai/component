@@ -113,11 +113,15 @@ func getAuthentication(setup *structpb.Struct) (authentication, error) {
 	}
 }
 
-func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 
 	method, ok := taskMethod[e.Task]
 	if !ok {
-		return nil, errmsg.AddMessage(
+		return errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", e.Task),
 			fmt.Sprintf("%s task is not supported.", e.Task),
 		)
@@ -129,13 +133,13 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 		taskOut := TaskOutput{}
 
 		if err := base.ConvertFromStructpb(input, &taskIn); err != nil {
-			return nil, err
+			return err
 		}
 
 		// We may have different url in batch.
 		client, err := newClient(e.Setup, e.GetLogger())
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		// An API error is a valid output in this connector.
@@ -146,7 +150,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 		resp, err := req.Execute(method, taskIn.EndpointURL)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		taskOut.StatusCode = resp.StatusCode()
@@ -161,12 +165,12 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 		output, err := base.ConvertToStructpb(taskOut)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		outputs = append(outputs, output)
 	}
-	return outputs, nil
+	return out.Write(ctx, outputs)
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {

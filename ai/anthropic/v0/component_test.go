@@ -12,6 +12,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 )
@@ -82,7 +83,12 @@ func TestComponent_Execute(t *testing.T) {
 			c.Assert(err, qt.IsNil)
 
 			pbIn := new(structpb.Struct)
-			_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Return(nil)
+
+			err = exec.Execute(ctx, ir, ow)
 			c.Check(err, qt.IsNotNil)
 
 			want := "Anthropic responded with a 401 status code. Incorrect API key provided."
@@ -221,11 +227,18 @@ func TestComponent_Generation(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			return nil
+		})
+
+		err = exec.Execute(ctx, ir, ow)
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(tc.wantResp)
-		c.Assert(err, qt.IsNil)
-		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
 }

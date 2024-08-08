@@ -13,6 +13,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 )
@@ -243,7 +244,12 @@ func testTask(c *qt.C, p taskParams) {
 		c.Assert(err, qt.IsNil)
 		pbIn.Fields["model"] = structpb.NewStringValue(model)
 
-		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Return(nil)
+
+		err = exec.Execute(ctx, ir, ow)
 		c.Check(err, qt.IsNotNil)
 		c.Check(err, qt.ErrorMatches, ".*no such host")
 		c.Check(errmsg.Message(err), qt.Matches, "Failed to call .*check that the connector configuration is correct.")
@@ -335,7 +341,16 @@ func testTask(c *qt.C, p taskParams) {
 			c.Assert(err, qt.IsNil)
 			pbIn.Fields["model"] = structpb.NewStringValue(model)
 
-			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs, qt.HasLen, 1)
+				c.Check(p.wantResp, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = exec.Execute(ctx, ir, ow)
 			if tc.wantErr != "" {
 				c.Check(err, qt.IsNotNil)
 				c.Check(errmsg.Message(err), qt.Equals, tc.wantErr)
@@ -344,8 +359,6 @@ func testTask(c *qt.C, p taskParams) {
 
 			c.Check(err, qt.IsNil)
 
-			c.Assert(got, qt.HasLen, 1)
-			c.Check(p.wantResp, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }

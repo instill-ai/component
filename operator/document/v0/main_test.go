@@ -12,6 +12,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 )
 
 func TestOperator(t *testing.T) {
@@ -52,10 +53,18 @@ func TestOperator(t *testing.T) {
 
 			input := []*structpb.Struct{&tc.input}
 
-			outputs, err := execution.Execute(ctx, input)
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return(input, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs, qt.HasLen, 1)
+				return nil
+			})
+
+			err = execution.Execute(ctx, ir, ow)
 
 			c.Assert(err, qt.IsNil)
-			c.Assert(outputs, qt.HasLen, 1)
+
 		})
 	}
 }

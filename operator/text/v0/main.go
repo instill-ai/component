@@ -55,7 +55,11 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 }
 
 // Execute executes the derived execution
-func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 	outputs := []*structpb.Struct{}
 
 	for _, input := range inputs {
@@ -64,21 +68,21 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			inputStruct := ChunkTextInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputStruct, err := chunkText(inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			output, err := base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputs = append(outputs, output)
 		default:
-			return nil, fmt.Errorf("not supported task: %s", e.Task)
+			return fmt.Errorf("not supported task: %s", e.Task)
 		}
 	}
-	return outputs, nil
+	return out.Write(ctx, outputs)
 }

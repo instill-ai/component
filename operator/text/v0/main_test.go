@@ -6,6 +6,7 @@ import (
 
 	"github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -58,15 +59,26 @@ func TestOperator(t *testing.T) {
 
 			input := []*structpb.Struct{&tc.input}
 
-			outputs, err := execution.Execute(ctx, input)
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return(input, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				if tc.name == "error case" {
+					c.Assert(outputs, quicktest.IsNil)
+					return
+				}
+				c.Assert(outputs, quicktest.HasLen, 1)
+				return nil
+			})
+
+			err = execution.Execute(ctx, ir, ow)
 
 			if tc.name == "error case" {
 				c.Assert(err, quicktest.ErrorMatches, "not supported task: FAKE_TASK")
-				c.Assert(outputs, quicktest.IsNil)
 				return
 			}
 			c.Assert(err, quicktest.IsNil)
-			c.Assert(outputs, quicktest.HasLen, 1)
+
 		})
 	}
 }

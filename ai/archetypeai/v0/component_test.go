@@ -2,6 +2,7 @@ package archetypeai
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 
@@ -272,18 +274,22 @@ func TestComponent_Execute(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.in)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.want)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+			err = exec.Execute(ctx, ir, ow)
 			if tc.wantErr != "" {
 				c.Check(errmsg.Message(err), qt.Matches, tc.wantErr)
 				return
 			}
 
 			c.Check(err, qt.IsNil)
-			c.Assert(got, qt.HasLen, 1)
-
-			gotJSON, err := got[0].MarshalJSON()
-			c.Assert(err, qt.IsNil)
-			c.Check(gotJSON, qt.JSONEquals, tc.want)
 		})
 	}
 }

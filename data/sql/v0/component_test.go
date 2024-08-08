@@ -10,6 +10,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"github.com/jmoiron/sqlx"
 
 	"go.uber.org/zap"
@@ -154,16 +155,23 @@ func TestInsertUser(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -219,16 +227,23 @@ func TestUpdateUser(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -284,16 +299,23 @@ func TestSelectUser(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -345,16 +367,23 @@ func TestDeleteUser(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -408,16 +437,23 @@ func TestCreateTable(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -466,16 +502,23 @@ func TestDropTable(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }

@@ -11,6 +11,7 @@ import (
 
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -571,16 +572,23 @@ func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType],
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Assert(outputs, qt.HasLen, 1)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+			err = e.Execute(ctx, ir, ow)
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 			c.Assert(err, qt.IsNil)
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Assert(got, qt.HasLen, 1)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+
 		})
 	}
 }

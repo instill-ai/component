@@ -9,6 +9,7 @@ import (
 	cohereSDK "github.com/cohere-ai/cohere-go/v2"
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -92,12 +93,18 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(commandTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
-		c.Assert(err, qt.IsNil)
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			wantJSON, err := json.Marshal(commandTc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			return nil
+		})
 
-		wantJSON, err := json.Marshal(commandTc.wantResp)
+		err = exec.Execute(ctx, ir, ow)
 		c.Assert(err, qt.IsNil)
-		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 
 	})
 
@@ -123,12 +130,19 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(embedFloatTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			wantJSON, err := json.Marshal(embedFloatTc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			return nil
+		})
+
+		err = exec.Execute(ctx, ir, ow)
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(embedFloatTc.wantResp)
-		c.Assert(err, qt.IsNil)
-		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
 
 	embedIntTc := struct {
@@ -153,12 +167,19 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(embedIntTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			wantJSON, err := json.Marshal(embedIntTc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			return nil
+		})
+
+		err = exec.Execute(ctx, ir, ow)
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(embedIntTc.wantResp)
-		c.Assert(err, qt.IsNil)
-		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
 
 	rerankTc := struct {
@@ -182,12 +203,19 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(rerankTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			wantJSON, err := json.Marshal(rerankTc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			return nil
+		})
+
+		err = exec.Execute(ctx, ir, ow)
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(rerankTc.wantResp)
-		c.Assert(err, qt.IsNil)
-		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
 
 }

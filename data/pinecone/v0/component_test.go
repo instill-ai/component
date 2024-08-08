@@ -13,6 +13,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 )
@@ -235,13 +236,20 @@ func TestComponent_Execute(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.execIn)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs, qt.HasLen, 1)
+				wantJSON, err := json.Marshal(tc.wantExec)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = exec.Execute(ctx, ir, ow)
 			c.Check(err, qt.IsNil)
 
-			c.Assert(got, qt.HasLen, 1)
-			wantJSON, err := json.Marshal(tc.wantExec)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 
@@ -267,7 +275,12 @@ func TestComponent_Execute(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Return(nil)
+
+		err = exec.Execute(ctx, ir, ow)
 		c.Check(err, qt.IsNotNil)
 
 		want := "Pinecone responded with a 400 status code. Cannot provide both ID and vector at the same time."
@@ -287,7 +300,12 @@ func TestComponent_Execute(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Return(nil)
+
+		err = exec.Execute(ctx, ir, ow)
 		c.Check(err, qt.IsNotNil)
 
 		want := "Failed to call http://no-such.host/.*. Please check that the connector configuration is correct."
