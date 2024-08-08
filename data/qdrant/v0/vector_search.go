@@ -19,7 +19,7 @@ type VectorSearchInput struct {
 	Limit          int            `json:"limit"`
 	Payloads       []string       `json:"payloads"`
 	Params         map[string]any `json:"params"`
-	MinScore       float64        `json:"min_score"`
+	MinScore       float64        `json:"min-score"`
 }
 
 type VectorSearchOutput struct {

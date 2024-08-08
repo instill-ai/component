@@ -130,8 +130,8 @@ Delete vector points from a collection
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to delete the object from |
-| ID | `id` | string | The ID of the point to delete. Fill empty object on filter to use the id |
-| Filter (required) | `filter` | object | The properties filter to be applied to the data with Qdrant filter, please refer to https://api.qdrant.tech/api-reference/points/delete-points filter section |
+| ID | `id` | string | The ID of the point |
+| Filter | `filter` | object | The properties filter to be applied to the data with Qdrant filter, please refer to https://api.qdrant.tech/api-reference/points/delete-points filter section |
 | Ordering | `ordering` | string | The ordering guarantees of the batch upsert |
 
 
