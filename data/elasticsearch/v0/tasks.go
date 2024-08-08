@@ -208,12 +208,18 @@ func IndexDocument(es *esapi.Index, inputStruct IndexInput) error {
 
 	esClient := ESIndex(*es)
 
-	_, err = esClient(indexName, bytes.NewReader(dataJSON), func(r *esapi.IndexRequest) {
+	res, err := esClient(indexName, bytes.NewReader(dataJSON), func(r *esapi.IndexRequest) {
 		r.DocumentID = id
 		r.Refresh = "true"
 	})
+
 	if err != nil {
 		return err
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("error indexing document: %s", res.Status())
 	}
 
 	return nil
@@ -262,11 +268,11 @@ func MultiIndexDocument(es *esapi.Bulk, inputStruct MultiIndexInput) (int, error
 	if err != nil {
 		return 0, err
 	}
+	defer res.Body.Close()
 
 	if res.IsError() {
-		return 0, fmt.Errorf("error indexing document: %s", res.Status())
+		return 0, fmt.Errorf("error multi indexing document: %s", res.Status())
 	}
-	defer res.Body.Close()
 
 	var response MultiIndexResponse
 	if err := json.NewDecoder(res.Body).Decode(&response); err != nil {
@@ -277,10 +283,12 @@ func MultiIndexDocument(es *esapi.Bulk, inputStruct MultiIndexInput) (int, error
 }
 
 // size is optional, empty means all documents
-// source-only, if true will return only source of documents, if false will return all fields (_id, _index, _score, _source)
 // min-score is optional, empty means no minimum score
 // fields is optional, empty means all fields
-// filter is optional, empty means no filter
+// filter is optional, empty means no filter, choose one (id, filter, or filter-sql)
+// id is optional, empty means no id, choose one (id, filter, or filter-sql)
+// filter-sql is optional, empty means no filter-sql, choose one (id, filter, or filter-sql)
+// query is optional, empty means no query, only for full text search
 func SearchDocument(es *esapi.Search, esSQLTranslate *esapi.SQLTranslate, inputStruct SearchInput) ([]Hit, error) {
 	indexName := inputStruct.IndexName
 	query := inputStruct.Query
@@ -483,7 +491,7 @@ func UpdateDocument(es *esapi.UpdateByQuery, esSQLTranslate *esapi.SQLTranslate,
 		return 0, err
 	}
 	if res.IsError() {
-		return 0, fmt.Errorf("error indexing document: %s", res.Status())
+		return 0, fmt.Errorf("error updating document: %s", res.Status())
 	}
 	defer res.Body.Close()
 
@@ -540,7 +548,7 @@ func DeleteDocument(es *esapi.DeleteByQuery, esSQLTranslate *esapi.SQLTranslate,
 		return 0, err
 	}
 	if res.IsError() {
-		return 0, fmt.Errorf("error indexing document: %s", res.Status())
+		return 0, fmt.Errorf("error deleting document: %s", res.Status())
 	}
 	defer res.Body.Close()
 
@@ -555,10 +563,15 @@ func DeleteDocument(es *esapi.DeleteByQuery, esSQLTranslate *esapi.SQLTranslate,
 func DeleteIndex(es *esapi.IndicesDelete, indexName string) error {
 	esClient := ESDeleteIndex(*es)
 
-	_, err := esClient([]string{indexName})
+	res, err := esClient([]string{indexName})
 
 	if err != nil {
 		return err
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("error deleting index: %s", res.Status())
 	}
 
 	return nil
@@ -580,12 +593,19 @@ func CreateIndex(es *esapi.IndicesCreate, indexName string, mappings map[string]
 
 	esClient := ESCreateIndex(*es)
 
-	_, err = esClient(indexName, func(r *esapi.IndicesCreateRequest) {
-		r.Body = strings.NewReader(string(createIndexJSON))
+	res, err := esClient(indexName, func(r *esapi.IndicesCreateRequest) {
+		if mappings != nil {
+			r.Body = strings.NewReader(string(createIndexJSON))
+		}
 	})
 
 	if err != nil {
 		return err
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return fmt.Errorf("error creating index: %s", res.Status())
 	}
 
 	return err

@@ -262,7 +262,7 @@
       "instillEditOnNodeFields": [
         "index-name",
         "filter-sql",
-        "update"
+        "update-data"
       ],
       "title": "Input",
       "type": "object"
@@ -887,8 +887,7 @@
         }
       },
       "required": [
-        "index-name",
-        "mappings"
+        "index-name"
       ],
       "title": "Input",
       "type": "object"
