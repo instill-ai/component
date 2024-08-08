@@ -9,6 +9,7 @@ The SQL component is a data component that allows users to access the SQL databa
 It can carry out the following tasks:
 
 - [Insert](#insert)
+- [Insert Many](#insert-many)
 - [Update](#update)
 - [Select](#select)
 - [Delete](#delete)
@@ -48,7 +49,7 @@ The component configuration is defined and maintained [here](https://github.com/
 
 ### Insert
 
-Perform an insert operation based on specified filter
+Perform insert operation
 
 
 | Input | ID | Type | Description |
@@ -56,7 +57,7 @@ Perform an insert operation based on specified filter
 | Task ID (required) | `task` | string | `TASK_INSERT` |
 | Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to insert data into |
-| Data (required) | `data` | any | The data to be inserted |
+| Data (required) | `data` | object | The data to be inserted |
 
 
 
@@ -69,9 +70,32 @@ Perform an insert operation based on specified filter
 
 
 
+### Insert Many
+
+Perform insert operation with multiple rows
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_INSERT_MANY` |
+| Engine (required) | `engine` | string | Choose the engine of your database |
+| Table Name (required) | `table-name` | string | The table name in the database to insert data into |
+| Data (required) | `array-data` | array[object] | The array data to be inserted |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Insert many status |
+
+
+
+
+
+
 ### Update
 
-Perform an update operation based on specified filter
+Perform update operation
 
 
 | Input | ID | Type | Description |
@@ -80,7 +104,7 @@ Perform an update operation based on specified filter
 | Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to update data into |
 | Filter (required) | `filter` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause |
-| Update (required) | `update-data` | any | The new data to be updated to |
+| Update (required) | `update-data` | object | The new data to be updated to |
 
 
 
@@ -95,7 +119,7 @@ Perform an update operation based on specified filter
 
 ### Select
 
-Perform a select operation based on specified filter
+Perform select operation
 
 
 | Input | ID | Type | Description |
@@ -121,7 +145,7 @@ Perform a select operation based on specified filter
 
 ### Delete
 
-Perform a delete operation based on specified filter
+Perform delete operation
 
 
 | Input | ID | Type | Description |
@@ -152,7 +176,7 @@ Create a table in the database
 | Task ID (required) | `task` | string | `TASK_CREATE_TABLE` |
 | Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to be created |
-| Columns (required) | `columns-structure` | any | The columns structure to be created in the table, json with value string, e.g \{"name": "VARCHAR(255)", "age": "INT not null"\} |
+| Columns (required) | `columns-structure` | object | The columns structure to be created in the table, json with value string, e.g \{"name": "VARCHAR(255)", "age": "INT not null"\} |
 
 
 
