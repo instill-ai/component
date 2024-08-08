@@ -647,8 +647,7 @@
           "default": 5,
           "instillUIOrder": 2,
           "instillAcceptFormats": [
-            "integer",
-            "number"
+            "integer"
           ],
           "instillUpstreamTypes": [
             "value",
@@ -731,8 +730,7 @@
           "default": 5,
           "instillUIOrder": 2,
           "instillAcceptFormats": [
-            "integer",
-            "number"
+            "integer"
           ],
           "instillUpstreamTypes": [
             "value",
