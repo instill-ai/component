@@ -202,13 +202,13 @@ class PdfTransformer:
 				result += "\n"
 			result += f"## {line['text']}\n"
 		elif "paragraph" in line["type"]:
-			bold_trigger = False
-			bold_text = ""
+			# bold_trigger = False
+			# bold_text = ""
 			## TODO: English version is not working for set the whitespace between words.
 			## It can be solved by using extract_words() instead of extract_text_lines()
 			## TODO: Chinese version is not working for bold.
 			## It is still under investigation.
-			for char in line["chars"]:
+			# for char in line["chars"]:
 				# if self.is_bold(char) and not bold_trigger: # start of bold text
 				#     bold_text += f"**{char['text']}"
 				#     bold_trigger = True
@@ -221,9 +221,10 @@ class PdfTransformer:
 				#     bold_trigger = False
 				# else:
 				#     result += char["text"]
-				result += char["text"]
+				# result += char["text"]
 			# extract numbers from line["type"] and add a change the line when the next line is a new paragraph
 
+			result += line["text"]
 			if (
 				(i < len(lines) - 1) and
 				"type" in lines[i+1] and

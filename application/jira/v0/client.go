@@ -10,6 +10,7 @@ import (
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -30,7 +31,7 @@ type AuthConfig struct {
 	BaseURL string `json:"base-url"`
 }
 
-func newClient(_ context.Context, setup *structpb.Struct) (*Client, error) {
+func newClient(_ context.Context, setup *structpb.Struct, logger *zap.Logger) (*Client, error) {
 	var authConfig AuthConfig
 	if err := base.ConvertFromStructpb(setup, &authConfig); err != nil {
 		return nil, err
@@ -59,6 +60,7 @@ func newClient(_ context.Context, setup *structpb.Struct) (*Client, error) {
 	jiraClient := httpclient.New(
 		"Jira-Client",
 		baseURL,
+		httpclient.WithLogger(logger),
 		httpclient.WithEndUserError(new(errBody)),
 	)
 	jiraClient.
@@ -96,10 +98,6 @@ func (e errBody) Message() string {
 }
 
 func addQueryOptions(req *resty.Request, opt interface{}) error {
-	var debug DebugSession
-	debug.SessionStart("addQueryOptions", StaticVerboseLevel)
-	defer debug.SessionEnd()
-
 	v := reflect.ValueOf(opt)
 	if v.Kind() == reflect.Ptr && v.IsNil() {
 		return nil
@@ -120,7 +118,6 @@ func addQueryOptions(req *resty.Request, opt interface{}) error {
 					continue
 				}
 				if stringVal == fmt.Sprintf("%v", reflect.Zero(reflect.TypeOf(val))) {
-					debug.AddMessage(key.String(), "Query value is not set. Skipping.")
 					continue
 				}
 				paramName := key.String()
@@ -131,7 +128,6 @@ func addQueryOptions(req *resty.Request, opt interface{}) error {
 		typeOfS := v.Type()
 		for i := 0; i < v.NumField(); i++ {
 			if !v.Field(i).IsValid() || !v.Field(i).CanInterface() {
-				debug.AddMessage(typeOfS.Field(i).Name, "Not a valid field")
 				continue
 			}
 			val := v.Field(i).Interface()
@@ -147,7 +143,6 @@ func addQueryOptions(req *resty.Request, opt interface{}) error {
 				continue
 			}
 			if stringVal == fmt.Sprintf("%v", reflect.Zero(reflect.TypeOf(val))) {
-				debug.AddMessage(typeOfS.Field(i).Name, "Query value is not set. Skipping.")
 				continue
 			}
 			paramName := typeOfS.Field(i).Tag.Get("api")
