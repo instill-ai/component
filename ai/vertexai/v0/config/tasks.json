@@ -323,9 +323,10 @@
         "model": {
           "enum": [
             "gecko",
-            "gecko-multilingual"
+            "gecko-multilingual",
+            "palm"
           ],
-          "example": "gecko",
+          "example": "palm",
           "description": "The Vertex AI embedding model to be used",
           "instillAcceptFormats": [
             "string"
@@ -341,7 +342,8 @@
           "instillCredentialMap": {
             "values": [
               "gecko",
-              "gecko-multilingual"
+              "gecko-multilingual",
+              "palm"
             ],
             "targets": [
               "setup.api-key"

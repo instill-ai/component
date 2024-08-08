@@ -17,6 +17,7 @@ import (
 	"github.com/instill-ai/component/ai/ollama/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
+	"github.com/instill-ai/component/ai/vertexai/v0"
 	"github.com/instill-ai/component/application/email/v0"
 	"github.com/instill-ai/component/application/github/v0"
 	"github.com/instill-ai/component/application/googlesearch/v0"
@@ -126,6 +127,12 @@ func Init(
 			// Cohere
 			conn := cohere.Init(baseComp)
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			compStore.Import(conn)
+		}
+
+		{
+			// Vertex AI
+			conn := vertexai.Init(baseComp)
 			compStore.Import(conn)
 		}
 
