@@ -90,7 +90,7 @@ type TaskGetTicketOutput struct {
 	TicketName           string   `json:"ticket-name"`
 	TicketStatus         string   `json:"ticket-status"`
 	Pipeline             string   `json:"pipeline"`
-	Category             []string `json:"categories,omitempty"`
+	Category             []string `json:"categories"`
 	Priority             string   `json:"priority,omitempty"`
 	Source               string   `json:"source,omitempty"`
 	RecordSource         string   `json:"record-source,omitempty"`
@@ -136,6 +136,8 @@ func (e *execution) GetTicket(input *structpb.Struct) (*structpb.Struct, error) 
 	var categoryValues []string
 	if ticketInfo.Category != "" {
 		categoryValues = strings.Split(ticketInfo.Category, ";")
+	} else {
+		categoryValues = []string{}
 	}
 
 	outputStruct := TaskGetTicketOutput{
