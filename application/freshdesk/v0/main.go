@@ -15,7 +15,9 @@ import (
 )
 
 const (
-	version = "v20.0"
+	version = "v2"
+
+	taskGetTicket = "TASK_GET_TICKET"
 )
 
 var (
@@ -25,8 +27,6 @@ var (
 	tasksJSON []byte
 	//go:embed config/setup.json
 	setupJSON []byte
-
-	basePath string
 
 	once sync.Once
 	comp *component
@@ -62,6 +62,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	}
 
 	switch x.Task {
+	case taskGetTicket:
+		e.execute = e.TaskGetTicket
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
