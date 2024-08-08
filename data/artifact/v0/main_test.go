@@ -130,6 +130,7 @@ func Test_uploadFiles(t *testing.T) {
 
 			c.Assert(outputStruct.File.FileUID, quicktest.Equals, "fakeFileID")
 			c.Assert(outputStruct.File.FileName, quicktest.Equals, tc.fileName)
+			c.Assert(outputStruct.File.FileType, quicktest.Equals, "FILE_TYPE_PDF")
 			c.Assert(outputStruct.File.Size, quicktest.Equals, int64(1))
 			c.Assert(outputStruct.File.CreateTime, quicktest.Equals, "1970-01-01T00:00:01Z")
 			c.Assert(outputStruct.File.UpdateTime, quicktest.Equals, "1970-01-01T00:00:01Z")
@@ -141,6 +142,78 @@ func Test_uploadFiles(t *testing.T) {
 }
 
 func Test_getFilesMetadata(t *testing.T) {
+	c := quicktest.New(t)
+	mc := minimock.NewController(t)
+
+	c.Run("get files metadata", func(c *quicktest.C) {
+		component := Init(base.Component{})
+
+		sysVar := map[string]interface{}{
+			"__ARTIFACT_BACKEND":       "http://localhost:8082",
+			"__PIPELINE_USER_UID":      "fakeUser",
+			"__PIPELINE_REQUESTER_UID": "fakeRequester",
+		}
+
+		e := &execution{
+			ComponentExecution: base.ComponentExecution{Component: component, SystemVariables: sysVar, Setup: nil, Task: taskGetFilesMetadata},
+		}
+
+		e.execute = e.getFilesMetadata
+
+		input := GetFilesMetadataInput{
+			Namespace: "fakeNs",
+			CatalogID: "fakeID",
+		}
+
+		inputStruct, _ := base.ConvertToStructpb(input)
+
+		clientMock := mock.NewArtifactPublicServiceClientMock(mc)
+
+		clientMock.ListCatalogFilesMock.
+			Expect(minimock.AnyContext, &artifactPB.ListCatalogFilesRequest{
+				NamespaceId: "fakeNs",
+				CatalogId:   "fakeID"}).
+			Times(1).
+			Return(&artifactPB.ListCatalogFilesResponse{
+				Files: []*artifactPB.File{
+					{
+						FileUid: "fakeFileID",
+						Name:    "fakeFileName",
+						Type:    artifactPB.FileType_FILE_TYPE_PDF,
+						Size:    1,
+						CreateTime: &timestamppb.Timestamp{
+							Seconds: 1,
+							Nanos:   1,
+						},
+						UpdateTime: &timestamppb.Timestamp{
+							Seconds: 1,
+							Nanos:   1,
+						},
+					},
+				},
+			}, nil)
+
+		e.client = clientMock
+		e.connection = fakeConnection{}
+
+		output, err := e.execute(inputStruct)
+
+		c.Assert(err, quicktest.IsNil)
+
+		var outputStruct GetFilesMetadataOutput
+		err = base.ConvertFromStructpb(output, &outputStruct)
+
+		c.Assert(err, quicktest.IsNil)
+
+		c.Assert(len(outputStruct.Files), quicktest.Equals, 1)
+		c.Assert(outputStruct.Files[0].FileUID, quicktest.Equals, "fakeFileID")
+		c.Assert(outputStruct.Files[0].FileType, quicktest.Equals, "FILE_TYPE_PDF")
+		c.Assert(outputStruct.Files[0].FileName, quicktest.Equals, "fakeFileName")
+		c.Assert(outputStruct.Files[0].Size, quicktest.Equals, int64(1))
+		c.Assert(outputStruct.Files[0].CreateTime, quicktest.Equals, "1970-01-01T00:00:01Z")
+		c.Assert(outputStruct.Files[0].UpdateTime, quicktest.Equals, "1970-01-01T00:00:01Z")
+
+	})
 }
 
 func Test_getChunksMetadata(t *testing.T) {
