@@ -29,13 +29,30 @@
       "instillUIOrder": 1,
       "title": "Service Account Credentials",
       "type": "string"
+    },
+    "location": {
+      "description": "Fill in the location of your GCP project, e.g. us-central1. To check the available locations, please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations",
+      "example": "asia-east1",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 2,
+      "title": "Location",
+      "type": "string"
     }
   },
   "required": [
-    "project-id"
+    "project-id",
+    "cred",
+    "location"
   ],
   "instillEditOnNodeFields": [
-    "project-id"
+    "project-id",
+    "cred",
+    "location"
   ],
   "title": "Vertex AI Connection",
   "type": "object"
