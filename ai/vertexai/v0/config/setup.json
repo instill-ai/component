@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": true,
+  "properties": {
+    "project-id": {
+      "description": "Fill in your GCP project ID",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": true,
+      "instillCredential": true,
+      "instillUIOrder": 0,
+      "title": "Project ID",
+      "type": "string"
+    },
+    "cred": {
+      "description": "Fill in your GCP service account credentials",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": true,
+      "instillCredential": true,
+      "instillUIOrder": 1,
+      "title": "Service Account Credentials",
+      "type": "string"
+    },
+    "location": {
+      "description": "Fill in the location of your GCP project, e.g. us-central1. To check the available locations, please refer to https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations",
+      "example": "asia-east1",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 2,
+      "title": "Location",
+      "type": "string"
+    }
+  },
+  "required": [
+    "project-id",
+    "cred",
+    "location"
+  ],
+  "instillEditOnNodeFields": [
+    "project-id",
+    "cred",
+    "location"
+  ],
+  "title": "Vertex AI Connection",
+  "type": "object"
+}
