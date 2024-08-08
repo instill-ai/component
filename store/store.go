@@ -27,6 +27,7 @@ import (
 	"github.com/instill-ai/component/application/website/v0"
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/data/bigquery/v0"
+	"github.com/instill-ai/component/data/elasticsearch/v0"
 	"github.com/instill-ai/component/data/googlecloudstorage/v0"
 	"github.com/instill-ai/component/data/mongodb/v0"
 	"github.com/instill-ai/component/data/pinecone/v0"
@@ -136,6 +137,7 @@ func Init(
 		compStore.Import(googlesearch.Init(baseComp))
 		compStore.Import(pinecone.Init(baseComp))
 		compStore.Import(redis.Init(baseComp))
+		compStore.Import(elasticsearch.Init(baseComp))
 		compStore.Import(mongodb.Init(baseComp))
 		compStore.Import(sql.Init(baseComp))
 		compStore.Import(restapi.Init(baseComp))
