@@ -60,7 +60,7 @@ func Init(bc base.Component) *component {
 
 func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	ctx := context.Background()
-	jiraClient, err := newClient(ctx, x.Setup)
+	jiraClient, err := newClient(ctx, x.Setup, c.Logger)
 	if err != nil {
 		return nil, err
 	}
