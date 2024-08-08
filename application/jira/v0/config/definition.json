@@ -4,7 +4,12 @@
     "TASK_LIST_ISSUES",
     "TASK_LIST_SPRINTS",
     "TASK_GET_ISSUE",
-    "TASK_GET_SPRINT"
+    "TASK_GET_SPRINT",
+    "TASK_CREATE_ISSUE",
+    "TASK_UPDATE_ISSUE",
+    "TASK_CREATE_SPRINT",
+    "TASK_UPDATE_SPRINT",
+    "TASK_RANK_EPIC"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/jira",
   "icon": "assets/jira.svg",
