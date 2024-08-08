@@ -1,7 +1,9 @@
 package hubspot
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 
 	hubspot "github.com/belong-inc/go-hubspot"
 	"github.com/instill-ai/component/base"
@@ -47,7 +49,7 @@ type TaskGetCompanyOutput struct {
 	AnnualRevenue        float64  `json:"annual-revenue,omitempty"`
 	TotalRevenue         float64  `json:"total-revenue,omitempty"`
 	LinkedinPage         string   `json:"linkedin-page,omitempty"`
-	AssociatedContactIDs []string `json:"associated-contact-ids,omitempty"`
+	AssociatedContactIDs []string `json:"associated-contact-ids"`
 }
 
 func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error) {
@@ -56,13 +58,17 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	res, err := e.client.CRM.Company.Get(inputStruct.CompanyID, &TaskGetCompanyResp{}, &hubspot.RequestQueryOption{Associations: []string{"contacts"}})
 
 	if err != nil {
-		return nil, err
+		if strings.Contains(err.Error(), "404") {
+			return nil, fmt.Errorf("404: unable to read response from hubspot: no company was found")
+		} else {
+			return nil, err
+		}
 	}
 
 	companyInfo := res.Properties.(*TaskGetCompanyResp)
@@ -71,12 +77,20 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 
 	var companyContactList []string
 	if res.Associations != nil {
-		companyContactAssociation := res.Associations.Contacts.Results
-		companyContactList = make([]string, len(companyContactAssociation))
+		// for company, it is possible to have duplicate contacts, so need to remove all the duplicates.
 
-		for index, value := range companyContactAssociation {
-			companyContactList[index] = value.ID
+		hash := make(map[string]bool)
+
+		companyContactAssociation := res.Associations.Contacts.Results
+
+		for _, value := range companyContactAssociation {
+			if _, ok := hash[value.ID]; !ok {
+				hash[value.ID] = true
+				companyContactList = append(companyContactList, value.ID)
+			}
 		}
+	} else {
+		companyContactList = []string{}
 	}
 
 	// convert to outputStruct
@@ -123,7 +137,7 @@ func (e *execution) GetCompany(input *structpb.Struct) (*structpb.Struct, error)
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil
@@ -176,7 +190,7 @@ func (e *execution) CreateCompany(input *structpb.Struct) (*structpb.Struct, err
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	var annualRevenue string
@@ -215,7 +229,7 @@ func (e *execution) CreateCompany(input *structpb.Struct) (*structpb.Struct, err
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	// This section is for creating associations (company -> object)

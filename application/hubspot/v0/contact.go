@@ -1,6 +1,7 @@
 package hubspot
 
 import (
+	"fmt"
 	"strings"
 
 	hubspot "github.com/belong-inc/go-hubspot"
@@ -46,7 +47,7 @@ func (e *execution) GetContact(input *structpb.Struct) (*structpb.Struct, error)
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	uniqueKey := inputStruct.ContactIDOrEmail
@@ -59,7 +60,11 @@ func (e *execution) GetContact(input *structpb.Struct) (*structpb.Struct, error)
 	res, err := e.client.CRM.Contact.Get(uniqueKey, &TaskGetContactResp{}, &hubspot.RequestQueryOption{CustomProperties: []string{"phone"}})
 
 	if err != nil {
-		return nil, err
+		if strings.Contains(err.Error(), "404") {
+			return nil, fmt.Errorf("404: unable to read response from hubspot: no contact was found")
+		} else {
+			return nil, err
+		}
 	}
 
 	contactInfo := res.Properties.(*TaskGetContactResp)
@@ -69,7 +74,7 @@ func (e *execution) GetContact(input *structpb.Struct) (*structpb.Struct, error)
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil
@@ -115,7 +120,7 @@ func (e *execution) CreateContact(input *structpb.Struct) (*structpb.Struct, err
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	req := TaskCreateContactReq{
@@ -143,7 +148,7 @@ func (e *execution) CreateContact(input *structpb.Struct) (*structpb.Struct, err
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	// This section is for creating associations (contact -> object)

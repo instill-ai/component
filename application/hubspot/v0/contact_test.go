@@ -33,6 +33,8 @@ func createMockClient() *CustomClient {
 		Thread:              &MockThread{},
 		RetrieveAssociation: &MockRetrieveAssociation{},
 		Ticket:              &MockTicket{},
+		GetAll:              &MockGetAll{},
+		Owner:               &MockOwner{},
 	}
 
 	return mockClient

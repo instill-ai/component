@@ -2,6 +2,7 @@ package hubspot
 
 import (
 	"fmt"
+	"strings"
 
 	hubspot "github.com/belong-inc/go-hubspot"
 	"github.com/instill-ai/component/base"
@@ -14,8 +15,8 @@ import (
 // API functions for Retrieve Association
 
 type RetrieveAssociationService interface {
-	GetThreadID(contactID string) (*TaskRetrieveAssociationThreadResp, error)
-	GetCrmID(contactID string, objectType string) (*TaskRetrieveAssociationCrmResp, error)
+	GetThreadID(contactID string, paging bool, pagingPath string) (*TaskRetrieveAssociationThreadResp, error)
+	GetCrmID(contactID string, objectType string, paging bool, pagingPath string) (interface{}, error)
 }
 
 type RetrieveAssociationServiceOp struct {
@@ -24,28 +25,51 @@ type RetrieveAssociationServiceOp struct {
 	client               *hubspot.Client
 }
 
-func (s *RetrieveAssociationServiceOp) GetThreadID(contactID string) (*TaskRetrieveAssociationThreadResp, error) {
+func (s *RetrieveAssociationServiceOp) GetThreadID(contactID string, paging bool, pagingPath string) (*TaskRetrieveAssociationThreadResp, error) {
 	resource := &TaskRetrieveAssociationThreadResp{}
-	if err := s.client.Get(s.retrieveThreadIDPath+contactID, resource, nil); err != nil {
+
+	var path string
+	if !paging {
+		path = s.retrieveThreadIDPath + contactID
+	} else {
+		path = pagingPath
+	}
+
+	if err := s.client.Get(path, resource, nil); err != nil {
 		return nil, err
 	}
 	return resource, nil
 }
 
-func (s *RetrieveAssociationServiceOp) GetCrmID(contactID string, objectType string) (*TaskRetrieveAssociationCrmResp, error) {
-	resource := &TaskRetrieveAssociationCrmResp{}
+func (s *RetrieveAssociationServiceOp) GetCrmID(contactID string, objectType string, paging bool, pagingPath string) (interface{}, error) {
 
-	contactIDInput := TaskRetrieveAssociationCrmReqID{ContactID: contactID}
+	if !paging {
+		resource := &TaskRetrieveAssociationCrmResp{}
 
-	req := &TaskRetrieveAssociationCrmReq{}
-	req.Input = append(req.Input, contactIDInput)
+		contactIDInput := TaskRetrieveAssociationCrmReqID{ContactID: contactID}
 
-	path := s.retrieveCrmIDPath + "/" + objectType + "/batch/read"
+		req := &TaskRetrieveAssociationCrmReq{}
+		req.Input = append(req.Input, contactIDInput)
 
-	if err := s.client.Post(path, req, resource); err != nil {
-		return nil, err
+		path := s.retrieveCrmIDPath + "/" + objectType + "/batch/read"
+
+		if err := s.client.Post(path, req, resource); err != nil {
+			return nil, err
+		}
+
+		return resource, nil
+	} else {
+
+		resource := &TaskRetrieveAssociationCrmPagingResp{}
+
+		if err := s.client.Get(pagingPath, resource, nil); err != nil {
+			return nil, err
+		}
+
+		return resource, nil
+
 	}
-	return resource, nil
+
 }
 
 // Retrieve Association: use contact id to get the object ID associated with it
@@ -53,6 +77,14 @@ func (s *RetrieveAssociationServiceOp) GetCrmID(contactID string, objectType str
 type TaskRetrieveAssociationInput struct {
 	ContactID  string `json:"contact-id"`
 	ObjectType string `json:"object-type"`
+}
+
+// This struct is used for both CRM and Threads
+type taskRetrieveAssociationRespPaging struct {
+	Next struct {
+		Link  string `json:"link"`
+		After string `json:"after"`
+	} `json:"next"`
 }
 
 // Retrieve Association Task is mainly divided into two:
@@ -66,6 +98,7 @@ type TaskRetrieveAssociationThreadResp struct {
 	Results []struct {
 		ID string `json:"id"`
 	} `json:"results"`
+	Paging *taskRetrieveAssociationRespPaging `json:"paging,omitempty"`
 }
 
 // For GetCrmID
@@ -78,6 +111,10 @@ type TaskRetrieveAssociationCrmReqID struct {
 	ContactID string `json:"id"`
 }
 
+// RetrieveAssociation CRM can have 2 responses
+// if it is more than 100, it will have  a paging link, which user can do another API call to it.
+// it has a different response format
+
 type TaskRetrieveAssociationCrmResp struct {
 	Results []taskRetrieveAssociationCrmRespResult `json:"results"`
 }
@@ -86,12 +123,21 @@ type taskRetrieveAssociationCrmRespResult struct {
 	IDArray []struct {
 		ID string `json:"id"`
 	} `json:"to"`
+	Paging *taskRetrieveAssociationRespPaging `json:"paging,omitempty"`
+}
+
+type TaskRetrieveAssociationCrmPagingResp struct {
+	Results []struct {
+		ID string `json:"id"`
+	} `json:"results"`
+	Paging *taskRetrieveAssociationRespPaging `json:"paging,omitempty"`
 }
 
 // Retrieve Association Output
 
 type TaskRetrieveAssociationOutput struct {
-	ObjectIDs []string `json:"object-ids"`
+	ObjectIDs       []string `json:"object-ids"`
+	ObjectIDsLength int      `json:"object-ids-length"`
 }
 
 func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struct, error) {
@@ -99,23 +145,68 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	// API calls to retrieve association for Threads and CRM objects are different
 
 	var objectIDs []string
-	if inputStruct.ObjectType == "Threads" {
 
-		// To handle Threads
-		res, err := e.client.RetrieveAssociation.GetThreadID(inputStruct.ContactID)
+	switch inputStruct.ObjectType {
+	case "Contacts", "Companies", "Deals", "Tickets":
+		// To handle CRM objects
+		res, err := e.client.RetrieveAssociation.GetCrmID(inputStruct.ContactID, inputStruct.ObjectType, false, "")
+
+		if err != nil {
+			return nil, err
+		}
+
+		crmRes := res.(*TaskRetrieveAssociationCrmResp)
+
+		// no object ID associated with the contact ID, just break
+		if len(crmRes.Results) == 0 {
+			break
+		}
+
+		// only take the first Result, because the input is only one contact id
+		objectIDs = make([]string, len(crmRes.Results[0].IDArray))
+		for index, value := range crmRes.Results[0].IDArray {
+			objectIDs[index] = value.ID
+		}
+
+		// if there is a paging link, do another API call to get the rest of the object IDs
+		if crmRes.Results[0].Paging != nil {
+			for {
+				// need to trim because go-hubspot sdk get function will add the base URL
+				pagingRelativePath := strings.TrimPrefix(crmRes.Results[0].Paging.Next.Link, "https://api.hubapi.com/")
+
+				res, err := e.client.RetrieveAssociation.GetCrmID(inputStruct.ContactID, inputStruct.ObjectType, true, pagingRelativePath)
+
+				if err != nil {
+					return nil, err
+				}
+
+				crmPagingRes := res.(*TaskRetrieveAssociationCrmPagingResp)
+
+				for _, value := range crmPagingRes.Results {
+					objectIDs = append(objectIDs, value.ID)
+				}
+
+				if crmPagingRes.Paging == nil || len(crmPagingRes.Results) == 0 {
+					break
+				}
+			}
+		}
+
+	case "Threads":
+		res, err := e.client.RetrieveAssociation.GetThreadID(inputStruct.ContactID, false, "")
 
 		if err != nil {
 			return nil, err
 		}
 
 		if len(res.Results) == 0 {
-			return nil, fmt.Errorf("no object ID found")
+			break
 		}
 
 		objectIDs = make([]string, len(res.Results))
@@ -123,35 +214,41 @@ func (e *execution) RetrieveAssociation(input *structpb.Struct) (*structpb.Struc
 			objectIDs[index] = value.ID
 		}
 
-	} else {
+		if res.Paging != nil {
+			for {
+				// need to trim because go-hubspot sdk get function will add the base URL
+				pagingRelativePath := strings.TrimPrefix(res.Paging.Next.Link, "https://api.hubapi.com/")
 
-		// To handle CRM objects
-		res, err := e.client.RetrieveAssociation.GetCrmID(inputStruct.ContactID, inputStruct.ObjectType)
+				res, err := e.client.RetrieveAssociation.GetThreadID(inputStruct.ContactID, true, pagingRelativePath)
 
-		if err != nil {
-			return nil, err
+				if err != nil {
+					return nil, err
+				}
+
+				for _, value := range res.Results {
+					objectIDs = append(objectIDs, value.ID)
+				}
+
+				if res.Paging == nil || len(res.Results) == 0 {
+					break
+				}
+			}
 		}
+	}
 
-		if len(res.Results) == 0 {
-			return nil, fmt.Errorf("no object ID found")
-		}
-
-		// only take the first Result, because the input is only one contact id
-		objectIDs = make([]string, len(res.Results[0].IDArray))
-		for index, value := range res.Results[0].IDArray {
-			objectIDs[index] = value.ID
-		}
-
+	if len(objectIDs) == 0 {
+		objectIDs = []string{}
 	}
 
 	outputStruct := TaskRetrieveAssociationOutput{
-		ObjectIDs: objectIDs,
+		ObjectIDs:       objectIDs,
+		ObjectIDsLength: len(objectIDs),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil
