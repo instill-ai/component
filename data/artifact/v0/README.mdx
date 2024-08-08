@@ -16,7 +16,9 @@ It can carry out the following tasks:
 - [Search Chunks](#search-chunks)
 - [Query](#query)
 
-
+To use Artifact Component, you will need to set up the OpenAI API key. 
+You can do this by setting the `OPENAI_API_KEY` environment variable.
+Please refer to [configuring-the-embedding-feature](https://www.instill.tech/docs/core/configuration#configuring-the-embedding-feature)
 
 ## Release Stage
 
@@ -88,7 +90,7 @@ get the metadata of the chunks from a file in the catalog
 | Task ID (required) | `task` | string | `TASK_GET_CHUNKS_METADATA` |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
 | Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
-| File UID | `file-uid` | string | The unique identifier of the file |
+| File UID (required) | `file-uid` | string | The unique identifier of the file |
 
 
 
@@ -111,13 +113,16 @@ get the file content in markdown format
 | Task ID (required) | `task` | string | `TASK_GET_FILE_IN_MARKDOWN` |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
 | Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
-| File UID | `file-uid` | string | The unique identifier of the file |
+| File UID (required) | `file-uid` | string | The unique identifier of the file |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| File Texts (optional) | `file-texts` | array[object] | File content in markdown format |
+| File UID | `original-file-uid` | string | The unique identifier of the file |
+| Content | `content` | string | The content of the file in markdown format |
+| Create Time | `create-time` | string | TThe creation time of the source file in ISO 8601 format |
+| Update Time | `update-time` | string | The update time of the source file in ISO 8601 format |
 
 
 
@@ -158,7 +163,7 @@ search the chunks in the catalog
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
 | Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | Text Prompt (required) | `text-prompt` | string | The prompt string to search the chunks |
-| Top K | `top-k` | integer | The number of top chunks to return |
+| Top K | `top-k` | integer | The number of top chunks to return. The range is from 1~20, and default is 5 |
 
 
 
@@ -182,7 +187,7 @@ Reply the questions based on the files in the catalog
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
 | Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | Question (required) | `question` | string | The question to reply |
-| Top K | `top-k` | integer | The number of top answers to return |
+| Top K | `top-k` | integer | The number of top answers to return. The range is from 1~20, and default is 5 |
 
 
 
