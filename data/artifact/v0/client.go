@@ -15,7 +15,7 @@ import (
 
 const maxPayloadSize int = 1024 * 1024 * 32
 
-func initArtifactClient(serverURL string) (pbClient interface{}, connection interface{}, err error) {
+func initArtifactClient(serverURL string) (pbClient artifactPB.ArtifactPublicServiceClient, connection Connection, err error) {
 	var clientDialOpts grpc.DialOption
 
 	if strings.HasPrefix(serverURL, "https://") {

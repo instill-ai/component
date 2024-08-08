@@ -60,13 +60,8 @@ func (e *execution) uploadFiles(input *structpb.Struct) (*structpb.Struct, error
 		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
 	}
 
-	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
-	}
-	defer connection.(Connection).Close()
-
-	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	artifactClient, connection := e.client, e.connection
+	defer connection.Close()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
@@ -156,13 +151,9 @@ func (e *execution) getFilesMetadata(input *structpb.Struct) (*structpb.Struct, 
 		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
 	}
 
-	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
-	}
-	defer connection.(Connection).Close()
+	artifactClient, connection := e.client, e.connection
 
-	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	defer connection.Close()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
@@ -226,13 +217,10 @@ func (e *execution) getChunksMetadata(input *structpb.Struct) (*structpb.Struct,
 		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
 	}
 
-	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
-	}
-	defer connection.(Connection).Close()
+	artifactClient, connection := e.client, e.connection
 
-	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	defer connection.Close()
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
@@ -287,13 +275,10 @@ func (e *execution) getFileInMarkdown(input *structpb.Struct) (*structpb.Struct,
 		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
 	}
 
-	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
-	}
-	defer connection.(Connection).Close()
+	artifactClient, connection := e.client, e.connection
 
-	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	defer connection.Close()
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
@@ -343,13 +328,10 @@ func (e *execution) searchChunks(input *structpb.Struct) (*structpb.Struct, erro
 		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
 	}
 
-	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
-	}
-	defer connection.(Connection).Close()
+	artifactClient, connection := e.client, e.connection
 
-	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	defer connection.Close()
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
@@ -400,13 +382,10 @@ func (e *execution) query(input *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
 	}
 
-	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
-	}
-	defer connection.(Connection).Close()
+	artifactClient, connection := e.client, e.connection
 
-	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	defer connection.Close()
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
@@ -456,13 +435,10 @@ func (e *execution) matchFileStatus(input *structpb.Struct) (*structpb.Struct, e
 		return nil, fmt.Errorf("failed to convert input to struct: %w", err)
 	}
 
-	client, connection, err := e.initClient(getArtifactServerURL(e.SystemVariables))
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize artifact client: %w", err)
-	}
-	defer connection.(Connection).Close()
+	artifactClient, connection := e.client, e.connection
 
-	artifactClient := client.(artifactPB.ArtifactPublicServiceClient)
+	defer connection.Close()
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))

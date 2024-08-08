@@ -9,6 +9,7 @@ import (
 	_ "embed"
 
 	"github.com/instill-ai/component/base"
+	artifactPB "github.com/instill-ai/protogen-go/artifact/artifact/v1alpha"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -39,7 +40,8 @@ type execution struct {
 	base.ComponentExecution
 
 	execute    func(*structpb.Struct) (*structpb.Struct, error)
-	initClient func(string) (interface{}, interface{}, error)
+	client     artifactPB.ArtifactPublicServiceClient
+	connection Connection
 }
 
 func Init(bc base.Component) *component {
@@ -56,7 +58,14 @@ func Init(bc base.Component) *component {
 func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	e := &execution{ComponentExecution: x}
 
-	e.initClient = initArtifactClient
+	client, connection, err := initArtifactClient(getArtifactServerURL(e.SystemVariables))
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to create client connection: %w", err)
+	}
+
+	e.client, e.connection = client, connection
+
 	switch x.Task {
 	case taskUploadFile:
 		e.execute = e.uploadFiles
