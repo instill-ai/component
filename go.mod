@@ -89,6 +89,8 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dlclark/regexp2 v1.10.0 // indirect
+	github.com/elastic/elastic-transport-go/v8 v8.6.0 // indirect
+	github.com/elastic/go-elasticsearch/v8 v8.14.0
 	github.com/emersion/go-sasl v0.0.0-20231106173351-e73c9f7bad43 // indirect
 	github.com/fatih/set v0.2.1 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -138,6 +140,7 @@ require (
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/tink-ab/tempfile v0.0.0-20180226111222-33beb0518f1a // indirect
 	github.com/u2takey/go-utils v0.3.1 // indirect
+	github.com/xwb1989/sqlparser v0.0.0-20180606152119-120387863bf2
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	gitlab.com/golang-commonmark/html v0.0.0-20191124015941-a22733972181 // indirect
 	gitlab.com/golang-commonmark/linkify v0.0.0-20191026162114-a0c2df6c8f82 // indirect
