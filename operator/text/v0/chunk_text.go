@@ -2,15 +2,16 @@ package text
 
 import (
 	"fmt"
-	"reflect"
 
-	tiktoken "github.com/pkoukk/tiktoken-go"
+	"github.com/instill-ai/component/base"
 	"github.com/tmc/langchaingo/textsplitter"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type ChunkTextInput struct {
-	Text     string   `json:"text"`
-	Strategy Strategy `json:"strategy"`
+	Text         string       `json:"text"`
+	Strategy     Strategy     `json:"strategy"`
+	Tokenization Tokenization `json:"tokenization"`
 }
 
 type Strategy struct {
@@ -30,6 +31,17 @@ type Setting struct {
 	// TODO: Add SecondSplitter, which is to set the details about how to chunk the paragraphs in Markdown format.
 	// https://pkg.go.dev/github.com/tmc/langchaingo@v0.1.10/textsplitter#MarkdownTextSplitter
 	// secondSplitter textsplitter.TextSplitter
+}
+
+type Tokenization struct {
+	Choice Choice `json:"choice"`
+}
+
+type Choice struct {
+	TokenizationMethod string `json:"tokenization-method"`
+	Model              string `json:"model,omitempty"`
+	Encoding           string `json:"encoding,omitempty"`
+	HuggingFaceModel   string `json:"hugging-face-model,omitempty"`
 }
 
 type ChunkTextOutput struct {
@@ -71,24 +83,28 @@ type TextSplitter interface {
 	SplitText(text string) ([]string, error)
 }
 
-func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
+
+func chunkText(inputPb *structpb.Struct) (*structpb.Struct, error) {
+	input := ChunkTextInput{}
+
+	err := base.ConvertFromStructpb(inputPb, &input)
+	if err != nil {
+		return nil, err
+	}
+
 	var split TextSplitter
+	var output ChunkTextOutput
+
 	setting := input.Strategy.Setting
 	// TODO: Take this out when we fix the error in frontend side.
 	// Bug: The default value is not set from frontend side.
 	setting.SetDefault()
 
-	var output ChunkTextOutput
-	var positionCalculator ChunkPositionCalculator
-
 	switch setting.ChunkMethod {
 	case "Token":
-		positionCalculator = PositionCalculator{}
 		if setting.ChunkOverlap >= setting.ChunkSize {
-			err := fmt.Errorf("ChunkOverlap must be less than ChunkSize when using Token method")
-			return output, err
+			return nil, fmt.Errorf("ChunkOverlap must be less than ChunkSize when using Token method")
 		}
-
 		split = textsplitter.NewTokenSplitter(
 			textsplitter.WithChunkSize(setting.ChunkSize),
 			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
@@ -97,13 +113,11 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 			textsplitter.WithDisallowedSpecial(setting.DisallowedSpecial),
 		)
 	case "Markdown":
-		positionCalculator = MarkdownPositionCalculator{}
 		split = NewMarkdownTextSplitter(
 			textsplitter.WithChunkSize(setting.ChunkSize),
 			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
 		)
 	case "Recursive":
-		positionCalculator = PositionCalculator{}
 		split = textsplitter.NewRecursiveCharacter(
 			textsplitter.WithSeparators(setting.Separators),
 			textsplitter.WithChunkSize(setting.ChunkSize),
@@ -114,129 +128,29 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 
 	chunks, err := split.SplitText(input.Text)
 	if err != nil {
-		return output, err
+		return nil, fmt.Errorf("failed to split text: %w", err)
 	}
-	output.ChunkNum = len(chunks)
 
-	tkm, err := tiktoken.EncodingForModel(setting.ModelName)
+	output.setChunksWithPosition(chunks, input.Text, setting.ChunkMethod)
+	output.ChunkNum = len(output.TextChunks)
+
+	choice := input.Tokenization.Choice
+	err = output.setTokenizeChunks(choice)
+
 	if err != nil {
-		return output, err
+		return nil, fmt.Errorf("failed to tokenize chunks: \n%w", err)
 	}
 
-	totalTokenCount := 0
-	startScanPosition := 0
-	rawRunes := []rune(input.Text)
-	for i, chunk := range chunks {
-		chunkRunes := []rune(chunk)
+	err = output.setFileTokenCount(choice, input.Text)
 
-		startPosition, endPosition := positionCalculator.getChunkPositions(rawRunes, chunkRunes, startScanPosition)
-
-		if shouldScanRawTextFromPreviousChunk(startPosition, endPosition) {
-			previousChunk := output.TextChunks[i-1]
-			startPosition, endPosition = positionCalculator.getChunkPositions(rawRunes, chunkRunes, previousChunk.StartPosition)
-		}
-
-		if startPosition == endPosition {
-			continue
-		}
-
-		token := tkm.Encode(chunk, setting.AllowedSpecial, setting.DisallowedSpecial)
-
-		output.TextChunks = append(output.TextChunks, TextChunk{
-			Text:          chunk,
-			StartPosition: startPosition,
-			EndPosition:   endPosition,
-			TokenCount:    len(token),
-		})
-		totalTokenCount += len(token)
-		startScanPosition = startPosition + 1
+	if err != nil {
+		return nil, fmt.Errorf("failed to set file token count: \n%w", err)
 	}
 
-	if len(output.TextChunks) == 0 {
-		token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
-
-		output.TextChunks = append(output.TextChunks, TextChunk{
-			Text:          input.Text,
-			StartPosition: 0,
-			EndPosition:   len(rawRunes) - 1,
-			TokenCount:    len(token),
-		})
-		output.ChunkNum = 1
-		totalTokenCount = len(token)
+	outputPb, err := base.ConvertToStructpb(output)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to structpb: %w", err)
 	}
 
-	originalTextToken := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
-	output.TokenCount = len(originalTextToken)
-	output.ChunksTokenCount = totalTokenCount
-
-	return output, nil
-}
-
-func shouldScanRawTextFromPreviousChunk(startPosition, endPosition int) bool {
-	return startPosition == 0 && endPosition == 0
-}
-
-type ChunkPositionCalculator interface {
-	getChunkPositions(rawText, chunk []rune, startScanPosition int) (startPosition int, endPosition int)
-}
-
-type PositionCalculator struct{}
-
-func (PositionCalculator) getChunkPositions(rawText, chunk []rune, startScanPosition int) (startPosition int, endPosition int) {
-
-	for i := startScanPosition; i < len(rawText); i++ {
-		if rawText[i] == chunk[0] {
-
-			if i+len(chunk) > len(rawText) {
-				break
-			}
-
-			if reflect.DeepEqual(rawText[i:i+len(chunk)], chunk) {
-				startPosition = i
-				endPosition = len(chunk) + i - 1
-				break
-			}
-		}
-	}
-	return startPosition, endPosition
-}
-
-type MarkdownPositionCalculator struct{}
-
-func (MarkdownPositionCalculator) getChunkPositions(rawText, chunk []rune, startScanPosition int) (startPosition int, endPosition int) {
-
-	skipHeaderIndex := getSkipHeaderIndex(chunk)
-
-	for i := startScanPosition; i < len(rawText); i++ {
-
-		if rawText[i] == chunk[skipHeaderIndex] {
-
-			if i+len(chunk)-skipHeaderIndex > len(rawText) {
-				break
-			}
-
-			if reflect.DeepEqual(rawText[i:(i+len(chunk)-skipHeaderIndex)], chunk[skipHeaderIndex:]) {
-				startPosition = i
-				endPosition = len(chunk) + i - 1 - skipHeaderIndex
-				break
-			}
-		}
-	}
-	return startPosition, endPosition
-}
-
-func getSkipHeaderIndex(chunk []rune) int {
-	hashtagCount := 0
-	skipPosition := 0
-	for i := 0; i < len(chunk); i++ {
-		if chunk[i] == '#' {
-			hashtagCount++
-		}
-
-		if hashtagCount >= 1 && chunk[i] == '\n' {
-			skipPosition = i + 1
-			hashtagCount = 0
-		}
-	}
-	return skipPosition
+	return outputPb, nil
 }

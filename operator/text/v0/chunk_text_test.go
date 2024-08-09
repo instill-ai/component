@@ -1,10 +1,13 @@
 package text
 
 import (
+	"context"
 	"os"
 	"testing"
 
 	"github.com/frankban/quicktest"
+	"github.com/instill-ai/component/base"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 func TestChunkText(t *testing.T) {
@@ -25,6 +28,14 @@ func TestChunkText(t *testing.T) {
 						ChunkMethod: "Token",
 						ChunkSize:   512,
 						ModelName:   "gpt-3.5-turbo",
+					},
+				},
+				Tokenization: Tokenization{
+					Choice: Choice{
+						TokenizationMethod: "Model",
+						Model:              "gpt-3.5-turbo",
+						Encoding:           "",
+						HuggingFaceModel:   "",
 					},
 				},
 			},
@@ -51,6 +62,14 @@ func TestChunkText(t *testing.T) {
 						ChunkMethod: "Markdown",
 						ModelName:   "gpt-3.5-turbo",
 						ChunkSize:   5,
+					},
+				},
+				Tokenization: Tokenization{
+					Choice: Choice{
+						TokenizationMethod: "Model",
+						Model:              "gpt-3.5-turbo",
+						Encoding:           "",
+						HuggingFaceModel:   "",
 					},
 				},
 			},
@@ -86,6 +105,14 @@ func TestChunkText(t *testing.T) {
 						Separators:  []string{" ", "."},
 					},
 				},
+				Tokenization: Tokenization{
+					Choice: Choice{
+						TokenizationMethod: "Model",
+						Model:              "gpt-3.5-turbo",
+						Encoding:           "",
+						HuggingFaceModel:   "",
+					},
+				},
 			},
 			output: ChunkTextOutput{
 				TextChunks: []TextChunk{
@@ -111,7 +138,27 @@ func TestChunkText(t *testing.T) {
 
 	for _, tc := range testCases {
 		c.Run(tc.name, func(c *quicktest.C) {
-			output, err := chunkText(tc.input)
+
+			bc := base.Component{}
+			component := Init(bc)
+			c.Assert(component, quicktest.IsNotNil)
+
+			execution, err := component.CreateExecution(base.ComponentExecution{
+				Component: component,
+				Task:      "TASK_CHUNK_TEXT",
+			})
+
+			c.Assert(err, quicktest.IsNil)
+			c.Assert(execution, quicktest.IsNotNil)
+
+			inputPd, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, quicktest.IsNil)
+
+			outputPd, err := execution.Execute(context.TODO(), []*structpb.Struct{inputPd})
+			c.Assert(err, quicktest.IsNil)
+			output := ChunkTextOutput{}
+			err = base.ConvertFromStructpb(outputPd[0], &output)
+
 			c.Assert(err, quicktest.IsNil)
 			c.Check(output, quicktest.DeepEquals, tc.output)
 		})
