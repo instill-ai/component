@@ -53,7 +53,7 @@ Send text-based template message. This task support header(text), body and butto
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEND_TEXT_BASED_TEMPLATE_MESSAGE` |
-| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. |
+| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. Note: This is for sender. |
 | Recipient Phone Number (required) | `to` | string | The number of the recipient you are sending the message to |
 | Template Name (required) | `name` | string | Name of the template |
 | Language Code (required) | `language-code` | string | The code of the language in which the template is used. Supported languages: https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages |
@@ -82,7 +82,7 @@ Send media-based template message. This task support header(image, document & vi
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEND_MEDIA_BASED_TEMPLATE_MESSAGE` |
-| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. |
+| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. Note: This is for sender. |
 | Recipient Phone Number (required) | `to` | string | The number of the recipient you are sending the message to |
 | Template Name (required) | `name` | string | Name of the template |
 | Language Code (required) | `language-code` | string | The code of the language in which the template is used. Supported languages: https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages |
@@ -113,7 +113,7 @@ Send location-based template message. This task support header(location), body a
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEND_LOCATION_BASED_TEMPLATE_MESSAGE` |
-| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. |
+| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. Note: This is for sender. |
 | Recipient Phone Number (required) | `to` | string | The number of the recipient you are sending the message to |
 | Template Name (required) | `name` | string | Name of the template |
 | Language Code (required) | `language-code` | string | The code of the language in which the template is used. Supported languages: https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages |
@@ -145,7 +145,7 @@ Send authentication template message with one-time password button (The button i
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEND_AUTHENTICATION_TEMPLATE_MESSAGE` |
-| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. |
+| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. Note: This is for sender. |
 | Recipient Phone Number (required) | `to` | string | The number of the recipient you are sending the message to |
 | Template Name (required) | `name` | string | Name of the template |
 | Language Code (required) | `language-code` | string | The code of the language in which the template is used. Supported languages: https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages |
@@ -172,7 +172,7 @@ Send text message. Note: Message can only be sent when the 24-hour customer serv
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEND_TEXT_MESSAGE` |
-| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. |
+| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. Note: This is for sender. |
 | Recipient Phone Number (required) | `to` | string | The number of the recipient you are sending the message to |
 | Text (required) | `body` | string | Body of the message |
 | Preview URL (required) | `preview-url` | string | Specify whether URL should be previewed or not. This will have no affect if the message does not contain any URL. |
@@ -197,7 +197,7 @@ Send media message. Media supported: video, audio, document, image. Note: Messag
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEND_MEDIA_MESSAGE` |
-| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. |
+| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. Note: This is for sender. |
 | Recipient Phone Number (required) | `to` | string | The number of the recipient you are sending the message to |
 | Media Type (required) | `media-type` | string | Specify what media to send. |
 | ID Or Link (required) | `id-or-link` | string | Input either ID or link of the media. If the input has 'http', it will be considered as a link. |
@@ -224,7 +224,7 @@ Send location message. Note: Message can only be sent when the 24-hour customer 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEND_LOCATION_MESSAGE` |
-| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. |
+| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. Note: This is for sender. |
 | Recipient Phone Number (required) | `to` | string | The number of the recipient you are sending the message to |
 | Latitude (required) | `latitude` | number | Location latitude |
 | Longitude (required) | `longitude` | number | Location longitude |
@@ -251,7 +251,7 @@ Send contact message. Note: Message can only be sent when the 24-hour customer s
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEND_CONTACT_MESSAGE` |
-| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. |
+| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. Note: This is for sender. |
 | Recipient Phone Number (required) | `to` | string | The number of the recipient you are sending the message to |
 | First Name (required) | `first-name` | string | First name of the contact |
 | Middle Name | `middle-name` | string | Middle name of the contact |
@@ -282,7 +282,7 @@ Send interactive Call-To-Action URL button message. Note: Message can only be se
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SEND_INTERACTIVE_CALL_TO_ACTION_URL_BUTTON_MESSAGE` |
-| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. |
+| Phone Number ID (required) | `phone-number-id` | string | Phone Number ID. Obtainable through the app dashboard. Note: This is for sender. |
 | Recipient Phone Number (required) | `to` | string | The number of the recipient you are sending the message to |
 | Header Text | `header-text` | string | Message header text. |
 | Body Text (required) | `body-text` | string | Message body text. |

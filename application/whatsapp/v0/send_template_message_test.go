@@ -17,7 +17,7 @@ const (
 
 type MockWhatsappClientSendTemplate struct{}
 
-func (c *MockWhatsappClientSendTemplate) SendMessageAPI(req interface{}, resp interface{}, PhoneNumberID string) (interface{}, error) {
+func (c *MockWhatsappClientSendTemplate) SendMessageAPI(req interface{}, resp interface{}, PhoneNumberID string) error {
 	jsonData := `{
 		"messaging_product": "whatsapp",
 		"contacts": [
@@ -36,10 +36,10 @@ func (c *MockWhatsappClientSendTemplate) SendMessageAPI(req interface{}, resp in
 
 	err := json.Unmarshal([]byte(jsonData), resp)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return resp, nil
+	return nil
 }
 
 func TestComponent_ExecuteSendTemplateMessageTask(t *testing.T) {

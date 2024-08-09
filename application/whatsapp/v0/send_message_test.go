@@ -11,11 +11,11 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-type MockWhatsappClientSendMessage struct{}
+type MockWhatsAppClientSendMessage struct{}
 
 // If you send a normal whatsapp message and not a template, message status will not be returned by the API
 
-func (c *MockWhatsappClientSendMessage) SendMessageAPI(req interface{}, resp interface{}, PhoneNumberID string) (interface{}, error) {
+func (c *MockWhatsAppClientSendMessage) SendMessageAPI(req interface{}, resp interface{}, PhoneNumberID string) error {
 
 	jsonData := `{
 		"messaging_product": "whatsapp",
@@ -35,10 +35,10 @@ func (c *MockWhatsappClientSendMessage) SendMessageAPI(req interface{}, resp int
 	err := json.Unmarshal([]byte(jsonData), resp)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return resp, nil
+	return nil
 }
 
 func TestComponent_ExecuteSendMessageTask(t *testing.T) {
@@ -136,7 +136,7 @@ func TestComponent_ExecuteSendMessageTask(t *testing.T) {
 
 			e := &execution{
 				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: tc.task},
-				client:             &MockWhatsappClientSendMessage{},
+				client:             &MockWhatsAppClientSendMessage{},
 			}
 
 			switch tc.task {

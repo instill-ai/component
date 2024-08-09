@@ -2,7 +2,7 @@
   "$defs": {
     "def-input": {
       "phone-number-id": {
-        "description": "Phone Number ID. Obtainable through the app dashboard.",
+        "description": "Phone Number ID. Obtainable through the app dashboard. Note: This is for sender.",
         "instillAcceptFormats": ["string"],
         "instillUIMultiline": false,
         "instillUIOrder": 0,

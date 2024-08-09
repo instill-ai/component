@@ -48,7 +48,7 @@ type component struct {
 
 type execution struct {
 	base.ComponentExecution
-	client  WhatsappInterface
+	client  WhatsAppInterface
 	execute func(*structpb.Struct) (*structpb.Struct, error)
 }
 

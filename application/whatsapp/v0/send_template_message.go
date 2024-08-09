@@ -151,19 +151,18 @@ func (e *execution) SendTextBasedTemplateMessage(in *structpb.Struct) (*structpb
 		req.Template.Components = append(req.Template.Components, buttonComponent)
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
+	resp := TaskSendTemplateMessageResp{}
+	err = e.client.SendMessageAPI(&req, &resp, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	respStruct := resp.(*TaskSendTemplateMessageResp)
-
 	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
 	outputStruct := TaskSendTemplateMessageOutput{
-		WaID:          respStruct.Contacts[0].WaID,
-		ID:            respStruct.Messages[0].ID,
-		MessageStatus: respStruct.Messages[0].MessageStatus,
+		WaID:          resp.Contacts[0].WaID,
+		ID:            resp.Messages[0].ID,
+		MessageStatus: resp.Messages[0].MessageStatus,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -222,7 +221,7 @@ func (e *execution) SendMediaBasedTemplateMessage(in *structpb.Struct) (*structp
 	switch inputStruct.MediaType {
 	case "image":
 
-		if strings.Contains(inputStruct.IDOrLink, "http") {
+		if strings.HasPrefix(inputStruct.IDOrLink, "http") {
 			headerComponent.Parameters[0] = imageParameter{
 				Type: "image",
 				Image: mediaObject{
@@ -241,7 +240,7 @@ func (e *execution) SendMediaBasedTemplateMessage(in *structpb.Struct) (*structp
 
 	case "video":
 
-		if strings.Contains(inputStruct.IDOrLink, "http") {
+		if strings.HasPrefix(inputStruct.IDOrLink, "http") {
 			headerComponent.Parameters[0] = videoParameter{
 				Type: "video",
 				Video: mediaObject{
@@ -260,7 +259,7 @@ func (e *execution) SendMediaBasedTemplateMessage(in *structpb.Struct) (*structp
 
 	case "document":
 
-		if strings.Contains(inputStruct.IDOrLink, "http") {
+		if strings.HasPrefix(inputStruct.IDOrLink, "http") {
 			headerComponent.Parameters[0] = documentParameter{
 				Type: "document",
 				Document: mediaObject{
@@ -341,19 +340,18 @@ func (e *execution) SendMediaBasedTemplateMessage(in *structpb.Struct) (*structp
 		req.Template.Components = append(req.Template.Components, buttonComponent)
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
+	resp := TaskSendTemplateMessageResp{}
+	err = e.client.SendMessageAPI(&req, &resp, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	respStruct := resp.(*TaskSendTemplateMessageResp)
-
 	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
 	outputStruct := TaskSendTemplateMessageOutput{
-		WaID:          respStruct.Contacts[0].WaID,
-		ID:            respStruct.Messages[0].ID,
-		MessageStatus: respStruct.Messages[0].MessageStatus,
+		WaID:          resp.Contacts[0].WaID,
+		ID:            resp.Messages[0].ID,
+		MessageStatus: resp.Messages[0].MessageStatus,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -482,19 +480,18 @@ func (e *execution) SendLocationBasedTemplateMessage(in *structpb.Struct) (*stru
 		req.Template.Components = append(req.Template.Components, buttonComponent)
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
+	resp := TaskSendTemplateMessageResp{}
+	err = e.client.SendMessageAPI(&req, &resp, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	respStruct := resp.(*TaskSendTemplateMessageResp)
-
 	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
 	outputStruct := TaskSendTemplateMessageOutput{
-		WaID:          respStruct.Contacts[0].WaID,
-		ID:            respStruct.Messages[0].ID,
-		MessageStatus: respStruct.Messages[0].MessageStatus,
+		WaID:          resp.Contacts[0].WaID,
+		ID:            resp.Messages[0].ID,
+		MessageStatus: resp.Messages[0].MessageStatus,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -571,19 +568,18 @@ func (e *execution) SendAuthenticationTemplateMessage(in *structpb.Struct) (*str
 
 	req.Template.Components = append(req.Template.Components, buttonComponent)
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendTemplateMessageResp{}, inputStruct.PhoneNumberID)
+	resp := TaskSendTemplateMessageResp{}
+	err = e.client.SendMessageAPI(&req, &resp, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	respStruct := resp.(*TaskSendTemplateMessageResp)
-
 	// only take the first index because we are sending a template to an individual, so there will only be one contact and one message.
 	outputStruct := TaskSendTemplateMessageOutput{
-		WaID:          respStruct.Contacts[0].WaID,
-		ID:            respStruct.Messages[0].ID,
-		MessageStatus: respStruct.Messages[0].MessageStatus,
+		WaID:          resp.Contacts[0].WaID,
+		ID:            resp.Messages[0].ID,
+		MessageStatus: resp.Messages[0].MessageStatus,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)

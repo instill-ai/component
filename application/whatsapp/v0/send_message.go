@@ -38,13 +38,15 @@ type locationObject struct {
 }
 
 type interactiveObject struct {
-	Type   string      `json:"type"`
-	Header interface{} `json:"header,omitempty"`
-	Body   struct {
-		Text string `json:"text"`
-	} `json:"body"`
-	Footer *footerObject `json:"footer,omitempty"`
-	Action actionObject  `json:"action"`
+	Type   string                `json:"type"`
+	Header interface{}           `json:"header,omitempty"`
+	Body   interactiveObjectBody `json:"body"`
+	Footer *footerObject         `json:"footer,omitempty"`
+	Action actionObject          `json:"action"`
+}
+
+type interactiveObjectBody struct {
+	Text string `json:"text"`
 }
 
 type footerObject struct {
@@ -52,11 +54,13 @@ type footerObject struct {
 }
 
 type actionObject struct {
-	Name      string `json:"name,omitempty"`
-	Parameter struct {
-		DisplayText string `json:"display_text"`
-		URL         string `json:"url"`
-	} `json:"parameters"` //I also don't know why the json is parameters instead of parameter, but the API works only when it is parameters
+	Name      string                `json:"name,omitempty"`
+	Parameter actionObjectParameter `json:"parameters"`
+}
+
+type actionObjectParameter struct {
+	DisplayText string `json:"display_text"`
+	URL         string `json:"url"`
 }
 
 type mediaObject struct {
@@ -211,17 +215,16 @@ func (e *execution) SendTextMessage(in *structpb.Struct) (*structpb.Struct, erro
 		},
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
+	resp := TaskSendMessageResp{}
+	err = e.client.SendMessageAPI(&req, &resp, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	respStruct := resp.(*TaskSendMessageResp)
-
 	outputStruct := TaskSendMessageOutput{
-		WaID: respStruct.Contacts[0].WaID,
-		ID:   respStruct.Messages[0].ID,
+		WaID: resp.Contacts[0].WaID,
+		ID:   resp.Messages[0].ID,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -270,7 +273,7 @@ func (e *execution) TaskSendMediaMessage(in *structpb.Struct) (*structpb.Struct,
 
 	var id string
 	var link string
-	if strings.Contains(inputStruct.IDOrLink, "http") {
+	if strings.HasPrefix(inputStruct.IDOrLink, "http") {
 		link = inputStruct.IDOrLink
 	} else {
 		id = inputStruct.IDOrLink
@@ -309,17 +312,16 @@ func (e *execution) TaskSendMediaMessage(in *structpb.Struct) (*structpb.Struct,
 		return nil, fmt.Errorf("unsupported media type")
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
+	resp := TaskSendMessageResp{}
+	err = e.client.SendMessageAPI(&req, &resp, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	respStruct := resp.(*TaskSendMessageResp)
-
 	outputStruct := TaskSendMessageOutput{
-		WaID: respStruct.Contacts[0].WaID,
-		ID:   respStruct.Messages[0].ID,
+		WaID: resp.Contacts[0].WaID,
+		ID:   resp.Messages[0].ID,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -368,17 +370,16 @@ func (e *execution) TaskSendLocationMessage(in *structpb.Struct) (*structpb.Stru
 		},
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
+	resp := TaskSendMessageResp{}
+	err = e.client.SendMessageAPI(&req, &resp, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	respStruct := resp.(*TaskSendMessageResp)
-
 	outputStruct := TaskSendMessageOutput{
-		WaID: respStruct.Contacts[0].WaID,
-		ID:   respStruct.Messages[0].ID,
+		WaID: resp.Contacts[0].WaID,
+		ID:   resp.Messages[0].ID,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -420,14 +421,16 @@ func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struc
 	}
 
 	var formattedName string
-	if inputStruct.MiddleName == "" && inputStruct.LastName == "" {
-		formattedName = inputStruct.FirstName
-	} else if inputStruct.MiddleName == "" {
-		formattedName = fmt.Sprintf("%s %s", inputStruct.FirstName, inputStruct.LastName)
-	} else if inputStruct.LastName == "" {
-		formattedName = fmt.Sprintf("%s %s", inputStruct.FirstName, inputStruct.MiddleName)
-	} else {
-		formattedName = fmt.Sprintf("%s %s %s", inputStruct.FirstName, inputStruct.MiddleName, inputStruct.LastName)
+	if inputStruct.FirstName != "" {
+		formattedName += inputStruct.FirstName
+	}
+
+	if inputStruct.MiddleName != "" {
+		formattedName += " " + inputStruct.MiddleName
+	}
+
+	if inputStruct.LastName != "" {
+		formattedName += " " + inputStruct.LastName
 	}
 
 	contact := contactObject{
@@ -455,7 +458,7 @@ func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struc
 
 	if inputStruct.PhoneNumber != "" {
 		if inputStruct.PhoneNumberType == "none" {
-			return nil, fmt.Errorf("you forgot to set the phone number type")
+			return nil, fmt.Errorf("please remember to set the phone number type when you input the phone number")
 		}
 
 		req.Contacts[0].Phones = append(req.Contacts[0].Phones, phoneObject{
@@ -467,7 +470,7 @@ func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struc
 
 	if inputStruct.Email != "" {
 		if inputStruct.EmailType == "none" {
-			return nil, fmt.Errorf("you forgot to set the email type")
+			return nil, fmt.Errorf("please remember to set the email type when you input the email")
 		}
 
 		req.Contacts[0].Emails = append(req.Contacts[0].Emails, emailObject{
@@ -476,17 +479,16 @@ func (e *execution) TaskSendContactMessage(in *structpb.Struct) (*structpb.Struc
 		})
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
+	resp := TaskSendMessageResp{}
+	err = e.client.SendMessageAPI(&req, &resp, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	respStruct := resp.(*TaskSendMessageResp)
-
 	outputStruct := TaskSendMessageOutput{
-		WaID: respStruct.Contacts[0].WaID,
-		ID:   respStruct.Messages[0].ID,
+		WaID: resp.Contacts[0].WaID,
+		ID:   resp.Messages[0].ID,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -532,17 +534,12 @@ func (e *execution) TaskSendInteractiveCTAURLButtonMessage(in *structpb.Struct) 
 		Type:             "interactive",
 		Interactive: interactiveObject{
 			Type: "cta_url",
-			Body: struct {
-				Text string `json:"text"`
-			}{
+			Body: interactiveObjectBody{
 				Text: inputStruct.BodyText,
 			},
 			Action: actionObject{
 				Name: "cta_url",
-				Parameter: struct {
-					DisplayText string `json:"display_text"`
-					URL         string `json:"url"`
-				}{
+				Parameter: actionObjectParameter{
 					DisplayText: inputStruct.ButtonDisplayText,
 					URL:         inputStruct.ButtonURL,
 				},
@@ -563,17 +560,16 @@ func (e *execution) TaskSendInteractiveCTAURLButtonMessage(in *structpb.Struct) 
 		}
 	}
 
-	resp, err := e.client.SendMessageAPI(&req, &TaskSendMessageResp{}, inputStruct.PhoneNumberID)
+	resp := TaskSendMessageResp{}
+	err = e.client.SendMessageAPI(&req, &resp, inputStruct.PhoneNumberID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	respStruct := resp.(*TaskSendMessageResp)
-
 	outputStruct := TaskSendMessageOutput{
-		WaID: respStruct.Contacts[0].WaID,
-		ID:   respStruct.Messages[0].ID,
+		WaID: resp.Contacts[0].WaID,
+		ID:   resp.Messages[0].ID,
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
