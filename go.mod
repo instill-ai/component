@@ -35,6 +35,7 @@ require (
 	github.com/itchyny/gojq v0.12.14
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/json-iterator/go v1.1.12
+	github.com/k3a/html2text v1.2.1
 	github.com/lestrrat-go/jspointer v0.0.0-20181205001929-82fadba7561c
 	github.com/lestrrat-go/jsref v0.0.0-20211028120858-c0bcbb5abf20
 	github.com/lestrrat-go/option v1.0.0

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"strings"
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
@@ -52,10 +53,24 @@ func ScrapeWebpageTitle(doc *goquery.Document) string {
 	return strings.TrimSpace(title)
 }
 
+// ScrapeWebpageDescription extracts and returns the description from the *goquery.Document.
+// If the description does not exist, an empty string is returned
+// The description is found by looking for the meta tag with the name "description"
+// and returning the content attribute
+func ScrapeWebpageDescription(doc *goquery.Document) string {
+	// Find the meta tag with the description name
+	description, ok := doc.Find(`meta[name="description"]`).Attr("content")
+	if !ok {
+		return ""
+	}
+	// Return the trimmed description
+	return strings.TrimSpace(description)
+}
+
 // ScrapeWebpageHTMLToMarkdown converts an HTML string to Markdown format
-func ScrapeWebpageHTMLToMarkdown(html string) (string, error) {
+func ScrapeWebpageHTMLToMarkdown(html, domain string) (string, error) {
 	// Initialize the markdown converter
-	converter := md.NewConverter("", true, nil)
+	converter := md.NewConverter(domain, true, nil)
 
 	// Convert the HTML to Markdown
 	markdown, err := converter.ConvertString(html)
@@ -64,6 +79,15 @@ func ScrapeWebpageHTMLToMarkdown(html string) (string, error) {
 	}
 
 	return markdown, nil
+}
+
+func GetDomainFromURL(urlStr string) (string, error) {
+	u, err := url.Parse(urlStr)
+
+	if err != nil {
+		return "", fmt.Errorf("error when parse url: %v", err)
+	}
+	return u.Host, nil
 }
 
 // DecodeBase64 takes a base64-encoded blob, trims the MIME type (if present)

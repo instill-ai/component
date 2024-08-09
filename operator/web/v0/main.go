@@ -1,5 +1,5 @@
 //go:generate compogen readme ./config ./README.mdx
-package website
+package web
 
 import (
 	"context"
@@ -10,12 +10,14 @@ import (
 
 	"google.golang.org/protobuf/types/known/structpb"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/instill-ai/component/base"
 )
 
 const (
-	taskScrapeWebsite = "TASK_SCRAPE_WEBSITE"
+	taskCrawlWebsite  = "TASK_CRAWL_WEBSITE"
 	taskScrapeSitemap = "TASK_SCRAPE_SITEMAP"
+	taskScrapeWebpage = "TASK_SCRAPE_WEBPAGE"
 )
 
 var (
@@ -36,6 +38,7 @@ type execution struct {
 	base.ComponentExecution
 	execute        func(*structpb.Struct) (*structpb.Struct, error)
 	externalCaller func(url string) (ioCloser io.ReadCloser, err error)
+	request        func(url string) (*goquery.Document, error)
 }
 
 func Init(bc base.Component) *component {
@@ -55,12 +58,15 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	}
 
 	switch x.Task {
-	case taskScrapeWebsite:
+	case taskCrawlWebsite:
 		e.execute = e.Scrape
 	case taskScrapeSitemap:
 		// To make mocking easier
 		e.externalCaller = scrapSitemapCaller
 		e.execute = e.ScrapeSitemap
+	case taskScrapeWebpage:
+		e.request = httpRequest
+		e.execute = e.ScrapeWebpage
 	default:
 		return nil, fmt.Errorf(x.Task + " task is not supported.")
 	}

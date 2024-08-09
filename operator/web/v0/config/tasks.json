@@ -41,7 +41,7 @@
       "type": "object"
     }
   },
-  "TASK_SCRAPE_WEBSITE": {
+  "TASK_CRAWL_WEBSITE": {
     "instillShortDescription": "Scrape the website contents.",
     "input": {
       "instillUIOrder": 0,
@@ -224,6 +224,164 @@
       },
       "required": [
         "list"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_SCRAPE_WEBPAGE": {
+    "instillShortDescription": "Scrape the webpage contents and manipulate html with jquery command. The sequence of jquery commands will be executed in the order of only-main-content, remove-tags, and only-include-tags.",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "url": {
+          "description": "The URL to be scrape the webpage contents",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "URL",
+          "type": "string"
+        },
+        "include-html": {
+          "description": "Indicate whether to include the raw HTML of the webpage in the output",
+          "instillAcceptFormats": [
+            "boolean"
+          ],
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Include HTML",
+          "type": "boolean"
+        },
+        "only-main-content": {
+          "description": "Only return the main content of the page excluding header, nav, footer.",
+          "instillAcceptFormats": [
+            "boolean"
+          ],
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Only Main Content",
+          "type": "boolean"
+        },
+        "remove-tags": {
+          "description": "A list of tags, classes, and ids to remove from the output. If empty, no tags will be removed. Example: 'script, .ad, #footer'",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Remove Tags",
+          "type": "array"
+        },
+        "only-include-tags": {
+          "description": "A list of tags, classes, and ids to include in the output. If empty, all tags will be included. Example: 'script, .ad, #footer'",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Only Include Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "content": {
+          "description": "The scraped plain content without html tags of the webpage",
+          "instillFormat": "string",
+          "instillUIOrder": 0,
+          "title": "Content",
+          "type": "string"
+        },
+        "markdown": {
+          "description": "The scraped markdown of the webpage",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Markdown",
+          "type": "string"
+        },
+        "html": {
+          "description": "The scraped html of the webpage",
+          "instillFormat": "string",
+          "instillUIMultiline": true,
+          "instillUIOrder": 2,
+          "title": "HTML",
+          "type": "string"
+        },
+        "metadata": {
+          "description": "The metadata of the webpage",
+          "instillFormat": "object",
+          "instillUIOrder": 3,
+          "properties": {
+            "title": {
+              "description": "The title of the webpage",
+              "instillFormat": "string",
+              "title": "Title",
+              "type": "string"
+            },
+            "description": {
+              "description": "The description of the webpage",
+              "instillFormat": "string",
+              "title": "Description",
+              "type": "string"
+            },
+            "source-url": {
+              "description": "The source URL of the webpage",
+              "instillFormat": "string",
+              "title": "Source URL",
+              "type": "string"
+            }
+          },
+          "required": [
+            "title",
+            "source-url"
+          ],
+          "title": "Metadata",
+          "type": "object"
+        },
+        "links-on-page": {
+          "description": "The list of links on the webpage",
+          "instillUIOrder": 4,
+          "instillFormat": "array:string",
+          "items": {
+            "type": "string"
+          },
+          "title": "Links on Page",
+          "type": "array"
+        }
+      },
+      "required": [
+        "content",
+        "markdown"
       ],
       "title": "Output",
       "type": "object"
