@@ -119,13 +119,6 @@
         "gpt-4o",
         "gpt-4",
         "gpt-3.5-turbo",
-        "open-mixtral-8x22b",
-        "open-mixtral-8x7b",
-        "open-mistral-7b",
-        "mistral-large-latest",
-        "mistral-small-latest",
-        "codestral-22b",
-        "mistral-embed",
         "command-r-plus",
         "command-r",
         "command",
@@ -429,37 +422,6 @@
                   "instillEditOnNodeFields": [
                     "tokenization-method",
                     "encoding"
-                  ],
-                  "type": "object"
-                },
-                {
-                  "properties": {
-                    "tokenization-method": {
-                      "const": "HuggingFace",
-                      "type": "string",
-                      "title": "Input Hugging Face Model Name"
-                    },
-                    "hugging-face-model": {
-                      "description": "The name of the Hugging Face model used for tokenization.",
-                      "instillAcceptFormats": [
-                        "string"
-                      ],
-                      "instillUIOrder": 1,
-                      "instillUpstreamTypes": [
-                        "value",
-                        "reference"
-                      ],
-                      "title": "Hugging Face Model Name",
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "tokenization-method",
-                    "hugging-face-model"
-                  ],
-                  "instillEditOnNodeFields": [
-                    "tokenization-method",
-                    "hugging-face-model"
                   ],
                   "type": "object"
                 }

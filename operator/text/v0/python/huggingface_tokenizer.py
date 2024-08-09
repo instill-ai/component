@@ -1,3 +1,4 @@
+## It is not used because there is a problem related to container built with Alpine Linux
 from transformers import AutoTokenizer
 import json
 import sys
