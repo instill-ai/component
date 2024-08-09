@@ -495,18 +495,17 @@ func TestComponent_ListSprintsTask(t *testing.T) {
 }
 
 func TestComponent_CreateIssueTask(t *testing.T) {
-
 	testcases := []TaskCase[CreateIssueInput, CreateIssueOutput]{
 		{
 			_type: "ok",
 			name:  "create issue",
 			input: CreateIssueInput{
-				ProjectKey:  "CRI",
-				IssueType:   "Task",
-				Status:      "To Do",
+				ProjectKey: "CRI",
+				IssueType: IssueType{
+					IssueType: "Task",
+				},
 				Summary:     "Test issue 1",
 				Description: "Test description 1",
-				Assignee:    "testuser",
 			},
 			wantResp: CreateIssueOutput{
 				Issue{
@@ -515,14 +514,8 @@ func TestComponent_CreateIssueTask(t *testing.T) {
 					Fields: map[string]interface{}{
 						"summary":     "Test issue 1",
 						"description": "Test description 1",
-						"status": map[string]interface{}{
-							"name": "To Do",
-						},
 						"issuetype": map[string]interface{}{
 							"name": "Task",
-						},
-						"assignee": map[string]interface{}{
-							"name": "testuser",
 						},
 						"project": map[string]interface{}{
 							"key": "CRI",
@@ -530,7 +523,6 @@ func TestComponent_CreateIssueTask(t *testing.T) {
 					},
 					Self:        "https://test.atlassian.net/rest/agile/1.0/issue/30000",
 					Summary:     "Test issue 1",
-					Status:      "To Do",
 					Description: "Test description 1",
 					IssueType:   "Task",
 				},
@@ -555,15 +547,18 @@ func TestComponent_UpdateIssueTask(t *testing.T) {
 			name:  "update issue",
 			input: UpdateIssueInput{
 				IssueKey: "TST-1",
-				Update: map[string][]AdditionalFields{
-					"summary": {
+				Update: Update{
+					UpdateType: "Custom Update",
+					UpdateFields: []UpdateField{
 						{
-							Set: "Test issue 1 updated",
+							FieldName: "summary",
+							Action:    "set",
+							Value:     "Test issue 1 updated",
 						},
-					},
-					"description": {
 						{
-							Set: "Test description 1 updated",
+							FieldName: "description",
+							Action:    "set",
+							Value:     "Test description 1 updated",
 						},
 					},
 				},
@@ -633,10 +628,106 @@ func TestComponent_CreateSprintTask(t *testing.T) {
 				Name:      "Test Sprint",
 				BoardName: "INVALID",
 			},
+			wantErr: "end date is required",
+		},
+		{
+			_type: "nok",
+			name:  "400 - Bad Request",
+			input: CreateSprintInput{
+				Name:      "Test Sprint",
+				BoardName: "INVALID",
+				EndDate:   "2021-01-15T00:00:00.000Z",
+			},
 			wantErr: "board not found",
 		},
 	}
 	taskTesting(testcases, taskCreateSprint, t)
+}
+
+func TestComponent_UpdateSprintTask(t *testing.T) {
+	testcases := []TaskCase[UpdateSprintInput, UpdateSprintOutput]{
+		{
+			_type: "ok",
+			name:  "update sprint",
+			input: UpdateSprintInput{
+				SprintID:       1,
+				Name:           "Test Sprint updated",
+				Goal:           "Sprint goal updated",
+				StartDate:      "2021-01-01T00:00:00.000Z",
+				EndDate:        "2021-01-15T00:00:00.000Z",
+				CurrentState:   "active",
+				EnterNextState: false,
+			},
+			wantResp: UpdateSprintOutput{
+				ID:            1,
+				Self:          "https://test.atlassian.net/rest/agile/1.0/sprint/1",
+				State:         "active",
+				Name:          "Test Sprint updated",
+				StartDate:     "2021-01-01T00:00:00.000Z",
+				EndDate:       "2021-01-15T00:00:00.000Z",
+				CompleteDate:  "2021-01-15T00:00:00.000Z",
+				OriginBoardID: 1,
+				Goal:          "Sprint goal updated",
+			},
+		},
+		{
+			_type: "ok",
+			name:  "future to active",
+			input: UpdateSprintInput{
+				SprintID:       1,
+				Name:           "Test Sprint updated",
+				Goal:           "Sprint goal updated",
+				StartDate:      "2021-01-01T00:00:00.000Z",
+				EndDate:        "2021-01-15T00:00:00.000Z",
+				CurrentState:   "future",
+				EnterNextState: true,
+			},
+			wantResp: UpdateSprintOutput{
+				ID:            1,
+				Self:          "https://test.atlassian.net/rest/agile/1.0/sprint/1",
+				State:         "active",
+				Name:          "Test Sprint updated",
+				StartDate:     "2021-01-01T00:00:00.000Z",
+				EndDate:       "2021-01-15T00:00:00.000Z",
+				CompleteDate:  "2021-01-15T00:00:00.000Z",
+				OriginBoardID: 1,
+				Goal:          "Sprint goal updated",
+			},
+		},
+		{
+			_type: "ok",
+			name:  "active to closed",
+			input: UpdateSprintInput{
+				SprintID:       1,
+				Name:           "Test Sprint updated",
+				Goal:           "Sprint goal updated",
+				StartDate:      "2021-01-01T00:00:00.000Z",
+				EndDate:        "2021-01-15T00:00:00.000Z",
+				CurrentState:   "active",
+				EnterNextState: true,
+			},
+			wantResp: UpdateSprintOutput{
+				ID:            1,
+				Self:          "https://test.atlassian.net/rest/agile/1.0/sprint/1",
+				State:         "closed",
+				Name:          "Test Sprint updated",
+				StartDate:     "2021-01-01T00:00:00.000Z",
+				EndDate:       "2021-01-15T00:00:00.000Z",
+				CompleteDate:  "2021-01-15T00:00:00.000Z",
+				OriginBoardID: 1,
+				Goal:          "Sprint goal updated",
+			},
+		},
+		{
+			_type: "nok",
+			name:  "400 - Bad Request",
+			input: UpdateSprintInput{
+				SprintID: -1,
+			},
+			wantErr: "end date is required",
+		},
+	}
+	taskTesting(testcases, taskUpdateSprint, t)
 }
 
 func TestAuth_nok(t *testing.T) {

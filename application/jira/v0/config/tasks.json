@@ -823,7 +823,6 @@
       "instillEditOnNodeFields": [
         "project-key",
         "issue-type",
-        "status",
         "summary",
         "description"
       ],
@@ -957,22 +956,6 @@
             }
           ]
         },
-        "status": {
-          "title": "Status",
-          "description": "The status of the issue, can be: `To Do`, `In Progress`, `Done`",
-          "instillShortDescription": "The status of the issue",
-          "instillUIOrder": 4,
-          "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "type": "string"
-        },
         "summary": {
           "title": "Summary",
           "description": "The summary of the issue",
@@ -1004,28 +987,11 @@
             "template"
           ],
           "type": "string"
-        },
-        "assignee": {
-          "title": "Assignee",
-          "description": "The assignee of the issue",
-          "instillShortDescription": "The assignee of the issue",
-          "instillUIOrder": 5,
-          "instillFormat": "string",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "type": "string"
         }
       },
       "required": [
         "project-key",
-        "issue-type",
-        "status"
+        "issue-type"
       ],
       "title": "Input",
       "type": "object"
@@ -1089,6 +1055,7 @@
                 "update-fields": {
                   "title": "Update Fields",
                   "description": "The fields to update",
+                  "instillUIMultiline": true,
                   "instillFormat": "array:structured/update-field",
                   "instillAcceptFormats": [
                     "array:structured/update-field"
@@ -1208,7 +1175,7 @@
       "description": "Create a sprint in Jira",
       "instillUIOrder": 0,
       "instillEditOnNodeFields": [
-        "board-id",
+        "board-name",
         "name",
         "goal",
         "start-date",
@@ -1297,7 +1264,7 @@
         }
       },
       "required": [
-        "board-id",
+        "board-name",
         "name",
         "goal",
         "start-date",
@@ -1321,29 +1288,30 @@
       "description": "Update a sprint in Jira",
       "instillUIOrder": 0,
       "instillEditOnNodeFields": [
-        "sprint-key",
+        "sprint-id",
         "name",
         "goal",
         "start-date",
         "end-date",
-        "complete-date"
+        "current-state",
+        "enter-next-state"
       ],
       "properties": {
-        "sprint-key": {
-          "title": "Sprint Key",
-          "description": "The key of the sprint",
-          "instillShortDescription": "The key of the sprint",
+        "sprint-id": {
+          "title": "Sprint ID",
+          "description": "The ID of the sprint",
+          "instillShortDescription": "The ID of the sprint",
           "instillUIOrder": 0,
-          "instillFormat": "string",
+          "instillFormat": "integer",
           "instillAcceptFormats": [
-            "string"
+            "integer"
           ],
           "instillUpstreamTypes": [
             "value",
             "reference",
             "template"
           ],
-          "type": "string"
+          "type": "integer"
         },
         "name": {
           "title": "Name",
@@ -1409,10 +1377,10 @@
           ],
           "type": "string"
         },
-        "complete-date": {
-          "title": "Complete Date",
-          "description": "The complete date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
-          "instillShortDescription": "The complete date of the sprint",
+        "current-state": {
+          "title": "Current State",
+          "description": "The current state of the sprint, can be: `future`, `active`, `closed`",
+          "instillShortDescription": "The current state of the sprint",
           "instillUIOrder": 5,
           "instillFormat": "string",
           "instillAcceptFormats": [
@@ -1424,10 +1392,28 @@
             "template"
           ],
           "type": "string"
+        },
+        "enter-next-state": {
+          "title": "Enter Next State",
+          "description": "Whether to enter the next state. If `true`, the sprint will enter the next state, i.e., `future` -> `active` -> `closed`",
+          "instillShortDescription": "Whether to enter the next state",
+          "instillUIOrder": 6,
+          "instillFormat": "boolean",
+          "instillAcceptFormats": [
+            "boolean"
+          ],
+          "instillUpstreamTypes": [
+            "value"
+          ],
+          "type": "boolean"
         }
       },
       "required": [
-        "sprint-key"
+        "sprint-id",
+        "name",
+        "start-date",
+        "end-date",
+        "current-state"
       ],
       "title": "Input",
       "type": "object"

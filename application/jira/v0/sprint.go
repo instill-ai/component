@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"time"
 
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/tools/logger"
@@ -97,7 +98,7 @@ type ListSprintsOutput struct {
 	Total      int                `json:"total"`
 }
 
-func (jiraClient *Client) listSprintsTask(_ context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+func (jiraClient *Client) listSprintsTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var opt ListSprintInput
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err
@@ -170,7 +171,7 @@ type CreateSprintOutput struct {
 
 func (jiraClient *Client) createSprintTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var debug logger.Session
-	defer debug.SessionStart("MockCreateIssueTask", logger.Develop).SessionEnd()
+	defer debug.SessionStart("CreateIssueTask", logger.Develop).SessionEnd()
 
 	var opt CreateSprintInput
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
@@ -179,7 +180,30 @@ func (jiraClient *Client) createSprintTask(ctx context.Context, props *structpb.
 	debug.Info("Create Sprint Task", opt)
 	apiBaseURL := "rest/agile/1.0/sprint"
 
-	// TODO: Validate timestamp format RFC3339
+	// Validate timestamp format RFC3339
+	if _, err := time.Parse(time.RFC3339, opt.StartDate); err != nil {
+		if opt.StartDate == "" {
+			opt.StartDate = time.Now().Format(time.RFC3339)
+		} else {
+			return nil, errmsg.AddMessage(
+				err,
+				fmt.Sprintf("invalid start date format: %s", opt.StartDate),
+			)
+		}
+	}
+	if _, err := time.Parse(time.RFC3339, opt.EndDate); err != nil {
+		if opt.EndDate == "" {
+			return nil, errmsg.AddMessage(
+				fmt.Errorf("end date is required"),
+				"end date is required",
+			)
+		} else {
+			return nil, errmsg.AddMessage(
+				err,
+				fmt.Sprintf("invalid end date format: %s", opt.EndDate),
+			)
+		}
+	}
 	boardName := opt.BoardName
 	debug.Info("opt", opt)
 	debug.Info("boardName", boardName)
@@ -238,5 +262,128 @@ func (jiraClient *Client) createSprintTask(ctx context.Context, props *structpb.
 		OriginBoardID: sprint.OriginBoardID,
 		Goal:          sprint.Goal,
 	}
+	return base.ConvertToStructpb(out)
+}
+
+type UpdateSprintInput struct {
+	SprintID       int    `json:"sprint-id"`
+	Name           string `json:"name"`
+	Goal           string `json:"goal"`
+	StartDate      string `json:"start-date"`
+	EndDate        string `json:"end-date"`
+	CurrentState   string `json:"current-state"`
+	EnterNextState bool   `json:"enter-next-state"`
+}
+
+type UpdateSprintRequest struct {
+	Name      string `json:"name,omitempty"`
+	Goal      string `json:"goal,omitempty"`
+	StartDate string `json:"startDate,omitempty"`
+	EndDate   string `json:"endDate,omitempty"`
+	State     string `json:"state,omitempty"`
+}
+
+type UpdateSprintResp struct {
+	Sprint
+}
+type UpdateSprintOutput struct {
+	ID            int    `json:"id"`
+	Self          string `json:"self"`
+	State         string `json:"state"`
+	Name          string `json:"name"`
+	StartDate     string `json:"start-date"`
+	EndDate       string `json:"end-date"`
+	CompleteDate  string `json:"complete-date"`
+	OriginBoardID int    `json:"origin-board-id"`
+	Goal          string `json:"goal"`
+}
+
+func (jiraClient *Client) updateSprintTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+	var debug logger.Session
+	defer debug.SessionStart("updateSprintTask", logger.Develop).SessionEnd()
+	var opt UpdateSprintInput
+	if err := base.ConvertFromStructpb(props, &opt); err != nil {
+		return nil, err
+	}
+
+	apiEndpoint := fmt.Sprintf("rest/agile/1.0/sprint/%v", opt.SprintID)
+	debug.Info("Update Sprint Task", opt)
+	debug.Info("apiEndpoint", apiEndpoint)
+
+	var body UpdateSprintRequest
+	structOpt, err := base.ConvertToStructpb(opt)
+	if err != nil {
+		return nil, err
+	}
+	if err := base.ConvertFromStructpb(structOpt, &body); err != nil {
+		return nil, err
+	}
+	body.StartDate = opt.StartDate
+	body.EndDate = opt.EndDate
+	if _, err := time.Parse(time.RFC3339, body.StartDate); err != nil {
+		debug.Info("body start date", body.StartDate)
+		debug.Info("opt start date", opt.StartDate)
+		if body.StartDate == "" {
+			body.StartDate = time.Now().Format(time.RFC3339)
+		} else {
+			return nil, errmsg.AddMessage(
+				err,
+				fmt.Sprintf("invalid start date format: %v", opt.StartDate),
+			)
+		}
+	}
+	if _, err := time.Parse(time.RFC3339, body.EndDate); err != nil {
+		if body.EndDate == "" {
+			return nil, errmsg.AddMessage(
+				fmt.Errorf("end date is required"),
+				"end date is required",
+			)
+		} else {
+			return nil, errmsg.AddMessage(
+				err,
+				fmt.Sprintf("invalid end date format: %s", opt.EndDate),
+			)
+		}
+	}
+	if opt.EnterNextState {
+		switch opt.CurrentState {
+		case "future":
+			body.State = "active"
+			startTime, _ := time.Parse(time.RFC3339, body.StartDate)
+			if time.Now().Compare(startTime) == -1 {
+				body.StartDate = time.Now().Format(time.RFC3339)
+			}
+		case "active":
+			body.State = "closed"
+		case "closed":
+			body.State = "closed"
+		}
+	} else {
+		body.State = opt.CurrentState
+	}
+	jsonOpt, err := base.ConvertToStructpb(body)
+	if err != nil {
+		return nil, err
+	}
+	debug.Info("body", jsonOpt)
+	req := jiraClient.Client.R().SetResult(&Sprint{}).SetBody(jsonOpt)
+	debug.Info("body", req.Body)
+
+	resp, err := req.Put(apiEndpoint)
+	// debug.Info("resp", resp)
+
+	if err != nil {
+		debug.Error(err)
+		return nil, err
+	}
+
+	updatedSprint, ok := resp.Result().(*Sprint)
+	if !ok {
+		return nil, errmsg.AddMessage(
+			fmt.Errorf("failed to convert response to `Update Sprint` Output"),
+			fmt.Sprintf("failed to convert %v to `Update Sprint` Output", resp.Result()),
+		)
+	}
+	out := extractSprintOutput(updatedSprint)
 	return base.ConvertToStructpb(out)
 }

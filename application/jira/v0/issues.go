@@ -10,6 +10,7 @@ import (
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/tools/logger"
 	"github.com/instill-ai/x/errmsg"
+	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -290,14 +291,17 @@ type AdditionalFields struct {
 	Edit   string `json:"edit,omitempty"`
 	Remove string `json:"remove,omitempty"`
 }
+type IssueType struct {
+	IssueType       string `json:"issue-type"`
+	ParentKey       string `json:"parent-key"`
+	CustomIssueType string `json:"custom-issue-type"`
+}
 type CreateIssueInput struct {
-	UpdateHistory bool   `json:"update-history"`
-	ProjectKey    string `json:"project-key"`
-	IssueType     string `json:"issue-type"`
-	Status        string `json:"status"`
-	Summary       string `json:"summary"`
-	Description   string `json:"description"`
-	Assignee      string `json:"assignee"`
+	UpdateHistory bool      `json:"update-history"`
+	ProjectKey    string    `json:"project-key"`
+	IssueType     IssueType `json:"issue-type"`
+	Summary       string    `json:"summary"`
+	Description   string    `json:"description"`
 }
 type CreateIssueRequset struct {
 	Fields map[string]interface{}        `json:"fields"`
@@ -321,30 +325,36 @@ type CreateIssueOutput struct {
 }
 
 func convertCreateIssueRequest(issue *CreateIssueInput) *CreateIssueRequset {
-	return &CreateIssueRequset{
+	newRequest := &CreateIssueRequset{
 		Fields: map[string]interface{}{
 			"project": map[string]interface{}{
 				"key": issue.ProjectKey,
 			},
 			"issuetype": map[string]interface{}{
-				"name": issue.IssueType,
-			},
-			"status": map[string]interface{}{
-				"name": issue.Status,
+				"name": issue.IssueType.IssueType,
 			},
 			"summary":     issue.Summary,
 			"description": issue.Description,
-			"assignee": map[string]interface{}{
-				"name": issue.Assignee,
-			},
 		},
 	}
+	if issue.IssueType.ParentKey != "" {
+		newRequest.Fields["parent"] = map[string]interface{}{
+			"key": issue.IssueType.ParentKey,
+		}
+	}
+	if issue.IssueType.CustomIssueType != "" {
+		newRequest.Fields["issuetype"] = map[string]interface{}{
+			"name": issue.IssueType.CustomIssueType,
+		}
+	}
+	return newRequest
 }
 
 func (jiraClient *Client) createIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var debug logger.Session
 	defer debug.SessionStart("CreateIssueTask", logger.Develop).SessionEnd()
 
+	debug.Info("props ", props)
 	var issue CreateIssueInput
 	if err := base.ConvertFromStructpb(props, &issue); err != nil {
 		return nil, err
@@ -386,10 +396,19 @@ func (jiraClient *Client) createIssueTask(ctx context.Context, props *structpb.S
 	return base.ConvertToStructpb(issueOutput)
 }
 
+type UpdateField struct {
+	Action    string `json:"action"`
+	FieldName string `json:"field-name"`
+	Value     string `json:"value"`
+}
+type Update struct {
+	UpdateType   string        `json:"update"`
+	UpdateFields []UpdateField `json:"update-fields"`
+}
 type UpdateIssueInput struct {
-	IssueKey    string                        `json:"issue-key"`
-	Update      map[string][]AdditionalFields `json:"update"`
-	NotifyUsers bool                          `json:"notify-users" api:"notifyUsers"`
+	IssueKey    string `json:"issue-key"`
+	Update      Update `json:"update"`
+	NotifyUsers bool   `json:"notify-users" api:"notifyUsers"`
 }
 type UpdateIssueRequset struct {
 	Body struct {
@@ -412,17 +431,48 @@ func (jiraClient *Client) updateIssueTask(_ context.Context, props *structpb.Str
 	var debug logger.Session
 	defer debug.SessionStart("UpdateIssueTask", logger.Develop).SessionEnd()
 
+	debug.Info("props ", props)
 	var input UpdateIssueInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
+	updateInfo := make(map[string][]AdditionalFields)
+	if input.Update.UpdateType == "Custom Update" {
+		for _, field := range input.Update.UpdateFields {
+			if field.FieldName == "" {
+				return nil, errmsg.AddMessage(
+					fmt.Errorf("field name is required"),
+					"field name is required",
+				)
+			}
+			if updateInfo[field.FieldName] == nil {
+				updateInfo[field.FieldName] = []AdditionalFields{}
+			}
+			switch field.Action {
+			case "set":
+				updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Set: field.Value})
+			case "add":
+				updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Add: field.Value})
+			case "remove":
+				updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Remove: field.Value})
+			case "edit":
+				updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Edit: field.Value})
+			case "copy":
+				updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Copy: field.Value})
+			default:
+				return nil, errmsg.AddMessage(
+					fmt.Errorf("invalid action"),
+					fmt.Sprintf("%s is an invalid action", field.Action),
+				)
+			}
+		}
+	}
 	apiEndpoint := "rest/api/2/issue/" + input.IssueKey
 	request := UpdateIssueRequset{
 		Body: struct {
 			Update map[string][]AdditionalFields `json:"update"`
 		}{
-			Update: input.Update,
+			Update: updateInfo,
 		},
 		Query: struct {
 			NotifyUsers bool `json:"notify-users" api:"notifyUsers"`
@@ -432,13 +482,19 @@ func (jiraClient *Client) updateIssueTask(_ context.Context, props *structpb.Str
 			ReturnIssue: true,
 		},
 	}
-	req := jiraClient.Client.R().SetResult(&UpdateIssueResp{}).SetBody(request.Body)
 
-	err := addQueryOptions(req, request.Query)
+	body, err := jsoniter.Marshal(request.Body)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := req.Post(apiEndpoint)
+	debug.Info("request ", string(body))
+	req := jiraClient.Client.R().SetResult(&UpdateIssueResp{}).SetBody(string(body))
+
+	err = addQueryOptions(req, request.Query)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := req.Put(apiEndpoint)
 	if err != nil {
 		return nil, err
 	}

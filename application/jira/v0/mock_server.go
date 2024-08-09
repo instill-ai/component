@@ -24,6 +24,7 @@ func router(middlewares ...func(http.Handler) http.Handler) http.Handler {
 	})
 	r.Get("/rest/agile/1.0/issue/{issueIdOrKey:[a-zA-z0-9-]+}", mockGetIssue)
 	r.Get("/rest/agile/1.0/sprint/{sprintId}", mockGetSprint)
+	r.Put("/rest/agile/1.0/sprint/{sprintId}", mockUpdateSprint)
 	r.Post("/rest/agile/1.0/sprint", mockCreateSprint)
 
 	r.Get("/rest/agile/1.0/board/{boardId}/issue", mockListIssues)           // list all issues
@@ -37,7 +38,7 @@ func router(middlewares ...func(http.Handler) http.Handler) http.Handler {
 	r.Get("/rest/api/2/search", mockIssuesSearch)
 	r.Post("/rest/api/2/search", mockIssuesSearch)
 
-	r.Post("/rest/api/2/issue/{issue-key}", mockUpdateIssue)
+	r.Put("/rest/api/2/issue/{issue-key}", mockUpdateIssue)
 	r.Post("/rest/api/2/issue", mockCreateIssue)
 	return r
 }
