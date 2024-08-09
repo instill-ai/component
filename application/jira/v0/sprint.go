@@ -51,15 +51,10 @@ func extractSprintOutput(sprint *Sprint) *GetSprintOutput {
 	}
 }
 func (jiraClient *Client) getSprintTask(_ context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug DebugSession
-	debug.SessionStart("getSprintTask", StaticVerboseLevel)
-	defer debug.SessionEnd()
-
 	var opt GetSprintInput
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err
 	}
-	debug.AddMessage(fmt.Sprintf("GetSprintInput: %+v", opt))
 
 	apiEndpoint := fmt.Sprintf("rest/agile/1.0/sprint/%v", opt.SprintID)
 	req := jiraClient.Client.R().SetResult(&Sprint{})
@@ -70,9 +65,6 @@ func (jiraClient *Client) getSprintTask(_ context.Context, props *structpb.Struc
 			err.Error(), errmsg.Message(err),
 		)
 	}
-	debug.AddMessage("GET", apiEndpoint)
-	debug.AddMapMessage("QueryParam", resp.Request.QueryParam)
-	debug.AddMessage("Status", resp.Status())
 
 	issue, ok := resp.Result().(*Sprint)
 	if !ok {
@@ -105,16 +97,11 @@ type ListSprintsOutput struct {
 }
 
 func (jiraClient *Client) listSprintsTask(_ context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug DebugSession
-	debug.SessionStart("listSprintsTask", StaticVerboseLevel)
-	defer debug.SessionEnd()
 
 	var opt ListSprintInput
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err
 	}
-	debug.AddMapMessage("props", props)
-	debug.AddMapMessage("opt", opt)
 	apiEndpoint := fmt.Sprintf("rest/agile/1.0/board/%d/sprint", opt.BoardID)
 
 	req := jiraClient.Client.R().SetResult(&ListSprintsResp{})
@@ -131,9 +118,6 @@ func (jiraClient *Client) listSprintsTask(_ context.Context, props *structpb.Str
 			err.Error(), errmsg.Message(err),
 		)
 	}
-	debug.AddMessage("GET", apiEndpoint)
-	debug.AddMapMessage("QueryParam", resp.Request.QueryParam)
-	debug.AddMessage("Status", resp.Status())
 
 	issues, ok := resp.Result().(*ListSprintsResp)
 	if !ok {

@@ -24,14 +24,18 @@ import (
 	"github.com/instill-ai/component/application/jira/v0"
 	"github.com/instill-ai/component/application/numbers/v0"
 	"github.com/instill-ai/component/application/slack/v0"
-	"github.com/instill-ai/component/application/website/v0"
 	"github.com/instill-ai/component/application/whatsapp/v0"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/data/artifact/v0"
 	"github.com/instill-ai/component/data/bigquery/v0"
+	"github.com/instill-ai/component/data/elasticsearch/v0"
 	"github.com/instill-ai/component/data/googlecloudstorage/v0"
+	"github.com/instill-ai/component/data/mongodb/v0"
 	"github.com/instill-ai/component/data/pinecone/v0"
+	"github.com/instill-ai/component/data/qdrant/v0"
 	"github.com/instill-ai/component/data/redis/v0"
 	"github.com/instill-ai/component/data/sql/v0"
+	"github.com/instill-ai/component/data/weaviate/v0"
 	"github.com/instill-ai/component/generic/restapi/v0"
 	"github.com/instill-ai/component/operator/audio/v0"
 	"github.com/instill-ai/component/operator/base64/v0"
@@ -40,6 +44,7 @@ import (
 	"github.com/instill-ai/component/operator/json/v0"
 	"github.com/instill-ai/component/operator/text/v0"
 	"github.com/instill-ai/component/operator/video/v0"
+	"github.com/instill-ai/component/operator/web/v0"
 
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -136,9 +141,14 @@ func Init(
 		compStore.Import(googlesearch.Init(baseComp))
 		compStore.Import(pinecone.Init(baseComp))
 		compStore.Import(redis.Init(baseComp))
+		compStore.Import(elasticsearch.Init(baseComp))
+		compStore.Import(mongodb.Init(baseComp))
 		compStore.Import(sql.Init(baseComp))
+		compStore.Import(weaviate.Init(baseComp))
+		compStore.Import(qdrant.Init(baseComp))
+		compStore.Import(artifact.Init(baseComp))
 		compStore.Import(restapi.Init(baseComp))
-		compStore.Import(website.Init(baseComp))
+		compStore.Import(web.Init(baseComp))
 		compStore.Import(slack.Init(baseComp))
 		compStore.Import(email.Init(baseComp))
 		compStore.Import(jira.Init(baseComp))

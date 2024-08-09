@@ -23,21 +23,20 @@ func (m *MockSQLClient) Queryx(query string, args ...interface{}) (*sqlx.Rows, e
 	defer mockDB.Close()
 
 	sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
-	mock.ExpectQuery("SELECT (.+) FROM users WHERE id = (.+) AND name = (.+) AND email = (.+) LIMIT (.+) OFFSET (.+)").
+	mock.ExpectQuery("SELECT (.+) FROM (users) WHERE (id = (.+) AND name = (.+) AND email = (.+) LIMIT (.+) OFFSET (.+))").
 		WithArgs("1", "john", "john@example.com", 1, 0).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "email"}).AddRow("1", "john", "john@example.com"))
 
 	return sqlxDB.Queryx("SELECT id, name, email FROM users WHERE id = ? AND name = ? AND email = ? LIMIT ? OFFSET ?", "1", "john", "john@example.com", 1, 0)
 }
 
-func (m *MockSQLClient) NamedExec(query string, _ interface{}) (sql.Result, error) {
-	switch {
-	case strings.Contains(query, "INSERT"):
-		mockDB, mock, _ := sqlmock.New()
-		defer mockDB.Close()
+func (m *MockSQLClient) NamedExec(query string, arg interface{}) (sql.Result, error) {
+	mockDB, mock, _ := sqlmock.New()
+	sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
+	defer mockDB.Close()
 
-		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
-		arg := map[string]interface{}{
+	if strings.Contains(query, "INSERT") {
+		insertArg := map[string]interface{}{
 			"id":   "1",
 			"name": "John Doe",
 		}
@@ -45,13 +44,18 @@ func (m *MockSQLClient) NamedExec(query string, _ interface{}) (sql.Result, erro
 		mock.ExpectExec("INSERT INTO users \\(id, name\\) VALUES \\(\\?, \\?\\)").
 			WithArgs("1", "John Doe").WillReturnResult(sqlmock.NewResult(1, 1))
 
-		return sqlxDB.NamedExec("INSERT INTO users (id, name) VALUES (:id, :name)", arg)
-	case strings.Contains(query, "DELETE"):
-		mockDB, mock, _ := sqlmock.New()
-		defer mockDB.Close()
+		return sqlxDB.NamedExec("INSERT INTO users (id, name) VALUES (:id, :name)", insertArg)
+	} else if strings.Contains(query, "INSERT INTO usersMany") {
+		insertManyArg := []map[string]interface{}{
+			{"id": "1", "name": "John Doe"},
+		}
 
-		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
-		arg := map[string]interface{}{
+		mock.ExpectExec("INSERT INTO usersMany \\(id, name\\) VALUES \\(\\?, \\?\\), \\(\\?, \\?\\)").
+			WithArgs("1", "John Doe", "2", "Jane Doe").WillReturnResult(sqlmock.NewResult(1, 1))
+
+		return sqlxDB.NamedExec("INSERT INTO usersMany (id, name) VALUES (:id, :name), (:id, :name)", insertManyArg)
+	} else if strings.Contains(query, "DELETE") {
+		deleteArg := map[string]interface{}{
 			"id":   "1",
 			"name": "john",
 		}
@@ -59,13 +63,9 @@ func (m *MockSQLClient) NamedExec(query string, _ interface{}) (sql.Result, erro
 		mock.ExpectExec("DELETE FROM users WHERE id = \\? AND name = \\?").
 			WithArgs("1", "john").WillReturnResult(sqlmock.NewResult(1, 1))
 
-		return sqlxDB.NamedExec("DELETE FROM users WHERE id = :id AND name = :name", arg)
-	case strings.Contains(query, "UPDATE"):
-		mockDB, mock, _ := sqlmock.New()
-		defer mockDB.Close()
-
-		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
-		arg := map[string]interface{}{
+		return sqlxDB.NamedExec("DELETE FROM users WHERE id = :id AND name = :name", deleteArg)
+	} else if strings.Contains(query, "UPDATE") {
+		updateArg := map[string]interface{}{
 			"id":   "1",
 			"name": "John Doe Updated",
 		}
@@ -73,13 +73,9 @@ func (m *MockSQLClient) NamedExec(query string, _ interface{}) (sql.Result, erro
 		mock.ExpectExec("UPDATE users SET id = \\?, name = \\? WHERE id = \\? AND name = \\?").
 			WithArgs("1", "John Doe Updated", "1", "John Doe Updated").WillReturnResult(sqlmock.NewResult(1, 1))
 
-		return sqlxDB.NamedExec("UPDATE users SET id = :id, name = :name WHERE id = :id AND name = :name", arg)
-	case strings.Contains(query, "CREATE"):
-		mockDB, mock, _ := sqlmock.New()
-		defer mockDB.Close()
-
-		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
-		arg := map[string]interface{}{
+		return sqlxDB.NamedExec("UPDATE users SET id = :id, name = :name WHERE id = :id AND name = :name", updateArg)
+	} else if strings.Contains(query, "CREATE") {
+		createArg := map[string]interface{}{
 			"id":   "INT",
 			"name": "VARCHAR(255)",
 		}
@@ -87,39 +83,33 @@ func (m *MockSQLClient) NamedExec(query string, _ interface{}) (sql.Result, erro
 		mock.ExpectExec("CREATE TABLE users \\(id INT, name VARCHAR\\(255\\)\\)").
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
-		return sqlxDB.NamedExec("CREATE TABLE users (id INT, name VARCHAR(255))", arg)
-	case strings.Contains(query, "DROP"):
-		mockDB, mock, _ := sqlmock.New()
-		defer mockDB.Close()
-
-		sqlxDB := sqlx.NewDb(mockDB, "sqlmock")
-		arg := map[string]interface{}{}
+		return sqlxDB.NamedExec("CREATE TABLE users (id INT, name VARCHAR(255))", createArg)
+	} else if strings.Contains(query, "DROP") {
+		dropArg := map[string]interface{}{}
 
 		mock.ExpectExec("DROP TABLE users").
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
-		return sqlxDB.NamedExec("DROP TABLE users", arg)
+		return sqlxDB.NamedExec("DROP TABLE users", dropArg)
 	}
 
 	return nil, nil
 }
 
-func TestInsertUser(t *testing.T) {
+func TestComponent_ExecuteInsertTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
-		name      string
-		tableName string
-		input     InsertInput
-		wantResp  InsertOutput
-		wantErr   string
+		name     string
+		input    InsertInput
+		wantResp InsertOutput
+		wantErr  string
 	}{
 		{
-			name:      "insert user",
-			tableName: "users",
+			name: "insert user",
 			input: InsertInput{
 				Data: map[string]any{
 					"id":   "1",
@@ -128,7 +118,7 @@ func TestInsertUser(t *testing.T) {
 				TableName: "users",
 			},
 			wantResp: InsertOutput{
-				Status: "Successfully inserted rows",
+				Status: "Successfully inserted 1 row",
 			},
 		},
 	}
@@ -168,22 +158,81 @@ func TestInsertUser(t *testing.T) {
 	}
 }
 
-func TestUpdateUser(t *testing.T) {
+func TestComponent_ExecuteInsertManyTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
-		name      string
-		tableName string
-		input     UpdateInput
-		wantResp  UpdateOutput
-		wantErr   string
+		name     string
+		input    InsertManyInput
+		wantResp InsertManyOutput
+		wantErr  string
 	}{
 		{
-			name:      "update user",
-			tableName: "users",
+			name: "insert many users",
+			input: InsertManyInput{
+				ArrayData: []map[string]any{
+					{"id": "1", "name": "John Doe"},
+				},
+				TableName: "users",
+			},
+			wantResp: InsertManyOutput{
+				Status: "Successfully inserted 1 rows",
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			setup, err := structpb.NewStruct(map[string]any{
+				"user":     "test_user",
+				"password": "test_pass",
+				"name":     "test_db",
+				"host":     "localhost",
+				"port":     "3306",
+				"region":   "us-west-2",
+			})
+			c.Assert(err, qt.IsNil)
+
+			e := &execution{
+				ComponentExecution: base.ComponentExecution{Component: connector, SystemVariables: nil, Setup: setup, Task: TaskInsertMany},
+				client:             &MockSQLClient{},
+			}
+			e.execute = e.insertMany
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+
+			if tc.wantErr != "" {
+				c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				return
+			}
+
+			wantJSON, err := json.Marshal(tc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
+		})
+	}
+}
+
+func TestComponent_ExecuteUpdateTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	connector := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    UpdateInput
+		wantResp UpdateOutput
+		wantErr  string
+	}{
+		{
+			name: "update user",
 			input: UpdateInput{
 				Filter: "id = 1 AND name = 'John Doe'",
 				UpdateData: map[string]any{
@@ -193,7 +242,7 @@ func TestUpdateUser(t *testing.T) {
 				TableName: "users",
 			},
 			wantResp: UpdateOutput{
-				Status: "Successfully updated rows",
+				Status: "Successfully updated 1 rows",
 			},
 		},
 	}
@@ -233,29 +282,27 @@ func TestUpdateUser(t *testing.T) {
 	}
 }
 
-func TestSelectUser(t *testing.T) {
+func TestComponent_ExecuteSelectTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
-		name      string
-		tableName string
-		input     SelectInput
-		wantResp  SelectOutput
-		wantErr   string
+		name     string
+		input    SelectInput
+		wantResp SelectOutput
+		wantErr  string
 	}{
 		{
-			name:      "select users",
-			tableName: "users",
+			name: "select users",
 			input: SelectInput{
 				Filter:    "id = 1 AND name = 'john' AND email = 'john@example.com'",
 				TableName: "users",
 				Limit:     0,
 			},
 			wantResp: SelectOutput{
-				Status: "Successfully selected rows",
+				Status: "Successfully selected 1 rows",
 				Rows: []map[string]any{
 					{"id": "1", "name": "john", "email": "john@example.com"},
 				},
@@ -298,28 +345,26 @@ func TestSelectUser(t *testing.T) {
 	}
 }
 
-func TestDeleteUser(t *testing.T) {
+func TestComponent_ExecuteDeleteTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
-		name      string
-		tableName string
-		input     DeleteInput
-		wantResp  DeleteOutput
-		wantErr   string
+		name     string
+		input    DeleteInput
+		wantResp DeleteOutput
+		wantErr  string
 	}{
 		{
-			name:      "delete user",
-			tableName: "users",
+			name: "delete user",
 			input: DeleteInput{
 				Filter:    "id = 1 AND name = 'john'",
 				TableName: "users",
 			},
 			wantResp: DeleteOutput{
-				Status: "Successfully deleted rows",
+				Status: "Successfully deleted 1 rows",
 			},
 		},
 	}
@@ -359,18 +404,17 @@ func TestDeleteUser(t *testing.T) {
 	}
 }
 
-func TestCreateTable(t *testing.T) {
+func TestComponent_ExecuteCreateTableTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
 	connector := Init(bc)
 
 	testcases := []struct {
-		name      string
-		tableName string
-		input     CreateTableInput
-		wantResp  CreateTableOutput
-		wantErr   string
+		name     string
+		input    CreateTableInput
+		wantResp CreateTableOutput
+		wantErr  string
 	}{
 		{
 			name: "create table",
@@ -382,7 +426,7 @@ func TestCreateTable(t *testing.T) {
 				TableName: "users",
 			},
 			wantResp: CreateTableOutput{
-				Status: "Successfully created table",
+				Status: "Successfully created 1 table",
 			},
 		},
 	}
@@ -422,7 +466,7 @@ func TestCreateTable(t *testing.T) {
 	}
 }
 
-func TestDropTable(t *testing.T) {
+func TestComponent_ExecuteDropTableTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
@@ -440,7 +484,7 @@ func TestDropTable(t *testing.T) {
 				TableName: "users",
 			},
 			wantResp: DropTableOutput{
-				Status: "Successfully dropped table",
+				Status: "Successfully dropped 1 table",
 			},
 		},
 	}

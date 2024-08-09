@@ -14,6 +14,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/util"
 
 	commonPB "github.com/instill-ai/protogen-go/common/task/v1alpha"
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
@@ -57,20 +58,6 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	return &execution{ComponentExecution: x}, nil
 }
 
-func getHeaderAuthorization(vars map[string]any) string {
-	if v, ok := vars["__PIPELINE_HEADER_AUTHORIZATION"]; ok {
-		return v.(string)
-	}
-	return ""
-}
-func getInstillUserUID(vars map[string]any) string {
-	return vars["__PIPELINE_USER_UID"].(string)
-}
-
-func getInstillRequesterUID(vars map[string]any) string {
-	return vars["__PIPELINE_REQUESTER_UID"].(string)
-}
-
 func getModelServerURL(vars map[string]any) string {
 	if v, ok := vars["__MODEL_BACKEND"]; ok {
 		return v.(string)
@@ -80,12 +67,12 @@ func getModelServerURL(vars map[string]any) string {
 
 func getRequestMetadata(vars map[string]any) metadata.MD {
 	md := metadata.Pairs(
-		"Authorization", getHeaderAuthorization(vars),
-		"Instill-User-Uid", getInstillUserUID(vars),
+		"Authorization", util.GetHeaderAuthorization(vars),
+		"Instill-User-Uid", util.GetInstillUserUID(vars),
 		"Instill-Auth-Type", "user",
 	)
 
-	if requester := getInstillRequesterUID(vars); requester != "" {
+	if requester := util.GetInstillRequesterUID(vars); requester != "" {
 		md.Set("Instill-Requester-Uid", requester)
 	}
 

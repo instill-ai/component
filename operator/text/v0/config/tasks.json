@@ -46,10 +46,89 @@
       "type": "integer"
     },
     "model-name": {
-      "description": "The name of the model used for tokenization.",
+      "description": "The name of the model used for token chunk strategy.",
       "enum": [
         "gpt-4",
         "gpt-3.5-turbo",
+        "text-davinci-003",
+        "text-davinci-002",
+        "text-davinci-001",
+        "text-curie-001",
+        "text-babbage-001",
+        "text-ada-001",
+        "davinci",
+        "curie",
+        "babbage",
+        "ada",
+        "code-davinci-002",
+        "code-davinci-001",
+        "code-cushman-002",
+        "code-cushman-001",
+        "davinci-codex",
+        "cushman-codex",
+        "text-davinci-edit-001",
+        "code-davinci-edit-001",
+        "text-embedding-ada-002",
+        "text-similarity-davinci-001",
+        "text-similarity-curie-001",
+        "text-similarity-babbage-001",
+        "text-similarity-ada-001",
+        "text-search-davinci-doc-001",
+        "text-search-curie-doc-001",
+        "text-search-babbage-doc-001",
+        "text-search-ada-doc-001",
+        "code-search-babbage-code-001",
+        "code-search-ada-code-001",
+        "gpt2"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 2,
+      "instillUpstreamTypes": [
+        "value",
+        "reference",
+        "template"
+      ],
+      "title": "Model",
+      "type": "string"
+    },
+    "encoding-name": {
+      "description": "The name of the encoding used to convert text into tokens.",
+      "enum": [
+        "o200k_base",
+        "cl100k_base",
+        "p50k_base",
+        "r50k_base",
+        "p50k_edit"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillUIOrder": 3,
+      "instillUpstreamTypes": [
+        "value",
+        "reference"
+      ],
+      "title": "Encoding Name",
+      "type": "string"
+    },
+    "tokenization-model": {
+      "description": "The name of the model used for tokenization",
+      "enum": [
+        "gpt-4o",
+        "gpt-4",
+        "gpt-3.5-turbo",
+        "command-r-plus",
+        "command-r",
+        "command",
+        "command-nightly",
+        "command-light",
+        "command-light-nightly",
+        "embed-english-v3.0",
+        "embed-multilingual-v3.0",
+        "embed-english-light-v3.0",
+        "embed-multilingual-light-v3.0",
         "text-davinci-003",
         "text-davinci-002",
         "text-davinci-001",
@@ -100,7 +179,8 @@
       "description": "Input",
       "instillEditOnNodeFields": [
         "text",
-        "strategy"
+        "strategy",
+        "tokenization"
       ],
       "instillUIOrder": 0,
       "properties": {
@@ -198,9 +278,6 @@
                     "chunk-overlap": {
                       "$ref": "#/$defs/chunk-overlap"
                     },
-                    "model-name": {
-                      "$ref": "#/$defs/model-name"
-                    },
                     "separators": {
                       "default": [],
                       "description": "A list of strings representing the separators used to split the text.",
@@ -242,7 +319,6 @@
                     "chunk-method",
                     "chunk-size",
                     "chunk-overlap",
-                    "model-name",
                     "separators",
                     "keep-separator"
                   ],
@@ -259,9 +335,6 @@
                     },
                     "chunk-overlap": {
                       "$ref": "#/$defs/chunk-overlap"
-                    },
-                    "model-name": {
-                      "$ref": "#/$defs/model-name"
                     },
                     "code-blocks": {
                       "description": "A flag indicating whether code blocks should be treated as a single unit",
@@ -285,7 +358,6 @@
                     "chunk-method",
                     "chunk-size",
                     "chunk-overlap",
-                    "model-name",
                     "code-blocks"
                   ],
                   "type": "object"
@@ -293,16 +365,80 @@
               ]
             }
           },
-          "title": "Strategy",
+          "title": "Chunk Strategy",
           "required": [
             "setting"
+          ],
+          "type": "object"
+        },
+        "tokenization": {
+          "description": "Tokenization choices",
+          "instillUIOrder": 2,
+          "properties": {
+            "choice": {
+              "description": "Tokenization choice",
+              "additionalProperties": true,
+              "type": "object",
+              "required": [
+                "tokenization-method"
+              ],
+              "oneOf": [
+                {
+                  "properties": {
+                    "tokenization-method": {
+                      "const": "Model",
+                      "type": "string",
+                      "title": "Choose by Model Name"
+                    },
+                    "model": {
+                      "$ref": "#/$defs/tokenization-model"
+                    }
+                  },
+                  "required": [
+                    "tokenization-method",
+                    "model"
+                  ],
+                  "instillEditOnNodeFields": [
+                    "tokenization-method",
+                    "model"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "tokenization-method": {
+                      "const": "Encoding",
+                      "type": "string",
+                      "title": "Choose by Encoding Name"
+                    },
+                    "encoding": {
+                      "$ref": "#/$defs/encoding-name"
+                    }
+                  },
+                  "required": [
+                    "tokenization-method",
+                    "encoding"
+                  ],
+                  "instillEditOnNodeFields": [
+                    "tokenization-method",
+                    "encoding"
+                  ],
+                  "type": "object"
+                }
+              ]
+            }
+          },
+          "title": "Tokenization",
+          "required": [
+            "choice"
           ],
           "type": "object"
         }
       },
       "required": [
         "text",
-        "strategy"
+        "strategy",
+        "tokenization"
       ],
       "title": "Input",
       "type": "object"
