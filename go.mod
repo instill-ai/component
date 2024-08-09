@@ -20,6 +20,7 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.3
 	github.com/gage-technologies/mistral-go v1.1.0
 	github.com/go-chi/chi/v5 v5.1.0
+	github.com/go-openapi/strfmt v0.23.0
 	github.com/go-resty/resty/v2 v2.12.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/gocolly/colly/v2 v2.1.0
@@ -29,7 +30,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/h2non/filetype v1.1.3
 	github.com/iFaceless/godub v0.0.0-20200728093528-a30bb4d1a0f1
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240729181905-96683859f44c
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240808093014-75008c807ea7
 	github.com/instill-ai/x v0.4.0-alpha
 	github.com/itchyny/gojq v0.12.14
 	github.com/jmoiron/sqlx v1.4.0
@@ -50,6 +51,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/tmc/langchaingo v0.1.10
 	github.com/u2takey/ffmpeg-go v0.5.0
+	github.com/weaviate/weaviate v1.26.0-rc.1
 	go.mongodb.org/mongo-driver v1.16.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/image v0.18.0
@@ -76,7 +78,6 @@ require (
 	github.com/go-openapi/jsonreference v0.19.6 // indirect
 	github.com/go-openapi/loads v0.21.1 // indirect
 	github.com/go-openapi/spec v0.20.4 // indirect
-	github.com/go-openapi/strfmt v0.23.0 // indirect
 	github.com/go-openapi/swag v0.22.4 // indirect
 	github.com/go-openapi/validate v0.21.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
@@ -85,7 +86,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	github.com/weaviate/weaviate v1.26.0-rc.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect

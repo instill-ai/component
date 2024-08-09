@@ -85,6 +85,10 @@ func GetContentTypeFromBase64(base64String string) (string, error) {
 	return parts[0], nil
 }
 
+func GetFileBase64Content(base64String string) string {
+	return strings.SplitN(base64String, ",", 2)[1]
+}
+
 func TransformContentTypeToFileExtension(contentType string) string {
 	// https://gist.github.com/AshHeskes/6038140
 	// We can integrate more Content-Type to file extension mappings in the future
@@ -103,4 +107,26 @@ func TransformContentTypeToFileExtension(contentType string) string {
 		return "pdf"
 	}
 	return ""
+}
+
+func StripProtocolFromURL(url string) string {
+	index := strings.Index(url, "://")
+	if index > 0 {
+		return url[strings.Index(url, "://")+3:]
+	}
+	return url
+}
+
+func GetHeaderAuthorization(vars map[string]any) string {
+	if v, ok := vars["__PIPELINE_HEADER_AUTHORIZATION"]; ok {
+		return v.(string)
+	}
+	return ""
+}
+func GetInstillUserUID(vars map[string]any) string {
+	return vars["__PIPELINE_USER_UID"].(string)
+}
+
+func GetInstillRequesterUID(vars map[string]any) string {
+	return vars["__PIPELINE_REQUESTER_UID"].(string)
 }

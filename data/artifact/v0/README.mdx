@@ -8,7 +8,7 @@ description: "Learn about how to set up a VDP Artifact component https://github.
 The Artifact component is a data component that allows users to manipulate and smart search files and data in the artifact store.
 It can carry out the following tasks:
 
-- [Upload Files](#upload-files)
+- [Upload File](#upload-file)
 - [Get Files Metadata](#get-files-metadata)
 - [Get Chunks Metadata](#get-chunks-metadata)
 - [Get File In Markdown](#get-file-in-markdown)
@@ -16,7 +16,9 @@ It can carry out the following tasks:
 - [Search Chunks](#search-chunks)
 - [Query](#query)
 
-
+To use Artifact Component, you will need to set up the OpenAI API key. 
+You can do this by setting the `OPENAI_API_KEY` environment variable.
+Please refer to [configuring-the-embedding-feature](https://www.instill.tech/docs/core/configuration#configuring-the-embedding-feature)
 
 ## Release Stage
 
@@ -34,21 +36,22 @@ The component configuration is defined and maintained [here](https://github.com/
 
 ## Supported Tasks
 
-### Upload Files
+### Upload File
 
 Upload and process the files into chunks into Catalog
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_UPLOAD_FILES` |
-| Option (required) | `option` | object | Choose to upload the files to existing catalog or create a new catalog |
+| Task ID (required) | `task` | string | `TASK_UPLOAD_FILE` |
+| Options (required) | `options` | object | Choose to upload the files to existing catalog or create a new catalog |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Files | `files` | array[object] | Result of uploading files into catalog |
+| File | `file` | object | Result of uploading files into catalog |
+| Status | `status` | boolean | The status of trigger file processing, if succeeded, return true |
 
 
 
@@ -87,7 +90,7 @@ get the metadata of the chunks from a file in the catalog
 | Task ID (required) | `task` | string | `TASK_GET_CHUNKS_METADATA` |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
 | Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
-| File UID | `file-uid` | string | The unique identifier of the file |
+| File UID (required) | `file-uid` | string | The unique identifier of the file |
 
 
 
@@ -110,13 +113,16 @@ get the file content in markdown format
 | Task ID (required) | `task` | string | `TASK_GET_FILE_IN_MARKDOWN` |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
 | Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
-| File UID | `file-uid` | string | The unique identifier of the file |
+| File UID (required) | `file-uid` | string | The unique identifier of the file |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| File Texts (optional) | `file-texts` | array[object] | File content in markdown format |
+| File UID | `original-file-uid` | string | The unique identifier of the file |
+| Content | `content` | string | The content of the file in markdown format |
+| Create Time | `create-time` | string | TThe creation time of the source file in ISO 8601 format |
+| Update Time | `update-time` | string | The update time of the source file in ISO 8601 format |
 
 
 
@@ -157,7 +163,7 @@ search the chunks in the catalog
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
 | Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | Text Prompt (required) | `text-prompt` | string | The prompt string to search the chunks |
-| Top K | `top-k` | integer | The number of top chunks to return |
+| Top K | `top-k` | integer | The number of top chunks to return. The range is from 1~20, and default is 5 |
 
 
 
@@ -181,7 +187,7 @@ Reply the questions based on the files in the catalog
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
 | Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | Question (required) | `question` | string | The question to reply |
-| Top K | `top-k` | integer | The number of top answers to return |
+| Top K | `top-k` | integer | The number of top answers to return. The range is from 1~20, and default is 5 |
 
 
 

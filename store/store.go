@@ -26,6 +26,7 @@ import (
 	"github.com/instill-ai/component/application/slack/v0"
 	"github.com/instill-ai/component/application/website/v0"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/data/artifact/v0"
 	"github.com/instill-ai/component/data/bigquery/v0"
 	"github.com/instill-ai/component/data/elasticsearch/v0"
 	"github.com/instill-ai/component/data/googlecloudstorage/v0"
@@ -144,6 +145,7 @@ func Init(
 		compStore.Import(sql.Init(baseComp))
 		compStore.Import(weaviate.Init(baseComp))
 		compStore.Import(qdrant.Init(baseComp))
+		compStore.Import(artifact.Init(baseComp))
 		compStore.Import(restapi.Init(baseComp))
 		compStore.Import(website.Init(baseComp))
 		compStore.Import(slack.Init(baseComp))

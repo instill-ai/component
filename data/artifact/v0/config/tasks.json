@@ -1,19 +1,16 @@
 {
   "$defs": {
-    "files": {
+    "file": {
       "description": "base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML files to be uploaded into catalog",
       "instillUIOrder": 2,
       "instillAcceptFormats": [
-        "array:*/*"
+        "*/*"
       ],
       "instillUpstreamTypes": [
         "reference"
       ],
-      "items": {
-        "type": "string"
-      },
-      "title": "Files",
-      "type": "array"
+      "title": "File",
+      "type": "string"
     },
     "file-item": {
       "properties": {
@@ -54,10 +51,10 @@
         },
         "size": {
           "description": "The size of the file in bytes",
-          "instillFormat": "string",
+          "instillFormat": "number",
           "instillUIOrder": 5,
           "title": "Size",
-          "type": "string"
+          "type": "number"
         },
         "catalog-id": {
           "description": "The ID of the catalog that you upload files",
@@ -68,12 +65,6 @@
         }
       },
       "required": [
-        "file-uid",
-        "file-name",
-        "file-type",
-        "create-time",
-        "update-time",
-        "size",
         "catalog-id"
       ],
       "title": "File",
@@ -133,25 +124,19 @@
       "type": "string"
     }
   },
-  "TASK_UPLOAD_FILES": {
+  "TASK_UPLOAD_FILE": {
     "instillShortDescription": "Upload and process the files into chunks into Catalog",
     "input": {
       "description": "Input",
       "instillUIOrder": 0,
       "properties": {
-        "option": {
+        "options": {
           "description": "Choose to upload the files to existing catalog or create a new catalog",
-          "instillUIOrder": 0,
-          "title": "Option",
-          "additionalProperties": false,
-          "instillAcceptFormats": [
-            "object"
-          ],
+          "title": "Options",
+          "additionalProperties": true,
           "type": "object",
+          "instillUIOrder": 0,
           "required": [
-            "option"
-          ],
-          "instillEditOnNodeFields": [
             "option"
           ],
           "oneOf": [
@@ -178,21 +163,36 @@
                   "title": "Catalog ID",
                   "type": "string"
                 },
-                "files": {
-                  "$ref": "#/$defs/files"
+                "file": {
+                  "$ref": "#/$defs/file"
+                },
+                "file-name": {
+                  "description": "The name of the file",
+                  "instillUIOrder": 2,
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference"
+                  ],
+                  "title": "File Name",
+                  "type": "string"
                 }
               },
               "required": [
                 "option",
                 "namespace",
                 "catalog-id",
-                "files"
+                "file",
+                "file-name"
               ],
               "instillEditOnNodeFields": [
                 "option",
                 "namespace",
                 "catalog-id",
-                "files"
+                "file",
+                "file-name"
               ],
               "type": "object"
             },
@@ -219,12 +219,25 @@
                   "title": "Catalog ID",
                   "type": "string"
                 },
-                "files": {
-                  "$ref": "#/$defs/files"
+                "file": {
+                  "$ref": "#/$defs/file"
+                },
+                "file-name": {
+                  "description": "The name of the file",
+                  "instillUIOrder": 3,
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference"
+                  ],
+                  "title": "File Name",
+                  "type": "string"
                 },
                 "description": {
                   "description": "Description of the catalog",
-                  "instillUIOrder": 3,
+                  "instillUIOrder": 4,
                   "instillAcceptFormats": [
                     "string"
                   ],
@@ -238,7 +251,7 @@
                 },
                 "tags": {
                   "description": "Tags for the catalog",
-                  "instillUIOrder": 4,
+                  "instillUIOrder": 5,
                   "instillAcceptFormats": [
                     "array:string"
                   ],
@@ -257,13 +270,15 @@
                 "option",
                 "namespace",
                 "catalog-id",
-                "files"
+                "file",
+                "file-name"
               ],
               "instillEditOnNodeFields": [
                 "option",
                 "namespace",
                 "catalog-id",
-                "files",
+                "file",
+                "file-name",
                 "description",
                 "tags"
               ],
@@ -273,7 +288,7 @@
         }
       },
       "required": [
-        "option"
+        "options"
       ],
       "title": "Input",
       "type": "object"
@@ -281,19 +296,36 @@
     "output": {
       "description": "Result of uploading files into catalog",
       "properties": {
-        "files": {
+        "file": {
           "description": "Result of uploading files into catalog",
           "instillUIOrder": 0,
-          "items": {
-            "$ref": "#/$defs/file-item"
+          "properties": {
+            "$ref": "#/$defs/file-item/properties"
           },
-          "instillFormat": "array:object",
-          "title": "Files",
-          "type": "array"
+          "required": [
+            "file-uid",
+            "file-name",
+            "file-type",
+            "create-time",
+            "update-time",
+            "size",
+            "catalog-id"
+          ],
+          "instillFormat": "object",
+          "title": "File",
+          "type": "object"
+        },
+        "status": {
+          "description": "The status of trigger file processing, if succeeded, return true",
+          "instillUIOrder": 1,
+          "instillFormat": "boolean",
+          "title": "Status",
+          "type": "boolean"
         }
       },
       "required": [
-        "files"
+        "file",
+        "status"
       ],
       "title": "Output",
       "type": "object"
@@ -391,11 +423,13 @@
       },
       "required": [
         "namespace",
-        "catalog-id"
+        "catalog-id",
+        "file-uid"
       ],
       "instillEditOnNodeFields": [
         "namespace",
-        "catalog-id"
+        "catalog-id",
+        "file-uid"
       ],
       "title": "Input",
       "type": "object"
@@ -520,11 +554,13 @@
       },
       "required": [
         "namespace",
-        "catalog-id"
+        "catalog-id",
+        "file-uid"
       ],
       "instillEditOnNodeFields": [
         "namespace",
-        "catalog-id"
+        "catalog-id",
+        "file-uid"
       ],
       "title": "Input",
       "type": "object"
@@ -533,55 +569,41 @@
       "description": "File content in markdown format",
       "instillUIOrder": 1,
       "properties": {
-        "file-texts": {
-          "description": "File content in markdown format",
+        "original-file-uid": {
+          "description": "The unique identifier of the file",
+          "instillFormat": "string",
           "instillUIOrder": 0,
-          "items": {
-            "properties": {
-              "original-file-uid": {
-                "description": "The unique identifier of the file",
-                "instillFormat": "string",
-                "instillUIOrder": 0,
-                "title": "File UID",
-                "type": "string"
-              },
-              "content": {
-                "description": "The content of the file in markdown format",
-                "instillFormat": "string",
-                "instillUIOrder": 1,
-                "title": "Content",
-                "type": "string"
-              },
-              "create-time": {
-                "description": "TThe creation time of the source file in ISO 8601 format",
-                "instillFormat": "string",
-                "instillUIOrder": 2,
-                "title": "Create Time",
-                "type": "string"
-              },
-              "update-time": {
-                "description": "The update time of the source file in ISO 8601 format",
-                "instillFormat": "string",
-                "instillUIOrder": 3,
-                "title": "Update Time",
-                "type": "string"
-              }
-            },
-            "required": [
-              "original-file-uid",
-              "content",
-              "create-time",
-              "update-time"
-            ],
-            "title": "File Text",
-            "type": "object"
-          },
-          "instillFormat": "array:object",
-          "title": "File Texts",
-          "type": "array"
+          "title": "File UID",
+          "type": "string"
+        },
+        "content": {
+          "description": "The content of the file in markdown format",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "create-time": {
+          "description": "TThe creation time of the source file in ISO 8601 format",
+          "instillFormat": "string",
+          "instillUIOrder": 2,
+          "title": "Create Time",
+          "type": "string"
+        },
+        "update-time": {
+          "description": "The update time of the source file in ISO 8601 format",
+          "instillFormat": "string",
+          "instillUIOrder": 3,
+          "title": "Update Time",
+          "type": "string"
         }
       },
-      "required": [],
+      "required": [
+        "original-file-uid",
+        "content",
+        "create-time",
+        "update-time"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -621,12 +643,11 @@
           "type": "string"
         },
         "top-k": {
-          "description": "The number of top chunks to return",
+          "description": "The number of top chunks to return. The range is from 1~20, and default is 5",
           "default": 5,
           "instillUIOrder": 2,
           "instillAcceptFormats": [
-            "integer",
-            "number"
+            "integer"
           ],
           "instillUpstreamTypes": [
             "value",
@@ -705,12 +726,11 @@
           "type": "string"
         },
         "top-k": {
-          "description": "The number of top answers to return",
+          "description": "The number of top answers to return. The range is from 1~20, and default is 5",
           "default": 5,
           "instillUIOrder": 2,
           "instillAcceptFormats": [
-            "integer",
-            "number"
+            "integer"
           ],
           "instillUpstreamTypes": [
             "value",
