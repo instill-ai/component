@@ -41,7 +41,7 @@
       "type": "object"
     }
   },
-  "TASK_SCRAPE_WEBSITE": {
+  "TASK_CRAWL_WEBSITE": {
     "instillShortDescription": "Scrape the website contents.",
     "input": {
       "instillUIOrder": 0,

@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	taskScrapeWebsite = "TASK_SCRAPE_WEBSITE"
+	taskCrawlWebsite  = "TASK_CRAWL_WEBSITE"
 	taskScrapeSitemap = "TASK_SCRAPE_SITEMAP"
 	taskScrapeWebpage = "TASK_SCRAPE_WEBPAGE"
 )
@@ -58,7 +58,7 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	}
 
 	switch x.Task {
-	case taskScrapeWebsite:
+	case taskCrawlWebsite:
 		e.execute = e.Scrape
 	case taskScrapeSitemap:
 		// To make mocking easier
