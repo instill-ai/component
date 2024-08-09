@@ -162,7 +162,8 @@
             "starcoder-7b",
             "phi-3-vision-128k-instruct",
             "qwen2-72b-instruct",
-            "mythomax-l2-13b"
+            "mythomax-l2-13b",
+            "yi-large"
           ],
           "example": "llama-v3p1-8b-instruct",
           "description": "The OSS model to be used",
@@ -190,7 +191,8 @@
               "starcoder-7b",
               "phi-3-vision-128k-instruct",
               "qwen2-72b-instruct",
-              "mythomax-l2-13b"
+              "mythomax-l2-13b",
+              "yi-large"
             ],
             "targets": [
               "setup.api-key"
