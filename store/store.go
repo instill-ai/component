@@ -132,7 +132,8 @@ func Init(
 		{
 			// FireworksAI
 			conn := fireworksai.Init(baseComp)
-			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			// Secret doesn't allow hyphens
+			conn = conn.WithInstillCredentials(secrets["fireworksai"])
 			compStore.Import(conn)
 		}
 
