@@ -32,6 +32,16 @@ func TestOperator(t *testing.T) {
 							}}},
 						},
 					}}},
+					"tokenization": {Kind: &structpb.Value_StructValue{StructValue: &structpb.Struct{
+						Fields: map[string]*structpb.Value{
+							"choice": {Kind: &structpb.Value_StructValue{StructValue: &structpb.Struct{
+								Fields: map[string]*structpb.Value{
+									"tokenization-method": {Kind: &structpb.Value_StringValue{StringValue: "Model"}},
+									"model":               {Kind: &structpb.Value_StringValue{StringValue: "gpt-3.5-turbo"}},
+								},
+							}}},
+						},
+					}}},
 				},
 			},
 		},
@@ -53,6 +63,10 @@ func TestOperator(t *testing.T) {
 				Component: component,
 				Task:      tc.task,
 			})
+			if tc.name == "error case" {
+				c.Assert(err, quicktest.ErrorMatches, "FAKE_TASK task is not supported.")
+				return
+			}
 			c.Assert(err, quicktest.IsNil)
 			c.Assert(execution, quicktest.IsNotNil)
 
@@ -60,11 +74,6 @@ func TestOperator(t *testing.T) {
 
 			outputs, err := execution.Execute(ctx, input)
 
-			if tc.name == "error case" {
-				c.Assert(err, quicktest.ErrorMatches, "not supported task: FAKE_TASK")
-				c.Assert(outputs, quicktest.IsNil)
-				return
-			}
 			c.Assert(err, quicktest.IsNil)
 			c.Assert(outputs, quicktest.HasLen, 1)
 		})

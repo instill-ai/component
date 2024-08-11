@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"strings"
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
@@ -52,10 +53,24 @@ func ScrapeWebpageTitle(doc *goquery.Document) string {
 	return strings.TrimSpace(title)
 }
 
+// ScrapeWebpageDescription extracts and returns the description from the *goquery.Document.
+// If the description does not exist, an empty string is returned
+// The description is found by looking for the meta tag with the name "description"
+// and returning the content attribute
+func ScrapeWebpageDescription(doc *goquery.Document) string {
+	// Find the meta tag with the description name
+	description, ok := doc.Find(`meta[name="description"]`).Attr("content")
+	if !ok {
+		return ""
+	}
+	// Return the trimmed description
+	return strings.TrimSpace(description)
+}
+
 // ScrapeWebpageHTMLToMarkdown converts an HTML string to Markdown format
-func ScrapeWebpageHTMLToMarkdown(html string) (string, error) {
+func ScrapeWebpageHTMLToMarkdown(html, domain string) (string, error) {
 	// Initialize the markdown converter
-	converter := md.NewConverter("", true, nil)
+	converter := md.NewConverter(domain, true, nil)
 
 	// Convert the HTML to Markdown
 	markdown, err := converter.ConvertString(html)
@@ -64,6 +79,15 @@ func ScrapeWebpageHTMLToMarkdown(html string) (string, error) {
 	}
 
 	return markdown, nil
+}
+
+func GetDomainFromURL(urlStr string) (string, error) {
+	u, err := url.Parse(urlStr)
+
+	if err != nil {
+		return "", fmt.Errorf("error when parse url: %v", err)
+	}
+	return u.Host, nil
 }
 
 // DecodeBase64 takes a base64-encoded blob, trims the MIME type (if present)
@@ -85,6 +109,10 @@ func GetContentTypeFromBase64(base64String string) (string, error) {
 	return parts[0], nil
 }
 
+func GetFileBase64Content(base64String string) string {
+	return strings.SplitN(base64String, ",", 2)[1]
+}
+
 func TransformContentTypeToFileExtension(contentType string) string {
 	// https://gist.github.com/AshHeskes/6038140
 	// We can integrate more Content-Type to file extension mappings in the future
@@ -103,4 +131,26 @@ func TransformContentTypeToFileExtension(contentType string) string {
 		return "pdf"
 	}
 	return ""
+}
+
+func StripProtocolFromURL(url string) string {
+	index := strings.Index(url, "://")
+	if index > 0 {
+		return url[strings.Index(url, "://")+3:]
+	}
+	return url
+}
+
+func GetHeaderAuthorization(vars map[string]any) string {
+	if v, ok := vars["__PIPELINE_HEADER_AUTHORIZATION"]; ok {
+		return v.(string)
+	}
+	return ""
+}
+func GetInstillUserUID(vars map[string]any) string {
+	return vars["__PIPELINE_USER_UID"].(string)
+}
+
+func GetInstillRequesterUID(vars map[string]any) string {
+	return vars["__PIPELINE_REQUESTER_UID"].(string)
 }

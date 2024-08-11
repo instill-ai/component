@@ -100,7 +100,13 @@ func scrapeSearchResults(searchResults *customsearch.Search, includeLinkText, in
 				if err != nil {
 					log.Printf("Error scraping HTML from %s: %v", item.Link, err)
 				}
-				linkText, err = util.ScrapeWebpageHTMLToMarkdown(linkHTML)
+
+				domain, err := util.GetDomainFromURL(item.Link)
+				if err != nil {
+					log.Printf("Error getting domain from %s: %v", item.Link, err)
+				}
+
+				linkText, err = util.ScrapeWebpageHTMLToMarkdown(linkHTML, domain)
 				if err != nil {
 					log.Printf("Error scraping text from %s: %v", item.Link, err)
 				}

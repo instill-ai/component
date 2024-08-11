@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 
+	"github.com/instill-ai/component/internal/util"
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
 )
 
@@ -26,21 +27,13 @@ func initModelPublicServiceClient(serverURL string) (modelPB.ModelPublicServiceC
 		clientDialOpts = grpc.WithTransportCredentials(insecure.NewCredentials())
 	}
 
-	serverURL = stripProtocolFromURL(serverURL)
+	serverURL = util.StripProtocolFromURL(serverURL)
 	clientConn, err := grpc.NewClient(serverURL, clientDialOpts, grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(maxPayloadSize), grpc.MaxCallSendMsgSize(maxPayloadSize)))
 	if err != nil {
 		return nil, nil
 	}
 
 	return modelPB.NewModelPublicServiceClient(clientConn), clientConn
-}
-
-func stripProtocolFromURL(url string) string {
-	index := strings.Index(url, "://")
-	if index > 0 {
-		return url[strings.Index(url, "://")+3:]
-	}
-	return url
 }
 
 func trigger(gRPCClient modelPB.ModelPublicServiceClient, vars map[string]any, nsID string, modelID string, version string, taskInputs []*modelPB.TaskInput) ([]*modelPB.TaskOutput, error) {

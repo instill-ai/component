@@ -14,7 +14,8 @@ import (
 )
 
 const (
-	taskChunkText string = "TASK_CHUNK_TEXT"
+	taskChunkText     string = "TASK_CHUNK_TEXT"
+	pythonInterpreter string = "/opt/venv/bin/python"
 )
 
 var (
@@ -24,6 +25,13 @@ var (
 	tasksJSON []byte
 	once      sync.Once
 	comp      *component
+
+	//go:embed python/cohere_tokenizer.py
+	cohereTokenizer string
+	//go:embed python/huggingface_tokenizer.py
+	huggingfaceTokenizer string
+	//go:embed python/mistral_tokenizer.py
+	mistralTokenizer string
 )
 
 // Operator is the derived operator
@@ -34,6 +42,7 @@ type component struct {
 // Execution is the derived execution
 type execution struct {
 	base.ComponentExecution
+	execute func(*structpb.Struct) (*structpb.Struct, error)
 }
 
 // Init initializes the operator
@@ -51,34 +60,30 @@ func Init(bc base.Component) *component {
 // CreateExecution initializes a connector executor that can be used in a
 // pipeline trigger.
 func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
-	return &execution{ComponentExecution: x}, nil
+	e := &execution{ComponentExecution: x}
+
+	switch x.Task {
+	case taskChunkText:
+		e.execute = chunkText
+	default:
+		return nil, fmt.Errorf(x.Task + " task is not supported.")
+	}
+
+	return e, nil
 }
 
 // Execute executes the derived execution
 func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-	outputs := []*structpb.Struct{}
+	outputs := make([]*structpb.Struct, len(inputs))
 
-	for _, input := range inputs {
-		switch e.Task {
-		case taskChunkText:
-			inputStruct := ChunkTextInput{}
-			err := base.ConvertFromStructpb(input, &inputStruct)
-			if err != nil {
-				return nil, err
-			}
-
-			outputStruct, err := chunkText(inputStruct)
-			if err != nil {
-				return nil, err
-			}
-			output, err := base.ConvertToStructpb(outputStruct)
-			if err != nil {
-				return nil, err
-			}
-			outputs = append(outputs, output)
-		default:
-			return nil, fmt.Errorf("not supported task: %s", e.Task)
+	for i, input := range inputs {
+		output, err := e.execute(input)
+		if err != nil {
+			return nil, err
 		}
+
+		outputs[i] = output
 	}
+
 	return outputs, nil
 }
