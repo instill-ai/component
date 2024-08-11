@@ -230,7 +230,7 @@ func mockListIssues(res http.ResponseWriter, req *http.Request) {
 	for _, issue := range fakeIssues {
 		prefix := strings.Split(issue.Key, "-")[0]
 		if board.Name != "" && prefix != board.Name {
-			fmt.Println("prefix", prefix, "board.Name", board.Name)
+			// fmt.Println("prefix", prefix, "board.Name", board.Name)
 			continue
 		}
 		if jql != "" {
