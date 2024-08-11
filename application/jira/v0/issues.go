@@ -285,11 +285,11 @@ func (jiraClient *Client) nextGenIssuesSearch(_ context.Context, opt nextGenSear
 }
 
 type AdditionalFields struct {
-	Add    string `json:"add,omitempty"`
-	Copy   string `json:"copy,omitempty"`
-	Set    string `json:"set,omitempty"`
-	Edit   string `json:"edit,omitempty"`
-	Remove string `json:"remove,omitempty"`
+	Add    any `json:"add,omitempty"`
+	Copy   any `json:"copy,omitempty"`
+	Set    any `json:"set,omitempty"`
+	Edit   any `json:"edit,omitempty"`
+	Remove any `json:"remove,omitempty"`
 }
 type IssueType struct {
 	IssueType       string `json:"issue-type"`
@@ -399,11 +399,13 @@ func (jiraClient *Client) createIssueTask(ctx context.Context, props *structpb.S
 type UpdateField struct {
 	Action    string `json:"action"`
 	FieldName string `json:"field-name"`
-	Value     string `json:"value"`
+	Value     any    `json:"value"`
 }
+
 type Update struct {
 	UpdateType   string        `json:"update"`
 	UpdateFields []UpdateField `json:"update-fields"`
+	EpicKey      string        `json:"epic-key"`
 }
 type UpdateIssueInput struct {
 	IssueKey    string `json:"issue-key"`
@@ -427,7 +429,8 @@ type UpdateIssueOutput struct {
 	Issue
 }
 
-func (jiraClient *Client) updateIssueTask(_ context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+func (jiraClient *Client) updateIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+	var err error
 	var debug logger.Session
 	defer debug.SessionStart("UpdateIssueTask", logger.Develop).SessionEnd()
 
@@ -436,35 +439,124 @@ func (jiraClient *Client) updateIssueTask(_ context.Context, props *structpb.Str
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-	updateInfo := make(map[string][]AdditionalFields)
+	var (
+		updatedIssue *UpdateIssueResp
+		out          *structpb.Struct
+	)
 	if input.Update.UpdateType == "Custom Update" {
-		for _, field := range input.Update.UpdateFields {
-			if field.FieldName == "" {
+		updatedIssue, err = jiraClient.updateIssue(ctx, &input)
+		if err != nil {
+			return nil, err
+		}
+		out, err = base.ConvertToStructpb(UpdateIssueOutput{Issue: updatedIssue.Issue})
+	} else if input.Update.UpdateType == "Move Issue to Epic" {
+		err = jiraClient.moveIssueToEpic(ctx, input.IssueKey, input.Update.EpicKey)
+		if err != nil {
+			debug.Error("Error: ", err)
+			if !strings.Contains(errmsg.Message(err), "The request contains a next-gen issue") {
+				return nil, err
+			}
+			input.Update.UpdateType = "Custom Update"
+			// TODO: both api seems not working
+			input.Update.UpdateFields = append(input.Update.UpdateFields, UpdateField{
+				Action:    "set",
+				FieldName: "parent",
+				Value: map[string]string{
+					"key": input.Update.EpicKey,
+				},
+			})
+			debug.Info("Updating issue with parent key")
+			debug.Info("Input: ", input.Update.UpdateFields)
+			if _, err = jiraClient.updateIssue(ctx, &input); err != nil {
 				return nil, errmsg.AddMessage(
-					fmt.Errorf("field name is required"),
-					"field name is required",
+					fmt.Errorf("failed to update issue with parent key"),
+					"You can only move issues to epics.",
 				)
 			}
-			if updateInfo[field.FieldName] == nil {
-				updateInfo[field.FieldName] = []AdditionalFields{}
-			}
-			switch field.Action {
-			case "set":
-				updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Set: field.Value})
-			case "add":
-				updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Add: field.Value})
-			case "remove":
-				updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Remove: field.Value})
-			case "edit":
-				updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Edit: field.Value})
-			case "copy":
-				updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Copy: field.Value})
-			default:
-				return nil, errmsg.AddMessage(
-					fmt.Errorf("invalid action"),
-					fmt.Sprintf("%s is an invalid action", field.Action),
-				)
-			}
+		}
+		// get issue
+		getIssueInput, err := base.ConvertToStructpb(GetIssueInput{IssueKey: input.IssueKey})
+		if err != nil {
+			return nil, err
+		}
+		getIssueOutput, err := jiraClient.getIssueTask(ctx, getIssueInput)
+		if err != nil {
+			return nil, err
+		}
+		var newIssue Issue
+		err = base.ConvertFromStructpb(getIssueOutput, &newIssue)
+		if err != nil {
+			return nil, err
+		}
+		out, err = base.ConvertToStructpb(UpdateIssueOutput{Issue: newIssue})
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, errmsg.AddMessage(
+			fmt.Errorf("invalid update type"),
+			fmt.Sprintf("%s is an invalid update type", input.Update.UpdateType),
+		)
+	}
+	debug.Info("Updated Issue: ", out)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (jiraClient *Client) moveIssueToEpic(_ context.Context, issueKey, epicKey string) error {
+	apiEndpoint := fmt.Sprintf("/rest/agile/1.0/epic/%s/issue", epicKey)
+	req := jiraClient.Client.R().SetBody(fmt.Sprintf(`{"issues":["%s"]}`, issueKey))
+	resp, err := req.Post(apiEndpoint)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode() != 204 {
+		return errmsg.AddMessage(
+			fmt.Errorf("failed to move issue to epic"),
+			fmt.Sprintf(`failed to move issue "%s" to epic "%s"`, issueKey, epicKey),
+		)
+	}
+	return nil
+}
+
+func (jiraClient *Client) updateIssue(_ context.Context, input *UpdateIssueInput) (*UpdateIssueResp, error) {
+	var debug logger.Session
+	defer debug.SessionStart("UpdateIssue", logger.Develop).SessionEnd()
+	if input.Update.UpdateType != "Custom Update" {
+		return nil, errmsg.AddMessage(
+			fmt.Errorf("invalid update type"),
+			fmt.Sprintf("%s is an invalid update type", input.Update.UpdateType),
+		)
+	}
+	updateInfo := make(map[string][]AdditionalFields)
+	for _, field := range input.Update.UpdateFields {
+		if field.FieldName == "" {
+			return nil, errmsg.AddMessage(
+				fmt.Errorf("field name is required"),
+				"field name is required",
+			)
+		}
+		if updateInfo[field.FieldName] == nil {
+			updateInfo[field.FieldName] = []AdditionalFields{}
+		}
+		switch field.Action {
+		case "set":
+			updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Set: field.Value})
+		case "add":
+			updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Add: field.Value})
+		case "remove":
+			updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Remove: field.Value})
+		case "edit":
+			updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Edit: field.Value})
+		case "copy":
+			updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Copy: field.Value})
+		default:
+			return nil, errmsg.AddMessage(
+				fmt.Errorf("invalid action"),
+				fmt.Sprintf("%s is an invalid action", field.Action),
+			)
 		}
 	}
 	apiEndpoint := "rest/api/2/issue/" + input.IssueKey
@@ -487,9 +579,8 @@ func (jiraClient *Client) updateIssueTask(_ context.Context, props *structpb.Str
 	if err != nil {
 		return nil, err
 	}
-	debug.Info("request ", string(body))
+	debug.Info("Request Body: ", string(body))
 	req := jiraClient.Client.R().SetResult(&UpdateIssueResp{}).SetBody(string(body))
-
 	err = addQueryOptions(req, request.Query)
 	if err != nil {
 		return nil, err
@@ -507,10 +598,5 @@ func (jiraClient *Client) updateIssueTask(_ context.Context, props *structpb.Str
 			fmt.Sprintf("failed to convert %v to `Update Issue` Output", resp.Result()),
 		)
 	}
-	debug.Info("Updated Issue: ", updatedIssue)
-	out, err := base.ConvertToStructpb(UpdateIssueOutput{Issue: updatedIssue.Issue})
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+	return updatedIssue, nil
 }

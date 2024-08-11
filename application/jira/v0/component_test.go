@@ -590,6 +590,10 @@ func TestComponent_UpdateIssueTask(t *testing.T) {
 			name:  "400 - Bad Request",
 			input: UpdateIssueInput{
 				IssueKey: "INVALID",
+				Update: Update{
+					UpdateType:   "Custom Update",
+					UpdateFields: []UpdateField{},
+				},
 			},
 			wantErr: "unsuccessful HTTP response.*",
 		},
