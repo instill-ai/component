@@ -96,15 +96,20 @@ type Engine struct {
 	DBEngine string `json:"engine"`
 }
 
-// newClient being setup here in the Execute since engine is part of the input, therefore, every new inputs will create a new connection
-func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+// newClient being setup here in the Execute since engine is part of the input,
+// therefore, every new inputs will create a new connection
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	for i, input := range inputs {
 		var inputStruct Engine
 		err := base.ConvertFromStructpb(input, &inputStruct)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		if e.client == nil {
@@ -113,11 +118,11 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 		output, err := e.execute(input)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		outputs[i] = output
 	}
 
-	return outputs, nil
+	return out.Write(ctx, outputs)
 }

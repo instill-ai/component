@@ -78,7 +78,11 @@ func getURL(setup *structpb.Struct) string {
 	return setup.GetFields()["url"].GetStringValue()
 }
 
-func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 	req := newClient(e.Setup, e.GetLogger()).R()
 	outputs := []*structpb.Struct{}
 
@@ -89,7 +93,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			inputStruct := queryInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			// Each query request can contain only one of the parameters
@@ -103,20 +107,20 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			req.SetResult(&resp).SetBody(inputStruct.asRequest())
 
 			if _, err := req.Post(queryPath); err != nil {
-				return nil, httpclient.WrapURLError(err)
+				return httpclient.WrapURLError(err)
 			}
 
 			resp = resp.filterOutBelowThreshold(inputStruct.MinScore)
 
 			output, err = base.ConvertToStructpb(resp)
 			if err != nil {
-				return nil, err
+				return err
 			}
 		case taskUpsert:
 			v := upsertInput{}
 			err := base.ConvertFromStructpb(input, &v)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			resp := upsertResp{}
@@ -126,17 +130,17 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			})
 
 			if _, err := req.Post(upsertPath); err != nil {
-				return nil, httpclient.WrapURLError(err)
+				return httpclient.WrapURLError(err)
 			}
 
 			output, err = base.ConvertToStructpb(upsertOutput(resp))
 			if err != nil {
-				return nil, err
+				return err
 			}
 		}
 		outputs = append(outputs, output)
 	}
-	return outputs, nil
+	return out.Write(ctx, outputs)
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {

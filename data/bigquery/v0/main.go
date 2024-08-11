@@ -79,12 +79,16 @@ func getTableName(setup *structpb.Struct) string {
 	return setup.GetFields()["table-name"].GetStringValue()
 }
 
-func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 	outputs := []*structpb.Struct{}
 
 	client, err := NewClient(getJSONKey(e.Setup), getProjectID(e.Setup))
 	if err != nil || client == nil {
-		return nil, fmt.Errorf("error creating BigQuery client: %v", err)
+		return fmt.Errorf("error creating BigQuery client: %v", err)
 	}
 	defer client.Close()
 
@@ -97,15 +101,15 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 			tableRef := client.Dataset(datasetID).Table(tableName)
 			metaData, err := tableRef.Metadata(context.Background())
 			if err != nil {
-				return nil, err
+				return err
 			}
 			valueSaver, err := getDataSaver(input, metaData.Schema)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			err = insertDataToBigQuery(getProjectID(e.Setup), datasetID, tableName, valueSaver, client)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			output = &structpb.Struct{Fields: map[string]*structpb.Value{"status": {Kind: &structpb.Value_StringValue{StringValue: "success"}}}}
 		case taskRead:
@@ -118,23 +122,23 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 			}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputStruct, err := readDataFromBigQuery(inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 		default:
-			return nil, fmt.Errorf("unsupported task: %s", e.Task)
+			return fmt.Errorf("unsupported task: %s", e.Task)
 		}
 		outputs = append(outputs, output)
 	}
-	return outputs, nil
+	return out.Write(ctx, outputs)
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {

@@ -8,6 +8,8 @@ import (
 	_ "embed"
 
 	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/internal/mock"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -122,7 +124,21 @@ func TestExecutionWrapper_Execute(t *testing.T) {
 			pbin, err := structpb.NewStruct(tc.in)
 			c.Assert(err, qt.IsNil)
 
-			got, err := xw.Execute(ctx, []*structpb.Struct{pbin})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbin}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				if tc.wantErr != "" {
+					return nil
+				}
+				c.Assert(outputs, qt.HasLen, 1)
+				gotJSON, err := outputs[0].MarshalJSON()
+				c.Assert(err, qt.IsNil)
+				c.Check(gotJSON, qt.JSONEquals, tc.want)
+				return nil
+			})
+
+			err = xw.Execute(ctx, ir, ow)
 			if tc.wantErr != "" {
 				c.Check(err, qt.IsNotNil)
 				c.Check(err, qt.ErrorMatches, tc.wantErr)
@@ -130,11 +146,6 @@ func TestExecutionWrapper_Execute(t *testing.T) {
 			}
 
 			c.Check(err, qt.IsNil)
-			c.Assert(got, qt.HasLen, 1)
-
-			gotJSON, err := got[0].MarshalJSON()
-			c.Assert(err, qt.IsNil)
-			c.Check(gotJSON, qt.JSONEquals, tc.want)
 		})
 	}
 }
@@ -146,9 +157,9 @@ type testExec struct {
 	err error
 }
 
-func (e *testExec) Execute(_ context.Context, _ []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *testExec) Execute(ctx context.Context, ir InputReader, ow OutputWriter) error {
 	if e.out == nil {
-		return nil, e.err
+		return e.err
 	}
 
 	pbout := make([]*structpb.Struct, len(e.out))
@@ -160,7 +171,10 @@ func (e *testExec) Execute(_ context.Context, _ []*structpb.Struct) ([]*structpb
 		pbout[i] = pbo
 	}
 
-	return pbout, e.err
+	if err := ow.Write(ctx, pbout); err != nil {
+		return err
+	}
+	return e.err
 }
 
 type testComp struct {

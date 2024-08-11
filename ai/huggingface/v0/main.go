@@ -104,7 +104,11 @@ func wrapSliceInStruct(data []byte, key string) (*structpb.Struct, error) {
 	}, nil
 }
 
-func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 	client := newClient(e.Setup, e.GetLogger())
 	outputs := []*structpb.Struct{}
 
@@ -118,36 +122,36 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 		case textGenerationTask:
 			inputStruct := TextGenerationRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			resp := []TextGenerationResponse{}
 			req := client.R().SetBody(inputStruct).SetResult(&resp)
 			if _, err := post(req, path); err != nil {
-				return nil, err
+				return err
 			}
 
 			if len(resp) < 1 {
 				err := fmt.Errorf("invalid response")
-				return nil, errmsg.AddMessage(err, "Hugging Face didn't return any result")
+				return errmsg.AddMessage(err, "Hugging Face didn't return any result")
 			}
 
 			output, err := structpb.NewStruct(map[string]any{"generated-text": resp[0].GeneratedText})
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		case textToImageTask:
 			inputStruct := TextToImageRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			req := client.R().SetBody(inputStruct)
 			resp, err := post(req, path)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			rawImg := base64.StdEncoding.EncodeToString(resp.Body())
@@ -155,71 +159,71 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				"image": fmt.Sprintf("data:image/jpeg;base64,%s", rawImg),
 			})
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		case fillMaskTask:
 			inputStruct := FillMaskRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			req := client.R().SetBody(inputStruct)
 			resp, err := post(req, path)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			output, err := wrapSliceInStruct(resp.Body(), "results")
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		case summarizationTask:
 			inputStruct := SummarizationRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			resp := []SummarizationResponse{}
 			req := client.R().SetBody(inputStruct).SetResult(&resp)
 			if _, err := post(req, path); err != nil {
-				return nil, err
+				return err
 			}
 
 			if len(resp) < 1 {
 				err := fmt.Errorf("invalid response")
-				return nil, errmsg.AddMessage(err, "Hugging Face didn't return any result")
+				return errmsg.AddMessage(err, "Hugging Face didn't return any result")
 			}
 
 			output, err := structpb.NewStruct(map[string]any{"summary-text": resp[0].SummaryText})
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		case textClassificationTask:
 			inputStruct := TextClassificationRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			var resp [][]any
 			req := client.R().SetBody(inputStruct).SetResult(&resp)
 			if _, err := post(req, path); err != nil {
-				return nil, err
+				return err
 			}
 
 			if len(resp) < 1 {
 				err := fmt.Errorf("invalid response")
-				return nil, errmsg.AddMessage(err, "Hugging Face didn't return any result")
+				return errmsg.AddMessage(err, "Hugging Face didn't return any result")
 			}
 
 			results, err := structpb.NewList(resp[0])
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			output := &structpb.Struct{
@@ -232,58 +236,58 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 		case tokenClassificationTask:
 			inputStruct := TokenClassificationRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 			req := client.R().SetBody(inputStruct)
 			resp, err := post(req, path)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			output, err := wrapSliceInStruct(resp.Body(), "results")
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		case translationTask:
 			inputStruct := TranslationRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			resp := []TranslationResponse{}
 			req := client.R().SetBody(inputStruct).SetResult(&resp)
 			if _, err := post(req, path); err != nil {
-				return nil, err
+				return err
 			}
 
 			if len(resp) < 1 {
 				err := fmt.Errorf("invalid response")
-				return nil, errmsg.AddMessage(err, "Hugging Face didn't return any result")
+				return errmsg.AddMessage(err, "Hugging Face didn't return any result")
 			}
 
 			output, err := structpb.NewStruct(map[string]any{"translation-text": resp[0].TranslationText})
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		case zeroShotClassificationTask:
 			inputStruct := ZeroShotRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			req := client.R().SetBody(inputStruct)
 			resp, err := post(req, path)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			var output structpb.Struct
 			if err = protojson.Unmarshal(resp.Body(), &output); err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, &output)
@@ -324,113 +328,113 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 		case questionAnsweringTask:
 			inputStruct := QuestionAnsweringRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 			req := client.R().SetBody(inputStruct)
 			resp, err := post(req, path)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			var output structpb.Struct
 			if err = protojson.Unmarshal(resp.Body(), &output); err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, &output)
 		case tableQuestionAnsweringTask:
 			inputStruct := TableQuestionAnsweringRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			req := client.R().SetBody(inputStruct)
 			resp, err := post(req, path)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			var output structpb.Struct
 			if err = protojson.Unmarshal(resp.Body(), &output); err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, &output)
 		case sentenceSimilarityTask:
 			inputStruct := SentenceSimilarityRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			req := client.R().SetBody(inputStruct)
 			resp, err := post(req, path)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			output, err := wrapSliceInStruct(resp.Body(), "scores")
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		case conversationalTask:
 			inputStruct := ConversationalRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			resp := ConversationalResponse{}
 			req := client.R().SetBody(inputStruct).SetResult(&resp)
 
 			if _, err := post(req, path); err != nil {
-				return nil, err
+				return err
 			}
 
 			out, err := base.ConvertToStructpb(resp)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputs = append(outputs, out)
 
 		case imageClassificationTask:
 			inputStruct := ImageRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(inputStruct.Image))
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			req := client.R().SetBody(b)
 			resp, err := post(req, path)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			output, err := wrapSliceInStruct(resp.Body(), "classes")
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		case imageSegmentationTask:
 			inputStruct := ImageRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(inputStruct.Image))
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			resp := []ImageSegmentationResponse{}
 			req := client.R().SetBody(b).SetResult(&resp)
 			if _, err := post(req, path); err != nil {
-				return nil, err
+				return err
 			}
 
 			segments := &structpb.ListValue{
@@ -445,7 +449,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				})
 
 				if err != nil {
-					return nil, err
+					return err
 				}
 
 				segments.Values[i] = structpb.NewStructValue(segment)
@@ -461,110 +465,110 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 		case objectDetectionTask:
 			inputStruct := ImageRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(inputStruct.Image))
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			req := client.R().SetBody(b)
 			resp, err := post(req, path)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			output, err := wrapSliceInStruct(resp.Body(), "objects")
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		case imageToTextTask:
 			inputStruct := ImageRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(inputStruct.Image))
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			resp := []ImageToTextResponse{}
 			req := client.R().SetBody(b).SetResult(&resp)
 			if _, err := post(req, path); err != nil {
-				return nil, err
+				return err
 			}
 
 			if len(resp) < 1 {
 				err := fmt.Errorf("invalid response")
-				return nil, errmsg.AddMessage(err, "Hugging Face didn't return any result")
+				return errmsg.AddMessage(err, "Hugging Face didn't return any result")
 			}
 
 			output, err := structpb.NewStruct(map[string]any{"text": resp[0].GeneratedText})
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		case speechRecognitionTask:
 			inputStruct := AudioRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(inputStruct.Audio))
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			resp := SpeechRecognitionResponse{}
 			req := client.R().SetBody(b).SetResult(&resp)
 
 			if _, err := post(req, path); err != nil {
-				return nil, err
+				return err
 			}
 
 			out, err := base.ConvertToStructpb(resp)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputs = append(outputs, out)
 
 		case audioClassificationTask:
 			inputStruct := AudioRequest{}
 			if err := base.ConvertFromStructpb(input, &inputStruct); err != nil {
-				return nil, err
+				return err
 			}
 
 			b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(inputStruct.Audio))
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			req := client.R().SetBody(b)
 			resp, err := post(req, path)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			output, err := wrapSliceInStruct(resp.Body(), "classes")
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		default:
-			return nil, errmsg.AddMessage(
+			return errmsg.AddMessage(
 				fmt.Errorf("not supported task: %s", e.Task),
 				fmt.Sprintf("%s task is not supported.", e.Task),
 			)
 		}
 	}
 
-	return outputs, nil
+	return out.Write(ctx, outputs)
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {

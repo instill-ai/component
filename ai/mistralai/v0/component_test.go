@@ -9,6 +9,7 @@ import (
 	qt "github.com/frankban/quicktest"
 	mistralSDK "github.com/gage-technologies/mistral-go"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -133,12 +134,19 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(chatTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			wantJSON, err := json.Marshal(chatTc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			return nil
+		})
+
+		err = e.Execute(ctx, ir, ow)
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(chatTc.wantResp)
-		c.Assert(err, qt.IsNil)
-		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
 
 	embeddingTc := struct {
@@ -163,12 +171,19 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(embeddingTc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			wantJSON, err := json.Marshal(embeddingTc.wantResp)
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			return nil
+		})
+
+		err = e.Execute(ctx, ir, ow)
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(embeddingTc.wantResp)
-		c.Assert(err, qt.IsNil)
-		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
 
 }
