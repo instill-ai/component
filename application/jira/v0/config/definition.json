@@ -8,8 +8,7 @@
     "TASK_CREATE_ISSUE",
     "TASK_UPDATE_ISSUE",
     "TASK_CREATE_SPRINT",
-    "TASK_UPDATE_SPRINT",
-    "TASK_RANK_EPIC"
+    "TASK_UPDATE_SPRINT"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/jira",
   "icon": "assets/jira.svg",
