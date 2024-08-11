@@ -11,7 +11,7 @@
     "TASK_SEND_INTERACTIVE_CALL_TO_ACTION_URL_BUTTON_MESSAGE"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/whatsapp",
-  "icon": "assets/WhatsApp.svg",
+  "icon": "assets/whatsapp.svg",
   "id": "whatsapp",
   "public": true,
   "title": "WhatsApp",
