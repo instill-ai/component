@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/go-resty/resty/v2"
@@ -414,7 +415,8 @@ type UpdateIssueInput struct {
 }
 type UpdateIssueRequset struct {
 	Body struct {
-		Update map[string][]AdditionalFields `json:"update"`
+		Update map[string][]AdditionalFields `json:"update,omitempty"`
+		Fields map[string]interface{}        `json:"fields,omitempty"`
 	}
 	Query struct {
 		NotifyUsers bool `json:"notify-users" api:"notifyUsers"`
@@ -457,7 +459,6 @@ func (jiraClient *Client) updateIssueTask(ctx context.Context, props *structpb.S
 				return nil, err
 			}
 			input.Update.UpdateType = "Custom Update"
-			// TODO: both api seems not working
 			input.Update.UpdateFields = append(input.Update.UpdateFields, UpdateField{
 				Action:    "set",
 				FieldName: "parent",
@@ -468,6 +469,7 @@ func (jiraClient *Client) updateIssueTask(ctx context.Context, props *structpb.S
 			debug.Info("Updating issue with parent key")
 			debug.Info("Input: ", input.Update.UpdateFields)
 			if _, err = jiraClient.updateIssue(ctx, &input); err != nil {
+				debug.Error("updateIssue err: ", err)
 				return nil, errmsg.AddMessage(
 					fmt.Errorf("failed to update issue with parent key"),
 					"You can only move issues to epics.",
@@ -531,6 +533,7 @@ func (jiraClient *Client) updateIssue(_ context.Context, input *UpdateIssueInput
 		)
 	}
 	updateInfo := make(map[string][]AdditionalFields)
+	fieldsInfo := make(map[string]interface{})
 	for _, field := range input.Update.UpdateFields {
 		if field.FieldName == "" {
 			return nil, errmsg.AddMessage(
@@ -543,7 +546,12 @@ func (jiraClient *Client) updateIssue(_ context.Context, input *UpdateIssueInput
 		}
 		switch field.Action {
 		case "set":
-			updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Set: field.Value})
+			if v := reflect.ValueOf(field.Value); v.Kind() != reflect.Slice || v.Len() <= 1 {
+				fieldsInfo[field.FieldName] = field.Value
+				delete(updateInfo, field.FieldName)
+			} else {
+				updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Set: field.Value})
+			}
 		case "add":
 			updateInfo[field.FieldName] = append(updateInfo[field.FieldName], AdditionalFields{Add: field.Value})
 		case "remove":
@@ -560,11 +568,14 @@ func (jiraClient *Client) updateIssue(_ context.Context, input *UpdateIssueInput
 		}
 	}
 	apiEndpoint := "rest/api/2/issue/" + input.IssueKey
+	debug.Info("apiEndpoint: ", apiEndpoint)
 	request := UpdateIssueRequset{
 		Body: struct {
-			Update map[string][]AdditionalFields `json:"update"`
+			Update map[string][]AdditionalFields `json:"update,omitempty"`
+			Fields map[string]interface{}        `json:"fields,omitempty"`
 		}{
 			Update: updateInfo,
+			Fields: fieldsInfo,
 		},
 		Query: struct {
 			NotifyUsers bool `json:"notify-users" api:"notifyUsers"`

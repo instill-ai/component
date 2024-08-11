@@ -11,6 +11,7 @@ import (
 type MockUpdateIssueRequset struct {
 	IssueKey    string                        `json:"issue-key"`
 	Update      map[string][]AdditionalFields `json:"update"`
+	Fields      map[string]interface{}        `json:"fields"`
 	NotifyUsers bool                          `json:"notify-users" api:"notifyUsers"`
 	ReturnIssue bool                          `json:"return-issue" api:"returnIssue"`
 }
@@ -23,7 +24,7 @@ type MockUpdateIssueResp struct {
 // UpdateIssue updates an issue in Jira.
 func mockUpdateIssue(res http.ResponseWriter, req *http.Request) {
 	var debug logger.Session
-	defer debug.SessionStart("UpdateIssue", logger.Develop).SessionEnd()
+	defer debug.SessionStart("mock UpdateIssue", logger.Develop).SessionEnd()
 
 	var request MockUpdateIssueRequset
 	err := json.NewDecoder(req.Body).Decode(&request)
@@ -53,22 +54,40 @@ func mockUpdateIssue(res http.ResponseWriter, req *http.Request) {
 	returnIssue := opt.Get("returnIssue")
 	for key, fields := range request.Update {
 		for _, field := range fields {
+			debug.Info("field", field)
 			if field.Set != "" {
 				issue.Fields[key] = field.Set
 			}
 		}
 	}
+	for key, field := range request.Fields {
+		if field != "" {
+			issue.Fields[key] = field
+		}
+	}
+	newIssue := Issue{
+		ID:          issue.ID,
+		Key:         issue.Key,
+		Self:        issue.Self,
+		Fields:      issue.Fields,
+		Description: issue.Fields["description"].(string),
+		IssueType:   issue.Fields["issuetype"].(map[string]interface{})["name"].(string),
+		Summary:     issue.Fields["summary"].(string),
+		Status:      issue.Fields["status"].(map[string]interface{})["name"].(string),
+	}
+	for issue := range fakeIssues {
+		if fakeIssues[issue].ID == newIssue.ID {
+			fakeIssues[issue] = FakeIssue{
+				ID:     newIssue.ID,
+				Key:    newIssue.Key,
+				Self:   newIssue.Self,
+				Fields: newIssue.Fields,
+			}
+			break
+		}
+	}
 	resp := MockUpdateIssueResp{
-		Issue: Issue{
-			ID:          issue.ID,
-			Key:         issue.Key,
-			Self:        issue.Self,
-			Fields:      issue.Fields,
-			Description: issue.Fields["description"].(string),
-			IssueType:   issue.Fields["issuetype"].(map[string]interface{})["name"].(string),
-			Summary:     issue.Fields["summary"].(string),
-			Status:      issue.Fields["status"].(map[string]interface{})["name"].(string),
-		},
+		Issue:       newIssue,
 		NotifyUsers: notifyUsers == "true",
 		ReturnIssue: returnIssue == "true",
 	}
