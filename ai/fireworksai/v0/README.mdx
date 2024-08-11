@@ -1,0 +1,95 @@
+---
+title: "Fireworks AI"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP Fireworks AI component https://github.com/instill-ai/instill-core"
+---
+
+The Fireworks AI component is an AI component that allows users to connect the AI models served on the Fireworks AI Platform.
+It can carry out the following tasks:
+
+- [Text Generation Chat](#text-generation-chat)
+- [Text Embeddings](#text-embeddings)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/ai/fireworksai/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| API Key (required) | `api-key` | string | Fill in your Fireworks AI API key. To find your keys, visit the Fireworks AI API Keys page. |
+
+
+
+
+## Supported Tasks
+
+### Text Generation Chat
+
+Provide text outputs in response to text inputs.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_GENERATION_CHAT` |
+| Model Name (required) | `model` | string | The OSS model to be used |
+| Prompt (required) | `prompt` | string | The prompt text |
+| System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is set using a generic message as "You are a helpful assistant." |
+| Prompt Images | `prompt-images` | array[string] | The prompt images (Note: According to Fireworks AI documentation on 2024-07-24, the total number of images included in a single API request should not exceed 30, and all the images should be smaller than 5MB in size) |
+| Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\} |
+| Seed | `seed` | integer | The seed |
+| Temperature | `temperature` | number | The temperature for sampling |
+| Top K | `top-k` | integer | Integer to define the top tokens considered within the sample operation to create new text |
+| Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
+| Top P | `top-p` | number | Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p (default=0.5) |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Text | `text` | string | Model Output |
+| Usage (optional) | `usage` | object | Token usage on the Fireworks AI platform text generation models |
+
+
+
+
+
+
+### Text Embeddings
+
+Turn text into a vector of numbers that capture its meaning, unlocking use cases like semantic search.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_TEXT_EMBEDDINGS` |
+| Model Name (required) | `model` | string | The OSS embedding model to be used |
+| Text (required) | `text` | string | The text |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Embedding | `embedding` | array[number] | Embedding of the input text |
+| Usage (optional) | `usage` | object | Token usage on the Fireworks AI platform embedding models |
+
+
+
+
+
+
+
