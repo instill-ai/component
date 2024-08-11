@@ -9,7 +9,6 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"github.com/instill-ai/x/errmsg"
 	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -352,10 +351,6 @@ func convertCreateIssueRequest(issue *CreateIssueInput) *CreateIssueRequset {
 }
 
 func (jiraClient *Client) createIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("CreateIssueTask", logger.Develop).SessionEnd()
-
-	debug.Info("props ", props)
 	var issue CreateIssueInput
 	if err := base.ConvertFromStructpb(props, &issue); err != nil {
 		return nil, err
@@ -380,7 +375,6 @@ func (jiraClient *Client) createIssueTask(ctx context.Context, props *structpb.S
 			fmt.Sprintf("failed to convert %v to `Create Issue` Output", resp.Result()),
 		)
 	}
-	debug.Info("Created Issue: ", createdResult)
 
 	getIssueInput, err := base.ConvertToStructpb(GetIssueInput{IssueKey: createdResult.Key, UpdateHistory: issue.UpdateHistory})
 	if err != nil {
@@ -433,10 +427,7 @@ type UpdateIssueOutput struct {
 
 func (jiraClient *Client) updateIssueTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var err error
-	var debug logger.Session
-	defer debug.SessionStart("UpdateIssueTask", logger.Develop).SessionEnd()
 
-	debug.Info("props ", props)
 	var input UpdateIssueInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
@@ -454,7 +445,6 @@ func (jiraClient *Client) updateIssueTask(ctx context.Context, props *structpb.S
 	} else if input.Update.UpdateType == "Move Issue to Epic" {
 		err = jiraClient.moveIssueToEpic(ctx, input.IssueKey, input.Update.EpicKey)
 		if err != nil {
-			debug.Error("Error: ", err)
 			if !strings.Contains(errmsg.Message(err), "The request contains a next-gen issue") {
 				return nil, err
 			}
@@ -466,10 +456,7 @@ func (jiraClient *Client) updateIssueTask(ctx context.Context, props *structpb.S
 					"key": input.Update.EpicKey,
 				},
 			})
-			debug.Info("Updating issue with parent key")
-			debug.Info("Input: ", input.Update.UpdateFields)
 			if _, err = jiraClient.updateIssue(ctx, &input); err != nil {
-				debug.Error("updateIssue err: ", err)
 				return nil, errmsg.AddMessage(
 					fmt.Errorf("failed to update issue with parent key"),
 					"You can only move issues to epics.",
@@ -500,7 +487,6 @@ func (jiraClient *Client) updateIssueTask(ctx context.Context, props *structpb.S
 			fmt.Sprintf("%s is an invalid update type", input.Update.UpdateType),
 		)
 	}
-	debug.Info("Updated Issue: ", out)
 	if err != nil {
 		return nil, err
 	}
@@ -524,8 +510,6 @@ func (jiraClient *Client) moveIssueToEpic(_ context.Context, issueKey, epicKey s
 }
 
 func (jiraClient *Client) updateIssue(_ context.Context, input *UpdateIssueInput) (*UpdateIssueResp, error) {
-	var debug logger.Session
-	defer debug.SessionStart("UpdateIssue", logger.Develop).SessionEnd()
 	if input.Update.UpdateType != "Custom Update" {
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("invalid update type"),
@@ -568,7 +552,6 @@ func (jiraClient *Client) updateIssue(_ context.Context, input *UpdateIssueInput
 		}
 	}
 	apiEndpoint := "rest/api/2/issue/" + input.IssueKey
-	debug.Info("apiEndpoint: ", apiEndpoint)
 	request := UpdateIssueRequset{
 		Body: struct {
 			Update map[string][]AdditionalFields `json:"update,omitempty"`
@@ -590,7 +573,6 @@ func (jiraClient *Client) updateIssue(_ context.Context, input *UpdateIssueInput
 	if err != nil {
 		return nil, err
 	}
-	debug.Info("Request Body: ", string(body))
 	req := jiraClient.Client.R().SetResult(&UpdateIssueResp{}).SetBody(string(body))
 	err = addQueryOptions(req, request.Query)
 	if err != nil {

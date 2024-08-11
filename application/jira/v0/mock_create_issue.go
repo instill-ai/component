@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/instill-ai/component/tools/logger"
 )
 
 type mockCreateIssueRequest struct {
@@ -27,9 +25,6 @@ type mockCreateIssueResponse struct {
 }
 
 func mockCreateIssue(res http.ResponseWriter, req *http.Request) {
-	var debug logger.Session
-	defer debug.SessionStart("MockCreateIssueTask", logger.Develop).SessionEnd()
-
 	var err error
 	if req.Method != http.MethodPost {
 		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
@@ -42,11 +37,7 @@ func mockCreateIssue(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	fields := body.Fields
-	update := body.Update
-	debug.Info("body: ", body)
-	debug.Info("Fields: ", fields)
-	debug.Info("Update: ", update)
-
+	// update := body.Update
 	project, ok := fields["project"].(map[string]interface{})["key"].(string)
 	if !ok {
 		http.Error(res, "Invalid project", http.StatusBadRequest)

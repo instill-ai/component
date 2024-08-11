@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/instill-ai/component/tools/logger"
 )
 
 type MockUpdateSprintRequset struct {
@@ -24,9 +23,6 @@ type MockUpdateSprintResp struct {
 
 // UpdateSprint updates an issue in Jira.
 func mockUpdateSprint(res http.ResponseWriter, req *http.Request) {
-	var debug logger.Session
-	defer debug.SessionStart("mockUpdateSprint", logger.Develop).SessionEnd()
-
 	var request MockUpdateSprintRequset
 
 	err := json.NewDecoder(req.Body).Decode(&request)
@@ -34,7 +30,6 @@ func mockUpdateSprint(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
-	debug.Info("request", request)
 	sprintID, err := strconv.Atoi(chi.URLParam(req, "sprintId"))
 	if err != nil {
 		http.Error(res, "sprint id is required", http.StatusBadRequest)
@@ -75,8 +70,6 @@ func mockUpdateSprint(res http.ResponseWriter, req *http.Request) {
 			if mockSprint.OriginBoardID != 0 {
 				fakeSprints[i].OriginBoardID = mockSprint.OriginBoardID
 			}
-			debug.Info("target sprint", mockSprint)
-			debug.Info("updated sprint", fakeSprints[i])
 			resp = MockUpdateSprintResp{
 				FakeSprint: FakeSprint{
 					ID:            fakeSprints[i].ID,

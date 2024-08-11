@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"github.com/instill-ai/x/errmsg"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -170,14 +169,10 @@ type CreateSprintOutput struct {
 }
 
 func (jiraClient *Client) createSprintTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("CreateIssueTask", logger.Develop).SessionEnd()
-
 	var opt CreateSprintInput
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err
 	}
-	debug.Info("Create Sprint Task", opt)
 	apiBaseURL := "rest/agile/1.0/sprint"
 
 	// Validate timestamp format RFC3339
@@ -205,13 +200,10 @@ func (jiraClient *Client) createSprintTask(ctx context.Context, props *structpb.
 		}
 	}
 	boardName := opt.BoardName
-	debug.Info("opt", opt)
-	debug.Info("boardName", boardName)
 	boards, err := jiraClient.listBoards(ctx, &ListBoardsInput{Name: boardName})
 	if err != nil {
 		return nil, err
 	}
-	debug.Info("boards", boards)
 
 	if len(boards.Values) == 0 {
 		return nil, errmsg.AddMessage(
@@ -226,7 +218,6 @@ func (jiraClient *Client) createSprintTask(ctx context.Context, props *structpb.
 	}
 	board := boards.Values[0]
 	boardID := board.ID
-	debug.Info("boardID", boardID)
 
 	req := jiraClient.Client.R().SetResult(&CreateSprintResp{}).SetBody(&CreateSprintRequest{
 		Name:          opt.Name,
@@ -299,16 +290,12 @@ type UpdateSprintOutput struct {
 }
 
 func (jiraClient *Client) updateSprintTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("updateSprintTask", logger.Develop).SessionEnd()
 	var opt UpdateSprintInput
 	if err := base.ConvertFromStructpb(props, &opt); err != nil {
 		return nil, err
 	}
 
 	apiEndpoint := fmt.Sprintf("rest/agile/1.0/sprint/%v", opt.SprintID)
-	debug.Info("Update Sprint Task", opt)
-	debug.Info("apiEndpoint", apiEndpoint)
 
 	var body UpdateSprintRequest
 	structOpt, err := base.ConvertToStructpb(opt)
@@ -321,8 +308,6 @@ func (jiraClient *Client) updateSprintTask(ctx context.Context, props *structpb.
 	body.StartDate = opt.StartDate
 	body.EndDate = opt.EndDate
 	if _, err := time.Parse(time.RFC3339, body.StartDate); err != nil {
-		debug.Info("body start date", body.StartDate)
-		debug.Info("opt start date", opt.StartDate)
 		if body.StartDate == "" {
 			body.StartDate = time.Now().Format(time.RFC3339)
 		} else {
@@ -365,15 +350,11 @@ func (jiraClient *Client) updateSprintTask(ctx context.Context, props *structpb.
 	if err != nil {
 		return nil, err
 	}
-	debug.Info("body", jsonOpt)
 	req := jiraClient.Client.R().SetResult(&Sprint{}).SetBody(jsonOpt)
-	debug.Info("body", req.Body)
 
 	resp, err := req.Put(apiEndpoint)
-	// debug.Info("resp", resp)
 
 	if err != nil {
-		debug.Error(err)
 		return nil, err
 	}
 

@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/instill-ai/component/tools/logger"
 )
 
 type MockUpdateIssueRequset struct {
@@ -23,9 +22,6 @@ type MockUpdateIssueResp struct {
 
 // UpdateIssue updates an issue in Jira.
 func mockUpdateIssue(res http.ResponseWriter, req *http.Request) {
-	var debug logger.Session
-	defer debug.SessionStart("mock UpdateIssue", logger.Develop).SessionEnd()
-
 	var request MockUpdateIssueRequset
 	err := json.NewDecoder(req.Body).Decode(&request)
 	if err != nil {
@@ -54,7 +50,6 @@ func mockUpdateIssue(res http.ResponseWriter, req *http.Request) {
 	returnIssue := opt.Get("returnIssue")
 	for key, fields := range request.Update {
 		for _, field := range fields {
-			debug.Info("field", field)
 			if field.Set != "" {
 				issue.Fields[key] = field.Set
 			}

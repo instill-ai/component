@@ -3,8 +3,6 @@ package jira
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/instill-ai/component/tools/logger"
 )
 
 type mockCreateSprintRequest struct {
@@ -16,12 +14,8 @@ type mockCreateSprintRequest struct {
 }
 
 func mockCreateSprint(res http.ResponseWriter, req *http.Request) {
-	var debug logger.Session
-	defer debug.SessionStart("MockCreateIssueTask", logger.Develop).SessionEnd()
 	var err error
 
-	debug.Info("MockCreateIssueTask called")
-	debug.Info(req.Method)
 	if req.Method != http.MethodPost {
 		http.Error(res, "Method not allowed", http.StatusMethodNotAllowed)
 		return
