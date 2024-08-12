@@ -341,7 +341,7 @@
       "instillUIOrder": 0,
       "properties": {
         "embedding": {
-          "description": "Model Output",
+          "description": "Embedding of the input text",
           "instillUIOrder": 0,
           "instillFormat": "array:number",
           "title": "Embedding",
@@ -430,7 +430,7 @@
       "instillUIOrder": 0,
       "properties": {
         "answer": {
-          "description": "Model Output",
+          "description": "Model Output, generated answer from the given context and question",
           "instillUIOrder": 0,
           "instillFormat": "string",
           "title": "Answer",
@@ -523,7 +523,7 @@
       "instillUIOrder": 0,
       "properties": {
         "summary": {
-          "description": "Model Output",
+          "description": "Summerization of the input text",
           "instillUIOrder": 0,
           "instillFormat": "string",
           "instillUIMultiline": true,
@@ -749,7 +749,7 @@
       "instillUIOrder": 0,
       "properties": {
         "suggestions": {
-          "description": "Model Output",
+          "description": "The suggestions of the text to be paraphrased from model",
           "instillUIOrder": 0,
           "instillFormat": "array:string",
           "instillUIMultiline": true,
@@ -804,7 +804,7 @@
       "instillUIOrder": 0,
       "properties": {
         "suggestions": {
-          "description": "Model Output",
+          "description": "The suggestions of the text to be corrected from model",
           "instillUIOrder": 0,
           "instillFormat": "array:string",
           "instillUIMultiline": true,
