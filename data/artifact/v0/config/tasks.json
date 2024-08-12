@@ -608,7 +608,7 @@
       "type": "object"
     }
   },
-  "TASK_SEARCH_CHUNKS": {
+  "TASK_RETRIEVE": {
     "instillShortDescription": "search the chunks in the catalog",
     "input": {
       "instillUIOrder": 0,
@@ -691,7 +691,7 @@
       "type": "object"
     }
   },
-  "TASK_QUERY": {
+  "TASK_ASK": {
     "instillShortDescription": "Reply the questions based on the files in the catalog",
     "input": {
       "instillUIOrder": 0,

@@ -13,8 +13,8 @@ It can carry out the following tasks:
 - [Get Chunks Metadata](#get-chunks-metadata)
 - [Get File In Markdown](#get-file-in-markdown)
 - [Match File Status](#match-file-status)
-- [Search Chunks](#search-chunks)
-- [Query](#query)
+- [Retrieve](#retrieve)
+- [Ask](#ask)
 
 To use Artifact Component, you will need to set up the OpenAI API key for self-hosted deployment of Instill Core.
 You can do this by setting the `OPENAI_API_KEY` environment variable.
@@ -153,14 +153,14 @@ Check if the specified file's processing status is done
 
 
 
-### Search Chunks
+### Retrieve
 
 search the chunks in the catalog
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_SEARCH_CHUNKS` |
+| Task ID (required) | `task` | string | `TASK_RETRIEVE` |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
 | Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | Text Prompt (required) | `text-prompt` | string | The prompt string to search the chunks |
@@ -177,14 +177,14 @@ search the chunks in the catalog
 
 
 
-### Query
+### Ask
 
 Reply the questions based on the files in the catalog
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_QUERY` |
+| Task ID (required) | `task` | string | `TASK_ASK` |
 | Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to search files in the Catalog |
 | Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | Question (required) | `question` | string | The question to reply |
