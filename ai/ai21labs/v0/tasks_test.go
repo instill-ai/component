@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
+	"github.com/instill-ai/component/ai"
 	"github.com/instill-ai/component/base"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -160,9 +161,9 @@ func TestTasks(t *testing.T) {
 		}{
 			input: map[string]any{"prompt": "Hello World!"},
 			wantResp: TaskTextGenerationChatOutput{
-				base.TemplateTextGenerationOutput{
+				ai.TemplateTextGenerationOutput{
 					Text: "Hello from AI21labs, (last message: Hello World!, message count: 2)",
-					Usage: base.GenerativeTextModelUsage{
+					Usage: ai.GenerativeTextModelUsage{
 						InputTokens:  12,
 						OutputTokens: 67,
 					},
@@ -199,7 +200,7 @@ func TestTasks(t *testing.T) {
 			input: map[string]any{"text": "Hello World!"},
 			wantResp: TaskTextEmbeddingsOutput{
 				Embedding: []float32{0.1, 0.2, 0.3},
-				Usage: base.EmbeddingTextModelUsage{
+				Usage: ai.EmbeddingTextModelUsage{
 					Tokens: len("Hello World!") / 2, // IMPORTANT: The vendor's API does not return the actual token count, so we are using a dummy value here.
 				},
 			},

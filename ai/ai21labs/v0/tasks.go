@@ -1,6 +1,7 @@
 package ai21labs
 
 import (
+	"github.com/instill-ai/component/ai"
 	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -21,13 +22,13 @@ const (
 )
 
 type TaskTextGenerationChatInput struct {
-	base.TemplateTextGenerationInput
+	ai.TemplateTextGenerationInput
 	TopP float64 `json:"top-p"`
 	N    int     `json:"n"`
 }
 
 type TaskTextGenerationChatOutput struct {
-	base.TemplateTextGenerationOutput
+	ai.TemplateTextGenerationOutput
 }
 
 func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struct, error) {
@@ -75,9 +76,9 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 		return nil, err
 	}
 
-	outputStruct := base.TemplateTextGenerationOutput{
+	outputStruct := ai.TemplateTextGenerationOutput{
 		Text: resp.Choices[0].Message.Content,
-		Usage: base.GenerativeTextModelUsage{
+		Usage: ai.GenerativeTextModelUsage{
 			InputTokens:  resp.Usage.PromptTokens,
 			OutputTokens: resp.Usage.CompletionTokens,
 		},
@@ -120,8 +121,8 @@ type TaskTextEmbeddingsInput struct {
 }
 
 type TaskTextEmbeddingsOutput struct {
-	Embedding []float32                    `json:"embedding"`
-	Usage     base.EmbeddingTextModelUsage `json:"usage"`
+	Embedding []float32                  `json:"embedding"`
+	Usage     ai.EmbeddingTextModelUsage `json:"usage"`
 }
 
 func (e *execution) TaskTextEmbeddings(in *structpb.Struct) (*structpb.Struct, error) {
@@ -142,7 +143,7 @@ func (e *execution) TaskTextEmbeddings(in *structpb.Struct) (*structpb.Struct, e
 
 	output := TaskTextEmbeddingsOutput{
 		Embedding: resp.Results[0].Embedding,
-		Usage: base.EmbeddingTextModelUsage{
+		Usage: ai.EmbeddingTextModelUsage{
 			Tokens: len(input.Text) / 2, // IMPORTANT: this is a rough estimate, but the embedding API does not return token counts for now (2024-07-21)
 		},
 	}

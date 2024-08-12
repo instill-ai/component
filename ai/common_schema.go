@@ -1,4 +1,4 @@
-package base
+package ai
 
 // The JSON schema template for task: TASK_TEXT_GENERATION_CHAT
 /**
