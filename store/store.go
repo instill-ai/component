@@ -151,7 +151,13 @@ func Init(
 			compStore.Import(conn)
 		}
 
-		compStore.Import(numbers.Init(baseComp))
+		{
+			// Numbers
+			conn := numbers.Init(baseComp)
+			conn = conn.WithNumbersSecret(secrets[conn.GetDefinitionID()])
+			compStore.Import(conn)
+		}
+
 		compStore.Import(bigquery.Init(baseComp))
 		compStore.Import(googlecloudstorage.Init(baseComp))
 		compStore.Import(googlesearch.Init(baseComp))
