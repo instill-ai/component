@@ -19,8 +19,8 @@ const (
 	taskGetChunksMetadata string = "TASK_GET_CHUNKS_METADATA"
 	taskGetFileInMarkdown string = "TASK_GET_FILE_IN_MARKDOWN"
 	taskMatchFileStatus   string = "TASK_MATCH_FILE_STATUS"
-	taskSearchChunks      string = "TASK_SEARCH_CHUNKS"
-	taskQuery             string = "TASK_QUERY"
+	taskSearchChunks      string = "TASK_RETRIEVE"
+	taskQuery             string = "TASK_ASK"
 )
 
 var (

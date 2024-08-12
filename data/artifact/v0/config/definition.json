@@ -5,8 +5,8 @@
     "TASK_GET_CHUNKS_METADATA",
     "TASK_GET_FILE_IN_MARKDOWN",
     "TASK_MATCH_FILE_STATUS",
-    "TASK_SEARCH_CHUNKS",
-    "TASK_QUERY"
+    "TASK_RETRIEVE",
+    "TASK_ASK"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/data/artifact",
   "icon": "assets/artifact.svg",
