@@ -22,6 +22,8 @@ func router(middlewares ...func(http.Handler) http.Handler) http.Handler {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte(`{"cloudId":"12345678-1234-1234-1234-123456789012"}`))
 	})
+
+	r.Post("/rest/agile/1.0/epic/{epic-key}/issue", mockMoveIssueToEpic)
 	r.Get("/rest/agile/1.0/issue/{issueIdOrKey:[a-zA-z0-9-]+}", mockGetIssue)
 	r.Get("/rest/agile/1.0/sprint/{sprintId}", mockGetSprint)
 	r.Put("/rest/agile/1.0/sprint/{sprintId}", mockUpdateSprint)

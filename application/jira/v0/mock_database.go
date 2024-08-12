@@ -100,12 +100,27 @@ var fakeIssues = []FakeIssue{
 		ID:  "4",
 		Key: "KAN-4",
 		Fields: map[string]interface{}{
-			"summary": "Test issue 4",
+			"summary":     "Test issue 4",
+			"description": "Test description 4",
 			"status": map[string]interface{}{
 				"name": "Done",
 			},
 			"issuetype": map[string]interface{}{
 				"name": "Epic",
+			},
+		},
+	},
+	{
+		ID:  "5",
+		Key: "KAN-5",
+		Fields: map[string]interface{}{
+			"summary":     "Test issue 5",
+			"description": "Test description 5",
+			"status": map[string]interface{}{
+				"name": "Done",
+			},
+			"issuetype": map[string]interface{}{
+				"name": "Task",
 			},
 		},
 	},

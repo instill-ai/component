@@ -92,3 +92,7 @@ func mockUpdateIssue(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 }
+
+func mockMoveIssueToEpic(res http.ResponseWriter, _ *http.Request) {
+	http.Error(res, "The request contains a next-gen issue", http.StatusBadRequest)
+}
