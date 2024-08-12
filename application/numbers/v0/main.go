@@ -38,10 +38,14 @@ var tasksJSON []byte
 
 type component struct {
 	base.Component
+
+	xAPIKey string
 }
 
 type execution struct {
 	base.ComponentExecution
+
+	xAPIKey string
 }
 
 type CommitCustomLicense struct {
@@ -111,11 +115,16 @@ func Init(bc base.Component) *component {
 }
 
 func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
-	return &execution{ComponentExecution: x}, nil
+	return &execution{ComponentExecution: x, xAPIKey: c.xAPIKey}, nil
 }
 
 func getToken(setup *structpb.Struct) string {
 	return fmt.Sprintf("token %s", setup.GetFields()["capture-token"].GetStringValue())
+}
+
+func (c *component) WithNumbersSecret(s map[string]any) *component {
+	c.xAPIKey = base.ReadFromGlobalConfig("x-api-key", s)
+	return c
 }
 
 func (e *execution) registerAsset(data []byte, reg Register) (string, error) {
@@ -158,6 +167,9 @@ func (e *execution) registerAsset(data []byte, reg Register) (string, error) {
 	}
 	req.Header.Set("Content-Type", w.FormDataContentType())
 	req.Header.Set("Authorization", getToken(e.Setup))
+	if e.xAPIKey != "" {
+		req.Header.Set("X-Api-Key", e.xAPIKey)
+	}
 
 	tr := &http.Transport{
 		DisableKeepAlives: true,
