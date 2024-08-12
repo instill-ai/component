@@ -24,7 +24,6 @@ const (
 type TaskTextGenerationChatInput struct {
 	ai.TemplateTextGenerationInput
 	TopP float64 `json:"top-p"`
-	N    int     `json:"n"`
 }
 
 type TaskTextGenerationChatOutput struct {
@@ -68,7 +67,7 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 		MaxTokens:   input.MaxNewTokens,
 		Temperature: float32(input.Temperature),
 		TopP:        float32(input.TopP),
-		N:           input.N,
+		N:           1,
 	}
 
 	resp, err := e.client.Chat(req)
