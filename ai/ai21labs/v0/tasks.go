@@ -153,11 +153,15 @@ type TaskTextImprovementInput struct {
 	Text string `json:"text"`
 }
 
+type Improvement struct {
+	Texts      []string `json:"texts"`
+	StartIndex int      `json:"start-index"`
+	EndIndex   int      `json:"end-index"`
+	Type       string   `json:"type"`
+}
+
 type TaskTextImprovementOutput struct {
-	Suggestions  []string `json:"suggestions"`
-	StartIndexes []int    `json:"start-indexes"`
-	EndIndexes   []int    `json:"end-indexes"`
-	Types        []string `json:"types"`
+	Suggestions []Improvement `json:"suggestions"`
 }
 
 func (e *execution) TaskTextImprovement(in *structpb.Struct) (*structpb.Struct, error) {
@@ -188,10 +192,12 @@ func (e *execution) TaskTextImprovement(in *structpb.Struct) (*structpb.Struct, 
 	output := TaskTextImprovementOutput{}
 
 	for _, improvement := range resp.Improvements {
-		output.Suggestions = append(output.Suggestions, improvement.Suggestions...)
-		output.StartIndexes = append(output.StartIndexes, improvement.StartIndex)
-		output.EndIndexes = append(output.EndIndexes, improvement.EndIndex)
-		output.Types = append(output.Types, string(improvement.ImprovementType))
+		output.Suggestions = append(output.Suggestions, Improvement{
+			Texts:      improvement.Suggestions,
+			StartIndex: improvement.StartIndex,
+			EndIndex:   improvement.EndIndex,
+			Type:       string(improvement.ImprovementType),
+		})
 	}
 	return base.ConvertToStructpb(output)
 }
@@ -275,11 +281,14 @@ type TaskTextSummarizationBySegmentInput struct {
 	Source string `json:"source"`
 }
 
+type TextSegmentSummarization struct {
+	Text string `json:"text"`
+	HTML string `json:"html"`
+	Type string `json:"type"`
+}
+
 type TaskTextSummarizationBySegmentOutput struct {
-	Summerizations []string `json:"summerizations"`
-	SegmentTexts   []string `json:"segments"`
-	SegmentHtmls   []string `json:"segment-htmls"`
-	Types          []string `json:"types"`
+	Summerizations []TextSegmentSummarization `json:"summerizations"`
 }
 
 func (e *execution) TaskTextSummarizationBySegment(in *structpb.Struct) (*structpb.Struct, error) {
@@ -299,18 +308,14 @@ func (e *execution) TaskTextSummarizationBySegment(in *structpb.Struct) (*struct
 		return nil, err
 	}
 
-	output := TaskTextSummarizationBySegmentOutput{
-		Summerizations: []string{},
-		SegmentTexts:   []string{},
-		SegmentHtmls:   []string{},
-		Types:          []string{},
-	}
+	output := TaskTextSummarizationBySegmentOutput{}
 
 	for _, segment := range resp.Segements {
-		output.Summerizations = append(output.Summerizations, segment.Summary)
-		output.SegmentTexts = append(output.SegmentTexts, segment.SegmentText)
-		output.SegmentHtmls = append(output.SegmentHtmls, segment.SegmentHTML)
-		output.Types = append(output.Types, string(segment.SegmentType))
+		output.Summerizations = append(output.Summerizations, TextSegmentSummarization{
+			Text: segment.SegmentText,
+			HTML: segment.SegmentHTML,
+			Type: string(segment.SegmentType),
+		})
 	}
 
 	return base.ConvertToStructpb(output)
@@ -321,9 +326,13 @@ type TaskTextSegmentationInput struct {
 	Source string `json:"source"`
 }
 
+type TextSegment struct {
+	Text string `json:"text"`
+	Type string `json:"type"`
+}
+
 type TaskTextSegmentationOutput struct {
-	SegmentTexts []string `json:"segments"`
-	Types        []string `json:"types"`
+	Segments []TextSegment `json:"segments"`
 }
 
 func (e *execution) TaskTextSegmentation(in *structpb.Struct) (*structpb.Struct, error) {
@@ -342,14 +351,13 @@ func (e *execution) TaskTextSegmentation(in *structpb.Struct) (*structpb.Struct,
 		return nil, err
 	}
 
-	output := TaskTextSegmentationOutput{
-		SegmentTexts: []string{},
-		Types:        []string{},
-	}
+	output := TaskTextSegmentationOutput{}
 
 	for _, segment := range resp.Segments {
-		output.SegmentTexts = append(output.SegmentTexts, segment.SegementText)
-		output.Types = append(output.Types, string(segment.SegmentType))
+		output.Segments = append(output.Segments, TextSegment{
+			Text: segment.SegementText,
+			Type: string(segment.SegmentType),
+		})
 	}
 
 	return base.ConvertToStructpb(output)
@@ -359,11 +367,15 @@ type TaskGrammarCheckInput struct {
 	GrammaticalErrorCorrectionsRequest
 }
 
+type GrammerSuggestion struct {
+	Text       string `json:"text"`
+	StartIndex int    `json:"start-index"`
+	EndIndex   int    `json:"end-index"`
+	Type       string `json:"type"`
+}
+
 type TaskGrammarCheckOutput struct {
-	Suggestions  []string `json:"suggestions"`
-	StartIndexes []int    `json:"start-indexes"`
-	EndIndexes   []int    `json:"end-indexes"`
-	Types        []string `json:"types"`
+	Suggestions []GrammerSuggestion `json:"suggestions"`
 }
 
 func (e *execution) TaskGrammarCheck(in *structpb.Struct) (*structpb.Struct, error) {
@@ -378,10 +390,12 @@ func (e *execution) TaskGrammarCheck(in *structpb.Struct) (*structpb.Struct, err
 	}
 	output := TaskGrammarCheckOutput{}
 	for _, correction := range resp.Corrections {
-		output.Suggestions = append(output.Suggestions, correction.Suggestion)
-		output.StartIndexes = append(output.StartIndexes, correction.StartIndex)
-		output.EndIndexes = append(output.EndIndexes, correction.EndIndex)
-		output.Types = append(output.Types, string(correction.CorrectionType))
+		output.Suggestions = append(output.Suggestions, GrammerSuggestion{
+			Text:       correction.Suggestion,
+			StartIndex: correction.StartIndex,
+			EndIndex:   correction.EndIndex,
+			Type:       string(correction.CorrectionType),
+		})
 	}
 	return base.ConvertToStructpb(output)
 }

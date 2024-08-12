@@ -335,10 +335,13 @@ func TestTasks(t *testing.T) {
 		}{
 			input: map[string]any{},
 			wantResp: TaskTextSummarizationBySegmentOutput{
-				Summerizations: []string{"abc"},
-				SegmentTexts:   []string{"ABC"},
-				SegmentHtmls:   []string{"<h1>ABC</h1>"},
-				Types:          []string{"title"},
+				Summerizations: []TextSegmentSummarization{
+					{
+						Text: "ABC",
+						HTML: "<h1>ABC</h1>",
+						Type: "title",
+					},
+				},
 			},
 		}
 		setup, err := structpb.NewStruct(map[string]any{
@@ -400,10 +403,14 @@ func TestTasks(t *testing.T) {
 		}{
 			input: map[string]any{"text": "Hello world!`"},
 			wantResp: TaskGrammarCheckOutput{
-				Suggestions:  []string{"ABC"},
-				StartIndexes: []int{0},
-				EndIndexes:   []int{3},
-				Types:        []string{"spelling"},
+				Suggestions: []GrammerSuggestion{
+					{
+						Text:       "ABC",
+						StartIndex: 0,
+						EndIndex:   3,
+						Type:       "spelling",
+					},
+				},
 			},
 		}
 		setup, err := structpb.NewStruct(map[string]any{
@@ -435,10 +442,14 @@ func TestTasks(t *testing.T) {
 		}{
 			input: map[string]any{"text": "Hello world!`"},
 			wantResp: TaskTextImprovementOutput{
-				Suggestions:  []string{"ABC"},
-				StartIndexes: []int{0},
-				EndIndexes:   []int{3},
-				Types:        []string{"fluency"},
+				Suggestions: []Improvement{
+					{
+						Texts:      []string{"ABC"},
+						StartIndex: 0,
+						EndIndex:   3,
+						Type:       "fluency",
+					},
+				},
 			},
 		}
 		setup, err := structpb.NewStruct(map[string]any{
@@ -470,8 +481,12 @@ func TestTasks(t *testing.T) {
 		}{
 			input: map[string]any{"text": "Hello world!`"},
 			wantResp: TaskTextSegmentationOutput{
-				SegmentTexts: []string{"ABC"},
-				Types:        []string{"title"},
+				Segments: []TextSegment{
+					{
+						Text: "ABC",
+						Type: "title",
+					},
+				},
 			},
 		}
 		setup, err := structpb.NewStruct(map[string]any{
