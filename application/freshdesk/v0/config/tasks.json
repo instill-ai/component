@@ -1,179 +1,165 @@
 {
   "$defs": {
     "ticket": {
+      "ticket-id": {
+        "description": "The ID of the ticket",
+        "title": "Ticket ID",
+        "type": "integer"
+      },
       "subject": {
         "description": "Subject of the ticket",
         "title": "Subject",
-        "type": "string",
-        "instillUIOrder": 0
+        "type": "string"
       },
       "description-text": {
         "description": "Content of the ticket",
         "title": "Description Text",
-        "type": "string",
-        "instillUIOrder": 1
+        "type": "string"
       },
       "source": {
         "description": "Source of the ticket. Eg: Email",
         "title": "Source",
-        "type": "string",
-        "instillUIOrder": 2
+        "type": "string"
       },
       "status": {
         "description": "Status of the ticket. Eg: Pending",
         "title": "Status",
-        "type": "string",
-        "instillUIOrder": 3
+        "type": "string"
       },
       "priority": {
         "description": "Priority of the ticket. Eg: Medium",
         "title": "Priority",
-        "type": "string",
-        "instillUIOrder": 4
+        "type": "string"
+      },
+      "ticket-type": {
+        "description": "Used to categorize the ticket. To check the possible types a ticket can have, please go to Admin -> Ticket Fields",
+        "title": "Ticket Type",
+        "type": "string"
       },
       "association-type": {
         "description": "Used to determine whether a ticket is a parent, child, tracker or related ticket",
         "title": "Association Type",
-        "type": "string",
-        "instillUIOrder": 5
+        "type": "string"
       },
       "associated-ticket-list": {
         "description": "List of associated ticket IDs",
         "title": "Associated Ticket List",
-        "type": "array",
-        "instillUIOrder": 6
+        "type": "array"
       },
       "tags": {
-        "description": "Tags associated with the ticket",
+        "description": "Tags associated with the ticket.",
         "title": "Tags",
-        "type": "array",
-        "instillUIOrder": 7
+        "type": "array"
       },
       "cc-emails": {
         "description": "Email addresses added in the 'cc' field of the incoming ticket email",
         "title": "CC Emails",
-        "type": "array",
-        "instillUIOrder": 8
+        "type": "array"
       },
       "forward-emails": {
         "description": "Email addresses added while forwarding a ticket",
         "title": "Forward Emails",
-        "type": "array",
-        "instillUIOrder": 9
+        "type": "array"
       },
       "reply-cc-emails": {
         "description": "Email addresses added while replying to a ticket",
         "title": "Reply CC Emails",
-        "type": "array",
-        "instillUIOrder": 10
+        "type": "array"
       },
       "requester-id": {
         "description": "ID of the requester",
         "title": "Requester ID",
-        "type": "integer",
-        "instillUIOrder": 11
+        "type": "integer"
       },
       "responder-id": {
-        "description": "ID of the agent to whom the ticket has been assigned",
+        "description": "ID of the agent to whom the ticket has been assigned. List of agents can be found in Admin -> Agents",
         "title": "Responder ID",
-        "type": "integer",
-        "instillUIOrder": 12
+        "type": "integer"
       },
       "company-id": {
         "description": "ID of the company to which this ticket belongs",
         "title": "Company ID",
-        "type": "integer",
-        "instillUIOrder": 13
+        "type": "integer"
       },
       "group-id": {
-        "description": "ID of the group to which the ticket has been assigned",
+        "description": "ID of the group to which the ticket has been assigned. List of groups can be found in Admin -> Groups",
         "title": "Group ID",
-        "type": "integer",
-        "instillUIOrder": 14
+        "type": "integer"
       },
       "product-id": {
-        "description": "ID of the product to which the ticket is associated",
+        "description": "ID of the product to which the ticket is associated. List of products can be found in Admin -> Multiple Products",
         "title": "Product ID",
-        "type": "integer",
-        "instillUIOrder": 15
+        "type": "integer"
       },
       "support-email": {
-        "description": "Support email address. You can find it in admin -> email (under channel).",
+        "description": "Support email address. You can find it in Admin -> Email (under channel).",
         "title": "Support Email",
-        "type": "string",
-        "instillUIOrder": 16
+        "type": "string"
       },
       "to-emails": {
         "description": "Email addresses to which the ticket was originally sent",
         "title": "To Emails",
-        "type": "array",
-        "instillUIOrder": 17
+        "type": "array"
       },
       "spam": {
         "description": "Set to true if the ticket is marked as spam",
         "title": "Spam",
-        "type": "boolean",
-        "instillUIOrder": 18
+        "type": "boolean"
+      },
+      "due-by": {
+        "description": "Timestamp that denotes when the ticket is due to be resolved. In UTC format.",
+        "title": "First Response Due By",
+        "type": "string"
       },
       "is-escalated": {
         "description": "Set to true if the ticket has been escalated",
         "title": "Is Escalated",
-        "type": "boolean",
-        "instillUIOrder": 19
+        "type": "boolean"
       },
       "first-response-due-by": {
-        "description": "Timestamp that denotes when the first response is due. You can adjust this by going to admin -> SLA policy (under Workflows).",
+        "description": "Timestamp that denotes when the first response is due. In UTC format. You can adjust this by going to Admin -> SLA policy (under Workflows).",
         "title": "First Response Due By",
-        "type": "string",
-        "instillUIOrder": 20
+        "type": "string"
       },
       "first-response-escalated": {
         "description": "Set to true if the ticket has been escalated as the result of first response time being breached",
         "title": "First Response Escalated",
-        "type": "boolean",
-        "instillUIOrder": 21
+        "type": "boolean"
       },
       "next-response-due-by": {
-        "description": "Timestamp that denotes when the next response is due. You can adjust this by going to admin -> SLA policy (under Workflows).",
+        "description": "Timestamp that denotes when the next response is due. In UTC format. You can adjust this by going to Admin -> SLA policy (under Workflows).",
         "title": "Next Response Due By",
-        "type": "string",
-        "instillUIOrder": 22
+        "type": "string"
       },
       "next-response-escalated": {
         "description": "Set to true if the ticket has been escalated as the result of next response time being breached",
         "title": "Next Response Escalated",
-        "type": "boolean",
-        "instillUIOrder": 23
+        "type": "boolean"
       },
       "created-at": {
         "description": "Timestamp that denotes when the ticket was created. In UTC format.",
         "title": "Created At",
-        "type": "string",
-        "instillUIOrder": 24
+        "type": "string"
       },
       "updated-at": {
         "description": "Timestamp that denotes when the ticket was last updated. In UTC format.",
         "title": "Updated At",
-        "type": "string",
-        "instillUIOrder": 25
+        "type": "string"
       },
       "attachments": {
         "description": "Ticket attachments (cannot be more than 20MB)",
         "title": "Attachments",
-        "type": "array",
-        "instillUIOrder": 26
+        "type": "array"
       },
       "sentiment-score": {
         "description": "Freshdesk uses AI to assess the emotional tone and attitude expressed in customer interaction.",
         "title": "Sentiment Score",
-        "type": "integer",
-        "instillUIOrder": 27
+        "type": "integer"
       },
       "intial-sentiment-score": {
         "description": "The initial sentiment score of the ticket",
         "title": "Initial Sentiment Score",
-        "type": "integer",
-        "instillUIOrder": 28
+        "type": "integer"
       }
     }
   },
@@ -185,13 +171,11 @@
       "instillEditOnNodeFields": ["ticket-id"],
       "properties": {
         "ticket-id": {
-          "description": "The ID of the ticket",
+          "$ref": "#/$defs/ticket/ticket-id",
           "instillAcceptFormats": ["integer"],
           "instillUpstreamTypes": ["value", "reference"],
           "instillUIMultiline": false,
-          "instillUIOrder": 0,
-          "title": "Ticket ID",
-          "type": "integer"
+          "instillUIOrder": 0
         }
       },
       "required": ["ticket-id"],
@@ -204,37 +188,49 @@
       "properties": {
         "subject": {
           "$ref": "#/$defs/ticket/subject",
-          "instillFormat": "string"
+          "instillFormat": "string",
+          "instillUIOrder": 0
         },
         "description-text": {
           "$ref": "#/$defs/ticket/description-text",
-          "instillFormat": "string"
+          "instillFormat": "string",
+          "instillUIOrder": 1
         },
         "source": {
           "$ref": "#/$defs/ticket/source",
-          "instillFormat": "string"
+          "instillFormat": "string",
+          "instillUIOrder": 2
         },
         "status": {
           "$ref": "#/$defs/ticket/status",
-          "instillFormat": "string"
+          "instillFormat": "string",
+          "instillUIOrder": 3
         },
         "priority": {
           "$ref": "#/$defs/ticket/priority",
-          "instillFormat": "string"
+          "instillFormat": "string",
+          "instillUIOrder": 4
+        },
+        "ticket-type": {
+          "$ref": "#/$defs/ticket/ticket-type",
+          "instillFormat": "string",
+          "instillUIOrder": 5
         },
         "association-type": {
           "$ref": "#/$defs/ticket/association-type",
-          "instillFormat": "string"
+          "instillFormat": "string",
+          "instillUIOrder": 6
         },
         "associated-ticket-list": {
           "$ref": "#/$defs/ticket/associated-ticket-list",
           "instillFormat": "array:integer",
           "items": {
             "title": "Associated Ticket",
-            "type": "string",
+            "type": "integer",
             "description": "The ID of the ticket associated with the current ticket",
             "instillFormat": "integer"
-          }
+          },
+          "instillUIOrder": 7
         },
         "tags": {
           "$ref": "#/$defs/ticket/tags",
@@ -244,7 +240,8 @@
             "type": "string",
             "description": "Tag associated with the ticket",
             "instillFormat": "string"
-          }
+          },
+          "instillUIOrder": 8
         },
         "cc-emails": {
           "$ref": "#/$defs/ticket/cc-emails",
@@ -254,7 +251,8 @@
             "type": "string",
             "description": "One of the email address added in the 'cc' field of the incoming ticket email",
             "instillFormat": "string"
-          }
+          },
+          "instillUIOrder": 9
         },
         "forward-emails": {
           "$ref": "#/$defs/ticket/forward-emails",
@@ -264,7 +262,8 @@
             "type": "string",
             "description": "One of the email address added while forwarding a ticket",
             "instillFormat": "string"
-          }
+          },
+          "instillUIOrder": 10
         },
         "reply-cc-emails": {
           "$ref": "#/$defs/ticket/reply-cc-emails",
@@ -274,31 +273,38 @@
             "type": "string",
             "description": "One of the email address added while replying to a ticket",
             "instillFormat": "string"
-          }
+          },
+          "instillUIOrder": 11
         },
         "requester-id": {
           "$ref": "#/$defs/ticket/requester-id",
-          "instillFormat": "integer"
+          "instillFormat": "integer",
+          "instillUIOrder": 12
         },
         "responder-id": {
           "$ref": "#/$defs/ticket/responder-id",
-          "instillFormat": "integer"
+          "instillFormat": "integer",
+          "instillUIOrder": 13
         },
         "company-id": {
           "$ref": "#/$defs/ticket/company-id",
-          "instillFormat": "integer"
+          "instillFormat": "integer",
+          "instillUIOrder": 14
         },
         "group-id": {
           "$ref": "#/$defs/ticket/group-id",
-          "instillFormat": "integer"
+          "instillFormat": "integer",
+          "instillUIOrder": 15
         },
         "product-id": {
           "$ref": "#/$defs/ticket/product-id",
-          "instillFormat": "integer"
+          "instillFormat": "integer",
+          "instillUIOrder": 16
         },
         "support-email": {
           "$ref": "#/$defs/ticket/support-email",
-          "instillFormat": "string"
+          "instillFormat": "string",
+          "instillUIOrder": 17
         },
         "to-emails": {
           "$ref": "#/$defs/ticket/to-emails",
@@ -308,39 +314,53 @@
             "type": "string",
             "description": "One of the email address to which the ticket was originally sent",
             "instillFormat": "string"
-          }
+          },
+          "instillUIOrder": 18
         },
         "spam": {
           "$ref": "#/$defs/ticket/spam",
-          "instillFormat": "boolean"
+          "instillFormat": "boolean",
+          "instillUIOrder": 19
+        },
+        "due-by": {
+          "$ref": "#/$defs/ticket/due-by",
+          "instillFormat": "string",
+          "instillUIOrder": 20
         },
         "is-escalated": {
           "$ref": "#/$defs/ticket/is-escalated",
-          "instillFormat": "boolean"
+          "instillFormat": "boolean",
+          "instillUIOrder": 21
         },
         "first-response-due-by": {
           "$ref": "#/$defs/ticket/first-response-due-by",
-          "instillFormat": "string"
+          "instillFormat": "string",
+          "instillUIOrder": 22
         },
         "first-response-escalated": {
           "$ref": "#/$defs/ticket/first-response-escalated",
-          "instillFormat": "boolean"
+          "instillFormat": "boolean",
+          "instillUIOrder": 23
         },
         "next-response-due-by": {
           "$ref": "#/$defs/ticket/next-response-due-by",
-          "instillFormat": "string"
+          "instillFormat": "string",
+          "instillUIOrder": 24
         },
         "next-response-escalated": {
           "$ref": "#/$defs/ticket/next-response-escalated",
-          "instillFormat": "boolean"
+          "instillFormat": "boolean",
+          "instillUIOrder": 25
         },
         "created-at": {
           "$ref": "#/$defs/ticket/created-at",
-          "instillFormat": "string"
+          "instillFormat": "string",
+          "instillUIOrder": 26
         },
         "updated-at": {
           "$ref": "#/$defs/ticket/updated-at",
-          "instillFormat": "string"
+          "instillFormat": "string",
+          "instillUIOrder": 27
         },
         "attachments": {
           "$ref": "#/$defs/ticket/attachments",
@@ -372,18 +392,224 @@
               }
             },
             "required": ["name", "content-type", "url"]
-          }
+          },
+          "instillUIOrder": 28
         },
         "sentiment-score": {
           "$ref": "#/$defs/ticket/sentiment-score",
-          "instillFormat": "integer"
+          "instillFormat": "integer",
+          "instillUIOrder": 29
         },
         "intial-sentiment-score": {
           "$ref": "#/$defs/ticket/intial-sentiment-score",
-          "instillFormat": "integer"
+          "instillFormat": "integer",
+          "instillUIOrder": 30
         }
       },
-      "required": ["requester-id","subject","description-text","source","status","priority","to-emails"],
+      "required": [
+        "requester-id",
+        "subject",
+        "description-text",
+        "source",
+        "status",
+        "priority",
+        "to-emails"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_TICKET": {
+    "instillShortDescription": "Create ticket",
+    "input": {
+      "description": "Ticket Information",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "requester-id",
+        "email",
+        "subject",
+        "description-text",
+        "source",
+        "status",
+        "priority"
+      ],
+      "properties": {
+        "requester-id": {
+          "description": "ID of the requester. Must be an existing contact. If you fill in this field, you don't need to fill in the email field. Only one of the two fields is required.",
+          "title": "Requester ID",
+          "type": "integer",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "reference"]
+        },
+        "email": {
+          "description": "Email address of the requester. If you fill in the Requester ID above, it will be ignored. Only one of the two fields is required. If no contact exists with this email address in Freshdesk, it will be added as a new contact.",
+          "title": "Email",
+          "type": "string",
+          "instillUIOrder": 1,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "subject": {
+          "$ref": "#/$defs/ticket/subject",
+          "instillUIOrder": 2,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "description-text": {
+          "$ref": "#/$defs/ticket/description-text",
+          "instillUIOrder": 3,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "source": {
+          "$ref": "#/$defs/ticket/source",
+          "enum": [
+            "Email",
+            "Portal",
+            "Phone",
+            "Twitter",
+            "Facebook",
+            "Chat",
+            "Feedback Widget",
+            "Outbound Email",
+            "Ecommerce"
+          ],
+          "example": "Portal",
+          "instillUIOrder": 4,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "reference"]
+        },
+        "status": {
+          "$ref": "#/$defs/ticket/status",
+          "enum": [
+            "Open",
+            "Pending",
+            "Resolved",
+            "Closed",
+            "Waiting on Customer",
+            "Waiting on Third Party"
+          ],
+          "example": "Open",
+          "instillUIOrder": 5,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "reference"]
+        },
+        "priority": {
+          "$ref": "#/$defs/ticket/priority",
+          "enum": ["Low", "Medium", "High", "Urgent"],
+          "example": "Low",
+          "instillUIOrder": 6,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "reference"]
+        },
+        "ticket-type": {
+          "$ref": "#/$defs/ticket/ticket-type",
+          "instillUIOrder": 7,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "company-id": {
+          "$ref": "#/$defs/ticket/company-id",
+          "instillUIOrder": 8,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "reference"]
+        },
+        "product-id": {
+          "$ref": "#/$defs/ticket/product-id",
+          "instillUIOrder": 9,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "reference"]
+        },
+        "group-id": {
+          "$ref": "#/$defs/ticket/group-id",
+          "instillUIOrder": 10,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "reference"]
+        },
+        "responder-id":{
+          "$ref": "#/$defs/ticket/responder-id",
+          "instillUIOrder": 11,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "reference"]
+        },
+        "tags": {
+          "$ref": "#/$defs/ticket/tags",
+          "instillUIOrder": 12,
+          "instillAcceptFormats": ["array:string"],
+          "items": {
+            "type": "string"
+          },
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "cc-emails": {
+          "$ref": "#/$defs/ticket/cc-emails",
+          "instillUIOrder": 13,
+          "instillAcceptFormats": ["array:string"],
+          "items": {
+            "type": "string"
+          },
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "parent-id": {
+          "description": "ID of the parent ticket. Need to be filled out if you want to create a child ticket.",
+          "title": "Parent ID",
+          "type": "integer",
+          "instillUIOrder": 14,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "reference"]
+        },
+        "related-ticket-ids": {
+          "description": "List of related ticket IDs. Need to be filled out if you want to create a tracker ticket.",
+          "title": "Related Ticket IDs",
+          "type": "array",
+          "instillUIOrder": 15,
+          "instillAcceptFormats": ["array:integer"],
+          "items": {
+            "type": "integer"
+          },
+          "instillUpstreamTypes": ["value", "reference"]
+        }
+      },
+      "required": [
+        "subject",
+        "description-text",
+        "source",
+        "status",
+        "priority"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Ticket ID and create date",
+      "instillUIOrder": 0,
+      "properties": {
+        "ticket-id": {
+          "$ref": "#/$defs/ticket/ticket-id",
+          "instillFormat": "integer",
+          "instillUIOrder": 0
+        },
+        "created-at": {
+          "$ref": "#/$defs/ticket/created-at",
+          "instillFormat": "string",
+          "instillUIOrder": 1
+        }
+      },
+      "required": ["ticket-id", "created-at"],
       "title": "Output",
       "type": "object"
     }

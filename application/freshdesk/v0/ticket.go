@@ -12,6 +12,8 @@ const (
 	TicketPath = "tickets"
 )
 
+// API functions for Ticket
+
 func (c *FreshdeskClient) GetTicket(ticketID int64) (*TaskGetTicketResponse, error) {
 
 	resp := &TaskGetTicketResponse{}
@@ -23,10 +25,19 @@ func (c *FreshdeskClient) GetTicket(ticketID int64) (*TaskGetTicketResponse, err
 	return resp, nil
 }
 
+func (c *FreshdeskClient) CreateTicket(req *TaskCreateTicketReq) (*TaskCreateTicketResponse, error) {
+	resp := &TaskCreateTicketResponse{}
+	httpReq := c.httpclient.R().SetBody(req).SetResult(resp)
+	if _, err := httpReq.Post("/" + TicketPath); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 //Task 1: Get Ticket
 
 type TaskGetTicketInput struct {
-	TicketId int64 `json:"ticket-id"`
+	TicketID int64 `json:"ticket-id"`
 }
 
 type TaskGetTicketResponse struct {
@@ -35,6 +46,7 @@ type TaskGetTicketResponse struct {
 	Source                 int                             `json:"source"`
 	Status                 int                             `json:"status"`
 	Priority               int                             `json:"priority"`
+	TicketType             string                          `json:"type"`
 	AssociationType        int                             `json:"association_type"`
 	AssociatedTicketList   []int                           `json:"associated_tickets_list"`
 	Tags                   []string                        `json:"tags"`
@@ -50,6 +62,7 @@ type TaskGetTicketResponse struct {
 	ToEmails               []string                        `json:"to_emails"`
 	Spam                   bool                            `json:"spam"`
 	IsEscalated            bool                            `json:"is_escalated"`
+	DueBy                  string                          `json:"due_by"`
 	FirstResponseDueBy     string                          `json:"fr_due_by"`
 	FirstResponseEscalated bool                            `json:"fr_escalated"`
 	NextResponseDueBy      string                          `json:"nr_due_by"`
@@ -67,6 +80,7 @@ type TaskGetTicketOutput struct {
 	Source                 string                          `json:"source"`
 	Status                 string                          `json:"status"`
 	Priority               string                          `json:"priority"`
+	TicketType             string                          `json:"ticket-type,omitempty"`
 	AssociationType        string                          `json:"association-type"`
 	AssociatedTicketList   []int                           `json:"associated-ticket-list,omitempty"`
 	Tags                   []string                        `json:"tags"`
@@ -81,6 +95,7 @@ type TaskGetTicketOutput struct {
 	SupportEmail           string                          `json:"support-email,omitempty"`
 	ToEmails               []string                        `json:"to-emails"`
 	Spam                   bool                            `json:"spam"`
+	DueBy                  string                          `json:"due-by,omitempty"`
 	IsEscalated            bool                            `json:"is-escalated"`
 	FirstResponseDueBy     string                          `json:"first-response-due-by,omitempty"`
 	FirstResponseEscalated bool                            `json:"first-response-escalated,omitempty"`
@@ -107,7 +122,7 @@ func (e *execution) TaskGetTicket(in *structpb.Struct) (*structpb.Struct, error)
 		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
-	resp, err := e.client.GetTicket(inputStruct.TicketId)
+	resp, err := e.client.GetTicket(inputStruct.TicketID)
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +133,7 @@ func (e *execution) TaskGetTicket(in *structpb.Struct) (*structpb.Struct, error)
 		Source:                 convertSourceToString(resp.Source),
 		Status:                 convertStatusToString(resp.Status),
 		Priority:               convertPriorityToString(resp.Priority),
+		TicketType:             resp.TicketType,
 		AssociationType:        convertAssociationType(resp.AssociationType),
 		AssociatedTicketList:   resp.AssociatedTicketList,
 		Tags:                   *checkForNil(&resp.Tags),
@@ -132,10 +148,11 @@ func (e *execution) TaskGetTicket(in *structpb.Struct) (*structpb.Struct, error)
 		SupportEmail:           resp.SupportEmail,
 		ToEmails:               *checkForNil(&resp.ToEmails),
 		Spam:                   resp.Spam,
+		DueBy:                  convertTimestampResp(resp.DueBy),
 		IsEscalated:            resp.IsEscalated,
-		FirstResponseDueBy:     resp.FirstResponseDueBy,
+		FirstResponseDueBy:     convertTimestampResp(resp.FirstResponseDueBy),
 		FirstResponseEscalated: resp.FirstResponseEscalated,
-		NextResponseDueBy:      resp.NextResponseDueBy,
+		NextResponseDueBy:      convertTimestampResp(resp.NextResponseDueBy),
 		NextResponseEscalated:  resp.NextResponseEscalated,
 		CreatedAt:              convertTimestampResp(resp.CreatedAt),
 		UpdatedAt:              convertTimestampResp(resp.UpdatedAt),
@@ -153,12 +170,127 @@ func (e *execution) TaskGetTicket(in *structpb.Struct) (*structpb.Struct, error)
 	return output, nil
 }
 
+// Create Ticket
+type TaskCreateTicketInput struct {
+	// Only one is needed: requester-id or email
+	RequesterID      int64    `json:"requester-id"`
+	Email            string   `json:"email"`
+	Subject          string   `json:"subject"`
+	Description      string   `json:"description-text"`
+	Source           string   `json:"source"`
+	Status           string   `json:"status"`
+	Priority         string   `json:"priority"`
+	Type             string   `json:"ticket-type"`
+	CompanyID        int64    `json:"company-id"`
+	ProductID        int64    `json:"product-id"`
+	GroupID          int64    `json:"group-id"`
+	ResponderID      int64    `json:"responder-id"`
+	Tags             []string `json:"tags"`
+	CCEmails         []string `json:"cc-emails"`
+	ParentID         int64    `json:"parent-id"`
+	RelatedTicketIDs []int64  `json:"related-ticket-ids"`
+}
+
+type TaskCreateTicketReq struct {
+	RequesterID      int64    `json:"requester_id,omitempty"`
+	Email            string   `json:"email,omitempty"`
+	Subject          string   `json:"subject"`
+	Description      string   `json:"description"`
+	Source           int      `json:"source"`
+	Status           int      `json:"status"`
+	Priority         int      `json:"priority"`
+	Type             string   `json:"type,omitempty"`
+	CompanyID        int64    `json:"company_id,omitempty"`
+	ProductID        int64    `json:"product_id,omitempty"`
+	GroupID          int64    `json:"group_id,omitempty"`
+	ResponderID      int64    `json:"responder_id,omitempty"`
+	Tags             []string `json:"tags,omitempty"`
+	CCEmails         []string `json:"cc_emails,omitempty"`
+	ParentID         int64    `json:"parent_id,omitempty"`
+	RelatedTicketIDs []int64  `json:"related_ticket_ids,omitempty"`
+}
+
+type TaskCreateTicketResponse struct {
+	ID        int64  `json:"id"`
+	CreatedAt string `json:"created_at"`
+}
+
+type TaskCreateTicketOutput struct {
+	ID        int64  `json:"ticket-id"`
+	CreatedAt string `json:"created-at"`
+}
+
+func (e *execution) TaskCreateTicket(in *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := TaskCreateTicketInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	if inputStruct.ParentID != 0 && len(inputStruct.RelatedTicketIDs) > 0 {
+		return nil, fmt.Errorf("only one of parent-id or related-ticket-ids can be provided")
+	}
+
+	req := TaskCreateTicketReq{
+		Subject:     inputStruct.Subject,
+		Description: inputStruct.Description,
+		Source:      convertSourceToInt(inputStruct.Source),
+		Status:      convertStatusToInt(inputStruct.Status),
+		Priority:    convertPriorityToInt(inputStruct.Priority),
+		Type:        inputStruct.Type,
+		CompanyID:   inputStruct.CompanyID,
+		ProductID:   inputStruct.ProductID,
+		GroupID:     inputStruct.GroupID,
+		ResponderID: inputStruct.ResponderID,
+		Tags:        inputStruct.Tags,
+		CCEmails:    inputStruct.CCEmails,
+	}
+
+	if inputStruct.RequesterID != 0 {
+		req.RequesterID = inputStruct.RequesterID
+	} else if inputStruct.Email != "" {
+		req.Email = inputStruct.Email
+	} else {
+		return nil, fmt.Errorf("either Requester ID or email is required")
+	}
+
+	if inputStruct.ParentID != 0 {
+		req.ParentID = inputStruct.ParentID
+	}
+
+	if len(inputStruct.RelatedTicketIDs) > 0 {
+		req.RelatedTicketIDs = inputStruct.RelatedTicketIDs
+	}
+
+	resp, err := e.client.CreateTicket(&req)
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := TaskCreateTicketOutput{
+		ID:        resp.ID,
+		CreatedAt: convertTimestampResp(resp.CreatedAt),
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
+	}
+
+	return output, nil
+}
+
 func convertTimestampResp(timestamp string) string {
 	// freshdesk response timestamp is always in the format of YYYY-MM-DDTHH:MM:SSZ and in UTC.
 	// this function will convert it to YYYY-MM-DD HH:MM:SS UTC
+
+	if timestamp == "" {
+		return timestamp
+	}
 	formattedTime := strings.Replace(timestamp, "T", " ", 1)
 	formattedTime = strings.Replace(formattedTime, "Z", " ", 1)
-	formattedTime += " UTC"
+	formattedTime += "UTC"
 
 	return formattedTime
 }
@@ -178,15 +310,54 @@ func convertSourceToString(source int) string {
 		return "Portal"
 	case 3:
 		return "Phone"
+	case 4:
+		return "Forum"
+	case 5:
+		return "Twitter"
+	case 6:
+		return "Facebook"
 	case 7:
 		return "Chat"
+	case 8:
+		return "MobiHelp"
 	case 9:
 		return "Feedback Widget"
 	case 10:
 		return "Outbound Email"
+	case 11:
+		return "Ecommerce"
+	case 12:
+		return "Bot"
+	case 13:
+		return "Whatsapp"
 	default:
-		return "No source"
+		return fmt.Sprintf("Unknown source, received: %d", source)
 	}
+}
+
+func convertSourceToInt(source string) int {
+	// For creating ticket, the only source that can be used is 1,2,3,5,6,7,9,11,10
+	switch source {
+	case "Email":
+		return 1
+	case "Portal":
+		return 2
+	case "Phone":
+		return 3
+	case "Twitter":
+		return 5
+	case "Facebook":
+		return 6
+	case "Chat":
+		return 7
+	case "Feedback Widget":
+		return 9
+	case "Outbound Email":
+		return 10
+	case "Ecommerce":
+		return 11
+	}
+	return 0
 }
 
 func convertStatusToString(status int) string {
@@ -199,9 +370,31 @@ func convertStatusToString(status int) string {
 		return "Resolved"
 	case 5:
 		return "Closed"
+	case 6:
+		return "Waiting on Customer"
+	case 7:
+		return "Waiting on Third Party"
 	default:
-		return "No status"
+		return fmt.Sprintf("Unknown status, received: %d", status)
 	}
+}
+
+func convertStatusToInt(status string) int {
+	switch status {
+	case "Open":
+		return 2
+	case "Pending":
+		return 3
+	case "Resolved":
+		return 4
+	case "Closed":
+		return 5
+	case "Waiting on Customer":
+		return 6
+	case "Waiting on Third Party":
+		return 7
+	}
+	return 0
 }
 
 func convertPriorityToString(priority int) string {
@@ -215,8 +408,22 @@ func convertPriorityToString(priority int) string {
 	case 4:
 		return "Urgent"
 	default:
-		return "No priority"
+		return fmt.Sprintf("Unknown priority, received: %d", priority)
 	}
+}
+
+func convertPriorityToInt(priority string) int {
+	switch priority {
+	case "Low":
+		return 1
+	case "Medium":
+		return 2
+	case "High":
+		return 3
+	case "Urgent":
+		return 4
+	}
+	return 0
 }
 
 func convertAssociationType(associationType int) string {

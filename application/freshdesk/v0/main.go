@@ -17,7 +17,8 @@ import (
 const (
 	version = "v2"
 
-	taskGetTicket = "TASK_GET_TICKET"
+	taskGetTicket    = "TASK_GET_TICKET"
+	taskCreateTicket = "TASK_CREATE_TICKET"
 )
 
 var (
@@ -64,6 +65,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	switch x.Task {
 	case taskGetTicket:
 		e.execute = e.TaskGetTicket
+	case taskCreateTicket:
+		e.execute = e.TaskCreateTicket
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}

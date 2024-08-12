@@ -35,17 +35,18 @@ type errBody struct {
 
 func (e errBody) Message() string {
 	var errReturn string
+	fmt.Println("ERRRORRR", e.Errors)
 	for index, err := range e.Errors {
 		if index > 0 {
-			errReturn += ", "
+			errReturn += ". "
 		}
 
 		errReturn += err.Message
 		if err.Field != "" {
-			errReturn += " " + err.Field
+			errReturn += ", field: " + err.Field
 		}
 		if err.Code != "" {
-			errReturn += " " + err.Code
+			errReturn += ", code: " + err.Code
 		}
 	}
 
@@ -70,4 +71,5 @@ type FreshdeskClient struct {
 
 type FreshdeskInterface interface {
 	GetTicket(ticketID int64) (*TaskGetTicketResponse, error)
+	CreateTicket(req *TaskCreateTicketReq) (*TaskCreateTicketResponse, error)
 }
