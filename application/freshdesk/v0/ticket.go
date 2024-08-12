@@ -2,7 +2,6 @@ package freshdesk
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -72,6 +71,7 @@ type TaskGetTicketResponse struct {
 	Attachments            []taskGetTicketOutputAttachment `json:"attachments"`
 	SentimentScore         int                             `json:"sentiment_score"`
 	InitialSentimentScore  int                             `json:"initial_sentiment_score"`
+	CustomFields           map[string]interface{}          `json:"custom_fields"`
 }
 
 type TaskGetTicketOutput struct {
@@ -98,14 +98,15 @@ type TaskGetTicketOutput struct {
 	DueBy                  string                          `json:"due-by,omitempty"`
 	IsEscalated            bool                            `json:"is-escalated"`
 	FirstResponseDueBy     string                          `json:"first-response-due-by,omitempty"`
-	FirstResponseEscalated bool                            `json:"first-response-escalated,omitempty"`
+	FirstResponseEscalated bool                            `json:"first-response-escalated"`
 	NextResponseDueBy      string                          `json:"next-response-due-by,omitempty"`
-	NextResponseEscalated  bool                            `json:"next-response-escalated,omitempty"`
+	NextResponseEscalated  bool                            `json:"next-response-escalated"`
 	CreatedAt              string                          `json:"created-at"`
 	UpdatedAt              string                          `json:"updated-at"`
 	Attachments            []taskGetTicketOutputAttachment `json:"attachments,omitempty"`
 	SentimentScore         int                             `json:"sentiment-score"`
 	InitialSentimentScore  int                             `json:"initial-sentiment-score"`
+	CustomFields           map[string]interface{}          `json:"custom-fields,omitempty"`
 }
 
 type taskGetTicketOutputAttachment struct {
@@ -136,17 +137,17 @@ func (e *execution) TaskGetTicket(in *structpb.Struct) (*structpb.Struct, error)
 		TicketType:             resp.TicketType,
 		AssociationType:        convertAssociationType(resp.AssociationType),
 		AssociatedTicketList:   resp.AssociatedTicketList,
-		Tags:                   *checkForNil(&resp.Tags),
-		CCEmails:               *checkForNil(&resp.CCEmails),
-		ForwardEmails:          *checkForNil(&resp.ForwardEmails),
-		ReplyCCEmails:          *checkForNil(&resp.ReplyCCEmails),
+		Tags:                   *checkForNilString(&resp.Tags),
+		CCEmails:               *checkForNilString(&resp.CCEmails),
+		ForwardEmails:          *checkForNilString(&resp.ForwardEmails),
+		ReplyCCEmails:          *checkForNilString(&resp.ReplyCCEmails),
 		RequesterID:            resp.RequesterID,
 		ResponderID:            resp.ResponderID,
 		CompanyID:              resp.CompanyID,
 		GroupID:                resp.GroupID,
 		ProductID:              resp.ProductID,
 		SupportEmail:           resp.SupportEmail,
-		ToEmails:               *checkForNil(&resp.ToEmails),
+		ToEmails:               *checkForNilString(&resp.ToEmails),
 		Spam:                   resp.Spam,
 		DueBy:                  convertTimestampResp(resp.DueBy),
 		IsEscalated:            resp.IsEscalated,
@@ -159,6 +160,10 @@ func (e *execution) TaskGetTicket(in *structpb.Struct) (*structpb.Struct, error)
 		Attachments:            resp.Attachments,
 		SentimentScore:         resp.SentimentScore,
 		InitialSentimentScore:  resp.InitialSentimentScore,
+	}
+
+	if len(resp.CustomFields) > 0 {
+		outputStruct.CustomFields = resp.CustomFields
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -279,27 +284,6 @@ func (e *execution) TaskCreateTicket(in *structpb.Struct) (*structpb.Struct, err
 	}
 
 	return output, nil
-}
-
-func convertTimestampResp(timestamp string) string {
-	// freshdesk response timestamp is always in the format of YYYY-MM-DDTHH:MM:SSZ and in UTC.
-	// this function will convert it to YYYY-MM-DD HH:MM:SS UTC
-
-	if timestamp == "" {
-		return timestamp
-	}
-	formattedTime := strings.Replace(timestamp, "T", " ", 1)
-	formattedTime = strings.Replace(formattedTime, "Z", " ", 1)
-	formattedTime += "UTC"
-
-	return formattedTime
-}
-
-func checkForNil(input *[]string) *[]string {
-	if *input == nil {
-		return &[]string{}
-	}
-	return input
 }
 
 func convertSourceToString(source int) string {

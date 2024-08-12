@@ -5,6 +5,7 @@ package freshdesk
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 
 	_ "embed"
@@ -17,8 +18,10 @@ import (
 const (
 	version = "v2"
 
-	taskGetTicket    = "TASK_GET_TICKET"
-	taskCreateTicket = "TASK_CREATE_TICKET"
+	taskGetTicket     = "TASK_GET_TICKET"
+	taskCreateTicket  = "TASK_CREATE_TICKET"
+	taskGetContact    = "TASK_GET_CONTACT"
+	taskCreateContact = "TASK_CREATE_CONTACT"
 )
 
 var (
@@ -67,6 +70,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.TaskGetTicket
 	case taskCreateTicket:
 		e.execute = e.TaskCreateTicket
+	case taskGetContact:
+		e.execute = e.TaskGetContact
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
@@ -87,4 +92,32 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	}
 
 	return outputs, nil
+}
+
+func convertTimestampResp(timestamp string) string {
+	// freshdesk response timestamp is always in the format of YYYY-MM-DDTHH:MM:SSZ and in UTC.
+	// this function will convert it to YYYY-MM-DD HH:MM:SS UTC
+
+	if timestamp == "" {
+		return timestamp
+	}
+	formattedTime := strings.Replace(timestamp, "T", " ", 1)
+	formattedTime = strings.Replace(formattedTime, "Z", " ", 1)
+	formattedTime += "UTC"
+
+	return formattedTime
+}
+
+// func checkForNilInt64(input *[]int64) *[]int64 {
+// 	if *input == nil {
+// 		return &[]int64{}
+// 	}
+// 	return input
+// }
+
+func checkForNilString(input *[]string) *[]string {
+	if *input == nil {
+		return &[]string{}
+	}
+	return input
 }

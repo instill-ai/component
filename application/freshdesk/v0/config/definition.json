@@ -1,7 +1,9 @@
 {
   "availableTasks": [
     "TASK_GET_TICKET",
-    "TASK_CREATE_TICKET"
+    "TASK_CREATE_TICKET",
+    "TASK_GET_CONTACT",
+    "TASK_CREATE_CONTACT"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/freshdesk",
   "icon": "assets/freshdesk.svg",

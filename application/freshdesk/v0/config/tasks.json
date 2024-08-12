@@ -160,6 +160,128 @@
         "description": "The initial sentiment score of the ticket",
         "title": "Initial Sentiment Score",
         "type": "integer"
+      },
+      "custom-fields":{
+        "description": "Custom fields that the ticket have. Custom fields can be created or modified in Admin -> Ticket Fields",
+        "title": "Custom Fields",
+        "type": "object"
+      }
+    },
+    "contact":{
+      "contact-id":{
+        "description": "ID of the contact",
+        "title": "Contact ID",
+        "type": "integer"
+      },
+      "name":{
+        "description": "Name of the contact",
+        "title": "Name",
+        "type": "string"
+      },
+      "email":{
+        "description": "The primary email address of the contact",
+        "title": "Email",
+        "type": "string"
+      },
+      "phone":{
+        "description": "Telephone number of the contact",
+        "title": "Phone",
+        "type": "string"
+      },
+      "mobile":{
+        "description": "Mobile number of the contact",
+        "title": "Mobile",
+        "type": "string"
+      },
+      "description":{
+        "description": "Description of the contact",
+        "title": "Description",
+        "type": "string"
+      },
+      "address":{
+        "description": "Address of the contact",
+        "title": "Address",
+        "type": "string"
+      },
+      "job-title":{
+        "description": "Job title of the contact",
+        "title": "Job Title",
+        "type": "string"
+      },
+      "tags":{
+        "description": "Tags associated with the contact",
+        "title": "Tags",
+        "type": "array"
+      },
+      "language":{
+        "description": "Language of the contact",
+        "title": "Language",
+        "type": "string"
+      },
+      "time-zone":{
+        "description": "Time zone of the contact",
+        "title": "Time Zone",
+        "type": "string"
+      },
+      "company-id":{
+        "description": "ID of the primary company to which the contact belongs",
+        "title": "Company ID",
+        "type": "integer"
+      },
+      "unique-external-id":{
+        "description": "Unique external ID of the contact which be assigned by the user(agent)",
+        "title": "Unique External ID",
+        "type": "string"
+      },
+      "twitter-id":{
+        "description": "Twitter ID of the contact",
+        "title": "Twitter ID",
+        "type": "string"
+      },
+      "view-all-tickets":{
+        "description": "Set to true if the contact can view all tickets",
+        "title": "View All Tickets",
+        "type": "boolean"
+      },
+      "deleted":{
+        "description": "Set to true if the contact is deleted",
+        "title": "Deleted",
+        "type": "boolean"
+      },
+      "active":{
+        "description": "Set to true if the contact has been verified",
+        "title": "Active",
+        "type": "boolean"
+      },
+      "other-emails":{
+        "description": "List of other email addresses of the contact",
+        "title": "Other Emails",
+        "type": "array"
+      },
+      "other-companies-ids":{
+        "description": "List of company IDs to which the contact belongs",
+        "title": "Other Companies IDs",
+        "type": "array"
+      },
+      "other-phone-numbers":{
+        "description": "List of other phone numbers of the contact",
+        "title": "Other Phone Numbers",
+        "type": "array"
+      },
+      "created-at":{
+        "description": "Timestamp that denotes when the contact was created. In UTC format.",
+        "title": "Created At",
+        "type": "string"
+      },
+      "updated-at":{
+        "description": "Timestamp that denotes when the contact was last updated. In UTC format.",
+        "title": "Updated At",
+        "type": "string"
+      },
+      "custom-fields":{
+        "description": "Custom fields that the contact have. Custom fields can be created or modified in Admin -> Customer Fields",
+        "title": "Custom Fields",
+        "type": "object"
       }
     }
   },
@@ -404,6 +526,12 @@
           "$ref": "#/$defs/ticket/intial-sentiment-score",
           "instillFormat": "integer",
           "instillUIOrder": 30
+        },
+        "custom-fields": {
+          "$ref": "#/$defs/ticket/custom-fields",
+          "instillFormat": "semi-structured/json",
+          "required":[],
+          "instillUIOrder": 31
         }
       },
       "required": [
@@ -412,8 +540,7 @@
         "description-text",
         "source",
         "status",
-        "priority",
-        "to-emails"
+        "priority"
       ],
       "title": "Output",
       "type": "object"
@@ -610,6 +737,172 @@
         }
       },
       "required": ["ticket-id", "created-at"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_CONTACT": {
+    "instillShortDescription": "Get contact using ID",
+    "input": {
+      "description": "Contact ID",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["contact-id"],
+      "properties": {
+        "contact-id": {
+          "$ref": "#/$defs/contact/contact-id",
+          "instillAcceptFormats": ["integer"],
+          "instillUpstreamTypes": ["value", "reference"],
+          "instillUIMultiline": false,
+          "instillUIOrder": 0
+        }
+      },
+      "required": ["contact-id"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Contact information",
+      "instillUIOrder": 0,
+      "properties": {
+        "name":{
+          "$ref": "#/$defs/contact/name",
+          "instillFormat": "string",
+          "instillUIOrder": 0
+        },
+        "email":{
+          "$ref": "#/$defs/contact/email",
+          "instillFormat": "string",
+          "instillUIOrder": 1
+        },
+        "phone":{
+          "$ref": "#/$defs/contact/phone",
+          "instillFormat": "string",
+          "instillUIOrder": 2
+        },
+        "mobile":{
+          "$ref": "#/$defs/contact/mobile",
+          "instillFormat": "string",
+          "instillUIOrder": 3
+        },
+        "description":{
+          "$ref": "#/$defs/contact/description",
+          "instillFormat": "string",
+          "instillUIOrder": 4
+        },
+        "address":{
+          "$ref": "#/$defs/contact/address",
+          "instillFormat": "string",
+          "instillUIOrder": 5
+        },
+        "job-title":{
+          "$ref": "#/$defs/contact/job-title",
+          "instillFormat": "string",
+          "instillUIOrder": 6
+        },
+        "tags":{
+          "$ref": "#/$defs/contact/tags",
+          "instillFormat": "array:string",
+          "items": {
+            "title": "Tag",
+            "type": "string",
+            "description": "Tag associated with the contact",
+            "instillFormat": "string"
+          },
+          "instillUIOrder": 7
+        },
+        "language":{
+          "$ref": "#/$defs/contact/language",
+          "instillFormat": "string",
+          "instillUIOrder": 8
+        },
+        "time-zone":{
+          "$ref": "#/$defs/contact/time-zone",
+          "instillFormat": "string",
+          "instillUIOrder": 9
+        },
+        "company-id":{
+          "$ref": "#/$defs/contact/company-id",
+          "instillFormat": "integer",
+          "instillUIOrder": 10
+        },
+        "unique-external-id":{
+          "$ref": "#/$defs/contact/unique-external-id",
+          "instillFormat": "string",
+          "instillUIOrder": 11
+        },
+        "twitter-id":{
+          "$ref": "#/$defs/contact/twitter-id",
+          "instillFormat": "string",
+          "instillUIOrder": 12
+        },
+        "view-all-tickets":{
+          "$ref": "#/$defs/contact/view-all-tickets",
+          "instillFormat": "boolean",
+          "instillUIOrder": 13
+        },
+        "deleted":{
+          "$ref": "#/$defs/contact/deleted",
+          "instillFormat": "boolean",
+          "instillUIOrder": 14
+        },
+        "active":{
+          "$ref": "#/$defs/contact/active",
+          "instillFormat": "boolean",
+          "instillUIOrder": 15
+        },
+        "other-emails":{
+          "$ref": "#/$defs/contact/other-emails",
+          "instillFormat": "array:string",
+          "items": {
+            "title": "Other Email",
+            "type": "string",
+            "description": "The other email addresses of the contact",
+            "instillFormat": "string"
+          },
+          "instillUIOrder": 16
+        },
+        "other-companies-ids":{
+          "$ref": "#/$defs/contact/other-companies-ids",
+          "instillFormat": "array:integer",
+          "items": {
+            "title": "Company ID",
+            "type": "integer",
+            "description": "ID of the company to which the contact belongs",
+            "instillFormat": "integer"
+          },
+          "instillUIOrder": 17
+        },
+        "other-phone-numbers":{
+          "$ref": "#/$defs/contact/other-phone-numbers",
+          "instillFormat": "array:string",
+          "items": {
+            "title": "Other Phone Number",
+            "type": "string",
+            "description": "The other phone number of the contact",
+            "instillFormat": "string"
+          },
+          "instillUIOrder": 18
+        },
+        "created-at":{
+          "$ref": "#/$defs/contact/created-at",
+          "instillFormat": "string",
+          "instillUIOrder": 19
+        },
+        "updated-at":{
+          "$ref": "#/$defs/contact/updated-at",
+          "instillFormat": "string",
+          "instillUIOrder": 20
+        },
+        "custom-fields":{
+          "$ref": "#/$defs/contact/custom-fields",
+          "instillFormat": "semi-structured/json",
+          "required":[],
+          "instillUIOrder": 21
+        }
+      },
+      "required": [
+        "name"
+      ],
       "title": "Output",
       "type": "object"
     }
