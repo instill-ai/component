@@ -309,6 +309,7 @@
             "gpt-4o-mini",
             "gpt-4o",
             "gpt-4o-2024-05-13",
+            "gpt-4o-2024-08-06",
             "gpt-4-turbo",
             "gpt-4-turbo-2024-04-09",
             "gpt-4-0125-preview",
@@ -329,7 +330,7 @@
             "gpt-3.5-turbo-0125",
             "gpt-3.5-turbo-16k-0613"
           ],
-          "example": "gpt-3.5-turbo",
+          "example": "gpt-4o",
           "type": "string",
           "instillAcceptFormats": [
             "string"
@@ -344,6 +345,7 @@
           "instillCredentialMap": {
             "values": [
               "gpt-4o",
+              "gpt-4o-2024-08-06",
               "gpt-4-turbo",
               "gpt-4-vision-preview",
               "gpt-4",
@@ -411,35 +413,68 @@
           "type": "string"
         },
         "response-format": {
-          "description": "An object specifying the format that the model must output. Used to enable JSON mode.",
+          "description": "Response format.",
           "instillUIOrder": 8,
-          "properties": {
-            "type": {
-              "default": "text",
-              "description": "Must be one of `text` or `json_object`.",
-              "enum": [
-                "text",
-                "json_object"
-              ],
-              "type": "string",
-              "instillAcceptFormats": [
-                "string"
-              ],
-              "title": "Type",
-              "example": "text",
-              "instillShortDescription": "Setting to `json_object` enables JSON mode. ",
-              "instillUIOrder": 0,
-              "instillUpstreamTypes": [
-                "value",
-                "reference"
-              ]
-            }
-          },
+          "additionalProperties": true,
+          "type": "object",
           "required": [
             "type"
           ],
-          "title": "Response Format",
-          "type": "object"
+          "oneOf": [
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "text"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "type": "object"
+            },
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "json_object"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "type": "object"
+            },
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "const": "json_schema"
+                },
+                "json-schema": {
+                  "description": "Set up the schema of the structured output.",
+                  "type": "string",
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "title": "JSON Schema",
+                  "instillShortDescription": "Specify the schema of the structured output.",
+                  "instillUIOrder": 1,
+                  "instillUIMultiline": true,
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference"
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "json-schema"
+              ],
+              "type": "object"
+            }
+          ],
+          "title": "Response Format"
         },
         "system-message": {
           "default": "You are a helpful assistant.",
@@ -501,7 +536,8 @@
       },
       "required": [
         "model",
-        "prompt"
+        "prompt",
+        "response-format"
       ],
       "title": "Input",
       "type": "object"

@@ -174,7 +174,31 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 			// workaround, the OpenAI service can not accept this param
 			if inputStruct.Model != "gpt-4-vision-preview" {
-				body.ResponseFormat = inputStruct.ResponseFormat
+				if inputStruct.ResponseFormat != nil {
+					body.ResponseFormat = &responseFormatReqStruct{
+						Type: inputStruct.ResponseFormat.Type,
+					}
+					if inputStruct.ResponseFormat.Type == "json_schema" {
+						if inputStruct.Model == "gpt-4o-mini" || inputStruct.Model == "gpt-4o-2024-08-06" {
+							sch := map[string]any{}
+							if inputStruct.ResponseFormat.JSONSchema != "" {
+								err = json.Unmarshal([]byte(inputStruct.ResponseFormat.JSONSchema), &sch)
+								if err != nil {
+									return nil, err
+								}
+								body.ResponseFormat = &responseFormatReqStruct{
+									Type:       inputStruct.ResponseFormat.Type,
+									JSONSchema: sch,
+								}
+							}
+
+						} else {
+							return nil, fmt.Errorf("this model doesn't support response format: json_schema")
+						}
+
+					}
+				}
+
 			}
 
 			resp := textCompletionResp{}

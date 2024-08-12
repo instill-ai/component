@@ -39,12 +39,13 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         },
         "data": {
           "description": "The data to be inserted",
           "instillAcceptFormats": [
-            "semi-structured/*","object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
@@ -88,7 +89,7 @@
       "type": "object"
     }
   },
-  "TASK_INSERT_MANY":{
+  "TASK_INSERT_MANY": {
     "instillShortDescription": "Perform insert operation with multiple rows",
     "input": {
       "instillUIOrder": 0,
@@ -128,12 +129,15 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         },
         "array-data": {
           "description": "The array data to be inserted",
           "instillAcceptFormats": [
-            "array:semi-structured/*","array:semi-structured/json","array:semi-structured/object", "array:object"
+            "array:semi-structured/*",
+            "array:semi-structured/json",
+            "array:semi-structured/object",
+            "array:object"
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
@@ -142,7 +146,7 @@
             "value"
           ],
           "title": "Data",
-          "type":"array",
+          "type": "array",
           "items": {
             "description": "The data to be inserted",
             "title": "Data",
@@ -219,7 +223,7 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         },
         "filter": {
           "instillShortDescription": "The filter to be applied to the data",
@@ -230,7 +234,7 @@
             "template",
             "value"
           ],
-          "instillAcceptFormats":[
+          "instillAcceptFormats": [
             "string"
           ],
           "title": "Filter",
@@ -239,7 +243,8 @@
         "update-data": {
           "description": "The new data to be updated to",
           "instillAcceptFormats": [
-            "semi-structured/*","object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUIOrder": 3,
           "instillUpstreamTypes": [
@@ -284,7 +289,7 @@
       "type": "object"
     }
   },
-  "TASK_SELECT":{
+  "TASK_SELECT": {
     "instillShortDescription": "Perform select operation",
     "input": {
       "instillUIOrder": 0,
@@ -324,7 +329,7 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         },
         "filter": {
           "instillShortDescription": "The filter to be applied to the data. If empty, then all rows will be updated",
@@ -335,7 +340,7 @@
             "template",
             "value"
           ],
-          "instillAcceptFormats":[
+          "instillAcceptFormats": [
             "string"
           ],
           "title": "Filter",
@@ -354,9 +359,9 @@
             "value"
           ],
           "title": "Limit",
-          "type":"integer"
+          "type": "integer"
         },
-        "columns":{
+        "columns": {
           "description": "The columns to return in the rows. If empty then all columns will be returned",
           "instillAcceptFormats": [
             "array:string"
@@ -369,9 +374,9 @@
             "value"
           ],
           "title": "Columns",
-          "type":"array",
+          "type": "array",
           "items": {
-            "title":"Column",
+            "title": "Column",
             "type": "string"
           },
           "minItems": 1
@@ -468,7 +473,7 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         },
         "filter": {
           "instillShortDescription": "The filter to be applied to the data",
@@ -479,7 +484,7 @@
             "template",
             "value"
           ],
-          "instillAcceptFormats":[
+          "instillAcceptFormats": [
             "string"
           ],
           "title": "Filter",
@@ -513,7 +518,7 @@
       "type": "object"
     }
   },
-  "TASK_CREATE_TABLE":{
+  "TASK_CREATE_TABLE": {
     "instillShortDescription": "Create a table in the database",
     "input": {
       "instillUIOrder": 0,
@@ -553,12 +558,13 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         },
         "columns-structure": {
           "description": "The columns structure to be created in the table, json with value string, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
           "instillAcceptFormats": [
-            "semi-structured/*","object"
+            "semi-structured/*",
+            "object"
           ],
           "instillShortDescription": "Columns Structure, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
           "instillUIOrder": 2,
@@ -599,7 +605,7 @@
       "type": "object"
     }
   },
-  "TASK_DROP_TABLE":{
+  "TASK_DROP_TABLE": {
     "instillShortDescription": "Drop a table in the database",
     "input": {
       "instillUIOrder": 0,
@@ -639,7 +645,7 @@
             "value"
           ],
           "title": "Table Name",
-          "type":"string"
+          "type": "string"
         }
       },
       "required": [

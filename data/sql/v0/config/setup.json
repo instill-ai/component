@@ -5,7 +5,8 @@
     "user": {
       "description": "Fill in your account username",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"
@@ -30,7 +31,8 @@
     "database-name": {
       "description": "Fill in the name of your database",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"
@@ -42,7 +44,8 @@
     "host": {
       "description": "Fill in the host of your database",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"
@@ -54,7 +57,8 @@
     "port": {
       "description": "Fill in the port of your database",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "default": 3306,
       "instillAcceptFormats": [

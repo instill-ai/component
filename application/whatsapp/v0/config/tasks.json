@@ -3,36 +3,60 @@
     "def-input": {
       "phone-number-id": {
         "description": "Phone Number ID. Obtainable through the app dashboard. Note: This is for sender.",
-        "instillAcceptFormats": ["string"],
+        "instillAcceptFormats": [
+          "string"
+        ],
         "instillUIMultiline": false,
         "instillUIOrder": 0,
-        "instillUpstreamTypes": ["value", "reference", "template"],
+        "instillUpstreamTypes": [
+          "value",
+          "reference",
+          "template"
+        ],
         "title": "Phone Number ID",
         "type": "string"
       },
       "to": {
         "description": "The number of the recipient you are sending the message to",
-        "instillAcceptFormats": ["string"],
+        "instillAcceptFormats": [
+          "string"
+        ],
         "instillUIMultiline": false,
         "instillUIOrder": 1,
-        "instillUpstreamTypes": ["value", "reference", "template"],
+        "instillUpstreamTypes": [
+          "value",
+          "reference",
+          "template"
+        ],
         "title": "Recipient Phone Number",
         "type": "string"
       },
-      "template":{
+      "template": {
         "name": {
           "description": "Name of the template",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Template Name",
           "type": "string"
         },
         "language-code": {
           "description": "The code of the language in which the template is used. Supported languages: https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Language Code",
           "type": "string"
         },
@@ -61,56 +85,98 @@
           }
         }
       },
-      "media":{
+      "media": {
         "id-or-link": {
           "description": "Input either ID or link of the media. If the input has 'http', it will be considered as a link.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "type": "string"
         },
         "caption": {
           "description": "Media asset caption. Description of the media. This property cannot be used when the media type is audio. If audio tried to use this property, it will be ignored.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "type": "string"
         },
         "filename": {
           "description": "The filename of the document. Only document can use this property. This property will specify what format the document is displayed as in WhatsApp. If other media type tried to use this property, it will be ignored.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "type": "string"
         }
       },
-      "location":{
+      "location": {
         "latitude": {
           "description": "Location latitude",
-          "instillAcceptFormats": ["number"],
+          "instillAcceptFormats": [
+            "number"
+          ],
           "instillUIMultiline": false,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "type": "number"
         },
         "longitude": {
           "description": "Location longitude",
-          "instillAcceptFormats": ["number"],
+          "instillAcceptFormats": [
+            "number"
+          ],
           "instillUIMultiline": false,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "type": "number"
         },
         "location-name": {
           "description": "Name of the location",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "type": "string"
         },
         "address": {
           "description": "Address of the location",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "type": "string"
         }
       }
@@ -183,7 +249,6 @@
         "body-parameters": {
           "$ref": "#/$defs/def-input/template/body-parameters",
           "instillUIOrder": 5
-
         },
         "button-parameters": {
           "$ref": "#/$defs/def-input/template/button-parameters",
@@ -201,7 +266,7 @@
     },
     "output": {
       "description": "API response",
-      "instillUIOrder": 0,  
+      "instillUIOrder": 0,
       "properties": {
         "recipient-wa-id": {
           "$ref": "#/$defs/def-output/recipient-wa-id"
@@ -213,7 +278,11 @@
           "$ref": "#/$defs/def-output/message-status"
         }
       },
-      "required": ["recipient-wa-id", "message-id", "message-status"],
+      "required": [
+        "recipient-wa-id",
+        "message-id",
+        "message-status"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -249,12 +318,22 @@
           "instillUIOrder": 3
         },
         "media-type": {
-          "enum": ["image", "video", "document"],
+          "enum": [
+            "image",
+            "video",
+            "document"
+          ],
           "example": "none",
           "description": "Specify the header(media) type for the header section of the template.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIOrder": 4,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Header Type",
           "type": "string"
         },
@@ -271,7 +350,6 @@
         "body-parameters": {
           "$ref": "#/$defs/def-input/template/body-parameters",
           "instillUIOrder": 7
-
         },
         "button-parameters": {
           "$ref": "#/$defs/def-input/template/button-parameters",
@@ -285,7 +363,6 @@
         "language-code",
         "media-type",
         "id-or-link"
-
       ],
       "title": "Input",
       "type": "object"
@@ -304,7 +381,11 @@
           "$ref": "#/$defs/def-output/message-status"
         }
       },
-      "required": ["recipient-wa-id", "message-id", "message-status"],
+      "required": [
+        "recipient-wa-id",
+        "message-id",
+        "message-status"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -360,7 +441,7 @@
           "$ref": "#/$defs/def-input/location/address",
           "instillUIOrder": 7
         },
-        "body-parameters":{
+        "body-parameters": {
           "$ref": "#/$defs/def-input/template/body-parameters",
           "instillUIOrder": 8
         },
@@ -368,7 +449,6 @@
           "$ref": "#/$defs/def-input/template/button-parameters",
           "instillUIOrder": 9
         }
-        
       },
       "required": [
         "phone-number-id",
@@ -397,7 +477,11 @@
           "$ref": "#/$defs/def-output/message-status"
         }
       },
-      "required": ["recipient-wa-id", "message-id", "message-status"],
+      "required": [
+        "recipient-wa-id",
+        "message-id",
+        "message-status"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -429,12 +513,18 @@
           "$ref": "#/$defs/def-input/template/language-code",
           "instillUIOrder": 3
         },
-        "one-time-password":{
+        "one-time-password": {
           "description": "One-time password to be sent to the recipient. Maximum 15 characters.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 4,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "One-Time Password",
           "type": "string"
         }
@@ -463,7 +553,11 @@
           "$ref": "#/$defs/def-output/message-status"
         }
       },
-      "required": ["recipient-wa-id", "message-id", "message-status"],
+      "required": [
+        "recipient-wa-id",
+        "message-id",
+        "message-status"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -488,25 +582,45 @@
         },
         "body": {
           "description": "Body of the message",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
           "instillUIOrder": 2,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Text",
           "type": "string"
         },
         "preview-url": {
-          "enum": ["false", "true"],
+          "enum": [
+            "false",
+            "true"
+          ],
           "example": "false",
           "description": "Specify whether URL should be previewed or not. This will have no affect if the message does not contain any URL.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIOrder": 3,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Preview URL",
           "type": "string"
         }
       },
-      "required": ["phone-number-id", "to", "body", "preview-url"],
+      "required": [
+        "phone-number-id",
+        "to",
+        "body",
+        "preview-url"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -521,7 +635,10 @@
           "$ref": "#/$defs/def-output/message-id"
         }
       },
-      "required": ["recipient-wa-id", "message-id"],
+      "required": [
+        "recipient-wa-id",
+        "message-id"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -547,12 +664,23 @@
           "$ref": "#/$defs/def-input/to"
         },
         "media-type": {
-          "enum": ["image", "audio", "document", "video"],
+          "enum": [
+            "image",
+            "audio",
+            "document",
+            "video"
+          ],
           "example": "image",
           "description": "Specify what media to send.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIOrder": 2,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Media Type",
           "type": "string"
         },
@@ -572,7 +700,12 @@
           "instillUIOrder": 5
         }
       },
-      "required": ["phone-number-id", "to", "media-type", "id-or-link"],
+      "required": [
+        "phone-number-id",
+        "to",
+        "media-type",
+        "id-or-link"
+      ],
       "title": "Input",
       "type": "object"
     },
@@ -587,7 +720,10 @@
           "$ref": "#/$defs/def-output/message-id"
         }
       },
-      "required": ["recipient-wa-id", "message-id"],
+      "required": [
+        "recipient-wa-id",
+        "message-id"
+      ],
       "title": "Output",
       "type": "object"
     }
@@ -655,12 +791,15 @@
           "$ref": "#/$defs/def-output/message-id"
         }
       },
-      "required": ["recipient-wa-id", "message-id"],
+      "required": [
+        "recipient-wa-id",
+        "message-id"
+      ],
       "title": "Output",
       "type": "object"
     }
   },
-  "TASK_SEND_CONTACT_MESSAGE":{
+  "TASK_SEND_CONTACT_MESSAGE": {
     "instillShortDescription": "Send contact message. Note: Message can only be sent when the 24-hour customer service window is open. For more information: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows",
     "input": {
       "description": "Contact input",
@@ -686,77 +825,136 @@
         },
         "first-name": {
           "description": "First name of the contact",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 2,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "First Name",
           "type": "string"
         },
         "middle-name": {
           "description": "Middle name of the contact",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 3,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Middle Name",
           "type": "string"
         },
         "last-name": {
           "description": "Last name of the contact",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 4,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Last Name",
           "type": "string"
         },
         "phone-number": {
           "description": "Phone number of the contact",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 5,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Phone Number",
           "type": "string"
         },
         "phone-number-type": {
-          "enum": ["none", "CELL", "MAIN", "PHONE", "HOME", "WORK"],
+          "enum": [
+            "none",
+            "CELL",
+            "MAIN",
+            "PHONE",
+            "HOME",
+            "WORK"
+          ],
           "example": "none",
           "description": "Phone number type of the contact. If there is no phone number, pick none.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 6,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Phone Number Type",
           "type": "string"
         },
         "email": {
           "description": "Email of the contact",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 7,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Email",
           "type": "string"
         },
         "email-type": {
-          "enum": ["none", "HOME", "WORK"],
+          "enum": [
+            "none",
+            "HOME",
+            "WORK"
+          ],
           "example": "none",
           "description": "Email type of the contact. If there is no email, pick none.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 8,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Email Type",
           "type": "string"
         },
         "birthday": {
           "description": "Birthday of the contact. Format is in 'YYYY-MM-DD'.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 9,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Birthday",
           "type": "string"
         }
@@ -780,12 +978,15 @@
           "$ref": "#/$defs/def-output/message-id"
         }
       },
-      "required": ["recipient-wa-id", "message-id"],
+      "required": [
+        "recipient-wa-id",
+        "message-id"
+      ],
       "title": "Output",
       "type": "object"
     }
   },
-  "TASK_SEND_INTERACTIVE_CALL_TO_ACTION_URL_BUTTON_MESSAGE":{
+  "TASK_SEND_INTERACTIVE_CALL_TO_ACTION_URL_BUTTON_MESSAGE": {
     "instillShortDescription": "Send interactive Call-To-Action URL button message. Note: Message can only be sent when the 24-hour customer service window is open. For more information: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows ",
     "input": {
       "description": "Interactive CTA URL button input",
@@ -808,46 +1009,76 @@
         },
         "header-text": {
           "description": "Message header text.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
           "instillUIOrder": 2,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Header Text",
           "type": "string"
         },
         "body-text": {
           "description": "Message body text.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
           "instillUIOrder": 3,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Body Text",
           "type": "string"
         },
         "footer-text": {
           "description": "Message footer text.",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
           "instillUIOrder": 4,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Footer Text",
           "type": "string"
         },
         "button-display-text": {
           "description": "The text displayed on the button",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": false,
           "instillUIOrder": 5,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Button Display Text",
           "type": "string"
         },
         "button-url": {
           "description": "URL to load when the user tapped the button",
-          "instillAcceptFormats": ["string"],
+          "instillAcceptFormats": [
+            "string"
+          ],
           "instillUIMultiline": true,
           "instillUIOrder": 6,
-          "instillUpstreamTypes": ["value", "reference", "template"],
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
           "title": "Button URL",
           "type": "string"
         }
@@ -873,7 +1104,10 @@
           "$ref": "#/$defs/def-output/message-id"
         }
       },
-      "required": ["recipient-wa-id", "message-id"],
+      "required": [
+        "recipient-wa-id",
+        "message-id"
+      ],
       "title": "Output",
       "type": "object"
     }

@@ -112,7 +112,7 @@ func TestComponent_ExecuteGetThreadTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.GetThread
-		
+
 		pbInput, err := structpb.NewStruct(map[string]any{
 			"thread-id": tc.input,
 		})
@@ -165,7 +165,7 @@ func TestComponent_ExecuteInsertMessageTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.InsertMessage
-		
+
 
 		pbInput, err := base.ConvertToStructpb(tc.input)
 

@@ -80,7 +80,7 @@ func TestComponent_ExecuteGetTicketTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.GetTicket
-		
+
 
 		pbInput, err := structpb.NewStruct(map[string]any{
 			"ticket-id": tc.input,
@@ -132,7 +132,7 @@ func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.CreateTicket
-		
+
 
 		pbInput, err := base.ConvertToStructpb(tc.inputTicket)
 
