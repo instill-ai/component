@@ -179,12 +179,11 @@ func TestTasks(t *testing.T) {
 			usesInstillCredentials: false,
 		}
 		e.execute = e.TaskTextGenerationChat
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)
@@ -215,12 +214,11 @@ func TestTasks(t *testing.T) {
 			usesInstillCredentials: false,
 		}
 		e.execute = e.TaskTextEmbeddings
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)
@@ -250,12 +248,11 @@ func TestTasks(t *testing.T) {
 			usesInstillCredentials: false,
 		}
 		e.execute = e.TaskContextualAnswering
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)
@@ -286,12 +283,11 @@ func TestTasks(t *testing.T) {
 			usesInstillCredentials: false,
 		}
 		e.execute = e.TaskContextualAnswering
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)
@@ -319,12 +315,11 @@ func TestTasks(t *testing.T) {
 			usesInstillCredentials: false,
 		}
 		e.execute = e.TaskTextSummarization
-		exec := &base.ExecutionWrapper{Execution: e}
 
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)
@@ -355,11 +350,10 @@ func TestTasks(t *testing.T) {
 			usesInstillCredentials: false,
 		}
 		e.execute = e.TaskTextSummarizationBySegment
-		exec := &base.ExecutionWrapper{Execution: e}
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)
@@ -387,11 +381,10 @@ func TestTasks(t *testing.T) {
 			usesInstillCredentials: false,
 		}
 		e.execute = e.TaskTextParaphrasing
-		exec := &base.ExecutionWrapper{Execution: e}
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)
@@ -423,11 +416,10 @@ func TestTasks(t *testing.T) {
 			usesInstillCredentials: false,
 		}
 		e.execute = e.TaskGrammarCheck
-		exec := &base.ExecutionWrapper{Execution: e}
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)
@@ -459,11 +451,10 @@ func TestTasks(t *testing.T) {
 			usesInstillCredentials: false,
 		}
 		e.execute = e.TaskTextImprovement
-		exec := &base.ExecutionWrapper{Execution: e}
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)
@@ -493,11 +484,10 @@ func TestTasks(t *testing.T) {
 			usesInstillCredentials: false,
 		}
 		e.execute = e.TaskTextSegmentation
-		exec := &base.ExecutionWrapper{Execution: e}
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Assert(err, qt.IsNil)
 
 		wantJSON, err := json.Marshal(tc.wantResp)

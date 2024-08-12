@@ -3,6 +3,7 @@ package ai21labs
 import (
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type AI21labsClient struct {
@@ -71,3 +72,7 @@ const (
 	NormalTextLong  SegmentType = "normal_text_long"
 	NonEnglish      SegmentType = "non_english"
 )
+
+func getAPIKey(setup *structpb.Struct) string {
+	return setup.GetFields()[cfgAPIKey].GetStringValue()
+}

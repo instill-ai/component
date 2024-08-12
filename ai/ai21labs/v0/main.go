@@ -16,6 +16,8 @@ const (
 	baseURL   = "https://api.ai21.com/"
 )
 
+const ()
+
 type ExecuteFunction func(*structpb.Struct) (*structpb.Struct, error)
 
 var (
@@ -61,14 +63,21 @@ func (c *component) WithInstillCredentials(s map[string]any) *component {
 	return c
 }
 
-func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Struct, task string) (*base.ExecutionWrapper, error) {
-	resolvedSetup, resolved, err := c.resolveSetup(setup)
+type AI21labsSetup struct {
+	APIKey string `json:"api-key"`
+}
+
+func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
+	resolvedSetup, resolved, err := c.resolveSetup(x.Setup)
 	if err != nil {
 		return nil, err
 	}
+
+	x.Setup = resolvedSetup
+
 	e := &execution{
-		ComponentExecution:     base.ComponentExecution{Component: c, SystemVariables: sysVars, Task: task, Setup: resolvedSetup},
-		client:                 newClient(getAPIKey(resolvedSetup), getBasePath(resolvedSetup), c.GetLogger()),
+		ComponentExecution:     x,
+		client:                 newClient(getAPIKey(resolvedSetup), getBasePath(x.Setup), c.Logger),
 		usesInstillCredentials: resolved,
 	}
 
@@ -83,13 +92,13 @@ func (c *component) CreateExecution(sysVars map[string]any, setup *structpb.Stru
 		TaskTextImprovement:            e.TaskTextImprovement,
 		TaskTextSegmentation:           e.TaskTextSegmentation,
 	}
-	if taskFunc, ok := taskMap[task]; ok {
+
+	if taskFunc, ok := taskMap[x.Task]; ok {
 		e.execute = taskFunc
 	} else {
 		return nil, fmt.Errorf("unsupported task")
 	}
-
-	return &base.ExecutionWrapper{Execution: e}, nil
+	return e, nil
 }
 
 // resolveSetup checks whether the component is configured to use the Instill
@@ -127,10 +136,6 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 	}
 
 	return outputs, nil
-}
-
-func getAPIKey(setup *structpb.Struct) string {
-	return setup.GetFields()[cfgAPIKey].GetStringValue()
 }
 
 // This function is not used in the codebase. It is only used in the tests.

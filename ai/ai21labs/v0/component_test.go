@@ -30,7 +30,7 @@ func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
-	connector := Init(bc)
+	cmp := Init(bc)
 
 	supportedTasks := []string{
 		"TASK_TEXT_GENERATION_CHAT",
@@ -47,24 +47,31 @@ func TestComponent_Execute(t *testing.T) {
 		c.Run("ok - supported task", func(c *qt.C) {
 			task := supportedTask
 
-			_, err := connector.CreateExecution(nil, nil, task)
+			_, err := cmp.CreateExecution(base.ComponentExecution{
+				Component: cmp,
+				Task:      task,
+			})
 			c.Check(err, qt.IsNil)
 		})
 	}
 
 	c.Run("nok - unsupported task", func(c *qt.C) {
 		task := "FOOBAR"
-		_, err := connector.CreateExecution(nil, nil, task)
+		_, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      task,
+		})
 		c.Check(err, qt.ErrorMatches, "unsupported task")
 	})
 }
 
 func TestComponent_Connection(t *testing.T) {
 	c := qt.New(t)
-	ctx := context.Background()
 
-	bc := base.Component{}
-	connector := Init(bc)
+	bc := base.Component{Logger: zap.NewNop()}
+	cmp := Init(bc)
+
+	ctx := context.Background()
 
 	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c.Check(r.Method, qt.Equals, http.MethodPost)
@@ -106,10 +113,14 @@ func TestComponent_Connection(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := connector.CreateExecution(nil, setup, "TASK_TEXT_GENERATION_CHAT")
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      "TASK_TEXT_GENERATION_CHAT",
+			Setup:     setup,
+		})
 		c.Assert(err, qt.IsNil)
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNil)
 
 	})
@@ -124,10 +135,14 @@ func TestComponent_Connection(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := connector.CreateExecution(nil, setup, "TASK_TEXT_GENERATION_CHAT")
+		exec, err := cmp.CreateExecution(base.ComponentExecution{
+			Component: cmp,
+			Task:      "TASK_TEXT_GENERATION_CHAT",
+			Setup:     setup,
+		})
 		c.Assert(err, qt.IsNil)
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
+		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
 		c.Check(err, qt.IsNotNil)
 
 		want := "AI21labs responded with a 401 status code. Incorrect API key provided."
@@ -143,7 +158,7 @@ func TestComponent_Connection(t *testing.T) {
 			"base-path": ai21labsServer.URL,
 		})
 		c.Assert(err, qt.IsNil)
-		err = connector.TestConnection(nil, setup)
+		err = cmp.TestConnection(nil, setup)
 		c.Check(err, qt.IsNotNil)
 	})
 }

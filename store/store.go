@@ -23,7 +23,8 @@ import (
 	"github.com/instill-ai/component/application/github/v0"
 	"github.com/instill-ai/component/application/googlesearch/v0"
 	"github.com/instill-ai/component/application/hubspot/v0"
-	"github.com/instill-ai/component/application/jira/v0"	"go.uber.org/zap"
+	"github.com/instill-ai/component/application/jira/v0"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 
