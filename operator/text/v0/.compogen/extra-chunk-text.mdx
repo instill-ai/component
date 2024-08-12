@@ -7,102 +7,39 @@ There are three strategies available for chunking text in Text Component:
 #### Token
 Language models have a token limit. You should not exceed the token limit. When you split your text into chunks it is therefore a good idea to count the number of tokens. There are many tokenizers. When you count tokens in your text you should use the same tokenizer as used in the language model.
 
-| **Parameter**        | **Type**         | **Description**                                                           |
-| -------------------- | ---------------- | ------------------------------------------------------------------------- |
-| `chunk-size`         | integer          | Specifies the maximum size of each chunk in terms of the number of tokens |
-| `chunk-overlap`      | integer          | Determines the number of tokens that overlap between consecutive chunks   |
-| `model-name`         | string           | The name of the model used for tokenization                               |
-| `allowed-special`    | array of strings | A list of special tokens that are allowed within chunks                   |
-| `disallowed-special` | array of strings | A list of special tokens that should not appear within chunks             |
+| **Parameter**        | **Type**         | **Description**                                                                                                                                                                                              |
+|----------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `chunk-size`         | integer          | Specifies the maximum size of each chunk in terms of the number of tokens                                                                                                                                    |
+| `chunk-overlap`      | integer          | Determines the number of tokens that overlap between consecutive chunks                                                                                                                                      |
+| `model-name`         | string           | The name of the model used for tokenization                                                                                                                                                                  |
+| `allowed-special`    | array of strings | A list of special tokens that are allowed within chunks                                                                                                                                                      |
+| `disallowed-special` | array of strings | A list of special tokens that should not appear within chunks                                                                                                                                                |
 
 #### Recursive
 This text splitter is the recommended one for generic text. It is parameterized by a list of characters. It tries to split on them in order until the chunks are small enough. The default list is ["\n\n", "\n", " ", ""]. This has the effect of trying to keep all paragraphs (and then sentences, and then words) together as long as possible, as those would generically seem to be the strongest semantically related pieces of text.
 
-| **Parameter**    | **Type**         | **Description**                                                                              |
-| ---------------- | ---------------- | -------------------------------------------------------------------------------------------- |
-| `chunk-size`     | integer          | Specifies the maximum size of each chunk in terms of the number of tokens                    |
-| `chunk-overlap`  | integer          | Determines the number of tokens that overlap between consecutive chunks                      |
-| `separators`     | array of strings | A list of strings representing the separators used to split the text                         |
-| `keep-separator` | boolean          | A flag indicating whether to keep the separator characters at the beginning or end of chunks |
+| **Parameter**      | **Type**         | **Description**                                                                                                                                                                                              |
+|--------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `chunk-size`       | integer          | Specifies the maximum size of each chunk in terms of the number of tokens                                                                                                                                    |
+| `chunk-overlap`    | integer          | Determines the number of tokens that overlap between consecutive chunks                                                                                                                                      |
+| `model-name`       | string           | The name of the model used for tokenization                                                                                                                                                                  |
+| `separators`       | array of strings | A list of strings representing the separators used to split the text                                                                                                                                         |
+| `keep-separator`   | boolean          | A flag indicating whether to keep the separator characters at the beginning or end of chunks                                                                                                                 |
 
 
 #### Markdown
 This text splitter is specially designed for Markdown format.
 
-| **Parameter**   | **Type** | **Description**                                                           |
-| --------------- | -------- | ------------------------------------------------------------------------- |
-| `chunk-size`    | integer  | Specifies the maximum size of each chunk in terms of the number of tokens |
-| `chunk-overlap` | integer  | Determines the number of tokens that overlap between consecutive chunks   |
-| `code-blocks`   | boolean  | A flag indicating whether code blocks should be treated as a single unit  |
-
-### Tokenization
-There are 2 ways to choose the tokenizer:
-- 1. Use Model name to choose the tokenizer
-- 2. Use Encoding name to choose the tokenizer
-
-#### Model Name
-
-| **Model**                     |
-| ----------------------------- |
-| gpt-4o                        |
-| gpt-4                         |
-| gpt-3.5-turbo                 |
-| command-r-plus                |
-| command-r                     |
-| command                       |
-| command-nightly               |
-| command-light                 |
-| command-light-nightly         |
-| embed-english-v3.0            |
-| embed-multilingual-v3.0       |
-| embed-english-light-v3.0      |
-| embed-multilingual-light-v3.0 |
-| text-davinci-003              |
-| text-davinci-002              |
-| text-davinci-001              |
-| text-curie-001                |
-| text-babbage-001              |
-| text-ada-001                  |
-| davinci                       |
-| curie                         |
-| babbage                       |
-| ada                           |
-| code-davinci-002              |
-| code-davinci-001              |
-| code-cushman-002              |
-| code-cushman-001              |
-| davinci-codex                 |
-| cushman-codex                 |
-| text-davinci-edit-001         |
-| code-davinci-edit-001         |
-| text-embedding-ada-002        |
-| text-similarity-davinci-001   |
-| text-similarity-curie-001     |
-| text-similarity-babbage-001   |
-| text-similarity-ada-001       |
-| text-search-davinci-doc-001   |
-| text-search-curie-doc-001     |
-| text-search-babbage-doc-001   |
-| text-search-ada-doc-001       |
-| code-search-babbage-code-001  |
-| code-search-ada-code-001      |
-| gpt2                          |
-
-
-
-#### Encoding Name
-| **Encoding** |
-| ------------ |
-| o200k_base   |
-| cl100k_base  |
-| p50k_base    |
-| r50k_base    |
-| p50k_edit    |
-
+| **Parameter**      | **Type** | **Description**                                                                                                                                                                                              |
+|--------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `chunk-size`       | integer  | Specifies the maximum size of each chunk in terms of the number of tokens                                                                                                                                    |
+| `chunk-overlap`    | integer  | Determines the number of tokens that overlap between consecutive chunks                                                                                                                                      |
+| `model-name`       | string   | The name of the model used for tokenization                                                                                                                                                                  |
+| `code-blocks`      | boolean  | A flag indicating whether code blocks should be treated as a single unit                                                                                                                                     |
 
 ### Text Chunks in Output
 | **Parameter**    | **Type** | **Description**                                              |
-| ---------------- | -------- | ------------------------------------------------------------ |
+|------------------|----------|--------------------------------------------------------------|
 | `test`           | string   | The text chunk                                               |
 | `start-position` | integer  | The starting position of the text chunk in the original text |
 | `end-position`   | integer  | The ending position of the text chunk in the original text   |
