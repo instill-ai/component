@@ -89,7 +89,7 @@ func TestComponent_ExecuteGetDealTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.GetDeal
-		
+
 
 		pbInput, err := structpb.NewStruct(map[string]any{
 			"deal-id": tc.input,
@@ -139,7 +139,7 @@ func TestComponent_ExecuteCreateDealTask(t *testing.T) {
 			client:             createMockClient(),
 		}
 		e.execute = e.CreateDeal
-		
+
 
 		pbInput, err := base.ConvertToStructpb(tc.inputDeal)
 

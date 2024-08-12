@@ -35,7 +35,8 @@
         "data": {
           "description": "Data to be indexed",
           "instillAcceptFormats": [
-            "semi-structured/*","object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
@@ -74,7 +75,7 @@
       "type": "object"
     }
   },
-  "TASK_MULTI_INDEX":{
+  "TASK_MULTI_INDEX": {
     "instillShortDescription": "Index multiple documents into Elasticsearch with bulk API",
     "input": {
       "instillUIOrder": 0,
@@ -106,7 +107,7 @@
           ],
           "items": {
             "description": "An id of the document",
-            "type":"string",
+            "type": "string",
             "example": 1
           },
           "minItems": 1,
@@ -116,7 +117,10 @@
         "array-data": {
           "description": "Array data to be indexed",
           "instillAcceptFormats": [
-            "array:semi-structured/*","array:semi-structured/json","array:semi-structured/object","array:object"
+            "array:semi-structured/*",
+            "array:semi-structured/json",
+            "array:semi-structured/object",
+            "array:object"
           ],
           "instillUIOrder": 2,
           "instillUpstreamTypes": [
@@ -206,13 +210,14 @@
             "reference",
             "template"
           ],
-          "type":"string",
+          "type": "string",
           "title": "Query"
         },
         "filter": {
           "description": "The query dsl filter which starts with \"query\" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html",
           "instillAcceptFormats": [
-            "semi-structured/*","object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUIOrder": 3,
           "instillUpstreamTypes": [
@@ -242,7 +247,8 @@
         "update-data": {
           "description": "Update data",
           "instillAcceptFormats": [
-            "semi-structured/*","object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUIOrder": 4,
           "instillUpstreamTypes": [
@@ -331,13 +337,14 @@
             "reference",
             "template"
           ],
-          "type":"string",
+          "type": "string",
           "title": "Query"
         },
         "filter": {
           "description": "The query dsl filter which starts with \"query\" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html",
           "instillAcceptFormats": [
-            "semi-structured/*","object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUIOrder": 4,
           "instillUpstreamTypes": [
@@ -364,7 +371,7 @@
           "title": "Filter SQL",
           "type": "string"
         },
-        "size":{
+        "size": {
           "description": "Number of documents to return. If empty then all documents will be returned",
           "instillAcceptFormats": [
             "integer"
@@ -378,7 +385,7 @@
           "title": "Size",
           "type": "integer"
         },
-        "fields":{
+        "fields": {
           "description": "The fields to return in the documents. If empty then all fields will be returned",
           "instillAcceptFormats": [
             "array:string"
@@ -391,14 +398,14 @@
             "value"
           ],
           "title": "Fields",
-          "type":"array",
+          "type": "array",
           "items": {
-            "title":"Field",
+            "title": "Field",
             "type": "string"
           },
           "minItems": 1
         },
-        "min-score":{
+        "min-score": {
           "description": "Minimum score to consider for search results. If empty then no minimum score will be considered",
           "instillAcceptFormats": [
             "number"
@@ -440,12 +447,12 @@
           "title": "Result",
           "type": "object",
           "properties": {
-            "ids":{
+            "ids": {
               "description": "The ids returned from the search operation",
               "instillUIOrder": 0,
               "title": "IDs",
               "type": "array",
-              "required":[],
+              "required": [],
               "instillFormat": "array:string",
               "items": {
                 "description": "An id of the document",
@@ -512,7 +519,7 @@
           "title": "Index Name",
           "type": "string"
         },
-        "field":{
+        "field": {
           "description": "Field name of the vector to search for similar vectors",
           "instillAcceptFormats": [
             "string"
@@ -529,7 +536,8 @@
         "query-vector": {
           "description": "Query vector to search for similar vectors",
           "instillAcceptFormats": [
-            "array:int","array:number"
+            "array:int",
+            "array:number"
           ],
           "instillShortDescription": "",
           "instillUIOrder": 3,
@@ -538,7 +546,7 @@
             "reference",
             "template"
           ],
-          "type":"array",
+          "type": "array",
           "items": {
             "description": "A dimension of the vector",
             "example": 0.8167237,
@@ -547,7 +555,7 @@
           "minItems": 1,
           "title": "Query Vector"
         },
-        "k":{
+        "k": {
           "description": "K of documents to do kNN vector search",
           "instillAcceptFormats": [
             "integer"
@@ -561,7 +569,7 @@
           "title": "K",
           "type": "integer"
         },
-        "num-candidates":{
+        "num-candidates": {
           "description": "Number of candidates to be considered for kNN vector search. Default to 2 times of k",
           "instillAcceptFormats": [
             "integer"
@@ -578,7 +586,8 @@
         "filter": {
           "description": "The query dsl filter which starts with \"filter\" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html#knn-search-filter-example",
           "instillAcceptFormats": [
-            "semi-structured/*","object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUIOrder": 6,
           "instillUpstreamTypes": [
@@ -605,7 +614,7 @@
           "title": "Filter SQL",
           "type": "string"
         },
-        "fields":{
+        "fields": {
           "description": "The fields to return in the documents. If empty then all fields will be returned",
           "instillAcceptFormats": [
             "array:string"
@@ -618,14 +627,14 @@
             "value"
           ],
           "title": "Fields",
-          "type":"array",
+          "type": "array",
           "items": {
-            "title":"Field",
+            "title": "Field",
             "type": "string"
           },
           "minItems": 1
         },
-        "min-score":{
+        "min-score": {
           "description": "Minimum score to consider for search results. If empty then no minimum score will be considered",
           "instillAcceptFormats": [
             "number"
@@ -670,12 +679,12 @@
           "title": "Result",
           "type": "object",
           "properties": {
-            "ids":{
+            "ids": {
               "description": "The ids returned from the vector search operation",
               "instillUIOrder": 0,
               "title": "IDs",
               "type": "array",
-              "required":[],
+              "required": [],
               "instillFormat": "array:string",
               "items": {
                 "description": "An id of the document",
@@ -702,13 +711,13 @@
               "instillUIOrder": 2,
               "title": "Vectors",
               "type": "array",
-              "required":[],
+              "required": [],
               "instillFormat": "array:array",
               "items": {
                 "description": "The vector from array vectors",
                 "type": "array",
                 "instillFormat": "array",
-                "required":[],
+                "required": [],
                 "items": {
                   "description": "A dimension of the vector",
                   "example": 0.8167237,
@@ -787,13 +796,14 @@
             "reference",
             "template"
           ],
-          "type":"string",
+          "type": "string",
           "title": "Query"
         },
         "filter": {
           "description": "The query dsl filter which starts with \"query\" field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html",
           "instillAcceptFormats": [
-            "semi-structured/*","object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUIOrder": 3,
           "instillUpstreamTypes": [
@@ -851,7 +861,7 @@
       "type": "object"
     }
   },
-  "TASK_CREATE_INDEX":{
+  "TASK_CREATE_INDEX": {
     "instillShortDescription": "Create an index in Elasticsearch",
     "input": {
       "instillUIOrder": 0,
@@ -873,7 +883,8 @@
         "mappings": {
           "description": "Index mappings which starts with {\"mappings\":{\"properties\"}} field, please refer to https://www.elastic.co/guide/en/elasticsearch/reference/current/dense-vector.html for vector search and https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html for other mappings",
           "instillAcceptFormats": [
-            "semi-structured/*","object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUIOrder": 1,
           "instillUpstreamTypes": [
@@ -911,7 +922,7 @@
       "type": "object"
     }
   },
-  "TASK_DELETE_INDEX":{
+  "TASK_DELETE_INDEX": {
     "instillShortDescription": "Delete an index in Elasticsearch",
     "input": {
       "instillUIOrder": 0,

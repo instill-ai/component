@@ -146,7 +146,7 @@ func TestComponent_ExecuteWriteTask(t *testing.T) {
 				client:             &MockSlackClient{},
 			}
 			e.execute = e.sendMessage
-			
+
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
@@ -230,7 +230,7 @@ func TestComponent_ExecuteReadTask(t *testing.T) {
 				client:             &MockSlackClient{},
 			}
 			e.execute = e.readMessage
-			
+
 
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)

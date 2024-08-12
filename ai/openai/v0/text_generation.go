@@ -10,23 +10,24 @@ type textMessage struct {
 }
 
 type TextCompletionInput struct {
-	Prompt           string                `json:"prompt"`
-	Images           []string              `json:"images"`
-	ChatHistory      []*textMessage        `json:"chat-history,omitempty"`
-	Model            string                `json:"model"`
-	SystemMessage    *string               `json:"system-message,omitempty"`
-	Temperature      *float32              `json:"temperature,omitempty"`
-	TopP             *float32              `json:"top-p,omitempty"`
-	N                *int                  `json:"n,omitempty"`
-	Stop             *string               `json:"stop,omitempty"`
-	MaxTokens        *int                  `json:"max-tokens,omitempty"`
-	PresencePenalty  *float32              `json:"presence-penalty,omitempty"`
-	FrequencyPenalty *float32              `json:"frequency-penalty,omitempty"`
-	ResponseFormat   *responseFormatStruct `json:"response-format,omitempty"`
+	Prompt           string                     `json:"prompt"`
+	Images           []string                   `json:"images"`
+	ChatHistory      []*textMessage             `json:"chat-history,omitempty"`
+	Model            string                     `json:"model"`
+	SystemMessage    *string                    `json:"system-message,omitempty"`
+	Temperature      *float32                   `json:"temperature,omitempty"`
+	TopP             *float32                   `json:"top-p,omitempty"`
+	N                *int                       `json:"n,omitempty"`
+	Stop             *string                    `json:"stop,omitempty"`
+	MaxTokens        *int                       `json:"max-tokens,omitempty"`
+	PresencePenalty  *float32                   `json:"presence-penalty,omitempty"`
+	FrequencyPenalty *float32                   `json:"frequency-penalty,omitempty"`
+	ResponseFormat   *responseFormatInputStruct `json:"response-format,omitempty"`
 }
 
-type responseFormatStruct struct {
-	Type string `json:"type,omitempty"`
+type responseFormatInputStruct struct {
+	Type       string `json:"type,omitempty"`
+	JSONSchema string `json:"json-schema,omitempty"`
 }
 
 type TextCompletionOutput struct {
@@ -35,16 +36,21 @@ type TextCompletionOutput struct {
 }
 
 type textCompletionReq struct {
-	Model            string                `json:"model"`
-	Messages         []interface{}         `json:"messages"`
-	Temperature      *float32              `json:"temperature,omitempty"`
-	TopP             *float32              `json:"top_p,omitempty"`
-	N                *int                  `json:"n,omitempty"`
-	Stop             *string               `json:"stop,omitempty"`
-	MaxTokens        *int                  `json:"max_tokens,omitempty"`
-	PresencePenalty  *float32              `json:"presence_penalty,omitempty"`
-	FrequencyPenalty *float32              `json:"frequency_penalty,omitempty"`
-	ResponseFormat   *responseFormatStruct `json:"response_format,omitempty"`
+	Model            string                   `json:"model"`
+	Messages         []interface{}            `json:"messages"`
+	Temperature      *float32                 `json:"temperature,omitempty"`
+	TopP             *float32                 `json:"top_p,omitempty"`
+	N                *int                     `json:"n,omitempty"`
+	Stop             *string                  `json:"stop,omitempty"`
+	MaxTokens        *int                     `json:"max_tokens,omitempty"`
+	PresencePenalty  *float32                 `json:"presence_penalty,omitempty"`
+	FrequencyPenalty *float32                 `json:"frequency_penalty,omitempty"`
+	ResponseFormat   *responseFormatReqStruct `json:"response_format,omitempty"`
+}
+
+type responseFormatReqStruct struct {
+	Type       string         `json:"type,omitempty"`
+	JSONSchema map[string]any `json:"json_schema,omitempty"`
 }
 
 type multiModalMessage struct {
