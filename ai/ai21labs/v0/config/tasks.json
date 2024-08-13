@@ -256,6 +256,22 @@
           ],
           "title": "Top P",
           "type": "number"
+        },
+        "stop-words": {
+          "description": "The stop words to be used in the model",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillUIOrder": 7,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Stop Words",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [

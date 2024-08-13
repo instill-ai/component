@@ -17,9 +17,8 @@ type ChatRequest struct {
 	Temperature float32       `json:"temperature"`
 	TopP        float32       `json:"top_p"`
 	N           int           `json:"n"`
-	// not supported
-	// Stop   []string `json:"stop"` will trigger 500 internal server error
-	Stream bool `json:"stream"`
+	Stop        *[]string     `json:"stop,omitempty"`
+	Stream      bool          `json:"stream"`
 }
 
 type ChatChoice struct {
