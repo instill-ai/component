@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.25.0-beta](https://github.com/instill-ai/component/compare/v0.24.0-beta...v0.25.0-beta) (2024-08-13)
+
+
+### Features
+
+* add a hook to avoid we miss make document ([#244](https://github.com/instill-ai/component/issues/244)) ([4c4531d](https://github.com/instill-ai/component/commit/4c4531d4e2ef08e796c16ba10717486265fb2ae9))
+* add elasticsearch component ([#211](https://github.com/instill-ai/component/issues/211)) ([eb492ca](https://github.com/instill-ai/component/commit/eb492ca6d72f87ed35db8df17ab84b54f9a230be))
+* add Fireworks AI component ([#237](https://github.com/instill-ai/component/issues/237)) ([0c40652](https://github.com/instill-ai/component/commit/0c406524f6904044610dc8055ab8204cf7b32318))
+* add Groq component ([#269](https://github.com/instill-ai/component/issues/269)) ([1401220](https://github.com/instill-ai/component/commit/140122058bcc9d65588267f2692248f6625957db))
+* add mongodb component ([#198](https://github.com/instill-ai/component/issues/198)) ([2cb550f](https://github.com/instill-ai/component/commit/2cb550f7483a20d1635040171ae227fa3542fe17))
+* add qdrant component ([#271](https://github.com/instill-ai/component/issues/271)) ([bd2b9e6](https://github.com/instill-ai/component/commit/bd2b9e6f0e614b58f52707c6c3bacbe63d49f05e))
+* add weaviate component ([#246](https://github.com/instill-ai/component/issues/246)) ([cb3e667](https://github.com/instill-ai/component/commit/cb3e667bc1277471fcba4998f691abeb4fa8383e))
+* add WhatsApp component ([#226](https://github.com/instill-ai/component/issues/226)) ([28d0de8](https://github.com/instill-ai/component/commit/28d0de87523a4b8054f610dd0f7fd35441776750))
+* **artifact:** add artifact component ([#268](https://github.com/instill-ai/component/issues/268)) ([dabf472](https://github.com/instill-ai/component/commit/dabf472ce21d9ac6430e76e0e8a7552c2fb9b034))
+* **artifact:** add artifact component ([#275](https://github.com/instill-ai/component/issues/275)) ([15fc0d2](https://github.com/instill-ai/component/commit/15fc0d2eb054bc1e6c24a973d3ae1bf417064c16))
+* **document:** integrate pdf2md in document operator ([#277](https://github.com/instill-ai/component/issues/277)) ([07360d1](https://github.com/instill-ai/component/commit/07360d13b70f8dc4e406dc045a499a79a905d04b))
+* **groq, fireworksai:** take out the unsupported models from instill credit ([#283](https://github.com/instill-ai/component/issues/283)) ([8978acd](https://github.com/instill-ai/component/commit/8978acdefd22337502d7b932428f572565635fb4))
+* make component ID accessible on IExecution ([#257](https://github.com/instill-ai/component/issues/257)) ([dd63656](https://github.com/instill-ai/component/commit/dd636560e9d82d66e9fdead03549a3cafd671288))
+* **openai:** support `gpt-4o-2024-08-06` and structured output ([#280](https://github.com/instill-ai/component/issues/280)) ([8bdaef7](https://github.com/instill-ai/component/commit/8bdaef74781362763b488664ca39dd09ae6a1d76))
+* **sql:** add TASK_INSERT_MANY and fix sql query validation ([#252](https://github.com/instill-ai/component/issues/252)) ([3a93cea](https://github.com/instill-ai/component/commit/3a93cea082a0acf22171ce5db4958d2e1c39efc2))
+* **text:** add tokenizer for cohere & new gpt-4o ([#276](https://github.com/instill-ai/component/issues/276)) ([5d8cec3](https://github.com/instill-ai/component/commit/5d8cec362516154e24555b81c2cc1f55f13e417b))
+* **text:** revert "add tokenizer for cohere & new gpt-4o ([#276](https://github.com/instill-ai/component/issues/276))" ([910a330](https://github.com/instill-ai/component/commit/910a330e40e2d275b81a670126152c96404f0d4c))
+
+
+### Bug Fixes
+
+* **artifact:** add the description to remind users to add file extension ([#281](https://github.com/instill-ai/component/issues/281)) ([5ff5d7a](https://github.com/instill-ai/component/commit/5ff5d7a0bdd4cd82f06857abafc9a078928346a2))
+* ignore bold case and add all line to result ([#272](https://github.com/instill-ai/component/issues/272)) ([219c77e](https://github.com/instill-ai/component/commit/219c77e6ecc67cd3b53e041b7f228c1f6bf3bdc1))
+
 ## [0.24.0-beta](https://github.com/instill-ai/component/compare/v0.23.0-beta...v0.24.0-beta) (2024-07-31)
 
 
