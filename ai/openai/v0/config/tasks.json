@@ -536,8 +536,7 @@
       },
       "required": [
         "model",
-        "prompt",
-        "response-format"
+        "prompt"
       ],
       "title": "Input",
       "type": "object"
