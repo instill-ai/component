@@ -3,6 +3,7 @@ package artifact
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -77,7 +78,11 @@ func (e *execution) uploadFiles(input *structpb.Struct) (*structpb.Struct, error
 		})
 
 		if err != nil {
-			return nil, fmt.Errorf("failed to create new catalog: %w", err)
+			if strings.Contains(err.Error(), "knowledge base name already exists") {
+				log.Println("Catalog already exists, skipping creation")
+			} else {
+				return nil, fmt.Errorf("failed to create new catalog: %w", err)
+			}
 		}
 	}
 
