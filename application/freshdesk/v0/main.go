@@ -72,6 +72,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.TaskCreateTicket
 	case taskGetContact:
 		e.execute = e.TaskGetContact
+	case taskCreateContact:
+		e.execute = e.TaskCreateContact
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
@@ -120,4 +122,98 @@ func checkForNilString(input *[]string) *[]string {
 		return &[]string{}
 	}
 	return input
+}
+
+func convertLanguageToCode(language string) string {
+
+	switch language {
+	case "Arabic":
+		return "ar"
+	case "Bosnian":
+		return "bs"
+	case "Bulgarian":
+		return "bg"
+	case "Catalan":
+		return "ca"
+	case "Chinese":
+		return "zh-CN"
+	case "Chinese (Traditional)":
+		return "zh-TW"
+	case "Croatian":
+		return "hr"
+	case "Czech":
+		return "cs"
+	case "Danish":
+		return "da"
+	case "Dutch":
+		return "nl"
+	case "English":
+		return "en"
+	case "Estonian":
+		return "et"
+	case "Filipino":
+		return "fil"
+	case "Finnish":
+		return "fi"
+	case "French":
+		return "fr"
+	case "German":
+		return "de"
+	case "Greek":
+		return "el"
+	case "Hebrew":
+		return "he"
+	case "Hungarian":
+		return "hu"
+	case "Icelandic":
+		return "is"
+	case "Indonesian":
+		return "id"
+	case "Italian":
+		return "it"
+	case "Japanese":
+		return "ja-JP"
+	case "Korean":
+		return "ko"
+	case "Latvian":
+		return "lv-LV"
+	case "Lithuanian":
+		return "lt"
+	case "Malay":
+		return "ms"
+	case "Norwegian":
+		return "nb-NO"
+	case "Polish":
+		return "pl"
+	case "Portuguese (BR)":
+		return "pt-BR"
+	case "Portuguese/Portugal":
+		return "pt-PT"
+	case "Romanian":
+		return "ro"
+	case "Russian":
+		return "ru-RU"
+	case "Serbian":
+		return "sr"
+	case "Slovak":
+		return "sk"
+	case "Slovenian":
+		return "sl"
+	case "Spanish":
+		return "es"
+	case "Spanish (Latin America)":
+		return "es-LA"
+	case "Swedish":
+		return "sv-SE"
+	case "Thai":
+		return "th"
+	case "Turkish":
+		return "tr"
+	case "Ukrainian":
+		return "uk"
+	case "Vietnamese":
+		return "vi"
+	default:
+		return ""
+	}
 }
