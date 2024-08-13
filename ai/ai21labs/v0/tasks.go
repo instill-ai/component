@@ -282,9 +282,10 @@ type TaskTextSummarizationBySegmentInput struct {
 }
 
 type TextSegmentSummarization struct {
-	Text string `json:"text"`
-	HTML string `json:"html"`
-	Type string `json:"type"`
+	Summary string `json:"sammery"`
+	Text    string `json:"text"`
+	HTML    string `json:"html"`
+	Type    string `json:"type"`
 }
 
 type TaskTextSummarizationBySegmentOutput struct {
@@ -312,9 +313,10 @@ func (e *execution) TaskTextSummarizationBySegment(in *structpb.Struct) (*struct
 
 	for _, segment := range resp.Segements {
 		output.Summerizations = append(output.Summerizations, TextSegmentSummarization{
-			Text: segment.SegmentText,
-			HTML: segment.SegmentHTML,
-			Type: string(segment.SegmentType),
+			Summary: segment.Summary,
+			Text:    segment.SegmentText,
+			HTML:    segment.SegmentHTML,
+			Type:    string(segment.SegmentType),
 		})
 	}
 

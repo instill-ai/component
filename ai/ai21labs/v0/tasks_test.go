@@ -337,9 +337,10 @@ func TestTasks(t *testing.T) {
 			wantResp: TaskTextSummarizationBySegmentOutput{
 				Summerizations: []TextSegmentSummarization{
 					{
-						Text: "ABC",
-						HTML: "<h1>ABC</h1>",
-						Type: "title",
+						Text:    "ABC",
+						HTML:    "<h1>ABC</h1>",
+						Summary: "abc",
+						Type:    "title",
 					},
 				},
 			},
