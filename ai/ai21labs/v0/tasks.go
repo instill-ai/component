@@ -62,7 +62,7 @@ func (e *execution) TaskTextGenerationChat(in *structpb.Struct) (*structpb.Struc
 	})
 
 	req := ChatRequest{
-		Model:       input.ModelName,
+		Model:       input.Model,
 		Messages:    messages,
 		MaxTokens:   input.MaxNewTokens,
 		Temperature: float32(input.Temperature),
@@ -161,7 +161,7 @@ type Improvement struct {
 }
 
 type TaskTextImprovementOutput struct {
-	Suggestions []Improvement `json:"suggestions"`
+	Improvements []Improvement `json:"improvements"`
 }
 
 func (e *execution) TaskTextImprovement(in *structpb.Struct) (*structpb.Struct, error) {
@@ -192,7 +192,7 @@ func (e *execution) TaskTextImprovement(in *structpb.Struct) (*structpb.Struct, 
 	output := TaskTextImprovementOutput{}
 
 	for _, improvement := range resp.Improvements {
-		output.Suggestions = append(output.Suggestions, Improvement{
+		output.Improvements = append(output.Improvements, Improvement{
 			Texts:      improvement.Suggestions,
 			StartIndex: improvement.StartIndex,
 			EndIndex:   improvement.EndIndex,
@@ -282,7 +282,7 @@ type TaskTextSummarizationBySegmentInput struct {
 }
 
 type TextSegmentSummarization struct {
-	Summary string `json:"sammery"`
+	Summary string `json:"summary"`
 	Text    string `json:"text"`
 	HTML    string `json:"html"`
 	Type    string `json:"type"`
@@ -370,6 +370,7 @@ type TaskGrammarCheckInput struct {
 }
 
 type GrammerSuggestion struct {
+	Suggestion string `json:"suggestion"`
 	Text       string `json:"text"`
 	StartIndex int    `json:"start-index"`
 	EndIndex   int    `json:"end-index"`
@@ -393,7 +394,8 @@ func (e *execution) TaskGrammarCheck(in *structpb.Struct) (*structpb.Struct, err
 	output := TaskGrammarCheckOutput{}
 	for _, correction := range resp.Corrections {
 		output.Suggestions = append(output.Suggestions, GrammerSuggestion{
-			Text:       correction.Suggestion,
+			Suggestion: correction.Suggestion,
+			Text:       correction.OriginalText,
 			StartIndex: correction.StartIndex,
 			EndIndex:   correction.EndIndex,
 			Type:       string(correction.CorrectionType),

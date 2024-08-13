@@ -297,7 +297,7 @@ type MultiModalContent struct {
 type TemplateTextGenerationInput struct {
 	ChatHistory  []ChatMessage `json:"chat-history"`
 	MaxNewTokens int           `json:"max-new-tokens"`
-	ModelName    string        `json:"model-name"`
+	Model        string        `json:"model"`
 	Prompt       string        `json:"prompt"`
 	PromptImages []string      `json:"prompt-images"`
 	Seed         int           `json:"seed"`

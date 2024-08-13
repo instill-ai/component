@@ -406,7 +406,8 @@ func TestTasks(t *testing.T) {
 			wantResp: TaskGrammarCheckOutput{
 				Suggestions: []GrammerSuggestion{
 					{
-						Text:       "ABC",
+						Suggestion: "ABC",
+						Text:       "Hel",
 						StartIndex: 0,
 						EndIndex:   3,
 						Type:       "spelling",
@@ -443,7 +444,7 @@ func TestTasks(t *testing.T) {
 		}{
 			input: map[string]any{"text": "Hello world!`"},
 			wantResp: TaskTextImprovementOutput{
-				Suggestions: []Improvement{
+				Improvements: []Improvement{
 					{
 						Texts:      []string{"ABC"},
 						StartIndex: 0,

@@ -131,7 +131,8 @@
         },
         "model": {
           "enum": [
-            "jamba-instruct"
+            "jamba-instruct",
+            "jamba-instruct-preview"
           ],
           "example": "jamba-instruct",
           "description": "The AI21labs model to be used",
@@ -144,13 +145,14 @@
           ],
           "instillCredentialMap": {
             "values": [
+              "jamba-instruct",
               "jamba-instruct-preview"
             ],
             "targets": [
               "setup.api-key"
             ]
           },
-          "title": "Model Name",
+          "title": "Model",
           "type": "string"
         },
         "prompt": {
@@ -609,52 +611,47 @@
       "instillUIOrder": 0,
       "properties": {
         "summerizations": {
-          "instillFormat": "array:string",
-          "items": {
-            "instillFormat": "string",
-            "title": "Summary",
-            "type": "string"
-          },
-          "type": "array",
-          "description": "Summeries for each segment of the input text",
+          "description": "Summerization of the input text",
           "instillUIOrder": 0,
-          "title": "Summaries"
-        },
-        "segments": {
-          "instillFormat": "array:string",
-          "items": {
-            "instillFormat": "string",
-            "title": "Segemnt Text",
-            "type": "string"
-          },
+          "instillFormat": "array:object",
+          "title": "Summerizations",
           "type": "array",
-          "description": "Origanl text for each segment of the input text",
-          "instillUIOrder": 0,
-          "title": "Segment Text"
-        },
-        "segment-htmls": {
-          "instillFormat": "array:string",
           "items": {
-            "instillFormat": "string",
-            "title": "Segment HTML",
-            "type": "string"
-          },
-          "type": "array",
-          "description": "HTML for each segment of the input text",
-          "instillUIOrder": 0,
-          "title": "Segment HTML"
-        },
-        "types": {
-          "instillFormat": "array:string",
-          "items": {
-            "instillFormat": "string",
-            "title": "Segment Type",
-            "type": "string"
-          },
-          "type": "array",
-          "description": "Type of each segment of the input text",
-          "instillUIOrder": 0,
-          "title": "Segment Type"
+            "type": "object",
+            "description": "Summerization of the segment",
+            "properties": {
+              "summary": {
+                "description": "Summerization of the segment",
+                "instillUIOrder": 0,
+                "instillFormat": "string",
+                "title": "Summary",
+                "type": "string"
+              },
+              "text": {
+                "description": "Original text for the segment",
+                "instillUIOrder": 1,
+                "instillFormat": "string",
+                "title": "Text",
+                "type": "string"
+              },
+              "html": {
+                "description": "HTML content of the segment",
+                "instillUIOrder": 2,
+                "instillFormat": "string",
+                "title": "HTML",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type of the segment",
+                "instillUIOrder": 3,
+                "instillFormat": "string",
+                "title": "Type",
+                "type": "string"
+              }
+            },
+            "required": [],
+            "title": "Summerizations"
+          }
         }
       },
       "required": [
@@ -806,42 +803,53 @@
         "suggestions": {
           "description": "The suggestions of the text to be corrected from model",
           "instillUIOrder": 0,
-          "instillFormat": "array:string",
-          "instillUIMultiline": true,
+          "instillFormat": "array:object",
           "title": "Suggestions",
           "type": "array",
           "items": {
-            "type": "string"
-          }
-        },
-        "start-indexes": {
-          "description": "Start index of the errors",
-          "instillUIOrder": 1,
-          "instillFormat": "array:number",
-          "title": "Start indexes",
-          "type": "array",
-          "items": {
-            "type": "number"
-          }
-        },
-        "end-indexes": {
-          "description": "End index of the errors",
-          "instillUIOrder": 2,
-          "instillFormat": "array:number",
-          "title": "End indexes",
-          "type": "array",
-          "items": {
-            "type": "number"
-          }
-        },
-        "types": {
-          "description": "Type of the errors",
-          "instillUIOrder": 3,
-          "instillFormat": "array:string",
-          "title": "Types",
-          "type": "array",
-          "items": {
-            "type": "string"
+            "type": "object",
+            "description": "Suggestion of the text",
+            "properties": {
+              "suggestion": {
+                "description": "Suggestion of the text",
+                "instillUIOrder": 0,
+                "instillFormat": "string",
+                "title": "Suggestion",
+                "type": "string"
+              },
+              "start-index": {
+                "description": "Start index of the suggestion",
+                "instillUIOrder": 1,
+                "instillFormat": "number",
+                "title": "Start Index",
+                "type": "number"
+              },
+              "end-index": {
+                "description": "End index of the suggestion",
+                "instillUIOrder": 2,
+                "instillFormat": "number",
+                "title": "End Index",
+                "type": "number"
+              },
+              "type": {
+                "description": "Type of the suggestion",
+                "instillUIOrder": 3,
+                "instillFormat": "string",
+                "title": "Type",
+                "type": "string"
+              },
+              "text": {
+                "description": "Original text for the suggestion",
+                "instillUIOrder": 4,
+                "instillFormat": "string",
+                "title": "Text",
+                "type": "string"
+              }
+            },
+            "required": [
+              "suggestion"
+            ],
+            "title": "Suggestions"
           }
         }
       },
@@ -888,50 +896,57 @@
       "description": "Output",
       "instillUIOrder": 0,
       "properties": {
-        "suggestions": {
-          "description": "Suggestions for improving the text",
+        "improvements": {
+          "description": "The suggestions of the text to be improved from model",
           "instillUIOrder": 0,
-          "instillFormat": "array:string",
-          "instillUIMultiline": true,
-          "title": "Suggestions",
+          "instillFormat": "array:object",
+          "title": "Improvements",
           "type": "array",
           "items": {
-            "type": "string"
-          }
-        },
-        "start-indexes": {
-          "description": "Start index of the improvements",
-          "instillUIOrder": 1,
-          "instillFormat": "array:number",
-          "title": "Start indexes",
-          "type": "array",
-          "items": {
-            "type": "number"
-          }
-        },
-        "end-indexes": {
-          "description": "End index of the improvements",
-          "instillUIOrder": 2,
-          "instillFormat": "array:number",
-          "title": "End indexes",
-          "type": "array",
-          "items": {
-            "type": "number"
-          }
-        },
-        "types": {
-          "description": "Type of the improvements",
-          "instillUIOrder": 3,
-          "instillFormat": "array:string",
-          "title": "Types",
-          "type": "array",
-          "items": {
-            "type": "string"
+            "type": "object",
+            "description": "Improvements of the text",
+            "properties": {
+              "texts": {
+                "description": "The suggestions of the text to be improved from model",
+                "instillUIOrder": 0,
+                "instillFormat": "array:string",
+                "title": "Texts",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "start-index": {
+                "description": "Start index of the improvement",
+                "instillUIOrder": 1,
+                "instillFormat": "number",
+                "title": "Start Index",
+                "type": "number"
+              },
+              "end-index": {
+                "description": "End index of the improvement",
+                "instillUIOrder": 2,
+                "instillFormat": "number",
+                "title": "End Index",
+                "type": "number"
+              },
+              "type": {
+                "description": "Type of the improvement",
+                "instillUIOrder": 3,
+                "instillFormat": "string",
+                "title": "Type",
+                "type": "string"
+              }
+            },
+            "required": [
+              "texts"
+            ],
+            "title": "Improvements"
           }
         }
       },
       "required": [
-        "suggestions"
+        "improvements"
       ],
       "title": "Output",
       "type": "object"
@@ -949,7 +964,7 @@
       "instillUIOrder": 0,
       "properties": {
         "text": {
-          "description": "The text content to be summarized",
+          "description": "The text content to be split into segments",
           "instillAcceptFormats": [
             "string"
           ],
@@ -961,21 +976,6 @@
             "template"
           ],
           "title": "Text",
-          "type": "string"
-        },
-        "focus": {
-          "description": "The focus of the summary",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIMultiline": true,
-          "instillUIOrder": 2,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "Focus",
           "type": "string"
         },
         "source": {
@@ -1008,28 +1008,35 @@
       "instillUIOrder": 0,
       "properties": {
         "segments": {
-          "instillFormat": "array:string",
-          "items": {
-            "instillFormat": "string",
-            "title": "Segemnt Text",
-            "type": "string"
-          },
-          "type": "array",
-          "description": "Origanl text for each segment of the input text",
+          "description": "The segments of the text",
           "instillUIOrder": 0,
-          "title": "Segment Text"
-        },
-        "types": {
-          "instillFormat": "array:string",
-          "items": {
-            "instillFormat": "string",
-            "title": "Segment Type",
-            "type": "string"
-          },
+          "instillFormat": "array:object",
+          "title": "Segments",
           "type": "array",
-          "description": "Type of each segment of the input text",
-          "instillUIOrder": 0,
-          "title": "Segment Type"
+          "items": {
+            "type": "object",
+            "description": "Segment of the text",
+            "properties": {
+              "text": {
+                "description": "The text content of the segment",
+                "instillUIOrder": 0,
+                "instillFormat": "string",
+                "title": "Text",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type of the segment",
+                "instillUIOrder": 1,
+                "instillFormat": "string",
+                "title": "Type",
+                "type": "string"
+              }
+            },
+            "required": [
+              "text"
+            ],
+            "title": "Segment"
+          }
         }
       },
       "required": [
