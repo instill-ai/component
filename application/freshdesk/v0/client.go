@@ -74,4 +74,6 @@ type FreshdeskInterface interface {
 	CreateTicket(req *TaskCreateTicketReq) (*TaskCreateTicketResponse, error)
 	GetContact(contactID int64) (*TaskGetContactResponse, error)
 	CreateContact(req *TaskCreateContactReq) (*TaskCreateContactResponse, error)
+	GetCompany(companyID int64) (*TaskGetCompanyResponse, error)
+	CreateCompany(req *TaskCreateCompanyReq) (*TaskCreateCompanyResponse, error)
 }

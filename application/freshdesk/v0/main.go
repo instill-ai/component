@@ -22,6 +22,8 @@ const (
 	taskCreateTicket  = "TASK_CREATE_TICKET"
 	taskGetContact    = "TASK_GET_CONTACT"
 	taskCreateContact = "TASK_CREATE_CONTACT"
+	taskGetCompany    = "TASK_GET_COMPANY"
+	taskCreateCompany = "TASK_CREATE_COMPANY"
 )
 
 var (
@@ -74,6 +76,10 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.TaskGetContact
 	case taskCreateContact:
 		e.execute = e.TaskCreateContact
+	case taskGetCompany:
+		e.execute = e.TaskGetCompany
+	case taskCreateCompany:
+		e.execute = e.TaskCreateCompany
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}

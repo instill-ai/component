@@ -3,7 +3,9 @@
     "TASK_GET_TICKET",
     "TASK_CREATE_TICKET",
     "TASK_GET_CONTACT",
-    "TASK_CREATE_CONTACT"
+    "TASK_CREATE_CONTACT",
+    "TASK_GET_COMPANY",
+    "TASK_CREATE_COMPANY"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/freshdesk",
   "icon": "assets/freshdesk.svg",

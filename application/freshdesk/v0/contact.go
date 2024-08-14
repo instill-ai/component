@@ -141,8 +141,8 @@ func (e *execution) TaskGetContact(in *structpb.Struct) (*structpb.Struct, error
 		Deleted:          resp.Deleted,
 		Active:           resp.Active,
 		OtherEmails:      *checkForNilString(&resp.OtherEmails),
-		CreatedAt:        resp.CreatedAt,
-		UpdatedAt:        resp.UpdatedAt,
+		CreatedAt:        convertTimestampResp(resp.CreatedAt),
+		UpdatedAt:        convertTimestampResp(resp.UpdatedAt),
 	}
 
 	if len(resp.OtherCompanies) > 0 {
@@ -174,6 +174,8 @@ func (e *execution) TaskGetContact(in *structpb.Struct) (*structpb.Struct, error
 
 	return output, nil
 }
+
+// Task 2: Create Contact
 
 type TaskCreateContactInput struct {
 	Name              string   `json:"name"`
@@ -304,7 +306,7 @@ func (e *execution) TaskCreateContact(in *structpb.Struct) (*structpb.Struct, er
 
 	outputStruct := TaskCreateContactOutput{
 		ID:        resp.ID,
-		CreatedAt: resp.CreatedAt,
+		CreatedAt: convertTimestampResp(resp.CreatedAt),
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)

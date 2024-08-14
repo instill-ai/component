@@ -485,6 +485,68 @@
         "title": "Custom Fields",
         "type": "object"
       }
+    },
+    "company":{
+      "company-id": {
+        "description": "ID of the company",
+        "title": "Company ID",
+        "type": "integer"
+      },
+      "name": {
+        "description": "Name of the company",
+        "title": "Name",
+        "type": "string"
+      },
+      "description": {
+        "description": "Description of the company",
+        "title": "Description",
+        "type": "string"
+      },
+      "note": {
+        "description": "Note about the company",
+        "title": "Note",
+        "type": "string"
+      },
+      "domains": {
+        "description": "Domains of the company",
+        "title": "Domains",
+        "type": "array"
+      },
+      "health-score":{
+        "description": "The strength of your relationship with the company. To look at all the possible values or create custom values, please go to Admin -> Customer Fields. Default values: \"At risk\", \"Doing okay\", \"Happy\"",
+        "title": "Health Score",
+        "type": "string"
+      },
+      "account-tier": {
+        "description": "Classification based on how much value the company brings to your business. To look at all the possible values or create custom values, please go to Admin -> Customer Fields. Default values: \"Basic\", \"Premium\", \"Enterprise\"",
+        "title": "Account Tier",
+        "type": "string"
+      },
+      "renewal-date":{
+        "description": "Date when your contract or relationship with the company is due for renewal",
+        "title": "Renewal Date",
+        "type": "string"
+      },
+      "industry":{
+        "description": "The industry in which the company operates. To look at all the possible values or create custom values, please go to Admin -> Customer Fields.",
+        "title": "Industry",
+        "type": "string"
+      },
+      "created-at":{
+        "description": "Timestamp that denotes when the company was created. In UTC format.",
+        "title": "Created At",
+        "type": "string"
+      },
+      "updated-at":{
+        "description": "Timestamp that denotes when the company was last updated. In UTC format.",
+        "title": "Updated At",
+        "type": "string"
+      },
+      "custom-fields": {
+        "description": "Custom fields that the company have. Custom fields can be created or modified in Admin -> Customer Fields",
+        "title": "Custom Fields",
+        "type": "object"
+      }
     }
   },
   "TASK_GET_TICKET": {
@@ -1290,6 +1352,196 @@
         }
       },
       "required": ["contact-id", "created-at"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_COMPANY": {
+    "instillShortDescription": "Get company using ID",
+    "input": {
+      "description": "Company ID",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["company-id"],
+      "properties": {
+        "company-id": {
+          "$ref": "#/$defs/contact/company-id",
+          "instillAcceptFormats": ["integer"],
+          "instillUpstreamTypes": ["value", "reference"],
+          "instillUIMultiline": false,
+          "instillUIOrder": 0
+        }
+      },
+      "required": ["company-id"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Company information",
+      "instillUIOrder": 0,
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/company/name",
+          "instillFormat": "string",
+          "instillUIOrder": 0
+        },
+        "description": {
+          "$ref": "#/$defs/company/description",
+          "instillFormat": "string",
+          "instillUIOrder": 1
+        },
+        "note": {
+          "$ref": "#/$defs/company/note",
+          "instillFormat": "string",
+          "instillUIOrder": 2
+        },
+        "domains": {
+          "$ref": "#/$defs/company/domains",
+          "instillFormat": "array:string",
+          "items": {
+            "title": "Domain",
+            "type": "string",
+            "description": "Domain of the company",
+            "instillFormat": "string"
+          },
+          "instillUIOrder": 3
+        },
+        "health-score": {
+          "$ref": "#/$defs/company/health-score",
+          "instillFormat": "string",
+          "instillUIOrder": 4
+        },
+        "account-tier": {
+          "$ref": "#/$defs/company/account-tier",
+          "instillFormat": "string",
+          "instillUIOrder": 5
+        },
+        "renewal-date": {
+          "$ref": "#/$defs/company/renewal-date",
+          "instillFormat": "string",
+          "instillUIOrder": 6
+        },
+        "industry": {
+          "$ref": "#/$defs/company/industry",
+          "instillFormat": "string",
+          "instillUIOrder": 7
+        },
+        "created-at": {
+          "$ref": "#/$defs/company/created-at",
+          "instillFormat": "string",
+          "instillUIOrder": 8
+        },
+        "updated-at": {
+          "$ref": "#/$defs/company/updated-at",
+          "instillFormat": "string",
+          "instillUIOrder": 9
+        },
+        "custom-fields": {
+          "$ref": "#/$defs/company/custom-fields",
+          "instillFormat": "semi-structured/json",
+          "required": [],
+          "instillUIOrder": 10
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_COMPANY": {
+    "instillShortDescription": "Create company",
+    "input": {
+      "description": "Company Information",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "name",
+        "description",
+        "note",
+        "domains"
+      ],
+      "properties": {
+        "name":{
+          "$ref": "#/$defs/company/name",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "description":{
+          "$ref": "#/$defs/company/description",
+          "instillUIOrder": 1,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "note":{
+          "$ref": "#/$defs/company/note",
+          "instillUIOrder": 2,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "domains":{
+          "$ref": "#/$defs/company/domains",
+          "instillUIOrder": 3,
+          "instillAcceptFormats": ["array:string"],
+          "items": {
+            "type": "string"
+          },
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "health-score":{
+          "$ref": "#/$defs/company/health-score",
+          "instillUIOrder": 4,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "account-tier":{
+          "$ref": "#/$defs/company/account-tier",
+          "instillUIOrder": 5,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "renewal-date":{
+          "description": "Date when your contract or relationship with the company is due for renewal. Enter in the format YYYY-MM-DD.",
+          "title": "Renewal Date",
+          "type": "string",
+          "instillUIOrder": 6,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "industry":{
+          "$ref": "#/$defs/company/industry",
+          "instillUIOrder": 7,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        }
+      },
+      "required": ["name"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Company ID and create date",
+      "instillUIOrder": 0,
+      "properties": {
+        "company-id": {
+          "$ref": "#/$defs/company/company-id",
+          "instillFormat": "integer",
+          "instillUIOrder": 0
+        },
+        "created-at": {
+          "$ref": "#/$defs/company/created-at",
+          "instillFormat": "string",
+          "instillUIOrder": 1
+        }
+      },
+      "required": ["company-id", "created-at"],
       "title": "Output",
       "type": "object"
     }
