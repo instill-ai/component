@@ -486,7 +486,7 @@
         "type": "object"
       }
     },
-    "company":{
+    "company": {
       "company-id": {
         "description": "ID of the company",
         "title": "Company ID",
@@ -512,7 +512,7 @@
         "title": "Domains",
         "type": "array"
       },
-      "health-score":{
+      "health-score": {
         "description": "The strength of your relationship with the company. To look at all the possible values or create custom values, please go to Admin -> Customer Fields. Default values: \"At risk\", \"Doing okay\", \"Happy\"",
         "title": "Health Score",
         "type": "string"
@@ -522,22 +522,22 @@
         "title": "Account Tier",
         "type": "string"
       },
-      "renewal-date":{
+      "renewal-date": {
         "description": "Date when your contract or relationship with the company is due for renewal",
         "title": "Renewal Date",
         "type": "string"
       },
-      "industry":{
+      "industry": {
         "description": "The industry in which the company operates. To look at all the possible values or create custom values, please go to Admin -> Customer Fields.",
         "title": "Industry",
         "type": "string"
       },
-      "created-at":{
+      "created-at": {
         "description": "Timestamp that denotes when the company was created. In UTC format.",
         "title": "Created At",
         "type": "string"
       },
-      "updated-at":{
+      "updated-at": {
         "description": "Timestamp that denotes when the company was last updated. In UTC format.",
         "title": "Updated At",
         "type": "string"
@@ -1442,9 +1442,7 @@
           "instillUIOrder": 10
         }
       },
-      "required": [
-        "name"
-      ],
+      "required": ["name"],
       "title": "Output",
       "type": "object"
     }
@@ -1454,35 +1452,30 @@
     "input": {
       "description": "Company Information",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": [
-        "name",
-        "description",
-        "note",
-        "domains"
-      ],
+      "instillEditOnNodeFields": ["name", "description", "note", "domains"],
       "properties": {
-        "name":{
+        "name": {
           "$ref": "#/$defs/company/name",
           "instillUIOrder": 0,
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "template", "reference"]
         },
-        "description":{
+        "description": {
           "$ref": "#/$defs/company/description",
           "instillUIOrder": 1,
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "template", "reference"]
         },
-        "note":{
+        "note": {
           "$ref": "#/$defs/company/note",
           "instillUIOrder": 2,
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "template", "reference"]
         },
-        "domains":{
+        "domains": {
           "$ref": "#/$defs/company/domains",
           "instillUIOrder": 3,
           "instillAcceptFormats": ["array:string"],
@@ -1491,21 +1484,21 @@
           },
           "instillUpstreamTypes": ["value", "template", "reference"]
         },
-        "health-score":{
+        "health-score": {
           "$ref": "#/$defs/company/health-score",
           "instillUIOrder": 4,
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "template", "reference"]
         },
-        "account-tier":{
+        "account-tier": {
           "$ref": "#/$defs/company/account-tier",
           "instillUIOrder": 5,
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "template", "reference"]
         },
-        "renewal-date":{
+        "renewal-date": {
           "description": "Date when your contract or relationship with the company is due for renewal. Enter in the format YYYY-MM-DD.",
           "title": "Renewal Date",
           "type": "string",
@@ -1514,7 +1507,7 @@
           "instillUIMultiline": false,
           "instillUpstreamTypes": ["value", "template", "reference"]
         },
-        "industry":{
+        "industry": {
           "$ref": "#/$defs/company/industry",
           "instillUIOrder": 7,
           "instillAcceptFormats": ["string"],
@@ -1542,6 +1535,58 @@
         }
       },
       "required": ["company-id", "created-at"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_ALL": {
+    "instillShortDescription": "Task to get all the IDs of existing contacts, companies, or tickets",
+    "input": {
+      "description": "Object type",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["object-type"],
+      "properties": {
+        "object-type": {
+          "description": "Type of object to get IDs for",
+          "title": "Object Type",
+          "type": "string",
+          "enum": ["Contacts", "Companies", "Tickets"],
+          "instillUIOrder": 0,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        }
+      },
+      "required": ["object-type"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Company information",
+      "instillUIOrder": 0,
+      "properties": {
+        "ids": {
+          "description": "List of IDs",
+          "title": "IDs",
+          "type": "array",
+          "items": {
+            "title": "ID",
+            "type": "integer",
+            "description": "ID of the object",
+            "instillFormat": "integer"
+          },
+          "instillFormat": "array:integer",
+          "instillUIOrder": 0
+        },
+        "id-length": {
+          "description": "Number of IDs",
+          "title": "ID Length",
+          "type": "integer",
+          "instillFormat": "integer",
+          "instillUIOrder": 1
+        }
+      },
+      "required": ["ids", "id-length"],
       "title": "Output",
       "type": "object"
     }

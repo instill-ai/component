@@ -76,4 +76,5 @@ type FreshdeskInterface interface {
 	CreateContact(req *TaskCreateContactReq) (*TaskCreateContactResponse, error)
 	GetCompany(companyID int64) (*TaskGetCompanyResponse, error)
 	CreateCompany(req *TaskCreateCompanyReq) (*TaskCreateCompanyResponse, error)
+	GetAll(objectType string, pagination bool, paginationPath string) ([]TaskGetAllResponse, string, error)
 }

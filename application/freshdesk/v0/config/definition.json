@@ -5,7 +5,8 @@
     "TASK_GET_CONTACT",
     "TASK_CREATE_CONTACT",
     "TASK_GET_COMPANY",
-    "TASK_CREATE_COMPANY"
+    "TASK_CREATE_COMPANY",
+    "TASK_GET_ALL"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/freshdesk",
   "icon": "assets/freshdesk.svg",
