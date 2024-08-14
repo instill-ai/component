@@ -188,7 +188,7 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 							if inputStruct.ResponseFormat.JSONSchema != "" {
 								err = json.Unmarshal([]byte(inputStruct.ResponseFormat.JSONSchema), &sch)
 								if err != nil {
-									return nil, err
+									return err
 								}
 								body.ResponseFormat = &responseFormatReqStruct{
 									Type:       inputStruct.ResponseFormat.Type,
@@ -197,7 +197,7 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 							}
 
 						} else {
-							return nil, fmt.Errorf("this model doesn't support response format: json_schema")
+							return fmt.Errorf("this model doesn't support response format: json_schema")
 						}
 
 					}
