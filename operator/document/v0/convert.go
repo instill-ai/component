@@ -33,7 +33,7 @@ var (
 		"text/url":                                                                  true,
 		"text/xml":                                                                  true,
 		"application/xml":                                                           true,
-		"image/jpeg":                                                                true,
+		"image/jpeg":                                                                false,
 		"image/png":                                                                 true,
 		"image/tif":                                                                 true,
 		"image/tiff":                                                                true,
