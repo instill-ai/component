@@ -9,6 +9,7 @@ The Artifact component is a data component that allows users to manipulate and s
 It can carry out the following tasks:
 
 - [Upload File](#upload-file)
+- [Upload Files](#upload-files)
 - [Get Files Metadata](#get-files-metadata)
 - [Get Chunks Metadata](#get-chunks-metadata)
 - [Get File In Markdown](#get-file-in-markdown)
@@ -51,8 +52,30 @@ Upload and process the files into chunks into Catalog
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| File | `file` | object | Result of uploading files into catalog |
+| File | `file` | object | Result of uploading file into catalog |
 | Status | `status` | boolean | The status of trigger file processing, if succeeded, return true |
+
+
+
+
+
+
+### Upload Files
+
+Upload and process the files into chunks into Catalog
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPLOAD_FILES` |
+| Options (required) | `options` | object | Choose to upload the files to existing catalog or create a new catalog |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Files | `files` | array[object] | Files metadata in catalog |
+| Status | `status` | boolean | The status of trigger file processing, if ALL succeeded, return true |
 
 
 

@@ -96,6 +96,41 @@ func DecodeBase64(input string) ([]byte, error) {
 	return base64.StdEncoding.DecodeString(base.TrimBase64Mime(input))
 }
 
+func GetFileType(base64String, filename string) (string, error) {
+	parts := strings.SplitN(base64String, ";", 2)
+	var typeFromBase64 string
+	var typeFromFilename string
+	var err error
+
+	if len(parts) == 2 {
+		contentType, _ := GetContentTypeFromBase64(base64String)
+		typeFromBase64 = TransformContentTypeToFileExtension(contentType)
+	}
+
+	typeFromFilename, err = GetFileTypeByFilename(filename)
+	if err != nil {
+		return "", err
+	}
+
+	if typeFromBase64 == "" {
+		return typeFromFilename, nil
+	}
+
+	if typeFromBase64 != typeFromFilename {
+		return "", fmt.Errorf("file type mismatch")
+	}
+
+	return typeFromBase64, nil
+}
+
+func GetFileTypeByFilename(filename string) (string, error) {
+	splittedString := strings.Split(filename, ".")
+	if len(splittedString) != 2 {
+		return "", fmt.Errorf("invalid filename")
+	}
+	return splittedString[1], nil
+}
+
 func GetContentTypeFromBase64(base64String string) (string, error) {
 	// Remove the "data:" prefix and split at the first semicolon
 	contentType := strings.TrimPrefix(base64String, "data:")
@@ -110,7 +145,11 @@ func GetContentTypeFromBase64(base64String string) (string, error) {
 }
 
 func GetFileBase64Content(base64String string) string {
-	return strings.SplitN(base64String, ",", 2)[1]
+	parts := strings.SplitN(base64String, ";", 2)
+	if len(parts) == 2 {
+		return strings.SplitN(parts[1], ",", 2)[1]
+	}
+	return base64String
 }
 
 func TransformContentTypeToFileExtension(contentType string) string {

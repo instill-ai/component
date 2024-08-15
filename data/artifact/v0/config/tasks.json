@@ -1,7 +1,7 @@
 {
   "$defs": {
     "file": {
-      "description": "base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML files to be uploaded into catalog",
+      "description": "base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML file to be uploaded into catalog",
       "instillUIOrder": 2,
       "instillAcceptFormats": [
         "*/*"
@@ -11,6 +11,21 @@
       ],
       "title": "File",
       "type": "string"
+    },
+    "files": {
+      "description": "base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML files to be uploaded into catalog",
+      "instillUIOrder": 2,
+      "instillAcceptFormats": [
+        "array:*/*"
+      ],
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "items": {
+        "type": "string"
+      },
+      "title": "Files",
+      "type": "array"
     },
     "file-item": {
       "properties": {
@@ -294,10 +309,10 @@
       "type": "object"
     },
     "output": {
-      "description": "Result of uploading files into catalog",
+      "description": "Result of uploading file into catalog",
       "properties": {
         "file": {
-          "description": "Result of uploading files into catalog",
+          "description": "Result of uploading file into catalog",
           "instillUIOrder": 0,
           "properties": {
             "$ref": "#/$defs/file-item/properties"
@@ -325,6 +340,208 @@
       },
       "required": [
         "file",
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_UPLOAD_FILES": {
+    "instillShortDescription": "Upload and process the files into chunks into Catalog",
+    "input": {
+      "description": "Input",
+      "instillUIOrder": 0,
+      "properties": {
+        "options": {
+          "description": "Choose to upload the files to existing catalog or create a new catalog",
+          "title": "Options",
+          "additionalProperties": true,
+          "type": "object",
+          "instillUIOrder": 0,
+          "required": [
+            "option"
+          ],
+          "oneOf": [
+            {
+              "properties": {
+                "option": {
+                  "const": "existing catalog",
+                  "type": "string",
+                  "title": "Existing Catalog"
+                },
+                "namespace": {
+                  "$ref": "#/$defs/namespace"
+                },
+                "catalog-id": {
+                  "description": "Catalog ID that you input in the Catalog",
+                  "instillUIOrder": 1,
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "reference",
+                    "value"
+                  ],
+                  "title": "Catalog ID",
+                  "type": "string"
+                },
+                "files": {
+                  "$ref": "#/$defs/files"
+                },
+                "file-names": {
+                  "description": "The names of the files, please remember to add the file extension in the end of file name. e.g. 'example.pdf'",
+                  "instillUIOrder": 2,
+                  "instillAcceptFormats": [
+                    "array:string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "reference"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "File Names",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "option",
+                "namespace",
+                "catalog-id",
+                "files",
+                "file-names"
+              ],
+              "instillEditOnNodeFields": [
+                "option",
+                "namespace",
+                "catalog-id",
+                "files",
+                "file-names"
+              ],
+              "type": "object"
+            },
+            {
+              "properties": {
+                "option": {
+                  "const": "create new catalog",
+                  "type": "string",
+                  "title": "Create New Catalog"
+                },
+                "namespace": {
+                  "$ref": "#/$defs/namespace"
+                },
+                "catalog-id": {
+                  "description": "Catalog ID for new catalog you want to create",
+                  "instillUIOrder": 1,
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "reference",
+                    "value"
+                  ],
+                  "title": "Catalog ID",
+                  "type": "string"
+                },
+                "files": {
+                  "$ref": "#/$defs/files"
+                },
+                "file-names": {
+                  "description": "The names of the files, please remember to add the file extension in the end of file name. e.g. 'example.pdf'",
+                  "instillUIOrder": 3,
+                  "instillAcceptFormats": [
+                    "array:string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "reference"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "File Names",
+                  "type": "array"
+                },
+                "description": {
+                  "description": "Description of the catalog",
+                  "instillUIOrder": 4,
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "title": "Description",
+                  "type": "string"
+                },
+                "tags": {
+                  "description": "Tags for the catalog",
+                  "instillUIOrder": 5,
+                  "instillAcceptFormats": [
+                    "array:string"
+                  ],
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Tags",
+                  "type": "array"
+                }
+              },
+              "required": [
+                "option",
+                "namespace",
+                "catalog-id",
+                "files",
+                "file-names"
+              ],
+              "instillEditOnNodeFields": [
+                "option",
+                "namespace",
+                "catalog-id",
+                "files",
+                "file-names",
+                "description",
+                "tags"
+              ],
+              "type": "object"
+            }
+          ]
+        }
+      },
+      "required": [
+        "options"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Result of uploading files into catalog",
+      "properties": {
+        "files": {
+          "description": "Files metadata in catalog",
+          "instillUIOrder": 0,
+          "items": {
+            "$ref": "#/$defs/file-item"
+          },
+          "instillFormat": "array:object",
+          "title": "Files",
+          "type": "array"
+        },
+        "status": {
+          "description": "The status of trigger file processing, if ALL succeeded, return true",
+          "instillUIOrder": 1,
+          "instillFormat": "boolean",
+          "title": "Status",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "files",
         "status"
       ],
       "title": "Output",
