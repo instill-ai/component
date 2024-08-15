@@ -38,12 +38,14 @@ Convert document to text in Markdown format.
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CONVERT_TO_MARKDOWN` |
 | Document (required) | `document` | string | Base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML to be converted to text in Markdown format |
+| Filename | `filename` | string | The name of the file, please remember to add the file extension in the end of file name. e.g. 'example.pdf' |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Body | `body` | string | Markdown text converted from the PDF document |
+| Filename (optional) | `filename` | string | The name of the file |
 
 
 
@@ -59,12 +61,14 @@ Convert document to text.
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CONVERT_TO_TEXT` |
 | Document (required) | `doc` | string | Base64 encoded document (PDF, DOC, DOCX, XML, HTML, RTF, etc.) to be converted to plain text |
+| Filename | `filename` | string | The name of the file, please remember to add the file extension in the end of file name. e.g. 'example.pdf' |
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Body | `body` | string | Plain text converted from the document |
+| Filename (optional) | `filename` | string | The name of the file |
 | Meta | `meta` | object | Metadata extracted from the document |
 | MSecs | `msecs` | number | Time taken to convert the document |
 | Error | `error` | string | Error message if any during the conversion process |
