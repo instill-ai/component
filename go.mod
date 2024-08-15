@@ -19,6 +19,7 @@ require (
 	github.com/frankban/quicktest v1.14.6
 	github.com/gabriel-vasile/mimetype v1.4.3
 	github.com/gage-technologies/mistral-go v1.1.0
+	github.com/gen2brain/go-fitz v1.23.7
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-openapi/strfmt v0.23.0
 	github.com/go-resty/resty/v2 v2.12.0
@@ -53,6 +54,7 @@ require (
 	github.com/tmc/langchaingo v0.1.10
 	github.com/u2takey/ffmpeg-go v0.5.0
 	github.com/weaviate/weaviate v1.26.0-rc.1
+	github.com/xuri/excelize/v2 v2.8.1
 	go.mongodb.org/mongo-driver v1.16.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/image v0.18.0
@@ -85,11 +87,14 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
+	github.com/xuri/efp v0.0.0-20231025114914-d1ff6096ae53 // indirect
+	github.com/xuri/nfp v0.0.0-20230919160717-d98342af3f05 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 )
 
@@ -150,7 +155,7 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.18 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
-	github.com/richardlehane/mscfb v1.0.3 // indirect
+	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.3 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect

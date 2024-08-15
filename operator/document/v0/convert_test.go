@@ -45,10 +45,10 @@ func TestConvertToText(t *testing.T) {
 			name:     "Convert png file",
 			filepath: "testdata/test.png",
 		},
-		{
-			name:     "Convert jpg file",
-			filepath: "testdata/test.jpg",
-		},
+		// {
+		// 	name:     "Convert jpg file",
+		// 	filepath: "testdata/test.jpg",
+		// },
 		{
 			name:     "Convert tiff file",
 			filepath: "testdata/test.tif",

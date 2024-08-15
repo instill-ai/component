@@ -2,6 +2,7 @@ package document
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
@@ -12,10 +13,12 @@ type convertDocumentToMarkdownInput struct {
 	Document        string `json:"document"`
 	DisplayImageTag bool   `json:"display-image-tag"`
 	Converter       string `json:"converter"`
+	Filename        string `json:"filename"`
 }
 
 type convertDocumentToMarkdownOutput struct {
-	Body string `json:"body"`
+	Body     string `json:"body"`
+	Filename string `json:"filename"`
 }
 
 func (e *execution) convertDocumentToMarkdown(input *structpb.Struct) (*structpb.Struct, error) {
@@ -50,6 +53,12 @@ func (e *execution) convertDocumentToMarkdown(input *structpb.Struct) (*structpb
 	outputStruct := convertDocumentToMarkdownOutput{
 		Body: extractedTextInMarkdownFormat,
 	}
+
+	if inputStruct.Filename != "" {
+		filename := strings.Split(inputStruct.Filename, ".")[0] + ".md"
+		outputStruct.Filename = filename
+	}
+
 	output, err := base.ConvertToStructpb(outputStruct)
 	if err != nil {
 		return nil, err
@@ -87,6 +96,10 @@ func getMarkdownTransformer(fileExtension string, inputStruct convertDocumentToM
 			FileExtension:     fileExtension,
 			DisplayImageTag:   inputStruct.DisplayImageTag,
 			Converter:         inputStruct.Converter,
+		}, nil
+	case "xlsx":
+		return XlsxToMarkdownTransformer{
+			Base64EncodedText: inputStruct.Document,
 		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported file type")

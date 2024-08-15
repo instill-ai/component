@@ -16,6 +16,7 @@ import (
 const (
 	taskConvertToMarkdown string = "TASK_CONVERT_TO_MARKDOWN"
 	taskConvertToText     string = "TASK_CONVERT_TO_TEXT"
+	taskConvertToImages   string = "TASK_CONVERT_TO_IMAGES"
 	pythonInterpreter     string = "/opt/venv/bin/python"
 )
 
@@ -81,6 +82,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.convertDocumentToMarkdown
 	case taskConvertToText:
 		e.execute = e.convertToText
+	case taskConvertToImages:
+		e.execute = e.convertPDFToImages
 	default:
 		return nil, fmt.Errorf(fmt.Sprintf("%s task is not supported.", x.Task))
 	}

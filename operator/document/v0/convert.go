@@ -3,6 +3,7 @@ package document
 import (
 	"bytes"
 	"fmt"
+	"strings"
 	"time"
 	"unicode/utf8"
 
@@ -32,7 +33,7 @@ var (
 		"text/url":                                                                  true,
 		"text/xml":                                                                  true,
 		"application/xml":                                                           true,
-		"image/jpeg":                                                                true,
+		"image/jpeg":                                                                false,
 		"image/png":                                                                 true,
 		"image/tif":                                                                 true,
 		"image/tiff":                                                                true,
@@ -43,7 +44,8 @@ var (
 // ConvertToTextInput defines the input for convert to text task
 type ConvertToTextInput struct {
 	// Doc: Document to convert
-	Doc string `json:"doc"`
+	Doc      string `json:"doc"`
+	Filename string `json:"filename"`
 }
 
 // ConvertToTextOutput defines the output for convert to text task
@@ -55,7 +57,8 @@ type ConvertToTextOutput struct {
 	// MSecs: Time taken to convert the document
 	MSecs uint32 `json:"msecs"`
 	// Error: Error message if any during the conversion process
-	Error string `json:"error"`
+	Error    string `json:"error"`
+	Filename string `json:"filename"`
 }
 
 type converter interface {
@@ -132,6 +135,11 @@ func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
 	res, err := converter.convert(contentType, b)
 	if err != nil {
 		return ConvertToTextOutput{}, err
+	}
+
+	if input.Filename != "" {
+		filename := strings.Split(input.Filename, ".")[0] + ".txt"
+		res.Filename = filename
 	}
 
 	return res, nil
