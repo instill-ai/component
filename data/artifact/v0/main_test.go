@@ -57,7 +57,7 @@ func Test_uploadFiles(t *testing.T) {
 			fileContent, _ := os.ReadFile(tc.fileName)
 			base64DataURI := fmt.Sprintf("data:%s;base64,%s", docconv.MimeTypeByExtension(tc.fileName), base64.StdEncoding.EncodeToString(fileContent))
 
-			input := UploadFilesInput{
+			input := UploadFileInput{
 				Options: UploadData{
 					Option:    tc.option,
 					Namespace: "fakeNs",
@@ -123,7 +123,7 @@ func Test_uploadFiles(t *testing.T) {
 
 			c.Assert(err, quicktest.IsNil)
 
-			var outputStruct UploadFilesOutput
+			var outputStruct UploadFileOutput
 			err = base.ConvertFromStructpb(output, &outputStruct)
 
 			c.Assert(err, quicktest.IsNil)

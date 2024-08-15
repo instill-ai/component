@@ -15,6 +15,7 @@ import (
 
 const (
 	taskUploadFile        string = "TASK_UPLOAD_FILE"
+	taskUploadFiles       string = "TASK_UPLOAD_FILES"
 	taskGetFilesMetadata  string = "TASK_GET_FILES_METADATA"
 	taskGetChunksMetadata string = "TASK_GET_CHUNKS_METADATA"
 	taskGetFileInMarkdown string = "TASK_GET_FILE_IN_MARKDOWN"
@@ -69,6 +70,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	switch x.Task {
 	case taskUploadFile:
 		e.execute = e.uploadFile
+	case taskUploadFiles:
+		e.execute = e.uploadFiles
 	case taskGetFilesMetadata:
 		e.execute = e.getFilesMetadata
 	case taskGetChunksMetadata:
