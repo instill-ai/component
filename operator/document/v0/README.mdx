@@ -10,6 +10,7 @@ It can carry out the following tasks:
 
 - [Convert To Markdown](#convert-to-markdown)
 - [Convert To Text](#convert-to-text)
+- [Convert To Images](#convert-to-images)
 
 
 
@@ -72,6 +73,29 @@ Convert document to text.
 | Meta | `meta` | object | Metadata extracted from the document |
 | MSecs | `msecs` | number | Time taken to convert the document |
 | Error | `error` | string | Error message if any during the conversion process |
+
+
+
+
+
+
+### Convert To Images
+
+Convert PDF to images.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CONVERT_TO_IMAGES` |
+| PDF (required) | `pdf` | string | Base64 encoded PDF to be converted to images |
+| Filename | `filename` | string | The name of the file, please remember to add the file extension in the end of file name. e.g. 'example.pdf' |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Images | `images` | array[string] | Images converted from the PDF document |
+| Filenames (optional) | `filenames` | array[string] | The filenames of the images. The filenames will be appended with the page number. e.g. 'example-1.jpg' |
 
 
 

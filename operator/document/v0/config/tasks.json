@@ -162,5 +162,79 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_CONVERT_TO_IMAGES": {
+    "instillShortDescription": "Convert PDF to images.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "pdf"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "pdf": {
+          "description": "Base64 encoded PDF to be converted to images",
+          "instillAcceptFormats": [
+            "*/*"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference"
+          ],
+          "title": "PDF",
+          "type": "string"
+        },
+        "filename": {
+          "description": "The name of the file, please remember to add the file extension in the end of file name. e.g. 'example.pdf'",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Filename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pdf"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillUIOrder": 0,
+      "properties": {
+        "images": {
+          "description": "Images converted from the PDF document",
+          "instillFormat": "array:image/*",
+          "instillUIOrder": 0,
+          "items": {
+            "type": "string"
+          },
+          "title": "Images",
+          "type": "array"
+        },
+        "filenames": {
+          "description": "The filenames of the images. The filenames will be appended with the page number. e.g. 'example-1.jpg'",
+          "instillFormat": "array:string",
+          "instillUIOrder": 1,
+          "items": {
+            "type": "string"
+          },
+          "title": "Filenames",
+          "type": "array"
+        }
+      },
+      "required": [
+        "images"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
   }
 }
