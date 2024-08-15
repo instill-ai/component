@@ -129,6 +129,8 @@ func TransformContentTypeToFileExtension(contentType string) string {
 		return "html"
 	case "application/pdf":
 		return "pdf"
+	case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+		return "xlsx"
 	}
 	return ""
 }
@@ -153,4 +155,30 @@ func GetInstillUserUID(vars map[string]any) string {
 
 func GetInstillRequesterUID(vars map[string]any) string {
 	return vars["__PIPELINE_REQUESTER_UID"].(string)
+}
+
+func ConvertFrameToMarkdownTable(rows [][]string) string {
+	var sb strings.Builder
+
+	sb.WriteString("|")
+	for _, colCell := range rows[0] {
+		sb.WriteString(fmt.Sprintf(" %s |", colCell))
+	}
+	sb.WriteString("\n")
+
+	sb.WriteString("|")
+	for range rows[0] {
+		sb.WriteString(" --- |")
+	}
+	sb.WriteString("\n")
+
+	for _, row := range rows[1:] {
+		sb.WriteString("|")
+		for _, colCell := range row {
+			sb.WriteString(fmt.Sprintf(" %s |", colCell))
+		}
+		sb.WriteString("\n")
+	}
+
+	return sb.String()
 }

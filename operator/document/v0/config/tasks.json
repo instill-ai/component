@@ -9,7 +9,7 @@
       "instillUIOrder": 0,
       "properties": {
         "document": {
-          "description": "Base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML to be converted to text in Markdown format",
+          "description": "Base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML/XLSX to be converted to text in Markdown format",
           "instillAcceptFormats": [
             "*/*"
           ],

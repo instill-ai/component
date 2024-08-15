@@ -97,6 +97,10 @@ func getMarkdownTransformer(fileExtension string, inputStruct convertDocumentToM
 			DisplayImageTag:   inputStruct.DisplayImageTag,
 			Converter:         inputStruct.Converter,
 		}, nil
+	case "xlsx":
+		return XlsxToMarkdownTransformer{
+			Base64EncodedText: inputStruct.Document,
+		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported file type")
 	}

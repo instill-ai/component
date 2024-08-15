@@ -1,6 +1,7 @@
 package document
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -13,6 +14,8 @@ import (
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/util"
+	"github.com/xuri/excelize/v2"
 )
 
 type MarkdownTransformer interface {
@@ -136,6 +139,45 @@ func (t HTMLToMarkdownTransformer) Transform() (string, error) {
 	}
 
 	return markdown, nil
+}
+
+type XlsxToMarkdownTransformer struct {
+	Base64EncodedText string
+}
+
+func (t XlsxToMarkdownTransformer) Transform() (string, error) {
+
+	base64String := strings.Split(t.Base64EncodedText, ",")[1]
+	fileContent, err := base64.StdEncoding.DecodeString(base64String)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to decode base64 to file: %w", err)
+	}
+
+	reader := bytes.NewReader(fileContent)
+
+	f, err := excelize.OpenReader(reader)
+	if err != nil {
+		return "", fmt.Errorf("failed to open reader: %w", err)
+	}
+	defer f.Close()
+
+	sheets := f.GetSheetList()
+
+	var result string
+	for _, sheet := range sheets {
+		rows, err := f.GetRows(sheet)
+
+		if err != nil {
+			return "", fmt.Errorf("failed to get rows: %w", err)
+		}
+
+		result += fmt.Sprintf("# %s\n", sheet)
+		result += util.ConvertFrameToMarkdownTable(rows)
+		result += "\n\n"
+	}
+
+	return result, nil
 }
 
 type pythonRunnerOutput struct {
