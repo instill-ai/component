@@ -173,7 +173,7 @@ func (t XlsxToMarkdownTransformer) Transform() (string, error) {
 		}
 
 		result += fmt.Sprintf("# %s\n", sheet)
-		result += util.ConvertFrameToMarkdownTable(rows)
+		result += util.ConvertDataFrameToMarkdownTable(rows)
 		result += "\n\n"
 	}
 

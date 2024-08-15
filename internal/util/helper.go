@@ -157,7 +157,7 @@ func GetInstillRequesterUID(vars map[string]any) string {
 	return vars["__PIPELINE_REQUESTER_UID"].(string)
 }
 
-func ConvertFrameToMarkdownTable(rows [][]string) string {
+func ConvertDataFrameToMarkdownTable(rows [][]string) string {
 	var sb strings.Builder
 
 	sb.WriteString("|")
