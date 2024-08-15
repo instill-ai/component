@@ -72,6 +72,8 @@ type FreshdeskClient struct {
 type FreshdeskInterface interface {
 	GetTicket(ticketID int64) (*TaskGetTicketResponse, error)
 	CreateTicket(req *TaskCreateTicketReq) (*TaskCreateTicketResponse, error)
+	ReplyToTicket(ticketID int64, req *TaskReplyToTicketReq) (*TaskReplyToTicketResponse, error)
+	CreateTicketNote(ticketID int64, req *TaskCreateTicketNoteReq) (*TaskCreateTicketNoteResponse, error)
 	GetContact(contactID int64) (*TaskGetContactResponse, error)
 	CreateContact(req *TaskCreateContactReq) (*TaskCreateContactResponse, error)
 	GetCompany(companyID int64) (*TaskGetCompanyResponse, error)

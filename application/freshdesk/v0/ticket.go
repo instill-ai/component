@@ -33,6 +33,24 @@ func (c *FreshdeskClient) CreateTicket(req *TaskCreateTicketReq) (*TaskCreateTic
 	return resp, nil
 }
 
+func (c *FreshdeskClient) ReplyToTicket(ticketID int64, req *TaskReplyToTicketReq) (*TaskReplyToTicketResponse, error) {
+	resp := &TaskReplyToTicketResponse{}
+	httpReq := c.httpclient.R().SetBody(req).SetResult(resp)
+	if _, err := httpReq.Post(fmt.Sprintf("/%s/%d/reply", TicketPath, ticketID)); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *FreshdeskClient) CreateTicketNote(ticketID int64, req *TaskCreateTicketNoteReq) (*TaskCreateTicketNoteResponse, error) {
+	resp := &TaskCreateTicketNoteResponse{}
+	httpReq := c.httpclient.R().SetBody(req).SetResult(resp)
+	if _, err := httpReq.Post(fmt.Sprintf("/%s/%d/notes", TicketPath, ticketID)); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 //Task 1: Get Ticket
 
 type TaskGetTicketInput struct {
@@ -181,7 +199,7 @@ type TaskCreateTicketInput struct {
 	RequesterID      int64    `json:"requester-id"`
 	Email            string   `json:"email"`
 	Subject          string   `json:"subject"`
-	Description      string   `json:"description-text"`
+	Description      string   `json:"description"`
 	Source           string   `json:"source"`
 	Status           string   `json:"status"`
 	Priority         string   `json:"priority"`
@@ -279,6 +297,136 @@ func (e *execution) TaskCreateTicket(in *structpb.Struct) (*structpb.Struct, err
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
+	}
+
+	return output, nil
+}
+
+// Task 3: Reply To A Ticket
+
+type TaskReplyToTicketInput struct {
+	TicketID  int64    `json:"ticket-id"`
+	Body      string   `json:"body"`
+	FromEmail string   `json:"from-email"`
+	UserID    int64    `json:"user-id"` //user ID can either be the requester or the agent
+	CCEmails  []string `json:"cc-emails"`
+	BCCEmails []string `json:"bcc-emails"`
+}
+
+type TaskReplyToTicketReq struct {
+	Body      string   `json:"body"`
+	FromEmail string   `json:"from_email,omitempty"`
+	UserID    int64    `json:"user_id,omitempty"`
+	CCEmails  []string `json:"cc_emails,omitempty"`
+	BCCEmails []string `json:"bcc_emails,omitempty"`
+}
+
+type TaskReplyToTicketResponse struct {
+	ConversationID int64  `json:"id"`
+	CreatedAt      string `json:"created_at"`
+}
+
+type TaskReplyToTicketOutput struct {
+	ConversationID int64  `json:"conversation-id"`
+	CreatedAt      string `json:"created-at"`
+}
+
+func (e *execution) TaskReplyToTicket(in *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := TaskReplyToTicketInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	req := TaskReplyToTicketReq{
+		Body:      inputStruct.Body,
+		FromEmail: inputStruct.FromEmail,
+		UserID:    inputStruct.UserID,
+		CCEmails:  inputStruct.CCEmails,
+		BCCEmails: inputStruct.BCCEmails,
+	}
+
+	resp, err := e.client.ReplyToTicket(inputStruct.TicketID, &req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := TaskReplyToTicketOutput{
+		ConversationID: resp.ConversationID,
+		CreatedAt:      convertTimestampResp(resp.CreatedAt),
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
+	}
+
+	return output, nil
+}
+
+// Task 4: Create Ticket Note
+
+type TaskCreateTicketNoteInput struct {
+	TicketID     int64    `json:"ticket-id"`
+	Body         string   `json:"body"`
+	NotifyEmails []string `json:"notify-emails"`
+	UserID       int64    `json:"user-id"`
+	Private      bool     `json:"private"`
+	Incoming     bool     `json:"incoming"`
+}
+
+type TaskCreateTicketNoteReq struct {
+	Body         string   `json:"body"`
+	NotifyEmails []string `json:"notify_emails,omitempty"`
+	UserID       int64    `json:"user_id,omitempty"`
+	Private      bool     `json:"private"`
+	Incoming     bool     `json:"incoming"`
+}
+
+type TaskCreateTicketNoteResponse struct {
+	ConversationID int64  `json:"id"`
+	CreatedAt      string `json:"created_at"`
+}
+
+type TaskCreateTicketNoteOutput struct {
+	ConversationID int64  `json:"conversation-id"`
+	CreatedAt      string `json:"created-at"`
+}
+
+func (e *execution) TaskCreateTicketNote(in *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := TaskCreateTicketNoteInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	req := TaskCreateTicketNoteReq{
+		Body:         inputStruct.Body,
+		NotifyEmails: inputStruct.NotifyEmails,
+		UserID:       inputStruct.UserID,
+		Private:      inputStruct.Private,
+		Incoming:     inputStruct.Incoming,
+	}
+
+	resp, err := e.client.CreateTicketNote(inputStruct.TicketID, &req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := TaskCreateTicketNoteOutput{
+		ConversationID: resp.ConversationID,
+		CreatedAt:      convertTimestampResp(resp.CreatedAt),
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}

@@ -367,6 +367,11 @@
         "description": "Custom fields that the ticket have. Custom fields can be created or modified in Admin -> Ticket Fields",
         "title": "Custom Fields",
         "type": "object"
+      },
+      "conversation-id":{
+        "description": "The ID of the note or reply that is associated with the ticket",
+        "title": "Conversation ID",
+        "type": "integer"
       }
     },
     "contact": {
@@ -819,7 +824,7 @@
         "requester-id",
         "email",
         "subject",
-        "description-text",
+        "description",
         "source",
         "status",
         "priority"
@@ -850,8 +855,10 @@
           "instillUIMultiline": true,
           "instillUpstreamTypes": ["value", "template", "reference"]
         },
-        "description-text": {
-          "$ref": "#/$defs/ticket/description-text",
+        "description": {
+          "description": "Content of the ticket. You can use HTML tags in the content.",
+          "title": "Description",
+          "type": "string",
           "instillUIOrder": 3,
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": true,
@@ -975,13 +982,7 @@
           "instillUpstreamTypes": ["value", "reference"]
         }
       },
-      "required": [
-        "subject",
-        "description-text",
-        "source",
-        "status",
-        "priority"
-      ],
+      "required": ["subject", "description", "source", "status", "priority"],
       "title": "Input",
       "type": "object"
     },
@@ -1001,6 +1002,195 @@
         }
       },
       "required": ["ticket-id", "created-at"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_REPLY_TO_TICKET": {
+    "instillShortDescription": "Reply to a ticket thread.",
+    "input": {
+      "description": "Reply information",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "ticket-id",
+        "body",
+        "from-email",
+        "user-id",
+        "cc-emails",
+        "bcc-emails"
+      ],
+      "properties": {
+        "ticket-id":{
+          "$ref": "#/$defs/ticket/ticket-id",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "body": {
+          "description": "Content of the reply. Can be in HTML format.",
+          "title": "Body",
+          "type": "string",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "from-email": {
+          "description": "Email address that is replying to the ticket. You need to have this email address registered in Freshdesk by going to Admin -> Emails. If you leave this field empty, the global support email will be used.",
+          "title": "From Email",
+          "type": "string",
+          "instillUIOrder": 1,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "user-id": {
+          "description": "ID of the agent/contact replying to the ticket. If you fill this field using a contact ID, there will be no email sent to the requester.",
+          "title": "User ID",
+          "type": "integer",
+          "instillUIOrder": 2,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "cc-emails": {
+          "description": "Email addresses added in the 'cc' field of the outgoing ticket email.",
+          "title": "CC Emails",
+          "type": "array",
+          "instillUIOrder": 3,
+          "instillAcceptFormats": ["array:string"],
+          "items": {
+            "type": "string"
+          },
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "bcc-emails": {
+          "description": "Email addresses added in the 'bcc' field of the outgoing ticket email.",
+          "title": "BCC Emails",
+          "type": "array",
+          "instillUIOrder": 4,
+          "instillAcceptFormats": ["array:string"],
+          "items": {
+            "type": "string"
+          },
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        }
+      },
+      "required": ["ticket-id","body"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Conversation ID, Ticket ID and created date",
+      "instillUIOrder": 0,
+      "properties": {
+        "conversation-id": {
+          "$ref": "#/$defs/ticket/conversation-id",
+          "instillFormat": "integer",
+          "instillUIOrder": 0
+        },
+        "created-at": {
+          "$ref": "#/$defs/ticket/created-at",
+          "instillFormat": "string",
+          "instillUIOrder": 1
+        }
+      },
+      "required": ["conversation-id","created-at"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_TICKET_NOTE": {
+    "instillShortDescription": "Create a private/public note on a ticket thread.",
+    "input": {
+      "description": "Note information",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "ticket-id",
+        "body",
+        "notify-emails",
+        "user-id",
+        "private",
+        "incoming"
+      ],
+      "properties": {
+        "ticket-id":{
+          "$ref": "#/$defs/ticket/ticket-id",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "body": {
+          "description": "Content of the note. Can be in HTML format.",
+          "title": "Body",
+          "type": "string",
+          "instillUIOrder": 1,
+          "instillAcceptFormats": ["string"],
+          "instillUIMultiline": true,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "notify-emails": {
+          "description": "Email addresses of agents/users who need to be notified about this note. The emails need to exist in Freshdesk agent. Agent list can be seen in Admin -> Agents.",
+          "title": "Notify Emails",
+          "type": "array",
+          "instillUIOrder": 2,
+          "instillAcceptFormats": ["array:string"],
+          "items": {
+            "type": "string"
+          },
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "user-id": {
+          "description": "ID of the agent/contact who is adding the note.",
+          "title": "User ID",
+          "type": "integer",
+          "instillUIOrder": 3,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "private":{
+          "description": "Set to true if the note is private",
+          "title": "Private",
+          "type": "boolean",
+          "instillUIOrder": 4,
+          "instillAcceptFormats": ["boolean"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "incoming":{
+          "description": "Set to true if a particular note should appear as being created from outside (i.e., not through web portal).",
+          "title": "Incoming",
+          "type": "boolean",
+          "instillUIOrder": 5,
+          "instillAcceptFormats": ["boolean"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        }
+        
+      },
+      "required": ["ticket-id","body"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Conversation ID, Ticket ID and created date",
+      "instillUIOrder": 0,
+      "properties": {
+        "conversation-id": {
+          "$ref": "#/$defs/ticket/conversation-id",
+          "instillFormat": "integer",
+          "instillUIOrder": 0
+        },
+        "created-at": {
+          "$ref": "#/$defs/ticket/created-at",
+          "instillFormat": "string",
+          "instillUIOrder": 1
+        }
+      },
+      "required": ["conversation-id","created-at"],
       "title": "Output",
       "type": "object"
     }
@@ -1562,7 +1752,7 @@
       "type": "object"
     },
     "output": {
-      "description": "Company information",
+      "description": "IDs of the object",
       "instillUIOrder": 0,
       "properties": {
         "ids": {

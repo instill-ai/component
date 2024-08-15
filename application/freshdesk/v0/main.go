@@ -18,13 +18,15 @@ import (
 const (
 	version = "v2"
 
-	taskGetTicket     = "TASK_GET_TICKET"
-	taskCreateTicket  = "TASK_CREATE_TICKET"
-	taskGetContact    = "TASK_GET_CONTACT"
-	taskCreateContact = "TASK_CREATE_CONTACT"
-	taskGetCompany    = "TASK_GET_COMPANY"
-	taskCreateCompany = "TASK_CREATE_COMPANY"
-	taskGetAll        = "TASK_GET_ALL"
+	taskGetTicket        = "TASK_GET_TICKET"
+	taskCreateTicket     = "TASK_CREATE_TICKET"
+	taskReplyToTicket    = "TASK_REPLY_TO_TICKET"
+	taskCreateTicketNote = "TASK_CREATE_TICKET_NOTE"
+	taskGetContact       = "TASK_GET_CONTACT"
+	taskCreateContact    = "TASK_CREATE_CONTACT"
+	taskGetCompany       = "TASK_GET_COMPANY"
+	taskCreateCompany    = "TASK_CREATE_COMPANY"
+	taskGetAll           = "TASK_GET_ALL"
 )
 
 var (
@@ -73,6 +75,10 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.TaskGetTicket
 	case taskCreateTicket:
 		e.execute = e.TaskCreateTicket
+	case taskReplyToTicket:
+		e.execute = e.TaskReplyToTicket
+	case taskCreateTicketNote:
+		e.execute = e.TaskCreateTicketNote
 	case taskGetContact:
 		e.execute = e.TaskGetContact
 	case taskCreateContact:
