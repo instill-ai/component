@@ -3,6 +3,7 @@ package artifact
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -51,7 +52,7 @@ type Connection interface {
 	Close() error
 }
 
-func (e *execution) uploadFiles(input *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) uploadFile(input *structpb.Struct) (*structpb.Struct, error) {
 
 	inputStruct := UploadFilesInput{}
 
@@ -77,7 +78,11 @@ func (e *execution) uploadFiles(input *structpb.Struct) (*structpb.Struct, error
 		})
 
 		if err != nil {
-			return nil, fmt.Errorf("failed to create new catalog: %w", err)
+			if strings.Contains(err.Error(), "knowledge base name already exists") {
+				log.Println("Catalog already exists, skipping creation")
+			} else {
+				return nil, fmt.Errorf("failed to create new catalog: %w", err)
+			}
 		}
 	}
 
@@ -86,13 +91,14 @@ func (e *execution) uploadFiles(input *structpb.Struct) (*structpb.Struct, error
 	}
 	file := inputStruct.Options.File
 
-	contentType, err := util.GetContentTypeFromBase64(file)
+	fileType, err := util.GetFileType(file, inputStruct.Options.FileName)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get content type: %w", err)
+		return nil, fmt.Errorf("failed to get file type: %w", err)
 	}
+	typeString := "FILE_TYPE_" + strings.ToUpper(fileType)
 
-	typeString := "FILE_TYPE_" + strings.ToUpper(util.TransformContentTypeToFileExtension(contentType))
 	content := util.GetFileBase64Content(file)
+
 	typePB := artifactPB.FileType_value[typeString]
 	filePB := &artifactPB.File{
 		Name:    inputStruct.Options.FileName,

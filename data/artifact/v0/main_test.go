@@ -52,7 +52,7 @@ func Test_uploadFiles(t *testing.T) {
 				ComponentExecution: base.ComponentExecution{Component: component, SystemVariables: sysVar, Setup: nil, Task: taskUploadFile},
 			}
 
-			e.execute = e.uploadFiles
+			e.execute = e.uploadFile
 
 			fileContent, _ := os.ReadFile(tc.fileName)
 			base64DataURI := fmt.Sprintf("data:%s;base64,%s", docconv.MimeTypeByExtension(tc.fileName), base64.StdEncoding.EncodeToString(fileContent))

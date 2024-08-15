@@ -68,7 +68,7 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 
 	switch x.Task {
 	case taskUploadFile:
-		e.execute = e.uploadFiles
+		e.execute = e.uploadFile
 	case taskGetFilesMetadata:
 		e.execute = e.getFilesMetadata
 	case taskGetChunksMetadata:
