@@ -258,6 +258,11 @@
         "title": "CC Emails",
         "type": "array"
       },
+      "bcc-emails":{
+        "description": "Email addresses added in the 'bcc' field of the incoming ticket email",
+        "title": "BCC Emails",
+        "type": "array"
+      },
       "forward-emails": {
         "description": "Email addresses added while forwarding a ticket",
         "title": "Forward Emails",
@@ -339,7 +344,7 @@
         "type": "boolean"
       },
       "created-at": {
-        "description": "Timestamp that denotes when the ticket was created. In UTC format.",
+        "description": "Timestamp that denotes when the ticket/conversation was created. In UTC format.",
         "title": "Created At",
         "type": "string"
       },
@@ -1191,6 +1196,148 @@
         }
       },
       "required": ["conversation-id","created-at"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_CONVERSATIONS":{
+    "instillShortDescription": "Get all the conversations in a ticket. (Conversations are replies and notes added to a ticket)",
+    "input": {
+      "description": "Ticket ID",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": [
+        "ticket-id"
+      ],
+      "properties": {
+        "ticket-id":{
+          "description": "Ticket ID",
+          "title": "Ticket ID",
+          "type": "integer",
+          "instillUIOrder": 2,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        }
+      },
+      "required": ["ticket-id"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Conversations",
+      "instillUIOrder": 0,
+      "properties": {
+        "conversations": {
+          "description": "An array of conversations",
+          "instillUIOrder": 0,
+          "title": "Conversations",
+          "type": "array",
+          "items": {
+            "title": "Conversation",
+            "type": "object",
+            "properties": {
+              "body-text":{
+                "description": "Content of the conversation",
+                "title": "Body Text",
+                "type": "string",
+                "instillUIOrder": 0,
+                "instillFormat":"string"
+              },
+              "conversation-id":{
+                "$ref": "#/$defs/ticket/conversation-id",
+                "instillUIOrder": 1,
+                "instillFormat":"integer"
+              },
+              "support-email":{
+                "$ref": "#/$defs/ticket/support-email",
+                "instillUIOrder": 2,
+                "instillFormat":"string"
+              },
+              "to-emails":{
+                "description": "Email addresses of agents/users who need to be notified about this conversation",
+                "title": "To Emails",
+                "type": "array",
+                "instillUIOrder": 3,
+                "instillFormat":"array:string",
+                "items": {
+                  "title": "To Email",
+                  "type": "string",
+                  "description": "One of the email addresses of agents/users who need to be notified about this conversation",
+                  "instillFormat": "string"
+                }
+              },
+              "from-email":{
+                "description": "Email address that is replying to the ticket or adding the note.",
+                "title": "From Email",
+                "type": "string",
+                "instillUIOrder": 4,
+                "instillAcceptFormats": ["string"],
+                "instillUIMultiline": true,
+                "instillUpstreamTypes": ["value", "template", "reference"]
+              },
+              "cc-emails":{
+                "$ref": "#/$defs/ticket/cc-emails",
+                "instillUIOrder": 5,
+                "instillFormat":"array:string",
+                "items": {
+                  "title": "CC Email",
+                  "type": "string",
+                  "description": "One of the email address added in the 'cc' field of the incoming ticket email",
+                  "instillFormat": "string"
+                }
+              },
+              "bcc-emails":{
+                "$ref": "#/$defs/ticket/bcc-emails",
+                "instillUIOrder": 6,
+                "instillFormat":"array:string",
+                "items": {
+                  "title": "BCC Email",
+                  "type": "string",
+                  "description": "One of the email address added in the 'bcc' field of the incoming ticket email",
+                  "instillFormat": "string"
+                }
+              },
+              "incoming":{
+                "description": "Set to true if a particular conversation should appear as being created from outside",
+                "title": "Incoming",
+                "type": "boolean",
+                "instillUIOrder": 7,
+                "instillFormat":"boolean"
+              },
+              "private":{
+                "description": "Set to true if a note is private. Can be set only for notes.",
+                "title": "Incoming",
+                "type": "boolean",
+                "instillUIOrder": 8,
+                "instillFormat":"boolean"
+              },
+              "user-id":{
+                "description": "ID of the agent/contact replying to the ticket.",
+                "title": "Incoming",
+                "type": "integer",
+                "instillUIOrder": 9,
+                "instillFormat":"integer"
+              },
+              "created-at":{
+                "$ref": "#/$defs/ticket/created-at",
+                "instillUIOrder": 10,
+                "instillFormat":"string"
+              }
+            },
+            "required": [
+              "body-text"
+            ]
+          }
+        },
+        "conversations-length":{
+          "description": "Number of conversations",
+          "title": "Conversations Length",
+          "type": "integer",
+          "instillUIOrder": 1,
+          "instillFormat":"integer"
+        }
+      },
+      "required": ["conversations", "conversations-length"],
       "title": "Output",
       "type": "object"
     }

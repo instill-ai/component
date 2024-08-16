@@ -79,4 +79,5 @@ type FreshdeskInterface interface {
 	GetCompany(companyID int64) (*TaskGetCompanyResponse, error)
 	CreateCompany(req *TaskCreateCompanyReq) (*TaskCreateCompanyResponse, error)
 	GetAll(objectType string, pagination bool, paginationPath string) ([]TaskGetAllResponse, string, error)
+	GetAllConversations(ticketID int64, pagination bool, paginationPath string) ([]TaskGetAllConversationsResponse, string, error)
 }

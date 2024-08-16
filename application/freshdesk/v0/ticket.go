@@ -2,7 +2,9 @@ package freshdesk
 
 import (
 	"fmt"
+	"strings"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -49,6 +51,39 @@ func (c *FreshdeskClient) CreateTicketNote(ticketID int64, req *TaskCreateTicket
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (c *FreshdeskClient) GetAllConversations(ticketID int64, pagination bool, paginationPath string) ([]TaskGetAllConversationsResponse, string, error) {
+	resp := []TaskGetAllConversationsResponse{}
+
+	httpReq := c.httpclient.R().SetResult(&resp)
+
+	var rawResp *resty.Response
+	var err error
+	if !pagination {
+		rawResp, err = httpReq.Get(fmt.Sprintf("/%s/%d/conversations", TicketPath, ticketID))
+
+	} else {
+		rawResp, err = httpReq.Get(paginationPath)
+	}
+
+	if err != nil {
+		return nil, "", err
+	}
+
+	// Will exist if there is a next page
+	linkHeader := rawResp.Header().Get("Link")
+
+	var nextPage string
+	if linkHeader != "" {
+		startIndex := strings.Index(linkHeader, "<")
+		endIndex := strings.Index(linkHeader, ">")
+		nextPage = linkHeader[startIndex+1 : endIndex]
+
+		return resp, nextPage, nil
+	}
+
+	return resp, "", nil
 }
 
 //Task 1: Get Ticket
@@ -429,6 +464,108 @@ func (e *execution) TaskCreateTicketNote(in *structpb.Struct) (*structpb.Struct,
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
+	}
+
+	return output, nil
+}
+
+// Task 5: Get Conversations
+
+type TaskGetAllConversationsInput struct {
+	AllOrSingle string `json:"all-or-single"`
+	TicketID    int64  `json:"ticket-id"`
+}
+
+type TaskGetAllConversationsResponse struct {
+	BodyText       string   `json:"body_text"`
+	ConversationID int64    `json:"id"`
+	SupportEmail   string   `json:"support_email"`
+	ToEmails       []string `json:"to_emails"`
+	FromEmail      string   `json:"from_email"`
+	CCEmails       []string `json:"cc_emails"`
+	BCCEmails      []string `json:"bcc_emails"`
+	Incoming       bool     `json:"incoming"`
+	Private        bool     `json:"private"`
+	UserID         int64    `json:"user_id"`
+	CreatedAt      string   `json:"created_at"`
+}
+
+type TaskGetAllConversationsOutput struct {
+	Conversations       []taskGetAllConversationsOutputConversation `json:"conversations"`
+	ConversationsLength int                                         `json:"conversations-length"`
+}
+
+type taskGetAllConversationsOutputConversation struct {
+	BodyText       string   `json:"body-text"`
+	ConversationID int64    `json:"conversation-id"`
+	SupportEmail   string   `json:"support-email,omitempty"`
+	ToEmails       []string `json:"to-emails"`
+	FromEmail      string   `json:"from-email,omitempty"`
+	CCEmails       []string `json:"cc-emails"`
+	BCCEmails      []string `json:"bcc-emails"`
+	Incoming       bool     `json:"incoming"`
+	Private        bool     `json:"private"`
+	UserID         int64    `json:"user-id,omitempty"`
+	CreatedAt      string   `json:"created-at"`
+}
+
+func (e *execution) TaskGetAllConversations(in *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := TaskGetAllConversationsInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	outputStruct := TaskGetAllConversationsOutput{}
+
+	var resp []TaskGetAllConversationsResponse
+	var paginationPath string
+
+	for {
+
+		if paginationPath == "" {
+			resp, paginationPath, err = e.client.GetAllConversations(inputStruct.TicketID, false, "")
+		} else {
+			resp, paginationPath, err = e.client.GetAllConversations(inputStruct.TicketID, true, paginationPath)
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		for _, conversation := range resp {
+			outputConvo := taskGetAllConversationsOutputConversation{
+				BodyText:       conversation.BodyText,
+				ConversationID: conversation.ConversationID,
+				SupportEmail:   conversation.SupportEmail,
+				ToEmails:       *checkForNilString(&conversation.ToEmails),
+				FromEmail:      conversation.FromEmail,
+				CCEmails:       *checkForNilString(&conversation.CCEmails),
+				BCCEmails:      *checkForNilString(&conversation.BCCEmails),
+				Incoming:       conversation.Incoming,
+				Private:        conversation.Private,
+				UserID:         conversation.UserID,
+				CreatedAt:      convertTimestampResp(conversation.CreatedAt),
+			}
+
+			outputStruct.Conversations = append(outputStruct.Conversations, outputConvo)
+		}
+
+		if paginationPath == "" {
+			break
+		}
+	}
+
+	outputStruct.ConversationsLength = len(outputStruct.Conversations)
+	if outputStruct.ConversationsLength == 0 {
+		outputStruct.Conversations = []taskGetAllConversationsOutputConversation{}
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+
+	if err != nil {
+		return nil, err
 	}
 
 	return output, nil
