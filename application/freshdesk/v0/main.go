@@ -27,7 +27,7 @@ const (
 	taskGetCompany          = "TASK_GET_COMPANY"
 	taskCreateCompany       = "TASK_CREATE_COMPANY"
 	taskGetAll              = "TASK_GET_ALL"
-	TaskGetAllConversations = "TASK_GET_ALL_CONVERSATIONS"
+	taskGetAllConversations = "TASK_GET_ALL_CONVERSATIONS"
 )
 
 var (
@@ -80,7 +80,7 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.TaskReplyToTicket
 	case taskCreateTicketNote:
 		e.execute = e.TaskCreateTicketNote
-	case TaskGetAllConversations:
+	case taskGetAllConversations:
 		e.execute = e.TaskGetAllConversations
 	case taskGetContact:
 		e.execute = e.TaskGetContact

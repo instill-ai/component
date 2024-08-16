@@ -1200,7 +1200,7 @@
       "type": "object"
     }
   },
-  "TASK_GET_CONVERSATIONS":{
+  "TASK_GET_ALL_CONVERSATIONS":{
     "instillShortDescription": "Get all the conversations in a ticket. (Conversations are replies and notes added to a ticket)",
     "input": {
       "description": "Ticket ID",
