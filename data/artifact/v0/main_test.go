@@ -521,7 +521,7 @@ func Test_searchChunks(t *testing.T) {
 		}
 
 		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: component, SystemVariables: sysVar, Setup: nil, Task: taskSearchChunks},
+			ComponentExecution: base.ComponentExecution{Component: component, SystemVariables: sysVar, Setup: nil, Task: taskRetrieve},
 		}
 
 		e.execute = e.searchChunks
@@ -591,7 +591,7 @@ func Test_query(t *testing.T) {
 		}
 
 		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: component, SystemVariables: sysVar, Setup: nil, Task: taskQuery},
+			ComponentExecution: base.ComponentExecution{Component: component, SystemVariables: sysVar, Setup: nil, Task: taskAsk},
 		}
 
 		e.execute = e.query

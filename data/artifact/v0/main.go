@@ -20,8 +20,9 @@ const (
 	taskGetChunksMetadata string = "TASK_GET_CHUNKS_METADATA"
 	taskGetFileInMarkdown string = "TASK_GET_FILE_IN_MARKDOWN"
 	taskMatchFileStatus   string = "TASK_MATCH_FILE_STATUS"
-	taskSearchChunks      string = "TASK_RETRIEVE"
-	taskQuery             string = "TASK_ASK"
+	taskRetrieve          string = "TASK_RETRIEVE"
+	taskAsk               string = "TASK_ASK"
+	task
 )
 
 var (
@@ -80,9 +81,9 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.getFileInMarkdown
 	case taskMatchFileStatus:
 		e.execute = e.matchFileStatus
-	case taskSearchChunks:
+	case taskRetrieve:
 		e.execute = e.searchChunks
-	case taskQuery:
+	case taskAsk:
 		e.execute = e.query
 	default:
 		return nil, fmt.Errorf(x.Task + " task is not supported.")
