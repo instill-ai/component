@@ -240,7 +240,8 @@ Retrieve the chat history from the conversation in catalog
 | Conversation ID (required) | `conversation-id` | string | The conversation ID to retrieve the chat history |
 | Role | `role` | string | The role of the user you want to specify to retrieve in the conversation. The default is all with the blank setting. Now, we support 'user' and 'assistant' |
 | Message Type | `message-type` | string | The message type of the chat history you want to retrieve. The default is all with blank setting. Now, we only support 'MESSAGE_TYPE_TEXT' |
-| Duration | `duration` | string | The duration between now and how long ago to retrieve the chat history from in D,H,M format i.e. 1.0.0 means 1 day ago. Default is all blank. |
+| Duration | `duration` | string | The duration between now and how long ago to retrieve the chat history from. i.e. 2h45m5s. Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".  The default is all with blank setting |
+| Max Message Count | `max-message-count` | integer | The maximum number of messages to retrieve. The default is all with blank setting |
 
 
 
@@ -266,8 +267,8 @@ Write the chat message into the conversation in catalog
 | Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
 | Conversation ID (required) | `conversation-id` | string | The conversation ID to write the chat history |
 | Content (required) | `content` | string | The content of the message |
-| Role | `role` | string | The role of the user who sends the message. Now, we support 'user' and 'assistant', and the default is 'user' with blank setting |
-| Message Type | `message-type` | string | The message type of the chat history. Now, we only support 'MESSAGE_TYPE_TEXT'. The default is 'MESSAGE_TYPE_TEXT' with blank setting. |
+| Role (required) | `role` | string | The role of the user who sends the message. Now, we support 'user' and 'assistant'. |
+| Message Type (required) | `message-type` | string | The message type of the chat history. Now, we only support 'MESSAGE_TYPE_TEXT'. |
 
 
 
