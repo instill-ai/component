@@ -1125,8 +1125,8 @@
           "title": "Message Type",
           "type": "string"
         },
-        "time-since": {
-          "description": "The start time to retrieve the chat history in the format of D,H,M. e.g. 1,0,0 means 1 day ago. The default is all with blank setting",
+        "duration": {
+          "description": "The duration between now and how long ago to retrieve the chat history from in D,H,M format i.e. 1.0.0 means 1 day ago. Default is all blank.",
           "instillUIOrder": 4,
           "instillAcceptFormats": [
             "string"
@@ -1135,7 +1135,7 @@
             "value",
             "reference"
           ],
-          "title": "Time Since",
+          "title": "Duration",
           "type": "string"
         }
       },
