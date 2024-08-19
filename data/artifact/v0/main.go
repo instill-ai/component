@@ -14,15 +14,16 @@ import (
 )
 
 const (
-	taskUploadFile        string = "TASK_UPLOAD_FILE"
-	taskUploadFiles       string = "TASK_UPLOAD_FILES"
-	taskGetFilesMetadata  string = "TASK_GET_FILES_METADATA"
-	taskGetChunksMetadata string = "TASK_GET_CHUNKS_METADATA"
-	taskGetFileInMarkdown string = "TASK_GET_FILE_IN_MARKDOWN"
-	taskMatchFileStatus   string = "TASK_MATCH_FILE_STATUS"
-	taskRetrieve          string = "TASK_RETRIEVE"
-	taskAsk               string = "TASK_ASK"
-	task
+	taskUploadFile          string = "TASK_UPLOAD_FILE"
+	taskUploadFiles         string = "TASK_UPLOAD_FILES"
+	taskGetFilesMetadata    string = "TASK_GET_FILES_METADATA"
+	taskGetChunksMetadata   string = "TASK_GET_CHUNKS_METADATA"
+	taskGetFileInMarkdown   string = "TASK_GET_FILE_IN_MARKDOWN"
+	taskMatchFileStatus     string = "TASK_MATCH_FILE_STATUS"
+	taskRetrieve            string = "TASK_RETRIEVE"
+	taskAsk                 string = "TASK_ASK"
+	taskRetrieveChatHistory string = "TASK_RETRIEVE_CHAT_HISTORY"
+	taskWriteChatMessage    string = "TASK_WRITE_CHAT_MESSAGE"
 )
 
 var (
@@ -85,6 +86,10 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.searchChunks
 	case taskAsk:
 		e.execute = e.query
+	case taskRetrieveChatHistory:
+		e.execute = e.retrieveChatHistory
+	case taskWriteChatMessage:
+		e.execute = e.writeChatMessage
 	default:
 		return nil, fmt.Errorf(x.Task + " task is not supported.")
 	}
