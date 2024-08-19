@@ -825,6 +825,72 @@
       "type": "object"
     }
   },
+  "TASK_MATCH_FILE_STATUS": {
+    "instillShortDescription": "Check if the specified file's processing status is done",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "namespace": {
+          "$ref": "#/$defs/namespace"
+        },
+        "catalog-id": {
+          "description": "Catalog ID that you input to check files' processing status in the Catalog",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Catalog ID",
+          "type": "string"
+        },
+        "file-uid": {
+          "description": "The unique identifier of the file",
+          "instillUIOrder": 1,
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "File UID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "catalog-id",
+        "file-uid"
+      ],
+      "instillEditOnNodeFields": [
+        "namespace",
+        "catalog-id",
+        "file-uid"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 1,
+      "properties": {
+        "succeeded": {
+          "description": "The status of the file processing, if succeeded, return true",
+          "instillUIOrder": 0,
+          "instillFormat": "boolean",
+          "title": "Status",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "succeeded"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
   "TASK_RETRIEVE": {
     "instillShortDescription": "search the chunks in the catalog",
     "input": {
@@ -998,16 +1064,17 @@
       "type": "object"
     }
   },
-  "TASK_MATCH_FILE_STATUS": {
-    "instillShortDescription": "Check if the specified file's processing status is done",
+  "TASK_RETRIEVE_CHAT_HISTORY": {
+    "instillShortDescription": "Retrieve the chat history from the conversation in catalog",
     "input": {
+      "description": "Input",
       "instillUIOrder": 0,
       "properties": {
         "namespace": {
           "$ref": "#/$defs/namespace"
         },
         "catalog-id": {
-          "description": "Catalog ID that you input to check files' processing status in the Catalog",
+          "description": "Catalog ID that you input to retrieve the chat history in the Catalog",
           "instillUIOrder": 0,
           "instillAcceptFormats": [
             "string"
@@ -1019,8 +1086,8 @@
           "title": "Catalog ID",
           "type": "string"
         },
-        "file-uid": {
-          "description": "The unique identifier of the file",
+        "conversation-id": {
+          "description": "The conversation ID to retrieve the chat history",
           "instillUIOrder": 1,
           "instillAcceptFormats": [
             "string"
@@ -1029,36 +1096,319 @@
             "reference",
             "value"
           ],
-          "title": "File UID",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "role": {
+          "description": "The role of the user you want to specify to retrieve in the conversation. The default is all with the blank setting. Now, we support 'user' and 'assistant'",
+          "instillUIOrder": 2,
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "message-type": {
+          "description": "The message type of the chat history you want to retrieve. The default is all with blank setting. Now, we only support 'MESSAGE_TYPE_TEXT'",
+          "instillUIOrder": 3,
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Message Type",
+          "type": "string"
+        },
+        "time-since": {
+          "description": "The start time to retrieve the chat history in the format of D,H,M. e.g. 1,0,0 means 1 day ago. The default is all with blank setting",
+          "instillUIOrder": 4,
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Time Since",
           "type": "string"
         }
       },
       "required": [
         "namespace",
         "catalog-id",
-        "file-uid"
+        "conversation-id"
       ],
       "instillEditOnNodeFields": [
         "namespace",
         "catalog-id",
-        "file-uid"
+        "conversation-id"
       ],
       "title": "Input",
       "type": "object"
     },
     "output": {
-      "instillUIOrder": 1,
+      "description": "Chat history from the conversation in catalog",
       "properties": {
-        "succeeded": {
-          "description": "The status of the file processing, if succeeded, return true",
+        "messages": {
+          "description": "Chat history from the conversation in catalog",
           "instillUIOrder": 0,
-          "instillFormat": "boolean",
-          "title": "Status",
-          "type": "boolean"
+          "items": {
+            "properties": {
+              "message-uid": {
+                "description": "The unique identifier of the message",
+                "instillFormat": "string",
+                "instillUIOrder": 0,
+                "title": "Message ID",
+                "type": "string"
+              },
+              "catalog-id": {
+                "description": "The catalog ID of the chat history",
+                "instillFormat": "string",
+                "instillUIOrder": 1,
+                "title": "Catalog ID",
+                "type": "string"
+              },
+              "conversation-id": {
+                "description": "The conversation ID of the chat history",
+                "instillFormat": "string",
+                "instillUIOrder": 2,
+                "title": "Conversation ID",
+                "type": "string"
+              },
+              "role": {
+                "description": "The role of the user who sends the message",
+                "instillFormat": "string",
+                "instillUIOrder": 3,
+                "title": "Role",
+                "type": "string"
+              },
+              "message-type": {
+                "description": "The message type of the chat history",
+                "instillFormat": "string",
+                "instillUIOrder": 4,
+                "title": "Message Type",
+                "type": "string"
+              },
+              "content": {
+                "description": "The content of the message",
+                "instillFormat": "string",
+                "instillUIOrder": 5,
+                "title": "Content",
+                "type": "string"
+              },
+              "create-time": {
+                "description": "The creation time of the message in ISO 8601 format",
+                "instillFormat": "string",
+                "instillUIOrder": 6,
+                "title": "Create Time",
+                "type": "string"
+              },
+              "update-time": {
+                "description": "The update time of the message in ISO 8601 format",
+                "instillFormat": "string",
+                "instillUIOrder": 7,
+                "title": "Update Time",
+                "type": "string"
+              }
+            },
+            "required": [
+              "message-uid",
+              "catalog-id",
+              "conversation-id",
+              "role",
+              "message-type",
+              "content",
+              "create-time",
+              "update-time"
+            ],
+            "title": "Message",
+            "type": "object"
+          },
+          "instillFormat": "array:object",
+          "title": "Messages",
+          "type": "array"
+        },
+        "next-page-token": {
+          "description": "The next page token to retrieve the next page of chat history",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Next Page Token",
+          "type": "string"
         }
       },
       "required": [
-        "succeeded"
+        "messages"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_WRITE_CHAT_MESSAGE": {
+    "instillShortDescription": "Write the chat message into the conversation in catalog",
+    "input": {
+      "description": "Input",
+      "instillUIOrder": 0,
+      "properties": {
+        "namespace": {
+          "$ref": "#/$defs/namespace"
+        },
+        "catalog-id": {
+          "description": "Catalog ID that you input to write the chat history in the Catalog",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Catalog ID",
+          "type": "string"
+        },
+        "conversation-id": {
+          "description": "The conversation ID to write the chat history",
+          "instillUIOrder": 1,
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "content": {
+          "description": "The content of the message",
+          "instillUIOrder": 2,
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "instillMultiLine": true,
+          "title": "Content",
+          "type": "string"
+        },
+        "role": {
+          "description": "The role of the user who sends the message. Now, we support 'user' and 'assistant', and the default is 'user' with blank setting",
+          "instillUIOrder": 3,
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "message-type": {
+          "description": "The message type of the chat history. Now, we only support 'MESSAGE_TYPE_TEXT'. The default is 'MESSAGE_TYPE_TEXT' with blank setting.",
+          "instillUIOrder": 4,
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Message Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "catalog-id",
+        "conversation-id",
+        "content"
+      ],
+      "instillEditOnNodeFields": [
+        "namespace",
+        "catalog-id",
+        "conversation-id",
+        "content"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Chat message from the conversation in catalog",
+      "properties": {
+        "message-uid": {
+          "description": "The unique identifier of the message",
+          "instillFormat": "string",
+          "instillUIOrder": 0,
+          "title": "Message ID",
+          "type": "string"
+        },
+        "catalog-id": {
+          "description": "The catalog ID of the chat history",
+          "instillFormat": "string",
+          "instillUIOrder": 1,
+          "title": "Catalog ID",
+          "type": "string"
+        },
+        "conversation-id": {
+          "description": "The conversation ID of the chat history",
+          "instillFormat": "string",
+          "instillUIOrder": 2,
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "role": {
+          "description": "The role of the user who sends the message",
+          "instillFormat": "string",
+          "instillUIOrder": 3,
+          "title": "Role",
+          "type": "string"
+        },
+        "message-type": {
+          "description": "The message type of the chat history",
+          "instillFormat": "string",
+          "instillUIOrder": 4,
+          "title": "Message Type",
+          "type": "string"
+        },
+        "content": {
+          "description": "The content of the message",
+          "instillFormat": "string",
+          "instillUIOrder": 5,
+          "title": "Content",
+          "type": "string"
+        },
+        "create-time": {
+          "description": "The creation time of the message in ISO 8601 format",
+          "instillFormat": "string",
+          "instillUIOrder": 6,
+          "title": "Create Time",
+          "type": "string"
+        },
+        "update-time": {
+          "description": "The update time of the message in ISO 8601 format",
+          "instillFormat": "string",
+          "instillUIOrder": 7,
+          "title": "Update Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message-uid",
+        "catalog-id",
+        "conversation-id",
+        "role",
+        "message-type",
+        "content",
+        "create-time",
+        "update-time"
       ],
       "title": "Output",
       "type": "object"

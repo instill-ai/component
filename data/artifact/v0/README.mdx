@@ -16,6 +16,8 @@ It can carry out the following tasks:
 - [Match File Status](#match-file-status)
 - [Retrieve](#retrieve)
 - [Ask](#ask)
+- [Retrieve Chat History](#retrieve-chat-history)
+- [Write Chat Message](#write-chat-message)
 
 To use Artifact Component, you will need to set up the OpenAI API key for self-hosted deployment of Instill Core.
 You can do this by setting the `OPENAI_API_KEY` environment variable.
@@ -219,6 +221,66 @@ Reply the questions based on the files in the catalog
 | :--- | :--- | :--- | :--- |
 | Answer | `answer` | string | Answers data from smart search |
 | Chunks (optional) | `chunks` | array[object] | Chunks data to answer question |
+
+
+
+
+
+
+### Retrieve Chat History
+
+Retrieve the chat history from the conversation in catalog
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_RETRIEVE_CHAT_HISTORY` |
+| Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to retrieve the chat history in the Catalog |
+| Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
+| Conversation ID (required) | `conversation-id` | string | The conversation ID to retrieve the chat history |
+| Role | `role` | string | The role of the user you want to specify to retrieve in the conversation. The default is all with the blank setting. Now, we support 'user' and 'assistant' |
+| Message Type | `message-type` | string | The message type of the chat history you want to retrieve. The default is all with blank setting. Now, we only support 'MESSAGE_TYPE_TEXT' |
+| Time Since | `time-since` | string | The start time to retrieve the chat history in the format of D,H,M. e.g. 1,0,0 means 1 day ago. The default is all with blank setting |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Messages | `messages` | array[object] | Chat history from the conversation in catalog |
+| Next Page Token (optional) | `next-page-token` | string | The next page token to retrieve the next page of chat history |
+
+
+
+
+
+
+### Write Chat Message
+
+Write the chat message into the conversation in catalog
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_WRITE_CHAT_MESSAGE` |
+| Catalog ID (required) | `catalog-id` | string | Catalog ID that you input to write the chat history in the Catalog |
+| Namespace (required) | `namespace` | string | Fill in your namespace, you can get namespace through the tab of switching namespace |
+| Conversation ID (required) | `conversation-id` | string | The conversation ID to write the chat history |
+| Content (required) | `content` | string | The content of the message |
+| Role | `role` | string | The role of the user who sends the message. Now, we support 'user' and 'assistant', and the default is 'user' with blank setting |
+| Message Type | `message-type` | string | The message type of the chat history. Now, we only support 'MESSAGE_TYPE_TEXT'. The default is 'MESSAGE_TYPE_TEXT' with blank setting. |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Message ID | `message-uid` | string | The unique identifier of the message |
+| Catalog ID | `catalog-id` | string | The catalog ID of the chat history |
+| Conversation ID | `conversation-id` | string | The conversation ID of the chat history |
+| Role | `role` | string | The role of the user who sends the message |
+| Message Type | `message-type` | string | The message type of the chat history |
+| Content | `content` | string | The content of the message |
+| Create Time | `create-time` | string | The creation time of the message in ISO 8601 format |
+| Update Time | `update-time` | string | The update time of the message in ISO 8601 format |
 
 
 

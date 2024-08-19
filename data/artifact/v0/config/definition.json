@@ -7,7 +7,9 @@
     "TASK_GET_FILE_IN_MARKDOWN",
     "TASK_MATCH_FILE_STATUS",
     "TASK_RETRIEVE",
-    "TASK_ASK"
+    "TASK_ASK",
+    "TASK_RETRIEVE_CHAT_HISTORY",
+    "TASK_WRITE_CHAT_MESSAGE"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/data/artifact",
   "icon": "assets/artifact.svg",
