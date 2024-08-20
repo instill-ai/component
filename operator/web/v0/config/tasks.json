@@ -304,6 +304,22 @@
           },
           "title": "Only Include Tags",
           "type": "array"
+        },
+        "wait-for": {
+          "default": 1000,
+          "description": "The time to wait for the page to load in milliseconds. Min 0, Max 60000.",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 5,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "minimum": 0,
+          "maximum": 60000,
+          "title": "Wait For",
+          "type": "integer"
         }
       },
       "required": [
