@@ -22,7 +22,6 @@ type Setting struct {
 	ChunkMethod       string   `json:"chunk-method,omitempty"`
 	ChunkSize         int      `json:"chunk-size,omitempty"`
 	ChunkOverlap      int      `json:"chunk-overlap,omitempty"`
-	ModelName         string   `json:"model-name,omitempty"`
 	AllowedSpecial    []string `json:"allowed-special,omitempty"`
 	DisallowedSpecial []string `json:"disallowed-special,omitempty"`
 	Separators        []string `json:"separators,omitempty"`
@@ -65,9 +64,6 @@ func (s *Setting) SetDefault() {
 	if s.ChunkOverlap == 0 {
 		s.ChunkOverlap = 100
 	}
-	if s.ModelName == "" {
-		s.ModelName = "gpt-3.5-turbo"
-	}
 	if s.AllowedSpecial == nil {
 		s.AllowedSpecial = []string{}
 	}
@@ -82,7 +78,6 @@ func (s *Setting) SetDefault() {
 type TextSplitter interface {
 	SplitText(text string) ([]string, error)
 }
-
 
 func chunkText(inputPb *structpb.Struct) (*structpb.Struct, error) {
 	input := ChunkTextInput{}
@@ -105,10 +100,10 @@ func chunkText(inputPb *structpb.Struct) (*structpb.Struct, error) {
 		if setting.ChunkOverlap >= setting.ChunkSize {
 			return nil, fmt.Errorf("ChunkOverlap must be less than ChunkSize when using Token method")
 		}
-		split = textsplitter.NewTokenSplitter(
+		split = NewTokenTextSplitter(
+			input.Tokenization,
 			textsplitter.WithChunkSize(setting.ChunkSize),
 			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
-			textsplitter.WithModelName(setting.ModelName),
 			textsplitter.WithAllowedSpecial(setting.AllowedSpecial),
 			textsplitter.WithDisallowedSpecial(setting.DisallowedSpecial),
 		)

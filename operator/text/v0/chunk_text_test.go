@@ -27,7 +27,6 @@ func TestChunkText(t *testing.T) {
 					Setting: Setting{
 						ChunkMethod: "Token",
 						ChunkSize:   512,
-						ModelName:   "gpt-3.5-turbo",
 					},
 				},
 				Tokenization: Tokenization{
@@ -60,7 +59,6 @@ func TestChunkText(t *testing.T) {
 				Strategy: Strategy{
 					Setting: Setting{
 						ChunkMethod: "Markdown",
-						ModelName:   "gpt-3.5-turbo",
 						ChunkSize:   5,
 					},
 				},
@@ -100,7 +98,6 @@ func TestChunkText(t *testing.T) {
 				Strategy: Strategy{
 					Setting: Setting{
 						ChunkMethod: "Recursive",
-						ModelName:   "gpt-3.5-turbo",
 						ChunkSize:   5,
 						Separators:  []string{" ", "."},
 					},
