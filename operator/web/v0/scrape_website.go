@@ -3,11 +3,9 @@ package web
 import (
 	"fmt"
 	"math/rand"
-	"net/http"
 	"net/url"
 	"strings"
 
-	"github.com/PuerkitoBio/goquery"
 	colly "github.com/gocolly/colly/v2"
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
@@ -33,6 +31,14 @@ type ScrapeWebsiteInput struct {
 	IncludeLinkText *bool `json:"include-link-text"`
 	// IncludeLinkHTML: Whether to include the scraped HTML of the scraped web page.
 	IncludeLinkHTML *bool `json:"include-link-html"`
+	// OnlyMainContent: Whether to scrape only the main content of the web page. If true, the scraped text wull exclude the header, nav, footer.
+	OnlyMainContent bool `json:"only-main-content"`
+	// RemoveTags: The list of tags to remove from the scraped text.
+	RemoveTags []string `json:"remove-tags"`
+	// OnlyIncludeTags: The list of tags to include in the scraped text.
+	OnlyIncludeTags []string `json:"only-include-tags"`
+	// WaitFor: The number of milliseconds to wait before scraping the web page. Min 0, Max 60000.
+	WaitFor int `json:"wait-for"`
 }
 
 // ScrapeWebsiteOutput defines the output of the scrape website task
@@ -71,27 +77,6 @@ func existsInSlice(slice []string, item string) bool {
 		}
 	}
 	return false // Item doesn't exist, so add it to the slice
-}
-
-// getHTMLPageDoc returns the *goquery.Document of a webpage
-func getHTMLPageDoc(url string) (*goquery.Document, error) {
-	// Request the HTML page.
-	client := &http.Client{Transport: &http.Transport{
-		DisableKeepAlives: true,
-	}}
-	res, err := client.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	// Load the HTML document
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return doc, nil
 }
 
 // Scrape crawls a webpage and returns a slice of PageInfo
@@ -153,7 +138,7 @@ func (e *execution) Scrape(input *structpb.Struct) (*structpb.Struct, error) {
 			// Add the URL to the slice if it doesn't already exist
 			pageLinks = append(pageLinks, strippedURL.String())
 			// Scrape the webpage information
-			doc, err := getHTMLPageDoc(strippedURL.String())
+			doc, err := getDocAfterRequestURL(strippedURL.String(), inputStruct.WaitFor)
 			if err != nil {
 				fmt.Printf("Error parsing %s: %v", strippedURL.String(), err)
 				return

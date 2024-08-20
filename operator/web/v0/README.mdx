@@ -32,7 +32,7 @@ The component configuration is defined and maintained [here](https://github.com/
 
 ### Crawl Website
 
-Scrape the website contents.
+Crawl the website contents and manipulate html with jquery command. The sequence of jquery commands will be executed in the order of only-main-content, remove-tags, and only-include-tags.
 
 
 | Input | ID | Type | Description |
@@ -43,6 +43,10 @@ Scrape the website contents.
 | Max Number of Pages (required) | `max-k` | integer | The max number of pages to return. If the number is set to 0, all pages will be returned. If the number is set to a positive integer, at most max k pages will be returned. |
 | Include Link Text | `include-link-text` | boolean | Indicate whether to scrape the link and include the text of the link associated with this page in the 'link-text' field |
 | Include Link HTML | `include-link-html` | boolean | Indicate whether to scrape the link and include the raw HTML of the link associated with this page in the 'link-html' field |
+| Only Main Content | `only-main-content` | boolean | Only return the main content of the page excluding header, nav, footer. |
+| Remove Tags | `remove-tags` | array[string] | A list of tags, classes, and ids to remove from the output. If empty, no tags will be removed. Example: 'script, .ad, #footer' |
+| Only Include Tags | `only-include-tags` | array[string] | A list of tags, classes, and ids to include in the output. If empty, all tags will be included. Example: 'script, .ad, #footer' |
+| Wait For | `wait-for` | integer | The time to wait for the page to load in milliseconds. Min 0, Max 60000. |
 
 
 

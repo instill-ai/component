@@ -42,7 +42,7 @@
     }
   },
   "TASK_CRAWL_WEBSITE": {
-    "instillShortDescription": "Scrape the website contents.",
+    "instillShortDescription": "Crawl the website contents and manipulate html with jquery command. The sequence of jquery commands will be executed in the order of only-main-content, remove-tags, and only-include-tags.",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -120,6 +120,67 @@
           ],
           "title": "Query",
           "type": "string"
+        },
+        "only-main-content": {
+          "description": "Only return the main content of the page excluding header, nav, footer.",
+          "instillAcceptFormats": [
+            "boolean"
+          ],
+          "instillUIOrder": 5,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Only Main Content",
+          "type": "boolean"
+        },
+        "remove-tags": {
+          "description": "A list of tags, classes, and ids to remove from the output. If empty, no tags will be removed. Example: 'script, .ad, #footer'",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillUIOrder": 6,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Remove Tags",
+          "type": "array"
+        },
+        "only-include-tags": {
+          "description": "A list of tags, classes, and ids to include in the output. If empty, all tags will be included. Example: 'script, .ad, #footer'",
+          "instillAcceptFormats": [
+            "array:string"
+          ],
+          "instillUIOrder": 7,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "title": "Only Include Tags",
+          "type": "array"
+        },
+        "wait-for": {
+          "default": 1000,
+          "description": "The time to wait for the page to load in milliseconds. Min 0, Max 60000.",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 8,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "minimum": 0,
+          "maximum": 60000,
+          "title": "Wait For",
+          "type": "integer"
         }
       },
       "required": [
