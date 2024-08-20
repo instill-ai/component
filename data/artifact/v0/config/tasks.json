@@ -1126,7 +1126,7 @@
           "type": "string"
         },
         "duration": {
-          "description": "The duration between now and how long ago to retrieve the chat history from. i.e. 2h45m5s. Valid time units are \"ns\", \"us\" (or \"µs\"), \"ms\", \"s\", \"m\", \"h\".  The default is all with blank setting",
+          "description": "The duration between now and how long ago to retrieve the chat history from. i.e. 2h45m5s. Valid time units are \"ns\", \"us\" (or \"\u00b5s\"), \"ms\", \"s\", \"m\", \"h\".  The default is all with blank setting",
           "instillUIOrder": 4,
           "instillAcceptFormats": [
             "string"
@@ -1180,20 +1180,6 @@
                 "title": "Message ID",
                 "type": "string"
               },
-              "catalog-id": {
-                "description": "The catalog ID of the chat history",
-                "instillFormat": "string",
-                "instillUIOrder": 1,
-                "title": "Catalog ID",
-                "type": "string"
-              },
-              "conversation-id": {
-                "description": "The conversation ID of the chat history",
-                "instillFormat": "string",
-                "instillUIOrder": 2,
-                "title": "Conversation ID",
-                "type": "string"
-              },
               "role": {
                 "description": "The role of the user who sends the message",
                 "instillFormat": "string",
@@ -1232,8 +1218,6 @@
             },
             "required": [
               "message-uid",
-              "catalog-id",
-              "conversation-id",
               "role",
               "message-type",
               "content",
@@ -1246,13 +1230,6 @@
           "instillFormat": "array:object",
           "title": "Messages",
           "type": "array"
-        },
-        "next-page-token": {
-          "description": "The next page token to retrieve the next page of chat history",
-          "instillFormat": "string",
-          "instillUIOrder": 1,
-          "title": "Next Page Token",
-          "type": "string"
         }
       },
       "required": [
@@ -1369,20 +1346,6 @@
           "title": "Message ID",
           "type": "string"
         },
-        "catalog-id": {
-          "description": "The catalog ID of the chat history",
-          "instillFormat": "string",
-          "instillUIOrder": 1,
-          "title": "Catalog ID",
-          "type": "string"
-        },
-        "conversation-id": {
-          "description": "The conversation ID of the chat history",
-          "instillFormat": "string",
-          "instillUIOrder": 2,
-          "title": "Conversation ID",
-          "type": "string"
-        },
         "role": {
           "description": "The role of the user who sends the message",
           "instillFormat": "string",
@@ -1421,8 +1384,6 @@
       },
       "required": [
         "message-uid",
-        "catalog-id",
-        "conversation-id",
         "role",
         "message-type",
         "content",

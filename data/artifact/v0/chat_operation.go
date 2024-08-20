@@ -24,19 +24,16 @@ type RetrieveChatHistoryInput struct {
 }
 
 type RetrieveChatHistoryOutput struct {
-	Messages      []Message `json:"messages"`
-	NextPageToken string    `json:"next-page-token"`
+	Messages []Message `json:"messages"`
 }
 
 type Message struct {
-	MessageUID     string `json:"message-uid"`
-	CatalogID      string `json:"catalog-id"`
-	ConversationID string `json:"conversation-id"`
-	Role           string `json:"role"`
-	MessageType    string `json:"message-type"`
-	Content        string `json:"content"`
-	CreateTime     string `json:"create-time"`
-	UpdateTime     string `json:"update-time"`
+	MessageUID  string `json:"message-uid"`
+	Role        string `json:"role"`
+	MessageType string `json:"message-type"`
+	Content     string `json:"content"`
+	CreateTime  string `json:"create-time"`
+	UpdateTime  string `json:"update-time"`
 }
 
 func (in *RetrieveChatHistoryInput) Validate() error {
@@ -78,14 +75,12 @@ func (out *RetrieveChatHistoryOutput) Filter(inputStruct RetrieveChatHistoryInpu
 			break
 		}
 		out.Messages = append(out.Messages, Message{
-			MessageUID:     message.Uid,
-			CatalogID:      message.CatalogUid,
-			ConversationID: message.ConversationUid,
-			Role:           message.Role,
-			MessageType:    message.Type.String(),
-			Content:        message.Content,
-			CreateTime:     message.CreateTime.AsTime().Format(time.RFC3339),
-			UpdateTime:     message.UpdateTime.AsTime().Format(time.RFC3339),
+			MessageUID:  message.Uid,
+			Role:        message.Role,
+			MessageType: message.Type.String(),
+			Content:     message.Content,
+			CreateTime:  message.CreateTime.AsTime().Format(time.RFC3339),
+			UpdateTime:  message.UpdateTime.AsTime().Format(time.RFC3339),
 		})
 	}
 }
@@ -143,7 +138,6 @@ func (e *execution) retrieveChatHistory(input *structpb.Struct) (*structpb.Struc
 		}
 
 		output.Filter(inputStruct, res.Messages)
-		output.NextPageToken = res.NextPageToken
 	}
 
 	return base.ConvertToStructpb(output)
@@ -160,14 +154,12 @@ type WriteChatMessageInput struct {
 }
 
 type WriteChatMessageOutput struct {
-	MessageUID     string `json:"message-uid"`
-	CatalogID      string `json:"catalog-id"`
-	ConversationID string `json:"conversation-id"`
-	Role           string `json:"role"`
-	MessageType    string `json:"message-type"`
-	Content        string `json:"content"`
-	CreateTime     string `json:"create-time"`
-	UpdateTime     string `json:"update-time"`
+	MessageUID  string `json:"message-uid"`
+	Role        string `json:"role"`
+	MessageType string `json:"message-type"`
+	Content     string `json:"content"`
+	CreateTime  string `json:"create-time"`
+	UpdateTime  string `json:"update-time"`
 }
 
 func (in *WriteChatMessageInput) Validate() error {
@@ -234,14 +226,12 @@ func (e *execution) writeChatMessage(input *structpb.Struct) (*structpb.Struct, 
 	messageOutput := res.Message
 
 	output := WriteChatMessageOutput{
-		MessageUID:     messageOutput.Uid,
-		CatalogID:      inputStruct.CatalogID,
-		ConversationID: inputStruct.ConversationID,
-		Role:           messageOutput.Role,
-		MessageType:    messageOutput.Type.String(),
-		Content:        messageOutput.Content,
-		CreateTime:     messageOutput.CreateTime.AsTime().Format(time.RFC3339),
-		UpdateTime:     messageOutput.UpdateTime.AsTime().Format(time.RFC3339),
+		MessageUID:  messageOutput.Uid,
+		Role:        messageOutput.Role,
+		MessageType: messageOutput.Type.String(),
+		Content:     messageOutput.Content,
+		CreateTime:  messageOutput.CreateTime.AsTime().Format(time.RFC3339),
+		UpdateTime:  messageOutput.UpdateTime.AsTime().Format(time.RFC3339),
 	}
 
 	return base.ConvertToStructpb(output)
