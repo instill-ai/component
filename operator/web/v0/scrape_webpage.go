@@ -69,10 +69,10 @@ func (e *execution) ScrapeWebpage(input *structpb.Struct) (*structpb.Struct, err
 
 }
 
-func getDocAfterRequestURL(url string, waitFar int) (*goquery.Document, error) {
+func getDocAfterRequestURL(url string, timeout int) (*goquery.Document, error) {
 
-	if waitFar > 0 {
-		return requestToWebpage(url, waitFar)
+	if timeout > 0 {
+		return requestToWebpage(url, timeout)
 	} else {
 		return httpRequest(url)
 	}
@@ -95,9 +95,9 @@ func httpRequest(url string) (*goquery.Document, error) {
 	return doc, nil
 }
 
-func requestToWebpage(url string, waitFor int) (*goquery.Document, error) {
+func requestToWebpage(url string, timeout int) (*goquery.Document, error) {
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(waitFor)*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Millisecond)
 	defer cancel()
 
 	ctx, cancelBrowser := chromedp.NewContext(ctx)

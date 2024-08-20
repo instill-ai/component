@@ -38,7 +38,7 @@ type execution struct {
 	base.ComponentExecution
 	execute               func(*structpb.Struct) (*structpb.Struct, error)
 	externalCaller        func(url string) (ioCloser io.ReadCloser, err error)
-	getDocAfterRequestURL func(url string, waitFar int) (*goquery.Document, error)
+	getDocAfterRequestURL func(url string, timeout int) (*goquery.Document, error)
 }
 
 func Init(bc base.Component) *component {

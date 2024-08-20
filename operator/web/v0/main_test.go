@@ -95,7 +95,7 @@ func TestScrapeWebpage(t *testing.T) {
 	})
 }
 
-func fakeHTTPRequest(url string, waitFor int) (*goquery.Document, error) {
+func fakeHTTPRequest(url string, timeout int) (*goquery.Document, error) {
 	html := `
 	<!DOCTYPE html>
 	<html>
