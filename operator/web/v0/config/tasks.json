@@ -166,7 +166,7 @@
           "title": "Only Include Tags",
           "type": "array"
         },
-        "wait-for": {
+        "timeout": {
           "default": 1000,
           "description": "The time to wait for the page to load in milliseconds. Min 0, Max 60000.",
           "instillAcceptFormats": [
@@ -366,7 +366,7 @@
           "title": "Only Include Tags",
           "type": "array"
         },
-        "wait-for": {
+        "timeout": {
           "default": 1000,
           "description": "The time to wait for the page to load in milliseconds. Min 0, Max 60000.",
           "instillAcceptFormats": [

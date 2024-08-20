@@ -22,7 +22,7 @@ type ScrapeWebpageInput struct {
 	OnlyMainContent bool     `json:"only-main-content"`
 	RemoveTags      []string `json:"remove-tags,omitempty"`
 	OnlyIncludeTags []string `json:"only-include-tags,omitempty"`
-	WaitFor         int      `json:"wait-for,omitempty"`
+	Timeout         int      `json:"timeout,omitempty"`
 }
 
 type ScrapeWebpageOutput struct {
@@ -51,7 +51,7 @@ func (e *execution) ScrapeWebpage(input *structpb.Struct) (*structpb.Struct, err
 
 	output := ScrapeWebpageOutput{}
 
-	doc, err := e.getDocAfterRequestURL(inputStruct.URL, inputStruct.WaitFor)
+	doc, err := e.getDocAfterRequestURL(inputStruct.URL, inputStruct.Timeout)
 
 	if err != nil {
 		return nil, fmt.Errorf("error getting HTML page doc: %v", err)

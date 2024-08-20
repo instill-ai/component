@@ -37,8 +37,8 @@ type ScrapeWebsiteInput struct {
 	RemoveTags []string `json:"remove-tags"`
 	// OnlyIncludeTags: The list of tags to include in the scraped text.
 	OnlyIncludeTags []string `json:"only-include-tags"`
-	// WaitFor: The number of milliseconds to wait before scraping the web page. Min 0, Max 60000.
-	WaitFor int `json:"wait-for"`
+	// Timeout: The number of milliseconds to wait before scraping the web page. Min 0, Max 60000.
+	Timeout int `json:"timeout"`
 }
 
 // ScrapeWebsiteOutput defines the output of the scrape website task
@@ -138,7 +138,7 @@ func (e *execution) Scrape(input *structpb.Struct) (*structpb.Struct, error) {
 			// Add the URL to the slice if it doesn't already exist
 			pageLinks = append(pageLinks, strippedURL.String())
 			// Scrape the webpage information
-			doc, err := getDocAfterRequestURL(strippedURL.String(), inputStruct.WaitFor)
+			doc, err := getDocAfterRequestURL(strippedURL.String(), inputStruct.Timeout)
 			if err != nil {
 				fmt.Printf("Error parsing %s: %v", strippedURL.String(), err)
 				return
