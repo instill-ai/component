@@ -30,7 +30,7 @@ func TestOperator(t *testing.T) {
 			task: "TASK_CONVERT_TO_TEXT",
 			input: structpb.Struct{
 				Fields: map[string]*structpb.Value{
-					"doc": {Kind: &structpb.Value_StringValue{StringValue: base64DataURI}},
+					"document": {Kind: &structpb.Value_StringValue{StringValue: base64DataURI}},
 				},
 			},
 		},
