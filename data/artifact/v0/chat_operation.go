@@ -203,7 +203,7 @@ func (e *execution) writeChatMessage(input *structpb.Struct) (*structpb.Struct, 
 	})
 
 	if err != nil {
-		if strings.Contains(err.Error(), "already exists") {
+		if strings.Contains(err.Error(), "a conversation already exists with the same ID") {
 			log.Println("Conversation already exists")
 		} else {
 			return nil, fmt.Errorf("failed to create conversation: %w", err)
