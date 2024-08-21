@@ -32,6 +32,8 @@ var (
 	huggingfaceTokenizer string
 	//go:embed python/mistral_tokenizer.py
 	mistralTokenizer string
+	//go:embed python/cohere_splitter.py
+	cohereSplitter string
 )
 
 // Operator is the derived operator

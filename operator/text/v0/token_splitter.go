@@ -1,8 +1,10 @@
 package text
 
 import (
+	"encoding/json"
 	"fmt"
 
+	"github.com/instill-ai/component/internal/util"
 	"github.com/pkoukk/tiktoken-go"
 	"github.com/tmc/langchaingo/textsplitter"
 )
@@ -107,7 +109,33 @@ type CohereSplitter struct {
 
 func (sp CohereSplitter) SplitText(text string) ([]string, error) {
 
-	return nil, fmt.Errorf("CohereSplitter not implemented yet")
+	params := map[string]interface{}{
+		"chunk_size":         sp.ChunkSize,
+		"chunk_overlap":      sp.ChunkOverlap,
+		"model":              sp.Model,
+		"allowed_special":    sp.AllowedSpecial,
+		"disallowed_special": sp.DisallowedSpecial,
+		"text":               text,
+	}
+
+	jsonBytes, err := util.ExecutePythonCode(cohereSplitter, params)
+
+	if err != nil {
+		return nil, fmt.Errorf("error when executing python code: %w", err)
+	}
+
+	var result map[string][]string
+	if err := json.Unmarshal(jsonBytes, &result); err != nil {
+		return nil, fmt.Errorf("error when unmarshalling json: %w", err)
+	}
+
+	chunks, ok := result["chunks"]
+
+	if !ok {
+		return nil, fmt.Errorf("chunks not found in result")
+	}
+
+	return chunks, nil
 }
 
 type MistralSplitter struct {

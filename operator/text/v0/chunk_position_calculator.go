@@ -1,6 +1,9 @@
 package text
 
-import "reflect"
+import (
+	"reflect"
+	"strings"
+)
 
 type ChunkPositionCalculator interface {
 	getChunkPositions(rawText, chunk []rune, startScanPosition int) (startPosition int, endPosition int)
@@ -67,6 +70,29 @@ func (PositionCalculator) getChunkPositions(rawText, chunk []rune, startScanPosi
 			}
 		}
 	}
+
+	// In some models, the chunks are transformed into lowercase before scanning.
+	// This is to handle the case where the chunk is not found in the raw text.
+	if startPosition == 0 && endPosition == 0 {
+		lowerString := strings.ToLower(string(rawText))
+		checkerString := strings.ReplaceAll(lowerString, "\n", "")
+		checker := []rune(checkerString)
+		for i := startScanPosition; i < len(checker); i++ {
+			if checker[i] == chunk[0] {
+
+				if i+len(chunk) > len(checker) {
+					break
+				}
+
+				if reflect.DeepEqual(checker[i:i+len(chunk)], chunk) {
+					startPosition = i
+					endPosition = len(chunk) + i - 1
+					break
+				}
+			}
+		}
+	}
+
 	return startPosition, endPosition
 }
 

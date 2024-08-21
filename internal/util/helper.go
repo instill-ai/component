@@ -1,11 +1,14 @@
 package util
 
 import (
+	"bytes"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os/exec"
 	"strings"
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
@@ -13,6 +16,8 @@ import (
 	"github.com/h2non/filetype"
 	"github.com/instill-ai/component/base"
 )
+
+const pythonInterpreter string = "/opt/venv/bin/python"
 
 func GetFileExt(fileData []byte) string {
 	kind, _ := filetype.Match(fileData)
@@ -220,4 +225,55 @@ func ConvertDataFrameToMarkdownTable(rows [][]string) string {
 	}
 
 	return sb.String()
+}
+
+func ExecutePythonCode(pythonCode string, params map[string]interface{}) ([]byte, error) {
+
+	paramsJSON, err := json.Marshal(params)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal params: %w", err)
+	}
+
+	cmdRunner := exec.Command(pythonInterpreter, "-c", pythonCode)
+
+	stdin, err := cmdRunner.StdinPipe()
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to get stdin pipe: %w", err)
+	}
+
+	errChan := make(chan error, 1)
+	go func() {
+		defer stdin.Close()
+		_, err := stdin.Write(paramsJSON)
+		if err != nil {
+			errChan <- err
+			return
+		}
+		errChan <- nil
+	}()
+
+	var stdoutStderr bytes.Buffer
+	cmdRunner.Stdout = &stdoutStderr
+	cmdRunner.Stderr = &stdoutStderr
+
+	err = cmdRunner.Start()
+	if err != nil {
+		return nil, fmt.Errorf("error starting command: %v", err)
+	}
+
+	err = <-errChan
+	if err != nil {
+		return nil, err
+	}
+
+	err = cmdRunner.Wait()
+	if err != nil {
+		return nil, fmt.Errorf("error waiting for command: %v", err)
+	}
+
+	outputBytes := stdoutStderr.Bytes()
+
+	return outputBytes, nil
 }
