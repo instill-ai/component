@@ -132,7 +132,7 @@ func (e *execution) TaskGetContact(in *structpb.Struct) (*structpb.Struct, error
 		Address:          resp.Address,
 		JobTitle:         resp.JobTitle,
 		Tags:             resp.Tags,
-		Language:         resp.Language,
+		Language:         convertCodeToLanguage(resp.Language),
 		TimeZone:         resp.TimeZone,
 		CompanyID:        resp.CompanyID,
 		UniqueExternalID: resp.UniqueExternalID,

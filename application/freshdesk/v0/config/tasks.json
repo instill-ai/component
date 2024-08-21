@@ -814,7 +814,9 @@
         "description-text",
         "source",
         "status",
-        "priority"
+        "priority",
+        "created-at",
+        "updated-at"
       ],
       "title": "Output",
       "type": "object"
@@ -1325,7 +1327,8 @@
               }
             },
             "required": [
-              "body-text"
+              "body-text",
+              "created-at"
             ]
           }
         },
@@ -1779,7 +1782,7 @@
           "instillUIOrder": 10
         }
       },
-      "required": ["name"],
+      "required": ["name","created-at","updated-at"],
       "title": "Output",
       "type": "object"
     }
@@ -1887,7 +1890,7 @@
           "description": "Type of object to get IDs for",
           "title": "Object Type",
           "type": "string",
-          "enum": ["Contacts", "Companies", "Tickets"],
+          "enum": ["Contacts", "Companies", "Tickets", "Products", "Agents", "Roles" , "Skills"],
           "instillUIOrder": 0,
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": false,
@@ -1924,6 +1927,268 @@
         }
       },
       "required": ["ids", "id-length"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_PRODUCT":{
+    "instillShortDescription": "Get product using ID. This task only works if you have admin privileges.",
+    "input": {
+      "description": "Product ID",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["product-id"],
+      "properties": {
+        "product-id":{
+          "description": "Product ID",
+          "title": "Product ID",
+          "type": "integer",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        }
+      },
+      "required": ["product-id"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Product information",
+      "instillUIOrder": 0,
+      "properties": {
+        "name":{
+          "description": "Name of the product",
+          "title": "Name",
+          "type": "string",
+          "instillUIOrder": 0,
+          "instillFormat":"string"
+        },
+        "description":{
+          "description": "Description of the product",
+          "title": "Description",
+          "type": "string",
+          "instillUIOrder": 1,
+          "instillFormat":"string"
+        },
+        "primary-email":{
+          "description": "Primary email of the product",
+          "title": "Primary Email",
+          "type": "string",
+          "instillUIOrder": 2,
+          "instillFormat":"string"
+        },
+        "created-at":{
+          "description": "Date when the product was created",
+          "title": "Created At",
+          "type": "string",
+          "instillUIOrder": 3,
+          "instillFormat":"string"
+        },
+        "updated-at":{
+          "description": "Date when the product was last updated",
+          "title": "Updated At",
+          "type": "string",
+          "instillUIOrder": 4,
+          "instillFormat":"string"
+        },
+        "default":{
+          "description": "Set to true if the product is the default product",
+          "title": "Default",
+          "type": "boolean",
+          "instillUIOrder": 5,
+          "instillFormat":"boolean"
+        }
+      },
+      "required": ["name","description","primary-email","created-at","updated-at","default"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_AGENT":{
+    "instillShortDescription": "Get agent using ID. This task only works if you have admin privileges.",
+    "input": {
+      "description": "Agent ID",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["agent-id"],
+      "properties": {
+        "agent-id":{
+          "description": "Agent ID",
+          "title": "Agent ID",
+          "type": "integer",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        }
+      },
+      "required": ["agent-id"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Agent information",
+      "instillUIOrder": 0,
+      "properties": {
+        "name":{
+          "description": "Name of the agent",
+          "title": "Name",
+          "type": "string",
+          "instillUIOrder": 0,
+          "instillFormat":"string"
+        },
+        "active":{
+          "description": "Set to true if the agent is verified",
+          "title": "Active",
+          "type": "boolean",
+          "instillUIOrder": 1,
+          "instillFormat":"boolean"
+        },
+        "email":{
+          "description": "Email of the agent",
+          "title": "Email",
+          "type": "string",
+          "instillUIOrder": 2,
+          "instillFormat":"string"
+        },
+        "job-title":{
+          "description": "Job title of the agent",
+          "title": "Job Title",
+          "type": "string",
+          "instillUIOrder": 3,
+          "instillFormat":"string"
+        },
+        "language":{
+          "description": "Language of the agent",
+          "title": "Language",
+          "type": "string",
+          "instillUIOrder": 4,
+          "instillFormat":"string"
+        },
+        "mobile":{
+          "description": "Mobile number of the agent",
+          "title": "Mobile",
+          "type": "string",
+          "instillUIOrder": 5,
+          "instillFormat":"string"
+        },
+        "phone":{
+          "description": "Telephone number of the agent",
+          "title": "Phone",
+          "type": "string",
+          "instillUIOrder": 6,
+          "instillFormat":"string"
+        },
+        "time-zone":{
+          "description": "Time zone of the agent",
+          "title": "Time Zone",
+          "type": "string",
+          "instillUIOrder": 7,
+          "instillFormat":"string"
+        },
+        "type":{
+          "description": "Type of the agent. Can be \"Support Agent\", \"Field Agent\" or \"Collaborator\"",
+          "title": "Type",
+          "type": "string",
+          "instillUIOrder": 8,
+          "instillFormat":"string"
+        },
+        "ticket-scope":{
+          "description": "Ticket permission of the agent. Can be \"Global Access\", \"Group Access\" or \"Restricted Access\"",
+          "title": "Ticket Scope",
+          "type": "string",
+          "instillUIOrder": 9,
+          "instillFormat":"string"
+        },
+        "available":{
+          "description": "Set to true if the agent is in a group that has enabled \"Automatic Ticket Assignment\"",
+          "title": "Available",
+          "type": "boolean",
+          "instillUIOrder": 10,
+          "instillFormat":"boolean"
+        },
+        "group-ids":{
+          "description": "Group IDs of the agent",
+          "title": "Group IDs",
+          "type": "array",
+          "instillUIOrder": 11,
+          "instillFormat":"array:integer",
+          "items": {
+            "title": "Group ID",
+            "type": "integer",
+            "description": "ID of the group",
+            "instillFormat": "integer"
+          }
+        },
+        "role-ids":{
+          "description": "Role IDs of the agent",
+          "title": "Role IDs",
+          "type": "array",
+          "instillUIOrder": 12,
+          "instillFormat":"array:integer",
+          "items": {
+            "title": "Role ID",
+            "type": "integer",
+            "description": "ID of the role",
+            "instillFormat": "integer"
+          }
+        },
+        "skill-ids":{
+          "description": "Skill IDs of the agent",
+          "title": "Skill IDs",
+          "type": "array",
+          "instillUIOrder": 13,
+          "instillFormat":"array:integer",
+          "items": {
+            "title": "Skill ID",
+            "type": "integer",
+            "description": "ID of the skill",
+            "instillFormat": "integer"
+          }
+        },
+        "occasional":{
+          "description": "Set to true if the agent is not working full-time",
+          "title": "Occasional",
+          "type": "boolean",
+          "instillUIOrder": 14,
+          "instillFormat":"boolean"
+        },
+        "signature":{
+          "description": "Signature of the agent in HTML format",
+          "title": "Signature",
+          "type": "string",
+          "instillUIOrder": 15,
+          "instillFormat":"string"
+        },
+        "focus-mode":{
+          "description": "Set to true if the agent is in focus mode",
+          "title": "Focus Mode",
+          "type": "boolean",
+          "instillUIOrder": 16,
+          "instillFormat":"boolean"
+        },
+        "deactivated":{
+          "description": "Set to true if the agent is deactivated",
+          "title": "Deactivated",
+          "type": "boolean",
+          "instillUIOrder": 17,
+          "instillFormat":"boolean"
+        },
+        "created-at":{
+          "description": "Timestamp that denotes when the agent was created",
+          "title": "Created At",
+          "type": "string",
+          "instillUIOrder": 18,
+          "instillFormat":"string"
+        },
+        "updated-at":{
+          "description": "Timestamp that denotes when the agent was last updated",
+          "title": "Updated At",
+          "type": "string",
+          "instillUIOrder": 19,
+          "instillFormat":"string"
+        }
+      },
+      "required": ["email", "type", "ticket-scope", "occasional"],
       "title": "Output",
       "type": "object"
     }

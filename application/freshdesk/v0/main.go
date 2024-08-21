@@ -28,6 +28,9 @@ const (
 	taskCreateCompany       = "TASK_CREATE_COMPANY"
 	taskGetAll              = "TASK_GET_ALL"
 	taskGetAllConversations = "TASK_GET_ALL_CONVERSATIONS"
+	taskGetProduct          = "TASK_GET_PRODUCT"
+	taskGetAgent            = "TASK_GET_AGENT"
+	taskGetGroup            = "TASK_GET_GROUP"
 )
 
 var (
@@ -92,6 +95,10 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.TaskCreateCompany
 	case taskGetAll:
 		e.execute = e.TaskGetAll
+	case taskGetProduct:
+		e.execute = e.TaskGetProduct
+	case taskGetAgent:
+		e.execute = e.TaskGetAgent
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}
@@ -233,5 +240,98 @@ func convertLanguageToCode(language string) string {
 		return "vi"
 	default:
 		return ""
+	}
+}
+
+func convertCodeToLanguage(code string) string {
+	switch code {
+	case "en":
+		return "English"
+	case "ar":
+		return "Arabic"
+	case "bs":
+		return "Bosnian"
+	case "bg":
+		return "Bulgarian"
+	case "ca":
+		return "Catalan"
+	case "zh-CN":
+		return "Chinese"
+	case "zh-TW":
+		return "Chinese (Traditional)"
+	case "hr":
+		return "Croatian"
+	case "cs":
+		return "Czech"
+	case "da":
+		return "Danish"
+	case "nl":
+		return "Dutch"
+	case "et":
+		return "Estonian"
+	case "fil":
+		return "Filipino"
+	case "fi":
+		return "Finnish"
+	case "fr":
+		return "French"
+	case "de":
+		return "German"
+	case "el":
+		return "Greek"
+	case "he":
+		return "Hebrew"
+	case "hu":
+		return "Hungarian"
+	case "is":
+		return "Icelandic"
+	case "id":
+		return "Indonesian"
+	case "it":
+		return "Italian"
+	case "ja-JP":
+		return "Japanese"
+	case "ko":
+		return "Korean"
+	case "lv-LV":
+		return "Latvian"
+	case "lt":
+		return "Lithuanian"
+	case "ms":
+		return "Malay"
+	case "nb-NO":
+		return "Norwegian"
+	case "pl":
+		return "Polish"
+	case "pt-BR":
+		return "Portuguese (BR)"
+	case "pt-PT":
+		return "Portuguese/Portugal"
+	case "ro":
+		return "Romanian"
+	case "ru-RU":
+		return "Russian"
+	case "sr":
+		return "Serbian"
+	case "sk":
+		return "Slovak"
+	case "sl":
+		return "Slovenian"
+	case "es":
+		return "Spanish"
+	case "es-LA":
+		return "Spanish (Latin America)"
+	case "sv-SE":
+		return "Swedish"
+	case "th":
+		return "Thai"
+	case "tr":
+		return "Turkish"
+	case "uk":
+		return "Ukrainian"
+	case "vi":
+		return "Vietnamese"
+	default:
+		return code
 	}
 }

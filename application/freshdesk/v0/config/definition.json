@@ -9,7 +9,10 @@
     "TASK_CREATE_CONTACT",
     "TASK_GET_COMPANY",
     "TASK_CREATE_COMPANY",
-    "TASK_GET_ALL"
+    "TASK_GET_ALL",
+    "TASK_GET_PRODUCT",
+    "TASK_GET_AGENT",
+    "TASK_GET_GROUP"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/freshdesk",
   "icon": "assets/freshdesk.svg",

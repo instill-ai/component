@@ -80,4 +80,6 @@ type FreshdeskInterface interface {
 	CreateCompany(req *TaskCreateCompanyReq) (*TaskCreateCompanyResponse, error)
 	GetAll(objectType string, pagination bool, paginationPath string) ([]TaskGetAllResponse, string, error)
 	GetAllConversations(ticketID int64, pagination bool, paginationPath string) ([]TaskGetAllConversationsResponse, string, error)
+	GetProduct(productID int64) (*TaskGetProductResponse, error)
+	GetAgent(agentID int64) (*TaskGetAgentResponse, error)
 }
