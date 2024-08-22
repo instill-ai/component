@@ -2372,5 +2372,82 @@
       "title": "Output",
       "type": "object"
     }
+  },
+  "TASK_GET_SKILL":{
+    "instillShortDescription": "Get skill using ID. This task will only work if you have admin privileges. ",
+    "input": {
+      "description": "Skill ID",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["skill-id"],
+      "properties": {
+        "skill-id":{
+          "description": "Skill ID",
+          "title": "Skill ID",
+          "type": "integer",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        }
+      },
+      "required": ["skill-id"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Skill information",
+      "instillUIOrder": 0,
+      "properties": {
+        "name":{
+          "description": "Name of the skill",
+          "title": "Name",
+          "type": "string",
+          "instillUIOrder": 0,
+          "instillFormat":"string"
+        },
+        "rank":{
+          "description": "Rank of the skill",
+          "title": "Rank",
+          "type": "integer",
+          "instillUIOrder": 1,
+          "instillFormat":"integer"
+        },
+        "condition-match-type":{
+          "description": "Type of condition match. Can be \"all\" or \"any\"",
+          "title": "Condition Match Type",
+          "type": "string",
+          "instillUIOrder": 2,
+          "instillFormat":"string"
+        },
+        "conditions":{
+          "description": "Conditions for the skill",
+          "title": "Conditions",
+          "instillFormat": "array:semi-structured/json",
+          "type": "array",
+          "items":{
+            "title": "Condition",
+            "instillFormat": "semi-structured/json"
+          },
+          "instillUIOrder": 3
+        },
+        "created-at":{
+          "description": "Timestamp that denotes when the skill was created",
+          "title": "Created At",
+          "type": "string",
+          "instillUIOrder": 4,
+          "instillFormat":"string"
+        },
+        "updated-at":{
+          "description": "Timestamp that denotes when the skill was last updated",
+          "title": "Updated At",
+          "type": "string",
+          "instillUIOrder": 5,
+          "instillFormat":"string"
+        }
+      },
+      "required": ["name","rank","condition-match-type","conditions","created-at","updated-at"],
+      "title": "Output",
+      "type": "object"
+    }
   }
 }

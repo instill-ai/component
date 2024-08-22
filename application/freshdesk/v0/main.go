@@ -32,6 +32,7 @@ const (
 	taskGetAgent            = "TASK_GET_AGENT"
 	taskGetRole             = "TASK_GET_ROLE"
 	taskGetGroup            = "TASK_GET_GROUP"
+	taskGetSkill            = "TASK_GET_SKILL"
 )
 
 var (
@@ -104,6 +105,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.TaskGetRole
 	case taskGetGroup:
 		e.execute = e.TaskGetGroup
+	case taskGetSkill:
+		e.execute = e.TaskGetSkill
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}

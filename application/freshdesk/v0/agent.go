@@ -14,6 +14,7 @@ const (
 	AgentPath = "agents"
 	RolePath  = "roles"
 	GroupPath = "groups"
+	SkillPath = "admin/skills"
 )
 
 // API function for Agent
@@ -47,6 +48,18 @@ func (c *FreshdeskClient) GetGroup(groupID int64) (*TaskGetGroupResponse, error)
 
 	httpReq := c.httpclient.R().SetResult(resp)
 	if _, err := httpReq.Get(fmt.Sprintf("/%s/%d", GroupPath, groupID)); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// API function for Skill
+
+func (c *FreshdeskClient) GetSkill(skillID int64) (*TaskGetSkillResponse, error) {
+	resp := &TaskGetSkillResponse{}
+
+	httpReq := c.httpclient.R().SetResult(resp)
+	if _, err := httpReq.Get(fmt.Sprintf("/%s/%d", SkillPath, skillID)); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -280,6 +293,70 @@ func (e *execution) TaskGetGroup(in *structpb.Struct) (*structpb.Struct, error) 
 
 	return output, nil
 
+}
+
+// Task 4: Get Skill
+
+type TaskGetSkillInput struct {
+	SkillID int64 `json:"skill-id"`
+}
+
+type TaskGetSkillResponse struct {
+	Name       string                          `json:"name"`
+	Rank       int                             `json:"rank"`
+	Conditions []taskGetSkillResponseCondition `json:"conditions"`
+	CreatedAt  string                          `json:"created_at"`
+	UpdatedAt  string                          `json:"updated_at"`
+}
+
+type taskGetSkillResponseCondition struct {
+	ChannelConditions []taskGetSkillResponseChannelCondition `json:"channel_conditions"`
+}
+
+type taskGetSkillResponseChannelCondition struct {
+	MatchType  string                   `json:"match_type"`
+	Properties []map[string]interface{} `json:"properties"`
+}
+
+type TaskGetSkillOutput struct {
+	Name               string                   `json:"name"`
+	Rank               int                      `json:"rank"`
+	ConditionMatchType string                   `json:"condition-match-type"`
+	Conditions         []map[string]interface{} `json:"conditions"`
+	CreatedAt          string                   `json:"created-at"`
+	UpdatedAt          string                   `json:"updated-at"`
+}
+
+func (e *execution) TaskGetSkill(in *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := TaskGetSkillInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	resp, err := e.client.GetSkill(inputStruct.SkillID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := TaskGetSkillOutput{
+		Name:               resp.Name,
+		Rank:               resp.Rank,
+		ConditionMatchType: resp.Conditions[0].ChannelConditions[0].MatchType, //only Condition[0] and ChannelCondition[0] are taken because no matter what kind of skill I make, there is only one of each.
+		Conditions:         resp.Conditions[0].ChannelConditions[0].Properties,
+		CreatedAt:          convertTimestampResp(resp.CreatedAt),
+		UpdatedAt:          convertTimestampResp(resp.UpdatedAt),
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
+	}
+
+	return output, nil
 }
 
 func convertTicketScopeResponse(in int) string { //used in Get Agent task

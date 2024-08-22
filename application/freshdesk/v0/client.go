@@ -87,4 +87,5 @@ type FreshdeskInterface interface {
 	GetAgent(agentID int64) (*TaskGetAgentResponse, error)
 	GetRole(roleID int64) (*TaskGetRoleResponse, error)
 	GetGroup(groupID int64) (*TaskGetGroupResponse, error)
+	GetSkill(skillID int64) (*TaskGetSkillResponse, error)
 }

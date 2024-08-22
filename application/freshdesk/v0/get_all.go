@@ -18,7 +18,15 @@ func (c *FreshdeskClient) GetAll(objectType string, pagination bool, paginationP
 	var rawResp *resty.Response
 	var err error
 	if !pagination {
-		rawResp, err = httpReq.Get(fmt.Sprintf("/%s", strings.ToLower(objectType)))
+
+		var path string
+		if objectType != "Skills" {
+			path = strings.ToLower(objectType)
+		} else {
+			path = "admin/skills"
+		}
+
+		rawResp, err = httpReq.Get(fmt.Sprintf("/%s", path))
 
 	} else {
 		rawResp, err = httpReq.Get(paginationPath)
