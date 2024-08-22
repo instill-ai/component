@@ -68,8 +68,8 @@ func TestScrapeWebpage(t *testing.T) {
 	c.Run("ScrapeWebpage", func(c *quicktest.C) {
 		component := Init(base.Component{})
 		e := &execution{
-			ComponentExecution: base.ComponentExecution{Component: component, SystemVariables: nil, Setup: nil, Task: taskScrapeWebpage},
-			request:            fakeHTTPRequest,
+			ComponentExecution:    base.ComponentExecution{Component: component, SystemVariables: nil, Setup: nil, Task: taskScrapeWebpage},
+			getDocAfterRequestURL: fakeHTTPRequest,
 		}
 
 		e.execute = e.ScrapeWebpage
@@ -95,7 +95,7 @@ func TestScrapeWebpage(t *testing.T) {
 	})
 }
 
-func fakeHTTPRequest(url string) (*goquery.Document, error) {
+func fakeHTTPRequest(url string, timeout int) (*goquery.Document, error) {
 	html := `
 	<!DOCTYPE html>
 	<html>

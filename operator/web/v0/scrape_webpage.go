@@ -1,11 +1,15 @@
 package web
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/chromedp/chromedp"
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
 	"github.com/k3a/html2text"
@@ -18,6 +22,7 @@ type ScrapeWebpageInput struct {
 	OnlyMainContent bool     `json:"only-main-content"`
 	RemoveTags      []string `json:"remove-tags,omitempty"`
 	OnlyIncludeTags []string `json:"only-include-tags,omitempty"`
+	Timeout         int      `json:"timeout,omitempty"`
 }
 
 type ScrapeWebpageOutput struct {
@@ -46,7 +51,7 @@ func (e *execution) ScrapeWebpage(input *structpb.Struct) (*structpb.Struct, err
 
 	output := ScrapeWebpageOutput{}
 
-	doc, err := e.request(inputStruct.URL)
+	doc, err := e.getDocAfterRequestURL(inputStruct.URL, inputStruct.Timeout)
 
 	if err != nil {
 		return nil, fmt.Errorf("error getting HTML page doc: %v", err)
@@ -64,6 +69,16 @@ func (e *execution) ScrapeWebpage(input *structpb.Struct) (*structpb.Struct, err
 
 }
 
+func getDocAfterRequestURL(url string, timeout int) (*goquery.Document, error) {
+
+	if timeout > 0 {
+		return requestToWebpage(url, timeout)
+	} else {
+		return httpRequest(url)
+	}
+
+}
+
 func httpRequest(url string) (*goquery.Document, error) {
 	client := &http.Client{}
 	res, err := client.Get(url)
@@ -73,6 +88,35 @@ func httpRequest(url string) (*goquery.Document, error) {
 	defer res.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse HTML from %s: %v", url, err)
+	}
+
+	return doc, nil
+}
+
+func requestToWebpage(url string, timeout int) (*goquery.Document, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Millisecond)
+	defer cancel()
+
+	ctx, cancelBrowser := chromedp.NewContext(ctx)
+	defer cancelBrowser()
+
+	var htmlContent string
+
+	err := chromedp.Run(ctx,
+		chromedp.Navigate(url),
+		chromedp.WaitReady("body"),
+		chromedp.OuterHTML("html", &htmlContent),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get HTML content: %v", err)
+	}
+
+	htmlReader := strings.NewReader(htmlContent)
+
+	doc, err := goquery.NewDocumentFromReader(htmlReader)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse HTML from %s: %v", url, err)
 	}
