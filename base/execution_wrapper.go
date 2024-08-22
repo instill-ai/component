@@ -15,13 +15,13 @@ type ExecutionWrapper struct {
 }
 
 type outputWriterInterceptor struct {
-	ow      OutputWriter
+	OutputWriter
 	outputs []*structpb.Struct
 }
 
 func (ow *outputWriterInterceptor) Write(ctx context.Context, outputs []*structpb.Struct) (err error) {
 	ow.outputs = outputs
-	return ow.ow.Write(ctx, outputs)
+	return ow.OutputWriter.Write(ctx, outputs)
 }
 
 func (ow *outputWriterInterceptor) GetOutputs(ctx context.Context) (outputs []*structpb.Struct, err error) {
@@ -49,7 +49,7 @@ func (e *ExecutionWrapper) Execute(ctx context.Context, ir InputReader, ow Outpu
 		return err
 	}
 
-	owi := &outputWriterInterceptor{ow: ow}
+	owi := &outputWriterInterceptor{OutputWriter: ow}
 	err = e.IExecution.Execute(ctx, ir, owi)
 	if err != nil {
 		return err

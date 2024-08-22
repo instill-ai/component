@@ -2,11 +2,14 @@
 package openai
 
 import (
+	"bytes"
 	"context"
 	_ "embed"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"sync"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -15,11 +18,11 @@ import (
 
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/x/errmsg"
+
+	openaisdk "github.com/sashabaranov/go-openai"
 )
 
 const (
-	host = "https://api.openai.com"
-
 	TextGenerationTask    = "TASK_TEXT_GENERATION"
 	TextEmbeddingsTask    = "TASK_TEXT_EMBEDDINGS"
 	SpeechRecognitionTask = "TASK_SPEECH_RECOGNITION"
@@ -117,10 +120,11 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 	if err != nil {
 		return err
 	}
-	client := newClient(e.Setup, e.GetLogger())
-	outputs := []*structpb.Struct{}
 
-	for _, input := range inputs {
+	client := newClient(e.Setup, e.GetLogger())
+	outputs := make([]*structpb.Struct, len(inputs))
+
+	for batchIdx, input := range inputs {
 		switch e.Task {
 		case TextGenerationTask:
 			inputStruct := TextCompletionInput{}
@@ -129,43 +133,56 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 				return err
 			}
 
-			messages := []interface{}{}
+			messages := []openaisdk.ChatCompletionMessage{}
 
 			// If chat history is provided, add it to the messages, and ignore the system message
 			if inputStruct.ChatHistory != nil {
 				for _, chat := range inputStruct.ChatHistory {
 					if chat.Role == "user" {
-						messages = append(messages, multiModalMessage{Role: chat.Role, Content: chat.Content})
+						multiContent := []openaisdk.ChatMessagePart{}
+						for _, c := range chat.Content {
+							multiContent = append(multiContent, openaisdk.ChatMessagePart{
+								Type: openaisdk.ChatMessagePartType(c.Type),
+								Text: c.Text,
+								ImageURL: &openaisdk.ChatMessageImageURL{
+									URL: c.ImageURL.URL,
+								},
+							})
+						}
+
+						messages = append(messages, openaisdk.ChatCompletionMessage{Role: chat.Role, MultiContent: multiContent})
 					} else {
 						content := ""
 						for _, c := range chat.Content {
 							// OpenAI doesn't support multi-modal content for
 							// non-user roles.
 							if c.Type == "text" {
-								content = *c.Text
+								content = c.Text
 							}
 						}
-						messages = append(messages, message{Role: chat.Role, Content: content})
+						messages = append(messages, openaisdk.ChatCompletionMessage{Role: chat.Role, Content: content})
 					}
 
 				}
-			} else if inputStruct.SystemMessage != nil {
+			} else if inputStruct.SystemMessage != "" {
 				// If chat history is not provided, add the system message to the messages
-				messages = append(messages, message{Role: "system", Content: *inputStruct.SystemMessage})
+				messages = append(messages, openaisdk.ChatCompletionMessage{Role: "system", Content: inputStruct.SystemMessage})
 			}
-			userContents := []content{}
-			userContents = append(userContents, content{Type: "text", Text: &inputStruct.Prompt})
+			userContents := []openaisdk.ChatMessagePart{}
+			userContents = append(userContents, openaisdk.ChatMessagePart{Type: "text", Text: inputStruct.Prompt})
 			for _, image := range inputStruct.Images {
 				b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(image))
 				if err != nil {
 					return err
 				}
 				url := fmt.Sprintf("data:%s;base64,%s", mimetype.Detect(b).String(), base.TrimBase64Mime(image))
-				userContents = append(userContents, content{Type: "image_url", ImageURL: &imageURL{URL: url}})
+				userContents = append(userContents, openaisdk.ChatMessagePart{Type: "image_url", ImageURL: &openaisdk.ChatMessageImageURL{
+					URL: url,
+				}})
 			}
-			messages = append(messages, multiModalMessage{Role: "user", Content: userContents})
+			messages = append(messages, openaisdk.ChatCompletionMessage{Role: "user", MultiContent: userContents})
 
-			body := textCompletionReq{
+			body := openaisdk.ChatCompletionRequest{
 				Messages:         messages,
 				Model:            inputStruct.Model,
 				MaxTokens:        inputStruct.MaxTokens,
@@ -174,13 +191,15 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 				TopP:             inputStruct.TopP,
 				PresencePenalty:  inputStruct.PresencePenalty,
 				FrequencyPenalty: inputStruct.FrequencyPenalty,
+				Stream:           true,
+				StreamOptions:    &openaisdk.StreamOptions{IncludeUsage: true},
 			}
 
 			// workaround, the OpenAI service can not accept this param
 			if inputStruct.Model != "gpt-4-vision-preview" {
 				if inputStruct.ResponseFormat != nil {
-					body.ResponseFormat = &responseFormatReqStruct{
-						Type: inputStruct.ResponseFormat.Type,
+					body.ResponseFormat = &openaisdk.ChatCompletionResponseFormat{
+						Type: openaisdk.ChatCompletionResponseFormatType(inputStruct.ResponseFormat.Type),
 					}
 					if inputStruct.ResponseFormat.Type == "json_schema" {
 						if inputStruct.Model == "gpt-4o-mini" || inputStruct.Model == "gpt-4o-2024-08-06" {
@@ -190,9 +209,12 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 								if err != nil {
 									return err
 								}
-								body.ResponseFormat = &responseFormatReqStruct{
-									Type:       inputStruct.ResponseFormat.Type,
-									JSONSchema: sch,
+								openaiSchema := &openaisdk.ChatCompletionResponseFormatJSONSchema{}
+								b, _ := json.Marshal(sch)
+								_ = json.Unmarshal(b, openaiSchema)
+								body.ResponseFormat = &openaisdk.ChatCompletionResponseFormat{
+									Type:       openaisdk.ChatCompletionResponseFormatType(inputStruct.ResponseFormat.Type),
+									JSONSchema: openaiSchema,
 								}
 							}
 
@@ -205,30 +227,60 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 
 			}
 
-			resp := textCompletionResp{}
-			req := client.R().SetResult(&resp).SetBody(body)
-			if _, err := req.Post(completionsPath); err != nil {
-				return err
-			}
-
-			outputStruct := TextCompletionOutput{
-				Texts: []string{},
-				Usage: usage(resp.Usage),
-			}
-			for _, c := range resp.Choices {
-				outputStruct.Texts = append(outputStruct.Texts, c.Message.Content)
-			}
-
-			outputJSON, err := json.Marshal(outputStruct)
+			stream, err := client.CreateChatCompletionStream(ctx, body)
 			if err != nil {
 				return err
 			}
-			output := structpb.Struct{}
-			err = protojson.Unmarshal(outputJSON, &output)
-			if err != nil {
-				return err
+			outputStruct := TextCompletionOutput{}
+
+			count := 0
+			for {
+				response, err := stream.Recv()
+
+				if count == 5 || errors.Is(err, io.EOF) {
+					outputJSON, inErr := json.Marshal(outputStruct)
+					if inErr != nil {
+						return inErr
+					}
+					output := &structpb.Struct{}
+					inErr = protojson.Unmarshal(outputJSON, output)
+					if inErr != nil {
+						return inErr
+					}
+					outputs[batchIdx] = output
+					inErr = out.Write(ctx, outputs)
+					if inErr != nil {
+						return inErr
+					}
+					count = 0
+					if errors.Is(err, io.EOF) {
+						break
+					}
+				}
+
+				if err != nil {
+					return err
+				}
+				if outputStruct.Texts == nil {
+					outputStruct.Texts = make([]string, len(response.Choices))
+				}
+				for idx, c := range response.Choices {
+					outputStruct.Texts[idx] += c.Delta.Content
+
+				}
+				if response.Usage != nil {
+					outputStruct.Usage = usage{
+						PromptTokens:     response.Usage.PromptTokens,
+						CompletionTokens: response.Usage.CompletionTokens,
+						TotalTokens:      response.Usage.TotalTokens,
+					}
+				}
+
+				count += 1
+
 			}
-			outputs = append(outputs, &output)
+			fmt.Println()
+			fmt.Println("xxxxx")
 
 		case TextEmbeddingsTask:
 			inputStruct := TextEmbeddingsInput{}
@@ -237,25 +289,22 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 				return err
 			}
 
-			resp := TextEmbeddingsResp{}
-
-			var reqParams TextEmbeddingsReq
+			var reqParams openaisdk.EmbeddingRequest
 			if inputStruct.Dimensions == 0 {
-				reqParams = TextEmbeddingsReq{
-					Model: inputStruct.Model,
+				reqParams = openaisdk.EmbeddingRequest{
+					Model: openaisdk.EmbeddingModel(inputStruct.Model),
 					Input: []string{inputStruct.Text},
 				}
 			} else {
-				reqParams = TextEmbeddingsReq{
-					Model:      inputStruct.Model,
+				reqParams = openaisdk.EmbeddingRequest{
+					Model:      openaisdk.EmbeddingModel(inputStruct.Model),
 					Input:      []string{inputStruct.Text},
 					Dimensions: inputStruct.Dimensions,
 				}
 			}
 
-			req := client.R().SetBody(reqParams).SetResult(&resp)
-
-			if _, err := req.Post(embeddingsPath); err != nil {
+			resp, err := client.CreateEmbeddings(ctx, reqParams)
+			if err != nil {
 				return err
 			}
 
@@ -267,7 +316,7 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 			if err != nil {
 				return err
 			}
-			outputs = append(outputs, output)
+			outputs[batchIdx] = output
 
 		case SpeechRecognitionTask:
 			inputStruct := AudioTranscriptionInput{}
@@ -281,23 +330,16 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 				return err
 			}
 
-			data, ct, err := getBytes(AudioTranscriptionReq{
-				File:        audioBytes,
+			request := openaisdk.AudioRequest{
+				Reader:      bytes.NewReader(audioBytes),
 				Model:       inputStruct.Model,
 				Prompt:      inputStruct.Prompt,
 				Language:    inputStruct.Prompt,
 				Temperature: inputStruct.Temperature,
-
-				// Verbosity is passed to extract result duration.
-				ResponseFormat: "verbose_json",
-			})
-			if err != nil {
-				return err
+				Format:      openaisdk.AudioResponseFormatVerboseJSON,
 			}
-
-			resp := AudioTranscriptionResp{}
-			req := client.R().SetBody(data).SetResult(&resp).SetHeader("Content-Type", ct)
-			if _, err := req.Post(transcriptionsPath); err != nil {
+			resp, err := client.CreateTranscription(ctx, request)
+			if err != nil {
 				return err
 			}
 
@@ -305,7 +347,7 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 			if err != nil {
 				return err
 			}
-			outputs = append(outputs, output)
+			outputs[batchIdx] = output
 
 		case TextToSpeechTask:
 			inputStruct := TextToSpeechInput{}
@@ -314,20 +356,24 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 				return err
 			}
 
-			req := client.R().SetBody(TextToSpeechReq{
+			request := openaisdk.CreateSpeechRequest{
+				Model:          openaisdk.SpeechModel(inputStruct.Model),
 				Input:          inputStruct.Text,
-				Model:          inputStruct.Model,
-				Voice:          inputStruct.Voice,
-				ResponseFormat: inputStruct.ResponseFormat,
+				Voice:          openaisdk.SpeechVoice(inputStruct.Voice),
+				ResponseFormat: openaisdk.SpeechResponseFormat(inputStruct.ResponseFormat),
 				Speed:          inputStruct.Speed,
-			})
-
-			resp, err := req.Post(createSpeechPath)
+			}
+			resp, err := client.CreateSpeech(ctx, request)
 			if err != nil {
 				return err
 			}
 
-			audio := base64.StdEncoding.EncodeToString(resp.Body())
+			buf, err := io.ReadAll(resp)
+			if err != nil {
+				return err
+			}
+
+			audio := base64.StdEncoding.EncodeToString(buf)
 			outputStruct := TextToSpeechOutput{
 				Audio: fmt.Sprintf("data:audio/wav;base64,%s", audio),
 			}
@@ -336,7 +382,7 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 			if err != nil {
 				return err
 			}
-			outputs = append(outputs, output)
+			outputs[batchIdx] = output
 
 		case TextToImageTask:
 
@@ -346,8 +392,7 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 				return err
 			}
 
-			resp := ImageGenerationsResp{}
-			req := client.R().SetBody(ImageGenerationsReq{
+			resp, err := client.CreateImage(ctx, openaisdk.ImageRequest{
 				Model:          inputStruct.Model,
 				Prompt:         inputStruct.Prompt,
 				Quality:        inputStruct.Quality,
@@ -355,16 +400,15 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 				Style:          inputStruct.Style,
 				N:              inputStruct.N,
 				ResponseFormat: "b64_json",
-			}).SetResult(&resp)
-
-			if _, err := req.Post(imgGenerationPath); err != nil {
+			})
+			if err != nil {
 				return err
 			}
 
 			results := []ImageGenerationsOutputResult{}
 			for _, data := range resp.Data {
 				results = append(results, ImageGenerationsOutputResult{
-					Image:         fmt.Sprintf("data:image/webp;base64,%s", data.Image),
+					Image:         fmt.Sprintf("data:image/webp;base64,%s", data.B64JSON),
 					RevisedPrompt: data.RevisedPrompt,
 				})
 			}
@@ -376,7 +420,7 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 			if err != nil {
 				return err
 			}
-			outputs = append(outputs, output)
+			outputs[batchIdx] = output
 
 		default:
 			return errmsg.AddMessage(
@@ -391,16 +435,6 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 
 // Test checks the connector state.
 func (c *component) Test(_ map[string]any, setup *structpb.Struct) error {
-	models := ListModelsResponse{}
-	req := newClient(setup, c.GetLogger()).R().SetResult(&models)
-
-	if _, err := req.Get(listModelsPath); err != nil {
-		return err
-	}
-
-	if len(models.Data) == 0 {
-		return fmt.Errorf("no models")
-	}
 
 	return nil
 }

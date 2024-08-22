@@ -17,7 +17,7 @@ type InputReaderMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcRead          func(ctx context.Context) (input []*structpb.Struct, err error)
+	funcRead          func(ctx context.Context) (inputs []*structpb.Struct, err error)
 	inspectFuncRead   func(ctx context.Context)
 	afterReadCounter  uint64
 	beforeReadCounter uint64
@@ -73,8 +73,8 @@ type InputReaderMockReadParamPtrs struct {
 
 // InputReaderMockReadResults contains results of the InputReader.Read
 type InputReaderMockReadResults struct {
-	input []*structpb.Struct
-	err   error
+	inputs []*structpb.Struct
+	err    error
 }
 
 // Marks this method to be optional. The default behavior of any method with Return() is '1 or more', meaning
@@ -145,7 +145,7 @@ func (mmRead *mInputReaderMockRead) Inspect(f func(ctx context.Context)) *mInput
 }
 
 // Return sets up results that will be returned by InputReader.Read
-func (mmRead *mInputReaderMockRead) Return(input []*structpb.Struct, err error) *InputReaderMock {
+func (mmRead *mInputReaderMockRead) Return(inputs []*structpb.Struct, err error) *InputReaderMock {
 	if mmRead.mock.funcRead != nil {
 		mmRead.mock.t.Fatalf("InputReaderMock.Read mock is already set by Set")
 	}
@@ -153,12 +153,12 @@ func (mmRead *mInputReaderMockRead) Return(input []*structpb.Struct, err error) 
 	if mmRead.defaultExpectation == nil {
 		mmRead.defaultExpectation = &InputReaderMockReadExpectation{mock: mmRead.mock}
 	}
-	mmRead.defaultExpectation.results = &InputReaderMockReadResults{input, err}
+	mmRead.defaultExpectation.results = &InputReaderMockReadResults{inputs, err}
 	return mmRead.mock
 }
 
 // Set uses given function f to mock the InputReader.Read method
-func (mmRead *mInputReaderMockRead) Set(f func(ctx context.Context) (input []*structpb.Struct, err error)) *InputReaderMock {
+func (mmRead *mInputReaderMockRead) Set(f func(ctx context.Context) (inputs []*structpb.Struct, err error)) *InputReaderMock {
 	if mmRead.defaultExpectation != nil {
 		mmRead.mock.t.Fatalf("Default expectation is already set for the InputReader.Read method")
 	}
@@ -187,8 +187,8 @@ func (mmRead *mInputReaderMockRead) When(ctx context.Context) *InputReaderMockRe
 }
 
 // Then sets up InputReader.Read return parameters for the expectation previously defined by the When method
-func (e *InputReaderMockReadExpectation) Then(input []*structpb.Struct, err error) *InputReaderMock {
-	e.results = &InputReaderMockReadResults{input, err}
+func (e *InputReaderMockReadExpectation) Then(inputs []*structpb.Struct, err error) *InputReaderMock {
+	e.results = &InputReaderMockReadResults{inputs, err}
 	return e.mock
 }
 
@@ -213,7 +213,7 @@ func (mmRead *mInputReaderMockRead) invocationsDone() bool {
 }
 
 // Read implements base.InputReader
-func (mmRead *InputReaderMock) Read(ctx context.Context) (input []*structpb.Struct, err error) {
+func (mmRead *InputReaderMock) Read(ctx context.Context) (inputs []*structpb.Struct, err error) {
 	mm_atomic.AddUint64(&mmRead.beforeReadCounter, 1)
 	defer mm_atomic.AddUint64(&mmRead.afterReadCounter, 1)
 
@@ -231,7 +231,7 @@ func (mmRead *InputReaderMock) Read(ctx context.Context) (input []*structpb.Stru
 	for _, e := range mmRead.ReadMock.expectations {
 		if minimock.Equal(*e.params, mm_params) {
 			mm_atomic.AddUint64(&e.Counter, 1)
-			return e.results.input, e.results.err
+			return e.results.inputs, e.results.err
 		}
 	}
 
@@ -256,7 +256,7 @@ func (mmRead *InputReaderMock) Read(ctx context.Context) (input []*structpb.Stru
 		if mm_results == nil {
 			mmRead.t.Fatal("No results are set for the InputReaderMock.Read")
 		}
-		return (*mm_results).input, (*mm_results).err
+		return (*mm_results).inputs, (*mm_results).err
 	}
 	if mmRead.funcRead != nil {
 		return mmRead.funcRead(ctx)

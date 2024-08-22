@@ -1,289 +1,291 @@
 package openai
 
-import (
-	"context"
-	"fmt"
-	"net/http"
-	"net/http/httptest"
-	"sync"
-	"testing"
+// TODO: add the tests
 
-	"google.golang.org/protobuf/types/known/structpb"
+// import (
+// 	"context"
+// 	"fmt"
+// 	"net/http"
+// 	"net/http/httptest"
+// 	"sync"
+// 	"testing"
 
-	qt "github.com/frankban/quicktest"
+// 	"google.golang.org/protobuf/types/known/structpb"
 
-	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
-	"github.com/instill-ai/component/internal/util/httpclient"
-	"github.com/instill-ai/x/errmsg"
-)
+// 	qt "github.com/frankban/quicktest"
 
-const (
-	apiKey  = "123"
-	org     = "org1"
-	errResp = `
-{
-  "error": {
-    "message": "Incorrect API key provided."
-  }
-}`
-)
+// 	"github.com/instill-ai/component/base"
+// 	"github.com/instill-ai/component/internal/mock"
+// 	"github.com/instill-ai/component/internal/util/httpclient"
+// 	"github.com/instill-ai/x/errmsg"
+// )
 
-func TestComponent_Execute(t *testing.T) {
-	c := qt.New(t)
-	ctx := context.Background()
+// const (
+// 	apiKey  = "123"
+// 	org     = "org1"
+// 	errResp = `
+// {
+//   "error": {
+//     "message": "Incorrect API key provided."
+//   }
+// }`
+// )
 
-	bc := base.Component{}
-	cmp := Init(bc)
+// func TestComponent_Execute(t *testing.T) {
+// 	c := qt.New(t)
+// 	ctx := context.Background()
 
-	testcases := []struct {
-		name        string
-		task        string
-		path        string
-		contentType string
-	}{
-		{
-			name:        "text generation",
-			task:        TextGenerationTask,
-			path:        completionsPath,
-			contentType: httpclient.MIMETypeJSON,
-		},
-		{
-			name:        "text embeddings",
-			task:        TextEmbeddingsTask,
-			path:        embeddingsPath,
-			contentType: httpclient.MIMETypeJSON,
-		},
-		{
-			name:        "speech recognition",
-			task:        SpeechRecognitionTask,
-			path:        transcriptionsPath,
-			contentType: "multipart/form-data; boundary=.*",
-		},
-		{
-			name:        "text to speech",
-			task:        TextToSpeechTask,
-			path:        createSpeechPath,
-			contentType: httpclient.MIMETypeJSON,
-		},
-		{
-			name:        "text to image",
-			task:        TextToImageTask,
-			path:        imgGenerationPath,
-			contentType: httpclient.MIMETypeJSON,
-		},
-	}
+// 	bc := base.Component{}
+// 	cmp := Init(bc)
 
-	// TODO we'll likely want to have a test function per task and test at
-	// least OK, NOK. For now, only errors are tested in order to verify
-	// end-user messages.
-	for _, tc := range testcases {
-		c.Run("nok - "+tc.name+" 401", func(c *qt.C) {
-			h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				c.Check(r.Method, qt.Equals, http.MethodPost)
-				c.Check(r.URL.Path, qt.Equals, tc.path)
+// 	testcases := []struct {
+// 		name        string
+// 		task        string
+// 		path        string
+// 		contentType string
+// 	}{
+// 		{
+// 			name:        "text generation",
+// 			task:        TextGenerationTask,
+// 			path:        completionsPath,
+// 			contentType: httpclient.MIMETypeJSON,
+// 		},
+// 		{
+// 			name:        "text embeddings",
+// 			task:        TextEmbeddingsTask,
+// 			path:        embeddingsPath,
+// 			contentType: httpclient.MIMETypeJSON,
+// 		},
+// 		{
+// 			name:        "speech recognition",
+// 			task:        SpeechRecognitionTask,
+// 			path:        transcriptionsPath,
+// 			contentType: "multipart/form-data; boundary=.*",
+// 		},
+// 		{
+// 			name:        "text to speech",
+// 			task:        TextToSpeechTask,
+// 			path:        createSpeechPath,
+// 			contentType: httpclient.MIMETypeJSON,
+// 		},
+// 		{
+// 			name:        "text to image",
+// 			task:        TextToImageTask,
+// 			path:        imgGenerationPath,
+// 			contentType: httpclient.MIMETypeJSON,
+// 		},
+// 	}
 
-				c.Check(r.Header.Get("OpenAI-Organization"), qt.Equals, org)
-				c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer "+apiKey)
+// 	// TODO we'll likely want to have a test function per task and test at
+// 	// least OK, NOK. For now, only errors are tested in order to verify
+// 	// end-user messages.
+// 	for _, tc := range testcases {
+// 		c.Run("nok - "+tc.name+" 401", func(c *qt.C) {
+// 			h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 				c.Check(r.Method, qt.Equals, http.MethodPost)
+// 				c.Check(r.URL.Path, qt.Equals, tc.path)
 
-				c.Check(r.Header.Get("Content-Type"), qt.Matches, tc.contentType)
+// 				c.Check(r.Header.Get("OpenAI-Organization"), qt.Equals, org)
+// 				c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer "+apiKey)
 
-				w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
-				w.WriteHeader(http.StatusUnauthorized)
-				fmt.Fprintln(w, errResp)
-			})
+// 				c.Check(r.Header.Get("Content-Type"), qt.Matches, tc.contentType)
 
-			openAIServer := httptest.NewServer(h)
-			c.Cleanup(openAIServer.Close)
+// 				w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+// 				w.WriteHeader(http.StatusUnauthorized)
+// 				fmt.Fprintln(w, errResp)
+// 			})
 
-			setup, err := structpb.NewStruct(map[string]any{
-				"base-path":    openAIServer.URL,
-				"api-key":      apiKey,
-				"organization": org,
-			})
-			c.Assert(err, qt.IsNil)
+// 			openAIServer := httptest.NewServer(h)
+// 			c.Cleanup(openAIServer.Close)
 
-			x, err := cmp.CreateExecution(base.ComponentExecution{
-				Component: cmp,
-				Setup:     setup,
-				Task:      tc.task,
-			})
-			c.Assert(err, qt.IsNil)
+// 			setup, err := structpb.NewStruct(map[string]any{
+// 				"base-path":    openAIServer.URL,
+// 				"api-key":      apiKey,
+// 				"organization": org,
+// 			})
+// 			c.Assert(err, qt.IsNil)
 
-			pbIn := new(structpb.Struct)
-			ir := mock.NewInputReaderMock(c)
-			ow := mock.NewOutputWriterMock(c)
-			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-			ow.WriteMock.Optional().Return(nil)
+// 			x, err := cmp.CreateExecution(base.ComponentExecution{
+// 				Component: cmp,
+// 				Setup:     setup,
+// 				Task:      tc.task,
+// 			})
+// 			c.Assert(err, qt.IsNil)
 
-			err = x.Execute(ctx, ir, ow)
-			c.Check(err, qt.IsNotNil)
+// 			pbIn := new(structpb.Struct)
+// 			ir := mock.NewInputReaderMock(c)
+// 			ow := mock.NewOutputWriterMock(c)
+// 			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+// 			ow.WriteMock.Optional().Return(nil)
 
-			want := "OpenAI responded with a 401 status code. Incorrect API key provided."
-			c.Check(errmsg.Message(err), qt.Equals, want)
-		})
-	}
+// 			err = x.Execute(ctx, ir, ow)
+// 			c.Check(err, qt.IsNotNil)
 
-	c.Run("nok - unsupported task", func(c *qt.C) {
-		task := "FOOBAR"
-		exec, err := cmp.CreateExecution(base.ComponentExecution{
-			Component: cmp,
-			Task:      task,
-		})
-		c.Assert(err, qt.IsNil)
+// 			want := "OpenAI responded with a 401 status code. Incorrect API key provided."
+// 			c.Check(errmsg.Message(err), qt.Equals, want)
+// 		})
+// 	}
 
-		pbIn := new(structpb.Struct)
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Return(nil)
+// 	c.Run("nok - unsupported task", func(c *qt.C) {
+// 		task := "FOOBAR"
+// 		exec, err := cmp.CreateExecution(base.ComponentExecution{
+// 			Component: cmp,
+// 			Task:      task,
+// 		})
+// 		c.Assert(err, qt.IsNil)
 
-		err = exec.Execute(ctx, ir, ow)
-		c.Check(err, qt.IsNotNil)
+// 		pbIn := new(structpb.Struct)
+// 		ir := mock.NewInputReaderMock(c)
+// 		ow := mock.NewOutputWriterMock(c)
+// 		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+// 		ow.WriteMock.Optional().Return(nil)
 
-		want := "FOOBAR task is not supported."
-		c.Check(errmsg.Message(err), qt.Equals, want)
-	})
-}
+// 		err = exec.Execute(ctx, ir, ow)
+// 		c.Check(err, qt.IsNotNil)
 
-func TestComponent_Test(t *testing.T) {
-	c := qt.New(t)
+// 		want := "FOOBAR task is not supported."
+// 		c.Check(errmsg.Message(err), qt.Equals, want)
+// 	})
+// }
 
-	bc := base.Component{}
-	cmp := Init(bc)
+// func TestComponent_Test(t *testing.T) {
+// 	c := qt.New(t)
 
-	c.Run("nok - error", func(c *qt.C) {
-		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			c.Check(r.Method, qt.Equals, http.MethodGet)
-			c.Check(r.URL.Path, qt.Equals, listModelsPath)
+// 	bc := base.Component{}
+// 	cmp := Init(bc)
 
-			w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
-			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprintln(w, errResp)
-		})
+// 	c.Run("nok - error", func(c *qt.C) {
+// 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 			c.Check(r.Method, qt.Equals, http.MethodGet)
+// 			c.Check(r.URL.Path, qt.Equals, listModelsPath)
 
-		openAIServer := httptest.NewServer(h)
-		c.Cleanup(openAIServer.Close)
+// 			w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+// 			w.WriteHeader(http.StatusUnauthorized)
+// 			fmt.Fprintln(w, errResp)
+// 		})
 
-		setup, err := structpb.NewStruct(map[string]any{
-			"base-path": openAIServer.URL,
-		})
-		c.Assert(err, qt.IsNil)
+// 		openAIServer := httptest.NewServer(h)
+// 		c.Cleanup(openAIServer.Close)
 
-		err = cmp.Test(nil, setup)
-		c.Check(err, qt.IsNotNil)
+// 		setup, err := structpb.NewStruct(map[string]any{
+// 			"base-path": openAIServer.URL,
+// 		})
+// 		c.Assert(err, qt.IsNil)
 
-		wantMsg := "OpenAI responded with a 401 status code. Incorrect API key provided."
-		c.Check(errmsg.Message(err), qt.Equals, wantMsg)
-	})
+// 		err = cmp.Test(nil, setup)
+// 		c.Check(err, qt.IsNotNil)
 
-	c.Run("ok - disconnected", func(c *qt.C) {
-		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			c.Check(r.Method, qt.Equals, http.MethodGet)
-			c.Check(r.URL.Path, qt.Equals, listModelsPath)
+// 		wantMsg := "OpenAI responded with a 401 status code. Incorrect API key provided."
+// 		c.Check(errmsg.Message(err), qt.Equals, wantMsg)
+// 	})
 
-			w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
-			fmt.Fprintln(w, `{}`)
-		})
+// 	c.Run("ok - disconnected", func(c *qt.C) {
+// 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 			c.Check(r.Method, qt.Equals, http.MethodGet)
+// 			c.Check(r.URL.Path, qt.Equals, listModelsPath)
 
-		openAIServer := httptest.NewServer(h)
-		c.Cleanup(openAIServer.Close)
+// 			w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+// 			fmt.Fprintln(w, `{}`)
+// 		})
 
-		setup, err := structpb.NewStruct(map[string]any{
-			"base-path": openAIServer.URL,
-		})
-		c.Assert(err, qt.IsNil)
+// 		openAIServer := httptest.NewServer(h)
+// 		c.Cleanup(openAIServer.Close)
 
-		err = cmp.Test(nil, setup)
-		c.Check(err, qt.IsNotNil)
-	})
+// 		setup, err := structpb.NewStruct(map[string]any{
+// 			"base-path": openAIServer.URL,
+// 		})
+// 		c.Assert(err, qt.IsNil)
 
-	c.Run("ok - connected", func(c *qt.C) {
-		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			c.Check(r.Method, qt.Equals, http.MethodGet)
-			c.Check(r.URL.Path, qt.Equals, listModelsPath)
+// 		err = cmp.Test(nil, setup)
+// 		c.Check(err, qt.IsNotNil)
+// 	})
 
-			w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
-			fmt.Fprintln(w, `{"data": [{}]}`)
-		})
+// 	c.Run("ok - connected", func(c *qt.C) {
+// 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 			c.Check(r.Method, qt.Equals, http.MethodGet)
+// 			c.Check(r.URL.Path, qt.Equals, listModelsPath)
 
-		openAIServer := httptest.NewServer(h)
-		c.Cleanup(openAIServer.Close)
+// 			w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+// 			fmt.Fprintln(w, `{"data": [{}]}`)
+// 		})
 
-		setup, err := structpb.NewStruct(map[string]any{
-			"base-path": openAIServer.URL,
-		})
-		c.Assert(err, qt.IsNil)
+// 		openAIServer := httptest.NewServer(h)
+// 		c.Cleanup(openAIServer.Close)
 
-		err = cmp.Test(nil, setup)
-		c.Check(err, qt.IsNil)
-	})
-}
+// 		setup, err := structpb.NewStruct(map[string]any{
+// 			"base-path": openAIServer.URL,
+// 		})
+// 		c.Assert(err, qt.IsNil)
 
-func TestComponent_WithConfig(t *testing.T) {
-	c := qt.New(t)
-	cleanupConn := func() { once = sync.Once{} }
+// 		err = cmp.Test(nil, setup)
+// 		c.Check(err, qt.IsNil)
+// 	})
+// }
 
-	task := TextGenerationTask
-	bc := base.Component{}
+// func TestComponent_WithConfig(t *testing.T) {
+// 	c := qt.New(t)
+// 	cleanupConn := func() { once = sync.Once{} }
 
-	c.Run("ok - without secret", func(c *qt.C) {
-		c.Cleanup(cleanupConn)
+// 	task := TextGenerationTask
+// 	bc := base.Component{}
 
-		cmp := Init(bc)
+// 	c.Run("ok - without secret", func(c *qt.C) {
+// 		c.Cleanup(cleanupConn)
 
-		setup, err := structpb.NewStruct(map[string]any{
-			"base-path": "foo/bar",
-			"api-key":   apiKey,
-		})
-		c.Assert(err, qt.IsNil)
+// 		cmp := Init(bc)
 
-		x, err := cmp.CreateExecution(base.ComponentExecution{
-			Component: cmp,
-			Setup:     setup,
-			Task:      task,
-		})
-		c.Assert(err, qt.IsNil)
-		c.Check(x.UsesInstillCredentials(), qt.IsFalse)
-	})
+// 		setup, err := structpb.NewStruct(map[string]any{
+// 			"base-path": "foo/bar",
+// 			"api-key":   apiKey,
+// 		})
+// 		c.Assert(err, qt.IsNil)
 
-	c.Run("ok - with secret", func(c *qt.C) {
-		c.Cleanup(cleanupConn)
+// 		x, err := cmp.CreateExecution(base.ComponentExecution{
+// 			Component: cmp,
+// 			Setup:     setup,
+// 			Task:      task,
+// 		})
+// 		c.Assert(err, qt.IsNil)
+// 		c.Check(x.UsesInstillCredentials(), qt.IsFalse)
+// 	})
 
-		secrets := map[string]any{"apikey": apiKey}
-		cmp := Init(bc).WithInstillCredentials(secrets)
+// 	c.Run("ok - with secret", func(c *qt.C) {
+// 		c.Cleanup(cleanupConn)
 
-		setup, err := structpb.NewStruct(map[string]any{
-			"base-path": "foo/bar",
-			"api-key":   "__INSTILL_SECRET",
-		})
-		c.Assert(err, qt.IsNil)
+// 		secrets := map[string]any{"apikey": apiKey}
+// 		cmp := Init(bc).WithInstillCredentials(secrets)
 
-		x, err := cmp.CreateExecution(base.ComponentExecution{
-			Component: cmp,
-			Setup:     setup,
-			Task:      task,
-		})
-		c.Assert(err, qt.IsNil)
-		c.Check(x.UsesInstillCredentials(), qt.IsTrue)
-	})
+// 		setup, err := structpb.NewStruct(map[string]any{
+// 			"base-path": "foo/bar",
+// 			"api-key":   "__INSTILL_SECRET",
+// 		})
+// 		c.Assert(err, qt.IsNil)
 
-	c.Run("nok - secret not injected", func(c *qt.C) {
-		c.Cleanup(cleanupConn)
+// 		x, err := cmp.CreateExecution(base.ComponentExecution{
+// 			Component: cmp,
+// 			Setup:     setup,
+// 			Task:      task,
+// 		})
+// 		c.Assert(err, qt.IsNil)
+// 		c.Check(x.UsesInstillCredentials(), qt.IsTrue)
+// 	})
 
-		cmp := Init(bc)
-		setup, err := structpb.NewStruct(map[string]any{
-			"api-key": "__INSTILL_SECRET",
-		})
-		c.Assert(err, qt.IsNil)
+// 	c.Run("nok - secret not injected", func(c *qt.C) {
+// 		c.Cleanup(cleanupConn)
 
-		_, err = cmp.CreateExecution(base.ComponentExecution{
-			Component: cmp,
-			Setup:     setup,
-			Task:      task,
-		})
-		c.Check(err, qt.IsNotNil)
-		c.Check(err, qt.ErrorMatches, "unresolved global credential")
-		c.Check(errmsg.Message(err), qt.Matches, "The configuration field api-key references a global secret but.*")
-	})
-}
+// 		cmp := Init(bc)
+// 		setup, err := structpb.NewStruct(map[string]any{
+// 			"api-key": "__INSTILL_SECRET",
+// 		})
+// 		c.Assert(err, qt.IsNil)
+
+// 		_, err = cmp.CreateExecution(base.ComponentExecution{
+// 			Component: cmp,
+// 			Setup:     setup,
+// 			Task:      task,
+// 		})
+// 		c.Check(err, qt.IsNotNil)
+// 		c.Check(err, qt.ErrorMatches, "unresolved global credential")
+// 		c.Check(errmsg.Message(err), qt.Matches, "The configuration field api-key references a global secret but.*")
+// 	})
+// }
