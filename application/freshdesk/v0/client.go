@@ -24,6 +24,7 @@ func newClient(setup *structpb.Struct, logger *zap.Logger) *FreshdeskClient {
 	return w
 }
 
+// sometimes it will give an array of errors, other times it wont.
 type errBody struct {
 	Description string `json:"description"`
 	Errors      []struct {
@@ -31,11 +32,11 @@ type errBody struct {
 		Message string `json:"message"`
 		Code    string `json:"code"`
 	} `json:"errors"`
+	ErrorMessage string `json:"message"`
 }
 
 func (e errBody) Message() string {
 	var errReturn string
-	fmt.Println("ERRRORRR", e.Errors)
 	for index, err := range e.Errors {
 		if index > 0 {
 			errReturn += ". "
@@ -49,6 +50,8 @@ func (e errBody) Message() string {
 			errReturn += ", code: " + err.Code
 		}
 	}
+
+	errReturn += e.ErrorMessage
 
 	return errReturn
 }
@@ -82,4 +85,6 @@ type FreshdeskInterface interface {
 	GetAllConversations(ticketID int64, pagination bool, paginationPath string) ([]TaskGetAllConversationsResponse, string, error)
 	GetProduct(productID int64) (*TaskGetProductResponse, error)
 	GetAgent(agentID int64) (*TaskGetAgentResponse, error)
+	GetRole(roleID int64) (*TaskGetRoleResponse, error)
+	GetGroup(groupID int64) (*TaskGetGroupResponse, error)
 }

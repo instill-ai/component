@@ -30,6 +30,7 @@ const (
 	taskGetAllConversations = "TASK_GET_ALL_CONVERSATIONS"
 	taskGetProduct          = "TASK_GET_PRODUCT"
 	taskGetAgent            = "TASK_GET_AGENT"
+	taskGetRole             = "TASK_GET_ROLE"
 	taskGetGroup            = "TASK_GET_GROUP"
 )
 
@@ -99,6 +100,10 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.TaskGetProduct
 	case taskGetAgent:
 		e.execute = e.TaskGetAgent
+	case taskGetRole:
+		e.execute = e.TaskGetRole
+	case taskGetGroup:
+		e.execute = e.TaskGetGroup
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}

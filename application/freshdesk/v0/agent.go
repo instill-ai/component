@@ -7,8 +7,13 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
+// This file is used to handle "Get Agent", "Get Role", "Get Skill"  and "Get Group" tasks.
+// Role, Skill and Group are common to all agents, so they are handled in the same file.
+
 const (
 	AgentPath = "agents"
+	RolePath  = "roles"
+	GroupPath = "groups"
 )
 
 // API function for Agent
@@ -18,6 +23,30 @@ func (c *FreshdeskClient) GetAgent(agentID int64) (*TaskGetAgentResponse, error)
 
 	httpReq := c.httpclient.R().SetResult(resp)
 	if _, err := httpReq.Get(fmt.Sprintf("/%s/%d", AgentPath, agentID)); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// API function for Role
+
+func (c *FreshdeskClient) GetRole(roleID int64) (*TaskGetRoleResponse, error) {
+	resp := &TaskGetRoleResponse{}
+
+	httpReq := c.httpclient.R().SetResult(resp)
+	if _, err := httpReq.Get(fmt.Sprintf("/%s/%d", RolePath, roleID)); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// API function for Group
+
+func (c *FreshdeskClient) GetGroup(groupID int64) (*TaskGetGroupResponse, error) {
+	resp := &TaskGetGroupResponse{}
+
+	httpReq := c.httpclient.R().SetResult(resp)
+	if _, err := httpReq.Get(fmt.Sprintf("/%s/%d", GroupPath, groupID)); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -105,7 +134,7 @@ func (e *execution) TaskGetAgent(in *structpb.Struct) (*structpb.Struct, error) 
 		Mobile:      resp.Contact.Mobile,
 		Phone:       resp.Contact.Phone,
 		TimeZone:    resp.Contact.TimeZone,
-		Type:        convertTypeResponse(resp.Type),
+		Type:        resp.Type,
 		TicketScope: convertTicketScopeResponse(resp.TicketScope),
 		Available:   resp.Available,
 		GroupIDs:    resp.GroupIDs,
@@ -128,20 +157,132 @@ func (e *execution) TaskGetAgent(in *structpb.Struct) (*structpb.Struct, error) 
 	return output, nil
 }
 
-func convertTypeResponse(in string) string {
-	switch in {
-	case "support_agent":
-		return "Support Agent"
-	case "field_agent":
-		return "Field Agent"
-	case "collaborator":
-		return "Collaborator"
-	default:
-		return in
-	}
+// Task 2: Get Role
+type TaskGetRoleInput struct {
+	RoleID int64 `json:"role-id"`
 }
 
-func convertTicketScopeResponse(in int) string {
+type TaskGetRoleResponse struct {
+	Description string `json:"description"`
+	Name        string `json:"name"`
+	Default     bool   `json:"default"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
+	AgentType   int    `json:"agent_type"`
+}
+
+type TaskGetRoleOutput struct {
+	Description string `json:"description"`
+	Name        string `json:"name"`
+	Default     bool   `json:"default"`
+	CreatedAt   string `json:"created-at"`
+	UpdatedAt   string `json:"updated-at"`
+	AgentType   string `json:"agent-type"`
+}
+
+func (e *execution) TaskGetRole(in *structpb.Struct) (*structpb.Struct, error) {
+
+	inputStruct := TaskGetRoleInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	resp, err := e.client.GetRole(inputStruct.RoleID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := TaskGetRoleOutput{
+		Description: resp.Description,
+		Name:        resp.Name,
+		Default:     resp.Default,
+		CreatedAt:   convertTimestampResp(resp.CreatedAt),
+		UpdatedAt:   convertTimestampResp(resp.UpdatedAt),
+		AgentType:   convertAgentTypeResponse(resp.AgentType),
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
+	}
+
+	return output, nil
+
+}
+
+// Task 3: Get Group
+type TaskGetGroupInput struct {
+	GroupID int64 `json:"group-id"`
+}
+
+type TaskGetGroupResponse struct {
+	Name                    string  `json:"name"`
+	Description             string  `json:"description"`
+	AgentIDs                []int64 `json:"agent_ids"`
+	AutoTicketAssign        int     `json:"auto_ticket_assign"`
+	EscalateTo              int64   `json:"escalate_to"`
+	UnassignedDuration      string  `json:"unassigned_for"`
+	GroupType               string  `json:"group_type"`
+	AgentAvailabilityStatus bool    `json:"agent_availability_status"`
+	CreatedAt               string  `json:"created_at"`
+	UpdatedAt               string  `json:"updated_at"`
+}
+
+type TaskGetGroupOutput struct {
+	Name                    string  `json:"name"`
+	Description             string  `json:"description"`
+	AgentIDs                []int64 `json:"agent-ids"`
+	AutoTicketAssign        string  `json:"auto-ticket-assign"`
+	EscalateTo              int64   `json:"escalate-to,omitempty"`
+	UnassignedDuration      string  `json:"unassigned-duration,omitempty"`
+	GroupType               string  `json:"group-type,omitempty"`
+	AgentAvailabilityStatus bool    `json:"agent-availability-status"`
+	CreatedAt               string  `json:"created-at"`
+	UpdatedAt               string  `json:"updated-at"`
+}
+
+func (e *execution) TaskGetGroup(in *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := TaskGetGroupInput{}
+	err := base.ConvertFromStructpb(in, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
+	}
+
+	resp, err := e.client.GetGroup(inputStruct.GroupID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct := TaskGetGroupOutput{
+		Name:                    resp.Name,
+		AgentIDs:                resp.AgentIDs,
+		AutoTicketAssign:        convertAutoTicketAssignResponse(resp.AutoTicketAssign),
+		Description:             resp.Description,
+		EscalateTo:              resp.EscalateTo,
+		UnassignedDuration:      resp.UnassignedDuration,
+		GroupType:               resp.GroupType,
+		AgentAvailabilityStatus: resp.AgentAvailabilityStatus,
+		CreatedAt:               convertTimestampResp(resp.CreatedAt),
+		UpdatedAt:               convertTimestampResp(resp.UpdatedAt),
+	}
+
+	output, err := base.ConvertToStructpb(outputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
+	}
+
+	return output, nil
+
+}
+
+func convertTicketScopeResponse(in int) string { //used in Get Agent task
 	switch in {
 	case 1:
 		return "Global Access"
@@ -151,5 +292,35 @@ func convertTicketScopeResponse(in int) string {
 		return "Restricted Access"
 	default:
 		return "Unknown"
+	}
+}
+
+func convertAgentTypeResponse(in int) string { //used in Get Role task
+	switch in {
+	case 1:
+		return "Support Agent"
+	case 2:
+		return "Field Agent"
+	case 3:
+		return "Collaborator"
+	default:
+		return "Unknown agent type"
+	}
+}
+
+func convertAutoTicketAssignResponse(in int) string {
+	switch in {
+	case 0:
+		return "Disabled"
+	case 1:
+		return "Round Robin"
+	case 2:
+		return "Skill Based Round Robin"
+	case 3:
+		return "Load Based Round Robin"
+	case 12:
+		return "Omniroute"
+	default:
+		return "Unknown automatic ticket assign type"
 	}
 }

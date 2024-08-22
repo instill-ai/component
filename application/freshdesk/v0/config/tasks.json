@@ -1880,7 +1880,7 @@
     }
   },
   "TASK_GET_ALL": {
-    "instillShortDescription": "Task to get all the IDs of existing contacts, companies, or tickets",
+    "instillShortDescription": "Task to get all the IDs of existing contacts, companies, tickets, products, agents, roles, or skills. Note: products, agents, roles, and skills require admin privileges. Some of these might not work, depending on the plan you are on.",
     "input": {
       "description": "Object type",
       "instillUIOrder": 0,
@@ -1932,7 +1932,7 @@
     }
   },
   "TASK_GET_PRODUCT":{
-    "instillShortDescription": "Get product using ID. This task only works if you have admin privileges.",
+    "instillShortDescription": "Get product using ID. This task will only work if you have admin privileges.",
     "input": {
       "description": "Product ID",
       "instillUIOrder": 0,
@@ -1978,14 +1978,14 @@
           "instillFormat":"string"
         },
         "created-at":{
-          "description": "Date when the product was created",
+          "description": "Timestamp that denotes when the product was created",
           "title": "Created At",
           "type": "string",
           "instillUIOrder": 3,
           "instillFormat":"string"
         },
         "updated-at":{
-          "description": "Date when the product was last updated",
+          "description": "Timestamp that denotes when the product was last updated",
           "title": "Updated At",
           "type": "string",
           "instillUIOrder": 4,
@@ -2005,7 +2005,7 @@
     }
   },
   "TASK_GET_AGENT":{
-    "instillShortDescription": "Get agent using ID. This task only works if you have admin privileges.",
+    "instillShortDescription": "Get agent using ID. This task will only work if you have admin privileges.",
     "input": {
       "description": "Agent ID",
       "instillUIOrder": 0,
@@ -2189,6 +2189,186 @@
         }
       },
       "required": ["email", "type", "ticket-scope", "occasional"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_ROLE":{
+    "instillShortDescription": "Get role using ID. This task will only work if you have admin privileges.",
+    "input": {
+      "description": "Role ID",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["role-id"],
+      "properties": {
+        "role-id":{
+          "description": "Role ID",
+          "title": "Role ID",
+          "type": "integer",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        }
+      },
+      "required": ["role-id"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Role information",
+      "instillUIOrder": 0,
+      "properties": {
+        "name":{
+          "description": "Name of the role",
+          "title": "Name",
+          "type": "string",
+          "instillUIOrder": 0,
+          "instillFormat":"string"
+        },
+        "description":{
+          "description": "Description of the role",
+          "title": "Description",
+          "type": "string",
+          "instillUIOrder": 1,
+          "instillFormat":"string"
+        },
+        "default":{
+          "description": "Set to true if the role is the default role",
+          "title": "Default",
+          "type": "boolean",
+          "instillUIOrder": 2,
+          "instillFormat":"boolean"
+        },
+        "agent-type":{
+          "description": "Type of the agent. Can be \"Support Agent\", \"Field Agent\" or \"Collaborator\"",
+          "title": "Agent Type",
+          "type": "string",
+          "instillUIOrder": 3,
+          "instillFormat":"string"
+        },
+        "created-at":{
+          "description": "Timestamp that denotes when the role was created",
+          "title": "Created At",
+          "type": "string",
+          "instillUIOrder": 4,
+          "instillFormat":"string"
+        },
+        "updated-at":{
+          "description": "Timestamp that denotes when the role was last updated",
+          "title": "Updated At",
+          "type": "string",
+          "instillUIOrder": 5,
+          "instillFormat":"string"
+        }
+      },
+      "required": ["name","description","default","agent-type","created-at","updated-at"],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_GET_GROUP":{
+    "instillShortDescription": "Get group using ID. This task will only work if you have admin privileges.",
+    "input": {
+      "description": "Group ID",
+      "instillUIOrder": 0,
+      "instillEditOnNodeFields": ["group-id"],
+      "properties": {
+        "group-id":{
+          "description": "Group ID",
+          "title": "Group ID",
+          "type": "integer",
+          "instillUIOrder": 0,
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
+        }
+      },
+      "required": ["group-id"],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Group information",
+      "instillUIOrder": 0,
+      "properties": {
+        "name":{
+          "description": "Name of the group",
+          "title": "Name",
+          "type": "string",
+          "instillUIOrder": 0,
+          "instillFormat":"string"
+        },
+        "description":{
+          "description": "Description of the group",
+          "title": "Description",
+          "type": "string",
+          "instillUIOrder": 1,
+          "instillFormat":"string"
+        },
+        "agent-ids":{
+          "description": "Agent IDs of the group",
+          "title": "Agent IDs",
+          "type": "array",
+          "instillUIOrder": 2,
+          "instillFormat":"array:integer",
+          "items": {
+            "title": "Agent ID",
+            "type": "integer",
+            "description": "ID of the agent",
+            "instillFormat": "integer"
+          }
+        },
+        "auto-ticket-assign":{
+          "description": "The type of automatic ticket assignment set for the group.",
+          "title": "Auto Ticket Assign",
+          "type": "string",
+          "instillUIOrder": 3,
+          "instillFormat":"string"
+        },
+        "escalate-to":{
+          "description": "The ID of the user to whom an escalation email is sent if a ticket is unassigned.",
+          "title": "Escalate To",
+          "type": "integer",
+          "instillUIOrder": 4,
+          "instillFormat":"integer"
+        },
+        "unassigned-duration":{
+          "description": "The duration for which a ticket is unassigned before it is escalated.",
+          "title": "Unassigned Duration",
+          "type": "string",
+          "instillUIOrder": 5,
+          "instillFormat":"string"
+        },
+        "group-type":{
+          "description": "Group type. Can be \"support_agent_group\" or \"field_agent_group\"",
+          "title": "Group Type",
+          "type": "string",
+          "instillUIOrder": 6,
+          "instillFormat":"string"
+        },
+        "agent-availability-status":{
+          "description": "The availability status of the agent in the group. Automatically set to true if the group has enabled \"Automatic Ticket Assignment\".",
+          "title": "Agent Availability Status",
+          "type": "boolean",
+          "instillUIOrder": 7,
+          "instillFormat":"boolean"
+        },
+        "created-at":{
+          "description": "Timestamp that denotes when the group was created",
+          "title": "Created At",
+          "type": "string",
+          "instillUIOrder": 8,
+          "instillFormat":"string"
+        },
+        "updated-at":{
+          "description": "Timestamp that denotes when the group was last updated",
+          "title": "Updated At",
+          "type": "string",
+          "instillUIOrder": 9,
+          "instillFormat":"string"
+        }
+      },
+      "required": ["name","description","auto-ticket-assign", "created-at","updated-at"],
       "title": "Output",
       "type": "object"
     }
