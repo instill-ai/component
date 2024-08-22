@@ -101,8 +101,10 @@ type Component struct {
 	taskInputSchemas  map[string]string
 	taskOutputSchemas map[string]string
 
-	definition   *pb.ComponentDefinition
-	secretFields []string
+	definition               *pb.ComponentDefinition
+	secretFields             []string
+	inputAcceptFormatsFields map[string]map[string][]string
+	outputFormatsFields      map[string]map[string]string
 }
 
 func (c *Component) HandleVerificationEvent(header map[string][]string, req *structpb.Struct, setup map[string]any) (isVerification bool, resp *structpb.Struct, err error) {
@@ -705,6 +707,8 @@ func (c *Component) LoadDefinition(definitionJSONBytes, setupJSONBytes, tasksJSO
 	}
 
 	c.initSecretField(c.definition)
+	c.initInputAcceptFormatsFields()
+	c.initOutputFormatsFields()
 
 	return nil
 
@@ -815,6 +819,101 @@ func (c *Component) traverseSecretField(input *structpb.Value, prefix string, se
 	}
 
 	return secretFields
+}
+
+func (c *Component) ListInputAcceptFormatsFields() (map[string]map[string][]string, error) {
+	return c.inputAcceptFormatsFields, nil
+}
+
+func (c *Component) initInputAcceptFormatsFields() {
+	inputAcceptFormatsFields := map[string]map[string][]string{}
+
+	for task, sch := range c.GetTaskInputSchemas() {
+		inputAcceptFormatsFields[task] = map[string][]string{}
+		input := &structpb.Struct{}
+		_ = protojson.Unmarshal([]byte(sch), input)
+		inputAcceptFormatsFields[task] = c.traverseInputAcceptFormatsFields(input.GetFields()["properties"], "", inputAcceptFormatsFields[task])
+		if l, ok := input.GetFields()["oneOf"]; ok {
+			for _, v := range l.GetListValue().Values {
+				inputAcceptFormatsFields[task] = c.traverseInputAcceptFormatsFields(v.GetStructValue().GetFields()["properties"], "", inputAcceptFormatsFields[task])
+			}
+		}
+		c.inputAcceptFormatsFields = inputAcceptFormatsFields
+	}
+
+}
+
+func (c *Component) traverseInputAcceptFormatsFields(input *structpb.Value, prefix string, inputAcceptFormatsFields map[string][]string) map[string][]string {
+	// fmt.Println("input", input)
+	for key, v := range input.GetStructValue().GetFields() {
+
+		if v, ok := v.GetStructValue().GetFields()["instillAcceptFormats"]; ok {
+			for _, f := range v.GetListValue().Values {
+				k := fmt.Sprintf("%s%s", prefix, key)
+				inputAcceptFormatsFields[k] = append(inputAcceptFormatsFields[k], f.GetStringValue())
+			}
+		}
+		if tp, ok := v.GetStructValue().GetFields()["type"]; ok {
+			if tp.GetStringValue() == "object" {
+				if l, ok := v.GetStructValue().GetFields()["oneOf"]; ok {
+					for _, v := range l.GetListValue().Values {
+						inputAcceptFormatsFields = c.traverseInputAcceptFormatsFields(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), inputAcceptFormatsFields)
+					}
+				}
+				inputAcceptFormatsFields = c.traverseInputAcceptFormatsFields(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), inputAcceptFormatsFields)
+			}
+
+		}
+	}
+
+	return inputAcceptFormatsFields
+}
+
+func (c *Component) ListOutputFormatsFields() (map[string]map[string]string, error) {
+	return c.outputFormatsFields, nil
+}
+
+func (c *Component) initOutputFormatsFields() {
+	outputFormatsFields := map[string]map[string]string{}
+
+	for task, sch := range c.GetTaskOutputSchemas() {
+		outputFormatsFields[task] = map[string]string{}
+		output := &structpb.Struct{}
+		_ = protojson.Unmarshal([]byte(sch), output)
+		outputFormatsFields[task] = c.traverseOutputFormatsFields(output.GetFields()["properties"], "", outputFormatsFields[task])
+		if l, ok := output.GetFields()["oneOf"]; ok {
+			for _, v := range l.GetListValue().Values {
+				outputFormatsFields[task] = c.traverseOutputFormatsFields(v.GetStructValue().GetFields()["properties"], "", outputFormatsFields[task])
+			}
+		}
+		c.outputFormatsFields = outputFormatsFields
+
+	}
+
+}
+
+func (c *Component) traverseOutputFormatsFields(input *structpb.Value, prefix string, outputFormatsFields map[string]string) map[string]string {
+	// fmt.Println("input", input)
+	for key, v := range input.GetStructValue().GetFields() {
+
+		if v, ok := v.GetStructValue().GetFields()["instillFormat"]; ok {
+			k := fmt.Sprintf("%s%s", prefix, key)
+			outputFormatsFields[k] = v.GetStringValue()
+		}
+		if tp, ok := v.GetStructValue().GetFields()["type"]; ok {
+			if tp.GetStringValue() == "object" {
+				if l, ok := v.GetStructValue().GetFields()["oneOf"]; ok {
+					for _, v := range l.GetListValue().Values {
+						outputFormatsFields = c.traverseOutputFormatsFields(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), outputFormatsFields)
+					}
+				}
+				outputFormatsFields = c.traverseOutputFormatsFields(v.GetStructValue().GetFields()["properties"], fmt.Sprintf("%s%s.", prefix, key), outputFormatsFields)
+			}
+
+		}
+	}
+
+	return outputFormatsFields
 }
 
 // UsageHandlerCreator returns a function to initialize a UsageHandler. If the

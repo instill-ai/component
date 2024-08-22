@@ -1,9 +1,5 @@
 package openai
 
-const (
-	listModelsPath = "/v1/models"
-)
-
 // Model represents a OpenAI Model
 type Model struct {
 	ID         string            `json:"id"`

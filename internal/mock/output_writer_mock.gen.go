@@ -17,8 +17,8 @@ type OutputWriterMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcWrite          func(ctx context.Context, output []*structpb.Struct) (err error)
-	inspectFuncWrite   func(ctx context.Context, output []*structpb.Struct)
+	funcWrite          func(ctx context.Context, outputs []*structpb.Struct) (err error)
+	inspectFuncWrite   func(ctx context.Context, outputs []*structpb.Struct)
 	afterWriteCounter  uint64
 	beforeWriteCounter uint64
 	WriteMock          mOutputWriterMockWrite
@@ -63,14 +63,14 @@ type OutputWriterMockWriteExpectation struct {
 
 // OutputWriterMockWriteParams contains parameters of the OutputWriter.Write
 type OutputWriterMockWriteParams struct {
-	ctx    context.Context
-	output []*structpb.Struct
+	ctx     context.Context
+	outputs []*structpb.Struct
 }
 
 // OutputWriterMockWriteParamPtrs contains pointers to parameters of the OutputWriter.Write
 type OutputWriterMockWriteParamPtrs struct {
-	ctx    *context.Context
-	output *[]*structpb.Struct
+	ctx     *context.Context
+	outputs *[]*structpb.Struct
 }
 
 // OutputWriterMockWriteResults contains results of the OutputWriter.Write
@@ -89,7 +89,7 @@ func (mmWrite *mOutputWriterMockWrite) Optional() *mOutputWriterMockWrite {
 }
 
 // Expect sets up expected params for OutputWriter.Write
-func (mmWrite *mOutputWriterMockWrite) Expect(ctx context.Context, output []*structpb.Struct) *mOutputWriterMockWrite {
+func (mmWrite *mOutputWriterMockWrite) Expect(ctx context.Context, outputs []*structpb.Struct) *mOutputWriterMockWrite {
 	if mmWrite.mock.funcWrite != nil {
 		mmWrite.mock.t.Fatalf("OutputWriterMock.Write mock is already set by Set")
 	}
@@ -102,7 +102,7 @@ func (mmWrite *mOutputWriterMockWrite) Expect(ctx context.Context, output []*str
 		mmWrite.mock.t.Fatalf("OutputWriterMock.Write mock is already set by ExpectParams functions")
 	}
 
-	mmWrite.defaultExpectation.params = &OutputWriterMockWriteParams{ctx, output}
+	mmWrite.defaultExpectation.params = &OutputWriterMockWriteParams{ctx, outputs}
 	for _, e := range mmWrite.expectations {
 		if minimock.Equal(e.params, mmWrite.defaultExpectation.params) {
 			mmWrite.mock.t.Fatalf("Expectation set by When has same params: %#v", *mmWrite.defaultExpectation.params)
@@ -134,8 +134,8 @@ func (mmWrite *mOutputWriterMockWrite) ExpectCtxParam1(ctx context.Context) *mOu
 	return mmWrite
 }
 
-// ExpectOutputParam2 sets up expected param output for OutputWriter.Write
-func (mmWrite *mOutputWriterMockWrite) ExpectOutputParam2(output []*structpb.Struct) *mOutputWriterMockWrite {
+// ExpectOutputsParam2 sets up expected param outputs for OutputWriter.Write
+func (mmWrite *mOutputWriterMockWrite) ExpectOutputsParam2(outputs []*structpb.Struct) *mOutputWriterMockWrite {
 	if mmWrite.mock.funcWrite != nil {
 		mmWrite.mock.t.Fatalf("OutputWriterMock.Write mock is already set by Set")
 	}
@@ -151,13 +151,13 @@ func (mmWrite *mOutputWriterMockWrite) ExpectOutputParam2(output []*structpb.Str
 	if mmWrite.defaultExpectation.paramPtrs == nil {
 		mmWrite.defaultExpectation.paramPtrs = &OutputWriterMockWriteParamPtrs{}
 	}
-	mmWrite.defaultExpectation.paramPtrs.output = &output
+	mmWrite.defaultExpectation.paramPtrs.outputs = &outputs
 
 	return mmWrite
 }
 
 // Inspect accepts an inspector function that has same arguments as the OutputWriter.Write
-func (mmWrite *mOutputWriterMockWrite) Inspect(f func(ctx context.Context, output []*structpb.Struct)) *mOutputWriterMockWrite {
+func (mmWrite *mOutputWriterMockWrite) Inspect(f func(ctx context.Context, outputs []*structpb.Struct)) *mOutputWriterMockWrite {
 	if mmWrite.mock.inspectFuncWrite != nil {
 		mmWrite.mock.t.Fatalf("Inspect function is already set for OutputWriterMock.Write")
 	}
@@ -181,7 +181,7 @@ func (mmWrite *mOutputWriterMockWrite) Return(err error) *OutputWriterMock {
 }
 
 // Set uses given function f to mock the OutputWriter.Write method
-func (mmWrite *mOutputWriterMockWrite) Set(f func(ctx context.Context, output []*structpb.Struct) (err error)) *OutputWriterMock {
+func (mmWrite *mOutputWriterMockWrite) Set(f func(ctx context.Context, outputs []*structpb.Struct) (err error)) *OutputWriterMock {
 	if mmWrite.defaultExpectation != nil {
 		mmWrite.mock.t.Fatalf("Default expectation is already set for the OutputWriter.Write method")
 	}
@@ -196,14 +196,14 @@ func (mmWrite *mOutputWriterMockWrite) Set(f func(ctx context.Context, output []
 
 // When sets expectation for the OutputWriter.Write which will trigger the result defined by the following
 // Then helper
-func (mmWrite *mOutputWriterMockWrite) When(ctx context.Context, output []*structpb.Struct) *OutputWriterMockWriteExpectation {
+func (mmWrite *mOutputWriterMockWrite) When(ctx context.Context, outputs []*structpb.Struct) *OutputWriterMockWriteExpectation {
 	if mmWrite.mock.funcWrite != nil {
 		mmWrite.mock.t.Fatalf("OutputWriterMock.Write mock is already set by Set")
 	}
 
 	expectation := &OutputWriterMockWriteExpectation{
 		mock:   mmWrite.mock,
-		params: &OutputWriterMockWriteParams{ctx, output},
+		params: &OutputWriterMockWriteParams{ctx, outputs},
 	}
 	mmWrite.expectations = append(mmWrite.expectations, expectation)
 	return expectation
@@ -236,15 +236,15 @@ func (mmWrite *mOutputWriterMockWrite) invocationsDone() bool {
 }
 
 // Write implements base.OutputWriter
-func (mmWrite *OutputWriterMock) Write(ctx context.Context, output []*structpb.Struct) (err error) {
+func (mmWrite *OutputWriterMock) Write(ctx context.Context, outputs []*structpb.Struct) (err error) {
 	mm_atomic.AddUint64(&mmWrite.beforeWriteCounter, 1)
 	defer mm_atomic.AddUint64(&mmWrite.afterWriteCounter, 1)
 
 	if mmWrite.inspectFuncWrite != nil {
-		mmWrite.inspectFuncWrite(ctx, output)
+		mmWrite.inspectFuncWrite(ctx, outputs)
 	}
 
-	mm_params := OutputWriterMockWriteParams{ctx, output}
+	mm_params := OutputWriterMockWriteParams{ctx, outputs}
 
 	// Record call args
 	mmWrite.WriteMock.mutex.Lock()
@@ -263,7 +263,7 @@ func (mmWrite *OutputWriterMock) Write(ctx context.Context, output []*structpb.S
 		mm_want := mmWrite.WriteMock.defaultExpectation.params
 		mm_want_ptrs := mmWrite.WriteMock.defaultExpectation.paramPtrs
 
-		mm_got := OutputWriterMockWriteParams{ctx, output}
+		mm_got := OutputWriterMockWriteParams{ctx, outputs}
 
 		if mm_want_ptrs != nil {
 
@@ -271,8 +271,8 @@ func (mmWrite *OutputWriterMock) Write(ctx context.Context, output []*structpb.S
 				mmWrite.t.Errorf("OutputWriterMock.Write got unexpected parameter ctx, want: %#v, got: %#v%s\n", *mm_want_ptrs.ctx, mm_got.ctx, minimock.Diff(*mm_want_ptrs.ctx, mm_got.ctx))
 			}
 
-			if mm_want_ptrs.output != nil && !minimock.Equal(*mm_want_ptrs.output, mm_got.output) {
-				mmWrite.t.Errorf("OutputWriterMock.Write got unexpected parameter output, want: %#v, got: %#v%s\n", *mm_want_ptrs.output, mm_got.output, minimock.Diff(*mm_want_ptrs.output, mm_got.output))
+			if mm_want_ptrs.outputs != nil && !minimock.Equal(*mm_want_ptrs.outputs, mm_got.outputs) {
+				mmWrite.t.Errorf("OutputWriterMock.Write got unexpected parameter outputs, want: %#v, got: %#v%s\n", *mm_want_ptrs.outputs, mm_got.outputs, minimock.Diff(*mm_want_ptrs.outputs, mm_got.outputs))
 			}
 
 		} else if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
@@ -286,9 +286,9 @@ func (mmWrite *OutputWriterMock) Write(ctx context.Context, output []*structpb.S
 		return (*mm_results).err
 	}
 	if mmWrite.funcWrite != nil {
-		return mmWrite.funcWrite(ctx, output)
+		return mmWrite.funcWrite(ctx, outputs)
 	}
-	mmWrite.t.Fatalf("Unexpected call to OutputWriterMock.Write. %v %v", ctx, output)
+	mmWrite.t.Fatalf("Unexpected call to OutputWriterMock.Write. %v %v", ctx, outputs)
 	return
 }
 
