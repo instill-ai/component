@@ -83,7 +83,7 @@ func TestConvertToText(t *testing.T) {
 
 			input := &structpb.Struct{
 				Fields: map[string]*structpb.Value{
-					"doc": {Kind: &structpb.Value_StringValue{StringValue: base64DataURI}},
+					"document": {Kind: &structpb.Value_StringValue{StringValue: base64DataURI}},
 				},
 			}
 			inputs := []*structpb.Struct{

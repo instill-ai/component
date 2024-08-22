@@ -43,8 +43,8 @@ var (
 
 // ConvertToTextInput defines the input for convert to text task
 type ConvertToTextInput struct {
-	// Doc: Document to convert
-	Doc      string `json:"doc"`
+	// Document: Document to convert
+	Document string `json:"document"`
 	Filename string `json:"filename"`
 }
 
@@ -112,12 +112,12 @@ func isSupportedByDocconvConvert(contentType string) bool {
 
 func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
 
-	contentType, err := util.GetContentTypeFromBase64(input.Doc)
+	contentType, err := util.GetContentTypeFromBase64(input.Document)
 	if err != nil {
 		return ConvertToTextOutput{}, err
 	}
 
-	b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(input.Doc))
+	b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(input.Document))
 	if err != nil {
 		return ConvertToTextOutput{}, err
 	}

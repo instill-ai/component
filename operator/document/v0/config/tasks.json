@@ -73,12 +73,12 @@
     "input": {
       "description": "Input",
       "instillEditOnNodeFields": [
-        "doc"
+        "document"
       ],
       "instillUIOrder": 0,
       "properties": {
-        "doc": {
-          "description": "Base64 encoded document (PDF, DOC, DOCX, XML, HTML, RTF, etc.) to be converted to plain text",
+        "document": {
+          "description": "Base64 encoded PDF/DOC/DOCX/XML/HTML/RTF/MD/PPTX/ODT/TIF/CSV/TXT/PNG document to be converted to plain text",
           "instillAcceptFormats": [
             "*/*"
           ],
@@ -105,7 +105,7 @@
         }
       },
       "required": [
-        "doc"
+        "document"
       ],
       "title": "Input",
       "type": "object"
