@@ -1161,7 +1161,7 @@
       "type": "object"
     },
     "output": {
-      "description": "Create an issue in Jira",
+      "description": "Update an issue in Jira",
       "instillUIOrder": 0,
       "$ref": "#/$defs/issue",
       "title": "Output",
@@ -1419,7 +1419,7 @@
       "type": "object"
     },
     "output": {
-      "description": "Create a sprint in Jira",
+      "description": "Update a sprint in Jira",
       "instillUIOrder": 0,
       "$ref": "#/$defs/sprint",
       "title": "Output",

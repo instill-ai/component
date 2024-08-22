@@ -459,7 +459,7 @@ func (jiraClient *Client) updateIssueTask(ctx context.Context, props *structpb.S
 			if _, err = jiraClient.updateIssue(ctx, &input); err != nil {
 				return nil, errmsg.AddMessage(
 					fmt.Errorf("failed to update issue with parent key"),
-					"You can only move issues to epics.",
+					"You can only move issues to epics. The Jira API response with: "+errmsg.Message(err),
 				)
 			}
 		}
