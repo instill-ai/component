@@ -7,6 +7,7 @@ import (
 
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -168,7 +169,19 @@ func TestComponent_ExecuteSendTemplateMessageTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			pbOut, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+
+				outJSON, err := protojson.Marshal(outputs[0])
+				c.Assert(err, qt.IsNil)
+
+				c.Check(outJSON, qt.JSONEquals, tc.wantOutput)
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
@@ -177,10 +190,6 @@ func TestComponent_ExecuteSendTemplateMessageTask(t *testing.T) {
 
 			c.Assert(err, qt.IsNil)
 
-			outJSON, err := protojson.Marshal(pbOut[0])
-			c.Assert(err, qt.IsNil)
-
-			c.Check(outJSON, qt.JSONEquals, tc.wantOutput)
 		})
 	}
 }

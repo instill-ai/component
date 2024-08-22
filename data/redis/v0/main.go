@@ -56,12 +56,16 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	}, nil
 }
 
-func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 	outputs := []*structpb.Struct{}
 
 	client, err := NewClient(e.Setup)
 	if err != nil {
-		return outputs, err
+		return err
 	}
 	defer client.Close()
 
@@ -72,41 +76,41 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 			inputStruct := ChatMessageWriteInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputStruct := WriteMessage(client, inputStruct)
 			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 		case taskWriteMultiModalChatMessage:
 			inputStruct := ChatMultiModalMessageWriteInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputStruct := WriteMultiModelMessage(client, inputStruct)
 			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 		case taskRetrieveChatHistory:
 			inputStruct := ChatHistoryRetrieveInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputStruct := RetrieveSessionMessages(client, inputStruct)
 			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 		default:
-			return nil, fmt.Errorf("unsupported task: %s", e.Task)
+			return fmt.Errorf("unsupported task: %s", e.Task)
 		}
 		outputs = append(outputs, output)
 	}
-	return outputs, nil
+	return out.Write(ctx, outputs)
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {

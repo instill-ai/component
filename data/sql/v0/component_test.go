@@ -10,6 +10,7 @@ import (
 	"github.com/DATA-DOG/go-sqlmock"
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"github.com/jmoiron/sqlx"
 
 	"go.uber.org/zap"
@@ -144,16 +145,23 @@ func TestComponent_ExecuteInsertTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -205,16 +213,23 @@ func TestComponent_ExecuteInsertManyTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -268,16 +283,23 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -331,16 +353,23 @@ func TestComponent_ExecuteSelectTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -390,16 +419,23 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -452,16 +488,23 @@ func TestComponent_ExecuteCreateTableTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -510,16 +553,23 @@ func TestComponent_ExecuteDropTableTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = e.Execute(ctx, ir, ow)
 
 			if tc.wantErr != "" {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
 				return
 			}
 
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }

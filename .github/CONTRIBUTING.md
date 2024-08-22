@@ -555,8 +555,11 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 
 	return e, nil
 }
-
-func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 	outputs := make([]*structpb.Struct, len(inputs))
 
 	// An execution  might take several inputs. One result will be returned for
@@ -571,7 +574,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 		outputs[i] = output
 	}
 
-	return outputs, nil
+	return out.Write(ctx, outputs)
 }
 
 func (e *execution) greet(in *structpb.Struct) (*structpb.Struct, error) {

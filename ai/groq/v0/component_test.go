@@ -13,6 +13,7 @@ import (
 	qt "github.com/frankban/quicktest"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 )
 
 const (
@@ -128,12 +129,19 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "llama-3.1-405b-reasoning", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
-		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			wantJSON, err := json.Marshal(TaskTextGenerationChatOuput{Text: "\nWhy did the tomato turn red?\nAnswer: Because it saw the salad dressing", Usage: TaskTextGenerationChatUsage{InputTokens: 24, OutputTokens: 377}})
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			return nil
+		})
+
+		err = e.Execute(ctx, ir, ow)
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(TaskTextGenerationChatOuput{Text: "\nWhy did the tomato turn red?\nAnswer: Because it saw the salad dressing", Usage: TaskTextGenerationChatUsage{InputTokens: 24, OutputTokens: 377}})
-		c.Assert(err, qt.IsNil)
-		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
 
 	c.Run("nok - task text generation", func(c *qt.C) {
@@ -150,7 +158,12 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "gemini", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
-		_, err = e.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Return(nil)
+
+		err = e.Execute(ctx, ir, ow)
 		c.Assert(err, qt.ErrorMatches, `error when sending chat request no access to "gemini"`)
 	})
 

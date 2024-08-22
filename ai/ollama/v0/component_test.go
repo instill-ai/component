@@ -13,6 +13,7 @@ import (
 	qt "github.com/frankban/quicktest"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 )
 
 func TestComponent_Tasks(t *testing.T) {
@@ -77,12 +78,19 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "moondream", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
-		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			wantJSON, err := json.Marshal(TaskTextGenerationChatOuput{Text: "\nWhy did the tomato turn red?\nAnswer: Because it saw the salad dressing"})
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			return nil
+		})
+
+		err = e.Execute(ctx, ir, ow)
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(TaskTextGenerationChatOuput{Text: "\nWhy did the tomato turn red?\nAnswer: Because it saw the salad dressing"})
-		c.Assert(err, qt.IsNil)
-		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
 
 	c.Run("nok - task text generation", func(c *qt.C) {
@@ -100,7 +108,12 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "gemini", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
-		_, err = e.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Return(nil)
+
+		err = e.Execute(ctx, ir, ow)
 		c.Assert(err, qt.ErrorMatches, `error when sending chat request model "gemini" not found, try pulling it first`)
 	})
 
@@ -119,12 +132,19 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "snowflake-arctic-embed:22m", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
 		c.Assert(err, qt.IsNil)
 
-		got, err := e.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			wantJSON, err := json.Marshal(TaskTextEmbeddingsOutput{Embedding: []float32{0.1, 0.2, 0.3, 0.4, 0.5}})
+			c.Assert(err, qt.IsNil)
+			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			return nil
+		})
+
+		err = e.Execute(ctx, ir, ow)
 		c.Assert(err, qt.IsNil)
 
-		wantJSON, err := json.Marshal(TaskTextEmbeddingsOutput{Embedding: []float32{0.1, 0.2, 0.3, 0.4, 0.5}})
-		c.Assert(err, qt.IsNil)
-		c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 	})
 
 	c.Run("nok - task embedding", func(c *qt.C) {
@@ -142,7 +162,12 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "snowflake-arctic-embed:23m", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
 		c.Assert(err, qt.IsNil)
 
-		_, err = e.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Return(nil)
+
+		err = e.Execute(ctx, ir, ow)
 		c.Assert(err, qt.ErrorMatches, `error when sending embeddings request model "snowflake-arctic-embed:23m" not found, try pulling it first`)
 	})
 

@@ -79,11 +79,14 @@ func getRequestMetadata(vars map[string]any) metadata.MD {
 	return md
 }
 
-func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
-	var err error
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 
 	if len(inputs) <= 0 || inputs[0] == nil {
-		return inputs, fmt.Errorf("invalid input")
+		return fmt.Errorf("invalid input")
 	}
 
 	// TODO, we should move this to CreateExecution
@@ -124,10 +127,14 @@ func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*
 	case commonPB.Task_TASK_IMAGE_TO_IMAGE.String():
 		result, err = e.executeImageToImage(gRPCClient, nsID, modelID, version, inputs)
 	default:
-		return inputs, fmt.Errorf("unsupported task: %s", e.Task)
+		return fmt.Errorf("unsupported task: %s", e.Task)
+	}
+	if err != nil {
+		return err
 	}
 
-	return result, err
+	return out.Write(ctx, result)
+
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {

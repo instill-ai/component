@@ -105,7 +105,11 @@ func (e *execution) UsesInstillCredentials() bool {
 	return e.usesInstillCredentials
 }
 
-func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 	client := newClient(e.Setup, e.GetLogger())
 	outputs := []*structpb.Struct{}
 
@@ -114,55 +118,55 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 		case TextToImageTask:
 			params, err := parseTextToImageReq(input)
 			if err != nil {
-				return inputs, err
+				return err
 			}
 
 			resp := ImageTaskRes{}
 			req := client.R().SetResult(&resp).SetBody(params)
 
 			if _, err := req.Post(params.path); err != nil {
-				return inputs, err
+				return err
 			}
 
 			output, err := textToImageOutput(resp)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 		case ImageToImageTask:
 			params, err := parseImageToImageReq(input)
 			if err != nil {
-				return inputs, err
+				return err
 			}
 
 			data, ct, err := params.getBytes()
 			if err != nil {
-				return inputs, err
+				return err
 			}
 
 			resp := ImageTaskRes{}
 			req := client.R().SetBody(data).SetResult(&resp).SetHeader("Content-Type", ct)
 
 			if _, err := req.Post(params.path); err != nil {
-				return inputs, err
+				return err
 			}
 
 			output, err := imageToImageOutput(resp)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			outputs = append(outputs, output)
 
 		default:
-			return nil, errmsg.AddMessage(
+			return errmsg.AddMessage(
 				fmt.Errorf("not supported task: %s", e.Task),
 				fmt.Sprintf("%s task is not supported.", e.Task),
 			)
 		}
 	}
-	return outputs, nil
+	return out.Write(ctx, outputs)
 }
 
 // Test checks the connector state.

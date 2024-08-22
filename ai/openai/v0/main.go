@@ -112,7 +112,11 @@ func (e *execution) UsesInstillCredentials() bool {
 	return e.usesInstillCredentials
 }
 
-func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 	client := newClient(e.Setup, e.GetLogger())
 	outputs := []*structpb.Struct{}
 
@@ -122,7 +126,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			inputStruct := TextCompletionInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			messages := []interface{}{}
@@ -154,7 +158,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			for _, image := range inputStruct.Images {
 				b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(image))
 				if err != nil {
-					return nil, err
+					return err
 				}
 				url := fmt.Sprintf("data:%s;base64,%s", mimetype.Detect(b).String(), base.TrimBase64Mime(image))
 				userContents = append(userContents, content{Type: "image_url", ImageURL: &imageURL{URL: url}})
@@ -184,7 +188,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 							if inputStruct.ResponseFormat.JSONSchema != "" {
 								err = json.Unmarshal([]byte(inputStruct.ResponseFormat.JSONSchema), &sch)
 								if err != nil {
-									return nil, err
+									return err
 								}
 								body.ResponseFormat = &responseFormatReqStruct{
 									Type:       inputStruct.ResponseFormat.Type,
@@ -193,7 +197,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 							}
 
 						} else {
-							return nil, fmt.Errorf("this model doesn't support response format: json_schema")
+							return fmt.Errorf("this model doesn't support response format: json_schema")
 						}
 
 					}
@@ -204,7 +208,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			resp := textCompletionResp{}
 			req := client.R().SetResult(&resp).SetBody(body)
 			if _, err := req.Post(completionsPath); err != nil {
-				return inputs, err
+				return err
 			}
 
 			outputStruct := TextCompletionOutput{
@@ -217,12 +221,12 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 			outputJSON, err := json.Marshal(outputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			output := structpb.Struct{}
 			err = protojson.Unmarshal(outputJSON, &output)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputs = append(outputs, &output)
 
@@ -230,7 +234,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			inputStruct := TextEmbeddingsInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			resp := TextEmbeddingsResp{}
@@ -252,7 +256,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			req := client.R().SetBody(reqParams).SetResult(&resp)
 
 			if _, err := req.Post(embeddingsPath); err != nil {
-				return inputs, err
+				return err
 			}
 
 			outputStruct := TextEmbeddingsOutput{
@@ -261,7 +265,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 			output, err := base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputs = append(outputs, output)
 
@@ -269,12 +273,12 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			inputStruct := AudioTranscriptionInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			audioBytes, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(inputStruct.Audio))
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			data, ct, err := getBytes(AudioTranscriptionReq{
@@ -288,18 +292,18 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 				ResponseFormat: "verbose_json",
 			})
 			if err != nil {
-				return inputs, err
+				return err
 			}
 
 			resp := AudioTranscriptionResp{}
 			req := client.R().SetBody(data).SetResult(&resp).SetHeader("Content-Type", ct)
 			if _, err := req.Post(transcriptionsPath); err != nil {
-				return inputs, err
+				return err
 			}
 
 			output, err := base.ConvertToStructpb(resp)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputs = append(outputs, output)
 
@@ -307,7 +311,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			inputStruct := TextToSpeechInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			req := client.R().SetBody(TextToSpeechReq{
@@ -320,7 +324,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 			resp, err := req.Post(createSpeechPath)
 			if err != nil {
-				return inputs, err
+				return err
 			}
 
 			audio := base64.StdEncoding.EncodeToString(resp.Body())
@@ -330,7 +334,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 			output, err := base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputs = append(outputs, output)
 
@@ -339,7 +343,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			inputStruct := ImagesGenerationInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			resp := ImageGenerationsResp{}
@@ -354,7 +358,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			}).SetResult(&resp)
 
 			if _, err := req.Post(imgGenerationPath); err != nil {
-				return inputs, err
+				return err
 			}
 
 			results := []ImageGenerationsOutputResult{}
@@ -370,19 +374,19 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 			output, err := base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			outputs = append(outputs, output)
 
 		default:
-			return nil, errmsg.AddMessage(
+			return errmsg.AddMessage(
 				fmt.Errorf("not supported task: %s", e.Task),
 				fmt.Sprintf("%s task is not supported.", e.Task),
 			)
 		}
 	}
 
-	return outputs, nil
+	return out.Write(ctx, outputs)
 }
 
 // Test checks the connector state.

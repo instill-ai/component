@@ -7,6 +7,7 @@ import (
 	hubspot "github.com/belong-inc/go-hubspot"
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -133,14 +134,19 @@ func TestComponent_ExecuteGetContactTask(t *testing.T) {
 
 		c.Assert(err, qt.IsNil)
 
-		res, err := e.Execute(ctx, []*structpb.Struct{pbInput})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbInput}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			resJSON, err := protojson.Marshal(outputs[0])
+			c.Assert(err, qt.IsNil)
+
+			c.Check(resJSON, qt.JSONEquals, tc.wantResp)
+			return nil
+		})
+		err = e.Execute(ctx, ir, ow)
 
 		c.Assert(err, qt.IsNil)
-
-		resJSON, err := protojson.Marshal(res[0])
-		c.Assert(err, qt.IsNil)
-
-		c.Check(resJSON, qt.JSONEquals, tc.wantResp)
 
 	})
 }
@@ -181,12 +187,17 @@ func TestComponent_ExecuteCreateContactTask(t *testing.T) {
 
 		c.Assert(err, qt.IsNil)
 
-		res, err := e.Execute(ctx, []*structpb.Struct{pbInput})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbInput}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			resString := outputs[0].Fields["contact-id"].GetStringValue()
+
+			c.Check(resString, qt.Equals, tc.wantResp)
+			return nil
+		})
+		err = e.Execute(ctx, ir, ow)
 		c.Assert(err, qt.IsNil)
-
-		resString := res[0].Fields["contact-id"].GetStringValue()
-
-		c.Check(resString, qt.Equals, tc.wantResp)
 
 	})
 }

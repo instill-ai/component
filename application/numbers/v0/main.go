@@ -205,7 +205,11 @@ func (e *execution) registerAsset(data []byte, reg Register) (string, error) {
 	}
 }
 
-func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 
 	var outputs []*structpb.Struct
 
@@ -216,13 +220,13 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 		inputStruct := Input{}
 		err := base.ConvertFromStructpb(input, &inputStruct)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		for _, image := range inputStruct.Images {
 			imageBytes, err := b64.StdEncoding.DecodeString(base.TrimBase64Mime(image))
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			var commitLicense *CommitCustomLicense
@@ -259,7 +263,7 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 			}
 			assetCid, err := e.registerAsset(imageBytes, reg)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			assetUrls = append(assetUrls, fmt.Sprintf("https://verify.numbersprotocol.io/asset-profile?nid=%s", assetCid))
@@ -271,13 +275,13 @@ func (e *execution) Execute(_ context.Context, inputs []*structpb.Struct) ([]*st
 
 		output, err := base.ConvertToStructpb(outputStruct)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		outputs = append(outputs, output)
 
 	}
 
-	return outputs, nil
+	return out.Write(ctx, outputs)
 
 }
 

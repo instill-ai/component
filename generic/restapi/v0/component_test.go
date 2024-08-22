@@ -13,6 +13,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 )
@@ -47,7 +48,12 @@ func TestComponent_Execute(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		_, err = exec.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Return(nil)
+
+		err = exec.Execute(ctx, ir, ow)
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -90,12 +96,19 @@ func TestComponent_Execute(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			resp := outputs[0].AsMap()
+			c.Check(resp["status-code"], qt.Equals, float64(http.StatusBadRequest))
+			c.Check(resp["body"], qt.ContentEquals, map[string]any{"message": "Bad request"})
+			return nil
+		})
+
+		err = exec.Execute(ctx, ir, ow)
 		c.Check(err, qt.IsNil)
 
-		resp := got[0].AsMap()
-		c.Check(resp["status-code"], qt.Equals, float64(http.StatusBadRequest))
-		c.Check(resp["body"], qt.ContentEquals, map[string]any{"message": "Bad request"})
 	})
 
 	c.Run("ok - PUT + query auth", func(c *qt.C) {
@@ -125,12 +138,19 @@ func TestComponent_Execute(t *testing.T) {
 
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			resp := outputs[0].AsMap()
+			c.Check(resp["status-code"], qt.Equals, float64(http.StatusOK))
+			c.Check(resp["body"], qt.ContentEquals, map[string]any{"title": "Be the wheel"})
+			return nil
+		})
+
+		err = exec.Execute(ctx, ir, ow)
 		c.Check(err, qt.IsNil)
 
-		resp := got[0].AsMap()
-		c.Check(resp["status-code"], qt.Equals, float64(http.StatusOK))
-		c.Check(resp["body"], qt.ContentEquals, map[string]any{"title": "Be the wheel"})
 	})
 
 	c.Run("ok - GET + bearer auth", func(c *qt.C) {
@@ -160,12 +180,19 @@ func TestComponent_Execute(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+		ir := mock.NewInputReaderMock(c)
+		ow := mock.NewOutputWriterMock(c)
+		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			resp := outputs[0].AsMap()
+			c.Check(resp["status-code"], qt.Equals, float64(http.StatusOK))
+			c.Check(resp["body"], qt.ContentEquals, map[string]any{"title": "Be the wheel"})
+			return nil
+		})
+
+		err = exec.Execute(ctx, ir, ow)
 		c.Check(err, qt.IsNil)
 
-		resp := got[0].AsMap()
-		c.Check(resp["status-code"], qt.Equals, float64(http.StatusOK))
-		c.Check(resp["body"], qt.ContentEquals, map[string]any{"title": "Be the wheel"})
 	})
 }
 

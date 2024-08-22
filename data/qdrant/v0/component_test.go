@@ -9,11 +9,14 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
-	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/util/httpclient"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/mock"
+	"github.com/instill-ai/component/internal/util/httpclient"
 )
 
 func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
@@ -126,13 +129,20 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs, qt.HasLen, 1)
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = exec.Execute(ctx, ir, ow)
 			c.Check(err, qt.IsNil)
 
-			c.Assert(got, qt.HasLen, 1)
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -228,13 +238,20 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs, qt.HasLen, 1)
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = exec.Execute(ctx, ir, ow)
 			c.Check(err, qt.IsNil)
 
-			c.Assert(got, qt.HasLen, 1)
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -329,13 +346,20 @@ func TestComponent_ExecuteUpsertTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs, qt.HasLen, 1)
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = exec.Execute(ctx, ir, ow)
 			c.Check(err, qt.IsNil)
 
-			c.Assert(got, qt.HasLen, 1)
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -432,14 +456,20 @@ func TestComponent_ExecuteBatchUpsertTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs, qt.HasLen, 1)
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = exec.Execute(ctx, ir, ow)
 			c.Check(err, qt.IsNil)
 
-			c.Assert(got, qt.HasLen, 1)
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -529,14 +559,20 @@ func TestComponent_ExecuteCreateCollectionTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs, qt.HasLen, 1)
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = exec.Execute(ctx, ir, ow)
 			c.Check(err, qt.IsNil)
 
-			c.Assert(got, qt.HasLen, 1)
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
@@ -608,14 +644,20 @@ func TestComponent_ExecuteDeleteCollectionTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			got, err := exec.Execute(ctx, []*structpb.Struct{pbIn})
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs, qt.HasLen, 1)
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = exec.Execute(ctx, ir, ow)
 			c.Check(err, qt.IsNil)
 
-			c.Assert(got, qt.HasLen, 1)
-			wantJSON, err := json.Marshal(tc.wantResp)
-			c.Assert(err, qt.IsNil)
-
-			c.Check(wantJSON, qt.JSONEquals, got[0].AsMap())
 		})
 	}
 }
