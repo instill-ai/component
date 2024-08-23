@@ -14,7 +14,7 @@ import (
 // API functions for Thread
 
 type ThreadService interface {
-	Get(threadID string) (*TaskGetThreadResp, error)
+	Get(threadID string, param string) (*TaskGetThreadResp, error)
 	Insert(threadID string, message *TaskInsertMessageReq) (*TaskInsertMessageResp, error)
 }
 
@@ -23,9 +23,9 @@ type ThreadServiceOp struct {
 	client     *hubspot.Client
 }
 
-func (s *ThreadServiceOp) Get(threadID string) (*TaskGetThreadResp, error) {
+func (s *ThreadServiceOp) Get(threadID string, param string) (*TaskGetThreadResp, error) {
 	resource := &TaskGetThreadResp{}
-	if err := s.client.Get(s.threadPath+"/"+threadID+"/messages", resource, nil); err != nil {
+	if err := s.client.Get(s.threadPath+"/"+threadID+"/messages"+param, resource, nil); err != nil {
 		return nil, err
 	}
 	return resource, nil
@@ -51,6 +51,7 @@ type TaskGetThreadInput struct {
 
 type TaskGetThreadResp struct {
 	Results []taskGetThreadRespResult `json:"results"`
+	Paging  *taskGetThreadRespPaging  `json:"paging,omitempty"`
 }
 
 type taskGetThreadRespResult struct {
@@ -62,6 +63,13 @@ type taskGetThreadRespResult struct {
 	ChannelID        string                  `json:"channelId,omitempty"`
 	ChannelAccountID string                  `json:"channelAccountId,omitempty"`
 	Type             string                  `json:"type,omitempty"`
+}
+
+type taskGetThreadRespPaging struct {
+	Next struct {
+		Link  string `json:"link"`
+		After string `json:"after"`
+	} `json:"next"`
 }
 
 type taskGetThreadRespUser struct {
@@ -78,7 +86,8 @@ type taskGetThreadRespIdentifier struct {
 // Get Thread Output structs
 
 type TaskGetThreadOutput struct {
-	Results []taskGetThreadOutputResult `json:"results"`
+	Results      []taskGetThreadOutputResult `json:"results"`
+	NoOfMessages int                         `json:"no-of-messages"`
 }
 
 type taskGetThreadOutputResult struct {
@@ -113,65 +122,80 @@ func (e *execution) GetThread(input *structpb.Struct) (*structpb.Struct, error) 
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
-	res, err := e.client.Thread.Get(inputStruct.ThreadID)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// convert to output struct
-
+	var param string
 	outputStruct := TaskGetThreadOutput{}
+	for {
+		res, err := e.client.Thread.Get(inputStruct.ThreadID, param)
 
-	for _, value1 := range res.Results {
-		// this way, the output will only contain the actual messages in the thread (ignore system message from hubspot)
-		if value1.Type != "MESSAGE" {
-			continue
+		if err != nil {
+			return nil, err
 		}
 
-		resultOutput := taskGetThreadOutputResult{
-			CreatedAt:        value1.CreatedAt,
-			Text:             value1.Text,
-			Subject:          value1.Subject,
-			ChannelID:        value1.ChannelID,
-			ChannelAccountID: value1.ChannelAccountID,
+		if len(res.Results) == 0 {
+			break
 		}
 
-		// there should only be one sender
-		// sender
-		if len(value1.Senders) > 0 {
-			value2 := value1.Senders[0]
-			userSenderOutput := taskGetThreadOutputSender{
-				Name:    value2.Name,
-				Type:    value2.DeliveryIdentifier.Type,
-				Value:   value2.DeliveryIdentifier.Value,
-				ActorID: value2.ActorID,
-			}
-			resultOutput.Sender = userSenderOutput
-		}
+		// convert to output struct
 
-		// recipient
-		for _, value3 := range value1.Recipients {
-			userRecipientOutput := taskGetThreadOutputRecipient{
-				Name:  value3.Name,
-				Type:  value3.DeliveryIdentifier.Type,
-				Value: value3.DeliveryIdentifier.Value,
+		for _, value1 := range res.Results {
+			// this way, the output will only contain the actual messages in the thread (ignore system message from hubspot)
+			if value1.Type != "MESSAGE" {
+				continue
 			}
 
-			resultOutput.Recipients = append(resultOutput.Recipients, userRecipientOutput)
+			resultOutput := taskGetThreadOutputResult{
+				CreatedAt:        value1.CreatedAt,
+				Text:             value1.Text,
+				Subject:          value1.Subject,
+				ChannelID:        value1.ChannelID,
+				ChannelAccountID: value1.ChannelAccountID,
+			}
+
+			// there should only be one sender
+			// sender
+			if len(value1.Senders) > 0 {
+				value2 := value1.Senders[0]
+				userSenderOutput := taskGetThreadOutputSender{
+					Name:    value2.Name,
+					Type:    value2.DeliveryIdentifier.Type,
+					Value:   value2.DeliveryIdentifier.Value,
+					ActorID: value2.ActorID,
+				}
+				resultOutput.Sender = userSenderOutput
+			}
+
+			// recipient
+			for _, value3 := range value1.Recipients {
+				userRecipientOutput := taskGetThreadOutputRecipient{
+					Name:  value3.Name,
+					Type:  value3.DeliveryIdentifier.Type,
+					Value: value3.DeliveryIdentifier.Value,
+				}
+
+				resultOutput.Recipients = append(resultOutput.Recipients, userRecipientOutput)
+
+			}
+
+			outputStruct.Results = append(outputStruct.Results, resultOutput)
 
 		}
 
-		outputStruct.Results = append(outputStruct.Results, resultOutput)
+		// if there is no more messages/ page to be read, break
+		if res.Paging == nil || len(res.Results) == 0 {
+			break
+		} else {
+			param = fmt.Sprintf("?after=%s", res.Paging.Next.After)
+		}
 
 	}
 
+	outputStruct.NoOfMessages = len(outputStruct.Results)
 	output, err := base.ConvertToStructpb(outputStruct)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil
@@ -234,7 +258,7 @@ func (e *execution) InsertMessage(input *structpb.Struct) (*structpb.Struct, err
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
 	recipients := make([]taskInsertMessageReqRecipient, len(inputStruct.Recipients))
@@ -275,7 +299,7 @@ func (e *execution) InsertMessage(input *structpb.Struct) (*structpb.Struct, err
 	output, err := base.ConvertToStructpb(outputStruct)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert output to struct: %v", err)
 	}
 
 	return output, nil

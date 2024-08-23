@@ -3,6 +3,7 @@ package hubspot
 import (
 	"context"
 	"testing"
+	"time"
 
 	hubspot "github.com/belong-inc/go-hubspot"
 	qt "github.com/frankban/quicktest"
@@ -22,11 +23,12 @@ func (s *MockDeal) Get(dealID string, deal interface{}, option *hubspot.RequestQ
 
 	var fakeDeal TaskGetDealResp
 	if dealID == "20620806729" {
+
 		fakeDeal = TaskGetDealResp{
 			DealName:   "Fake deal",
 			Pipeline:   "default",
 			DealStage:  "qualifiedtobuy",
-			CreateDate: "2024-07-09T02:22:06.140Z",
+			CreateDate: hubspot.NewTime(time.Date(2024, 7, 9, 0, 0, 0, 0, time.UTC)),
 		}
 	}
 
@@ -72,10 +74,11 @@ func TestComponent_ExecuteGetDealTask(t *testing.T) {
 		name:  "ok - get deal",
 		input: "20620806729",
 		wantResp: TaskGetDealOutput{
-			DealName:   "Fake deal",
-			Pipeline:   "default",
-			DealStage:  "qualifiedtobuy",
-			CreateDate: "2024-07-09T02:22:06.140Z",
+			DealName:             "Fake deal",
+			Pipeline:             "default",
+			DealStage:            "qualifiedtobuy",
+			CreateDate:           "2024-07-09 00:00:00 +0000 UTC",
+			AssociatedContactIDs: []string{},
 		},
 	}
 

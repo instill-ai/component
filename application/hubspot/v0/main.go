@@ -18,13 +18,17 @@ const (
 	taskCreateContact       = "TASK_CREATE_CONTACT"
 	taskGetDeal             = "TASK_GET_DEAL"
 	taskCreateDeal          = "TASK_CREATE_DEAL"
+	taskUpdateDeal          = "TASK_UPDATE_DEAL"
 	taskGetCompany          = "TASK_GET_COMPANY"
 	taskCreateCompany       = "TASK_CREATE_COMPANY"
 	taskGetTicket           = "TASK_GET_TICKET"
 	taskCreateTicket        = "TASK_CREATE_TICKET"
+	taskUpdateTicket        = "TASK_UPDATE_TICKET"
 	taskGetThread           = "TASK_GET_THREAD"
 	taskInsertMessage       = "TASK_INSERT_MESSAGE"
 	taskRetrieveAssociation = "TASK_RETRIEVE_ASSOCIATION"
+	taskGetOwner            = "TASK_GET_OWNER"
+	taskGetAll              = "TASK_GET_ALL"
 )
 
 var (
@@ -91,6 +95,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.GetDeal
 	case taskCreateDeal:
 		e.execute = e.CreateDeal
+	case taskUpdateDeal:
+		e.execute = e.UpdateDeal
 	case taskGetCompany:
 		e.execute = e.GetCompany
 	case taskCreateCompany:
@@ -99,12 +105,18 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.GetTicket
 	case taskCreateTicket:
 		e.execute = e.CreateTicket
+	case taskUpdateTicket:
+		e.execute = e.UpdateTicket
 	case taskGetThread:
 		e.execute = e.GetThread
 	case taskInsertMessage:
 		e.execute = e.InsertMessage
 	case taskRetrieveAssociation:
 		e.execute = e.RetrieveAssociation
+	case taskGetOwner:
+		e.execute = e.GetOwner
+	case taskGetAll:
+		e.execute = e.GetAll
 	default:
 		return nil, fmt.Errorf("unsupported task")
 	}

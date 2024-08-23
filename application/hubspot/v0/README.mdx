@@ -12,13 +12,17 @@ It can carry out the following tasks:
 - [Create Contact](#create-contact)
 - [Get Deal](#get-deal)
 - [Create Deal](#create-deal)
+- [Update Deal](#update-deal)
 - [Get Company](#get-company)
 - [Create Company](#create-company)
 - [Get Ticket](#get-ticket)
 - [Create Ticket](#create-ticket)
+- [Update Ticket](#update-ticket)
 - [Get Thread](#get-thread)
 - [Insert Message](#insert-message)
 - [Retrieve Association](#retrieve-association)
+- [Get Owner](#get-owner)
+- [Get All](#get-all)
 
 
 
@@ -166,6 +170,36 @@ Create new deal
 
 
 
+### Update Deal
+
+Update existing deal
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPDATE_DEAL` |
+| Deal ID (required) | `deal-id` | string | Input deal ID |
+| Owner ID | `owner-id` | string | The user who is assigned to the object |
+| Deal Name | `deal-name` | string | Deal name |
+| Pipeline | `pipeline` | string | A pipeline is the place where you document and manage how your prospects move through the steps of your sales process. HubSpot uses interval value rather than the name displayed in the view |
+| Deal Stage | `deal-stage` | string | Deal stages allow you to categorize and track the progress of the deals that you are working on. Default format is in small letters, all words are combined. Example: qualifiedtobuy. However, remember to check internal value for custom fields. |
+| Amount | `amount` | number | The total amount of the deal |
+| Deal Type | `deal-type` | string | The type of deal. Default format is in small letters, all words are combined. Example: newbusiness. However, remember to check internal value for custom fields. |
+| Close Date | `close-date` | string | Date the deal was closed. Set automatically by HubSpot. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z |
+| Create Object -> Contact Association using contact IDs | `create-contacts-association` | array[string] | Existing contact IDs to be associated with the object |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Updated By User ID | `updated-by-user-id` | string | User ID that updated the deal |
+| Updated At | `updated-at` | string | The time when the deal was updated |
+
+
+
+
+
+
 ### Get Company
 
 Get company information using company ID
@@ -296,6 +330,35 @@ Create new ticket
 
 
 
+### Update Ticket
+
+Update existing ticket
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPDATE_TICKET` |
+| Owner ID | `owner-id` | string | The user who is assigned to the object |
+| Ticket ID (required) | `ticket-id` | string | Input ticket ID |
+| Ticket Name | `ticket-name` | string | Ticket name |
+| Ticket Status | `ticket-status` | string | The pipeline stage that contains this ticket. Default format is number. Example: 1. However, remember to check internal value for custom fields. Note: In Instill AI, ticket-status is displayed as string because of the possible custom internal value. |
+| Pipeline | `pipeline` | string | A pipeline organizes and tracks the progression of tickets through various stages of resolution within your support process. HubSpot uses interval value rather than the name displayed in the view |
+| Categories | `categories` | array[string] | The main reason customer reached out for help. Default format is in capital letters. Example: BILLING_ISSUE. However, remember to check internal value for custom fields. |
+| Priority | `priority` | string | The level of attention needed on the ticket. Default format is in capital letters. Example: MEDIUM. However, remember to check internal value for custom fields. |
+| Source | `source` | string | Channel where ticket was originally submitted. Default format is in capital letters. Example: EMAIL |
+| Create Object -> Contact Association using contact IDs | `create-contacts-association` | array[string] | Existing contact IDs to be associated with the object |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Updated At | `updated-at` | string | The time when the ticket was updated |
+
+
+
+
+
+
 ### Get Thread
 
 Retrieve all the messages inside a thread (conversation inbox). The messages will be sorted from most recent to least recent. Note: This task uses Conversation API from HubSpot, which is still in BETA.
@@ -311,6 +374,7 @@ Retrieve all the messages inside a thread (conversation inbox). The messages wil
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Messages | `results` | array[object] | An array of messages |
+| Number of Messages | `no-of-messages` | integer | The number of messages in a thread |
 
 
 
@@ -345,7 +409,7 @@ Insert message into a thread (only support email thread)
 
 ### Retrieve Association
 
-Get the object IDs associated with contact ID (contact->objects). If you are trying to do the opposite (object->contacts), it is possible using the other tasks. Example: Go to get deal task to obtain deal->contacts
+Get the object IDs associated with contact ID (contact->objects). If you are trying to do the opposite (object->contacts), it is possible using the other tasks. Example: Go to get deal task to obtain deal->contacts. Remember to check that the contact ID you input exists, because there won't be an error message if the contact ID doesn't exist.
 
 
 | Input | ID | Type | Description |
@@ -359,6 +423,59 @@ Get the object IDs associated with contact ID (contact->objects). If you are try
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Object ID Array  | `object-ids` | array[string] | An array of object ID associated with the contact |
+| Object IDs Length | `object-ids-length` | integer | The number of object IDs |
+
+
+
+
+
+
+### Get Owner
+
+Get information about HubSpot owner using either owner ID or user ID. For more information about owner, please go to: https://developers.hubspot.com/docs/api/crm/owners
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_OWNER` |
+| ID Type (required) | `id-type` | string | Specify the type of ID you will use to get owner's information. |
+| ID (required) | `id` | string | Can either be owner ID or user ID; according to the ID type you selected. |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| First Name | `first-name` | string | First name |
+| Last Name | `last-name` | string | Last name |
+| Email | `email` | string | Email |
+| Owner ID | `owner-id` | string | Owner ID. Usually used to associate the owner with other objects. |
+| User ID | `user-id` | string | User ID. Usually used to indicate the owner who performed the action. User ID can be seen in Update Deal task output. |
+| Teams (optional) | `teams` | array[object] | The owner's teams information |
+| Created At | `created-at` | string | Created at |
+| Updated At | `updated-at` | string | Updated at |
+| Archived | `archived` | boolean | Archived |
+
+
+
+
+
+
+### Get All
+
+Get all the IDs for a specific object (e.g. all contact IDs)
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_GET_ALL` |
+| Object Type (required) | `object-type` | string | The object which you want to get all IDs for |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Object ID Array  | `object-ids` | array[string] | An array of object ID |
+| Object IDs Length | `object-ids-length` | integer | The number of object IDs |
 
 
 

@@ -76,12 +76,13 @@ func TestComponent_ExecuteGetCompanyTask(t *testing.T) {
 		name:  "ok - get company",
 		input: "20620806729",
 		wantResp: TaskGetCompanyOutput{
-			CompanyName:   "HubSpot",
-			CompanyDomain: "hubspot.com",
-			Description:   "HubSpot offers a comprehensive cloud-based marketing and sales platform with integrated applications for attracting, converting, and delighting customers through inbound marketing strategies.",
-			PhoneNumber:   "+1 888-482-7768",
-			Industry:      "COMPUTER_SOFTWARE",
-			AnnualRevenue: 10000000000,
+			CompanyName:          "HubSpot",
+			CompanyDomain:        "hubspot.com",
+			Description:          "HubSpot offers a comprehensive cloud-based marketing and sales platform with integrated applications for attracting, converting, and delighting customers through inbound marketing strategies.",
+			PhoneNumber:          "+1 888-482-7768",
+			Industry:             "COMPUTER_SOFTWARE",
+			AnnualRevenue:        10000000000,
+			AssociatedContactIDs: []string{},
 		},
 	}
 

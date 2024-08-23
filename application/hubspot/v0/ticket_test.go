@@ -3,6 +3,7 @@ package hubspot
 import (
 	"context"
 	"testing"
+	"time"
 
 	hubspot "github.com/belong-inc/go-hubspot"
 	qt "github.com/frankban/quicktest"
@@ -22,10 +23,12 @@ func (s *MockTicket) Get(ticketID string) (*hubspot.ResponseResource, error) {
 	var fakeTicket TaskGetTicketResp
 	if ticketID == "2865646368" {
 		fakeTicket = TaskGetTicketResp{
-			TicketName:   "HubSpot - New Query (Sample Query)",
-			TicketStatus: "1",
-			Pipeline:     "0",
-			Category:     "PRODUCT_ISSUE;BILLING_ISSUE",
+			TicketName:       "HubSpot - New Query (Sample Query)",
+			TicketStatus:     "1",
+			Pipeline:         "0",
+			Category:         "PRODUCT_ISSUE;BILLING_ISSUE",
+			CreateDate:       hubspot.NewTime(time.Date(2024, 7, 9, 0, 0, 0, 0, time.UTC)),
+			LastModifiedDate: hubspot.NewTime(time.Date(2024, 7, 9, 0, 0, 0, 0, time.UTC)),
 		}
 	}
 
@@ -49,6 +52,10 @@ func (s *MockTicket) Create(ticket *TaskCreateTicketReq) (*hubspot.ResponseResou
 	return ret, nil
 }
 
+func (s *MockTicket) Update(ticketID string, ticket *TaskUpdateTicketReq) (*hubspot.ResponseResource, error) {
+	return nil, nil
+}
+
 func TestComponent_ExecuteGetTicketTask(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
@@ -63,10 +70,13 @@ func TestComponent_ExecuteGetTicketTask(t *testing.T) {
 		name:  "ok - get ticket",
 		input: "2865646368",
 		wantResp: TaskGetTicketOutput{
-			TicketName:   "HubSpot - New Query (Sample Query)",
-			TicketStatus: "1",
-			Pipeline:     "0",
-			Category:     []string{"PRODUCT_ISSUE", "BILLING_ISSUE"},
+			TicketName:           "HubSpot - New Query (Sample Query)",
+			TicketStatus:         "1",
+			Pipeline:             "0",
+			Category:             []string{"PRODUCT_ISSUE", "BILLING_ISSUE"},
+			CreateDate:           "2024-07-09 00:00:00 +0000 UTC",
+			LastModifiedDate:     "2024-07-09 00:00:00 +0000 UTC",
+			AssociatedContactIDs: []string{},
 		},
 	}
 

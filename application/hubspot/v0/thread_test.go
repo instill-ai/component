@@ -17,7 +17,7 @@ import (
 // Mock Thread struct and its functions
 type MockThread struct{}
 
-func (s *MockThread) Get(threadID string) (*TaskGetThreadResp, error) {
+func (s *MockThread) Get(threadID string, param string) (*TaskGetThreadResp, error) {
 
 	var fakeThread TaskGetThreadResp
 	if threadID == "7509711154" {
@@ -99,6 +99,7 @@ func TestComponent_ExecuteGetThreadTask(t *testing.T) {
 					ChannelAccountID: "638727358",
 				},
 			},
+			NoOfMessages: 1,
 		},
 	}
 
