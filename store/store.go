@@ -32,6 +32,7 @@ import (
 	"github.com/instill-ai/component/data/bigquery/v0"
 	"github.com/instill-ai/component/data/elasticsearch/v0"
 	"github.com/instill-ai/component/data/googlecloudstorage/v0"
+	"github.com/instill-ai/component/data/milvus/v0"
 	"github.com/instill-ai/component/data/mongodb/v0"
 	"github.com/instill-ai/component/data/pinecone/v0"
 	"github.com/instill-ai/component/data/qdrant/v0"
@@ -167,6 +168,7 @@ func Init(
 		compStore.Import(mongodb.Init(baseComp))
 		compStore.Import(sql.Init(baseComp))
 		compStore.Import(weaviate.Init(baseComp))
+		compStore.Import(milvus.Init(baseComp))
 		compStore.Import(qdrant.Init(baseComp))
 		compStore.Import(artifact.Init(baseComp))
 		compStore.Import(restapi.Init(baseComp))
