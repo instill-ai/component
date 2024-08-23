@@ -1,0 +1,189 @@
+---
+title: "Milvus"
+lang: "en-US"
+draft: false
+description: "Learn about how to set up a VDP Milvus component https://github.com/instill-ai/instill-core"
+---
+
+The Milvus component is a data component that allows users to build and search vector datasets.
+It can carry out the following tasks:
+
+- [Vector Search](#vector-search)
+- [Upsert](#upsert)
+- [Delete](#delete)
+- [Drop Collection](#drop-collection)
+- [Create Partition](#create-partition)
+- [Drop Partition](#drop-partition)
+
+
+
+## Release Stage
+
+`Alpha`
+
+
+
+## Configuration
+
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/milvus/v0/config/definition.json).
+
+
+
+
+## Setup
+
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Milvus URL Endpoint (required) | `url` | string | Fill in your Milvus public URL endpoint with port number, e.g http://3.25.202.142:19530 |
+| Milvus Username (required) | `username` | string | Fill in your Milvus username |
+| Milvus Password (required) | `password` | string | Fill in your Milvus password |
+
+
+
+
+## Supported Tasks
+
+### Vector Search
+
+Perform a vector search on a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_VECTOR_SEARCH` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to perform vector search on |
+| Partition Name | `partition-name` | string | The name of the partition to vector search the data from |
+| Vector (required) | `vector` | array[number] | An array of dimensions for the vector search |
+| Vector Field (required) | `vector-field` | string | The name of the field to perform vector search on |
+| Fields | `fields` | array[string] | The fields to return in the data. If empty then all fields will be returned |
+| Limit (required) | `limit` | integer | The limit of the data to return |
+| Filter | `filter` | string | The properties filter to be applied to the data with milvus scalar filter, please refer to https://milvus.io/docs/single-vector-search.md#Filtered-search |
+| Offset | `offset` | integer | The offset of the data to return |
+| Grouping Field | `grouping-field` | string | The name of the field to group the data by, please refer to https://milvus.io/docs/single-vector-search.md#Grouping-search |
+| Search Parameters | `search-params` | object | The search parameters to be applied to the data with milvus search parameters, please refer to https://milvus.io/docs/single-vector-search.md#Search-parameters |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Result | `result` | object | Result of the vector search operation |
+| Status | `status` | string | Vector search status |
+
+
+
+
+
+
+### Upsert
+
+Insert a vector data into a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPSERT` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to upsert the data into |
+| Partition Name | `partition-name` | string | The name of the partition to upsert the data from. If empty then default partition will be used |
+| Data (required) | `data` | object | The data |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Upsert status |
+
+
+
+
+
+
+### Delete
+
+Delete vector data from a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DELETE` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to delete the data from |
+| Partition Name | `partition-name` | string | The name of the partition to delete the data from. If empty then default partition will be used |
+| Filter | `filter` | string | The properties filter to be applied to the data with milvus scalar filter, please refer to https://milvus.io/docs/single-vector-search.md#Filtered-search |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Delete status |
+
+
+
+
+
+
+### Drop Collection
+
+Drop a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DROP_COLLECTION` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to drop |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Drop collection status |
+
+
+
+
+
+
+### Create Partition
+
+Create a partition in a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CREATE_PARTITION` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to create the partition in |
+| Partition Name (required) | `partition-name` | string | The name of the partition to create |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Create partition status |
+
+
+
+
+
+
+### Drop Partition
+
+Drop a partition from a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DROP_PARTITION` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to drop the partition from |
+| Partition Name (required) | `partition-name` | string | The name of the partition to drop |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Drop partition status |
+
+
+
+
+
+
+
