@@ -93,7 +93,7 @@ func (e *execution) createCollection(in *structpb.Struct) (*structpb.Struct, err
 		return nil, fmt.Errorf("failed to create collection: %s", res.String())
 	}
 
-	if resp.Message != "" && resp.Code != 200 {
+	if resp.Message != "" && resp.Code != 0 {
 		return nil, fmt.Errorf("failed to create collection: %s", resp.Message)
 	}
 

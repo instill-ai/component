@@ -60,7 +60,7 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("failed to delete point: %s", res.String())
 	}
 
-	if resp.Message != "" && resp.Code != 200 {
+	if resp.Message != "" && resp.Code != 0 {
 		return nil, fmt.Errorf("failed to delete data: %s", resp.Message)
 	}
 

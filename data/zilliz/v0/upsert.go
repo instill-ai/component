@@ -67,7 +67,7 @@ func (e *execution) upsert(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("failed to upsert data: %s", res.String())
 	}
 
-	if resp.Message != "" && resp.Code != 200 {
+	if resp.Message != "" && resp.Code != 0 {
 		return nil, fmt.Errorf("failed to upsert data: %s", resp.Message)
 	}
 
