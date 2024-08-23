@@ -172,6 +172,12 @@ func (t XlsxToMarkdownTransformer) Transform() (string, error) {
 			return "", fmt.Errorf("failed to get rows: %w", err)
 		}
 
+		if len(rows) == 0 {
+			result += fmt.Sprintf("# %s\n", sheet)
+			result += "No data found\n\n"
+			continue
+		}
+
 		result += fmt.Sprintf("# %s\n", sheet)
 		result += util.ConvertDataFrameToMarkdownTable(rows)
 		result += "\n\n"
