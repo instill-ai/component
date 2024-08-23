@@ -13,6 +13,10 @@ It can carry out the following tasks:
 - [List Sprints](#list-sprints)
 - [Get Issue](#get-issue)
 - [Get Sprint](#get-sprint)
+- [Create Issue](#create-issue)
+- [Update Issue](#update-issue)
+- [Create Sprint](#create-sprint)
+- [Update Sprint](#update-sprint)
 
 
 
@@ -172,9 +176,138 @@ Get a sprint in Jira
 | Self (optional) | `self` | string | The URL of the sprint |
 | State (optional) | `state` | string | The state of the sprint, can be: `active`, `closed`, `future` |
 | Name (optional) | `name` | string | The name of the sprint |
-| Start Date (optional) | `start-date` | string | The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
-| End Date (optional) | `end-date` | string | The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
-| Complete Date (optional) | `complete-date` | string | The complete date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
+| Start Date (optional) | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| End Date (optional) | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| Complete Date (optional) | `complete-date` | string | The complete date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| Origin Board ID (optional) | `origin-board-id` | integer | The ID of the origin board |
+| Goal (optional) | `goal` | string | The Goal of the sprint |
+
+
+
+
+
+
+### Create Issue
+
+Create an issue in Jira
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CREATE_ISSUE` |
+| Project Key (required) | `project-key` | string | The key of the project, e.g. `INS` |
+| Issue Type (required) | `issue-type` | object | The type of the issue, can be: `Task`, `Epic`, `Subtask`, etc. |
+| Summary | `summary` | string | The summary of the issue |
+| Description | `description` | string | The description of the issue |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| ID | `id` | string | The ID of the issue |
+| Key | `key` | string | The key of the issue, e.g. `JRA-1330` |
+| Self | `self` | string | The URL of the issue |
+| Fields | `fields` | object | The fields of the issue. All navigable and Agile fields are returned |
+| Issue Type (optional) | `issue-type` | string | The type of the issue, can be: `Task`, `Epic` |
+| Summary (optional) | `summary` | string | The summary of the issue |
+| Description (optional) | `description` | string | The description of the issue |
+| Status (optional) | `status` | string | The status of the issue, can be: `To Do`, `In Progress`, `Done` |
+
+
+
+
+
+
+### Update Issue
+
+Update an issue in Jira
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPDATE_ISSUE` |
+| Issue Key (required) | `issue-key` | string | The key of the issue, e.g. `JRA-1330` |
+| Notify Users | `notify-users` | boolean | Whether to notify users |
+| Update | `update` | object | Update an issue in Jira |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| ID | `id` | string | The ID of the issue |
+| Key | `key` | string | The key of the issue, e.g. `JRA-1330` |
+| Self | `self` | string | The URL of the issue |
+| Fields | `fields` | object | The fields of the issue. All navigable and Agile fields are returned |
+| Issue Type (optional) | `issue-type` | string | The type of the issue, can be: `Task`, `Epic` |
+| Summary (optional) | `summary` | string | The summary of the issue |
+| Description (optional) | `description` | string | The description of the issue |
+| Status (optional) | `status` | string | The status of the issue, can be: `To Do`, `In Progress`, `Done` |
+
+
+
+
+
+
+### Create Sprint
+
+Create a sprint in Jira
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CREATE_SPRINT` |
+| Board Name (required) | `board-name` | string | The name of the board |
+| Name (required) | `name` | string | The name of the sprint |
+| Goal (required) | `goal` | string | The goal of the sprint |
+| Start Date (required) | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| End Date (required) | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| ID | `id` | integer | The ID of the sprint |
+| Self | `self` | string | The URL of the sprint |
+| State (optional) | `state` | string | The state of the sprint, can be: `active`, `closed`, `future` |
+| Name (optional) | `name` | string | The name of the sprint |
+| Start Date (optional) | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| End Date (optional) | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| Complete Date (optional) | `complete-date` | string | The complete date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| Origin Board ID (optional) | `origin-board-id` | integer | The ID of the origin board |
+| Goal (optional) | `goal` | string | The Goal of the sprint |
+
+
+
+
+
+
+### Update Sprint
+
+Update a sprint in Jira
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UPDATE_SPRINT` |
+| Sprint ID (required) | `sprint-id` | integer | The ID of the sprint |
+| Name (required) | `name` | string | The name of the sprint |
+| Goal | `goal` | string | The goal of the sprint |
+| Start Date (required) | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| End Date (required) | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| Current State (required) | `current-state` | string | The current state of the sprint, can be: `future`, `active`, `closed` |
+| Enter Next State | `enter-next-state` | boolean | Whether to enter the next state. If `true`, the sprint will enter the next state, i.e., `future` -> `active` -> `closed` |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| ID | `id` | integer | The ID of the sprint |
+| Self | `self` | string | The URL of the sprint |
+| State (optional) | `state` | string | The state of the sprint, can be: `active`, `closed`, `future` |
+| Name (optional) | `name` | string | The name of the sprint |
+| Start Date (optional) | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| End Date (optional) | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| Complete Date (optional) | `complete-date` | string | The complete date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
 | Origin Board ID (optional) | `origin-board-id` | integer | The ID of the origin board |
 | Goal (optional) | `goal` | string | The Goal of the sprint |
 
