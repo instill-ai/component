@@ -21,7 +21,7 @@ type UpsertInput struct {
 	Vector         []float64      `json:"vector"`
 	Metadata       map[string]any `json:"metadata"`
 	Document       string         `json:"document"`
-	Uri            string         `json:"uri"`
+	URI            string         `json:"uri"`
 }
 
 type UpsertReq struct {
@@ -59,8 +59,8 @@ func (e *execution) upsert(in *structpb.Struct) (*structpb.Struct, error) {
 	if inputStruct.Document != "" {
 		reqParams.Documents = []string{inputStruct.Document}
 	}
-	if inputStruct.Uri != "" {
-		reqParams.Uris = []string{inputStruct.Uri}
+	if inputStruct.URI != "" {
+		reqParams.Uris = []string{inputStruct.URI}
 	}
 
 	var collID string
