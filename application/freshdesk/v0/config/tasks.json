@@ -1203,7 +1203,7 @@
     }
   },
   "TASK_GET_ALL_CONVERSATIONS":{
-    "instillShortDescription": "Get all the conversations in a ticket. (Conversations are replies and notes added to a ticket)",
+    "instillShortDescription": "Get all the conversations in a ticket. (Conversations are replies and notes that are added to a ticket)",
     "input": {
       "description": "Ticket ID",
       "instillUIOrder": 0,
@@ -2005,7 +2005,7 @@
     }
   },
   "TASK_GET_AGENT":{
-    "instillShortDescription": "Get agent using ID. This task will only work if you have admin privileges.",
+    "instillShortDescription": "Get agent using ID. This task will only work if you have admin privileges. Agents are those in your team who will login to Freshdesk.",
     "input": {
       "description": "Agent ID",
       "instillUIOrder": 0,
@@ -2194,7 +2194,7 @@
     }
   },
   "TASK_GET_ROLE":{
-    "instillShortDescription": "Get role using ID. This task will only work if you have admin privileges.",
+    "instillShortDescription": "Get role using ID. This task will only work if you have admin privileges. Roles allow agents/collaborators to have different priviledges.",
     "input": {
       "description": "Role ID",
       "instillUIOrder": 0,
@@ -2267,7 +2267,7 @@
     }
   },
   "TASK_GET_GROUP":{
-    "instillShortDescription": "Get group using ID. This task will only work if you have admin privileges.",
+    "instillShortDescription": "Get group using ID. This task will only work if you have admin privileges. Agents can be classified into groups such as Customer Support.",
     "input": {
       "description": "Group ID",
       "instillUIOrder": 0,
@@ -2374,7 +2374,7 @@
     }
   },
   "TASK_GET_SKILL":{
-    "instillShortDescription": "Get skill using ID. This task will only work if you have admin privileges. ",
+    "instillShortDescription": "Get skill using ID. This task will only work if you have admin privileges. Agents can be assigned skills, and it is possible for tickets to be automatically assigned to agents based on the skills they have.",
     "input": {
       "description": "Skill ID",
       "instillUIOrder": 0,
