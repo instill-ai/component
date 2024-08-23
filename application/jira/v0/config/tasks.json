@@ -157,21 +157,21 @@
         },
         "start-date": {
           "title": "Start Date",
-          "description": "The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "description": "The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000`",
           "type": "string",
           "instillUIOrder": 4,
           "instillFormat": "string"
         },
         "end-date": {
           "title": "End Date",
-          "description": "The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "description": "The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000`",
           "type": "string",
           "instillUIOrder": 5,
           "instillFormat": "string"
         },
         "complete-date": {
           "title": "Complete Date",
-          "description": "The complete date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "description": "The complete date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000`",
           "type": "string",
           "instillUIOrder": 6,
           "instillFormat": "string"
@@ -1232,7 +1232,7 @@
         },
         "start-date": {
           "title": "Start Date",
-          "description": "The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "description": "The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000`",
           "instillShortDescription": "The start date of the sprint",
           "instillUIOrder": 3,
           "instillFormat": "string",
@@ -1248,7 +1248,7 @@
         },
         "end-date": {
           "title": "End Date",
-          "description": "The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "description": "The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000`",
           "instillShortDescription": "The end date of the sprint",
           "instillUIOrder": 4,
           "instillFormat": "string",
@@ -1347,7 +1347,7 @@
         },
         "start-date": {
           "title": "Start Date",
-          "description": "The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "description": "The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000`",
           "instillShortDescription": "The start date of the sprint",
           "instillUIOrder": 3,
           "instillFormat": "string",
@@ -1363,7 +1363,7 @@
         },
         "end-date": {
           "title": "End Date",
-          "description": "The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z",
+          "description": "The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000`",
           "instillShortDescription": "The end date of the sprint",
           "instillUIOrder": 4,
           "instillFormat": "string",

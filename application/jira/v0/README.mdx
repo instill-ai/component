@@ -176,9 +176,9 @@ Get a sprint in Jira
 | Self (optional) | `self` | string | The URL of the sprint |
 | State (optional) | `state` | string | The state of the sprint, can be: `active`, `closed`, `future` |
 | Name (optional) | `name` | string | The name of the sprint |
-| Start Date (optional) | `start-date` | string | The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
-| End Date (optional) | `end-date` | string | The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
-| Complete Date (optional) | `complete-date` | string | The complete date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
+| Start Date (optional) | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| End Date (optional) | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| Complete Date (optional) | `complete-date` | string | The complete date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
 | Origin Board ID (optional) | `origin-board-id` | integer | The ID of the origin board |
 | Goal (optional) | `goal` | string | The Goal of the sprint |
 
@@ -259,8 +259,8 @@ Create a sprint in Jira
 | Board Name (required) | `board-name` | string | The name of the board |
 | Name (required) | `name` | string | The name of the sprint |
 | Goal (required) | `goal` | string | The goal of the sprint |
-| Start Date (required) | `start-date` | string | The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
-| End Date (required) | `end-date` | string | The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
+| Start Date (required) | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| End Date (required) | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
 
 
 
@@ -270,9 +270,9 @@ Create a sprint in Jira
 | Self | `self` | string | The URL of the sprint |
 | State (optional) | `state` | string | The state of the sprint, can be: `active`, `closed`, `future` |
 | Name (optional) | `name` | string | The name of the sprint |
-| Start Date (optional) | `start-date` | string | The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
-| End Date (optional) | `end-date` | string | The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
-| Complete Date (optional) | `complete-date` | string | The complete date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
+| Start Date (optional) | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| End Date (optional) | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| Complete Date (optional) | `complete-date` | string | The complete date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
 | Origin Board ID (optional) | `origin-board-id` | integer | The ID of the origin board |
 | Goal (optional) | `goal` | string | The Goal of the sprint |
 
@@ -292,8 +292,8 @@ Update a sprint in Jira
 | Sprint ID (required) | `sprint-id` | integer | The ID of the sprint |
 | Name (required) | `name` | string | The name of the sprint |
 | Goal | `goal` | string | The goal of the sprint |
-| Start Date (required) | `start-date` | string | The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
-| End Date (required) | `end-date` | string | The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
+| Start Date (required) | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| End Date (required) | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
 | Current State (required) | `current-state` | string | The current state of the sprint, can be: `future`, `active`, `closed` |
 | Enter Next State | `enter-next-state` | boolean | Whether to enter the next state. If `true`, the sprint will enter the next state, i.e., `future` -> `active` -> `closed` |
 
@@ -305,9 +305,9 @@ Update a sprint in Jira
 | Self | `self` | string | The URL of the sprint |
 | State (optional) | `state` | string | The state of the sprint, can be: `active`, `closed`, `future` |
 | Name (optional) | `name` | string | The name of the sprint |
-| Start Date (optional) | `start-date` | string | The start date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
-| End Date (optional) | `end-date` | string | The end date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
-| Complete Date (optional) | `complete-date` | string | The complete date of the sprint. In the RFC3339 format, e.g. 2018-03-05T00:00:00Z |
+| Start Date (optional) | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| End Date (optional) | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| Complete Date (optional) | `complete-date` | string | The complete date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
 | Origin Board ID (optional) | `origin-board-id` | integer | The ID of the origin board |
 | Goal (optional) | `goal` | string | The Goal of the sprint |
 

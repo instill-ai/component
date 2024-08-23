@@ -179,6 +179,8 @@ func (jiraClient *Client) createSprintTask(ctx context.Context, props *structpb.
 	if _, err := time.Parse(time.RFC3339, opt.StartDate); err != nil {
 		if opt.StartDate == "" {
 			opt.StartDate = time.Now().Format(time.RFC3339)
+		} else if _, err := time.Parse(time.RFC3339, opt.StartDate+"T00:00:00Z"); err == nil {
+			opt.StartDate = opt.StartDate + "T00:00:00.000Z"
 		} else {
 			return nil, errmsg.AddMessage(
 				err,
@@ -192,6 +194,8 @@ func (jiraClient *Client) createSprintTask(ctx context.Context, props *structpb.
 				fmt.Errorf("end date is required"),
 				"end date is required",
 			)
+		} else if _, err := time.Parse(time.RFC3339, opt.EndDate+"T00:00:00Z"); err == nil {
+			opt.EndDate = opt.EndDate + "T00:00:00.000Z"
 		} else {
 			return nil, errmsg.AddMessage(
 				err,
@@ -310,6 +314,8 @@ func (jiraClient *Client) updateSprintTask(ctx context.Context, props *structpb.
 	if _, err := time.Parse(time.RFC3339, body.StartDate); err != nil {
 		if body.StartDate == "" {
 			body.StartDate = time.Now().Format(time.RFC3339)
+		} else if _, err := time.Parse(time.RFC3339, body.StartDate+"T00:00:00Z"); err == nil {
+			body.StartDate = body.StartDate + "T00:00:00.000Z"
 		} else {
 			return nil, errmsg.AddMessage(
 				err,
@@ -323,6 +329,8 @@ func (jiraClient *Client) updateSprintTask(ctx context.Context, props *structpb.
 				fmt.Errorf("end date is required"),
 				"end date is required",
 			)
+		} else if _, err := time.Parse(time.RFC3339, body.EndDate+"T00:00:00Z"); err == nil {
+			body.EndDate = body.EndDate + "T00:00:00.000Z"
 		} else {
 			return nil, errmsg.AddMessage(
 				err,
