@@ -16,7 +16,7 @@ type BatchUpsertInput struct {
 	ArrayID        []string         `json:"array-id"`
 	ArrayVector    [][]float64      `json:"array-vector"`
 	ArrayMetadata  []map[string]any `json:"array-metadata"`
-	ArrayUri       []string         `json:"array-uri"`
+	ArrayURI       []string         `json:"array-uri"`
 	ArrayDocument  []string         `json:"array-document"`
 }
 
@@ -37,8 +37,8 @@ func (e *execution) batchUpsert(in *structpb.Struct) (*structpb.Struct, error) {
 	if inputStruct.ArrayDocument != nil {
 		reqParams.Documents = inputStruct.ArrayDocument
 	}
-	if inputStruct.ArrayUri != nil {
-		reqParams.Uris = inputStruct.ArrayUri
+	if inputStruct.ArrayURI != nil {
+		reqParams.Uris = inputStruct.ArrayURI
 	}
 
 	var collID string
