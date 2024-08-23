@@ -4,50 +4,27 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "engine": {
-          "description": "Choose the engine of your database",
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 0,
-          "title": "Engine",
-          "enum": [
-            "MySQL",
-            "PostgreSQL",
-            "SQL Server",
-            "Oracle",
-            "MariaDB",
-            "Firebird"
-          ],
-          "type": "string"
-        },
         "table-name": {
           "description": "The table name in the database to insert data into",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 1,
+          "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
           "title": "Table Name",
-          "type": "string"
+          "type":"string"
         },
         "data": {
           "description": "The data to be inserted",
           "instillAcceptFormats": [
-            "semi-structured/*",
-            "object"
+            "semi-structured/*","object"
           ],
-          "instillUIOrder": 2,
+          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -63,7 +40,6 @@
         }
       },
       "required": [
-        "engine",
         "data",
         "table-name"
       ],
@@ -89,64 +65,39 @@
       "type": "object"
     }
   },
-  "TASK_INSERT_MANY": {
+  "TASK_INSERT_MANY":{
     "instillShortDescription": "Perform insert operation with multiple rows",
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "engine": {
-          "description": "Choose the engine of your database",
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 0,
-          "title": "Engine",
-          "enum": [
-            "MySQL",
-            "PostgreSQL",
-            "SQL Server",
-            "Oracle",
-            "MariaDB",
-            "Firebird"
-          ],
-          "type": "string"
-        },
         "table-name": {
           "description": "The table name in the database to insert data into",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 1,
+          "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
           "title": "Table Name",
-          "type": "string"
+          "type":"string"
         },
         "array-data": {
           "description": "The array data to be inserted",
           "instillAcceptFormats": [
-            "array:semi-structured/*",
-            "array:semi-structured/json",
-            "array:semi-structured/object",
-            "array:object"
+            "array:semi-structured/*","array:semi-structured/json","array:semi-structured/object", "array:object"
           ],
-          "instillUIOrder": 2,
+          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
           "title": "Data",
-          "type": "array",
+          "type":"array",
           "items": {
             "description": "The data to be inserted",
             "title": "Data",
@@ -157,7 +108,6 @@
         }
       },
       "required": [
-        "engine",
         "array-data",
         "table-name"
       ],
@@ -188,53 +138,31 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "engine": {
-          "description": "Choose the engine of your database",
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 0,
-          "title": "Engine",
-          "enum": [
-            "MySQL",
-            "PostgreSQL",
-            "SQL Server",
-            "Oracle",
-            "MariaDB",
-            "Firebird"
-          ],
-          "type": "string"
-        },
         "table-name": {
           "description": "The table name in the database to update data into",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 1,
+          "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
           "title": "Table Name",
-          "type": "string"
+          "type":"string"
         },
         "filter": {
           "instillShortDescription": "The filter to be applied to the data",
           "description": "The filter to be applied to the data with SQL syntax, which starts with WHERE clause",
-          "instillUIOrder": 2,
+          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
-          "instillAcceptFormats": [
+          "instillAcceptFormats":[
             "string"
           ],
           "title": "Filter",
@@ -243,10 +171,9 @@
         "update-data": {
           "description": "The new data to be updated to",
           "instillAcceptFormats": [
-            "semi-structured/*",
-            "object"
+            "semi-structured/*","object"
           ],
-          "instillUIOrder": 3,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -262,7 +189,6 @@
         }
       },
       "required": [
-        "engine",
         "filter",
         "update-data",
         "table-name"
@@ -289,58 +215,36 @@
       "type": "object"
     }
   },
-  "TASK_SELECT": {
+  "TASK_SELECT":{
     "instillShortDescription": "Perform select operation",
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "engine": {
-          "description": "Choose the engine of your database",
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 0,
-          "title": "Engine",
-          "enum": [
-            "MySQL",
-            "PostgreSQL",
-            "SQL Server",
-            "Oracle",
-            "MariaDB",
-            "Firebird"
-          ],
-          "type": "string"
-        },
         "table-name": {
           "description": "The table name in the database to be selected",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 1,
+          "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
           "title": "Table Name",
-          "type": "string"
+          "type":"string"
         },
         "filter": {
           "instillShortDescription": "The filter to be applied to the data. If empty, then all rows will be updated",
           "description": "The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for all rows",
-          "instillUIOrder": 2,
+          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
-          "instillAcceptFormats": [
+          "instillAcceptFormats":[
             "string"
           ],
           "title": "Filter",
@@ -352,42 +256,40 @@
             "integer"
           ],
           "instillShortDescription": "Limit Rows",
-          "instillUIOrder": 3,
+          "instillUIOrder": 2,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
           "title": "Limit",
-          "type": "integer"
+          "type":"integer"
         },
-        "columns": {
+        "columns":{
           "description": "The columns to return in the rows. If empty then all columns will be returned",
           "instillAcceptFormats": [
             "array:string"
           ],
           "instillShortDescription": "Columns to be returned, empty for all columns",
-          "instillUIOrder": 4,
+          "instillUIOrder": 3,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
           "title": "Columns",
-          "type": "array",
+          "type":"array",
           "items": {
-            "title": "Column",
+            "title":"Column",
             "type": "string"
           },
           "minItems": 1
         }
       },
       "required": [
-        "engine",
         "table-name"
       ],
       "instillEditOnNodeFields": [
-        "engine",
         "table-name",
         "filter"
       ],
@@ -438,53 +340,31 @@
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "engine": {
-          "description": "Choose the engine of your database",
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 0,
-          "title": "Engine",
-          "enum": [
-            "MySQL",
-            "PostgreSQL",
-            "SQL Server",
-            "Oracle",
-            "MariaDB",
-            "Firebird"
-          ],
-          "type": "string"
-        },
         "table-name": {
           "description": "The table name in the database to be deleted",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 1,
+          "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
           "title": "Table Name",
-          "type": "string"
+          "type":"string"
         },
         "filter": {
           "instillShortDescription": "The filter to be applied to the data",
           "description": "The filter to be applied to the data with SQL syntax, which starts with WHERE clause",
-          "instillUIOrder": 2,
+          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
-          "instillAcceptFormats": [
+          "instillAcceptFormats":[
             "string"
           ],
           "title": "Filter",
@@ -492,7 +372,6 @@
         }
       },
       "required": [
-        "engine",
         "filter",
         "table-name"
       ],
@@ -518,56 +397,33 @@
       "type": "object"
     }
   },
-  "TASK_CREATE_TABLE": {
+  "TASK_CREATE_TABLE":{
     "instillShortDescription": "Create a table in the database",
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "engine": {
-          "description": "Choose the engine of your database",
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 0,
-          "title": "Engine",
-          "enum": [
-            "MySQL",
-            "PostgreSQL",
-            "SQL Server",
-            "Oracle",
-            "MariaDB",
-            "Firebird"
-          ],
-          "type": "string"
-        },
         "table-name": {
           "description": "The table name in the database to be created",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 1,
+          "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
           "title": "Table Name",
-          "type": "string"
+          "type":"string"
         },
         "columns-structure": {
           "description": "The columns structure to be created in the table, json with value string, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
           "instillAcceptFormats": [
-            "semi-structured/*",
-            "object"
+            "semi-structured/*","object"
           ],
           "instillShortDescription": "Columns Structure, e.g {\"name\": \"VARCHAR(255)\", \"age\": \"INT not null\"}",
-          "instillUIOrder": 2,
+          "instillUIOrder": 1,
           "instillUpstreamTypes": [
             "reference",
             "template",
@@ -579,7 +435,6 @@
         }
       },
       "required": [
-        "engine",
         "table-name",
         "columns-structure"
       ],
@@ -605,51 +460,28 @@
       "type": "object"
     }
   },
-  "TASK_DROP_TABLE": {
+  "TASK_DROP_TABLE":{
     "instillShortDescription": "Drop a table in the database",
     "input": {
       "instillUIOrder": 0,
       "properties": {
-        "engine": {
-          "description": "Choose the engine of your database",
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 0,
-          "title": "Engine",
-          "enum": [
-            "MySQL",
-            "PostgreSQL",
-            "SQL Server",
-            "Oracle",
-            "MariaDB",
-            "Firebird"
-          ],
-          "type": "string"
-        },
         "table-name": {
           "description": "The table name in the database to be dropped",
           "instillAcceptFormats": [
             "string"
           ],
           "instillShortDescription": "Database Table Name",
-          "instillUIOrder": 1,
+          "instillUIOrder": 0,
           "instillUpstreamTypes": [
             "reference",
             "template",
             "value"
           ],
           "title": "Table Name",
-          "type": "string"
+          "type":"string"
         }
       },
       "required": [
-        "engine",
         "table-name"
       ],
       "title": "Input",

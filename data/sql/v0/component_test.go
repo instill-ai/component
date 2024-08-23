@@ -133,6 +133,9 @@ func TestComponent_ExecuteInsertTask(t *testing.T) {
 				"host":     "localhost",
 				"port":     "3306",
 				"region":   "us-west-2",
+				"ssl-tls": map[string]any{
+					"ssl-tls-type": "NO TLS",
+				},
 			})
 			c.Assert(err, qt.IsNil)
 
@@ -201,6 +204,9 @@ func TestComponent_ExecuteInsertManyTask(t *testing.T) {
 				"host":     "localhost",
 				"port":     "3306",
 				"region":   "us-west-2",
+				"ssl-tls": map[string]any{
+					"ssl-tls-type": "NO TLS",
+				},
 			})
 			c.Assert(err, qt.IsNil)
 
@@ -271,6 +277,9 @@ func TestComponent_ExecuteUpdateTask(t *testing.T) {
 				"host":     "localhost",
 				"port":     "3306",
 				"region":   "us-west-2",
+				"ssl-tls": map[string]any{
+					"ssl-tls-type": "NO TLS",
+				},
 			})
 			c.Assert(err, qt.IsNil)
 
@@ -341,6 +350,9 @@ func TestComponent_ExecuteSelectTask(t *testing.T) {
 				"host":     "localhost",
 				"port":     "3306",
 				"region":   "us-west-2",
+				"ssl-tls": map[string]any{
+					"ssl-tls-type": "NO TLS",
+				},
 			})
 			c.Assert(err, qt.IsNil)
 
@@ -407,6 +419,9 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 				"host":     "localhost",
 				"port":     "3306",
 				"region":   "us-west-2",
+				"ssl-tls": map[string]any{
+					"ssl-tls-type": "NO TLS",
+				},
 			})
 			c.Assert(err, qt.IsNil)
 
@@ -476,6 +491,9 @@ func TestComponent_ExecuteCreateTableTask(t *testing.T) {
 				"host":     "localhost",
 				"port":     "3306",
 				"region":   "us-west-2",
+				"ssl-tls": map[string]any{
+					"ssl-tls-type": "NO TLS",
+				},
 			})
 			c.Assert(err, qt.IsNil)
 
@@ -541,6 +559,9 @@ func TestComponent_ExecuteDropTableTask(t *testing.T) {
 				"host":     "localhost",
 				"port":     "3306",
 				"region":   "us-west-2",
+				"ssl-tls": map[string]any{
+					"ssl-tls-type": "NO TLS",
+				},
 			})
 			c.Assert(err, qt.IsNil)
 
