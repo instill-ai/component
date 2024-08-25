@@ -27,7 +27,8 @@
     "username": {
       "description": "Fill in your account username",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"
@@ -52,7 +53,8 @@
     "database-name": {
       "description": "Fill in the name of your database",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"
@@ -64,7 +66,8 @@
     "host": {
       "description": "Fill in the host of your database",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"
@@ -76,7 +79,8 @@
     "port": {
       "description": "Fill in the port of your database",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "default": 3306,
       "instillAcceptFormats": [
@@ -92,8 +96,8 @@
       "oneOf": [
         {
           "properties": {
-            "ssl-tls-type":{
-              "const":"NO TLS",
+            "ssl-tls-type": {
+              "const": "NO TLS",
               "description": "Choose the type of SSL/TLS",
               "instillUIOrder": 0,
               "order": 0,
@@ -107,8 +111,8 @@
         },
         {
           "properties": {
-            "ssl-tls-type":{
-              "const":"TLS",
+            "ssl-tls-type": {
+              "const": "TLS",
               "description": "Choose the type of SSL/TLS",
               "instillUIOrder": 0,
               "order": 0,
@@ -137,8 +141,8 @@
         },
         {
           "properties": {
-            "ssl-tls-type":{
-              "const":"mTLS",
+            "ssl-tls-type": {
+              "const": "mTLS",
               "description": "Choose the type of SSL/TLS",
               "instillUIOrder": 0,
               "order": 0,
