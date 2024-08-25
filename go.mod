@@ -31,7 +31,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/h2non/filetype v1.1.3
 	github.com/iFaceless/godub v0.0.0-20200728093528-a30bb4d1a0f1
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240808093014-75008c807ea7
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240823161910-354761b16f15
 	github.com/instill-ai/x v0.4.0-alpha
 	github.com/itchyny/gojq v0.12.14
 	github.com/jmoiron/sqlx v1.4.0
@@ -48,7 +48,6 @@ require (
 	github.com/pkoukk/tiktoken-go v0.1.6
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.0
-	github.com/sashabaranov/go-openai v1.28.2
 	github.com/slack-go/slack v0.12.5
 	github.com/stretchr/testify v1.9.0
 	github.com/tmc/langchaingo v0.1.10
