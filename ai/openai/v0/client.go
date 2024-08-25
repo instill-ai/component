@@ -1,21 +1,48 @@
 package openai
 
 import (
+	"github.com/instill-ai/component/internal/util/httpclient"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
-
-	openaiclient "github.com/sashabaranov/go-openai"
 )
 
-func newClient(setup *structpb.Struct, logger *zap.Logger) *openaiclient.Client {
+func newClient(setup *structpb.Struct, logger *zap.Logger) *httpclient.Client {
+	c := httpclient.New("OpenAI", getBasePath(setup),
+		httpclient.WithLogger(logger),
+		httpclient.WithEndUserError(new(errBody)),
+	)
 
-	cfg := openaiclient.DefaultConfig(getAPIKey(setup))
+	c.SetAuthToken(getAPIKey(setup))
+
 	org := getOrg(setup)
 	if org != "" {
-		cfg.OrgID = org
+		c.SetHeader("OpenAI-Organization", org)
 	}
 
-	return openaiclient.NewClientWithConfig(cfg)
+	return c
+}
+
+type errBody struct {
+	Error struct {
+		Message string `json:"message"`
+	} `json:"error"`
+}
+
+func (e errBody) Message() string {
+	return e.Error.Message
+}
+
+// getBasePath returns OpenAI's API URL. This configuration param allows us to
+// override the API the connector will point to. It isn't meant to be exposed
+// to users. Rather, it can serve to test the logic against a fake server.
+// TODO instead of having the API value hardcoded in the codebase, it should be
+// read from a setup file or environment variable.
+func getBasePath(setup *structpb.Struct) string {
+	v, ok := setup.GetFields()["base-path"]
+	if !ok {
+		return host
+	}
+	return v.GetStringValue()
 }
 
 func getAPIKey(setup *structpb.Struct) string {

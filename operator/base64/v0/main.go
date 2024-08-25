@@ -38,7 +38,7 @@ type execution struct {
 }
 
 type Base64 struct {
-	Data string `json:"data" instillFormat:"a"`
+	Data string `json:"data"`
 }
 
 func Init(bc base.Component) *component {
