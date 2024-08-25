@@ -226,6 +226,9 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 					continue
 				}
 				res = strings.Replace(res, "data: ", "", 1)
+				if res == "[DONE]" {
+					break
+				}
 
 				response := &textCompletionResp{}
 				err = json.Unmarshal([]byte(res), response)
