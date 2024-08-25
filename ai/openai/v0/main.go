@@ -177,6 +177,9 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 				PresencePenalty:  inputStruct.PresencePenalty,
 				FrequencyPenalty: inputStruct.FrequencyPenalty,
 				Stream:           true,
+				StreamOptions: streamOptions{
+					IncludeUsage: true,
+				},
 			}
 
 			// workaround, the OpenAI service can not accept this param
@@ -218,6 +221,7 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 
 			outputStruct := TextCompletionOutput{}
 
+			u := usage{}
 			count := 0
 			for scanner.Scan() {
 
@@ -267,7 +271,7 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 
 				}
 
-				outputStruct.Usage = usage{
+				u = usage{
 					PromptTokens:     response.Usage.PromptTokens,
 					CompletionTokens: response.Usage.CompletionTokens,
 					TotalTokens:      response.Usage.TotalTokens,
@@ -275,6 +279,7 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 
 			}
 
+			outputStruct.Usage = u
 			outputJSON, err := json.Marshal(outputStruct)
 			if err != nil {
 				return err

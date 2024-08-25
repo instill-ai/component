@@ -47,6 +47,11 @@ type textCompletionReq struct {
 	FrequencyPenalty *float32                 `json:"frequency_penalty,omitempty"`
 	ResponseFormat   *responseFormatReqStruct `json:"response_format,omitempty"`
 	Stream           bool                     `json:"stream"`
+	StreamOptions    streamOptions            `json:"stream_options"`
+}
+
+type streamOptions struct {
+	IncludeUsage bool `json:"include_usage"`
 }
 
 type responseFormatReqStruct struct {
