@@ -218,6 +218,7 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 
 			outputStruct := TextCompletionOutput{}
 
+			count := 0
 			for scanner.Scan() {
 
 				res := scanner.Text()
@@ -226,10 +227,32 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 					continue
 				}
 				res = strings.Replace(res, "data: ", "", 1)
-				if res == "[DONE]" {
-					break
+
+				// Note: Since we haven’t provided delta updates for the
+				// messages, we’re reducing the number of event streams by
+				// returning the response every ten iterations.
+				if count == 10 || res == "[DONE]" {
+					outputJSON, inErr := json.Marshal(outputStruct)
+					if inErr != nil {
+						return inErr
+					}
+					output := &structpb.Struct{}
+					inErr = protojson.Unmarshal(outputJSON, output)
+					if inErr != nil {
+						return inErr
+					}
+					outputs[batchIdx] = output
+					inErr = out.Write(ctx, outputs)
+					if inErr != nil {
+						return inErr
+					}
+					if res == "[DONE]" {
+						break
+					}
+					count = 0
 				}
 
+				count += 1
 				response := &textCompletionResp{}
 				err = json.Unmarshal([]byte(res), response)
 				if err != nil {
@@ -248,21 +271,6 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 					PromptTokens:     response.Usage.PromptTokens,
 					CompletionTokens: response.Usage.CompletionTokens,
 					TotalTokens:      response.Usage.TotalTokens,
-				}
-
-				outputJSON, inErr := json.Marshal(outputStruct)
-				if inErr != nil {
-					return inErr
-				}
-				output := &structpb.Struct{}
-				inErr = protojson.Unmarshal(outputJSON, output)
-				if inErr != nil {
-					return inErr
-				}
-				outputs[batchIdx] = output
-				inErr = out.Write(ctx, outputs)
-				if inErr != nil {
-					return inErr
 				}
 
 			}
