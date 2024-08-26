@@ -22,6 +22,8 @@ const (
 	TaskDropCollection   = "TASK_DROP_COLLECTION"
 	TaskCreatePartition  = "TASK_CREATE_PARTITION"
 	TaskDropPartition    = "TASK_DROP_PARTITION"
+	TaskCreateIndex      = "TASK_CREATE_INDEX"
+	TaskDropIndex        = "TASK_DROP_INDEX"
 )
 
 //go:embed config/definition.json
@@ -82,6 +84,10 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.createPartition
 	case TaskDropPartition:
 		e.execute = e.dropPartition
+	case TaskCreateIndex:
+		e.execute = e.createIndex
+	case TaskDropIndex:
+		e.execute = e.dropIndex
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", x.Task),

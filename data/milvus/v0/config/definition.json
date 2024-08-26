@@ -2,10 +2,14 @@
   "availableTasks": [
     "TASK_VECTOR_SEARCH",
     "TASK_UPSERT",
+    "TASK_BATCH_UPSERT",
     "TASK_DELETE",
+    "TASK_CREATE_COLLECTION",
     "TASK_DROP_COLLECTION",
     "TASK_CREATE_PARTITION",
-    "TASK_DROP_PARTITION"
+    "TASK_DROP_PARTITION",
+    "TASK_CREATE_INDEX",
+    "TASK_DROP_INDEX"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/data/milvus",
   "icon": "assets/milvus.svg",
@@ -15,7 +19,7 @@
   "description": "Build and search vector datasets",
   "tombstone": false,
   "type": "COMPONENT_TYPE_DATA",
-  "uid": "28a0ac4e-9ef7-4f89-8e2b-7c5411f2efab",
+  "uid": "51a5246e-2f2c-4597-bbca-4baaa0dc8994",
   "vendor": "Milvus",
   "vendorAttributes": {},
   "version": "0.1.0",

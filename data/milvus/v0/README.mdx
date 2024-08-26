@@ -10,10 +10,14 @@ It can carry out the following tasks:
 
 - [Vector Search](#vector-search)
 - [Upsert](#upsert)
+- [Batch Upsert](#batch-upsert)
 - [Delete](#delete)
+- [Create Collection](#create-collection)
 - [Drop Collection](#drop-collection)
 - [Create Partition](#create-partition)
 - [Drop Partition](#drop-partition)
+- [Create Index](#create-index)
+- [Drop Index](#drop-index)
 
 
 
@@ -98,6 +102,29 @@ Insert a vector data into a collection
 
 
 
+### Batch Upsert
+
+Insert a batch of vector data into a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_BATCH_UPSERT` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to upsert the data into |
+| Partition Name | `partition-name` | string | The name of the partition to upsert the data from. If empty then default partition will be used |
+| Array Data (required) | `array-data` | array[object] | The data |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Batch upsert status |
+
+
+
+
+
+
 ### Delete
 
 Delete vector data from a collection
@@ -115,6 +142,34 @@ Delete vector data from a collection
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
+
+
+
+### Create Collection
+
+Create a collectio, please refer to https://milvus.io/docs/manage-collections.md#Create-Collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CREATE_COLLECTION` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to create |
+| Dimension (required) | `dimension` | integer | The dimension of the collection |
+| ID Type | `id-type` | string | The type of the id |
+| Schema | `schema` | object | The schema of the collection |
+| Auto ID | `auto-id` | boolean | Whether to auto generate id |
+| Metric Type | `metric-type` | string | The metric type of the collection |
+| Index Parameters | `index-params` | array[object] | The index parameters to be applied to the collection with milvus index parameters, please refer to https://milvus.io/api-reference/restful/v2.4.x/v2/Collection%20(v2)/Create.md |
+| Parameters | `params` | object | The parameters to be applied to the collection with milvus parameters, please refer to https://milvus.io/docs/single-vector-search.md#Parameters |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Create collection status |
 
 
 
@@ -180,6 +235,50 @@ Drop a partition from a collection
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop partition status |
+
+
+
+
+
+
+### Create Index
+
+Create an index in a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CREATE_INDEX` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to create the index in |
+| Index Parameters (required) | `index-params` | object | The index parameters to be applied to the collection with milvus index parameters, please refer to https://milvus.io/api-reference/restful/v2.4.x/v2/Index%20(v2)/Create.md |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Create index status |
+
+
+
+
+
+
+### Drop Index
+
+Drop an index from a collection
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DROP_INDEX` |
+| Collection Name (required) | `collection-name` | string | The name of the collection to drop the index from |
+| Index Name (required) | `index-name` | string | The name of the index to drop |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Status | `status` | string | Drop index status |
 
 
 

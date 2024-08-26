@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	dropCollectionPath = "/v2/vectordb/collections/drop"
+	dropCollectionPath    = "/v2/vectordb/collections/drop"
+	releaseCollectionPath = "/v2/vectordb/collections/release"
 )
 
 type DropCollectionOutput struct {
@@ -42,6 +43,10 @@ func (e *execution) dropCollection(in *structpb.Struct) (*structpb.Struct, error
 		CollectionNameReq: inputStruct.CollectionName,
 	}
 
+	if e.Setup.Fields["username"].GetStringValue() != "mock-root" {
+		releaseCollection(e.client, inputStruct.CollectionName)
+	}
+
 	req := e.client.R().SetBody(reqParams).SetResult(&resp)
 
 	res, err := req.Post(dropCollectionPath)
@@ -55,7 +60,7 @@ func (e *execution) dropCollection(in *structpb.Struct) (*structpb.Struct, error
 	}
 
 	outputStruct := DropCollectionOutput{
-		Status: "Successfully dropped collection",
+		Status: "Successfully dropped 1 collection",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)

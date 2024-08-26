@@ -10,6 +10,7 @@ import (
 const (
 	searchPath             = "/v2/vectordb/entities/search"
 	describeCollectionPath = "/v2/vectordb/collections/describe"
+	loadCollectionPath     = "/v2/vectordb/collections/load"
 )
 
 type SearchOutput struct {
@@ -70,6 +71,15 @@ type DescribeCollectionResp struct {
 	Data    DataDescribe `json:"data"`
 }
 
+type LoadCollectionReq struct {
+	CollectionNameReq string `json:"collectionName"`
+}
+
+type LoadCollectionResp struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
 type DataDescribe struct {
 	Fields []Field `json:"fields"`
 }
@@ -92,6 +102,12 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		CollectionNameReq: inputStruct.CollectionName,
 	}
 
+	respLoadCollection := LoadCollectionResp{}
+
+	reqLoadCollection := LoadCollectionReq{
+		CollectionNameReq: inputStruct.CollectionName,
+	}
+
 	if e.Setup.Fields["username"].GetStringValue() == "mock-root" {
 		respDescribe.Data.Fields = []Field{
 			{
@@ -108,6 +124,22 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 			},
 		}
 	} else {
+		reqLoadCollection := e.client.R().SetBody(reqLoadCollection).SetResult(&respLoadCollection)
+
+		resLoadCollection, err := reqLoadCollection.Post(loadCollectionPath)
+
+		if err != nil {
+			return nil, err
+		}
+
+		if resLoadCollection.StatusCode() != 200 {
+			return nil, fmt.Errorf("failed to load collection: %s", resLoadCollection.String())
+		}
+
+		if respLoadCollection.Message != "" && respLoadCollection.Code != 200 {
+			return nil, fmt.Errorf("failed to load collection: %s", respLoadCollection.Message)
+		}
+
 		reqDescribe := e.client.R().SetBody(reqParamsDescribe).SetResult(&respDescribe)
 
 		resDescribe, err := reqDescribe.Post(describeCollectionPath)
@@ -118,6 +150,10 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 
 		if resDescribe.StatusCode() != 200 {
 			return nil, fmt.Errorf("failed to describe collection: %s", resDescribe.String())
+		}
+
+		if respDescribe.Message != "" && respDescribe.Code != 200 {
+			return nil, fmt.Errorf("failed to describe collection: %s", respDescribe.Message)
 		}
 	}
 
@@ -138,6 +174,10 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		for _, field := range respDescribe.Data.Fields {
 			fields = append(fields, field.Name)
 		}
+	} else {
+		fields = append(fields, primaryKeyField)
+		fields = append(fields, inputStruct.VectorField)
+		fields = append(fields, inputStruct.Fields...)
 	}
 
 	resp := SearchResp{}
@@ -147,11 +187,12 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		Data:           [][]float32{inputStruct.Vector},
 		Limit:          inputStruct.Limit,
 		AnnsField:      inputStruct.VectorField,
+		OutputFields:   fields,
 	}
 	if inputStruct.PartitionName != "" {
 		reqParams.PartitionName = inputStruct.PartitionName
 	}
-	if fields != nil {
+	if inputStruct.Filter != "" {
 		reqParams.Filter = inputStruct.Filter
 	}
 	if inputStruct.Offset != 0 {
@@ -159,9 +200,6 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 	if inputStruct.GroupingField != "" {
 		reqParams.GroupingField = inputStruct.GroupingField
-	}
-	if len(inputStruct.Fields) > 0 {
-		reqParams.OutputFields = inputStruct.Fields
 	}
 	if inputStruct.SearchParams != nil {
 		reqParams.SearchParams = inputStruct.SearchParams
@@ -179,7 +217,7 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("failed to Search point: %s", res.String())
 	}
 
-	if resp.Message != "" && resp.Code != 0 {
+	if resp.Message != "" && resp.Code != 200 {
 		return nil, fmt.Errorf("failed to upsert data: %s", resp.Message)
 	}
 
@@ -198,12 +236,21 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		vectors = append(vectors, vectorFloat32)
 
 		metadatum := make(map[string]any)
-		for _, field := range respDescribe.Data.Fields {
-			if field.Name == "distance" || field.Name == inputStruct.VectorField {
-				continue
+		if inputStruct.Fields != nil {
+			for _, field := range inputStruct.Fields {
+				if _, ok := metadatum[field]; ok {
+					metadatum[field] = d[field]
+				}
 			}
-			metadatum[field.Name] = d[field.Name]
+		} else {
+			for _, field := range fields {
+				if field == "distance" {
+					continue
+				}
+				metadatum[field] = d[field]
+			}
 		}
+
 		metadata = append(metadata, metadatum)
 	}
 

@@ -380,6 +380,8 @@
           "description": "The data",
           "instillAcceptFormats": [
             "array:semi-structured/*",
+            "array:semi-structured/json",
+            "array:semi-structured/object",
             "array:object"
           ],
           "instillUIOrder": 2,
@@ -599,10 +601,10 @@
           "default": "L2"
         },
         "index-params":{
-          "description": "The index parameters to be applied to the collection with milvus index parameters, please refer to https://milvus.io/docs/single-vector-search.md#Index-parameters",
+          "description": "The index parameters to be applied to the collection with milvus index parameters, please refer to https://milvus.io/api-reference/restful/v2.4.x/v2/Collection%20(v2)/Create.md",
           "instillUIOrder": 7,
           "instillAcceptFormats": [
-            "semi-structured/*", "object"
+            "array:semi-structured/*", "array:object"
           ],
           "instillUpstreamTypes": [
             "reference",
@@ -610,8 +612,13 @@
             "value"
           ],
           "title": "Index Parameters",
-          "type": "object",
-          "required": []
+          "type": "array",
+          "required": [],
+          "items": {
+            "description": "Index parameter",
+            "type": "object",
+            "required": []
+          }
         },
         "params":{
           "description": "The parameters to be applied to the collection with milvus parameters, please refer to https://milvus.io/docs/single-vector-search.md#Parameters",
@@ -812,6 +819,125 @@
       "properties": {
         "status": {
           "description": "Drop partition status",
+          "instillFormat": "string",
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_CREATE_INDEX":{
+    "instillShortDescription": "Create an index in a collection",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "collection-name": {
+          "description": "The name of the collection to create the index in",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "index-params":{
+          "description": "The index parameters to be applied to the collection with milvus index parameters, please refer to https://milvus.io/api-reference/restful/v2.4.x/v2/Index%20(v2)/Create.md",
+          "instillUIOrder": 7,
+          "instillAcceptFormats": [
+            "semi-structured/*", "object"
+          ],
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Index Parameters",
+          "type": "object",
+          "required": []
+        }
+      },
+      "required": [
+        "collection-name",
+        "index-params"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Create index status",
+          "instillFormat": "string",
+          "instillUIOrder": 0,
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_DROP_INDEX":{
+    "instillShortDescription": "Drop an index from a collection",
+    "input": {
+      "instillUIOrder": 0,
+      "properties": {
+        "collection-name": {
+          "description": "The name of the collection to drop the index from",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "index-name":{
+          "description": "The name of the index to drop",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 1,
+          "instillUpstreamTypes": [
+            "reference",
+            "template",
+            "value"
+          ],
+          "title": "Index Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection-name",
+        "index-name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "instillUIOrder": 0,
+      "properties": {
+        "status": {
+          "description": "Drop index status",
           "instillFormat": "string",
           "instillUIOrder": 0,
           "title": "Status",

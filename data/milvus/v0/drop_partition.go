@@ -45,6 +45,10 @@ func (e *execution) dropPartition(in *structpb.Struct) (*structpb.Struct, error)
 		PartitionNameReq:  inputStruct.PartitionName,
 	}
 
+	if e.Setup.Fields["username"].GetStringValue() != "mock-root" {
+		releaseCollection(e.client, inputStruct.CollectionName)
+	}
+
 	req := e.client.R().SetBody(reqParams).SetResult(&resp)
 
 	res, err := req.Post(dropPartitionPath)
@@ -58,7 +62,7 @@ func (e *execution) dropPartition(in *structpb.Struct) (*structpb.Struct, error)
 	}
 
 	outputStruct := DropPartitionOutput{
-		Status: "Successfully dropped partition",
+		Status: "Successfully dropped 1 partition",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)

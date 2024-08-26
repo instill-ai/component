@@ -49,7 +49,7 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 					Ids:      []string{"mockID1", "mockID2"},
 					Data:     []map[string]any{{"distance": 1, "id": "mockID1", "name": "a", "vector": []float32{0.1, 0.2}}, {"distance": 1, "id": "mockID2", "name": "b", "vector": []float32{0.2, 0.3}}},
 					Vectors:  [][]float32{{0.1, 0.2}, {0.2, 0.3}},
-					Metadata: []map[string]any{{"id": "mockID1", "name": "a"}, {"id": "mockID2", "name": "b"}},
+					Metadata: []map[string]any{{"id": "mockID1", "name": "a", "vector": []float64{0.1, 0.2}}, {"id": "mockID2", "name": "b", "vector": []float64{0.2, 0.3}}},
 				},
 			},
 			wantClientPath: searchPath,
@@ -58,6 +58,7 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 				Data:           [][]float32{{0.1, 0.2}},
 				AnnsField:      "vector",
 				Limit:          2,
+				OutputFields:   []string{"id", "name", "vector"},
 			},
 			clientResp: `{
 				"code": 200,
@@ -550,7 +551,7 @@ func TestComponent_ExecuteDropCollectionTask(t *testing.T) {
 				CollectionName: "mock-collection",
 			},
 			wantResp: DropCollectionOutput{
-				Status: "Successfully dropped collection",
+				Status: "Successfully dropped 1 collection",
 			},
 			wantClientPath: dropCollectionPath,
 			wantClientReq: DropCollectionReq{
@@ -734,7 +735,7 @@ func TestComponent_ExecuteDropPartitionTask(t *testing.T) {
 				PartitionName:  "mock-partition",
 			},
 			wantResp: DropPartitionOutput{
-				Status: "Successfully dropped partition",
+				Status: "Successfully dropped 1 partition",
 			},
 			wantClientPath: dropPartitionPath,
 			wantClientReq: DropPartitionReq{
@@ -782,6 +783,212 @@ func TestComponent_ExecuteDropPartitionTask(t *testing.T) {
 				Component: cmp,
 				Setup:     setup,
 				Task:      TaskDropPartition,
+			})
+
+			c.Assert(err, qt.IsNil)
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs, qt.HasLen, 1)
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = exec.Execute(ctx, ir, ow)
+			c.Check(err, qt.IsNil)
+
+		})
+	}
+}
+
+func TestComponent_ExecuteCreateIndexTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	cmp := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    CreateIndexInput
+		wantResp CreateIndexOutput
+		wantErr  string
+
+		wantClientPath string
+		wantClientReq  any
+		clientResp     string
+	}{
+		{
+			name: "ok to create index",
+			input: CreateIndexInput{
+				CollectionName: "mock-collection",
+				IndexParams: map[string]any{
+					"metricType": "L2",
+					"fieldName":  "my_vector",
+					"indexName":  "my_vector",
+					"indexConfig": map[string]any{
+						"index_type": "IVF_FLAT",
+						"nlist":      "1024",
+					},
+				},
+			},
+			wantResp: CreateIndexOutput{
+				Status: "Successfully created 1 index",
+			},
+			wantClientPath: createIndexPath,
+			wantClientReq: CreateIndexReq{
+				CollectionName: "mock-collection",
+				IndexParams: []map[string]any{{"metricType": "L2",
+					"fieldName": "my_vector",
+					"indexName": "my_vector",
+					"indexConfig": map[string]any{
+						"index_type": "IVF_FLAT",
+						"nlist":      "1024",
+					}}},
+			},
+			clientResp: `{
+				"code": 200,
+				"data": {}
+			}`,
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				c.Check(r.Method, qt.Equals, http.MethodPost)
+				c.Check(r.URL.Path, qt.Equals, tc.wantClientPath)
+
+				c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
+				c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
+				c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-root:Milvus")
+
+				c.Assert(r.Body, qt.IsNotNil)
+				defer r.Body.Close()
+
+				body, err := io.ReadAll(r.Body)
+				c.Assert(err, qt.IsNil)
+				c.Check(body, qt.JSONEquals, tc.wantClientReq)
+
+				w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+				fmt.Fprintln(w, tc.clientResp)
+			})
+
+			milvusServer := httptest.NewServer(h)
+			c.Cleanup(milvusServer.Close)
+
+			setup, _ := structpb.NewStruct(map[string]any{
+				"username": "mock-root",
+				"password": "Milvus",
+				"url":      milvusServer.URL,
+			})
+
+			exec, err := cmp.CreateExecution(base.ComponentExecution{
+				Component: cmp,
+				Setup:     setup,
+				Task:      TaskCreateIndex,
+			})
+
+			c.Assert(err, qt.IsNil)
+
+			pbIn, err := base.ConvertToStructpb(tc.input)
+			c.Assert(err, qt.IsNil)
+
+			ir := mock.NewInputReaderMock(c)
+			ow := mock.NewOutputWriterMock(c)
+			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+				c.Assert(outputs, qt.HasLen, 1)
+				wantJSON, err := json.Marshal(tc.wantResp)
+				c.Assert(err, qt.IsNil)
+				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				return nil
+			})
+
+			err = exec.Execute(ctx, ir, ow)
+			c.Check(err, qt.IsNil)
+
+		})
+	}
+}
+
+func TestComponent_ExecuteDropIndexTask(t *testing.T) {
+	c := qt.New(t)
+	ctx := context.Background()
+	bc := base.Component{Logger: zap.NewNop()}
+	cmp := Init(bc)
+
+	testcases := []struct {
+		name     string
+		input    DropIndexInput
+		wantResp DropIndexOutput
+		wantErr  string
+
+		wantClientPath string
+		wantClientReq  any
+		clientResp     string
+	}{
+		{
+			name: "ok to delete index",
+			input: DropIndexInput{
+				CollectionName: "mock-collection",
+				IndexName:      "mock-index",
+			},
+			wantResp: DropIndexOutput{
+				Status: "Successfully dropped 1 index",
+			},
+			wantClientPath: dropIndexPath,
+			wantClientReq: DropIndexReq{
+				CollectionNameReq: "mock-collection",
+				IndexNameReq:      "mock-index",
+			},
+			clientResp: `{
+				"code": 200,
+				"data": {}
+			}`,
+		},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.name, func(c *qt.C) {
+			h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				c.Check(r.Method, qt.Equals, http.MethodPost)
+				c.Check(r.URL.Path, qt.Equals, tc.wantClientPath)
+
+				c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
+				c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
+				c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-root:Milvus")
+
+				c.Assert(r.Body, qt.IsNotNil)
+				defer r.Body.Close()
+
+				body, err := io.ReadAll(r.Body)
+				c.Assert(err, qt.IsNil)
+				c.Check(body, qt.JSONEquals, tc.wantClientReq)
+
+				w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+				fmt.Fprintln(w, tc.clientResp)
+			})
+
+			milvusServer := httptest.NewServer(h)
+			c.Cleanup(milvusServer.Close)
+
+			setup, _ := structpb.NewStruct(map[string]any{
+				"username": "mock-root",
+				"password": "Milvus",
+				"url":      milvusServer.URL,
+			})
+
+			exec, err := cmp.CreateExecution(base.ComponentExecution{
+				Component: cmp,
+				Setup:     setup,
+				Task:      TaskDropIndex,
 			})
 
 			c.Assert(err, qt.IsNil)
