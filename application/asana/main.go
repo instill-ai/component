@@ -82,18 +82,25 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	return e, nil
 }
 
-func (e *execution) Execute(ctx context.Context, inputs []*structpb.Struct) ([]*structpb.Struct, error) {
+func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
+	inputs, err := in.Read(ctx)
+	if err != nil {
+		return err
+	}
 	outputs := make([]*structpb.Struct, len(inputs))
+
 	for i, input := range inputs {
 		input, err := e.ComponentExecution.FillInDefaultValues(input)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		output, err := e.execute(ctx, input)
 		if err != nil {
-			return nil, err
+			return err
 		}
+
 		outputs[i] = output
 	}
-	return outputs, nil
+
+	return out.Write(ctx, outputs)
 }
