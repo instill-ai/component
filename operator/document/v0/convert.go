@@ -110,7 +110,7 @@ func isSupportedByDocconvConvert(contentType string) bool {
 	return supportedByDocconvConvertMimeTypes[contentType]
 }
 
-func convertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
+func ConvertToText(input ConvertToTextInput) (ConvertToTextOutput, error) {
 
 	contentType, err := util.GetContentTypeFromBase64(input.Document)
 	if err != nil {

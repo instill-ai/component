@@ -41,7 +41,7 @@ func TestConvertDocumentToMarkdown(t *testing.T) {
 
 			base64DataURI := fmt.Sprintf("data:%s;base64,%s", mimeTypeByExtension(test.filepath), base64.StdEncoding.EncodeToString(fileContent))
 
-			inputStruct := convertDocumentToMarkdownInput{
+			inputStruct := ConvertDocumentToMarkdownInput{
 				Document:        base64DataURI,
 				DisplayImageTag: false,
 				Converter:       "instill",
@@ -56,7 +56,7 @@ func TestConvertDocumentToMarkdown(t *testing.T) {
 			output, err := e.convertDocumentToMarkdown(input)
 			c.Assert(err, quicktest.IsNil)
 
-			outputStruct := convertDocumentToMarkdownOutput{}
+			outputStruct := ConvertDocumentToMarkdownOutput{}
 			err = base.ConvertFromStructpb(output, &outputStruct)
 			c.Assert(err, quicktest.IsNil)
 			c.Assert(outputStruct.Body, quicktest.DeepEquals, "This is test file")
@@ -81,7 +81,7 @@ func mimeTypeByExtension(filepath string) string {
 	}
 }
 
-func fakeGetMarkdownTransformer(fileExtension string, inputStruct convertDocumentToMarkdownInput) (MarkdownTransformer, error) {
+func fakeGetMarkdownTransformer(fileExtension string, inputStruct *ConvertDocumentToMarkdownInput) (MarkdownTransformer, error) {
 	return FakeMarkdownTransformer{}, nil
 }
 
