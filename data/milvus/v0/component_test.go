@@ -219,7 +219,6 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 
 			err = exec.Execute(ctx, ir, ow)
 			c.Check(err, qt.IsNil)
-
 		})
 	}
 }
@@ -1009,7 +1008,6 @@ func TestComponent_ExecuteDropIndexTask(t *testing.T) {
 
 			err = exec.Execute(ctx, ir, ow)
 			c.Check(err, qt.IsNil)
-
 		})
 	}
 }

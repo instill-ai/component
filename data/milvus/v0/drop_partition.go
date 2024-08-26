@@ -46,7 +46,10 @@ func (e *execution) dropPartition(in *structpb.Struct) (*structpb.Struct, error)
 	}
 
 	if e.Setup.Fields["username"].GetStringValue() != "mock-root" {
-		releaseCollection(e.client, inputStruct.CollectionName)
+		err := releaseCollection(e.client, inputStruct.CollectionName)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	req := e.client.R().SetBody(reqParams).SetResult(&resp)
