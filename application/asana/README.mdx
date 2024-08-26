@@ -8,10 +8,10 @@ description: "Learn about how to set up a VDP Asana component https://github.com
 The Asana component is an application component that allows users to do anything available on Asana.
 It can carry out the following tasks:
 
-- [Goal](#goal)
-- [Task](#task)
-- [Project](#project)
-- [Portfolio](#portfolio)
+- [Asana Goal](#asana-goal)
+- [Asana Task](#asana-task)
+- [Asana Project](#asana-project)
+- [Asana Portfolio](#asana-portfolio)
 
 
 
@@ -40,14 +40,14 @@ The component configuration is defined and maintained [here](https://github.com/
 
 ## Supported Tasks
 
-### Goal
+### Asana Goal
 
 Goal Related Task, including get, update, delete, create, duplicate
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_GOAL` |
+| Task ID (required) | `task` | string | `TASK_ASANA_GOAL` |
 | Action | `action` | object | action |
 
 
@@ -57,8 +57,8 @@ Goal Related Task, including get, update, delete, create, duplicate
 | Goal ID (optional) | `gid` | string | Globally unique identifier (GID) for the goal. |
 | Goal Name (optional) | `name` | string | The name of the goal. |
 | Owner (optional) | `owner` | object | The owner of the goal. |
-| Goal Note (optional) | `note` | string | The note of the goal. |
-| Goal HTML Note (optional) | `html-note` | string | The note of the goal in HTML format. |
+| Goal Note (optional) | `notes` | string | The notes of the goal. |
+| Goal HTML Note (optional) | `html-notes` | string | The notes of the goal in HTML format. |
 | Due Date (optional) | `due-on` | string | The date on which the goal is due. In the format YYYY-MM-DD. |
 | Start Date (optional) | `start-on` | string | The date on which the goal starts. In the format YYYY-MM-DD. |
 | Liked (optional) | `liked` | boolean | Whether the goal is liked by the user. |
@@ -69,14 +69,14 @@ Goal Related Task, including get, update, delete, create, duplicate
 
 
 
-### Task
+### Asana Task
 
 Task Related Task, including get, update, delete, create, set parent, add tag, remove tag, add follower, remove follower, add project, remove project
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_TASK` |
+| Task ID (required) | `task` | string | `TASK_ASANA_TASK` |
 | Action | `action` | object | Action |
 
 
@@ -98,14 +98,14 @@ Task Related Task, including get, update, delete, create, set parent, add tag, r
 
 
 
-### Project
+### Asana Project
 
 Project Related Task, including get, update, delete, create, duplicate
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_PROJECT` |
+| Task ID (required) | `task` | string | `TASK_ASANA_PROJECT` |
 | Action | `action` | object | action |
 
 
@@ -115,8 +115,8 @@ Project Related Task, including get, update, delete, create, duplicate
 | Project ID (optional) | `gid` | string | Globally unique identifier (GID) for the project. |
 | Project Name (optional) | `name` | string | The name of the project. |
 | Owner (optional) | `owner` | object | The owner of the project. |
-| Project Note (optional) | `note` | string | The note of the project. |
-| Project HTML Note (optional) | `html-note` | string | The note of the project in HTML format. |
+| Project Note (optional) | `notes` | string | The notes of the project. |
+| Project HTML Note (optional) | `html-notes` | string | The notes of the project in HTML format. |
 | Due Date (optional) | `due-on` | string | The date on which the project is due. In the format YYYY-MM-DD. |
 | Start Date (optional) | `start-on` | string | The date on which the project starts. In the format YYYY-MM-DD. |
 | Completed (optional) | `completed` | boolean | Whether the project is completed. |
@@ -134,14 +134,14 @@ Project Related Task, including get, update, delete, create, duplicate
 
 
 
-### Portfolio
+### Asana Portfolio
 
 Portfolio Related Task, including get, update, delete, create, duplicate
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_PORTFOLIO` |
+| Task ID (required) | `task` | string | `TASK_ASANA_PORTFOLIO` |
 | Action | `action` | object | action |
 
 

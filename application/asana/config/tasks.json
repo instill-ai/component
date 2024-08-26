@@ -1,5 +1,5 @@
 {
-  "TASK_GOAL": {
+  "TASK_ASANA_GOAL": {
     "description": "Goal Related Task",
     "instillShortDescription": "Goal Related Task, including get, update, delete, create, duplicate",
     "input": {
@@ -92,8 +92,8 @@
                   "instillFormat": "string",
                   "type": "string"
                 },
-                "note": {
-                  "description": "The note of the goal.",
+                "notes": {
+                  "description": "The notes of the goal.",
                   "instillShortDescription": "Update Goal Note",
                   "instillUIOrder": 2,
                   "title": "Goal Note",
@@ -188,7 +188,7 @@
                 "action",
                 "goal-gid",
                 "name",
-                "note",
+                "notes",
                 "due-on",
                 "start-on",
                 "liked",
@@ -253,8 +253,8 @@
                   "instillFormat": "string",
                   "type": "string"
                 },
-                "note": {
-                  "description": "The note of the goal.",
+                "notes": {
+                  "description": "The notes of the goal.",
                   "instillShortDescription": "Goal Note",
                   "instillUIOrder": 2,
                   "title": "Goal Note",
@@ -325,7 +325,7 @@
               "instillEditOnNodeFields": [
                 "action",
                 "name",
-                "note",
+                "notes",
                 "due-on",
                 "start-on",
                 "liked",
@@ -425,17 +425,17 @@
             "name"
           ]
         },
-        "note": {
-          "description": "The note of the goal.",
-          "instillShortDescription": "The note of the goal.",
+        "notes": {
+          "description": "The notes of the goal.",
+          "instillShortDescription": "The notes of the goal.",
           "instillUIOrder": 2,
           "title": "Goal Note",
           "instillFormat": "string",
           "type": "string"
         },
-        "html-note": {
-          "description": "The note of the goal in HTML format.",
-          "instillShortDescription": "The note of the goal in HTML format.",
+        "html-notes": {
+          "description": "The notes of the goal in HTML format.",
+          "instillShortDescription": "The notes of the goal in HTML format.",
           "instillUIOrder": 3,
           "title": "Goal HTML Note",
           "instillFormat": "string",
@@ -513,7 +513,7 @@
       "type": "object"
     }
   },
-  "TASK_TASK": {
+  "TASK_ASANA_TASK": {
     "description": "Task Related Task",
     "instillShortDescription": "Task Related Task, including get, update, delete, create, set parent, add tag, remove tag, add follower, remove follower, add project, remove project",
     "input": {
@@ -959,9 +959,10 @@
                 "approval-status",
                 "completed",
                 "liked",
-                "notes",
                 "assignee",
-                "parent"
+                "parent",
+                "start-at",
+                "due-at"
               ],
               "instillFormat": "object",
               "type": "object"
@@ -1419,7 +1420,7 @@
       "type": "object"
     }
   },
-  "TASK_PROJECT": {
+  "TASK_ASANA_PROJECT": {
     "description": "Project Related Task",
     "instillShortDescription": "Project Related Task, including get, update, delete, create, duplicate",
     "input": {
@@ -1512,8 +1513,8 @@
                   "instillFormat": "string",
                   "type": "string"
                 },
-                "note": {
-                  "description": "The note of the project.",
+                "notes": {
+                  "description": "The notes of the project.",
                   "instillShortDescription": "Update Project Note",
                   "instillUIOrder": 2,
                   "title": "Project Note",
@@ -1638,7 +1639,7 @@
                 "action",
                 "project-gid",
                 "name",
-                "note",
+                "notes",
                 "due-on",
                 "start-on",
                 "color",
@@ -1704,8 +1705,8 @@
                   "instillFormat": "string",
                   "type": "string"
                 },
-                "note": {
-                  "description": "The note of the project.",
+                "notes": {
+                  "description": "The notes of the project.",
                   "instillShortDescription": "Update Project Note",
                   "instillUIOrder": 2,
                   "title": "Project Note",
@@ -1815,7 +1816,7 @@
               "instillEditOnNodeFields": [
                 "action",
                 "name",
-                "note",
+                "notes",
                 "due-on",
                 "start-on",
                 "color",
@@ -1915,17 +1916,17 @@
             "name"
           ]
         },
-        "note": {
-          "description": "The note of the project.",
-          "instillShortDescription": "The note of the project.",
+        "notes": {
+          "description": "The notes of the project.",
+          "instillShortDescription": "The notes of the project.",
           "instillUIOrder": 2,
           "title": "Project Note",
           "instillFormat": "string",
           "type": "string"
         },
-        "html-note": {
-          "description": "The note of the project in HTML format.",
-          "instillShortDescription": "The note of the project in HTML format.",
+        "html-notes": {
+          "description": "The notes of the project in HTML format.",
+          "instillShortDescription": "The notes of the project in HTML format.",
           "instillUIOrder": 3,
           "title": "Project HTML Note",
           "instillFormat": "string",
@@ -2077,7 +2078,7 @@
       "type": "object"
     }
   },
-  "TASK_PORTFOLIO": {
+  "TASK_ASANA_PORTFOLIO": {
     "description": "Portfolio Related Task",
     "instillShortDescription": "Portfolio Related Task, including get, update, delete, create, duplicate",
     "input": {

@@ -1,9 +1,9 @@
 {
   "availableTasks": [
-    "TASK_GOAL",
-    "TASK_TASK",
-    "TASK_PROJECT",
-    "TASK_PORTFOLIO"
+    "TASK_ASANA_GOAL",
+    "TASK_ASANA_TASK",
+    "TASK_ASANA_PROJECT",
+    "TASK_ASANA_PORTFOLIO"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/asana",
   "icon": "assets/asana.svg",

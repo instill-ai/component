@@ -15,6 +15,7 @@ require (
 	github.com/cohere-ai/cohere-go/v2 v2.8.5
 	github.com/emersion/go-imap/v2 v2.0.0-beta.3
 	github.com/emersion/go-message v0.18.1
+	github.com/fatih/color v1.16.0
 	github.com/fogleman/gg v1.3.0
 	github.com/frankban/quicktest v1.14.6
 	github.com/gabriel-vasile/mimetype v1.4.3
@@ -90,6 +91,8 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
