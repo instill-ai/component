@@ -22,14 +22,7 @@ type ConvertPDFToImagesOutput struct {
 	Filenames []string `json:"filenames"`
 }
 
-func (e *execution) convertPDFToImages(input *structpb.Struct) (*structpb.Struct, error) {
-
-	inputStruct := ConvertPDFToImagesInput{}
-	err := base.ConvertFromStructpb(input, &inputStruct)
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert input struct: %w", err)
-	}
-
+func ConvertPDFToImage(inputStruct *ConvertPDFToImagesInput) (*ConvertPDFToImagesOutput, error) {
 	base64String := strings.Split(inputStruct.PDF, ",")[1]
 	fileContent, err := base64.StdEncoding.DecodeString(base64String)
 
@@ -71,6 +64,21 @@ func (e *execution) convertPDFToImages(input *structpb.Struct) (*structpb.Struct
 	outputStruct := ConvertPDFToImagesOutput{
 		Images:    images,
 		Filenames: filenames,
+	}
+	return &outputStruct, nil
+}
+
+func (e *execution) convertPDFToImages(input *structpb.Struct) (*structpb.Struct, error) {
+
+	inputStruct := ConvertPDFToImagesInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert input struct: %w", err)
+	}
+
+	outputStruct, err := ConvertPDFToImage(&inputStruct)
+	if err != nil {
+		return nil, err
 	}
 
 	return base.ConvertToStructpb(outputStruct)

@@ -38,8 +38,10 @@ type component struct {
 type execution struct {
 	base.ComponentExecution
 	execute                func(*structpb.Struct) (*structpb.Struct, error)
-	getMarkdownTransformer func(fileExtension string, inputStruct convertDocumentToMarkdownInput) (MarkdownTransformer, error)
+	getMarkdownTransformer MarkdownTransformerGetterFunc
 }
+
+type MarkdownTransformerGetterFunc func(fileExtension string, inputStruct *ConvertDocumentToMarkdownInput) (MarkdownTransformer, error)
 
 func Init(bc base.Component) *component {
 	once.Do(func() {
@@ -58,7 +60,7 @@ func (e *execution) convertToText(input *structpb.Struct) (*structpb.Struct, err
 	if err != nil {
 		return nil, err
 	}
-	outputStruct, err := convertToText(inputStruct)
+	outputStruct, err := ConvertToText(inputStruct)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +76,7 @@ func (e *execution) convertToText(input *structpb.Struct) (*structpb.Struct, err
 func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	e := &execution{
 		ComponentExecution:     x,
-		getMarkdownTransformer: getMarkdownTransformer,
+		getMarkdownTransformer: GetMarkdownTransformer,
 	}
 
 	switch x.Task {
