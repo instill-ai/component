@@ -23,8 +23,6 @@ func getCollectionID(collectionName string, client *httpclient.Client) (string, 
 
 	resGetColl, err := reqGetColl.Get(fmt.Sprintf(getCollectionPath, collectionName))
 
-	fmt.Println("GET COLELCTION", reqGetColl, resGetColl)
-
 	if err != nil {
 		return "", err
 	}

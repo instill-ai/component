@@ -84,11 +84,7 @@ func (e *execution) query(in *structpb.Struct) (*structpb.Struct, error) {
 
 	req := e.client.R().SetBody(reqParams).SetResult(&resp)
 
-	fmt.Println("REQPARAMS ", reqParams)
-
 	res, err := req.Post(fmt.Sprintf(queryPath, collID))
-
-	fmt.Println("RES", resp)
 
 	if err != nil {
 		return nil, err
@@ -166,8 +162,6 @@ func (e *execution) query(in *structpb.Struct) (*structpb.Struct, error) {
 			Metadata: metadatas,
 		},
 	}
-
-	fmt.Println("outputstruct", outputStruct)
 
 	output, err := base.ConvertToStructpb(outputStruct)
 	if err != nil {
