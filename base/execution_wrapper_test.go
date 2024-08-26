@@ -78,6 +78,7 @@ func TestExecutionWrapper_Execute(t *testing.T) {
 		{
 			name:    "nok - execution error",
 			in:      inputValid,
+			out:     outputValid,
 			outErr:  fmt.Errorf("bar"),
 			wantErr: "bar",
 		},
@@ -128,8 +129,8 @@ func TestExecutionWrapper_Execute(t *testing.T) {
 			ow := mock.NewOutputWriterMock(c)
 			ir.ReadMock.Return([]*structpb.Struct{pbin}, nil)
 			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
-				if tc.wantErr != "" {
-					return nil
+				if tc.outErr != nil {
+					return tc.outErr
 				}
 				c.Assert(outputs, qt.HasLen, 1)
 				gotJSON, err := outputs[0].MarshalJSON()
@@ -158,6 +159,10 @@ type testExec struct {
 }
 
 func (e *testExec) Execute(ctx context.Context, ir InputReader, ow OutputWriter) error {
+	_, err := ir.Read(ctx)
+	if err != nil {
+		return err
+	}
 	if e.out == nil {
 		return e.err
 	}
