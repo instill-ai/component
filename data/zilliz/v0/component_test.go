@@ -49,7 +49,7 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 					Ids:      []string{"mockID1", "mockID2"},
 					Data:     []map[string]any{{"distance": 1, "id": "mockID1", "name": "a", "vector": []float32{0.1, 0.2}}, {"distance": 1, "id": "mockID2", "name": "b", "vector": []float32{0.2, 0.3}}},
 					Vectors:  [][]float32{{0.1, 0.2}, {0.2, 0.3}},
-					Metadata: []map[string]any{{"id": "mockID1", "name": "a"}, {"id": "mockID2", "name": "b"}},
+					Metadata: []map[string]any{{"id": "mockID1", "name": "a", "vector": []float64{0.1, 0.2}}, {"id": "mockID2", "name": "b", "vector": []float64{0.2, 0.3}}},
 				},
 			},
 			wantClientPath: searchPath,
@@ -58,6 +58,11 @@ func TestComponent_ExecuteVectorSearchTask(t *testing.T) {
 				Data:           [][]float32{{0.1, 0.2}},
 				AnnsField:      "vector",
 				Limit:          2,
+				OutputFields: []string{
+					"id",
+					"name",
+					"vector",
+				},
 			},
 			clientResp: `{
 				"code": 200,
@@ -545,7 +550,7 @@ func TestComponent_ExecuteDropCollectionTask(t *testing.T) {
 				CollectionName: "mock-collection",
 			},
 			wantResp: DropCollectionOutput{
-				Status: "Successfully dropped collection",
+				Status: "Successfully dropped 1 collection",
 			},
 			wantClientPath: dropCollectionPath,
 			wantClientReq: DropCollectionReq{
@@ -727,7 +732,7 @@ func TestComponent_ExecuteDropPartitionTask(t *testing.T) {
 				PartitionName:  "mock-partition",
 			},
 			wantResp: DropPartitionOutput{
-				Status: "Successfully dropped partition",
+				Status: "Successfully dropped 1 partition",
 			},
 			wantClientPath: dropPartitionPath,
 			wantClientReq: DropPartitionReq{

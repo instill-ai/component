@@ -37,7 +37,7 @@ The component configuration is defined and maintained [here](https://github.com/
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Zilliz URL Endpoint (required) | `url` | string | Fill in your Zilliz public URL endpoint with port number, e.g http://3.25.202.142:19530 |
+| Zilliz URL Endpoint (required) | `url` | string | Fill in your Zilliz public URL endpoint |
 | Zilliz API Key (required) | `api-key` | string | Fill in your Zilliz API key |
 
 
@@ -59,10 +59,10 @@ Perform a vector search on a collection
 | Vector Field (required) | `vector-field` | string | The name of the field to perform vector search on |
 | Fields | `fields` | array[string] | The fields to return in the data. If empty then all fields will be returned |
 | Limit (required) | `limit` | integer | The limit of the data to return |
-| Filter | `filter` | string | The properties filter to be applied to the data with zilliz scalar filter, please refer to https://zilliz.io/docs/single-vector-search.md#Filtered-search |
+| Filter | `filter` | string | The properties filter to be applied to the data with zilliz scalar filter, please refer to https://docs.zilliz.com/docs/single-vector-search?_highlight=filter/docs/single-vector-search#filtered-search |
 | Offset | `offset` | integer | The offset of the data to return |
-| Grouping Field | `grouping-field` | string | The name of the field to group the data by |
-| Search Parameters | `search-params` | object | The search parameters to be applied to the data with zilliz search parameters, please refer to https://zilliz.io/docs/single-vector-search.md#Search-parameters |
+| Grouping Field | `grouping-field` | string | The name of the field to group the data by, please refer to https://docs.zilliz.com/docs/release-notes-290?_highlight=grouping&_highlight=field/docs/release-notes-290#grouping-search |
+| Search Parameters | `search-params` | object | The search parameters to be applied to the data with zilliz search parameters, please refer to https://docs.zilliz.com/docs/single-vector-search?_highlight=search&_highlight=params/docs/single-vector-search#search-parameters |
 
 
 
@@ -132,7 +132,7 @@ Delete vector data from a collection
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to delete the data from |
 | Partition Name | `partition-name` | string | The name of the partition to delete the data from. If empty then default partition will be used |
-| Filter | `filter` | string | The properties filter to be applied to the data with zilliz scalar filter, please refer to https://zilliz.io/docs/single-vector-search.md#Filtered-search |
+| Filter | `filter` | string | The properties filter to be applied to the data with zilliz scalar filter, please refer to https://docs.zilliz.com/docs/single-vector-search?_highlight=filter/docs/single-vector-search#filtered-search |
 
 
 
@@ -147,7 +147,7 @@ Delete vector data from a collection
 
 ### Create Collection
 
-Create a collection
+Create a collection, please refer to https://docs.zilliz.com/reference/restful/create-collection-v2
 
 
 | Input | ID | Type | Description |

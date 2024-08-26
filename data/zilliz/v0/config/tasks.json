@@ -380,6 +380,8 @@
           "description": "The data",
           "instillAcceptFormats": [
             "array:semi-structured/*",
+            "array:semi-structured/json",
+            "array:semi-structured/object",
             "array:object"
           ],
           "instillUIOrder": 2,

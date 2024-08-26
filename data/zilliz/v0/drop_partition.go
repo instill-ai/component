@@ -58,7 +58,7 @@ func (e *execution) dropPartition(in *structpb.Struct) (*structpb.Struct, error)
 	}
 
 	outputStruct := DropPartitionOutput{
-		Status: "Successfully dropped partition",
+		Status: "Successfully dropped 1 partition",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)

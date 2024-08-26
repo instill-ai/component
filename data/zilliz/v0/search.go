@@ -138,6 +138,10 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		for _, field := range respDescribe.Data.Fields {
 			fields = append(fields, field.Name)
 		}
+	} else {
+		fields = append(fields, primaryKeyField)
+		fields = append(fields, inputStruct.VectorField)
+		fields = append(fields, inputStruct.Fields...)
 	}
 
 	resp := SearchResp{}
@@ -147,11 +151,12 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		Data:           [][]float32{inputStruct.Vector},
 		Limit:          inputStruct.Limit,
 		AnnsField:      inputStruct.VectorField,
+		OutputFields:   fields,
 	}
 	if inputStruct.PartitionName != "" {
 		reqParams.PartitionName = inputStruct.PartitionName
 	}
-	if fields != nil {
+	if inputStruct.Filter != "" {
 		reqParams.Filter = inputStruct.Filter
 	}
 	if inputStruct.Offset != 0 {
@@ -159,9 +164,6 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 	if inputStruct.GroupingField != "" {
 		reqParams.GroupingField = inputStruct.GroupingField
-	}
-	if len(inputStruct.Fields) > 0 {
-		reqParams.OutputFields = inputStruct.Fields
 	}
 	if inputStruct.SearchParams != nil {
 		reqParams.SearchParams = inputStruct.SearchParams
@@ -198,12 +200,21 @@ func (e *execution) search(in *structpb.Struct) (*structpb.Struct, error) {
 		vectors = append(vectors, vectorFloat32)
 
 		metadatum := make(map[string]any)
-		for _, field := range respDescribe.Data.Fields {
-			if field.Name == "distance" || field.Name == inputStruct.VectorField {
-				continue
+		if inputStruct.Fields != nil {
+			for _, field := range inputStruct.Fields {
+				if _, ok := metadatum[field]; ok {
+					metadatum[field] = d[field]
+				}
 			}
-			metadatum[field.Name] = d[field.Name]
+		} else {
+			for _, field := range fields {
+				if field == "distance" {
+					continue
+				}
+				metadatum[field] = d[field]
+			}
 		}
+
 		metadata = append(metadata, metadatum)
 	}
 

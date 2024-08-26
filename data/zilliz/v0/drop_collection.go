@@ -55,7 +55,7 @@ func (e *execution) dropCollection(in *structpb.Struct) (*structpb.Struct, error
 	}
 
 	outputStruct := DropCollectionOutput{
-		Status: "Successfully dropped collection",
+		Status: "Successfully dropped 1 collection",
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
