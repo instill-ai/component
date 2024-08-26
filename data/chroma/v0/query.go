@@ -29,21 +29,24 @@ type QueryInput struct {
 	Filter         map[string]any `json:"filter"`
 	FilterDocument map[string]any `json:"filter-document"`
 	NResults       int            `json:"n-results"`
+	Fields         []string       `json:"fields"`
 }
 
 type QueryReq struct {
-	QueryEmbeddings []float64      `json:"query_embeddings"`
+	QueryEmbeddings [][]float64    `json:"query_embeddings"`
 	Where           map[string]any `json:"where"`
 	WhereDocument   map[string]any `json:"where_document"`
 	NResults        int            `json:"n_results"`
+	Include         []string       `json:"include"`
 }
 
 type QueryResp struct {
-	IDs        []string         `json:"ids"`
-	Distances  []float64        `json:"distances"`
-	Metadatas  []map[string]any `json:"metadatas"`
-	Embeddings [][]float64      `json:"embeddings"`
-	Documents  []string         `json:"documents"`
+	IDs        [][]string         `json:"ids"`
+	Distances  [][]float64        `json:"distances"`
+	Metadatas  [][]map[string]any `json:"metadatas"`
+	Embeddings [][][]float64      `json:"embeddings"`
+	Documents  [][]string         `json:"documents"`
+	Uris       [][]string         `json:"uris"`
 
 	Detail []map[string]any `json:"detail"`
 }
@@ -58,8 +61,9 @@ func (e *execution) query(in *structpb.Struct) (*structpb.Struct, error) {
 	resp := QueryResp{}
 
 	reqParams := QueryReq{
-		QueryEmbeddings: inputStruct.Vector,
+		QueryEmbeddings: [][]float64{inputStruct.Vector},
 		NResults:        inputStruct.NResults,
+		Include:         []string{"embeddings", "metadatas", "distances", "documents"},
 	}
 	if inputStruct.Filter != nil {
 		reqParams.Where = inputStruct.Filter
@@ -80,7 +84,11 @@ func (e *execution) query(in *structpb.Struct) (*structpb.Struct, error) {
 
 	req := e.client.R().SetBody(reqParams).SetResult(&resp)
 
+	fmt.Println("REQPARAMS ", reqParams)
+
 	res, err := req.Post(fmt.Sprintf(queryPath, collID))
+
+	fmt.Println("RES", resp)
 
 	if err != nil {
 		return nil, err
@@ -94,9 +102,40 @@ func (e *execution) query(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("failed to query item: %s", resp.Detail[0]["msg"])
 	}
 
-	ids := resp.IDs
-	metadatas := resp.Metadatas
-	vectors := resp.Embeddings
+	if inputStruct.Fields != nil {
+		var notFields []string
+		for k := range resp.Metadatas[0][0] {
+			var found bool
+			for _, field := range inputStruct.Fields {
+				if k == field {
+					found = true
+					break
+				}
+			}
+			if !found {
+				notFields = append(notFields, k)
+			}
+		}
+
+		for _, metadata := range resp.Metadatas[0] {
+			for _, notField := range notFields {
+				delete(metadata, notField)
+			}
+
+		}
+	}
+
+	ids := resp.IDs[0]
+	metadatas := resp.Metadatas[0]
+	vectors := resp.Embeddings[0]
+	var uris []string
+	if len(resp.Uris) > 0 {
+		uris = resp.Uris[0]
+	}
+	var documents []string
+	if len(resp.Documents) > 0 {
+		documents = resp.Documents[0]
+	}
 	var items []map[string]any
 
 	for i, metadata := range metadatas {
@@ -106,14 +145,20 @@ func (e *execution) query(in *structpb.Struct) (*structpb.Struct, error) {
 				item[k] = v
 			}
 		}
-		item["distance"] = resp.Distances[i]
+		item["distance"] = resp.Distances[0][i]
 		item["id"] = ids[i]
 		item["vector"] = vectors[i]
+		if len(uris) > 0 {
+			item["uri"] = uris[i]
+		}
+		if len(documents) > 0 {
+			item["document"] = documents[i]
+		}
 		items = append(items, item)
 	}
 
 	outputStruct := QueryOutput{
-		Status: fmt.Sprintf("Successfully queryed %d items", len(resp.IDs)),
+		Status: fmt.Sprintf("Successfully queryed %d items", len(resp.IDs[0])),
 		Result: Result{
 			Ids:      ids,
 			Items:    items,
@@ -121,6 +166,8 @@ func (e *execution) query(in *structpb.Struct) (*structpb.Struct, error) {
 			Metadata: metadatas,
 		},
 	}
+
+	fmt.Println("outputstruct", outputStruct)
 
 	output, err := base.ConvertToStructpb(outputStruct)
 	if err != nil {

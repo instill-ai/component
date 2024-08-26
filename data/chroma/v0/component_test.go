@@ -53,14 +53,15 @@ func TestComponent_ExecuteQueryTask(t *testing.T) {
 			},
 			wantClientPath: fmt.Sprintf(queryPath, "mock-collection-id"),
 			wantClientReq: QueryReq{
-				QueryEmbeddings: []float64{0.1, 0.2},
+				QueryEmbeddings: [][]float64{{0.1, 0.2}},
 				NResults:        2,
+				Include:         []string{"embeddings", "metadatas", "distances", "documents"},
 			},
 			clientResp: `{
-				"ids": ["mockID1", "mockID2"],
-				"embeddings": [[0.1, 0.2], [0.2, 0.3]],
-				"metadatas": [{"name": "a"}, {"name": "b"}],
-				"distances": [1, 1]
+				"ids": [["mockID1", "mockID2"]],
+				"embeddings": [[[0.1, 0.2], [0.2, 0.3]]],
+				"metadatas": [[{"name": "a"}, {"name": "b"}]],
+				"distances": [[1, 1]]
 			}`,
 		},
 	}

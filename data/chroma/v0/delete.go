@@ -42,10 +42,15 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("one of id or filter or filter document should be present")
 	}
 
-	reqParams := DeleteReq{
-		IDs:           []string{inputStruct.ID},
-		Where:         inputStruct.Filter,
-		WhereDocument: inputStruct.FilterDocument,
+	reqParams := DeleteReq{}
+	if inputStruct.ID != "" {
+		reqParams.IDs = []string{inputStruct.ID}
+	}
+	if inputStruct.Filter != nil {
+		reqParams.Where = inputStruct.Filter
+	}
+	if inputStruct.FilterDocument != nil {
+		reqParams.WhereDocument = inputStruct.FilterDocument
 	}
 
 	var collID string
@@ -70,7 +75,7 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	if len(resp) == 0 {
-		return nil, fmt.Errorf("failed to delete item")
+		return nil, fmt.Errorf("item not found")
 	}
 
 	outputStruct := DeleteOutput{
