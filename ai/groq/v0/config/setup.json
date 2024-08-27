@@ -17,9 +17,7 @@
       "type": "string"
     }
   },
-  "required": [
-    "api-key"
-  ],
+  "required": [],
   "instillEditOnNodeFields": [
     "api-key"
   ],
