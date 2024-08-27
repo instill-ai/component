@@ -86,6 +86,7 @@ func TestExecutionWrapper_Execute(t *testing.T) {
 			name:       "nok - collect error",
 			in:         inputValid,
 			out:        outputValid,
+			want:       outputValid,
 			collectErr: fmt.Errorf("zot"),
 			wantErr:    "zot",
 		},
