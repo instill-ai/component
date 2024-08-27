@@ -9,25 +9,19 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-type convertDocumentToMarkdownInput struct {
+type ConvertDocumentToMarkdownInput struct {
 	Document        string `json:"document"`
 	DisplayImageTag bool   `json:"display-image-tag"`
 	Converter       string `json:"converter"`
 	Filename        string `json:"filename"`
 }
 
-type convertDocumentToMarkdownOutput struct {
+type ConvertDocumentToMarkdownOutput struct {
 	Body     string `json:"body"`
 	Filename string `json:"filename"`
 }
 
-func (e *execution) convertDocumentToMarkdown(input *structpb.Struct) (*structpb.Struct, error) {
-	inputStruct := convertDocumentToMarkdownInput{}
-	err := base.ConvertFromStructpb(input, &inputStruct)
-	if err != nil {
-		return nil, err
-	}
-
+func ConvertDocumentToMarkdown(inputStruct *ConvertDocumentToMarkdownInput, transformerGetter MarkdownTransformerGetterFunc) (*ConvertDocumentToMarkdownOutput, error) {
 	contentType, err := util.GetContentTypeFromBase64(inputStruct.Document)
 	if err != nil {
 		return nil, err
@@ -41,7 +35,7 @@ func (e *execution) convertDocumentToMarkdown(input *structpb.Struct) (*structpb
 
 	var transformer MarkdownTransformer
 
-	transformer, err = e.getMarkdownTransformer(fileExtension, inputStruct)
+	transformer, err = transformerGetter(fileExtension, inputStruct)
 	if err != nil {
 		return nil, err
 	}
@@ -50,13 +44,27 @@ func (e *execution) convertDocumentToMarkdown(input *structpb.Struct) (*structpb
 		return nil, err
 	}
 
-	outputStruct := convertDocumentToMarkdownOutput{
+	outputStruct := &ConvertDocumentToMarkdownOutput{
 		Body: extractedTextInMarkdownFormat,
 	}
 
 	if inputStruct.Filename != "" {
 		filename := strings.Split(inputStruct.Filename, ".")[0] + ".md"
 		outputStruct.Filename = filename
+	}
+	return outputStruct, nil
+}
+
+func (e *execution) convertDocumentToMarkdown(input *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := ConvertDocumentToMarkdownInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
+	if err != nil {
+		return nil, err
+	}
+
+	outputStruct, err := ConvertDocumentToMarkdown(&inputStruct, e.getMarkdownTransformer)
+	if err != nil {
+		return nil, err
 	}
 
 	output, err := base.ConvertToStructpb(outputStruct)
@@ -67,7 +75,7 @@ func (e *execution) convertDocumentToMarkdown(input *structpb.Struct) (*structpb
 	return output, nil
 }
 
-func getMarkdownTransformer(fileExtension string, inputStruct convertDocumentToMarkdownInput) (MarkdownTransformer, error) {
+func GetMarkdownTransformer(fileExtension string, inputStruct *ConvertDocumentToMarkdownInput) (MarkdownTransformer, error) {
 	switch fileExtension {
 	case "pdf":
 		return PDFToMarkdownTransformer{

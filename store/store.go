@@ -39,6 +39,7 @@ import (
 	"github.com/instill-ai/component/data/redis/v0"
 	"github.com/instill-ai/component/data/sql/v0"
 	"github.com/instill-ai/component/data/weaviate/v0"
+	"github.com/instill-ai/component/data/zilliz/v0"
 	"github.com/instill-ai/component/generic/restapi/v0"
 	"github.com/instill-ai/component/operator/audio/v0"
 	"github.com/instill-ai/component/operator/base64/v0"
@@ -169,6 +170,7 @@ func Init(
 		compStore.Import(sql.Init(baseComp))
 		compStore.Import(weaviate.Init(baseComp))
 		compStore.Import(milvus.Init(baseComp))
+		compStore.Import(zilliz.Init(baseComp))
 		compStore.Import(qdrant.Init(baseComp))
 		compStore.Import(artifact.Init(baseComp))
 		compStore.Import(restapi.Init(baseComp))
@@ -217,7 +219,7 @@ type ExecutionParams struct {
 func (s *Store) CreateExecution(p ExecutionParams) (*base.ExecutionWrapper, error) {
 	c, ok := s.componentIDMap[p.ComponentDefinitionID]
 	if !ok {
-		return nil, fmt.Errorf("component definition not found")
+		return nil, ErrComponentDefinitionNotFound
 	}
 
 	x, err := c.comp.CreateExecution(base.ComponentExecution{
@@ -250,7 +252,7 @@ func (s *Store) GetDefinitionByUID(defUID uuid.UUID, sysVars map[string]any, com
 		}
 		return proto.Clone(def).(*pb.ComponentDefinition), err
 	}
-	return nil, fmt.Errorf("component definition not found")
+	return nil, ErrComponentDefinitionNotFound
 }
 
 // GetDefinitionByID returns a component definition by its ID.
@@ -262,7 +264,7 @@ func (s *Store) GetDefinitionByID(defID string, sysVars map[string]any, compConf
 		}
 		return proto.Clone(def).(*pb.ComponentDefinition), err
 	}
-	return nil, fmt.Errorf("component definition not found")
+	return nil, ErrComponentDefinitionNotFound
 }
 
 // ListDefinitions returns all the loaded component definitions.
@@ -284,5 +286,9 @@ func (s *Store) IsSecretField(defUID uuid.UUID, target string) (bool, error) {
 	if c, ok := s.componentUIDMap[defUID]; ok {
 		return c.comp.IsSecretField(target), nil
 	}
-	return false, fmt.Errorf("component definition not found")
+	return false, ErrComponentDefinitionNotFound
 }
+
+// ErrComponentDefinitionNotFound is returned when trying to access an
+// inexistent component definition.
+var ErrComponentDefinitionNotFound = fmt.Errorf("component definition not found")

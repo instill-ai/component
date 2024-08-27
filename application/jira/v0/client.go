@@ -97,32 +97,49 @@ func (e errBody) Message() string {
 	return strings.Join(e.Body.Msg, " ")
 }
 
+func turnToStringQueryParams(val any) string {
+	var stringVal string
+	switch val := val.(type) {
+	case string:
+		stringVal = val
+	case int:
+		stringVal = fmt.Sprintf("%d", val)
+	case bool:
+		stringVal = fmt.Sprintf("%t", val)
+	case []string:
+		stringVal = strings.Join(val, ",")
+	case []int:
+		var strVals []string
+		for _, v := range val {
+			strVals = append(strVals, fmt.Sprintf("%d", v))
+		}
+		stringVal = strings.Join(strVals, ",")
+	default:
+		return ""
+	}
+	return stringVal
+}
+
 func addQueryOptions(req *resty.Request, opt interface{}) error {
 	v := reflect.ValueOf(opt)
 	if v.Kind() == reflect.Ptr && v.IsNil() {
 		return nil
 	}
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
 	if v.Kind() == reflect.Map {
 		for _, key := range v.MapKeys() {
-			if v.MapIndex(key).IsValid() && v.MapIndex(key).CanInterface() {
-				val := v.MapIndex(key).Interface()
-				var stringVal string
-				switch val := val.(type) {
-				case string:
-					stringVal = val
-				case int:
-					stringVal = fmt.Sprintf("%d", val)
-				case bool:
-					stringVal = fmt.Sprintf("%t", val)
-				default:
-					continue
-				}
-				if stringVal == fmt.Sprintf("%v", reflect.Zero(reflect.TypeOf(val))) {
-					continue
-				}
-				paramName := key.String()
-				req.SetQueryParam(paramName, stringVal)
+			if !v.MapIndex(key).IsValid() || !v.MapIndex(key).CanInterface() {
+				continue
 			}
+			val := v.MapIndex(key).Interface()
+			stringVal := turnToStringQueryParams(val)
+			if stringVal == fmt.Sprintf("%v", reflect.Zero(reflect.TypeOf(val))) {
+				continue
+			}
+			paramName := key.String()
+			req.SetQueryParam(paramName, stringVal)
 		}
 	} else if v.Kind() == reflect.Struct {
 		typeOfS := v.Type()
@@ -131,17 +148,7 @@ func addQueryOptions(req *resty.Request, opt interface{}) error {
 				continue
 			}
 			val := v.Field(i).Interface()
-			var stringVal string
-			switch val := val.(type) {
-			case string:
-				stringVal = val
-			case int:
-				stringVal = fmt.Sprintf("%d", val)
-			case bool:
-				stringVal = fmt.Sprintf("%t", val)
-			default:
-				continue
-			}
+			stringVal := turnToStringQueryParams(val)
 			if stringVal == fmt.Sprintf("%v", reflect.Zero(reflect.TypeOf(val))) {
 				continue
 			}

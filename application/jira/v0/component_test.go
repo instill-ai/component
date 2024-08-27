@@ -126,7 +126,8 @@ func TestComponent_GetIssueTask(t *testing.T) {
 					ID:  "4",
 					Key: "KAN-4",
 					Fields: map[string]interface{}{
-						"summary": "Test issue 4",
+						"summary":     "Test issue 4",
+						"description": "Test description 4",
 						"status": map[string]interface{}{
 							"name": "Done",
 						},
@@ -134,10 +135,11 @@ func TestComponent_GetIssueTask(t *testing.T) {
 							"name": "Epic",
 						},
 					},
-					Self:      "https://test.atlassian.net/rest/agile/1.0/issue/4",
-					Summary:   "Test issue 4",
-					Status:    "Done",
-					IssueType: "Epic",
+					Self:        "https://test.atlassian.net/rest/agile/1.0/issue/4",
+					Summary:     "Test issue 4",
+					Description: "Test description 4",
+					Status:      "Done",
+					IssueType:   "Epic",
 				},
 			},
 		},
@@ -145,7 +147,7 @@ func TestComponent_GetIssueTask(t *testing.T) {
 			_type: "nok",
 			name:  "404 - Not Found",
 			input: GetIssueInput{
-				IssueKey:      "5",
+				IssueKey:      "100",
 				UpdateHistory: true,
 			},
 			wantErr: "unsuccessful HTTP response.*",
@@ -208,7 +210,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 				},
 			},
 			wantResp: ListIssuesOutput{
-				Total:      1,
+				Total:      2,
 				StartAt:    0,
 				MaxResults: 10,
 				Issues: []Issue{
@@ -216,7 +218,8 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 						ID:  "4",
 						Key: "KAN-4",
 						Fields: map[string]interface{}{
-							"summary": "Test issue 4",
+							"summary":     "Test issue 4",
+							"description": "Test description 4",
 							"status": map[string]interface{}{
 								"name": "Done",
 							},
@@ -224,10 +227,30 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 								"name": "Epic",
 							},
 						},
-						IssueType: "Epic",
-						Self:      "https://test.atlassian.net/rest/agile/1.0/issue/4",
-						Status:    "Done",
-						Summary:   "Test issue 4",
+						IssueType:   "Epic",
+						Self:        "https://test.atlassian.net/rest/agile/1.0/issue/4",
+						Description: "Test description 4",
+						Status:      "Done",
+						Summary:     "Test issue 4",
+					},
+					{
+						ID:  "5",
+						Key: "KAN-5",
+						Fields: map[string]interface{}{
+							"summary":     "Test issue 5",
+							"description": "Test description 5",
+							"status": map[string]interface{}{
+								"name": "Done",
+							},
+							"issuetype": map[string]interface{}{
+								"name": "Task",
+							},
+						},
+						IssueType:   "Task",
+						Self:        "https://test.atlassian.net/rest/agile/1.0/issue/5",
+						Description: "Test description 5",
+						Status:      "Done",
+						Summary:     "Test issue 5",
 					},
 				},
 			},
@@ -244,7 +267,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 				},
 			},
 			wantResp: ListIssuesOutput{
-				Total:      1,
+				Total:      2,
 				StartAt:    0,
 				MaxResults: 10,
 				Issues: []Issue{
@@ -252,7 +275,8 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 						ID:  "4",
 						Key: "KAN-4",
 						Fields: map[string]interface{}{
-							"summary": "Test issue 4",
+							"summary":     "Test issue 4",
+							"description": "Test description 4",
 							"status": map[string]interface{}{
 								"name": "Done",
 							},
@@ -260,10 +284,30 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 								"name": "Epic",
 							},
 						},
-						IssueType: "Epic",
-						Self:      "https://test.atlassian.net/rest/agile/1.0/issue/4",
-						Status:    "Done",
-						Summary:   "Test issue 4",
+						IssueType:   "Epic",
+						Self:        "https://test.atlassian.net/rest/agile/1.0/issue/4",
+						Description: "Test description 4",
+						Status:      "Done",
+						Summary:     "Test issue 4",
+					},
+					{
+						ID:  "5",
+						Key: "KAN-5",
+						Fields: map[string]interface{}{
+							"summary":     "Test issue 5",
+							"description": "Test description 5",
+							"status": map[string]interface{}{
+								"name": "Done",
+							},
+							"issuetype": map[string]interface{}{
+								"name": "Task",
+							},
+						},
+						IssueType:   "Epic",
+						Self:        "https://test.atlassian.net/rest/agile/1.0/issue/5",
+						Description: "Test description 5",
+						Status:      "Done",
+						Summary:     "Test issue 5",
 					},
 				},
 			},
@@ -280,7 +324,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 				},
 			},
 			wantResp: ListIssuesOutput{
-				Total:      1,
+				Total:      2,
 				StartAt:    0,
 				MaxResults: 10,
 				Issues: []Issue{
@@ -288,7 +332,8 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 						ID:  "4",
 						Key: "KAN-4",
 						Fields: map[string]interface{}{
-							"summary": "Test issue 4",
+							"summary":     "Test issue 4",
+							"description": "Test description 4",
 							"status": map[string]interface{}{
 								"name": "Done",
 							},
@@ -296,10 +341,30 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 								"name": "Epic",
 							},
 						},
-						IssueType: "Epic",
-						Self:      "https://test.atlassian.net/rest/agile/1.0/issue/4",
-						Status:    "Done",
-						Summary:   "Test issue 4",
+						IssueType:   "Epic",
+						Self:        "https://test.atlassian.net/rest/agile/1.0/issue/4",
+						Description: "Test description 4",
+						Status:      "Done",
+						Summary:     "Test issue 4",
+					},
+					{
+						ID:  "5",
+						Key: "KAN-5",
+						Fields: map[string]interface{}{
+							"summary":     "Test issue 5",
+							"description": "Test description 5",
+							"status": map[string]interface{}{
+								"name": "Done",
+							},
+							"issuetype": map[string]interface{}{
+								"name": "Task",
+							},
+						},
+						IssueType:   "Task",
+						Self:        "https://test.atlassian.net/rest/agile/1.0/issue/5",
+						Description: "Test description 5",
+						Status:      "Done",
+						Summary:     "Test issue 5",
 					},
 				},
 			},
@@ -316,7 +381,7 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 				},
 			},
 			wantResp: ListIssuesOutput{
-				Total:      1,
+				Total:      2,
 				StartAt:    0,
 				MaxResults: 10,
 				Issues: []Issue{
@@ -324,7 +389,8 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 						ID:  "4",
 						Key: "KAN-4",
 						Fields: map[string]interface{}{
-							"summary": "Test issue 4",
+							"summary":     "Test issue 4",
+							"description": "Test description 4",
 							"status": map[string]interface{}{
 								"name": "Done",
 							},
@@ -332,10 +398,30 @@ func TestComponent_ListIssuesTask(t *testing.T) {
 								"name": "Epic",
 							},
 						},
-						IssueType: "Epic",
-						Self:      "https://test.atlassian.net/rest/agile/1.0/issue/4",
-						Status:    "Done",
-						Summary:   "Test issue 4",
+						IssueType:   "Epic",
+						Self:        "https://test.atlassian.net/rest/agile/1.0/issue/4",
+						Description: "Test description 4",
+						Status:      "Done",
+						Summary:     "Test issue 4",
+					},
+					{
+						ID:  "5",
+						Key: "KAN-5",
+						Fields: map[string]interface{}{
+							"summary":     "Test issue 5",
+							"description": "Test description 5",
+							"status": map[string]interface{}{
+								"name": "Done",
+							},
+							"issuetype": map[string]interface{}{
+								"name": "Task",
+							},
+						},
+						IssueType:   "Task",
+						Self:        "https://test.atlassian.net/rest/agile/1.0/issue/5",
+						Description: "Test description 5",
+						Status:      "Done",
+						Summary:     "Test issue 5",
 					},
 				},
 			},
@@ -492,6 +578,281 @@ func TestComponent_ListSprintsTask(t *testing.T) {
 		},
 	}
 	taskTesting(testcases, taskListSprints, t)
+}
+
+func TestComponent_CreateIssueTask(t *testing.T) {
+	testcases := []TaskCase[CreateIssueInput, CreateIssueOutput]{
+		{
+			_type: "ok",
+			name:  "create issue",
+			input: CreateIssueInput{
+				ProjectKey: "CRI",
+				IssueType: IssueType{
+					IssueType: "Task",
+				},
+				Summary:     "Test issue 1",
+				Description: "Test description 1",
+			},
+			wantResp: CreateIssueOutput{
+				Issue{
+					ID:  "30000",
+					Key: "CRI-1",
+					Fields: map[string]interface{}{
+						"summary":     "Test issue 1",
+						"description": "Test description 1",
+						"issuetype": map[string]interface{}{
+							"name": "Task",
+						},
+						"project": map[string]interface{}{
+							"key": "CRI",
+						},
+					},
+					Self:        "https://test.atlassian.net/rest/agile/1.0/issue/30000",
+					Summary:     "Test issue 1",
+					Description: "Test description 1",
+					IssueType:   "Task",
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name:  "400 - Bad Request",
+			input: CreateIssueInput{
+				ProjectKey: "INVALID",
+			},
+			wantErr: "unsuccessful HTTP response.*",
+		},
+	}
+	taskTesting(testcases, taskCreateIssue, t)
+}
+
+func TestComponent_UpdateIssueTask(t *testing.T) {
+	testcases := []TaskCase[UpdateIssueInput, UpdateIssueOutput]{
+		{
+			_type: "ok",
+			name:  "update issue",
+			input: UpdateIssueInput{
+				IssueKey: "TST-1",
+				Update: Update{
+					UpdateType: "Custom Update",
+					UpdateFields: []UpdateField{
+						{
+							FieldName: "summary",
+							Action:    "set",
+							Value:     "Test issue 1 updated",
+						},
+						{
+							FieldName: "description",
+							Action:    "set",
+							Value:     "Test description 1 updated",
+						},
+					},
+				},
+			},
+			wantResp: UpdateIssueOutput{
+				Issue{
+					ID:  "1",
+					Key: "TST-1",
+					Fields: map[string]interface{}{
+						"summary":     "Test issue 1 updated",
+						"description": "Test description 1 updated",
+						"status": map[string]interface{}{
+							"name": "To Do",
+						},
+						"issuetype": map[string]interface{}{
+							"name": "Task",
+						},
+					},
+					Self:        "https://test.atlassian.net/rest/agile/1.0/issue/1",
+					Summary:     "Test issue 1 updated",
+					Status:      "To Do",
+					Description: "Test description 1 updated",
+					IssueType:   "Task",
+				},
+			},
+		},
+		{
+			_type: "ok",
+			name:  "move issue to epic",
+			input: UpdateIssueInput{
+				IssueKey: "KAN-5",
+				Update: Update{
+					UpdateType: "Move Issue to Epic",
+					EpicKey:    "KAN-4",
+				},
+			},
+			wantResp: UpdateIssueOutput{
+				Issue{
+					ID:  "5",
+					Key: "KAN-5",
+					Fields: map[string]interface{}{
+						"summary":     "Test issue 5",
+						"description": "Test description 5",
+						"status": map[string]interface{}{
+							"name": "Done",
+						},
+						"issuetype": map[string]interface{}{
+							"name": "Task",
+						},
+						"parent": map[string]interface{}{
+							"key": "KAN-4",
+						},
+					},
+					Self:        "https://test.atlassian.net/rest/agile/1.0/issue/5",
+					Summary:     "Test issue 5",
+					Status:      "Done",
+					Description: "Test description 5",
+					IssueType:   "Task",
+				},
+			},
+		},
+		{
+			_type: "nok",
+			name:  "400 - Bad Request",
+			input: UpdateIssueInput{
+				IssueKey: "INVALID",
+				Update: Update{
+					UpdateType:   "Custom Update",
+					UpdateFields: []UpdateField{},
+				},
+			},
+			wantErr: "unsuccessful HTTP response.*",
+		},
+	}
+	taskTesting(testcases, taskUpdateIssue, t)
+}
+
+func TestComponent_CreateSprintTask(t *testing.T) {
+	testcases := []TaskCase[CreateSprintInput, CreateSprintOutput]{
+		{
+			_type: "ok",
+			name:  "create sprint",
+			input: CreateSprintInput{
+				Name:      "Test Sprint",
+				Goal:      "Sprint goal",
+				StartDate: "2021-01-01T00:00:00.000Z",
+				EndDate:   "2021-01-15T00:00:00.000Z",
+				BoardName: "TST",
+			},
+			wantResp: CreateSprintOutput{
+				ID:            1,
+				Self:          "https://test.atlassian.net/rest/agile/1.0/sprint/1",
+				State:         "active",
+				Name:          "Test Sprint",
+				StartDate:     "2021-01-01T00:00:00.000Z",
+				EndDate:       "2021-01-15T00:00:00.000Z",
+				CompleteDate:  "",
+				OriginBoardID: 3,
+				Goal:          "Sprint goal",
+			},
+		},
+		{
+			_type: "nok",
+			name:  "400 - Bad Request",
+			input: CreateSprintInput{
+				Name:      "Test Sprint",
+				BoardName: "INVALID",
+			},
+			wantErr: "end date is required",
+		},
+		{
+			_type: "nok",
+			name:  "400 - Bad Request",
+			input: CreateSprintInput{
+				Name:      "Test Sprint",
+				BoardName: "INVALID",
+				EndDate:   "2021-01-15T00:00:00.000Z",
+			},
+			wantErr: "board not found",
+		},
+	}
+	taskTesting(testcases, taskCreateSprint, t)
+}
+
+func TestComponent_UpdateSprintTask(t *testing.T) {
+	testcases := []TaskCase[UpdateSprintInput, UpdateSprintOutput]{
+		{
+			_type: "ok",
+			name:  "update sprint",
+			input: UpdateSprintInput{
+				SprintID:       1,
+				Name:           "Test Sprint updated",
+				Goal:           "Sprint goal updated",
+				StartDate:      "2021-01-01T00:00:00.000Z",
+				EndDate:        "2021-01-15T00:00:00.000Z",
+				CurrentState:   "active",
+				EnterNextState: false,
+			},
+			wantResp: UpdateSprintOutput{
+				ID:            1,
+				Self:          "https://test.atlassian.net/rest/agile/1.0/sprint/1",
+				State:         "active",
+				Name:          "Test Sprint updated",
+				StartDate:     "2021-01-01T00:00:00.000Z",
+				EndDate:       "2021-01-15T00:00:00.000Z",
+				CompleteDate:  "2021-01-15T00:00:00.000Z",
+				OriginBoardID: 1,
+				Goal:          "Sprint goal updated",
+			},
+		},
+		{
+			_type: "ok",
+			name:  "future to active",
+			input: UpdateSprintInput{
+				SprintID:       1,
+				Name:           "Test Sprint updated",
+				Goal:           "Sprint goal updated",
+				StartDate:      "2021-01-01T00:00:00.000Z",
+				EndDate:        "2021-01-15T00:00:00.000Z",
+				CurrentState:   "future",
+				EnterNextState: true,
+			},
+			wantResp: UpdateSprintOutput{
+				ID:            1,
+				Self:          "https://test.atlassian.net/rest/agile/1.0/sprint/1",
+				State:         "active",
+				Name:          "Test Sprint updated",
+				StartDate:     "2021-01-01T00:00:00.000Z",
+				EndDate:       "2021-01-15T00:00:00.000Z",
+				CompleteDate:  "2021-01-15T00:00:00.000Z",
+				OriginBoardID: 1,
+				Goal:          "Sprint goal updated",
+			},
+		},
+		{
+			_type: "ok",
+			name:  "active to closed",
+			input: UpdateSprintInput{
+				SprintID:       1,
+				Name:           "Test Sprint updated",
+				Goal:           "Sprint goal updated",
+				StartDate:      "2021-01-01T00:00:00.000Z",
+				EndDate:        "2021-01-15T00:00:00.000Z",
+				CurrentState:   "active",
+				EnterNextState: true,
+			},
+			wantResp: UpdateSprintOutput{
+				ID:            1,
+				Self:          "https://test.atlassian.net/rest/agile/1.0/sprint/1",
+				State:         "closed",
+				Name:          "Test Sprint updated",
+				StartDate:     "2021-01-01T00:00:00.000Z",
+				EndDate:       "2021-01-15T00:00:00.000Z",
+				CompleteDate:  "2021-01-15T00:00:00.000Z",
+				OriginBoardID: 1,
+				Goal:          "Sprint goal updated",
+			},
+		},
+		{
+			_type: "nok",
+			name:  "400 - Bad Request",
+			input: UpdateSprintInput{
+				SprintID: -1,
+			},
+			wantErr: "end date is required",
+		},
+	}
+	taskTesting(testcases, taskUpdateSprint, t)
 }
 
 func TestAuth_nok(t *testing.T) {

@@ -36,11 +36,13 @@ The component configuration is defined and maintained [here](https://github.com/
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Username (required) | `user` | string | Fill in your account username |
+| Engine (required) | `engine` | string | Choose the engine of your database |
+| Username (required) | `username` | string | Fill in your account username |
 | Password (required) | `password` | string | Fill in your account password |
 | Database Name (required) | `database-name` | string | Fill in the name of your database |
 | Host (required) | `host` | string | Fill in the host of your database |
 | Port (required) | `port` | number | Fill in the port of your database |
+| SSL/TLS (required) | `ssl-tls` | object | Enable SSL/TLS |
 
 
 
@@ -55,7 +57,6 @@ Perform insert operation
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_INSERT` |
-| Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to insert data into |
 | Data (required) | `data` | object | The data to be inserted |
 
@@ -78,7 +79,6 @@ Perform insert operation with multiple rows
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_INSERT_MANY` |
-| Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to insert data into |
 | Data (required) | `array-data` | array[object] | The array data to be inserted |
 
@@ -101,7 +101,6 @@ Perform update operation
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UPDATE` |
-| Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to update data into |
 | Filter (required) | `filter` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause |
 | Update (required) | `update-data` | object | The new data to be updated to |
@@ -125,7 +124,6 @@ Perform select operation
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SELECT` |
-| Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to be selected |
 | Filter | `filter` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause, empty for all rows |
 | Limit | `limit` | integer | The limit of rows to be selected, empty for all rows |
@@ -151,7 +149,6 @@ Perform delete operation
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DELETE` |
-| Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to be deleted |
 | Filter (required) | `filter` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause |
 
@@ -174,7 +171,6 @@ Create a table in the database
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_TABLE` |
-| Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to be created |
 | Columns (required) | `columns-structure` | object | The columns structure to be created in the table, json with value string, e.g \{"name": "VARCHAR(255)", "age": "INT not null"\} |
 
@@ -197,7 +193,6 @@ Drop a table in the database
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DROP_TABLE` |
-| Engine (required) | `engine` | string | Choose the engine of your database |
 | Table Name (required) | `table-name` | string | The table name in the database to be dropped |
 
 

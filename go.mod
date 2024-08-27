@@ -13,7 +13,6 @@ require (
 	github.com/belong-inc/go-hubspot v0.9.0
 	github.com/chromedp/chromedp v0.10.0
 	github.com/cohere-ai/cohere-go/v2 v2.8.5
-	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/emersion/go-imap/v2 v2.0.0-beta.3
 	github.com/emersion/go-message v0.18.1
 	github.com/fogleman/gg v1.3.0
@@ -32,7 +31,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/h2non/filetype v1.1.3
 	github.com/iFaceless/godub v0.0.0-20200728093528-a30bb4d1a0f1
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240808093014-75008c807ea7
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240823161910-354761b16f15
 	github.com/instill-ai/x v0.4.0-alpha
 	github.com/itchyny/gojq v0.12.14
 	github.com/jmoiron/sqlx v1.4.0
@@ -49,8 +48,6 @@ require (
 	github.com/pkoukk/tiktoken-go v0.1.6
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.0
-	github.com/sashabaranov/go-openai v1.28.2
-	github.com/sijms/go-ora/v2 v2.8.19
 	github.com/slack-go/slack v0.12.5
 	github.com/stretchr/testify v1.9.0
 	github.com/tmc/langchaingo v0.1.10
@@ -131,8 +128,6 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
-	github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe // indirect
-	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
@@ -168,6 +163,7 @@ require (
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
+	github.com/sijms/go-ora v1.3.2
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/tink-ab/tempfile v0.0.0-20180226111222-33beb0518f1a // indirect
