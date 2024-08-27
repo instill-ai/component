@@ -37,11 +37,15 @@ func (ir *inputReaderInterceptor) Read(ctx context.Context) (inputs []*structpb.
 	return inputs, nil
 }
 
+func (ir *inputReaderInterceptor) GetInputs() []*structpb.Struct {
+	return ir.inputs
+}
+
 type outputWriterInterceptor struct {
 	OutputWriter
 	schema                 string
 	inputReaderInterceptor *inputReaderInterceptor
-	usageHandler           UsageHandler
+	outputs                []*structpb.Struct
 }
 
 func (ow *outputWriterInterceptor) Write(ctx context.Context, outputs []*structpb.Struct) (err error) {
@@ -49,13 +53,13 @@ func (ow *outputWriterInterceptor) Write(ctx context.Context, outputs []*structp
 	if err := Validate(outputs, ow.schema, "outputs"); err != nil {
 		return err
 	}
-
-	if err := ow.usageHandler.Collect(ctx, ow.inputReaderInterceptor.inputs, outputs); err != nil {
-		return err
-	}
+	ow.outputs = outputs
 
 	return ow.OutputWriter.Write(ctx, outputs)
 
+}
+func (ow *outputWriterInterceptor) GetOutputs() []*structpb.Struct {
+	return ow.outputs
 }
 
 // Execute wraps the execution method with validation and usage collection.
@@ -77,10 +81,15 @@ func (e *ExecutionWrapper) Execute(ctx context.Context, ir InputReader, ow Outpu
 		OutputWriter:           ow,
 		schema:                 e.GetTaskOutputSchema(),
 		inputReaderInterceptor: iri,
-		usageHandler:           h,
 	}
 
 	if err := e.IExecution.Execute(ctx, iri, owi); err != nil {
+		return err
+	}
+
+	// Since there might be multiple writes, we collect the usage at the end of
+	// the execution.​
+	if err := h.Collect(ctx, iri.GetInputs(), owi.GetOutputs()); err != nil {
 		return err
 	}
 
