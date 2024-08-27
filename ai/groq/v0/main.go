@@ -103,9 +103,14 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 // credentials injected during initialization and, if so, returns a new setup
 // with the secret credential values.
 func (c *component) resolveSetup(setup *structpb.Struct) (*structpb.Struct, bool, error) {
-	apiKey := setup.GetFields()[cfgAPIKey].GetStringValue()
-	if apiKey != "" && apiKey != base.SecretKeyword {
-		return setup, false, nil
+	if setup == nil || setup.Fields == nil {
+		setup = &structpb.Struct{Fields: map[string]*structpb.Value{}}
+	}
+	if v, ok := setup.GetFields()[cfgAPIKey]; ok {
+		apiKey := v.GetStringValue()
+		if apiKey != "" && apiKey != base.SecretKeyword {
+			return setup, false, nil
+		}
 	}
 
 	if c.instillAPIKey == "" {

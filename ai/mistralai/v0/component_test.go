@@ -66,14 +66,15 @@ func (m *MockMistralClient) Chat(model string, messages []mistralSDK.ChatMessage
 }
 
 const (
-	apiKey = "### MOCK API KEY ###"
+	apiKey        = "### MOCK API KEY ###"
+	instillSecret = "instill-credential-key"
 )
 
 func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
-	cmp := Init(bc)
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 
 	c.Run("ok - supported task", func(c *qt.C) {
 		task := TextGenerationTask
@@ -109,7 +110,7 @@ func TestComponent_Tasks(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
-	cmp := Init(bc)
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 	ctx := context.Background()
 
 	chatTc := struct {

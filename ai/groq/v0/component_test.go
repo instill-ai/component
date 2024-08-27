@@ -17,14 +17,15 @@ import (
 )
 
 const (
-	MockAPIKey = "### Mock API Key ###"
+	MockAPIKey    = "### Mock API Key ###"
+	instillSecret = "instill-credential-key"
 )
 
 func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{Logger: zap.NewNop()}
-	cmp := Init(bc)
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 
 	c.Run("ok - supported task", func(c *qt.C) {
 		task := TaskTextGenerationChat
@@ -51,7 +52,7 @@ func TestComponent_Tasks(t *testing.T) {
 	mc := minimock.NewController(t)
 	c := qt.New(t)
 	bc := base.Component{Logger: zap.NewNop()}
-	connector := Init(bc)
+	connector := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 	ctx := context.Background()
 
 	GroqClientMock := NewGroqClientInterfaceMock(mc)

@@ -7,11 +7,13 @@ import (
 	"github.com/instill-ai/component/base"
 )
 
+const instillSecret = "instill-credential-key"
+
 func TestComponent_Execute(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{}
-	cmp := Init(bc)
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 
 	c.Run("ok - supported chat task", func(c *qt.C) {
 		_, err := cmp.CreateExecution(base.ComponentExecution{
