@@ -19,9 +19,10 @@ import (
 )
 
 const (
-	apiKey  = "123"
-	org     = "org1"
-	errResp = `
+	apiKey        = "123"
+	instillSecret = "instill-credential-key"
+	org           = "org1"
+	errResp       = `
 {
   "error": {
     "message": "Incorrect API key provided."
@@ -34,7 +35,7 @@ func TestComponent_Execute(t *testing.T) {
 	ctx := context.Background()
 
 	bc := base.Component{}
-	cmp := Init(bc)
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 
 	testcases := []struct {
 		name        string
@@ -152,7 +153,7 @@ func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{}
-	cmp := Init(bc)
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 
 	c.Run("nok - error", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -232,7 +233,7 @@ func TestComponent_WithConfig(t *testing.T) {
 	c.Run("ok - without secret", func(c *qt.C) {
 		c.Cleanup(cleanupConn)
 
-		cmp := Init(bc)
+		cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 
 		setup, err := structpb.NewStruct(map[string]any{
 			"base-path": "foo/bar",

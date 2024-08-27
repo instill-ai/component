@@ -18,8 +18,9 @@ import (
 )
 
 const (
-	apiKey  = "123"
-	errResp = `
+	apiKey        = "123"
+	instillSecret = "instill-credential-key"
+	errResp       = `
 {
   "error": {
     "message": "Incorrect API key provided."
@@ -32,8 +33,7 @@ func TestComponent_Execute(t *testing.T) {
 	ctx := context.Background()
 
 	bc := base.Component{}
-	cmp := Init(bc)
-
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 	testcases := []struct {
 		name        string
 		task        string
@@ -110,7 +110,7 @@ func TestComponent_Connection(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{}
-	cmp := Init(bc)
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 
 	c.Run("nok - error", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -191,7 +191,7 @@ func TestComponent_Generation(t *testing.T) {
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{}
-	cmp := Init(bc)
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 
 	mockHistory := []message{
 		{Role: "user", Content: []content{{Type: "text", Text: "Answer the following question in traditional chinses"}}},

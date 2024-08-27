@@ -18,8 +18,9 @@ import (
 )
 
 const (
-	apiKey  = "123"
-	errResp = `
+	apiKey        = "123"
+	instillSecret = "instill-credential-key"
+	errResp       = `
 {
   "id": "6e958442e7911ffb2e0bf89c6efe804f",
   "message": "Incorrect API key provided",
@@ -48,7 +49,7 @@ func TestComponent_ExecuteImageFromText(t *testing.T) {
 	engine := "engine"
 
 	bc := base.Component{}
-	cmp := Init(bc)
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 
 	testcases := []struct {
 		name      string
@@ -163,7 +164,7 @@ func TestComponent_ExecuteImageFromImage(t *testing.T) {
 	engine := "engine"
 
 	bc := base.Component{}
-	cmp := Init(bc)
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 
 	testcases := []struct {
 		name      string
@@ -273,7 +274,7 @@ func TestComponent_Test(t *testing.T) {
 	c := qt.New(t)
 
 	bc := base.Component{}
-	cmp := Init(bc)
+	cmp := Init(bc).WithInstillCredentials(map[string]any{"apikey": instillSecret})
 
 	c.Run("nok - error", func(c *qt.C) {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
