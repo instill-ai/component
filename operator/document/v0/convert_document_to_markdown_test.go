@@ -33,6 +33,10 @@ func TestConvertDocumentToMarkdown(t *testing.T) {
 			name:     "Convert PPTX file",
 			filepath: "testdata/test.pptx",
 		},
+		{
+			name:     "Convert XLSX file",
+			filepath: "testdata/test.xlsx",
+		},
 	}
 	for _, test := range tests {
 		c.Run(test.name, func(c *quicktest.C) {
@@ -75,6 +79,8 @@ func mimeTypeByExtension(filepath string) string {
 		return "text/html"
 	case "testdata/test.pptx":
 		return "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+	case "testdata/test.xlsx":
+		return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 	default:
 		return ""
 	}
@@ -91,6 +97,17 @@ type FakeMarkdownTransformer struct {
 	Converter         string
 }
 
-func (f FakeMarkdownTransformer) Transform() (string, error) {
-	return "This is test file", nil
+func (f FakeMarkdownTransformer) Transform() (converterOutput, error) {
+	b, err := os.ReadFile("testdata/test.png")
+	if err != nil {
+		return converterOutput{}, err
+	}
+
+	base64DataURI := fmt.Sprintf("data:image/png;base64,%s", base64.StdEncoding.EncodeToString(b))
+
+	output := converterOutput{
+		Body:   "This is test file",
+		Images: []string{base64DataURI},
+	}
+	return output, nil
 }

@@ -70,6 +70,16 @@
           "instillUIOrder": 1,
           "title": "Filename",
           "type": "string"
+        },
+        "images": {
+          "description": "Images extracted from the document",
+          "instillFormat": "array:image/*",
+          "instillUIOrder": 2,
+          "items": {
+            "type": "string"
+          },
+          "title": "Images",
+          "type": "array"
         }
       },
       "required": [
