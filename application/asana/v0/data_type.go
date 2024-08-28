@@ -11,6 +11,11 @@ type Like struct {
 	UserName string `json:"name"`
 }
 
+type RawLike struct {
+	LikeGID string `json:"gid"`
+	User    User   `json:"user"`
+}
+
 type SimpleProject struct {
 	GID  string `json:"gid"`
 	Name string `json:"name"`
@@ -67,7 +72,7 @@ type Portfolio struct {
 	StartOn             string            `json:"start-on" api:"start_on"`
 	Color               string            `json:"color" api:"color"`
 	Public              bool              `json:"public" api:"public"`
-	CompletedBy         User              `json:"completed-by" api:"completed_by"`
+	CreatedBy           User              `json:"created-by" api:"created_by"`
 	CurrentStatus       map[string]string `json:"current-status" api:"current_status"`
 	CustomFields        map[string]string `json:"custom-fields" api:"custom_fields"`
 	CustomFieldSettings map[string]string `json:"custom-field-settings" api:"custom_field_settings"`

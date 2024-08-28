@@ -15,6 +15,7 @@ import (
 type Client struct {
 	*httpclient.Client
 	APIBaseURL string `json:"api-base-url"`
+	logger     *zap.Logger
 }
 
 type AuthConfig struct {
@@ -50,6 +51,7 @@ func newClient(_ context.Context, setup *structpb.Struct, logger *zap.Logger) (*
 	client := &Client{
 		Client:     asanaClient,
 		APIBaseURL: baseURL,
+		logger:     logger,
 	}
 	return client, nil
 }

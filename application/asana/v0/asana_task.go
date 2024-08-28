@@ -27,8 +27,6 @@ func (c *Client) GoalRelatedTask(ctx context.Context, props *structpb.Struct) (*
 		return c.DeleteGoal(ctx, props)
 	case "get":
 		return c.GetGoal(ctx, props)
-	case "duplicate":
-		return c.DuplicateGoal(ctx, props)
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("invalid action"),
@@ -107,8 +105,6 @@ func (c *Client) PortfolioRelatedTask(ctx context.Context, props *structpb.Struc
 		return c.DeletePortfolio(ctx, props)
 	case "get":
 		return c.GetPortfolio(ctx, props)
-	case "duplicate":
-		return c.DuplicatePortfolio(ctx, props)
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("invalid action"),

@@ -328,42 +328,7 @@
                 "notes",
                 "due-on",
                 "start-on",
-                "liked",
-                "status"
-              ],
-              "instillFormat": "object",
-              "type": "object"
-            },
-            {
-              "properties": {
-                "action": {
-                  "const": "duplicate",
-                  "type": "string"
-                },
-                "goal-gid": {
-                  "description": "Globally unique identifier (GID) for the goal. You can find the GID of a goal from the URL of the goal in Asana. For example, if the URL of the goal is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.",
-                  "instillShortDescription": "Goal ID",
-                  "instillUIOrder": 0,
-                  "title": "Goal ID",
-                  "instillUpstreamTypes": [
-                    "value",
-                    "reference",
-                    "template"
-                  ],
-                  "instillAcceptFormats": [
-                    "string"
-                  ],
-                  "instillFormat": "string",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "action",
-                "goal-gid"
-              ],
-              "instillEditOnNodeFields": [
-                "action",
-                "goal-gid"
+                "liked"
               ],
               "instillFormat": "object",
               "type": "object"
@@ -988,15 +953,33 @@
                   ],
                   "instillFormat": "string",
                   "type": "string"
+                },
+                "name": {
+                  "description": "Name of the new task. This is generally a short sentence fragment that fits on a line in the UI for maximum readability. However, it can be longer.",
+                  "instillShortDescription": "Name of the new task",
+                  "instillUIOrder": 1,
+                  "title": "Name",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
                 }
               },
               "required": [
                 "action",
-                "task-gid"
+                "task-gid",
+                "name"
               ],
               "instillEditOnNodeFields": [
                 "action",
-                "task-gid"
+                "task-gid",
+                "name"
               ],
               "instillFormat": "object",
               "type": "object"
@@ -1148,11 +1131,11 @@
                   "instillFormat": "string",
                   "type": "string"
                 },
-                "follower-gid": {
-                  "description": "Globally unique identifier (GID) for the follower.",
-                  "instillShortDescription": "Follower ID",
+                "followers": {
+                  "description": "This can either be the string \"me\", an email, or the gid of a user. For multiple followers, separate them with commas.",
+                  "instillShortDescription": "Followers' Identifications, can either be the string \"me\", an email, or the gid of a user.",
                   "instillUIOrder": 1,
-                  "title": "Follower ID",
+                  "title": "Followers",
                   "instillUpstreamTypes": [
                     "value",
                     "reference",
@@ -1846,15 +1829,97 @@
                   ],
                   "instillFormat": "string",
                   "type": "string"
+                },
+                "name": {
+                  "description": "The name of the new project.",
+                  "instillShortDescription": "New Project Name",
+                  "instillUIOrder": 1,
+                  "title": "New Project Name",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
+                },
+                "team": {
+                  "description": "Globally unique identifier (GID) for the team of the new project. If team is not defined, the new project will be in the same team as the the original project.",
+                  "instillShortDescription": "Team ID of the new project",
+                  "instillUIOrder": 2,
+                  "title": "Team ID",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
+                },
+                "due-on": {
+                  "description": "Sets the last due date in the duplicated project to the given date. The rest of the due dates will be offset by the same amount as the due dates in the original project. In the format YYYY-MM-DD.",
+                  "instillShortDescription": "Update Due Date",
+                  "instillUIOrder": 3,
+                  "title": "Due Date",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
+                },
+                "start-on": {
+                  "description": "Sets the first start date in the duplicated project to the given date. The rest of the start dates will be offset by the same amount as the start dates in the original project. In the format YYYY-MM-DD.",
+                  "instillShortDescription": "Update Start Date",
+                  "instillUIOrder": 4,
+                  "title": "Start Date",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
+                },
+                "should-skip-weekends": {
+                  "description": "Determines if the auto-shifted dates should skip weekends.",
+                  "instillShortDescription": "Determines if the auto-shifted dates should skip weekends.",
+                  "instillUIOrder": 5,
+                  "title": "Should Skip Weekends (For auto-shifted dates)",
+                  "instillUpstreamTypes": [
+                    "value"
+                  ],
+                  "instillAcceptFormats": [
+                    "boolean"
+                  ],
+                  "instillFormat": "boolean",
+                  "type": "boolean"
                 }
               },
               "required": [
                 "action",
-                "project-gid"
+                "project-gid",
+                "name"
               ],
               "instillEditOnNodeFields": [
                 "action",
-                "project-gid"
+                "project-gid",
+                "name",
+                "due-on",
+                "start-on"
               ],
               "instillFormat": "object",
               "type": "object"
@@ -2387,40 +2452,6 @@
                 "color",
                 "public",
                 "workspace"
-              ],
-              "instillFormat": "object",
-              "type": "object"
-            },
-            {
-              "properties": {
-                "action": {
-                  "const": "duplicate",
-                  "type": "string"
-                },
-                "portfolio-gid": {
-                  "description": "Globally unique identifier (GID) for the portfolio. You can find the GID of a goal from the URL of the portfolio in Asana. For example, if the URL of the portfolio is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.",
-                  "instillShortDescription": "Portfolio ID",
-                  "instillUIOrder": 0,
-                  "title": "Portfolio ID",
-                  "instillUpstreamTypes": [
-                    "value",
-                    "reference",
-                    "template"
-                  ],
-                  "instillAcceptFormats": [
-                    "string"
-                  ],
-                  "instillFormat": "string",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "action",
-                "portfolio-gid"
-              ],
-              "instillEditOnNodeFields": [
-                "action",
-                "portfolio-gid"
               ],
               "instillFormat": "object",
               "type": "object"

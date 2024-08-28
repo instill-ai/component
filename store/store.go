@@ -19,7 +19,7 @@ import (
 	"github.com/instill-ai/component/ai/ollama/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
-	"github.com/instill-ai/component/application/asana"
+	"github.com/instill-ai/component/application/asana/v0"
 	"github.com/instill-ai/component/application/email/v0"
 	"github.com/instill-ai/component/application/freshdesk/v0"
 	"github.com/instill-ai/component/application/github/v0"
