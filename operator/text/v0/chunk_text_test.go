@@ -239,7 +239,7 @@ func Test_ChunkPositions(t *testing.T) {
 	}{
 		{
 			name:            "test",
-			rawTextFilePath: "testdata/Case2-1130-1206.txt",
+			rawTextFilePath: "testdata/test.txt",
 		},
 	}
 
