@@ -228,3 +228,55 @@ func Test_ChunkPositionCalculator(t *testing.T) {
 		})
 	}
 }
+
+func Test_ChunkPositions(t *testing.T) {
+
+	c := quicktest.New(t)
+
+	testCases := []struct {
+		name            string
+		rawTextFilePath string
+	}{
+		{
+			name:            "test",
+			rawTextFilePath: "testdata/test.txt",
+		},
+	}
+
+	for _, tc := range testCases {
+		rawTextBytes, err := os.ReadFile(tc.rawTextFilePath)
+		c.Assert(err, quicktest.IsNil)
+
+		input := ChunkTextInput{
+			Text: string(rawTextBytes),
+			Strategy: Strategy{
+				Setting: Setting{
+					ChunkMethod:  "Recursive",
+					ChunkSize:    800,
+					ChunkOverlap: 200,
+					ModelName:    "gpt-4",
+				},
+			},
+		}
+
+		output, err := chunkText(input)
+
+		c.Assert(err, quicktest.IsNil)
+
+		for i, chunk := range output.TextChunks {
+			c.Assert(chunk.TokenCount, quicktest.Not(quicktest.Equals), 0)
+			if i != 0 {
+				c.Assert(chunk.StartPosition, quicktest.Not(quicktest.Equals), 0)
+			}
+			c.Assert(chunk.EndPosition, quicktest.Not(quicktest.Equals), 0)
+			c.Assert(chunk.Text, quicktest.Not(quicktest.Equals), "")
+
+			if i > 0 {
+				increaseChecker := output.TextChunks[i].StartPosition > output.TextChunks[i-1].StartPosition
+				c.Assert(increaseChecker, quicktest.Equals, true)
+
+			}
+		}
+
+	}
+}
