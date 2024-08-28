@@ -16,13 +16,19 @@ class PdfTransformer:
 		self.lines = []
 		self.tables = []
 		self.images = []
+		self.base64_images = []
 		if display_image_tag:
 			self.process_image()
 
 		for page in self.pages:
-			page_lines = page.extract_text_lines()
+			page_lines = page.extract_text_lines(
+				layout=True,
+				x_tolerance_ratio=0.1,
+			)
 			self.process_line(page_lines, page.page_number)
 			self.process_table(page)
+
+		self.set_paragraph_information(self.lines)
 
 		self.result = ""
 
@@ -34,7 +40,19 @@ class PdfTransformer:
 				image["page_number"] = page.page_number
 				image["img_number"] = i
 				i += 1
+				img_base64 = self.encode_image(image, page)
+				image["img_base64"] = img_base64
 				self.images.append(image)
+
+	def encode_image(self, image, page):
+		bbox = [image['x0'], page.cropbox[3]-image['y1'],  image['x1'], page.cropbox[3]-image['y0']]
+		img_page = page.crop(bbox=bbox)
+		img_obj = img_page.to_image(resolution=500)
+		buffer = BytesIO()
+		img_obj.save(buffer, format="PNG")
+		buffer.seek(0)
+		img_data = buffer.getvalue()
+		return "data:image/png;base64," + base64.b64encode(img_data).decode("utf-8")
 
 	def set_heights(self):
 		tolerance = 0.95
@@ -50,6 +68,18 @@ class PdfTransformer:
 		self.title_height = largest_text_height * tolerance
 		self.subtitle_height = second_largest_text_height * tolerance
 
+	def set_paragraph_information(self, lines):
+		smallest_distance = float("inf")
+		paragraph_width = 0
+		for _, line in enumerate(lines):
+			if line["distance_to_next_line"] and line["distance_to_next_line"] < smallest_distance:
+				smallest_distance = line["distance_to_next_line"]
+			if line["line_width"] > paragraph_width:
+				paragraph_width = line["line_width"]
+
+		paragraph_distance = smallest_distance * 1.5
+		self.paragraph_distance = paragraph_distance
+		self.paragraph_width = paragraph_width
 
 	def execute(self):
 		self.set_line_type(self.title_height, self.subtitle_height, "indent")
@@ -67,7 +97,12 @@ class PdfTransformer:
 			self.lines.append(line)
 
 	def process_table(self, page):
-		tables = page.find_tables()
+		tables = page.find_tables(
+			table_settings={
+				"vertical_strategy": "lines",
+				"horizontal_strategy": "lines",
+				}
+		)
 		if tables:
 			for table in tables:
 				table_info = {}
@@ -112,6 +147,7 @@ class PdfTransformer:
 					paragraph_idx += 1
 					current_paragraph = []
 			else:
+				line["type"] = 'paragraph'
 				if current_paragraph:
 					current_paragraph.append(line)
 
@@ -155,14 +191,68 @@ class PdfTransformer:
 					self.tables.remove(table)
 				to_be_processed_table = []
 
-				result += self.line_process(line, i, lines, result)
-				result += "\n\n"
+				if (i > 0 and
+					("title" == lines[i-1]["type"] and "title" == lines[i]["type"] or
+	  				"subtitle" == lines[i-1]["type"] and "subtitle" == lines[i]["type"])
+					):
+					while len(result) > 0 and result[-1] == "\n":
+						result = result[:-1]
+
+					line_text = self.line_process(line, i, lines, result)
+					## If line_text prefix or suffix is \n, remove them
+					while line_text.startswith("\n") or line_text.endswith("\n"):
+						line_text = line_text.strip("\n")
+				else:
+					line_text = self.line_process(line, i, lines, result)
+					while (
+						(line_text.startswith("\n") or line_text.endswith("\n"))):
+						line_text = line_text.strip("\n")
+
+				result += line_text
+				result += "\n"
+				## TODO: Do not change another line if it is bullet point or numbered list.
+				if (
+					(line["distance_to_next_line"] and line["distance_to_next_line"] >= self.paragraph_distance) or
+					(
+						line["page_number"] != lines[i+1]["page_number"] if i < len(lines) - 1 else False
+						and line["line_width"] < self.paragraph_width * 0.8
+					)
+					):
+					result += "\n"
 
 			else:
-				result += self.line_process(line, i, lines, result)
+				if (i > 0 and
+					("title" == lines[i-1]["type"] and "title" == lines[i]["type"] or
+	  				"subtitle" == lines[i-1]["type"] and "subtitle" == lines[i]["type"])
+					):
+					while len(result) > 0 and result[-1] == "\n":
+						result = result[:-1]
+
+					line_text = self.line_process(line, i, lines, result)
+					## If line_text prefix or suffix is \n, remove them
+					while line_text.startswith("\n") or line_text.endswith("\n"):
+						line_text = line_text.strip("\n")
+				else:
+					line_text = self.line_process(line, i, lines, result)
+					while (
+						(line_text.startswith("\n") or line_text.endswith("\n"))):
+						line_text = line_text.strip("\n")
+
+				result += line_text
+
+				## TODO: Do not change another line if it is bullet point or numbered list.
+				if (
+					(line["distance_to_next_line"] and line["distance_to_next_line"] >= self.paragraph_distance) or
+					(
+						line["page_number"] != lines[i+1]["page_number"] if i < len(lines) - 1 else False
+						and line["line_width"] < self.paragraph_width * 0.8
+					)
+					):
+					result += "\n"
+				result += "\n"
+
 
 			if i < len(lines) - 1:
-
 				result += self.insert_image(line, lines[i+1])
 			else:
 				result += self.insert_image(line, None)
@@ -184,14 +274,18 @@ class PdfTransformer:
 			return line["text"]
 		if line["type"] == "title":
 			if current_result != "":
-				result += "\n"
-				result += "\n"
-			result += f"# {line['text']}\n"
+				result += "\n\n"
+			if i > 0 and lines[i-1]["type"] == "title":
+				result += f" {line['text']}\n"
+			else:
+				result += f"# {line['text']}\n"
 		elif line["type"] == "subtitle":
 			if current_result != "":
-				result += "\n"
-				result += "\n"
-			result += f"## {line['text']}\n"
+				result += "\n\n"
+			if i > 0 and lines[i-1]["type"] == "subtitle":
+				result += f" {line['text']}\n"
+			else:
+				result += f"## {line['text']}\n"
 		elif "paragraph" in line["type"]:
 			result += line["text"]
 			if (
@@ -227,6 +321,11 @@ class PdfTransformer:
 
 					if j < len(row) - 1:
 						result += " | "
+				else:
+					if j == 0:
+						result += "||"
+					else:
+						result += "|"
 			if i == 0:
 				result += "\n"
 				## TODO: Judge table that cross the page,
@@ -251,21 +350,24 @@ class PdfTransformer:
 					for image in images:
 						if image["page_number"] == line["page_number"] and image["top"] > line["bottom"] and image["bottom"] < next_line["top"]:
 							result += "\n\n"
-							result += f"![image {image['img_number']}]"
+							result += f"![image {image['img_number']}]({image['img_number']})"
+							self.base64_images.append(image["img_base64"])
 							result += "\n\n"
 							to_be_removed_images.append(image)
 				elif next_line["page_number"] > line["page_number"]:
 					for image in images:
 						if image["page_number"] >= line["page_number"] and image["page_number"] < next_line["page_number"]:
 							result += "\n\n"
-							result += f"![image {image['img_number']}]"
+							result += f"![image {image['img_number']}]({image['img_number']})"
+							self.base64_images.append(image["img_base64"])
 							result += "\n\n"
 							to_be_removed_images.append(image)
 
 			else: # if images exists and there is no next_line, we insert image.
 				for image in images:
 					result += "\n\n"
-					result += f"![image {image['img_number']}]"
+					result += f"![image {image['img_number']}]({image['img_number']})"
+					self.base64_images.append(image["img_base64"])
 					result += "\n\n"
 					to_be_removed_images.append(image)
 		for image in to_be_removed_images:
@@ -283,8 +385,10 @@ if __name__ == "__main__":
 	pdf_file_obj = BytesIO(decoded_bytes)
 	pdf = PdfTransformer(pdf_file_obj, display_image_tag)
 	result = pdf.execute()
+	images = pdf.base64_images
 	output = {
 		"body": result,
-		"metadata": pdf.metadata
+		"metadata": pdf.metadata,
+		"images": images
 	}
 	print(json.dumps(output))

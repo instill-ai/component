@@ -16,8 +16,9 @@ type ConvertDocumentToMarkdownInput struct {
 }
 
 type ConvertDocumentToMarkdownOutput struct {
-	Body     string `json:"body"`
-	Filename string `json:"filename"`
+	Body     string   `json:"body"`
+	Filename string   `json:"filename"`
+	Images   []string `json:"images"`
 }
 
 func ConvertDocumentToMarkdown(inputStruct *ConvertDocumentToMarkdownInput, transformerGetter MarkdownTransformerGetterFunc) (*ConvertDocumentToMarkdownOutput, error) {
@@ -38,13 +39,14 @@ func ConvertDocumentToMarkdown(inputStruct *ConvertDocumentToMarkdownInput, tran
 	if err != nil {
 		return nil, err
 	}
-	extractedTextInMarkdownFormat, err := transformer.Transform()
+	converterOutput, err := transformer.Transform()
 	if err != nil {
 		return nil, err
 	}
 
 	outputStruct := &ConvertDocumentToMarkdownOutput{
-		Body: extractedTextInMarkdownFormat,
+		Body:   converterOutput.Body,
+		Images: converterOutput.Images,
 	}
 
 	if inputStruct.Filename != "" {
@@ -112,7 +114,7 @@ func GetMarkdownTransformer(fileExtension string, inputStruct *ConvertDocumentTo
 }
 
 // We could provide more converters in the future. For now, we only have one.
-func getPDFConvertFunc(converter string) func(string, bool) (string, error) {
+func getPDFConvertFunc(converter string) func(string, bool) (converterOutput, error) {
 	switch converter {
 	default:
 		return convertPDFToMarkdownWithPDFPlumber

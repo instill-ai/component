@@ -16,17 +16,17 @@ import (
 )
 
 type MarkdownTransformer interface {
-	Transform() (string, error)
+	Transform() (converterOutput, error)
 }
 
 type PDFToMarkdownTransformer struct {
 	Base64EncodedText string
 	FileExtension     string
 	DisplayImageTag   bool
-	PDFConvertFunc    func(string, bool) (string, error)
+	PDFConvertFunc    func(string, bool) (converterOutput, error)
 }
 
-func (t PDFToMarkdownTransformer) Transform() (string, error) {
+func (t PDFToMarkdownTransformer) Transform() (converterOutput, error) {
 	return t.PDFConvertFunc(t.Base64EncodedText, t.DisplayImageTag)
 }
 
@@ -34,15 +34,15 @@ type DocxDocToMarkdownTransformer struct {
 	Base64EncodedText string
 	FileExtension     string
 	DisplayImageTag   bool
-	PDFConvertFunc    func(string, bool) (string, error)
+	PDFConvertFunc    func(string, bool) (converterOutput, error)
 }
 
-func (t DocxDocToMarkdownTransformer) Transform() (string, error) {
+func (t DocxDocToMarkdownTransformer) Transform() (converterOutput, error) {
 
 	base64PDF, err := ConvertToPDF(t.Base64EncodedText, t.FileExtension)
 
 	if err != nil {
-		return "", fmt.Errorf("failed to encode file to base64: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to encode file to base64: %w", err)
 	}
 
 	return t.PDFConvertFunc(base64PDF, t.DisplayImageTag)
@@ -52,15 +52,15 @@ type PptPptxToMarkdownTransformer struct {
 	Base64EncodedText string
 	FileExtension     string
 	DisplayImageTag   bool
-	PDFConvertFunc    func(string, bool) (string, error)
+	PDFConvertFunc    func(string, bool) (converterOutput, error)
 }
 
-func (t PptPptxToMarkdownTransformer) Transform() (string, error) {
+func (t PptPptxToMarkdownTransformer) Transform() (converterOutput, error) {
 
 	base64PDF, err := ConvertToPDF(t.Base64EncodedText, t.FileExtension)
 
 	if err != nil {
-		return "", fmt.Errorf("failed to encode file to base64: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to encode file to base64: %w", err)
 	}
 
 	return t.PDFConvertFunc(base64PDF, t.DisplayImageTag)
@@ -72,11 +72,11 @@ type HTMLToMarkdownTransformer struct {
 	DisplayImageTag   bool
 }
 
-func (t HTMLToMarkdownTransformer) Transform() (string, error) {
+func (t HTMLToMarkdownTransformer) Transform() (converterOutput, error) {
 
 	data, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(t.Base64EncodedText))
 	if err != nil {
-		return "", fmt.Errorf("failed to decode base64 to file: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to decode base64 to file: %w", err)
 	}
 
 	converter := md.NewConverter("", true, nil)
@@ -84,30 +84,30 @@ func (t HTMLToMarkdownTransformer) Transform() (string, error) {
 	html := string(data)
 	markdown, err := converter.ConvertString(html)
 	if err != nil {
-		return "", fmt.Errorf("failed to convert HTML to markdown: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to convert HTML to markdown: %w", err)
 	}
 
-	return markdown, nil
+	return converterOutput{Body: markdown}, nil
 }
 
 type XlsxToMarkdownTransformer struct {
 	Base64EncodedText string
 }
 
-func (t XlsxToMarkdownTransformer) Transform() (string, error) {
+func (t XlsxToMarkdownTransformer) Transform() (converterOutput, error) {
 
 	base64String := strings.Split(t.Base64EncodedText, ",")[1]
 	fileContent, err := base64.StdEncoding.DecodeString(base64String)
 
 	if err != nil {
-		return "", fmt.Errorf("failed to decode base64 to file: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to decode base64 to file: %w", err)
 	}
 
 	reader := bytes.NewReader(fileContent)
 
 	f, err := excelize.OpenReader(reader)
 	if err != nil {
-		return "", fmt.Errorf("failed to open reader: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to open reader: %w", err)
 	}
 	defer f.Close()
 
@@ -118,7 +118,7 @@ func (t XlsxToMarkdownTransformer) Transform() (string, error) {
 		rows, err := f.GetRows(sheet)
 
 		if err != nil {
-			return "", fmt.Errorf("failed to get rows: %w", err)
+			return converterOutput{}, fmt.Errorf("failed to get rows: %w", err)
 		}
 
 		if len(rows) == 0 {
@@ -132,11 +132,7 @@ func (t XlsxToMarkdownTransformer) Transform() (string, error) {
 		result += "\n\n"
 	}
 
-	return result, nil
-}
-
-type pythonRunnerOutput struct {
-	Body string `json:"body"`
+	return converterOutput{Body: result}, nil
 }
 
 func writeDecodeToFile(base64Str string, file *os.File) error {
