@@ -26,9 +26,9 @@ var (
 	//go:embed config/tasks.json
 	tasksJSON []byte
 	//go:embed python/transformPDFToMarkdown.py
-	pythonCode string
-	once       sync.Once
-	comp       *component
+	pythonPDFPlumberConverter string
+	once                      sync.Once
+	comp                      *component
 )
 
 type component struct {
