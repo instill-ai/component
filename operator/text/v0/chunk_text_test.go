@@ -271,10 +271,12 @@ func Test_ChunkPositions(t *testing.T) {
 			c.Assert(chunk.EndPosition, quicktest.Not(quicktest.Equals), 0)
 			c.Assert(chunk.Text, quicktest.Not(quicktest.Equals), "")
 
+			positionChecker := chunk.StartPosition < chunk.EndPosition
+			c.Assert(positionChecker, quicktest.Equals, true)
+
 			if i > 0 {
 				increaseChecker := output.TextChunks[i].StartPosition > output.TextChunks[i-1].StartPosition
 				c.Assert(increaseChecker, quicktest.Equals, true)
-
 			}
 		}
 
