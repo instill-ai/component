@@ -56,11 +56,6 @@ class PdfTransformer:
 		self.result = self.transform_line_to_markdown(self.lines)
 		return self.result
 
-		# export .md file
-		# file_name = "pdfTransform/output/" + self.path.split("/")[-1].replace(".pdf", ".md")
-		# with open(file_name, "w") as f:
-		#     f.write(self.result)
-
 	# It can add more calculation for the future development when we want to extend more use cases.
 	def process_line(self, lines, page_number):
 		for idx, line in enumerate(lines):
@@ -81,10 +76,6 @@ class PdfTransformer:
 				table_info["text"] = text
 				table_info["page_number"] = page.page_number
 				self.tables.append(table_info)
-
-	# TODO: Chinese version is not working for bold.
-	def is_bold(self, char):
-		return char['fontname'] and 'bold' in char['fontname'].lower()
 
 	# TODO: Implement paragraph strategy
 	def paragraph_strategy(self, lines, subtitle_height=14):
@@ -202,28 +193,6 @@ class PdfTransformer:
 				result += "\n"
 			result += f"## {line['text']}\n"
 		elif "paragraph" in line["type"]:
-			# bold_trigger = False
-			# bold_text = ""
-			## TODO: English version is not working for set the whitespace between words.
-			## It can be solved by using extract_words() instead of extract_text_lines()
-			## TODO: Chinese version is not working for bold.
-			## It is still under investigation.
-			# for char in line["chars"]:
-				# if self.is_bold(char) and not bold_trigger: # start of bold text
-				#     bold_text += f"**{char['text']}"
-				#     bold_trigger = True
-				# elif self.is_bold(char) and bold_trigger: # continue bold text
-				#     bold_text += char["text"]
-				# elif not self.is_bold(char) and bold_trigger: # end of bold text
-				#     bold_text += f"{char['text']}**"
-				#     result += bold_text
-				#     bold_text = ""
-				#     bold_trigger = False
-				# else:
-				#     result += char["text"]
-				# result += char["text"]
-			# extract numbers from line["type"] and add a change the line when the next line is a new paragraph
-
 			result += line["text"]
 			if (
 				(i < len(lines) - 1) and

@@ -44,7 +44,6 @@ func TestConvertDocumentToMarkdown(t *testing.T) {
 			inputStruct := ConvertDocumentToMarkdownInput{
 				Document:        base64DataURI,
 				DisplayImageTag: false,
-				Converter:       "instill",
 			}
 			input, err := base.ConvertToStructpb(inputStruct)
 			c.Assert(err, quicktest.IsNil)

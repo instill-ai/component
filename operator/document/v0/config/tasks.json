@@ -33,6 +33,17 @@
           ],
           "title": "Filename",
           "type": "string"
+        },
+        "display-image-tag": {
+          "default": false,
+          "description": "Whether to display image tag in the markdown text. Default is 'false'. It is only applicable for convert-2024-08-28 converter. And, it is only applicable for the type of PPTX/PPT/DOCX/DOC/PDF.",
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Display Image Tag",
+          "type": "boolean"
         }
       },
       "required": [
