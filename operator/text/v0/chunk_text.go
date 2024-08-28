@@ -134,7 +134,7 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		if shouldScanRawTextFromPreviousChunk(startPosition, endPosition) {
 			previousChunkIndex := len(output.TextChunks) - 1
 			previousChunk := output.TextChunks[previousChunkIndex]
-			startPosition, endPosition = positionCalculator.getChunkPositions(rawRunes, chunkRunes, previousChunk.StartPosition)
+			startPosition, endPosition = positionCalculator.getChunkPositions(rawRunes, chunkRunes, previousChunk.StartPosition+1)
 		}
 
 		if startPosition == endPosition {
