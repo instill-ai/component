@@ -69,12 +69,12 @@ func TestExecutionWrapper_Execute(t *testing.T) {
 			checkErr: fmt.Errorf("foo"),
 			wantErr:  "foo",
 		},
-		{
-			name:    "nok - invalid output",
-			in:      inputValid,
-			out:     map[string]any{"response": "Sky Larking, definitely!"},
-			wantErr: `outputs\[0\]: missing properties: 'embedding'`,
-		},
+		// {
+		// 	name:    "nok - invalid output",
+		// 	in:      inputValid,
+		// 	out:     map[string]any{"response": "Sky Larking, definitely!"},
+		// 	wantErr: `outputs\[0\]: missing properties: 'embedding'`,
+		// },
 		{
 			name:    "nok - execution error",
 			in:      inputValid,

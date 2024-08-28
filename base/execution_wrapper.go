@@ -2,6 +2,7 @@ package base
 
 import (
 	"context"
+	"sync"
 
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -43,6 +44,7 @@ func (ir *inputReaderInterceptor) GetInputs() []*structpb.Struct {
 
 type outputWriterInterceptor struct {
 	OutputWriter
+	mu                     sync.Mutex
 	schema                 string
 	inputReaderInterceptor *inputReaderInterceptor
 	outputs                []*structpb.Struct
@@ -50,9 +52,16 @@ type outputWriterInterceptor struct {
 
 func (ow *outputWriterInterceptor) Write(ctx context.Context, outputs []*structpb.Struct) (err error) {
 
-	if err := Validate(outputs, ow.schema, "outputs"); err != nil {
-		return err
-	}
+	// There might be concurrent writes inside the Execute function, so we need
+	// to lock the data.​
+	ow.mu.Lock()
+	defer ow.mu.Unlock()
+
+	// TODO: Skip output validation for now, as streaming contains partial data
+	// and is not compatible with it.
+	// if err := Validate(outputs, ow.schema, "outputs"); err != nil {
+	// 	return err
+	// }
 	ow.outputs = outputs
 
 	return ow.OutputWriter.Write(ctx, outputs)
