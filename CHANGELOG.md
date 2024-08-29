@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.26.0-beta](https://github.com/instill-ai/component/compare/v0.25.0-beta...v0.26.0-beta) (2024-08-29)
+
+
+### Features
+
+* add milvus component ([#299](https://github.com/instill-ai/component/issues/299)) ([a48c211](https://github.com/instill-ai/component/commit/a48c211f8b0b8c1cf663fad01937542a90855dc2))
+* add zilliz component ([#297](https://github.com/instill-ai/component/issues/297)) ([92726ef](https://github.com/instill-ai/component/commit/92726ef6a77c79a4d516a24b385996abfc895eb9))
+* **artifact:** improve artifact component ([#289](https://github.com/instill-ai/component/issues/289)) ([44ea196](https://github.com/instill-ai/component/commit/44ea1963f065dd64ab47b301e376492f2601c6ac))
+* **document:** improve document operator ([#287](https://github.com/instill-ai/component/issues/287)) ([c0d8d31](https://github.com/instill-ai/component/commit/c0d8d31bd58c0f64e8e2790cd3706c0e173e11d9))
+* **hubspot:** add 4 tasks and modify Retrieve Association task and Get Thread task ([#265](https://github.com/instill-ai/component/issues/265)) ([62903ec](https://github.com/instill-ai/component/commit/62903ecba99df296398db335bd9000380194c8f1))
+* introduce interfaces InputReader and OutputWriter ([#294](https://github.com/instill-ai/component/issues/294)) ([e26ecef](https://github.com/instill-ai/component/commit/e26ecef9df5295742e2c509ea19821a5affc558e))
+* **jira:** add action tasks ([#241](https://github.com/instill-ai/component/issues/241)) ([e756e31](https://github.com/instill-ai/component/commit/e756e3187d0463c472c016a8eaeb0b16d799a760))
+* make the API key be optional for Instill-Credit-supported component ([#305](https://github.com/instill-ai/component/issues/305)) ([0f9a7b2](https://github.com/instill-ai/component/commit/0f9a7b2d29c31188b910446b1c21ce6c7a3e6261))
+* **openai:** revert go-openai and add support for streaming ([#301](https://github.com/instill-ai/component/issues/301)) ([aa605fa](https://github.com/instill-ai/component/commit/aa605fabd78869d7f07c446314642c3856591b86))
+* **openai:** use go-openai client ([#295](https://github.com/instill-ai/component/issues/295)) ([aa20a16](https://github.com/instill-ai/component/commit/aa20a16365e981299634a4a346a0e81fc1a7ca21))
+* **sql:** add ssl/tls input as base64 encoded and move engine to setup ([#282](https://github.com/instill-ai/component/issues/282)) ([390e2b8](https://github.com/instill-ai/component/commit/390e2b838301b21b2529c9ef5b4091a50deaeb5b))
+* use error type for component definition not found error ([#302](https://github.com/instill-ai/component/issues/302)) ([cfcee78](https://github.com/instill-ai/component/commit/cfcee7893783f1002193b8fbc5a53bcb4d856ed3))
+* **web:** improve web operator ([#292](https://github.com/instill-ai/component/issues/292)) ([1da84af](https://github.com/instill-ai/component/commit/1da84af9ce6ff2d072dbfac3d2e58fe08b3a2c1b))
+
+
+### Bug Fixes
+
+* **document:** catch the error if there is no data in sheet ([#296](https://github.com/instill-ai/component/issues/296)) ([21bebbd](https://github.com/instill-ai/component/commit/21bebbd6d5a861bb8df39337fa890597c72c1fe1))
+* **hubspot:** fix test code ([#298](https://github.com/instill-ai/component/issues/298)) ([98c4261](https://github.com/instill-ai/component/commit/98c4261323a06091d067df3679d0520dab10a288))
+* **text:** fix chunk position bugs ([#307](https://github.com/instill-ai/component/issues/307)) ([cfc9076](https://github.com/instill-ai/component/commit/cfc907630fb309294b2a5e15d145a0a3a0be180d))
+* **text:** fix the bug if there are 2 exact same chunks ([#308](https://github.com/instill-ai/component/issues/308)) ([b58909f](https://github.com/instill-ai/component/commit/b58909f36591e82a5e1f0162e085082117b2cc9b))
+
 ## [0.25.0-beta](https://github.com/instill-ai/component/compare/v0.24.0-beta...v0.25.0-beta) (2024-08-13)
 
 
