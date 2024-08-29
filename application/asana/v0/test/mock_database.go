@@ -57,7 +57,26 @@ var FakeGoal = []RawGoal{
 	},
 }
 
-var FakeProject = []asana.Project{
+type RawProject struct {
+	GID                 string            `json:"gid"`
+	Name                string            `json:"name"`
+	Owner               asana.User        `json:"owner"`
+	Notes               string            `json:"notes"`
+	HTMLNotes           string            `json:"html_notes"`
+	DueOn               string            `json:"due_on"`
+	StartOn             string            `json:"start_on"`
+	Completed           bool              `json:"completed"`
+	Color               string            `json:"color"`
+	PrivacySetting      string            `json:"privacy_setting"`
+	Archived            bool              `json:"archived"`
+	CompletedBy         asana.User        `json:"completed_by"`
+	CurrentStatus       map[string]string `json:"current_status"`
+	CustomFields        map[string]string `json:"custom_fields"`
+	CustomFieldSettings map[string]string `json:"custom_field_settings"`
+	ModifiedAt          string            `json:"modified_at"`
+}
+
+var FakeProject = []RawProject{
 	{
 		GID:                 "1234",
 		Name:                "Test Project",
@@ -68,7 +87,43 @@ var FakeProject = []asana.Project{
 		StartOn:             "2021-01-01",
 		Completed:           true,
 		Color:               "red",
-		PrivacySetting:      "public",
+		PrivacySetting:      "public_to_workspace",
+		Archived:            true,
+		CompletedBy:         FakeUser[0],
+		CurrentStatus:       map[string]string{"status": "completed"},
+		CustomFields:        map[string]string{"field": "value"},
+		CustomFieldSettings: map[string]string{"field": "value"},
+		ModifiedAt:          "2021-01-01",
+	},
+	{
+		GID:                 "123",
+		Name:                "Test Project",
+		Owner:               FakeUser[0],
+		Notes:               "Test Notes",
+		HTMLNotes:           "Test HTML Notes",
+		DueOn:               "2021-01-01",
+		StartOn:             "2021-01-01",
+		Completed:           true,
+		Color:               "red",
+		PrivacySetting:      "public_to_workspace",
+		Archived:            true,
+		CompletedBy:         FakeUser[0],
+		CurrentStatus:       map[string]string{"status": "completed"},
+		CustomFields:        map[string]string{"field": "value"},
+		CustomFieldSettings: map[string]string{"field": "value"},
+		ModifiedAt:          "2021-01-01",
+	},
+	{
+		GID:                 "1234567890",
+		Name:                "Test Project",
+		Owner:               FakeUser[0],
+		Notes:               "Test Notes",
+		HTMLNotes:           "Test HTML Notes",
+		DueOn:               "2021-01-01",
+		StartOn:             "2021-01-01",
+		Completed:           true,
+		Color:               "red",
+		PrivacySetting:      "public_to_workspace",
 		Archived:            true,
 		CompletedBy:         FakeUser[0],
 		CurrentStatus:       map[string]string{"status": "completed"},

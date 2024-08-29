@@ -3,6 +3,7 @@ package asana
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/tools/logger"
@@ -134,7 +135,7 @@ func (c *Client) UpdateProject(ctx context.Context, props *structpb.Struct) (*st
 				DueOn:          input.DueOn,
 				StartOn:        input.StartOn,
 				Color:          input.Color,
-				PrivacySetting: input.PrivacySetting,
+				PrivacySetting: strings.Replace(input.PrivacySetting, " ", "_", -1),
 				Archived:       input.Archived,
 			},
 		})
@@ -159,7 +160,6 @@ func (c *Client) UpdateProject(ctx context.Context, props *structpb.Struct) (*st
 
 type CreateProjectInput struct {
 	Action         string `json:"action"`
-	ID             string `json:"project-gid"`
 	Name           string `json:"name"`
 	Notes          string `json:"notes"`
 	DueOn          string `json:"due-on"`
@@ -196,7 +196,7 @@ func (c *Client) CreateProject(ctx context.Context, props *structpb.Struct) (*st
 				DueOn:          input.DueOn,
 				StartOn:        input.StartOn,
 				Color:          input.Color,
-				PrivacySetting: input.PrivacySetting,
+				PrivacySetting: strings.Replace(input.PrivacySetting, " ", "_", -1),
 			},
 		})
 	wantOptFields := parseWantOptionFields(Project{})

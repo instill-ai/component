@@ -18,5 +18,11 @@ func Router(middlewares ...func(http.Handler) http.Handler) http.Handler {
 	r.Put("/goals/{goalGID}", updateGoal)
 	r.Delete("/goals/{goalGID}", deleteGoal)
 	r.Post("/goals", createGoal)
+
+	r.Get("/projects/{projectGID}", getProject)
+	r.Put("/projects/{projectGID}", updateProject)
+	r.Delete("/projects/{projectGID}", deleteProject)
+	r.Post("/projects/{projectGID}/duplicate", duplicateProject)
+	r.Post("/projects", createProject)
 	return r
 }
