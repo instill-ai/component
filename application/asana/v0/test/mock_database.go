@@ -151,7 +151,23 @@ var FakeTask = []asana.Task{
 	},
 }
 
-var FakePortfolio = []asana.Portfolio{
+type RawPortfolio struct {
+	GID                 string            `json:"gid"`
+	Name                string            `json:"name"`
+	Owner               asana.User        `json:"owner"`
+	Notes               string            `json:"notes"`
+	HTMLNotes           string            `json:"html_notes"`
+	DueOn               string            `json:"due_on"`
+	StartOn             string            `json:"start_on"`
+	Color               string            `json:"color"`
+	Public              bool              `json:"public"`
+	CreatedBy           asana.User        `json:"created_by"`
+	CurrentStatus       map[string]string `json:"current_status"`
+	CustomFields        map[string]string `json:"custom_fields"`
+	CustomFieldSettings map[string]string `json:"custom_field_settings"`
+}
+
+var FakePortfolio = []RawPortfolio{
 	{
 		GID:                 "1234",
 		Name:                "Test Portfolio",
@@ -161,7 +177,33 @@ var FakePortfolio = []asana.Portfolio{
 		Color:               "red",
 		Public:              true,
 		CreatedBy:           FakeUser[0],
-		CurrentStatus:       map[string]string{"status": "completed"},
+		CurrentStatus:       map[string]string{"title": "On track"},
+		CustomFields:        map[string]string{"field": "value"},
+		CustomFieldSettings: map[string]string{"field": "value"},
+	},
+	{
+		GID:                 "4321",
+		Name:                "Test Portfolio",
+		Owner:               FakeUser[0],
+		DueOn:               "2021-01-01",
+		StartOn:             "2021-01-01",
+		Color:               "red",
+		Public:              true,
+		CreatedBy:           FakeUser[0],
+		CurrentStatus:       map[string]string{"title": "On track"},
+		CustomFields:        map[string]string{"field": "value"},
+		CustomFieldSettings: map[string]string{"field": "value"},
+	},
+	{
+		GID:                 "1234567890",
+		Name:                "Test Portfolio",
+		Owner:               FakeUser[0],
+		DueOn:               "2021-01-01",
+		StartOn:             "2021-01-01",
+		Color:               "red",
+		Public:              true,
+		CreatedBy:           FakeUser[0],
+		CurrentStatus:       map[string]string{"title": "On track"},
 		CustomFields:        map[string]string{"field": "value"},
 		CustomFieldSettings: map[string]string{"field": "value"},
 	},

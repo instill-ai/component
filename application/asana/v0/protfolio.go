@@ -140,7 +140,6 @@ func (c *Client) UpdatePortfolio(ctx context.Context, props *structpb.Struct) (*
 
 type CreatePortfolioInput struct {
 	Action    string `json:"action"`
-	ID        string `json:"portfolio-gid"`
 	Name      string `json:"name"`
 	Color     string `json:"color"`
 	Public    bool   `json:"public"`

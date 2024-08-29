@@ -24,5 +24,10 @@ func Router(middlewares ...func(http.Handler) http.Handler) http.Handler {
 	r.Delete("/projects/{projectGID}", deleteProject)
 	r.Post("/projects/{projectGID}/duplicate", duplicateProject)
 	r.Post("/projects", createProject)
+
+	r.Get("/portfolios/{portfolioGID}", getPortfolio)
+	r.Put("/portfolios/{portfolioGID}", updatePortfolio)
+	r.Delete("/portfolios/{portfolioGID}", deletePortfolio)
+	r.Post("/portfolios", createPortfolio)
 	return r
 }
