@@ -27,10 +27,10 @@ var (
 
 const (
 	apiBaseURL         = "https://app.asana.com/api/1.0"
-	taskAsanaGoal      = "TASK_ASANA_GOAL"
-	taskAsanaTask      = "TASK_ASANA_TASK"
-	taskAsanaPortfolio = "TASK_ASANA_PORTFOLIO"
-	taskAsanaProject   = "TASK_ASANA_PROJECT"
+	TaskAsanaGoal      = "TASK_ASANA_GOAL"
+	TaskAsanaTask      = "TASK_ASANA_TASK"
+	TaskAsanaPortfolio = "TASK_ASANA_PORTFOLIO"
+	TaskAsanaProject   = "TASK_ASANA_PROJECT"
 )
 
 type component struct {
@@ -68,13 +68,13 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		client:             *asanaClient,
 	}
 	switch x.Task {
-	case taskAsanaGoal:
+	case TaskAsanaGoal:
 		e.execute = e.client.GoalRelatedTask
-	case taskAsanaTask:
+	case TaskAsanaTask:
 		e.execute = e.client.TaskRelatedTask
-	case taskAsanaPortfolio:
+	case TaskAsanaPortfolio:
 		e.execute = e.client.PortfolioRelatedTask
-	case taskAsanaProject:
+	case TaskAsanaProject:
 		e.execute = e.client.ProjectRelatedTask
 	default:
 		return nil, errmsg.AddMessage(

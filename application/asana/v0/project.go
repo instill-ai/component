@@ -59,7 +59,8 @@ func projectResp2Output(resp *ProjectTaskResp) ProjectTaskOutput {
 }
 
 type GetProjectInput struct {
-	ID string `json:"project-gid"`
+	Action string `json:"action"`
+	ID     string `json:"project-gid"`
 }
 
 func (c *Client) GetProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -93,6 +94,7 @@ func (c *Client) GetProject(ctx context.Context, props *structpb.Struct) (*struc
 }
 
 type UpdateProjectInput struct {
+	Action         string `json:"action"`
 	ID             string `json:"project-gid"`
 	Name           string `json:"name"`
 	Notes          string `json:"notes"`
@@ -126,7 +128,7 @@ func (c *Client) UpdateProject(ctx context.Context, props *structpb.Struct) (*st
 	apiEndpoint := fmt.Sprintf("/projects/%s", input.ID)
 	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &UpdateProjectReq{
+			"data": &UpdateProjectReq{
 				Name:           input.Name,
 				Notes:          input.Notes,
 				DueOn:          input.DueOn,
@@ -156,6 +158,7 @@ func (c *Client) UpdateProject(ctx context.Context, props *structpb.Struct) (*st
 }
 
 type CreateProjectInput struct {
+	Action         string `json:"action"`
 	ID             string `json:"project-gid"`
 	Name           string `json:"name"`
 	Notes          string `json:"notes"`
@@ -187,7 +190,7 @@ func (c *Client) CreateProject(ctx context.Context, props *structpb.Struct) (*st
 	apiEndpoint := "/projects"
 	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &CreateProjectReq{
+			"data": &CreateProjectReq{
 				Name:           input.Name,
 				Notes:          input.Notes,
 				DueOn:          input.DueOn,
@@ -212,7 +215,8 @@ func (c *Client) CreateProject(ctx context.Context, props *structpb.Struct) (*st
 }
 
 type DeleteProjectInput struct {
-	ID string `json:"project-gid"`
+	Action string `json:"action"`
+	ID     string `json:"project-gid"`
 }
 
 func (c *Client) DeleteProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -226,18 +230,18 @@ func (c *Client) DeleteProject(ctx context.Context, props *structpb.Struct) (*st
 	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/projects/%s", input.ID)
-	req := c.Client.R().SetResult(&ProjectTaskResp{})
+	req := c.Client.R()
 
-	resp, err := req.Delete(apiEndpoint)
+	_, err := req.Delete(apiEndpoint)
 	if err != nil {
 		return nil, err
 	}
-	project := resp.Result().(*ProjectTaskResp)
-	out := projectResp2Output(project)
+	out := ProjectTaskOutput{}
 	return base.ConvertToStructpb(out)
 }
 
 type DuplicateProjectInput struct {
+	Action             string `json:"action"`
 	ID                 string `json:"project-gid"`
 	Name               string `json:"name"`
 	Team               string `json:"team"`
@@ -271,7 +275,7 @@ func (c *Client) DuplicateProject(ctx context.Context, props *structpb.Struct) (
 	apiEndpoint := fmt.Sprintf("/projects/%s/duplicate", input.ID)
 	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &DuplicateProjectReq{
+			"data": &DuplicateProjectReq{
 				Name: input.Name,
 				Team: input.Team,
 				// include all fields, see https://developers.asana.com/reference/duplicateproject

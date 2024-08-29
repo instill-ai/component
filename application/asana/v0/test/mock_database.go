@@ -1,0 +1,113 @@
+package asana
+
+import "github.com/instill-ai/component/application/asana/v0"
+
+var FakeUser = []asana.User{
+	{
+		GID:  "123",
+		Name: "Admin User",
+	},
+	{
+		GID:  "456",
+		Name: "Test User",
+	},
+}
+
+var FakeLike = []asana.RawLike{
+	{
+		LikeGID: "123",
+		User:    FakeUser[0],
+	},
+}
+
+type RawGoal struct {
+	GID       string          `json:"gid"`
+	Name      string          `json:"name"`
+	Owner     asana.User      `json:"owner"`
+	Notes     string          `json:"notes"`
+	HTMLNotes string          `json:"html_notes"`
+	DueOn     string          `json:"due_on"`
+	StartOn   string          `json:"start_on"`
+	Liked     bool            `json:"liked"`
+	Likes     []asana.RawLike `json:"likes"`
+}
+
+var FakeGoal = []RawGoal{
+	{
+		GID:       "1234",
+		Name:      "Test Goal",
+		Owner:     FakeUser[0],
+		Notes:     "Test Notes",
+		HTMLNotes: "Test HTML Notes",
+		DueOn:     "2021-01-01",
+		StartOn:   "2021-01-01",
+		Liked:     true,
+		Likes:     FakeLike,
+	},
+	{
+		GID:       "1234567890",
+		Name:      "Test Goal (To be deleted)",
+		Owner:     FakeUser[0],
+		Notes:     "Test Notes",
+		HTMLNotes: "Test HTML Notes",
+		DueOn:     "2021-01-01",
+		StartOn:   "2021-01-01",
+		Liked:     true,
+		Likes:     FakeLike,
+	},
+}
+
+var FakeProject = []asana.Project{
+	{
+		GID:                 "1234",
+		Name:                "Test Project",
+		Owner:               FakeUser[0],
+		Notes:               "Test Notes",
+		HTMLNotes:           "Test HTML Notes",
+		DueOn:               "2021-01-01",
+		StartOn:             "2021-01-01",
+		Completed:           true,
+		Color:               "red",
+		PrivacySetting:      "public",
+		Archived:            true,
+		CompletedBy:         FakeUser[0],
+		CurrentStatus:       map[string]string{"status": "completed"},
+		CustomFields:        map[string]string{"field": "value"},
+		CustomFieldSettings: map[string]string{"field": "value"},
+		ModifiedAt:          "2021-01-01",
+	},
+}
+
+var FakeTask = []asana.Task{
+	{
+		GID:       "1234",
+		Name:      "Test Task",
+		Notes:     "Test Notes",
+		HTMLNotes: "Test HTML Notes",
+		Projects: []asana.SimpleProject{
+			{
+				GID:  "1234",
+				Name: "Test Project",
+			},
+		},
+		DueOn:   "2021-01-01",
+		StartOn: "2021-01-01",
+		Liked:   true,
+	},
+}
+
+var FakePortfolio = []asana.Portfolio{
+	{
+		GID:                 "1234",
+		Name:                "Test Portfolio",
+		Owner:               FakeUser[0],
+		DueOn:               "2021-01-01",
+		StartOn:             "2021-01-01",
+		Color:               "red",
+		Public:              true,
+		CreatedBy:           FakeUser[0],
+		CurrentStatus:       map[string]string{"status": "completed"},
+		CustomFields:        map[string]string{"field": "value"},
+		CustomFieldSettings: map[string]string{"field": "value"},
+	},
+}

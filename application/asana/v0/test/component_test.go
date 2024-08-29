@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
+	"github.com/instill-ai/component/application/asana/v0"
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
@@ -17,26 +18,6 @@ import (
 const (
 	token = "testToken"
 )
-
-func TestGetGoal(t *testing.T) {
-	testcases := []taskCase[structpb.Struct, structpb.Struct]{
-		{
-			_type: "happy-path",
-			name:  "get-goal",
-			input: structpb.Struct{
-				Fields: map[string]*structpb.Value{
-					"id": {Kind: &structpb.Value_StringValue{StringValue: "123"}},
-				},
-			},
-			wantResp: structpb.Struct{
-				Fields: map[string]*structpb.Value{
-					"id": {Kind: &structpb.Value_StringValue{StringValue: "123"}},
-				},
-			},
-		},
-	}
-	taskTesting(testcases, "get-goal", t)
-}
 
 type taskCase[inType any, outType any] struct {
 	_type    string
@@ -50,7 +31,7 @@ func taskTesting[inType any, outType any](testcases []taskCase[inType, outType],
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
-	cmp := Init(bc)
+	cmp := asana.Init(bc)
 
 	for _, tc := range testcases {
 		c.Run(tc._type+`-`+tc.name, func(c *qt.C) {
@@ -68,7 +49,7 @@ func taskTesting[inType any, outType any](testcases []taskCase[inType, outType],
 				}
 				return http.HandlerFunc(fn)
 			}
-			srv := httptest.NewServer(router(authenticationMiddleware, setContentTypeMiddleware))
+			srv := httptest.NewServer(Router(authenticationMiddleware, setContentTypeMiddleware))
 			c.Cleanup(srv.Close)
 
 			setup, err := structpb.NewStruct(map[string]any{

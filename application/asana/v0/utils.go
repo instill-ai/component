@@ -103,5 +103,6 @@ func parseWantOptionFields(opt interface{}) string {
 			options = fmt.Sprintf("%s,%s", options, paramName)
 		}
 	}
+	options = strings.TrimLeft(options, ",")
 	return options
 }

@@ -54,7 +54,8 @@ func taskResp2Output(resp *TaskTaskResp) TaskTaskOutput {
 }
 
 type GetTaskInput struct {
-	ID string `json:"task-gid"`
+	Action string `json:"action"`
+	ID     string `json:"task-gid"`
 }
 
 func (c *Client) GetTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -88,6 +89,7 @@ func (c *Client) GetTask(ctx context.Context, props *structpb.Struct) (*structpb
 }
 
 type UpdateTaskInput struct {
+	Action          string `json:"action"`
 	ID              string `json:"task-gid"`
 	Name            string `json:"name"`
 	ResourceSubtype string `json:"resource-subtype"`
@@ -123,7 +125,7 @@ func (c *Client) UpdateTask(ctx context.Context, props *structpb.Struct) (*struc
 	apiEndpoint := fmt.Sprintf("/tasks/%s", input.ID)
 	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &UpdateTaskReq{
+			"data": &UpdateTaskReq{
 				Name:            input.Name,
 				ResourceSubtype: input.ResourceSubtype,
 				ApprovalStatus:  input.ApprovalStatus,
@@ -154,6 +156,7 @@ func (c *Client) UpdateTask(ctx context.Context, props *structpb.Struct) (*struc
 }
 
 type CreateTaskInput struct {
+	Action          string `json:"action"`
 	ID              string `json:"task-gid"`
 	Name            string `json:"name"`
 	Notes           string `json:"notes"`
@@ -193,7 +196,7 @@ func (c *Client) CreateTask(ctx context.Context, props *structpb.Struct) (*struc
 	apiEndpoint := "/tasks"
 	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &CreateTaskReq{
+			"data": &CreateTaskReq{
 				Name:            input.Name,
 				Notes:           input.Notes,
 				ResourceSubtype: input.ResourceSubtype,
@@ -222,7 +225,8 @@ func (c *Client) CreateTask(ctx context.Context, props *structpb.Struct) (*struc
 }
 
 type DeleteTaskInput struct {
-	ID string `json:"task-gid"`
+	Action string `json:"action"`
+	ID     string `json:"task-gid"`
 }
 
 func (c *Client) DeleteTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -236,21 +240,21 @@ func (c *Client) DeleteTask(ctx context.Context, props *structpb.Struct) (*struc
 	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/tasks/%s", input.ID)
-	req := c.Client.R().SetResult(&TaskTaskResp{})
+	req := c.Client.R()
 
-	resp, err := req.Delete(apiEndpoint)
+	_, err := req.Delete(apiEndpoint)
 	if err != nil {
 		return nil, err
 	}
-	task := resp.Result().(*TaskTaskResp)
-	out := taskResp2Output(task)
+	out := TaskTaskOutput{}
 	return base.ConvertToStructpb(out)
 
 }
 
 type DuplicateTaskInput struct {
-	ID   string `json:"task-gid"`
-	Name string `json:"name"`
+	Action string `json:"action"`
+	ID     string `json:"task-gid"`
+	Name   string `json:"name"`
 }
 
 type DuplicateTaskReq struct {
@@ -271,7 +275,7 @@ func (c *Client) DuplicateTask(ctx context.Context, props *structpb.Struct) (*st
 	apiEndpoint := fmt.Sprintf("/tasks/%s/duplicate", input.ID)
 	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &DuplicateTaskReq{
+			"data": &DuplicateTaskReq{
 				Name: input.Name,
 				// include all fields, see https://developers.asana.com/reference/duplicatetask
 				Include: "assignee,attachments,dates,dependencies,followers,notes,parent,projects,subtasks,tags",
@@ -295,6 +299,7 @@ func (c *Client) DuplicateTask(ctx context.Context, props *structpb.Struct) (*st
 }
 
 type TaskSetParentInput struct {
+	Action string `json:"action"`
 	ID     string `json:"task-gid"`
 	Parent string `json:"parent"`
 }
@@ -315,7 +320,7 @@ func (c *Client) TaskSetParent(ctx context.Context, props *structpb.Struct) (*st
 	apiEndpoint := fmt.Sprintf("/tasks/%s/setParent", input.ID)
 	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &TaskSetParentReq{
+			"data": &TaskSetParentReq{
 				Parent: input.Parent,
 			},
 		},
@@ -337,6 +342,7 @@ func (c *Client) TaskSetParent(ctx context.Context, props *structpb.Struct) (*st
 }
 
 type TaskEditTagInput struct {
+	Action     string `json:"action"`
 	ID         string `json:"task-gid"`
 	TagID      string `json:"tag-gid"`
 	EditOption string `json:"edit-option"`
@@ -363,7 +369,7 @@ func (c *Client) TaskEditTag(ctx context.Context, props *structpb.Struct) (*stru
 
 	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &TaskEditTagReq{
+			"data": &TaskEditTagReq{
 				Tag: input.TagID,
 			},
 		},
@@ -376,6 +382,7 @@ func (c *Client) TaskEditTag(ctx context.Context, props *structpb.Struct) (*stru
 }
 
 type TaskEditFollowerInput struct {
+	Action     string `json:"action"`
 	ID         string `json:"task-gid"`
 	Followers  string `json:"followers"`
 	EditOption string `json:"edit-option"`
@@ -402,7 +409,7 @@ func (c *Client) TaskEditFollower(ctx context.Context, props *structpb.Struct) (
 	followers := strings.Split(input.Followers, ",")
 	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &TaskEditFollowerReq{
+			"data": &TaskEditFollowerReq{
 				Followers: followers,
 			},
 		},
@@ -423,6 +430,7 @@ func (c *Client) TaskEditFollower(ctx context.Context, props *structpb.Struct) (
 }
 
 type TaskEditProjectInput struct {
+	Action     string `json:"action"`
 	ID         string `json:"task-gid"`
 	ProjectID  string `json:"project-gid"`
 	EditOption string `json:"edit-option"`
@@ -449,7 +457,7 @@ func (c *Client) TaskEditProject(ctx context.Context, props *structpb.Struct) (*
 
 	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &TaskEditProjectReq{
+			"data": &TaskEditProjectReq{
 				ProjectID: input.ProjectID,
 			},
 		},

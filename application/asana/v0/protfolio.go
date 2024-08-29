@@ -49,7 +49,8 @@ func portfolioResp2Output(resp *PortfolioTaskResp) PortfolioTaskOutput {
 }
 
 type GetPortfolioInput struct {
-	ID string `json:"portfolio-gid"`
+	Action string `json:"action"`
+	ID     string `json:"portfolio-gid"`
 }
 
 func (c *Client) GetPortfolio(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -83,6 +84,7 @@ func (c *Client) GetPortfolio(ctx context.Context, props *structpb.Struct) (*str
 }
 
 type UpdatePortfolioInput struct {
+	Action    string `json:"action"`
 	ID        string `json:"portfolio-gid"`
 	Name      string `json:"name"`
 	Color     string `json:"color"`
@@ -110,7 +112,7 @@ func (c *Client) UpdatePortfolio(ctx context.Context, props *structpb.Struct) (*
 	apiEndpoint := fmt.Sprintf("/portfolios/%s", input.ID)
 	req := c.Client.R().SetResult(&PortfolioTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &UpdatePortfolioReq{
+			"data": &UpdatePortfolioReq{
 				Name:      input.Name,
 				Color:     input.Color,
 				Public:    input.Public,
@@ -137,6 +139,7 @@ func (c *Client) UpdatePortfolio(ctx context.Context, props *structpb.Struct) (*
 }
 
 type CreatePortfolioInput struct {
+	Action    string `json:"action"`
 	ID        string `json:"portfolio-gid"`
 	Name      string `json:"name"`
 	Color     string `json:"color"`
@@ -164,7 +167,7 @@ func (c *Client) CreatePortfolio(ctx context.Context, props *structpb.Struct) (*
 	apiEndpoint := "/portfolios"
 	req := c.Client.R().SetResult(&PortfolioTaskResp{}).SetBody(
 		map[string]interface{}{
-			"body": &CreatePortfolioReq{
+			"data": &CreatePortfolioReq{
 				Name:      input.Name,
 				Color:     input.Color,
 				Public:    input.Public,
@@ -187,7 +190,8 @@ func (c *Client) CreatePortfolio(ctx context.Context, props *structpb.Struct) (*
 }
 
 type DeletePortfolioInput struct {
-	ID string `json:"portfolio-gid"`
+	Action string `json:"action"`
+	ID     string `json:"portfolio-gid"`
 }
 
 func (c *Client) DeletePortfolio(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -201,13 +205,12 @@ func (c *Client) DeletePortfolio(ctx context.Context, props *structpb.Struct) (*
 	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/portfolios/%s", input.ID)
-	req := c.Client.R().SetResult(&PortfolioTaskResp{})
+	req := c.Client.R()
 
-	resp, err := req.Delete(apiEndpoint)
+	_, err := req.Delete(apiEndpoint)
 	if err != nil {
 		return nil, err
 	}
-	portfolio := resp.Result().(*PortfolioTaskResp)
-	out := portfolioResp2Output(portfolio)
+	out := PortfolioTaskOutput{}
 	return base.ConvertToStructpb(out)
 }
