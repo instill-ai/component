@@ -16,30 +16,40 @@ type TaskTaskOutput struct {
 
 type TaskTaskResp struct {
 	Data struct {
-		GID       string          `json:"gid"`
-		Name      string          `json:"name"`
-		Notes     string          `json:"notes"`
-		HTMLNotes string          `json:"html_notes"`
-		Projects  []SimpleProject `json:"projects"`
-		DueOn     string          `json:"due_on"`
-		StartOn   string          `json:"start_on"`
-		Liked     bool            `json:"liked"`
-		Likes     []RawLike       `json:"likes"`
+		GID             string          `json:"gid"`
+		Name            string          `json:"name"`
+		Notes           string          `json:"notes"`
+		HTMLNotes       string          `json:"html_notes"`
+		Projects        []SimpleProject `json:"projects"`
+		DueOn           string          `json:"due_on"`
+		StartOn         string          `json:"start_on"`
+		Liked           bool            `json:"liked"`
+		Likes           []RawLike       `json:"likes"`
+		ApprovalStatus  string          `json:"approval_status" api:"approval_status"`
+		ResourceSubtype string          `json:"resource_subtype"`
+		Completed       bool            `json:"completed" api:"completed"`
+		Assignee        User            `json:"assignee" api:"assignee"`
+		Parent          TaskParent      `json:"parent" api:"parent"`
 	} `json:"data"`
 }
 
 func taskResp2Output(resp *TaskTaskResp) TaskTaskOutput {
 	out := TaskTaskOutput{
 		Task: Task{
-			GID:       resp.Data.GID,
-			Name:      resp.Data.Name,
-			Notes:     resp.Data.Notes,
-			HTMLNotes: resp.Data.HTMLNotes,
-			Projects:  resp.Data.Projects,
-			DueOn:     resp.Data.DueOn,
-			StartOn:   resp.Data.StartOn,
-			Liked:     resp.Data.Liked,
-			Likes:     []Like{},
+			GID:             resp.Data.GID,
+			Name:            resp.Data.Name,
+			Notes:           resp.Data.Notes,
+			HTMLNotes:       resp.Data.HTMLNotes,
+			Projects:        resp.Data.Projects,
+			DueOn:           resp.Data.DueOn,
+			StartOn:         resp.Data.StartOn,
+			Liked:           resp.Data.Liked,
+			Likes:           []Like{},
+			ApprovalStatus:  resp.Data.ApprovalStatus,
+			ResourceSubtype: resp.Data.ResourceSubtype,
+			Completed:       resp.Data.Completed,
+			Assignee:        resp.Data.Assignee.GID,
+			Parent:          resp.Data.Parent.GID,
 		},
 	}
 
@@ -157,7 +167,6 @@ func (c *Client) UpdateTask(ctx context.Context, props *structpb.Struct) (*struc
 
 type CreateTaskInput struct {
 	Action          string `json:"action"`
-	ID              string `json:"task-gid"`
 	Name            string `json:"name"`
 	Notes           string `json:"notes"`
 	ResourceSubtype string `json:"resource-subtype"`
@@ -264,7 +273,7 @@ type DuplicateTaskReq struct {
 
 func (c *Client) DuplicateTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var debug logger.Session
-	defer debug.SessionStart("DeleteTask", logger.Develop).SessionEnd()
+	defer debug.SessionStart("DuplicateTask", logger.Develop).SessionEnd()
 	var input DuplicateTaskInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
@@ -367,7 +376,7 @@ func (c *Client) TaskEditTag(ctx context.Context, props *structpb.Struct) (*stru
 		apiEndpoint += "removeTag"
 	}
 
-	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
+	req := c.Client.R().SetBody(
 		map[string]interface{}{
 			"data": &TaskEditTagReq{
 				Tag: input.TagID,
@@ -455,7 +464,7 @@ func (c *Client) TaskEditProject(ctx context.Context, props *structpb.Struct) (*
 		apiEndpoint += "removeProject"
 	}
 
-	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
+	req := c.Client.R().SetBody(
 		map[string]interface{}{
 			"data": &TaskEditProjectReq{
 				ProjectID: input.ProjectID,

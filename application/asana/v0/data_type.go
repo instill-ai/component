@@ -33,16 +33,27 @@ type Goal struct {
 	Likes     []Like `json:"likes" api:"likes"`
 }
 
+type TaskParent struct {
+	GID             string `json:"gid"`
+	Name            string `json:"name"`
+	ResourceSubtype string `json:"resource-subtype"`
+	CreatedBy       User   `json:"created-by"`
+}
 type Task struct {
-	GID       string          `json:"gid" api:"gid"`
-	Name      string          `json:"name" api:"name"`
-	Notes     string          `json:"notes" api:"notes"`
-	HTMLNotes string          `json:"html-notes" api:"html_notes"`
-	Projects  []SimpleProject `json:"projects" api:"projects"`
-	DueOn     string          `json:"due-on" api:"due_on"`
-	StartOn   string          `json:"start-on" api:"start_on"`
-	Liked     bool            `json:"liked" api:"liked"`
-	Likes     []Like          `json:"likes" api:"likes"`
+	GID             string          `json:"gid" api:"gid"`
+	Name            string          `json:"name" api:"name"`
+	Notes           string          `json:"notes" api:"notes"`
+	HTMLNotes       string          `json:"html-notes" api:"html_notes"`
+	Projects        []SimpleProject `json:"projects" api:"projects"`
+	DueOn           string          `json:"due-on" api:"due_on"`
+	StartOn         string          `json:"start-on" api:"start_on"`
+	Liked           bool            `json:"liked" api:"liked"`
+	Likes           []Like          `json:"likes" api:"likes"`
+	ApprovalStatus  string          `json:"approval-status" api:"approval_status"`
+	ResourceSubtype string          `json:"resource-subtype"`
+	Completed       bool            `json:"completed" api:"completed"`
+	Assignee        string          `json:"assignee" api:"assignee"`
+	Parent          string          `json:"parent" api:"parent"`
 }
 
 type Project struct {

@@ -1396,6 +1396,46 @@
               "name"
             ]
           }
+        },
+        "approval-status": {
+          "description": "The approval status of the task. If you set completed to true, this field will be set to approved.",
+          "instillShortDescription": "The approval status of the task",
+          "instillUIOrder": 8,
+          "title": "Approval Status",
+          "instillFormat": "string",
+          "type": "string"
+        },
+        "resource-subtype": {
+          "description": "The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning.",
+          "instillShortDescription": "The subtype of this resource",
+          "instillUIOrder": 9,
+          "title": "Resource Subtype",
+          "instillFormat": "string",
+          "type": "string"
+        },
+        "completed": {
+          "description": "Whether the task is currently marked complete.",
+          "instillShortDescription": "Whether the task is currently marked complete",
+          "instillUIOrder": 10,
+          "title": "Completed",
+          "instillFormat": "boolean",
+          "type": "boolean"
+        },
+        "assignee": {
+          "description": "GID of the assignee.",
+          "instillShortDescription": "GID of the assignee",
+          "instillUIOrder": 11,
+          "title": "Assignee",
+          "instillFormat": "string",
+          "type": "string"
+        },
+        "parent": {
+          "description": "GID of the parent task.",
+          "instillShortDescription": "GID of the parent task",
+          "instillUIOrder": 12,
+          "title": "Parent Task",
+          "instillFormat": "string",
+          "type": "string"
         }
       },
       "required": [],

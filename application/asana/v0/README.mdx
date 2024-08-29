@@ -92,6 +92,11 @@ Task Related Task, including get, update, delete, create, set parent, add tag, r
 | Start Date (optional) | `start-on` | string | The date on which the task starts. In the format YYYY-MM-DD. |
 | Liked (optional) | `liked` | boolean | Whether the task is liked by the user. |
 | Likes (optional) | `likes` | array[object] | The users who likes the task. |
+| Approval Status (optional) | `approval-status` | string | The approval status of the task. If you set completed to true, this field will be set to approved. |
+| Resource Subtype (optional) | `resource-subtype` | string | The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning. |
+| Completed (optional) | `completed` | boolean | Whether the task is currently marked complete. |
+| Assignee (optional) | `assignee` | string | GID of the assignee. |
+| Parent Task (optional) | `parent` | string | GID of the parent task. |
 
 
 

@@ -133,7 +133,26 @@ var FakeProject = []RawProject{
 	},
 }
 
-var FakeTask = []asana.Task{
+type RawTask struct {
+	GID             string                `json:"gid"`
+	Name            string                `json:"name"`
+	Notes           string                `json:"notes"`
+	HTMLNotes       string                `json:"html_notes"`
+	Projects        []asana.SimpleProject `json:"projects"`
+	DueOn           string                `json:"due_on"`
+	StartOn         string                `json:"start_on"`
+	DueAt           string                `json:"due_at,omitempty"`
+	StartAt         string                `json:"start_at,omitempty"`
+	Liked           bool                  `json:"liked"`
+	Likes           []asana.RawLike       `json:"likes"`
+	ApprovalStatus  string                `json:"approval_status"`
+	ResourceSubtype string                `json:"resource_subtype"`
+	Completed       bool                  `json:"completed"`
+	Assignee        asana.User            `json:"assignee"`
+	Parent          asana.TaskParent      `json:"parent"`
+}
+
+var FakeTask = []RawTask{
 	{
 		GID:       "1234",
 		Name:      "Test Task",
@@ -145,9 +164,72 @@ var FakeTask = []asana.Task{
 				Name: "Test Project",
 			},
 		},
-		DueOn:   "2021-01-01",
-		StartOn: "2021-01-01",
-		Liked:   true,
+		DueOn:           "2021-01-01",
+		StartOn:         "2021-01-01",
+		Liked:           true,
+		Likes:           FakeLike,
+		ApprovalStatus:  "approved",
+		ResourceSubtype: "default_task",
+		Completed:       true,
+		Assignee:        FakeUser[0],
+		Parent: asana.TaskParent{
+			GID:             "1234",
+			Name:            "Test Task",
+			ResourceSubtype: "default_task",
+			CreatedBy:       FakeUser[0],
+		},
+	},
+	{
+		GID:       "43210",
+		Name:      "Test Task",
+		Notes:     "Test Notes",
+		HTMLNotes: "Test HTML Notes",
+		Projects: []asana.SimpleProject{
+			{
+				GID:  "1234",
+				Name: "Test Project",
+			},
+		},
+		DueOn:           "2021-01-01",
+		StartOn:         "2021-01-01",
+		Liked:           true,
+		Likes:           FakeLike,
+		ApprovalStatus:  "approved",
+		ResourceSubtype: "default_task",
+		Completed:       true,
+		Assignee:        FakeUser[0],
+		Parent: asana.TaskParent{
+			GID:             "1234",
+			Name:            "Test Task",
+			ResourceSubtype: "default_task",
+			CreatedBy:       FakeUser[0],
+		},
+	},
+	{
+		GID:       "1234567890",
+		Name:      "Test Task",
+		Notes:     "Test Notes",
+		HTMLNotes: "Test HTML Notes",
+		Projects: []asana.SimpleProject{
+			{
+				GID:  "1234",
+				Name: "Test Project",
+			},
+		},
+		DueOn:           "2021-01-01",
+		StartOn:         "2021-01-01",
+		Liked:           true,
+		Likes:           FakeLike,
+		ApprovalStatus:  "approved",
+		ResourceSubtype: "default_task",
+		Completed:       true,
+		Assignee:        FakeUser[0],
+		Parent: asana.TaskParent{
+			GID:             "1234",
+			Name:            "Test Task",
+			ResourceSubtype: "default_task",
+			CreatedBy:       FakeUser[0],
+		},
 	},
 }
 
