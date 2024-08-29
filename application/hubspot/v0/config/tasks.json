@@ -1861,7 +1861,7 @@
           "type": "string"
         },
         "sender-actor-id": {
-          "description": "Input sender actor id. Example: A-12345678. To obtain this, it is recommended to use and copy the 'Get Thread task' sender output. For more information about actor id: https://developers.hubspot.com/beta-docs/guides/api/conversations/inbox-and-messages#get-actors",
+          "description": "Input sender actor id. Example: A-12345678. To obtain this, it is recommended to use and copy the 'Get Thread task' sender output. For [more information](https://developers.hubspot.com/beta-docs/guides/api/conversations/inbox-and-messages#get-actors) about actor id",
           "instillAcceptFormats": [
             "string"
           ],
@@ -2056,7 +2056,7 @@
     }
   },
   "TASK_GET_OWNER": {
-    "instillShortDescription": "Get information about HubSpot owner using either owner ID or user ID. For more information about owner, please go to: https://developers.hubspot.com/docs/api/crm/owners",
+    "instillShortDescription": "Get information about HubSpot owner using either owner ID or user ID. For more information about owner, please go to [here](https://developers.hubspot.com/docs/api/crm/owners)",
     "input": {
       "description": "Owner information and type",
       "instillUIOrder": 0,
