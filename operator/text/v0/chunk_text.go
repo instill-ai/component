@@ -3,6 +3,7 @@ package text
 import (
 	"fmt"
 	"reflect"
+	"time"
 
 	tiktoken "github.com/pkoukk/tiktoken-go"
 	"github.com/tmc/langchaingo/textsplitter"
@@ -112,7 +113,11 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		)
 	}
 
+	now := time.Now()
 	chunks, err := split.SplitText(input.Text)
+	now1 := time.Now()
+	fmt.Println("===== SplitText took: ", now1.Sub(now))
+
 	if err != nil {
 		return output, err
 	}
@@ -126,7 +131,10 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	totalTokenCount := 0
 	startScanPosition := 0
 	rawRunes := []rune(input.Text)
+
+	now = time.Now()
 	for _, chunk := range chunks {
+		each := time.Now()
 		chunkRunes := []rune(chunk)
 
 		startPosition, endPosition := positionCalculator.getChunkPositions(rawRunes, chunkRunes, startScanPosition)
@@ -151,7 +159,10 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		})
 		totalTokenCount += len(token)
 		startScanPosition = startPosition + 1
+		fmt.Println("===== each chunk took: ", time.Since(each))
 	}
+	now1 = time.Now()
+	fmt.Println("===== getChunkPositions took: ", now1.Sub(now))
 
 	if len(output.TextChunks) == 0 {
 		token := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
