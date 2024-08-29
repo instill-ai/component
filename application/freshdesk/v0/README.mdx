@@ -86,7 +86,7 @@ Get ticket using ID
 | Support Email (optional) | `support-email` | string | Support email address. You can find it in Admin -> Email (under channel). |
 | To Emails (optional) | `to-emails` | array[string] | Email addresses to which the ticket was originally sent |
 | Spam (optional) | `spam` | boolean | Set to true if the ticket is marked as spam |
-| First Response Due By (optional) | `due-by` | string | Timestamp that denotes when the ticket is due to be resolved. In UTC format. |
+| Due By (optional) | `due-by` | string | Timestamp that denotes when the ticket is due to be resolved. In UTC format. |
 | Is Escalated (optional) | `is-escalated` | boolean | Set to true if the ticket has been escalated |
 | First Response Due By (optional) | `first-response-due-by` | string | Timestamp that denotes when the first response is due. In UTC format. You can adjust this by going to Admin -> SLA policy (under Workflows). |
 | First Response Escalated (optional) | `first-response-escalated` | boolean | Set to true if the ticket has been escalated as the result of first response time being breached |
@@ -280,9 +280,9 @@ Create contact
 | Company ID | `company-id` | integer | ID of the primary company to which the contact belongs |
 | Unique External ID | `unique-external-id` | string | Unique external ID of the contact which be assigned by the user(agent) |
 | Twitter ID | `twitter-id` | string | Twitter ID of the contact |
-| View All Tickets | `view-all-tickets` | boolean | Set to true if the contact can see all the tickets that are associated with the primary company. |
+| View All Tickets | `view-all-tickets` | boolean | Used to determine if the contact can see all the tickets that are associated with the primary company. Note: this property will be ignored if the Company ID is not provided. |
 | Other Emails | `other-emails` | array[string] | List of other email addresses of the contact |
-| Other Companies | `other-companies` | array[string] | List of other companies to which the contact belongs. Each company should be in the format of company-id;view-all-tickets(boolean "true"/"false" Example: 123;true |
+| Other Companies | `other-companies` | array[string] | List of other companies to which the contact belongs. Each company should be in the format of company-id;view-all-tickets(boolean "true"/"false") Example: 123;true |
 | Other Phone Numbers | `other-phone-numbers` | array[string] | List of other phone numbers of the contact |
 
 

@@ -89,7 +89,7 @@ func (e *execution) TaskGetCompany(in *structpb.Struct) (*structpb.Struct, error
 		Domains:     *checkForNilString(&resp.Domains),
 		HealthScore: resp.HealthScore,
 		AccountTier: resp.AccountTier,
-		RenewalDate: resp.RenewalDate,
+		RenewalDate: convertTimestampResp(resp.RenewalDate),
 		Industry:    resp.Industry,
 		CreatedAt:   convertTimestampResp(resp.CreatedAt),
 		UpdatedAt:   convertTimestampResp(resp.UpdatedAt),

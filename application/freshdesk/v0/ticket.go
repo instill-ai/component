@@ -472,8 +472,7 @@ func (e *execution) TaskCreateTicketNote(in *structpb.Struct) (*structpb.Struct,
 // Task 5: Get Conversations
 
 type TaskGetAllConversationsInput struct {
-	AllOrSingle string `json:"all-or-single"`
-	TicketID    int64  `json:"ticket-id"`
+	TicketID int64 `json:"ticket-id"`
 }
 
 type TaskGetAllConversationsResponse struct {

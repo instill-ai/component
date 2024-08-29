@@ -315,7 +315,7 @@
       },
       "due-by": {
         "description": "Timestamp that denotes when the ticket is due to be resolved. In UTC format.",
-        "title": "First Response Due By",
+        "title": "Due By",
         "type": "string"
       },
       "is-escalated": {
@@ -1637,7 +1637,9 @@
           "instillUpstreamTypes": ["value", "template", "reference"]
         },
         "view-all-tickets": {
-          "$ref": "#/$defs/contact/view-all-tickets",
+          "description": "Used to determine if the contact can see all the tickets that are associated with the primary company. Note: this property will be ignored if the Company ID is not provided.",
+          "title": "View All Tickets",
+          "type": "boolean",
           "instillUIOrder": 13,
           "instillAcceptFormats": ["boolean"],
           "instillUIMultiline": false,
@@ -1655,7 +1657,7 @@
         "other-companies": {
           "title": "Other Companies",
           "type": "array",
-          "description": "List of other companies to which the contact belongs. Each company should be in the format of company-id;view-all-tickets(boolean \"true\"/\"false\" Example: 123;true",
+          "description": "List of other companies to which the contact belongs. Each company should be in the format of company-id;view-all-tickets(boolean \"true\"/\"false\") Example: 123;true",
           "items": {
             "type": "string"
           },
