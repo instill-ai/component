@@ -106,9 +106,6 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 			return err
 		}
 
-		// TODO: Take it off
-		fmt.Println("==== \n\n \nOutput: ", output, "\n \n \n====")
-
 		outputs[i] = output
 	}
 	return out.Write(ctx, outputs)

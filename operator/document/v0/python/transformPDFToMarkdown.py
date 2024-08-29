@@ -337,7 +337,6 @@ class PdfTransformer:
 
 		return result
 
-
 	def insert_image(self, line, next_line):
 		result = ""
 		images = self.images
@@ -375,7 +374,6 @@ class PdfTransformer:
 
 		return result
 
-
 if __name__ == "__main__":
 	json_str = sys.stdin.buffer.read().decode('utf-8')
 	params = json.loads(json_str)
@@ -384,11 +382,13 @@ if __name__ == "__main__":
 	decoded_bytes = base64.b64decode(pdf_string)
 	pdf_file_obj = BytesIO(decoded_bytes)
 	pdf = PdfTransformer(pdf_file_obj, display_image_tag)
-	result = pdf.execute()
-	images = pdf.base64_images
-	output = {
-		"body": result,
-		"metadata": pdf.metadata,
-		"images": images
-	}
-	print(json.dumps(output))
+	try:
+		body = pdf.execute()
+		images = pdf.base64_images
+		output = {
+			"body": body,
+			"images": images,
+		}
+		print(json.dumps(output))
+	except Exception as e:
+		print(json.dumps({"error": str(e)}))
