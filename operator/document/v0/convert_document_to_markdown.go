@@ -18,7 +18,7 @@ type ConvertDocumentToMarkdownInput struct {
 type ConvertDocumentToMarkdownOutput struct {
 	Body     string   `json:"body"`
 	Filename string   `json:"filename"`
-	Images   []string `json:"images"`
+	Images   []string `json:"images,omitempty"`
 }
 
 func ConvertDocumentToMarkdown(inputStruct *ConvertDocumentToMarkdownInput, transformerGetter MarkdownTransformerGetterFunc) (*ConvertDocumentToMarkdownOutput, error) {
