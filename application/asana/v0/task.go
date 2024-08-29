@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -69,20 +68,15 @@ type GetTaskInput struct {
 }
 
 func (c *Client) GetTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("GetTask", logger.Develop).SessionEnd()
 	var input GetTaskInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
 
-	debug.Info("input", input)
-
 	apiEndpoint := fmt.Sprintf("/tasks/%s", input.ID)
 	req := c.Client.R().SetResult(&TaskTaskResp{})
 
 	wantOptFields := parseWantOptionFields(Task{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -91,9 +85,7 @@ func (c *Client) GetTask(ctx context.Context, props *structpb.Struct) (*structpb
 		return nil, err
 	}
 
-	debug.Info("resp", resp)
 	task := resp.Result().(*TaskTaskResp)
-	debug.Info("task", task)
 	out := taskResp2Output(task)
 	return base.ConvertToStructpb(out)
 }
@@ -123,14 +115,10 @@ type UpdateTaskReq struct {
 }
 
 func (c *Client) UpdateTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("UpdateTask", logger.Develop).SessionEnd()
 	var input UpdateTaskInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/tasks/%s", input.ID)
 	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
@@ -148,7 +136,6 @@ func (c *Client) UpdateTask(ctx context.Context, props *structpb.Struct) (*struc
 		})
 
 	wantOptFields := parseWantOptionFields(Task{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -158,9 +145,7 @@ func (c *Client) UpdateTask(ctx context.Context, props *structpb.Struct) (*struc
 	if err != nil {
 		return nil, err
 	}
-	debug.Info("resp", resp)
 	task := resp.Result().(*TaskTaskResp)
-	debug.Info("task", task)
 	out := taskResp2Output(task)
 	return base.ConvertToStructpb(out)
 }
@@ -193,14 +178,10 @@ type CreateTaskReq struct {
 }
 
 func (c *Client) CreateTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("CreateTask", logger.Develop).SessionEnd()
 	var input CreateTaskInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := "/tasks"
 	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
@@ -219,7 +200,6 @@ func (c *Client) CreateTask(ctx context.Context, props *structpb.Struct) (*struc
 			},
 		})
 	wantOptFields := parseWantOptionFields(Task{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -239,14 +219,10 @@ type DeleteTaskInput struct {
 }
 
 func (c *Client) DeleteTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("DeleteTask", logger.Develop).SessionEnd()
 	var input DeleteTaskInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/tasks/%s", input.ID)
 	req := c.Client.R()
@@ -272,14 +248,10 @@ type DuplicateTaskReq struct {
 }
 
 func (c *Client) DuplicateTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("DuplicateTask", logger.Develop).SessionEnd()
 	var input DuplicateTaskInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/tasks/%s/duplicate", input.ID)
 	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
@@ -293,7 +265,6 @@ func (c *Client) DuplicateTask(ctx context.Context, props *structpb.Struct) (*st
 	)
 
 	wantOptFields := parseWantOptionFields(Task{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -317,14 +288,10 @@ type TaskSetParentReq struct {
 }
 
 func (c *Client) TaskSetParent(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("TaskSetParent", logger.Develop).SessionEnd()
 	var input TaskSetParentInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/tasks/%s/setParent", input.ID)
 	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
@@ -336,7 +303,6 @@ func (c *Client) TaskSetParent(ctx context.Context, props *structpb.Struct) (*st
 	)
 
 	wantOptFields := parseWantOptionFields(Task{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -361,13 +327,10 @@ type TaskEditTagReq struct {
 }
 
 func (c *Client) TaskEditTag(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("TaskEditTag", logger.Develop).SessionEnd()
 	var input TaskEditTagInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/tasks/%s/", input.ID)
 	if input.EditOption == "add" {
@@ -401,13 +364,10 @@ type TaskEditFollowerReq struct {
 }
 
 func (c *Client) TaskEditFollower(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("TaskEditFollower", logger.Develop).SessionEnd()
 	var input TaskEditFollowerInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/tasks/%s/", input.ID)
 	if input.EditOption == "add" {
@@ -424,7 +384,6 @@ func (c *Client) TaskEditFollower(ctx context.Context, props *structpb.Struct) (
 		},
 	)
 	wantOptFields := parseWantOptionFields(Task{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -449,13 +408,10 @@ type TaskEditProjectReq struct {
 }
 
 func (c *Client) TaskEditProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("TaskEditProject", logger.Develop).SessionEnd()
 	var input TaskEditProjectInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/tasks/%s/", input.ID)
 	if input.EditOption == "add" {

@@ -51,9 +51,6 @@ func Init(bc base.Component) *component {
 			panic(err)
 		}
 	})
-	fmt.Println("================================")
-	fmt.Println("Asana component initialized")
-	fmt.Println("================================")
 	return comp
 }
 

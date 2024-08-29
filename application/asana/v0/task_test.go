@@ -4,7 +4,20 @@ import (
 	"testing"
 )
 
-func TestGetTask(t *testing.T) {
+func TestTask(t *testing.T) {
+	// to avoid data race in tests
+	testGetTask(t)
+	testUpdateTask(t)
+	testCreateTask(t)
+	testDeleteTask(t)
+	testDuplicateTask(t)
+	testTaskSetParent(t)
+	testTaskEditTag(t)
+	testTaskEditFollowers(t)
+	testTaskEditProject(t)
+}
+
+func testGetTask(t *testing.T) {
 	testcases := []taskCase[GetTaskInput, TaskTaskOutput]{
 		{
 			_type: "ok",
@@ -55,7 +68,8 @@ func TestGetTask(t *testing.T) {
 	}
 	taskTesting(testcases, TaskAsanaTask, t)
 }
-func TestUpdateTask(t *testing.T) {
+
+func testUpdateTask(t *testing.T) {
 	testcases := []taskCase[UpdateTaskInput, TaskTaskOutput]{
 		{
 			_type: "ok",
@@ -109,7 +123,8 @@ func TestUpdateTask(t *testing.T) {
 	}
 	taskTesting(testcases, TaskAsanaTask, t)
 }
-func TestCreateTask(t *testing.T) {
+
+func testCreateTask(t *testing.T) {
 	testcases := []taskCase[CreateTaskInput, TaskTaskOutput]{
 		{
 			_type: "ok",
@@ -164,7 +179,7 @@ func TestCreateTask(t *testing.T) {
 	taskTesting(testcases, TaskAsanaTask, t)
 }
 
-func TestDeleteTask(t *testing.T) {
+func testDeleteTask(t *testing.T) {
 	testcases := []taskCase[DeleteTaskInput, TaskTaskOutput]{
 		{
 			_type: "ok",
@@ -189,7 +204,8 @@ func TestDeleteTask(t *testing.T) {
 	}
 	taskTesting(testcases, TaskAsanaTask, t)
 }
-func TestDuplicateTask(t *testing.T) {
+
+func testDuplicateTask(t *testing.T) {
 	testcases := []taskCase[DuplicateTaskInput, TaskTaskOutput]{
 		{
 			_type: "ok",
@@ -241,7 +257,7 @@ func TestDuplicateTask(t *testing.T) {
 	taskTesting(testcases, TaskAsanaTask, t)
 }
 
-func TestTaskSetParent(t *testing.T) {
+func testTaskSetParent(t *testing.T) {
 	testcases := []taskCase[TaskSetParentInput, TaskTaskOutput]{
 		{
 			_type: "ok",
@@ -293,7 +309,7 @@ func TestTaskSetParent(t *testing.T) {
 	taskTesting(testcases, TaskAsanaTask, t)
 }
 
-func TestTaskEditTag(t *testing.T) {
+func testTaskEditTag(t *testing.T) {
 	testcases := []taskCase[TaskEditTagInput, TaskTaskOutput]{
 		{
 			_type: "ok",
@@ -385,7 +401,7 @@ func TestTaskEditTag(t *testing.T) {
 	taskTesting(testcases, TaskAsanaTask, t)
 }
 
-func TestTaskEditFollowers(t *testing.T) {
+func testTaskEditFollowers(t *testing.T) {
 	testcases := []taskCase[TaskEditFollowerInput, TaskTaskOutput]{
 		{
 			_type: "ok",
@@ -477,7 +493,7 @@ func TestTaskEditFollowers(t *testing.T) {
 	taskTesting(testcases, TaskAsanaTask, t)
 }
 
-func TestTaskEditProject(t *testing.T) {
+func testTaskEditProject(t *testing.T) {
 	testcases := []taskCase[TaskEditProjectInput, TaskTaskOutput]{
 		{
 			_type: "ok",

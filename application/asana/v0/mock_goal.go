@@ -2,7 +2,6 @@ package asana
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -59,7 +58,6 @@ func updateGoal(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("goal: ", goal)
 	for i, v := range FakeGoal {
 		if v.GID == goalGID {
 			updateGoal := goal["data"]
@@ -106,7 +104,6 @@ func createGoal(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("goal: ", goal)
 	newID := "123456789"
 	newGoal := goal["data"]
 	if newGoal.Name == "" {

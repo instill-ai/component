@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -65,20 +64,15 @@ type GetProjectInput struct {
 }
 
 func (c *Client) GetProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("GetProject", logger.Develop).SessionEnd()
 	var input GetProjectInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
 
-	debug.Info("input", input)
-
 	apiEndpoint := fmt.Sprintf("/projects/%s", input.ID)
 	req := c.Client.R().SetResult(&ProjectTaskResp{})
 
 	wantOptFields := parseWantOptionFields(Project{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -87,9 +81,7 @@ func (c *Client) GetProject(ctx context.Context, props *structpb.Struct) (*struc
 		return nil, err
 	}
 
-	debug.Info("resp", resp)
 	project := resp.Result().(*ProjectTaskResp)
-	debug.Info("project", project)
 	out := projectResp2Output(project)
 	return base.ConvertToStructpb(out)
 }
@@ -117,14 +109,10 @@ type UpdateProjectReq struct {
 }
 
 func (c *Client) UpdateProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("UpdateProject", logger.Develop).SessionEnd()
 	var input UpdateProjectInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/projects/%s", input.ID)
 	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(
@@ -141,7 +129,6 @@ func (c *Client) UpdateProject(ctx context.Context, props *structpb.Struct) (*st
 		})
 
 	wantOptFields := parseWantOptionFields(Project{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -151,9 +138,7 @@ func (c *Client) UpdateProject(ctx context.Context, props *structpb.Struct) (*st
 	if err != nil {
 		return nil, err
 	}
-	debug.Info("resp", resp)
 	project := resp.Result().(*ProjectTaskResp)
-	debug.Info("project", project)
 	out := projectResp2Output(project)
 	return base.ConvertToStructpb(out)
 }
@@ -178,14 +163,10 @@ type CreateProjectReq struct {
 }
 
 func (c *Client) CreateProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("CreateProject", logger.Develop).SessionEnd()
 	var input CreateProjectInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := "/projects"
 	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(
@@ -200,7 +181,6 @@ func (c *Client) CreateProject(ctx context.Context, props *structpb.Struct) (*st
 			},
 		})
 	wantOptFields := parseWantOptionFields(Project{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -220,14 +200,10 @@ type DeleteProjectInput struct {
 }
 
 func (c *Client) DeleteProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("DeleteProject", logger.Develop).SessionEnd()
 	var input DeleteProjectInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/projects/%s", input.ID)
 	req := c.Client.R()
@@ -263,14 +239,10 @@ type DuplicateProjectReq struct {
 }
 
 func (c *Client) DuplicateProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("DeleteProject", logger.Develop).SessionEnd()
 	var input DuplicateProjectInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/projects/%s/duplicate", input.ID)
 	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(
@@ -290,7 +262,6 @@ func (c *Client) DuplicateProject(ctx context.Context, props *structpb.Struct) (
 	)
 
 	wantOptFields := parseWantOptionFields(Project{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}

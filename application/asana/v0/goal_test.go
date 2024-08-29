@@ -4,7 +4,14 @@ import (
 	"testing"
 )
 
-func TestGetGoal(t *testing.T) {
+func TestGoal(t *testing.T) {
+	// to avoid data race in tests
+	testGetGoal(t)
+	testUpdateGoal(t)
+	testCreateGoal(t)
+	testDeleteGoal(t)
+}
+func testGetGoal(t *testing.T) {
 	testcases := []taskCase[GetGoalInput, GoalTaskOutput]{
 		{
 			_type: "ok",
@@ -45,7 +52,7 @@ func TestGetGoal(t *testing.T) {
 	}
 	taskTesting(testcases, TaskAsanaGoal, t)
 }
-func TestUpdateGoal(t *testing.T) {
+func testUpdateGoal(t *testing.T) {
 	testcases := []taskCase[UpdateGoalInput, GoalTaskOutput]{
 		{
 			_type: "ok",
@@ -89,7 +96,7 @@ func TestUpdateGoal(t *testing.T) {
 	}
 	taskTesting(testcases, TaskAsanaGoal, t)
 }
-func TestCreateGoal(t *testing.T) {
+func testCreateGoal(t *testing.T) {
 	testcases := []taskCase[CreateGoalInput, GoalTaskOutput]{
 		{
 			_type: "ok",
@@ -134,7 +141,7 @@ func TestCreateGoal(t *testing.T) {
 	taskTesting(testcases, TaskAsanaGoal, t)
 }
 
-func TestDeleteGoal(t *testing.T) {
+func testDeleteGoal(t *testing.T) {
 	testcases := []taskCase[DeleteGoalInput, GoalTaskOutput]{
 		{
 			_type: "ok",

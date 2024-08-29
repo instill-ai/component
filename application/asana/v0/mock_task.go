@@ -70,11 +70,9 @@ func updateTask(res http.ResponseWriter, req *http.Request) {
 
 	var task UpdateTaskReqBody
 	if err = json.NewDecoder(req.Body).Decode(&task); err != nil {
-		fmt.Println("error: ", err)
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("task: ", task)
 	for i, v := range FakeTask {
 		if v.GID == taskGID {
 			updateTask := task.Data
@@ -161,7 +159,6 @@ func createTask(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("task: ", task)
 	newID := "123456789"
 	newTaskInfo := task.Data
 	if newTaskInfo.Name == "" {

@@ -2,7 +2,6 @@ package asana
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -59,7 +58,6 @@ func updateProject(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("project: ", project)
 	for i, v := range FakeProject {
 		if v.GID == projectGID {
 			updateProject := project["data"]
@@ -112,7 +110,6 @@ func createProject(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("project: ", project)
 	newID := "123456789"
 	newProject := project["data"]
 	if newProject.Name == "" {

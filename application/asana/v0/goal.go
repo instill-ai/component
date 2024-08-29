@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -56,19 +55,15 @@ type GetGoalInput struct {
 }
 
 func (c *Client) GetGoal(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("GetGoal", logger.Develop).SessionEnd()
 	var input GetGoalInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
 
-	debug.Info("input", input)
 	apiEndpoint := "/goals/" + input.ID
 	req := c.Client.R().SetResult(&GoalTaskResp{})
 
 	wantOptFields := parseWantOptionFields(Goal{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -77,7 +72,6 @@ func (c *Client) GetGoal(ctx context.Context, props *structpb.Struct) (*structpb
 		return nil, err
 	}
 	goal := resp.Result().(*GoalTaskResp)
-	debug.Info("goal", goal)
 	out := goalResp2Output(goal)
 	return base.ConvertToStructpb(out)
 }
@@ -103,14 +97,10 @@ type UpdateGoalReq struct {
 }
 
 func (c *Client) UpdateGoal(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("UpdateGoal", logger.Develop).SessionEnd()
 	var input UpdateGoalInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := "/goals/" + input.ID
 
@@ -137,19 +127,15 @@ func (c *Client) UpdateGoal(ctx context.Context, props *structpb.Struct) (*struc
 	// })
 
 	wantOptFields := parseWantOptionFields(Goal{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
-	debug.Info("req", req)
 	resp, err := req.Put(apiEndpoint)
 
 	if err != nil {
 		return nil, err
 	}
-	debug.Info("resp", resp)
 	goal := resp.Result().(*GoalTaskResp)
-	debug.Info("goal", goal)
 	out := goalResp2Output(goal)
 	return base.ConvertToStructpb(out)
 }
@@ -171,14 +157,10 @@ type CreateGoalReq struct {
 }
 
 func (c *Client) CreateGoal(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("CreateGoal", logger.Develop).SessionEnd()
 	var input CreateGoalInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := "/goals"
 	req := c.Client.R().SetResult(&GoalTaskResp{}).SetBody(
@@ -192,7 +174,6 @@ func (c *Client) CreateGoal(ctx context.Context, props *structpb.Struct) (*struc
 			},
 		})
 	wantOptFields := parseWantOptionFields(Goal{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -211,14 +192,10 @@ type DeleteGoalInput struct {
 }
 
 func (c *Client) DeleteGoal(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("DeleteGoal", logger.Develop).SessionEnd()
 	var input DeleteGoalInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := "/goals/" + input.ID
 	req := c.Client.R()

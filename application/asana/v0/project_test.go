@@ -4,7 +4,15 @@ import (
 	"testing"
 )
 
-func TestGetProject(t *testing.T) {
+func TestProject(t *testing.T) {
+	// to avoid data race in tests
+	testGetProject(t)
+	testUpdateProject(t)
+	testCreateProject(t)
+	testDeleteProject(t)
+	testDuplicateProject(t)
+}
+func testGetProject(t *testing.T) {
 	testcases := []taskCase[GetProjectInput, ProjectTaskOutput]{
 		{
 			_type: "ok",
@@ -52,7 +60,7 @@ func TestGetProject(t *testing.T) {
 	}
 	taskTesting(testcases, TaskAsanaProject, t)
 }
-func TestUpdateProject(t *testing.T) {
+func testUpdateProject(t *testing.T) {
 	testcases := []taskCase[UpdateProjectInput, ProjectTaskOutput]{
 		{
 			_type: "ok",
@@ -103,7 +111,7 @@ func TestUpdateProject(t *testing.T) {
 	}
 	taskTesting(testcases, TaskAsanaProject, t)
 }
-func TestCreateProject(t *testing.T) {
+func testCreateProject(t *testing.T) {
 	testcases := []taskCase[CreateProjectInput, ProjectTaskOutput]{
 		{
 			_type: "ok",
@@ -155,7 +163,7 @@ func TestCreateProject(t *testing.T) {
 	taskTesting(testcases, TaskAsanaProject, t)
 }
 
-func TestDeleteProject(t *testing.T) {
+func testDeleteProject(t *testing.T) {
 	testcases := []taskCase[DeleteProjectInput, ProjectTaskOutput]{
 		{
 			_type: "ok",
@@ -181,7 +189,7 @@ func TestDeleteProject(t *testing.T) {
 	taskTesting(testcases, TaskAsanaProject, t)
 }
 
-func TestDuplicateProject(t *testing.T) {
+func testDuplicateProject(t *testing.T) {
 	testcases := []taskCase[DuplicateProjectInput, ProjectTaskOutput]{
 		{
 			_type: "ok",

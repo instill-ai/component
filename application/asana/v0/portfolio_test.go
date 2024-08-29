@@ -4,7 +4,15 @@ import (
 	"testing"
 )
 
-func TestGetPortfolio(t *testing.T) {
+func TestPortfolio(t *testing.T) {
+	// to avoid data race in tests
+	testGetPortfolio(t)
+	testUpdatePortfolio(t)
+	testCreatePortfolio(t)
+	testDeletePortfolio(t)
+}
+
+func testGetPortfolio(t *testing.T) {
 	testcases := []taskCase[GetPortfolioInput, PortfolioTaskOutput]{
 		{
 			_type: "ok",
@@ -41,7 +49,7 @@ func TestGetPortfolio(t *testing.T) {
 	}
 	taskTesting(testcases, TaskAsanaPortfolio, t)
 }
-func TestUpdatePortfolio(t *testing.T) {
+func testUpdatePortfolio(t *testing.T) {
 	testcases := []taskCase[UpdatePortfolioInput, PortfolioTaskOutput]{
 		{
 			_type: "ok",
@@ -80,7 +88,7 @@ func TestUpdatePortfolio(t *testing.T) {
 	}
 	taskTesting(testcases, TaskAsanaPortfolio, t)
 }
-func TestCreatePortfolio(t *testing.T) {
+func testCreatePortfolio(t *testing.T) {
 	testcases := []taskCase[CreatePortfolioInput, PortfolioTaskOutput]{
 		{
 			_type: "ok",
@@ -120,7 +128,7 @@ func TestCreatePortfolio(t *testing.T) {
 	taskTesting(testcases, TaskAsanaPortfolio, t)
 }
 
-func TestDeletePortfolio(t *testing.T) {
+func testDeletePortfolio(t *testing.T) {
 	testcases := []taskCase[DeletePortfolioInput, PortfolioTaskOutput]{
 		{
 			_type: "ok",

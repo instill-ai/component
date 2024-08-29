@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -54,20 +53,15 @@ type GetPortfolioInput struct {
 }
 
 func (c *Client) GetPortfolio(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("GetPortfolio", logger.Develop).SessionEnd()
 	var input GetPortfolioInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
 
-	debug.Info("input", input)
-
 	apiEndpoint := fmt.Sprintf("/portfolios/%s", input.ID)
 	req := c.Client.R().SetResult(&PortfolioTaskResp{})
 
 	wantOptFields := parseWantOptionFields(Portfolio{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -76,9 +70,7 @@ func (c *Client) GetPortfolio(ctx context.Context, props *structpb.Struct) (*str
 		return nil, err
 	}
 
-	debug.Info("resp", resp)
 	portfolio := resp.Result().(*PortfolioTaskResp)
-	debug.Info("portfolio", portfolio)
 	out := portfolioResp2Output(portfolio)
 	return base.ConvertToStructpb(out)
 }
@@ -100,14 +92,10 @@ type UpdatePortfolioReq struct {
 }
 
 func (c *Client) UpdatePortfolio(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("UpdatePortfolio", logger.Develop).SessionEnd()
 	var input UpdatePortfolioInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/portfolios/%s", input.ID)
 	req := c.Client.R().SetResult(&PortfolioTaskResp{}).SetBody(
@@ -121,7 +109,6 @@ func (c *Client) UpdatePortfolio(ctx context.Context, props *structpb.Struct) (*
 		})
 
 	wantOptFields := parseWantOptionFields(Portfolio{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -131,9 +118,7 @@ func (c *Client) UpdatePortfolio(ctx context.Context, props *structpb.Struct) (*
 	if err != nil {
 		return nil, err
 	}
-	debug.Info("resp", resp)
 	portfolio := resp.Result().(*PortfolioTaskResp)
-	debug.Info("portfolio", portfolio)
 	out := portfolioResp2Output(portfolio)
 	return base.ConvertToStructpb(out)
 }
@@ -154,14 +139,10 @@ type CreatePortfolioReq struct {
 }
 
 func (c *Client) CreatePortfolio(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("CreatePortfolio", logger.Develop).SessionEnd()
 	var input CreatePortfolioInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := "/portfolios"
 	req := c.Client.R().SetResult(&PortfolioTaskResp{}).SetBody(
@@ -174,7 +155,6 @@ func (c *Client) CreatePortfolio(ctx context.Context, props *structpb.Struct) (*
 			},
 		})
 	wantOptFields := parseWantOptionFields(Portfolio{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -194,14 +174,10 @@ type DeletePortfolioInput struct {
 }
 
 func (c *Client) DeletePortfolio(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("DeletePortfolio", logger.Develop).SessionEnd()
 	var input DeletePortfolioInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
-	debug.Info("input", input)
 
 	apiEndpoint := fmt.Sprintf("/portfolios/%s", input.ID)
 	req := c.Client.R()
