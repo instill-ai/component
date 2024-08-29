@@ -18,7 +18,7 @@
           "title": "Collection Name",
           "type": "string"
         },
-        "partition-name":{
+        "partition-name": {
           "description": "The name of the partition to vector search the data from",
           "instillAcceptFormats": [
             "string"
@@ -53,7 +53,7 @@
           "title": "Vector",
           "type": "array"
         },
-        "vector-field":{
+        "vector-field": {
           "description": "The name of the field to perform vector search on",
           "instillAcceptFormats": [
             "string"
@@ -102,7 +102,7 @@
           }
         },
         "filter": {
-          "description": "The properties filter to be applied to the data with milvus scalar filter, please refer to https://milvus.io/docs/single-vector-search.md#Filtered-search",
+          "description": "The properties filter to be applied to the data with milvus scalar filter, please refer to [filter-search](https://milvus.io/docs/single-vector-search.md#Filtered-search)",
           "instillUIOrder": 5,
           "instillAcceptFormats": [
             "string"
@@ -115,7 +115,7 @@
           "title": "Filter",
           "type": "string"
         },
-        "offset":{
+        "offset": {
           "description": "The offset of the data to return",
           "instillAcceptFormats": [
             "integer"
@@ -129,8 +129,8 @@
           "title": "Offset",
           "type": "integer"
         },
-        "grouping-field":{
-          "description": "The name of the field to group the data by, please refer to https://milvus.io/docs/single-vector-search.md#Grouping-search",
+        "grouping-field": {
+          "description": "The name of the field to group the data by, please refer to [Grouping-search](https://milvus.io/docs/single-vector-search.md#Grouping-search)",
           "instillAcceptFormats": [
             "string"
           ],
@@ -143,11 +143,12 @@
           "title": "Grouping Field",
           "type": "string"
         },
-        "search-params":{
-          "description": "The search parameters to be applied to the data with milvus search parameters, please refer to https://milvus.io/docs/single-vector-search.md#Search-parameters",
+        "search-params": {
+          "description": "The search parameters to be applied to the data with milvus search parameters, please refer to [Search-parameters](https://milvus.io/docs/single-vector-search.md#Search-parameters)",
           "instillUIOrder": 8,
           "instillAcceptFormats": [
-            "semi-structured/*", "object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUpstreamTypes": [
             "reference",
@@ -282,7 +283,7 @@
           "title": "Collection Name",
           "type": "string"
         },
-        "partition-name":{
+        "partition-name": {
           "description": "The name of the partition to upsert the data from. If empty then default partition will be used",
           "instillAcceptFormats": [
             "string"
@@ -343,7 +344,7 @@
       "type": "object"
     }
   },
-  "TASK_BATCH_UPSERT":{
+  "TASK_BATCH_UPSERT": {
     "instillShortDescription": "Insert a batch of vector data into a collection",
     "input": {
       "instillUIOrder": 0,
@@ -362,7 +363,7 @@
           "title": "Collection Name",
           "type": "string"
         },
-        "partition-name":{
+        "partition-name": {
           "description": "The name of the partition to upsert the data from. If empty then default partition will be used",
           "instillAcceptFormats": [
             "string"
@@ -448,7 +449,7 @@
           "title": "Collection Name",
           "type": "string"
         },
-        "partition-name":{
+        "partition-name": {
           "description": "The name of the partition to delete the data from. If empty then default partition will be used",
           "instillAcceptFormats": [
             "string"
@@ -463,7 +464,7 @@
           "type": "string"
         },
         "filter": {
-          "description": "The properties filter to be applied to the data with milvus scalar filter, please refer to https://milvus.io/docs/single-vector-search.md#Filtered-search",
+          "description": "The properties filter to be applied to the data with milvus scalar filter, please refer to [Filtered-search](https://milvus.io/docs/single-vector-search.md#Filtered-search)",
           "instillUIOrder": 2,
           "instillAcceptFormats": [
             "string"
@@ -506,8 +507,8 @@
       "type": "object"
     }
   },
-  "TASK_CREATE_COLLECTION":{
-    "instillShortDescription": "Create a collectio, please refer to https://milvus.io/docs/manage-collections.md#Create-Collection",
+  "TASK_CREATE_COLLECTION": {
+    "instillShortDescription": "Create a collectio, please refer to [Create-Collection](https://milvus.io/docs/manage-collections.md#Create-Collection)",
     "input": {
       "instillUIOrder": 0,
       "properties": {
@@ -525,7 +526,7 @@
           "title": "Collection Name",
           "type": "string"
         },
-        "dimension":{
+        "dimension": {
           "description": "The dimension of the collection",
           "instillAcceptFormats": [
             "integer"
@@ -539,7 +540,7 @@
           "title": "Dimension",
           "type": "integer"
         },
-        "id-type":{
+        "id-type": {
           "description": "The type of the id",
           "instillAcceptFormats": [
             "string"
@@ -553,7 +554,7 @@
           "title": "ID Type",
           "type": "string"
         },
-        "schema":{
+        "schema": {
           "description": "The schema of the collection",
           "instillAcceptFormats": [
             "semi-structured/*",
@@ -569,7 +570,7 @@
           "type": "object",
           "required": []
         },
-        "auto-id":{
+        "auto-id": {
           "description": "Whether to auto generate id",
           "instillAcceptFormats": [
             "boolean"
@@ -584,7 +585,7 @@
           "type": "boolean",
           "default": false
         },
-        "metric-type":{
+        "metric-type": {
           "description": "The metric type of the collection",
           "instillAcceptFormats": [
             "string"
@@ -597,14 +598,19 @@
           ],
           "title": "Metric Type",
           "type": "string",
-          "enum": ["L2", "IP", "COSINE"],
+          "enum": [
+            "L2",
+            "IP",
+            "COSINE"
+          ],
           "default": "L2"
         },
-        "index-params":{
-          "description": "The index parameters to be applied to the collection with milvus index parameters, please refer to https://milvus.io/api-reference/restful/v2.4.x/v2/Collection%20(v2)/Create.md",
+        "index-params": {
+          "description": "The index parameters to be applied to the collection with milvus index parameters, please refer to [Create](https://milvus.io/api-reference/restful/v2.4.x/v2/Collection%20(v2)/Create.md)",
           "instillUIOrder": 7,
           "instillAcceptFormats": [
-            "array:semi-structured/*", "array:object"
+            "array:semi-structured/*",
+            "array:object"
           ],
           "instillUpstreamTypes": [
             "reference",
@@ -620,11 +626,12 @@
             "required": []
           }
         },
-        "params":{
-          "description": "The parameters to be applied to the collection with milvus parameters, please refer to https://milvus.io/docs/single-vector-search.md#Parameters",
+        "params": {
+          "description": "The parameters to be applied to the collection with milvus parameters, please refer to [Parameters](https://milvus.io/docs/single-vector-search.md#Parameters)",
           "instillUIOrder": 8,
           "instillAcceptFormats": [
-            "semi-structured/*", "object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUpstreamTypes": [
             "reference",
@@ -705,7 +712,7 @@
       "type": "object"
     }
   },
-  "TASK_CREATE_PARTITION":{
+  "TASK_CREATE_PARTITION": {
     "instillShortDescription": "Create a partition in a collection",
     "input": {
       "instillUIOrder": 0,
@@ -767,9 +774,8 @@
       "title": "Output",
       "type": "object"
     }
-  
   },
-  "TASK_DROP_PARTITION":{
+  "TASK_DROP_PARTITION": {
     "instillShortDescription": "Drop a partition from a collection",
     "input": {
       "instillUIOrder": 0,
@@ -832,7 +838,7 @@
       "type": "object"
     }
   },
-  "TASK_CREATE_INDEX":{
+  "TASK_CREATE_INDEX": {
     "instillShortDescription": "Create an index in a collection",
     "input": {
       "instillUIOrder": 0,
@@ -851,11 +857,12 @@
           "title": "Collection Name",
           "type": "string"
         },
-        "index-params":{
-          "description": "The index parameters to be applied to the collection with milvus index parameters, please refer to https://milvus.io/api-reference/restful/v2.4.x/v2/Index%20(v2)/Create.md",
+        "index-params": {
+          "description": "The index parameters to be applied to the collection with milvus index parameters, please refer to [Create](https://milvus.io/api-reference/restful/v2.4.x/v2/Index%20(v2)/Create.md)",
           "instillUIOrder": 7,
           "instillAcceptFormats": [
-            "semi-structured/*", "object"
+            "semi-structured/*",
+            "object"
           ],
           "instillUpstreamTypes": [
             "reference",
@@ -892,7 +899,7 @@
       "type": "object"
     }
   },
-  "TASK_DROP_INDEX":{
+  "TASK_DROP_INDEX": {
     "instillShortDescription": "Drop an index from a collection",
     "input": {
       "instillUIOrder": 0,
@@ -911,7 +918,7 @@
           "title": "Collection Name",
           "type": "string"
         },
-        "index-name":{
+        "index-name": {
           "description": "The name of the index to drop",
           "instillAcceptFormats": [
             "string"
