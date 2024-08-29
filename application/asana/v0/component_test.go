@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"github.com/instill-ai/component/application/asana/v0"
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
@@ -31,7 +30,7 @@ func taskTesting[inType any, outType any](testcases []taskCase[inType, outType],
 	c := qt.New(t)
 	ctx := context.Background()
 	bc := base.Component{Logger: zap.NewNop()}
-	cmp := asana.Init(bc)
+	cmp := Init(bc)
 
 	for _, tc := range testcases {
 		c.Run(tc._type+`-`+tc.name, func(c *qt.C) {

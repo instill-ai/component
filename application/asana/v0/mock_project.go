@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/instill-ai/component/application/asana/v0"
 )
 
 func getProject(res http.ResponseWriter, req *http.Request) {
@@ -171,10 +170,10 @@ func deleteProject(res http.ResponseWriter, req *http.Request) {
 }
 
 type duplicateProjectReqBody struct {
-	Name          string              `json:"name"`
-	Team          string              `json:"team"`
-	Include       string              `json:"include"`
-	ScheduleDates asana.ScheduleDates `json:"schedule_dates"`
+	Name          string        `json:"name"`
+	Team          string        `json:"team"`
+	Include       string        `json:"include"`
+	ScheduleDates ScheduleDates `json:"schedule_dates"`
 }
 
 func duplicateProject(res http.ResponseWriter, req *http.Request) {

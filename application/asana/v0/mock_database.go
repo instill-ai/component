@@ -1,8 +1,6 @@
 package asana
 
-import "github.com/instill-ai/component/application/asana/v0"
-
-var FakeUser = []asana.User{
+var FakeUser = []User{
 	{
 		GID:  "123",
 		Name: "Admin User",
@@ -13,7 +11,7 @@ var FakeUser = []asana.User{
 	},
 }
 
-var FakeLike = []asana.RawLike{
+var FakeLike = []RawLike{
 	{
 		LikeGID: "123",
 		User:    FakeUser[0],
@@ -21,15 +19,15 @@ var FakeLike = []asana.RawLike{
 }
 
 type RawGoal struct {
-	GID       string          `json:"gid"`
-	Name      string          `json:"name"`
-	Owner     asana.User      `json:"owner"`
-	Notes     string          `json:"notes"`
-	HTMLNotes string          `json:"html_notes"`
-	DueOn     string          `json:"due_on"`
-	StartOn   string          `json:"start_on"`
-	Liked     bool            `json:"liked"`
-	Likes     []asana.RawLike `json:"likes"`
+	GID       string    `json:"gid"`
+	Name      string    `json:"name"`
+	Owner     User      `json:"owner"`
+	Notes     string    `json:"notes"`
+	HTMLNotes string    `json:"html_notes"`
+	DueOn     string    `json:"due_on"`
+	StartOn   string    `json:"start_on"`
+	Liked     bool      `json:"liked"`
+	Likes     []RawLike `json:"likes"`
 }
 
 var FakeGoal = []RawGoal{
@@ -60,7 +58,7 @@ var FakeGoal = []RawGoal{
 type RawProject struct {
 	GID                 string            `json:"gid"`
 	Name                string            `json:"name"`
-	Owner               asana.User        `json:"owner"`
+	Owner               User              `json:"owner"`
 	Notes               string            `json:"notes"`
 	HTMLNotes           string            `json:"html_notes"`
 	DueOn               string            `json:"due_on"`
@@ -69,7 +67,7 @@ type RawProject struct {
 	Color               string            `json:"color"`
 	PrivacySetting      string            `json:"privacy_setting"`
 	Archived            bool              `json:"archived"`
-	CompletedBy         asana.User        `json:"completed_by"`
+	CompletedBy         User              `json:"completed_by"`
 	CurrentStatus       map[string]string `json:"current_status"`
 	CustomFields        map[string]string `json:"custom_fields"`
 	CustomFieldSettings map[string]string `json:"custom_field_settings"`
@@ -134,22 +132,22 @@ var FakeProject = []RawProject{
 }
 
 type RawTask struct {
-	GID             string                `json:"gid"`
-	Name            string                `json:"name"`
-	Notes           string                `json:"notes"`
-	HTMLNotes       string                `json:"html_notes"`
-	Projects        []asana.SimpleProject `json:"projects"`
-	DueOn           string                `json:"due_on"`
-	StartOn         string                `json:"start_on"`
-	DueAt           string                `json:"due_at,omitempty"`
-	StartAt         string                `json:"start_at,omitempty"`
-	Liked           bool                  `json:"liked"`
-	Likes           []asana.RawLike       `json:"likes"`
-	ApprovalStatus  string                `json:"approval_status"`
-	ResourceSubtype string                `json:"resource_subtype"`
-	Completed       bool                  `json:"completed"`
-	Assignee        asana.User            `json:"assignee"`
-	Parent          asana.TaskParent      `json:"parent"`
+	GID             string          `json:"gid"`
+	Name            string          `json:"name"`
+	Notes           string          `json:"notes"`
+	HTMLNotes       string          `json:"html_notes"`
+	Projects        []SimpleProject `json:"projects"`
+	DueOn           string          `json:"due_on"`
+	StartOn         string          `json:"start_on"`
+	DueAt           string          `json:"due_at,omitempty"`
+	StartAt         string          `json:"start_at,omitempty"`
+	Liked           bool            `json:"liked"`
+	Likes           []RawLike       `json:"likes"`
+	ApprovalStatus  string          `json:"approval_status"`
+	ResourceSubtype string          `json:"resource_subtype"`
+	Completed       bool            `json:"completed"`
+	Assignee        User            `json:"assignee"`
+	Parent          TaskParent      `json:"parent"`
 }
 
 var FakeTask = []RawTask{
@@ -158,7 +156,7 @@ var FakeTask = []RawTask{
 		Name:      "Test Task",
 		Notes:     "Test Notes",
 		HTMLNotes: "Test HTML Notes",
-		Projects: []asana.SimpleProject{
+		Projects: []SimpleProject{
 			{
 				GID:  "1234",
 				Name: "Test Project",
@@ -172,7 +170,7 @@ var FakeTask = []RawTask{
 		ResourceSubtype: "default_task",
 		Completed:       true,
 		Assignee:        FakeUser[0],
-		Parent: asana.TaskParent{
+		Parent: TaskParent{
 			GID:             "1234",
 			Name:            "Test Task",
 			ResourceSubtype: "default_task",
@@ -184,7 +182,7 @@ var FakeTask = []RawTask{
 		Name:      "Test Task",
 		Notes:     "Test Notes",
 		HTMLNotes: "Test HTML Notes",
-		Projects: []asana.SimpleProject{
+		Projects: []SimpleProject{
 			{
 				GID:  "1234",
 				Name: "Test Project",
@@ -198,7 +196,7 @@ var FakeTask = []RawTask{
 		ResourceSubtype: "default_task",
 		Completed:       true,
 		Assignee:        FakeUser[0],
-		Parent: asana.TaskParent{
+		Parent: TaskParent{
 			GID:             "1234",
 			Name:            "Test Task",
 			ResourceSubtype: "default_task",
@@ -210,7 +208,7 @@ var FakeTask = []RawTask{
 		Name:      "Test Task",
 		Notes:     "Test Notes",
 		HTMLNotes: "Test HTML Notes",
-		Projects: []asana.SimpleProject{
+		Projects: []SimpleProject{
 			{
 				GID:  "1234",
 				Name: "Test Project",
@@ -224,7 +222,7 @@ var FakeTask = []RawTask{
 		ResourceSubtype: "default_task",
 		Completed:       true,
 		Assignee:        FakeUser[0],
-		Parent: asana.TaskParent{
+		Parent: TaskParent{
 			GID:             "1234",
 			Name:            "Test Task",
 			ResourceSubtype: "default_task",
@@ -236,14 +234,14 @@ var FakeTask = []RawTask{
 type RawPortfolio struct {
 	GID                 string            `json:"gid"`
 	Name                string            `json:"name"`
-	Owner               asana.User        `json:"owner"`
+	Owner               User              `json:"owner"`
 	Notes               string            `json:"notes"`
 	HTMLNotes           string            `json:"html_notes"`
 	DueOn               string            `json:"due_on"`
 	StartOn             string            `json:"start_on"`
 	Color               string            `json:"color"`
 	Public              bool              `json:"public"`
-	CreatedBy           asana.User        `json:"created_by"`
+	CreatedBy           User              `json:"created_by"`
 	CurrentStatus       map[string]string `json:"current_status"`
 	CustomFields        map[string]string `json:"custom_fields"`
 	CustomFieldSettings map[string]string `json:"custom_field_settings"`

@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/instill-ai/component/application/asana/v0"
 )
 
 func getTask(res http.ResponseWriter, req *http.Request) {
@@ -98,17 +97,17 @@ func updateTask(res http.ResponseWriter, req *http.Request) {
 				FakeTask[i].StartOn = updateTask.StartOn
 			}
 			if updateTask.Assignee != "" {
-				FakeTask[i].Assignee = asana.User{
+				FakeTask[i].Assignee = User{
 					GID:  updateTask.Assignee,
 					Name: "Test User",
 				}
 			}
 			if updateTask.Parent != "" {
-				FakeTask[i].Parent = asana.TaskParent{
+				FakeTask[i].Parent = TaskParent{
 					GID:             updateTask.Parent,
 					Name:            "Test Task",
 					ResourceSubtype: "default_task",
-					CreatedBy: asana.User{
+					CreatedBy: User{
 						GID:  "123",
 						Name: "Admin User",
 					},
@@ -175,7 +174,7 @@ func createTask(res http.ResponseWriter, req *http.Request) {
 		Name:            newTaskInfo.Name,
 		Notes:           newTaskInfo.Notes,
 		HTMLNotes:       "Test HTML Notes",
-		Projects:        []asana.SimpleProject{},
+		Projects:        []SimpleProject{},
 		DueOn:           newTaskInfo.DueAt,
 		StartOn:         newTaskInfo.DueAt,
 		Liked:           newTaskInfo.Liked,
@@ -183,15 +182,15 @@ func createTask(res http.ResponseWriter, req *http.Request) {
 		ApprovalStatus:  newTaskInfo.ApprovalStatus,
 		ResourceSubtype: newTaskInfo.ResourceSubtype,
 		Completed:       newTaskInfo.Completed,
-		Assignee: asana.User{
+		Assignee: User{
 			GID:  newTaskInfo.Assignee,
 			Name: "Test User",
 		},
-		Parent: asana.TaskParent{
+		Parent: TaskParent{
 			GID:             newTaskInfo.Parent,
 			Name:            "Test Task",
 			ResourceSubtype: "default_task",
-			CreatedBy: asana.User{
+			CreatedBy: User{
 				GID:  "123",
 				Name: "Admin User",
 			},
@@ -314,11 +313,11 @@ func setParentTask(res http.ResponseWriter, req *http.Request) {
 	for _, v := range FakeTask {
 		if v.GID == taskGID {
 			newTask := v
-			newTask.Parent = asana.TaskParent{
+			newTask.Parent = TaskParent{
 				GID:             body.Parent,
 				Name:            "Test Task",
 				ResourceSubtype: "default_task",
-				CreatedBy: asana.User{
+				CreatedBy: User{
 					GID:  "123",
 					Name: "Admin User",
 				},
