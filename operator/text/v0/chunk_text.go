@@ -98,11 +98,11 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 			textsplitter.WithDisallowedSpecial(setting.DisallowedSpecial),
 		)
 	case "Markdown":
-		positionCalculator = MarkdownPositionCalculator{}
-		split = NewMarkdownTextSplitter(
-			textsplitter.WithChunkSize(setting.ChunkSize),
-			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
-		)
+		// positionCalculator = MarkdownPositionCalculator{}
+		// split = NewMarkdownTextSplitter(
+		// 	textsplitter.WithChunkSize(setting.ChunkSize),
+		// 	textsplitter.WithChunkOverlap(setting.ChunkOverlap),
+		// )
 	case "Recursive":
 		positionCalculator = PositionCalculator{}
 		split = textsplitter.NewRecursiveCharacter(
@@ -134,7 +134,6 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 
 	now = time.Now()
 	for _, chunk := range chunks {
-		each := time.Now()
 		chunkRunes := []rune(chunk)
 
 		startPosition, endPosition := positionCalculator.getChunkPositions(rawRunes, chunkRunes, startScanPosition)
@@ -159,7 +158,6 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 		})
 		totalTokenCount += len(token)
 		startScanPosition = startPosition + 1
-		fmt.Println("===== each chunk took: ", time.Since(each))
 	}
 	now1 = time.Now()
 	fmt.Println("===== getChunkPositions took: ", now1.Sub(now))
