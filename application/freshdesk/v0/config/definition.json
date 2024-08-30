@@ -17,7 +17,7 @@
     "TASK_GET_SKILL"
   ],
   "documentationUrl": "https://www.instill.tech/docs/component/application/freshdesk",
-  "icon": "assets/freshdesk.svg",
+  "icon": "assets/Freshdesk.svg",
   "id": "freshdesk",
   "public": true,
   "title": "Freshdesk",
