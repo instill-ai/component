@@ -1,4 +1,4 @@
-package asana
+package mockasana
 
 import (
 	"net/http"

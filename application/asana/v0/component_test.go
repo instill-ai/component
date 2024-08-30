@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
+	"github.com/instill-ai/component/application/asana/v0/mockasana"
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
@@ -48,7 +49,7 @@ func taskTesting[inType any, outType any](testcases []taskCase[inType, outType],
 				}
 				return http.HandlerFunc(fn)
 			}
-			srv := httptest.NewServer(Router(authenticationMiddleware, setContentTypeMiddleware))
+			srv := httptest.NewServer(mockasana.Router(authenticationMiddleware, setContentTypeMiddleware))
 			c.Cleanup(srv.Close)
 
 			setup, err := structpb.NewStruct(map[string]any{

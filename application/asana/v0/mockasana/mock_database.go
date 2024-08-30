@@ -1,4 +1,38 @@
-package asana
+package mockasana
+
+type User struct {
+	GID  string `json:"gid"`
+	Name string `json:"name"`
+}
+
+type Like struct {
+	LikeGID  string `json:"like-gid"`
+	UserGID  string `json:"user-gid"`
+	UserName string `json:"name"`
+}
+
+type RawLike struct {
+	LikeGID string `json:"gid"`
+	User    User   `json:"user"`
+}
+
+type SimpleProject struct {
+	GID  string `json:"gid"`
+	Name string `json:"name"`
+}
+
+type TaskParent struct {
+	GID             string `json:"gid"`
+	Name            string `json:"name"`
+	ResourceSubtype string `json:"resource-subtype"`
+	CreatedBy       User   `json:"created-by"`
+}
+
+type ScheduleDates struct {
+	ShouldSkipWeekends bool   `json:"should_skip_weekends"`
+	DueOn              string `json:"due_on,omitempty"`
+	StartOn            string `json:"start_on,omitempty"`
+}
 
 var FakeUser = []User{
 	{
