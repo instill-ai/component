@@ -128,7 +128,13 @@ type workerResult struct {
 }
 
 func (e *execution) worker(ctx context.Context, client *httpclient.Client, batchIdx int, input *structpb.Struct, result chan<- *workerResult) {
-	defer func() { result <- &workerResult{done: true} }()
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("panic: %+v", r)
+			result <- &workerResult{batchIdx: batchIdx, err: fmt.Errorf("panic: %+v", r)}
+		}
+		result <- &workerResult{done: true}
+	}()
 
 	switch e.Task {
 	case TextGenerationTask:
