@@ -30,17 +30,19 @@ func (h *Header) Validate() error {
 }
 
 type Content struct {
-	Type      string
-	PlainText string
-	Table     Table
-	Lists     []List
+	Type               string
+	PlainText          string
+	Table              Table
+	Lists              []List
+	BlockStartPosition int
+	BlockEndPosition   int
 }
 
 type Table struct {
 	HeaderText     string
 	TableSeparator string
-	HeaderRow      []string
-	Rows           [][]string
+	HeaderRow      string
+	Rows           []string
 }
 
 // List includes bullet points and numbered lists
@@ -108,8 +110,11 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 			// fmt.Println("Table block: \n", block, "\n")
 			currentContent.Type = "table"
 			currentContent.Table = parseTableFromBlock(block)
+			currentContent.BlockStartPosition = currentPosition - len(block)
+			currentContent.BlockEndPosition = currentPosition
 			doc.Contents = append(doc.Contents, currentContent)
 		} else if isList(block) {
+			// fmt.Println("List block: \n", block, "\n")
 			currentContent.Type = "list"
 			currentContent.Lists = parseListFromBlock(block)
 
@@ -122,6 +127,8 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 				}
 			}
 
+			currentContent.BlockStartPosition = currentPosition - len(block)
+			currentContent.BlockEndPosition = currentPosition
 			doc.Contents = append(doc.Contents, currentContent)
 		} else {
 			// fmt.Println("Plaintext block: \n", block, "\n")
@@ -130,10 +137,13 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 				endPositionOfBlock := currentPosition
 				currentPosition -= len(block) + 1
 				currentContent.Type = "plaintext"
+				currentContent.BlockStartPosition = currentPosition
+				currentContent.BlockEndPosition = currentPosition
 
 				for currentPosition < endPositionOfBlock {
 
 					line := readLine(rawRunes, &currentPosition)
+					currentContent.BlockEndPosition += len(line) + 1
 
 					if isHeader(line) {
 						// fmt.Println("currentPosition: ", currentPosition)
@@ -147,7 +157,9 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 							// fmt.Println("====================== end of document ======================")
 							currentPosition -= len(line) + 1
 							currentContent.PlainText = paragraph
-							doc.Contents = append(doc.Contents, currentContent)
+							if len(currentContent.PlainText) > 0 {
+								doc.Contents = append(doc.Contents, currentContent)
+							}
 							end = true
 							break
 						}
@@ -162,11 +174,15 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 					}
 				}
 				currentContent.PlainText = paragraph
-				doc.Contents = append(doc.Contents, currentContent)
+				if len(currentContent.PlainText) > 0 {
+					doc.Contents = append(doc.Contents, currentContent)
+				}
 			} else {
 				currentContent.Type = "plaintext"
 				currentContent.PlainText = block
 
+				currentContent.BlockStartPosition = currentPosition - len(block)
+				currentContent.BlockEndPosition = currentPosition
 				doc.Contents = append(doc.Contents, currentContent)
 			}
 		}
@@ -255,69 +271,18 @@ func isTableStart(line string) bool {
 	return false
 }
 
-// Function to parse a table
-func parseTable(rawRunes []rune, currentPosition *int, previousLine string) Table {
-	var table Table
-	var rows [][]string
-
-	inHeader := true
-	var headerRow []string
-
-	// Capture the header text from the line before the table
-	table.HeaderText = previousLine
-
-	for *currentPosition < len(rawRunes) {
-		line := readLine(rawRunes, currentPosition)
-		trimmedLine := strings.TrimSpace(line)
-
-		if isTableSeparator(trimmedLine) {
-			// Switch from header row to data rows
-			if inHeader {
-				inHeader = false
-				// Process header row
-				headerRow = nil
-			} else {
-				break
-			}
-		} else if isTableStart(trimmedLine) {
-			// Process table header or data row
-			if inHeader {
-				headerRow = parseTableRow(trimmedLine)
-			} else {
-				rows = append(rows, parseTableRow(trimmedLine))
-			}
-		}
-	}
-
-	table.HeaderRow = headerRow
-	table.Rows = rows
-
-	return table
-}
-
 // Helper function to determine if a line is a table separator
 func isTableSeparator(line string) bool {
 	trimmedLine := strings.TrimSpace(line)
-	return strings.Contains(trimmedLine, "-")
-}
-
-// Function to parse a row of table data
-func parseTableRow(line string) []string {
-	trimmedLine := strings.Trim(line, " |")
-	columns := strings.Split(trimmedLine, "|")
-	var result []string
-	for _, col := range columns {
-		result = append(result, strings.TrimSpace(col))
-	}
-	return result
+	return strings.Contains(trimmedLine, "-|")
 }
 
 // Function to parse a table from a block of text
 func parseTableFromBlock(block string) Table {
 	var table Table
 	lines := strings.Split(block, "\n")
-	var rows [][]string
-	var headerRow []string
+	var rows []string
+	var headerRow string
 	var headerText string
 
 	inHeader := true
@@ -336,12 +301,11 @@ func parseTableFromBlock(block string) Table {
 			inHeader = false
 		} else if isTableStart(line) {
 			// Process table header or data row
-			row := parseTableRow(line)
 			if inHeader {
-				headerRow = row
+				headerRow = line
 				inHeader = false // Ensure we don't overwrite header row with data
 			} else {
-				rows = append(rows, row)
+				rows = append(rows, line)
 			}
 		}
 	}
