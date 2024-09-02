@@ -71,7 +71,13 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 				return err
 			}
 
-			outputStruct, err := chunkText(inputStruct)
+			var outputStruct ChunkTextOutput
+			if inputStruct.Strategy.Setting.ChunkMethod == "Markdown" {
+				outputStruct, err = markdownChunkText(inputStruct)
+			} else {
+				outputStruct, err = chunkText(inputStruct)
+			}
+
 			if err != nil {
 				return err
 			}

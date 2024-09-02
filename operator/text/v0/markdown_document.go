@@ -1,7 +1,6 @@
 package text
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -12,21 +11,15 @@ const (
 )
 
 type MarkdownDocument struct {
-	Headers  []Header
-	Contents []Content
+	Headers         []Header
+	TotalHeaderSize int
+	Contents        []Content
 }
 
 type Header struct {
 	Level int
 	Text  string
 	Size  int
-}
-
-func (h *Header) Validate() error {
-	if h.Level < 1 || h.Level > 6 {
-		return fmt.Errorf("invalid level: must be between 1 and 6")
-	}
-	return nil
 }
 
 type Content struct {
@@ -48,10 +41,14 @@ type Table struct {
 // List includes bullet points and numbered lists
 type List struct {
 	// HeaderText is the text before the list starts
-	HeaderText    string
-	PreviousList  *List
-	Text          string
-	NextLevelList []List
+	HeaderText        string
+	PreviousLevelList *List
+	Text              string
+	StartPosition     int
+	EndPosition       int
+	NextLevelLists    []List
+	NextList          *List
+	PreviousList      *List
 }
 
 func buildDocuments(rawRunes []rune) ([]MarkdownDocument, error) {
@@ -110,24 +107,24 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 			// fmt.Println("Table block: \n", block, "\n")
 			currentContent.Type = "table"
 			currentContent.Table = parseTableFromBlock(block)
-			currentContent.BlockStartPosition = currentPosition - len(block)
+			currentContent.BlockStartPosition = currentPosition - len(block) - 1
 			currentContent.BlockEndPosition = currentPosition
 			doc.Contents = append(doc.Contents, currentContent)
 		} else if isList(block) {
 			// fmt.Println("List block: \n", block, "\n")
 			currentContent.Type = "list"
-			currentContent.Lists = parseListFromBlock(block)
+			currentContent.Lists = parseListFromBlock(block, currentPosition)
 
 			// Temp: Reset Previous Link
 			for _, l := range currentContent.Lists {
-				if len(l.NextLevelList) > 0 {
-					for i := range l.NextLevelList {
-						l.NextLevelList[i].PreviousList = &l
+				if len(l.NextLevelLists) > 0 {
+					for i := range l.NextLevelLists {
+						l.NextLevelLists[i].PreviousLevelList = &l
 					}
 				}
 			}
 
-			currentContent.BlockStartPosition = currentPosition - len(block)
+			currentContent.BlockStartPosition = currentPosition - len(block) - 1
 			currentContent.BlockEndPosition = currentPosition
 			doc.Contents = append(doc.Contents, currentContent)
 		} else {
@@ -137,7 +134,7 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 				endPositionOfBlock := currentPosition
 				currentPosition -= len(block) + 1
 				currentContent.Type = "plaintext"
-				currentContent.BlockStartPosition = currentPosition
+				currentContent.BlockStartPosition = currentPosition - len(block) - 1
 				currentContent.BlockEndPosition = currentPosition
 
 				for currentPosition < endPositionOfBlock {
@@ -181,7 +178,7 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 				currentContent.Type = "plaintext"
 				currentContent.PlainText = block
 
-				currentContent.BlockStartPosition = currentPosition - len(block)
+				currentContent.BlockStartPosition = currentPosition - len(block) - 1
 				currentContent.BlockEndPosition = currentPosition
 				doc.Contents = append(doc.Contents, currentContent)
 			}
@@ -336,7 +333,7 @@ func isList(block string) bool {
 }
 
 // Function to parse a list from a block of text
-func parseListFromBlock(block string) []List {
+func parseListFromBlock(block string, currentPosition int) []List {
 	var lists []List
 	var currentList *List
 	var allLists []List
@@ -355,13 +352,19 @@ func parseListFromBlock(block string) []List {
 		if isListStart(line) {
 			indentLevel := countIndent(line)
 			listItem := List{
-				HeaderText:    headerText,
-				Text:          line,
-				NextLevelList: []List{},
+				HeaderText:     headerText,
+				Text:           line,
+				NextLevelLists: []List{},
+				StartPosition:  currentPosition,
+				EndPosition:    currentPosition + len(line) - 1,
 			}
 
 			if indentLevel == 0 {
 				// Top-level list item or a new list block
+				if len(lists) > 0 {
+					lists[len(lists)-1].NextList = &listItem
+					listItem.PreviousList = &lists[len(lists)-1]
+				}
 				lists = append(lists, listItem)
 				allLists = append(allLists, listItem)
 
@@ -373,12 +376,19 @@ func parseListFromBlock(block string) []List {
 					}
 				}
 
-				currentList.NextLevelList = append(currentList.NextLevelList, listItem)
-				listItem.PreviousList = currentList
+				if len(currentList.NextLevelLists) > 1 {
+					prevItem := &currentList.NextLevelLists[len(currentList.NextLevelLists)-2]
+					prevItem.NextList = &currentList.NextLevelLists[len(currentList.NextLevelLists)-1]
+					currentList.NextLevelLists[len(currentList.NextLevelLists)-1].PreviousList = prevItem
+				}
+
+				currentList.NextLevelLists = append(currentList.NextLevelLists, listItem)
+				listItem.PreviousLevelList = currentList
+
 			}
 		} else {
 			if currentList != nil {
-				currentList.NextLevelList[len(currentList.NextLevelList)-1].Text += "\n" + line
+				currentList.NextLevelLists[len(currentList.NextLevelLists)-1].Text += "\n" + line
 			}
 
 		}

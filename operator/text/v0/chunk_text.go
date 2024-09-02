@@ -75,8 +75,6 @@ type TextSplitter interface {
 func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	var split TextSplitter
 	setting := input.Strategy.Setting
-	// TODO: Take this out when we fix the error in frontend side.
-	// Bug: The default value is not set from frontend side.
 	setting.SetDefault()
 
 	var output ChunkTextOutput
@@ -97,19 +95,13 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 			textsplitter.WithAllowedSpecial(setting.AllowedSpecial),
 			textsplitter.WithDisallowedSpecial(setting.DisallowedSpecial),
 		)
-	case "Markdown":
-		// positionCalculator = MarkdownPositionCalculator{}
-		// split = NewMarkdownTextSplitter(
-		// 	textsplitter.WithChunkSize(setting.ChunkSize),
-		// 	textsplitter.WithChunkOverlap(setting.ChunkOverlap),
-		// )
 	case "Recursive":
 		positionCalculator = PositionCalculator{}
-		split = textsplitter.NewRecursiveCharacter(
-			textsplitter.WithSeparators(setting.Separators),
-			textsplitter.WithChunkSize(setting.ChunkSize),
-			textsplitter.WithChunkOverlap(setting.ChunkOverlap),
-			textsplitter.WithKeepSeparator(setting.KeepSeparator),
+		split = NewRecursiveCharacter(
+			WithChunkSize(setting.ChunkSize),
+			WithChunkOverlap(setting.ChunkOverlap),
+			WithSeparators(setting.Separators),
+			WithKeepSeparator(setting.KeepSeparator),
 		)
 	}
 
@@ -209,44 +201,4 @@ func (PositionCalculator) getChunkPositions(rawText, chunk []rune, startScanPosi
 		}
 	}
 	return startPosition, endPosition
-}
-
-type MarkdownPositionCalculator struct{}
-
-func (MarkdownPositionCalculator) getChunkPositions(rawText, chunk []rune, startScanPosition int) (startPosition int, endPosition int) {
-
-	skipHeaderIndex := getSkipHeaderIndex(chunk)
-
-	for i := startScanPosition; i < len(rawText); i++ {
-
-		if rawText[i] == chunk[skipHeaderIndex] {
-
-			if i+len(chunk)-skipHeaderIndex > len(rawText) {
-				break
-			}
-
-			if reflect.DeepEqual(rawText[i:(i+len(chunk)-skipHeaderIndex)], chunk[skipHeaderIndex:]) {
-				startPosition = i
-				endPosition = len(chunk) + i - 1 - skipHeaderIndex
-				break
-			}
-		}
-	}
-	return startPosition, endPosition
-}
-
-func getSkipHeaderIndex(chunk []rune) int {
-	hashtagCount := 0
-	skipPosition := 0
-	for i := 0; i < len(chunk); i++ {
-		if chunk[i] == '#' {
-			hashtagCount++
-		}
-
-		if hashtagCount >= 1 && chunk[i] == '\n' {
-			skipPosition = i + 1
-			hashtagCount = 0
-		}
-	}
-	return skipPosition
 }
