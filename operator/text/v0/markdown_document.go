@@ -110,7 +110,6 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 			currentContent.Table = parseTableFromBlock(block)
 			doc.Contents = append(doc.Contents, currentContent)
 		} else if isList(block) {
-			fmt.Println("List block: \n", block, "\n")
 			currentContent.Type = "list"
 			currentContent.Lists = parseListFromBlock(block)
 
