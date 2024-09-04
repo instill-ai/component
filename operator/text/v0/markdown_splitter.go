@@ -1,392 +1,355 @@
 package text
 
 import (
+	"fmt"
+	"reflect"
+	"strings"
+
 	"github.com/tmc/langchaingo/textsplitter"
 )
 
-func NewMarkdownTextSplitter(opts ...textsplitter.Option) MarkdownTextSplitter {
-	options := textsplitter.DefaultOptions()
-
-	for _, o := range opts {
-		o(&options)
-	}
-
-	sp := MarkdownTextSplitter{
-		ChunkSize:    options.ChunkSize,
-		ChunkOverlap: options.ChunkOverlap,
-		ContentSplitter: textsplitter.NewRecursiveCharacter(
-			textsplitter.WithChunkSize(options.ChunkSize),
-			textsplitter.WithChunkOverlap(options.ChunkOverlap),
-			textsplitter.WithSeparators([]string{
-				"\n\n",
-				"\n",
-				" ",
-			})),
-	}
-
-	return sp
-}
-
 type MarkdownTextSplitter struct {
-	ChunkSize       int
-	ChunkOverlap    int
-	ContentSplitter textsplitter.RecursiveCharacter
+	ChunkSize    int
+	ChunkOverlap int
+	RawText      string
 }
 
-func (sp MarkdownTextSplitter) SplitText(text string) ([]string, error) {
-
-	rawTextRunes := []rune(text)
-	documents := sp.buildDocuments(rawTextRunes)
-
-	finalChunks := []string{}
-
-	for _, d := range documents {
-		chunks, err := sp.splitDocument(d)
-
-		if err != nil {
-			return nil, err
-		}
-
-		finalChunks = append(finalChunks, chunks...)
+func (sp *MarkdownTextSplitter) Validate() error {
+	if sp.ChunkSize <= 0 {
+		return fmt.Errorf("ChunkSize must be greater than 0")
 	}
-
-	return finalChunks, nil
-}
-
-type MarkdownDocument struct {
-	Header1            string
-	Header2            string
-	Header3            string
-	Header4            string
-	Header5            string
-	Header6            string
-	SumHeaderChunkSize int
-	Content            string
-}
-
-func (sp MarkdownTextSplitter) buildDocuments(rawRunes []rune) []MarkdownDocument {
-
-	documents := []MarkdownDocument{}
-
-	var startPosition int
-	var document MarkdownDocument
-	for startPosition < len(rawRunes) {
-		document, startPosition = sp.buildDocument(rawRunes, document, startPosition)
-
-		if !isBlankDocument(document) {
-			documents = append(documents, document)
-		}
-		if startPosition == 0 {
-			break
-		}
+	if sp.ChunkOverlap < 0 {
+		return fmt.Errorf("ChunkOverlap must be greater than or equal to 0")
 	}
-
-	return documents
+	if sp.ChunkOverlap >= sp.ChunkSize {
+		return fmt.Errorf("ChunkOverlap must be less than ChunkSize")
+	}
+	return nil
 }
 
-// Definition:
-// Document means the struct with Header1, Header2, … Header6, and Content.
-// The Content must not be blank.
-// The Header can be blank.
-// A Document can only have a header for each layer
-func (sp MarkdownTextSplitter) buildDocument(rawRunes []rune, previousDocument MarkdownDocument, startPosition int) (doc MarkdownDocument, endPosition int) {
+type ContentChunk struct {
+	Chunk                string
+	ContentStartPosition int
+	ContentEndPosition   int
+}
 
-	if documentStartsWithoutHeader(rawRunes, startPosition, previousDocument) {
-		document := MarkdownDocument{}
-		for startPosition < len(rawRunes) {
-			if string(rawRunes[startPosition]) == "#" && !isHashtagInContent(startPosition, rawRunes) {
-				break
-			}
-			startPosition++
-		}
-		noHeaderContent := string(rawRunes[:startPosition])
-		document.Content = noHeaderContent
-		setHeaderSize(&document)
-		return document, startPosition - 1
-	}
+func (sp MarkdownTextSplitter) chunkTable(content Content, headers []Header) ([]ContentChunk, error) {
 
-	l := startPosition
-	r := startPosition
-	hashtagCount := 0
-	layer1Count := 0
-	layer2Count := 0
-	layer3Count := 0
-	layer4Count := 0
-	layer5Count := 0
-	layer6Count := 0
+	rows := content.Table.Rows
+	chunks := []ContentChunk{}
 
-	document := previousDocument
-	document.Content = ""
-	var content string
-	for r < len(rawRunes) {
-		if string(rawRunes[r]) == "#" {
-			if !isHashtagInContent(r, rawRunes) {
-				isEnd, layer := endLayerOfDocument(content, layer1Count, layer2Count, layer3Count, layer4Count, layer5Count, layer6Count)
-				if isEnd {
-					document.Content = content
-					clearLowerLayerHeader(&document, layer)
-					setHeaderSize(&document)
-					return document, r - 1
-				}
-				hashtagCount++
-				r++
-				continue
-			}
-		}
-		if hashtagCount > 0 {
-			if string(rawRunes[r]) == "\n" {
-				if hashtagCount == 1 {
-					document.Header1 = string(rawRunes[l : r+1])
-					layer1Count++
-				}
-				if hashtagCount == 2 {
-					document.Header2 = string(rawRunes[l : r+1])
-					layer2Count++
-				}
-				if hashtagCount == 3 {
-					document.Header3 = string(rawRunes[l : r+1])
-					layer3Count++
-				}
-				if hashtagCount == 4 {
-					document.Header4 = string(rawRunes[l : r+1])
-					layer4Count++
-				}
-				if hashtagCount == 5 {
-					document.Header5 = string(rawRunes[l : r+1])
-					layer5Count++
-				}
-				if hashtagCount == 6 {
-					document.Header6 = string(rawRunes[l : r+1])
-					layer6Count++
-				}
-				hashtagCount = 0
-				l = r
-			}
-			r++
+	chunkSize := sp.ChunkSize
+	chunkOverlap := sp.ChunkOverlap
+
+	headerString := ""
+	for _, header := range headers {
+		trimmedHeader := strings.TrimSpace(header.Text)
+		if len(trimmedHeader) == 0 {
 			continue
 		}
+		headerString += header.Text + "\n"
+	}
 
-		if isContent(hashtagCount, layer1Count, layer2Count, layer3Count, layer4Count, layer5Count, layer6Count, content, string(rawRunes[r])) {
-			content += string(rawRunes[r])
-			r++
+	startPosition := content.BlockStartPosition
+
+	tableHeader := content.Table.HeaderText
+	if len(tableHeader) > 0 {
+		headerString += content.Table.HeaderText + "\n"
+		startPosition += sizeOfString(content.Table.HeaderText) + 1
+	}
+
+	headerRow := content.Table.HeaderRow
+	if len(headerRow) > 0 {
+		headerString += headerRow + "\n"
+		startPosition += sizeOfString(headerRow) + 1
+	}
+
+	tableSeparator := content.Table.TableSeparator
+	if len(tableSeparator) > 0 {
+		headerString += content.Table.TableSeparator + "\n"
+		startPosition += sizeOfString(content.Table.TableSeparator) + 1
+	}
+
+	var endPosition int
+	for i := 0; i < len(rows); i++ {
+		chunk := headerString
+
+		if i > 0 && sizeOfString(rows[i-1]) < chunkOverlap {
+			chunk += rows[i-1] + "\n"
+			startPosition -= sizeOfString(rows[i-1]) + 1
+			endPosition = startPosition + sizeOfString(rows[i-1]) + 1
 		} else {
-			r++
+			endPosition = startPosition
 		}
 
-	}
-	if len(content) > 0 && document.Content == "" {
-		document.Content = content
-		setHeaderSize(&document)
-	}
-	return document, 0
-}
+		chunk += rows[i] + "\n"
+		endPosition += sizeOfString(rows[i]) - 1
 
-func endLayerOfDocument(content string, layer1Count, layer2Count, layer3Count, layer4Count, layer5Count, layer6Count int) (bool, int) {
-	if content == "" {
-		return false, 0
-	}
-	if layer6Count >= 1 {
-		return true, 6
-	}
-	if layer5Count >= 1 {
-		return true, 5
-	}
-	if layer4Count >= 1 {
-		return true, 4
-	}
-	if layer3Count >= 1 {
-		return true, 3
-	}
-	if layer2Count >= 1 {
-		return true, 2
-	}
-	if layer1Count >= 1 {
-		return true, 1
-	}
-	return true, 0
-}
-
-func clearLowerLayerHeader(doc *MarkdownDocument, layer int) {
-	if layer == 0 {
-		doc.Header1 = ""
-		doc.Header2 = ""
-		doc.Header3 = ""
-		doc.Header4 = ""
-		doc.Header5 = ""
-		doc.Header6 = ""
-	}
-	if layer == 1 {
-		doc.Header2 = ""
-		doc.Header3 = ""
-		doc.Header4 = ""
-		doc.Header5 = ""
-		doc.Header6 = ""
-	}
-	if layer == 2 {
-		doc.Header3 = ""
-		doc.Header4 = ""
-		doc.Header5 = ""
-		doc.Header6 = ""
-	}
-	if layer == 3 {
-		doc.Header4 = ""
-		doc.Header5 = ""
-		doc.Header6 = ""
-	}
-	if layer == 4 {
-		doc.Header5 = ""
-		doc.Header6 = ""
-	}
-	if layer == 5 {
-		doc.Header6 = ""
-	}
-}
-
-func setHeaderSize(doc *MarkdownDocument) {
-	doc.SumHeaderChunkSize = sizeOfString(doc.Header1) + sizeOfString(doc.Header2) + sizeOfString(doc.Header3) + sizeOfString(doc.Header4) + sizeOfString(doc.Header5) + sizeOfString(doc.Header6)
-}
-
-func isContent(hashtagCount, layer1Count, layer2Count, layer3Count, layer4Count, layer5Count, layer6Count int, content, chr string) bool {
-	if isSeparator(chr) && len(content) == 0 {
-		return false
-	}
-
-	return hashtagCount == 0 && (layer1Count >= 1 ||
-		layer2Count >= 1 ||
-		layer3Count >= 1 ||
-		layer4Count >= 1 ||
-		layer5Count >= 1 ||
-		layer6Count >= 1)
-}
-
-func isSeparator(text string) bool {
-	separators := []string{"\n\n", "\n", " ", ""}
-	for _, sep := range separators {
-		if sep == text {
-			return true
+		for j := i + 1; j < len(rows) && sizeOfString(chunk+rows[j]) < chunkSize; j++ {
+			chunk += rows[j] + "\n"
+			endPosition += sizeOfString(rows[j]) + 1
+			i = j
 		}
+
+		chunks = append(chunks, ContentChunk{
+			Chunk:                chunk,
+			ContentStartPosition: startPosition,
+			ContentEndPosition:   endPosition,
+		})
+
+		startPosition = endPosition + 2 // new line and the first character of the next row
+
 	}
-	return false
+
+	return chunks, nil
 }
 
-func isHashtagInContent(position int, rawRunes []rune) bool {
-	if position == 0 {
-		return false
-	}
-	hashTagCount := 1
-	breakChar := string(rawRunes[position-1])
-	if string(rawRunes[position-1]) == "#" {
-		hashTagCount++
-		position = position - 2
-		for position >= 0 {
-			if string(rawRunes[position]) == "#" {
-				hashTagCount++
+func (sp MarkdownTextSplitter) chunkList(content Content, _ []Header) ([]ContentChunk, error) {
+	var chunks []ContentChunk
+
+	lists := content.Lists
+
+	chunks = sp.processChunks(lists)
+
+	return chunks, nil
+}
+
+func (sp MarkdownTextSplitter) processChunks(lists []List) []ContentChunk {
+	contentChunks := []ContentChunk{}
+	currentChunk := ""
+	currentChunkSize := 0
+	currentStartPosition := 0
+	currentEndPosition := 0
+	isPrepended := false
+
+	addListCount := 0
+	for i := 0; i < len(lists); i++ {
+		list := lists[i]
+
+		// Add the title
+		if addListCount == 1 && sizeOfString(currentChunk)+sizeOfString(list.HeaderText) < sp.ChunkSize {
+			currentChunk = list.HeaderText + "\n" + currentChunk
+			currentChunkSize += sizeOfString(list.Text) + 1
+		}
+
+		if sizeOfString(list.Text) > sp.ChunkSize {
+
+			if len(currentChunk) > 0 {
+				previousChunk := ContentChunk{
+					Chunk:                currentChunk,
+					ContentStartPosition: currentStartPosition,
+					ContentEndPosition:   currentEndPosition,
+				}
+				currentChunk = ""
+				currentChunkSize = 0
+				contentChunks = append(contentChunks, previousChunk)
+				isPrepended = false
+			}
+
+			prependList := &list
+			var prependString string
+
+			for prependList.PreviousLevelList != nil {
+				prependList = prependList.PreviousLevelList
+
+				if len(prependList.Text) > 0 &&
+					sizeOfString(prependList.Text) <= sp.ChunkSize { // Do not prepend if the list is too large
+					prependString = prependList.Text + "\n" + prependString
+				}
+			}
+
+			prependString = list.HeaderText + "\n" + prependString
+
+			smallerChunks := sp.chunkLargeList(list, sizeOfString(prependString))
+
+			if len(prependString) > 0 {
+				for i := range smallerChunks {
+					smallerChunks[i].Chunk = prependString + smallerChunks[i].Chunk
+				}
+			}
+
+			contentChunks = append(contentChunks, smallerChunks...)
+			addListCount = 0
+
+		} else {
+			if !isPrepended {
+				prependList := &list
+				var prependString string
+
+				for prependList.PreviousLevelList != nil {
+
+					prependList = prependList.PreviousLevelList
+					if len(prependList.Text) > 0 &&
+						sizeOfString(prependList.Text) <= sp.ChunkSize { // Do not prepend if the list is too large
+						prependString = prependList.Text + "\n" + prependString
+					}
+				}
+				isPrepended = true
+				currentChunk += prependString + list.Text + "\n"
+				currentChunkSize += sizeOfString(list.Text)
+				currentStartPosition = list.StartPosition
+				currentEndPosition = list.EndPosition
+				addListCount++
+			} else if currentChunkSize+sizeOfString(list.Text) < sp.ChunkSize {
+				currentChunk += list.Text + "\n"
+				currentChunkSize += sizeOfString(list.Text) + 1
+				currentEndPosition = list.EndPosition
+				addListCount++
+
 			} else {
-				breakChar = string(rawRunes[position])
-				break
+				contentChunks = append(contentChunks, ContentChunk{
+					Chunk:                currentChunk,
+					ContentStartPosition: currentStartPosition,
+					ContentEndPosition:   currentEndPosition,
+				})
+				isPrepended = false
+				currentChunk = ""
+				currentChunkSize = 0
+				currentStartPosition = 0 // To be set in !isPrepended Block
+				currentEndPosition = 0   // To be set in isPrepended Block
+
+				// Overlap Handling: Start from final appended list if it's smaller than the overlap
+				if i > 0 && sizeOfString(lists[i-1].Text) <= sp.ChunkOverlap {
+					i -= 2
+					addListCount = -1
+				} else {
+					addListCount = 0
+				}
 			}
-			position--
 		}
 	}
-	if hashTagCount > 6 {
-		return true
+
+	if currentChunkSize > 0 {
+		contentChunks = append(contentChunks, ContentChunk{
+			Chunk:                currentChunk,
+			ContentStartPosition: currentStartPosition,
+			ContentEndPosition:   currentEndPosition,
+		})
 	}
-	if breakChar == "\n" || position == -1 {
-		return false
-	}
-	return true
+
+	return contentChunks
 }
 
-func documentStartsWithoutHeader(rawRunes []rune, startPosition int, previousDocument MarkdownDocument) bool {
-	if isBlankDocument(previousDocument) && startPosition == 0 {
-		for startPosition < len(rawRunes) {
-			if isSeparator(string(rawRunes[startPosition])) {
-				startPosition++
-				continue
+// chunkLargeList splits a large list item into multiple chunks by words
+func (sp MarkdownTextSplitter) chunkLargeList(list List, prependStringSize int) []ContentChunk {
+	var chunks []ContentChunk
+	words := strings.Fields(list.Text)
+	currentChunk := ""
+	currentChunkSize := 0
+	currentStartPosition := list.StartPosition
+	currentEndPosition := list.StartPosition + list.indentation
+
+	chunkSizeToUse := sp.ChunkSize - prependStringSize
+	if chunkSizeToUse <= 0 || sp.ChunkOverlap >= chunkSizeToUse { // avoid edge case where chunkSize is too small
+		chunkSizeToUse = sp.ChunkSize
+	}
+
+	for i := 0; i < len(words); {
+		wordSize := sizeOfString(words[i])
+		if currentChunkSize+wordSize <= chunkSizeToUse {
+			currentChunk += words[i] + " "
+			currentChunkSize += wordSize
+			currentEndPosition += wordSize + 1
+			i++
+		} else {
+			chunks = append(chunks, ContentChunk{
+				Chunk:                currentChunk,
+				ContentStartPosition: currentStartPosition,
+				ContentEndPosition:   currentEndPosition - 2,
+			})
+			overlapSize := sp.ChunkOverlap
+			for overlapSize-sizeOfString(words[i])+1 >= 0 {
+				i--
+				if i == 0 {
+					break
+				}
+				overlapSize -= sizeOfString(words[i]) + 1
+				currentEndPosition -= sizeOfString(words[i]) + 1
 			}
-			if string(rawRunes[startPosition]) == "#" {
-				return false
-			}
-			return true
+			currentStartPosition = currentEndPosition
+			currentChunk = ""
+			currentChunkSize = 0
 		}
 	}
-	return false
-}
 
-func isBlankDocument(document MarkdownDocument) bool {
-	return document.Header1 == "" && document.Header2 == "" && document.Header3 == "" && document.Header4 == "" && document.Header5 == "" && document.Header6 == "" && document.Content == ""
-}
-
-func (sp MarkdownTextSplitter) splitDocument(document MarkdownDocument) ([]string, error) {
-
-	contentSplitter := sp.ContentSplitter
-	if sp.ChunkSize < document.SumHeaderChunkSize {
-		contentSplitter.ChunkSize = sp.ChunkSize
-	} else {
-		contentSplitter.ChunkSize = sp.ChunkSize - document.SumHeaderChunkSize
+	// Add the last chunk
+	if currentChunkSize > 0 {
+		chunks = append(chunks, ContentChunk{
+			Chunk:                currentChunk,
+			ContentStartPosition: currentStartPosition,
+			ContentEndPosition:   currentEndPosition - 2,
+		})
 	}
-	contentSplitter.ChunkOverlap = sp.ChunkOverlap
+	return chunks
+}
 
-	chunks, err := contentSplitter.SplitText(document.Content)
+func (sp MarkdownTextSplitter) chunkPlainText(content Content, headers []Header) ([]ContentChunk, error) {
+
+	split := textsplitter.NewRecursiveCharacter(
+		textsplitter.WithChunkSize(sp.ChunkSize),
+		textsplitter.WithChunkOverlap(sp.ChunkOverlap),
+	)
+
+	chunks, err := split.SplitText(content.PlainText)
+
 	if err != nil {
 		return nil, err
 	}
 
-	var documentFinalChunks []string
+	prependHeader := ""
+	for _, header := range headers {
+		trimmedHeader := strings.TrimSpace(header.Text)
+		if len(trimmedHeader) == 0 {
+			continue
+		}
+		prependHeader += header.Text + "\n"
+	}
+
+	rawRunes := []rune(sp.RawText)
+	startScanPosition := 0
+
+	contentChunks := []ContentChunk{}
 	for _, chunk := range chunks {
+		chunkRunes := []rune(chunk)
 
-		prependHeaderChunk := sp.prependHeaderWithoutOverChunkSizeSetting(document, chunk)
+		startPosition, endPosition := getChunkPositions(rawRunes, chunkRunes, startScanPosition)
 
-		documentFinalChunks = append(documentFinalChunks, prependHeaderChunk)
+		if shouldScanRawTextFromPreviousChunk(startPosition, endPosition) {
+			previousChunkIndex := len(contentChunks) - 1
+			previousChunk := contentChunks[previousChunkIndex]
+			startPosition, endPosition = getChunkPositions(rawRunes, chunkRunes, previousChunk.ContentStartPosition+1)
+		}
+
+		if startPosition == endPosition {
+			continue
+		}
+
+		contentChunks = append(contentChunks, ContentChunk{
+			Chunk:                prependHeader + "\n" + chunk,
+			ContentStartPosition: startPosition,
+			ContentEndPosition:   endPosition,
+		})
+		startScanPosition = startPosition + 1
 	}
 
-	return documentFinalChunks, nil
+	return contentChunks, nil
 }
 
-func (sp MarkdownTextSplitter) prependHeaderWithoutOverChunkSizeSetting(document MarkdownDocument, chunk string) string {
+func getChunkPositions(rawText, chunk []rune, startScanPosition int) (startPosition int, endPosition int) {
 
-	if sizeOfString(chunk) >= sp.ChunkSize {
-		return chunk
+	for i := startScanPosition; i < len(rawText); i++ {
+		if rawText[i] == chunk[0] {
+
+			if i+len(chunk) > len(rawText) {
+				break
+			}
+
+			if reflect.DeepEqual(rawText[i:i+len(chunk)], chunk) {
+				startPosition = i
+				endPosition = len(chunk) + i - 1
+				break
+			}
+		}
 	}
-	midChunk6 := document.Header6 + chunk
-
-	if sizeOfString(midChunk6) >= sp.ChunkSize {
-		return chunk
-	}
-
-	midChunk5 := document.Header5 + midChunk6
-
-	if sizeOfString(midChunk5) >= sp.ChunkSize {
-		return midChunk6
-	}
-
-	midChunk4 := document.Header4 + midChunk5
-
-	if sizeOfString(midChunk4) >= sp.ChunkSize {
-		return midChunk5
-	}
-
-	midChunk3 := document.Header3 + midChunk4
-
-	if sizeOfString(midChunk3) >= sp.ChunkSize {
-		return midChunk4
-	}
-
-	midChunk2 := document.Header2 + midChunk3
-
-	if sizeOfString(midChunk2) >= sp.ChunkSize {
-		return midChunk3
-	}
-
-	midChunk1 := document.Header1 + midChunk2
-
-	if sizeOfString(midChunk1) >= sp.ChunkSize {
-		return midChunk2
-	}
-
-	return midChunk1
-}
-
-func sizeOfString(text string) int {
-	return len([]rune(text))
+	return startPosition, endPosition
 }
