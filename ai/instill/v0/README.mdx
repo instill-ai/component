@@ -18,7 +18,6 @@ It can carry out the following tasks:
 - [Text Generation Chat](#text-generation-chat)
 - [Text To Image](#text-to-image)
 - [Visual Question Answering](#visual-question-answering)
-- [Image To Image](#image-to-image)
 
 
 
@@ -182,11 +181,8 @@ Generate texts from input text prompts.
 | Model Name (required) | `model-name` | string | The Instill Model model to be used. |
 | Prompt (required) | `prompt` | string | The prompt text |
 | System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is using a generic message as "You are a helpful assistant." |
-| Prompt Images | `prompt-images` | array[string] | The prompt images |
-| Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
 | Seed | `seed` | integer | The seed |
 | Temperature | `temperature` | number | The temperature for sampling |
-| Top K | `top-k` | integer | Top k for sampling |
 | Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
 
 
@@ -215,7 +211,6 @@ Generate texts from input text prompts and chat history.
 | Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
 | Seed | `seed` | integer | The seed |
 | Temperature | `temperature` | number | The temperature for sampling |
-| Top K | `top-k` | integer | Top k for sampling |
 | Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
 
 
@@ -239,10 +234,10 @@ Generate images from input text prompts.
 | Task ID (required) | `task` | string | `TASK_TEXT_TO_IMAGE` |
 | Model Name (required) | `model-name` | string | The Instill Model model to be used. |
 | Prompt (required) | `prompt` | string | The prompt text |
-| CFG Scale | `cfg-scale` | number | The guidance scale, default is 7.5 |
 | Samples | `samples` | integer | The number of generated samples, default is 1 |
 | Seed | `seed` | integer | The seed, default is 0 |
-| Steps | `steps` | integer | The steps, default is 5 |
+| Aspect ratio | `negative-prompt` | string | Keywords of what you do not wish to see in the output image. |
+| Aspect ratio | `aspect-ratio` | string | Controls the aspect ratio of the generated image. Defaults to 1:1. |
 
 
 
@@ -266,11 +261,10 @@ Answer questions based on a prompt and an image.
 | Model Name (required) | `model-name` | string | The Instill Model model to be used. |
 | Prompt (required) | `prompt` | string | The prompt text |
 | System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is using a generic message as "You are a helpful assistant." |
-| Prompt Images (required) | `prompt-images` | array[string] | The prompt images |
+| Prompt Images | `prompt-images` | array[string] | The prompt images |
 | Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
 | Seed | `seed` | integer | The seed |
 | Temperature | `temperature` | number | The temperature for sampling |
-| Top K | `top-k` | integer | Top k for sampling |
 | Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
 
 
@@ -278,33 +272,6 @@ Answer questions based on a prompt and an image.
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Text |
-
-
-
-
-
-
-### Image To Image
-
-Generate image from input text prompt and image.
-
-
-| Input | ID | Type | Description |
-| :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_IMAGE_TO_IMAGE` |
-| Model Name (required) | `model-name` | string | The Instill Model model to be used. |
-| Prompt (required) | `prompt` | string | The prompt text |
-| Prompt Image (required) | `image-base64` | string | The prompt image |
-| CFG Scale | `cfg-scale` | number | The guidance scale, default is 7.5 |
-| Seed | `seed` | integer | The seed |
-| Samples | `samples` | integer | The number of generated samples, default is 1 |
-| Top K | `top-k` | integer | Top k for sampling |
-
-
-
-| Output | ID | Type | Description |
-| :--- | :--- | :--- | :--- |
-| Images | `images` | array[string] | Images |
 
 
 

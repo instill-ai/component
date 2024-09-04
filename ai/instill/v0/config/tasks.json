@@ -94,148 +94,6 @@
       "type": "object"
     }
   },
-  "TASK_IMAGE_TO_IMAGE": {
-    "instillShortDescription": "Generate image from input text prompt and image.",
-    "input": {
-      "description": "Input",
-      "instillEditOnNodeFields": [
-        "prompt",
-        "image-base64",
-        "model-name"
-      ],
-      "instillUIOrder": 0,
-      "properties": {
-        "cfg-scale": {
-          "description": "The guidance scale, default is 7.5",
-          "instillAcceptFormats": [
-            "number",
-            "integer"
-          ],
-          "instillUIOrder": 4,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "title": "CFG Scale",
-          "type": "number"
-        },
-        "image-base64": {
-          "description": "The prompt image",
-          "instillAcceptFormats": [
-            "image/*"
-          ],
-          "instillUIOrder": 3,
-          "instillUpstreamTypes": [
-            "reference"
-          ],
-          "title": "Prompt Image",
-          "type": "string"
-        },
-        "model-name": {
-          "description": "The Instill Model model to be used.",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 0,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "Model Name",
-          "type": "string"
-        },
-        "prompt": {
-          "description": "The prompt text",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIMultiline": true,
-          "instillUIOrder": 2,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "Prompt",
-          "type": "string"
-        },
-        "samples": {
-          "description": "The number of generated samples, default is 1",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUIOrder": 5,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "title": "Samples",
-          "type": "integer"
-        },
-        "seed": {
-          "description": "The seed",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUIOrder": 4,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "title": "Seed",
-          "type": "integer"
-        },
-        "top-k": {
-          "default": 10,
-          "description": "Top k for sampling",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUIOrder": 5,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "title": "Top K",
-          "type": "integer"
-        }
-      },
-      "required": [
-        "prompt",
-        "image-base64",
-        "model-name"
-      ],
-      "title": "Input",
-      "type": "object"
-    },
-    "output": {
-      "description": "Output",
-      "instillEditOnNodeFields": [
-        "images"
-      ],
-      "instillUIOrder": 0,
-      "properties": {
-        "images": {
-          "description": "Images",
-          "instillUIOrder": 0,
-          "instillFormat": "array:image/jpeg",
-          "items": {
-            "instillFormat": "image/jpeg",
-            "title": "Image",
-            "type": "string"
-          },
-          "title": "Images",
-          "type": "array"
-        }
-      },
-      "required": [
-        "images"
-      ],
-      "title": "Output",
-      "type": "object"
-    }
-  },
   "TASK_INSTANCE_SEGMENTATION": {
     "instillShortDescription": "Detect, localize and delineate multiple objects in images.",
     "input": {
@@ -302,6 +160,134 @@
       ],
       "instillUIOrder": 0,
       "properties": {
+        "max-new-tokens": {
+          "default": 50,
+          "description": "The maximum number of tokens for model to generate",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 6,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Max new tokens",
+          "type": "integer"
+        },
+        "model-name": {
+          "description": "The Instill Model model to be used.",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Model Name",
+          "type": "string"
+        },
+        "prompt": {
+          "description": "The prompt text",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "Prompt",
+          "type": "string"
+        },
+        "seed": {
+          "description": "The seed",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 4,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Seed",
+          "type": "integer"
+        },
+        "system-message": {
+          "default": "You are a helpful assistant.",
+          "description": "The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model\u2019s behavior is using a generic message as \"You are a helpful assistant.\"",
+          "instillAcceptFormats": [
+            "string"
+          ],
+          "instillShortDescription": "The system message helps set the behavior of the assistant",
+          "instillUIMultiline": true,
+          "instillUIOrder": 2,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "title": "System message",
+          "type": "string"
+        },
+        "temperature": {
+          "default": 0.7,
+          "description": "The temperature for sampling",
+          "instillAcceptFormats": [
+            "number"
+          ],
+          "instillUIOrder": 5,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "title": "Temperature",
+          "type": "number"
+        }
+      },
+      "required": [
+        "prompt",
+        "model-name"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillEditOnNodeFields": [
+        "text"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "text": {
+          "description": "Text",
+          "instillFormat": "string",
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_TEXT_GENERATION_CHAT": {
+    "instillShortDescription": "Generate texts from input text prompts and chat history.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "prompt",
+        "model-name"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
         "chat-history": {
           "description": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
           "instillAcceptFormats": [
@@ -419,20 +405,6 @@
           ],
           "title": "Temperature",
           "type": "number"
-        },
-        "top-k": {
-          "default": 10,
-          "description": "Top k for sampling",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUIOrder": 5,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "title": "Top K",
-          "type": "integer"
         }
       },
       "required": [
@@ -465,10 +437,6 @@
       "type": "object"
     }
   },
-  "TASK_TEXT_GENERATION_CHAT": {
-    "instillShortDescription": "Generate texts from input text prompts and chat history.",
-    "$ref": "#/TASK_TEXT_GENERATION"
-  },
   "TASK_TEXT_TO_IMAGE": {
     "instillShortDescription": "Generate images from input text prompts.",
     "input": {
@@ -479,20 +447,6 @@
       ],
       "instillUIOrder": 0,
       "properties": {
-        "cfg-scale": {
-          "description": "The guidance scale, default is 7.5",
-          "instillAcceptFormats": [
-            "number",
-            "integer"
-          ],
-          "instillUIOrder": 4,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "title": "CFG Scale",
-          "type": "number"
-        },
         "model-name": {
           "description": "The Instill Model model to be used.",
           "instillAcceptFormats": [
@@ -548,18 +502,37 @@
           "title": "Seed",
           "type": "integer"
         },
-        "steps": {
-          "description": "The steps, default is 5",
+        "negative-prompt": {
+          "title": "Aspect ratio",
+          "type": "string",
+          "description": "Keywords of what you do not wish to see in the output image.",
+          "instillShortDescription": "Keywords of what you do not wish to see in the output image.",
           "instillAcceptFormats": [
-            "integer"
+            "string"
           ],
-          "instillUIOrder": 7,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
+          "instillUIOrder": 7
+        },
+        "aspect-ratio": {
+          "title": "Aspect ratio",
+          "type": "string",
+          "description": "Controls the aspect ratio of the generated image. Defaults to 1:1.",
+          "instillShortDescription": "Controls the aspect ratio of the generated image. Defaults to 1:1.",
+          "instillAcceptFormats": [
+            "string"
           ],
-          "title": "Steps",
-          "type": "integer"
+          "instillUIOrder": 8,
+          "default": "1:1",
+          "enum": [
+            "16:9",
+            "1:1",
+            "21:9",
+            "2:3",
+            "3:2",
+            "4:5",
+            "5:4",
+            "9:16",
+            "9:21"
+          ]
         }
       },
       "required": [
@@ -598,177 +571,6 @@
   },
   "TASK_VISUAL_QUESTION_ANSWERING": {
     "instillShortDescription": "Answer questions based on a prompt and an image.",
-    "input": {
-      "description": "Input",
-      "instillEditOnNodeFields": [
-        "prompt",
-        "prompt-images",
-        "model-name"
-      ],
-      "instillUIOrder": 0,
-      "properties": {
-        "chat-history": {
-          "description": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
-          "instillAcceptFormats": [
-            "structured/chat-messages"
-          ],
-          "instillShortDescription": "Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : {\"role\": \"The message role, i.e. 'system', 'user' or 'assistant'\", \"content\": \"message content\"}.",
-          "instillUIOrder": 4,
-          "instillUpstreamTypes": [
-            "reference"
-          ],
-          "items": {
-            "$ref": "#/$defs/chat-message"
-          },
-          "title": "Chat history",
-          "type": "array"
-        },
-        "max-new-tokens": {
-          "default": 50,
-          "description": "The maximum number of tokens for model to generate",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUIOrder": 6,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "title": "Max new tokens",
-          "type": "integer"
-        },
-        "model-name": {
-          "description": "The Instill Model model to be used.",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIOrder": 0,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "Model Name",
-          "type": "string"
-        },
-        "prompt": {
-          "description": "The prompt text",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillUIMultiline": true,
-          "instillUIOrder": 2,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "Prompt",
-          "type": "string"
-        },
-        "prompt-images": {
-          "description": "The prompt images",
-          "instillAcceptFormats": [
-            "array:image/*"
-          ],
-          "instillUIOrder": 3,
-          "instillUpstreamTypes": [
-            "reference"
-          ],
-          "items": {
-            "type": "string"
-          },
-          "title": "Prompt Images",
-          "type": "array"
-        },
-        "seed": {
-          "description": "The seed",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUIOrder": 4,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "title": "Seed",
-          "type": "integer"
-        },
-        "system-message": {
-          "default": "You are a helpful assistant.",
-          "description": "The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model\u2019s behavior is using a generic message as \"You are a helpful assistant.\"",
-          "instillAcceptFormats": [
-            "string"
-          ],
-          "instillShortDescription": "The system message helps set the behavior of the assistant",
-          "instillUIMultiline": true,
-          "instillUIOrder": 2,
-          "instillUpstreamTypes": [
-            "value",
-            "reference",
-            "template"
-          ],
-          "title": "System message",
-          "type": "string"
-        },
-        "temperature": {
-          "default": 0.7,
-          "description": "The temperature for sampling",
-          "instillAcceptFormats": [
-            "number"
-          ],
-          "instillUIOrder": 5,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "title": "Temperature",
-          "type": "number"
-        },
-        "top-k": {
-          "default": 10,
-          "description": "Top k for sampling",
-          "instillAcceptFormats": [
-            "integer"
-          ],
-          "instillUIOrder": 5,
-          "instillUpstreamTypes": [
-            "value",
-            "reference"
-          ],
-          "title": "Top K",
-          "type": "integer"
-        }
-      },
-      "required": [
-        "prompt",
-        "prompt-images",
-        "model-name"
-      ],
-      "title": "Input",
-      "type": "object"
-    },
-    "output": {
-      "description": "Output",
-      "instillEditOnNodeFields": [
-        "text"
-      ],
-      "instillUIOrder": 0,
-      "properties": {
-        "text": {
-          "description": "Text",
-          "instillFormat": "string",
-          "instillUIMultiline": true,
-          "instillUIOrder": 0,
-          "title": "Text",
-          "type": "string"
-        }
-      },
-      "required": [
-        "text"
-      ],
-      "title": "Output",
-      "type": "object"
-    }
+    "$ref": "#/TASK_TEXT_GENERATION_CHAT"
   }
 }

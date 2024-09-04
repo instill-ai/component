@@ -169,8 +169,8 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 			// If chat history is not provided, add the system message to the messages
 			messages = append(messages, message{Role: "system", Content: *inputStruct.SystemMessage})
 		}
-		userContents := []content{}
-		userContents = append(userContents, content{Type: "text", Text: &inputStruct.Prompt})
+		userContents := []Content{}
+		userContents = append(userContents, Content{Type: "text", Text: &inputStruct.Prompt})
 		for _, image := range inputStruct.Images {
 			b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(image))
 			if err != nil {
@@ -178,7 +178,7 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 				return
 			}
 			url := fmt.Sprintf("data:%s;base64,%s", mimetype.Detect(b).String(), base.TrimBase64Mime(image))
-			userContents = append(userContents, content{Type: "image_url", ImageURL: &imageURL{URL: url}})
+			userContents = append(userContents, Content{Type: "image_url", ImageURL: &ImageURL{URL: url}})
 		}
 		messages = append(messages, multiModalMessage{Role: "user", Content: userContents})
 

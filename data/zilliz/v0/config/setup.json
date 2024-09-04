@@ -5,7 +5,8 @@
     "url": {
       "description": "Fill in your Zilliz public URL endpoint",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"
@@ -15,10 +16,11 @@
       "title": "Zilliz URL Endpoint",
       "type": "string"
     },
-    "api-key":{
+    "api-key": {
       "description": "Fill in your Zilliz API key",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"

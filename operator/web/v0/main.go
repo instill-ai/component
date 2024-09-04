@@ -68,7 +68,7 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.getDocAfterRequestURL = getDocAfterRequestURL
 		e.execute = e.ScrapeWebpage
 	default:
-		return nil, fmt.Errorf(x.Task + " task is not supported.")
+		return nil, fmt.Errorf("%s task is not supported", x.Task)
 	}
 
 	return e, nil

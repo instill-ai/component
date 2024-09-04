@@ -201,7 +201,7 @@ func (e *execution) registerAsset(data []byte, reg Register) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		return "", fmt.Errorf(string(bodyBytes))
+		return "", fmt.Errorf("error: %s", string(bodyBytes))
 	}
 }
 

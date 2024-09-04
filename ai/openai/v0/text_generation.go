@@ -4,15 +4,15 @@ const (
 	completionsPath = "/v1/chat/completions"
 )
 
-type textMessage struct {
+type TextMessage struct {
 	Role    string    `json:"role"`
-	Content []content `json:"content"`
+	Content []Content `json:"content"`
 }
 
 type TextCompletionInput struct {
 	Prompt           string                     `json:"prompt"`
 	Images           []string                   `json:"images"`
-	ChatHistory      []*textMessage             `json:"chat-history,omitempty"`
+	ChatHistory      []*TextMessage             `json:"chat-history,omitempty"`
 	Model            string                     `json:"model"`
 	SystemMessage    *string                    `json:"system-message,omitempty"`
 	Temperature      *float32                   `json:"temperature,omitempty"`
@@ -61,7 +61,7 @@ type responseFormatReqStruct struct {
 
 type multiModalMessage struct {
 	Role    string    `json:"role"`
-	Content []content `json:"content"`
+	Content []Content `json:"content"`
 }
 
 type message struct {
@@ -69,14 +69,14 @@ type message struct {
 	Content string `json:"content"`
 }
 
-type imageURL struct {
+type ImageURL struct {
 	URL string `json:"url"`
 }
 
-type content struct {
+type Content struct {
 	Type     string    `json:"type"`
 	Text     *string   `json:"text,omitempty"`
-	ImageURL *imageURL `json:"image_url,omitempty"`
+	ImageURL *ImageURL `json:"image_url,omitempty"`
 }
 
 type textCompletionResp struct {
