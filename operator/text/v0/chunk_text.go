@@ -43,6 +43,27 @@ type TextChunk struct {
 	TokenCount    int    `json:"token-count"`
 }
 
+func (s *Setting) SetDefault() {
+	if s.ChunkSize == 0 {
+		s.ChunkSize = 512
+	}
+	if s.ChunkOverlap == 0 {
+		s.ChunkOverlap = 100
+	}
+	if s.ModelName == "" {
+		s.ModelName = "gpt-3.5-turbo"
+	}
+	if s.AllowedSpecial == nil {
+		s.AllowedSpecial = []string{}
+	}
+	if s.DisallowedSpecial == nil {
+		s.DisallowedSpecial = []string{"all"}
+	}
+	if s.Separators == nil {
+		s.Separators = []string{"\n\n", "\n", " ", ""}
+	}
+}
+
 type TextSplitter interface {
 	SplitText(text string) ([]string, error)
 }
@@ -50,6 +71,7 @@ type TextSplitter interface {
 func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 	var split TextSplitter
 	setting := input.Strategy.Setting
+	setting.SetDefault()
 
 	var output ChunkTextOutput
 	var positionCalculator ChunkPositionCalculator
@@ -143,45 +165,20 @@ func chunkText(input ChunkTextInput) (ChunkTextOutput, error) {
 func chunkMarkdown(input ChunkTextInput) (ChunkTextOutput, error) {
 	var output ChunkTextOutput
 	setting := input.Strategy.Setting
-	rawRunes := []rune(input.Text)
+	setting.SetDefault()
 
-	docs, err := buildDocuments(rawRunes)
+	sp := NewMarkdownTextSplitter(setting.ChunkSize, setting.ChunkOverlap, input.Text)
 
-	if err != nil {
-		return output, fmt.Errorf("failed to build documents: %w", err)
-	}
-
-	sp := MarkdownTextSplitter{
-		ChunkSize:    setting.ChunkSize,
-		ChunkOverlap: setting.ChunkOverlap,
-		RawText:      input.Text,
-	}
-
-	err = sp.Validate()
+	err := sp.Validate()
 
 	if err != nil {
 		return output, fmt.Errorf("failed to validate MarkdownTextSplitter: %w", err)
 	}
 
-	var chunks []ContentChunk
-	chunkMap := make(map[string]bool)
+	chunks, err := sp.SplitText()
 
-	for _, doc := range docs {
-		for _, content := range doc.Contents {
-			var newChunks []ContentChunk
-			switch content.Type {
-			case "table":
-				newChunks, err = sp.chunkTable(content, doc.Headers)
-			case "list":
-				newChunks, err = sp.chunkList(content, doc.Headers)
-			case "plaintext":
-				newChunks, err = sp.chunkPlainText(content, doc.Headers)
-			}
-			if err != nil {
-				return output, fmt.Errorf("failed to chunk content: %w", err)
-			}
-			appendUniqueChunksMap(&chunks, newChunks, &chunkMap)
-		}
+	if err != nil {
+		return output, fmt.Errorf("failed to split text: %w", err)
 	}
 
 	tkm, err := tiktoken.EncodingForModel(setting.ModelName)
@@ -209,7 +206,7 @@ func chunkMarkdown(input ChunkTextInput) (ChunkTextOutput, error) {
 		output.TextChunks = append(output.TextChunks, TextChunk{
 			Text:          input.Text,
 			StartPosition: 0,
-			EndPosition:   len(rawRunes) - 1,
+			EndPosition:   len([]rune(input.Text)) - 1,
 			TokenCount:    len(token),
 		})
 		output.ChunkNum = 1
@@ -219,6 +216,7 @@ func chunkMarkdown(input ChunkTextInput) (ChunkTextOutput, error) {
 	originalTextToken := tkm.Encode(input.Text, setting.AllowedSpecial, setting.DisallowedSpecial)
 	output.TokenCount = len(originalTextToken)
 	output.ChunksTokenCount = totalTokenCount
+	output.ChunkNum = len(output.TextChunks)
 
 	return output, nil
 }
@@ -250,14 +248,4 @@ func (PositionCalculator) getChunkPositions(rawText, chunk []rune, startScanPosi
 		}
 	}
 	return startPosition, endPosition
-}
-
-func appendUniqueChunksMap(chunks *[]ContentChunk, newChunks []ContentChunk, chunkMap *map[string]bool) {
-	for _, newChunk := range newChunks {
-		key := fmt.Sprintf("%d-%d", newChunk.ContentStartPosition, newChunk.ContentEndPosition)
-		if _, exists := (*chunkMap)[key]; !exists {
-			*chunks = append(*chunks, newChunk)
-			(*chunkMap)[key] = true
-		}
-	}
 }

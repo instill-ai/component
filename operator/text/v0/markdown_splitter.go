@@ -14,6 +14,14 @@ type MarkdownTextSplitter struct {
 	RawText      string
 }
 
+func NewMarkdownTextSplitter(chunkSize, chunkOverlap int, rawText string) *MarkdownTextSplitter {
+	return &MarkdownTextSplitter{
+		ChunkSize:    chunkSize,
+		ChunkOverlap: chunkOverlap,
+		RawText:      rawText,
+	}
+}
+
 func (sp *MarkdownTextSplitter) Validate() error {
 	if sp.ChunkSize <= 0 {
 		return fmt.Errorf("ChunkSize must be greater than 0")
@@ -25,6 +33,49 @@ func (sp *MarkdownTextSplitter) Validate() error {
 		return fmt.Errorf("ChunkOverlap must be less than ChunkSize")
 	}
 	return nil
+}
+
+func (sp *MarkdownTextSplitter) SplitText() ([]ContentChunk, error) {
+	var chunks []ContentChunk
+
+	rawRunes := []rune(sp.RawText)
+
+	docs, err := buildDocuments(rawRunes)
+
+	if err != nil {
+		return chunks, fmt.Errorf("failed to build documents: %w", err)
+	}
+	chunkMap := make(map[string]bool)
+
+	for _, doc := range docs {
+		for _, content := range doc.Contents {
+			var newChunks []ContentChunk
+			switch content.Type {
+			case "table":
+				newChunks, err = sp.chunkTable(content, doc.Headers)
+			case "list":
+				newChunks, err = sp.chunkList(content, doc.Headers)
+			case "plaintext":
+				newChunks, err = sp.chunkPlainText(content, doc.Headers)
+			}
+			if err != nil {
+				return chunks, fmt.Errorf("failed to chunk content: %w", err)
+			}
+			appendUniqueChunksMap(&chunks, newChunks, &chunkMap)
+		}
+	}
+
+	return chunks, nil
+}
+
+func appendUniqueChunksMap(chunks *[]ContentChunk, newChunks []ContentChunk, chunkMap *map[string]bool) {
+	for _, newChunk := range newChunks {
+		key := fmt.Sprintf("%d-%d", newChunk.ContentStartPosition, newChunk.ContentEndPosition)
+		if _, exists := (*chunkMap)[key]; !exists {
+			*chunks = append(*chunks, newChunk)
+			(*chunkMap)[key] = true
+		}
+	}
 }
 
 type ContentChunk struct {

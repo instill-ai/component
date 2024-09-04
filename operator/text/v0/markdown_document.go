@@ -121,6 +121,9 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 				var paragraph string
 				endPositionOfBlock := currentPosition
 				currentPosition -= sizeOfString(block) + 1
+				if currentPosition < 0 {
+					currentPosition = 0
+				}
 				currentContent.Type = "plaintext"
 				currentContent.BlockStartPosition = currentPosition
 				currentContent.BlockEndPosition = currentPosition

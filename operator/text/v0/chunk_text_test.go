@@ -48,9 +48,10 @@ func TestChunkText(t *testing.T) {
 				Text: "Hello world.",
 				Strategy: Strategy{
 					Setting: Setting{
-						ChunkMethod: "Markdown",
-						ModelName:   "gpt-3.5-turbo",
-						ChunkSize:   5,
+						ChunkMethod:  "Markdown",
+						ModelName:    "gpt-3.5-turbo",
+						ChunkSize:    5,
+						ChunkOverlap: 2,
 					},
 				},
 			},
@@ -63,15 +64,21 @@ func TestChunkText(t *testing.T) {
 						TokenCount:    2,
 					},
 					{
-						Text:          "\nworld.",
+						Text:          "\nworld",
 						StartPosition: 6,
 						EndPosition:   10,
 						TokenCount:    2,
 					},
+					{
+						Text:          "\nld.",
+						StartPosition: 9,
+						EndPosition:   11,
+						TokenCount:    3,
+					},
 				},
-				ChunkNum:         2,
+				ChunkNum:         3,
 				TokenCount:       3,
-				ChunksTokenCount: 3,
+				ChunksTokenCount: 7,
 			},
 		},
 		{
