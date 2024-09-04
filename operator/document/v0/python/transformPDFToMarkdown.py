@@ -3,6 +3,7 @@ import sys
 from io import BytesIO
 import json
 import base64
+from collections import Counter
 
 class PdfTransformer:
 	def __init__(self, x, display_image_tag=False):
@@ -69,15 +70,32 @@ class PdfTransformer:
 		self.subtitle_height = second_largest_text_height * tolerance
 
 	def set_paragraph_information(self, lines):
-		smallest_distance = float("inf")
+		def round_to_nearest_upper_bound(value, step=3): # for the golden sample case
+			"""
+			Round the value to the nearest upper bound based on the given step.
+			For example, with step=3: 0~3 -> 3, 3~6 -> 6, etc.
+			"""
+			return ((value // step) + 1) * step
+
+		distances = []
 		paragraph_width = 0
+
 		for _, line in enumerate(lines):
-			if line["distance_to_next_line"] and line["distance_to_next_line"] < smallest_distance:
-				smallest_distance = line["distance_to_next_line"]
+			if line["distance_to_next_line"] and line["distance_to_next_line"] > 0:
+				# Round the distance to the nearest integer and add to the list
+				rounded_distance = round_to_nearest_upper_bound(line["distance_to_next_line"])
+				distances.append(rounded_distance)
+
 			if line["line_width"] > paragraph_width:
 				paragraph_width = line["line_width"]
 
-		paragraph_distance = smallest_distance * 1.5
+		# Find the most common distance
+		if distances:
+			common_distance = Counter(distances).most_common(1)[0][0]
+		else:
+			common_distance = 10 ## default value
+
+		paragraph_distance = common_distance * 1.5
 		self.paragraph_distance = paragraph_distance
 		self.paragraph_width = paragraph_width
 
