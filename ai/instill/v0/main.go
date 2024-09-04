@@ -16,7 +16,6 @@ import (
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
 
-	commonPB "github.com/instill-ai/protogen-go/common/task/v1alpha"
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
@@ -102,30 +101,24 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 	version := modelNameSplits[2]
 	var result []*structpb.Struct
 	switch e.Task {
-	case commonPB.Task_TASK_UNSPECIFIED.String():
-		result, err = e.executeUnspecified(gRPCClient, nsID, modelID, version, inputs)
-	case commonPB.Task_TASK_CLASSIFICATION.String():
-		result, err = e.executeImageClassification(gRPCClient, nsID, modelID, version, inputs)
-	case commonPB.Task_TASK_DETECTION.String():
-		result, err = e.executeObjectDetection(gRPCClient, nsID, modelID, version, inputs)
-	case commonPB.Task_TASK_KEYPOINT.String():
-		result, err = e.executeKeyPointDetection(gRPCClient, nsID, modelID, version, inputs)
-	case commonPB.Task_TASK_OCR.String():
-		result, err = e.executeOCR(gRPCClient, nsID, modelID, version, inputs)
-	case commonPB.Task_TASK_INSTANCE_SEGMENTATION.String():
-		result, err = e.executeInstanceSegmentation(gRPCClient, nsID, modelID, version, inputs)
-	case commonPB.Task_TASK_SEMANTIC_SEGMENTATION.String():
-		result, err = e.executeSemanticSegmentation(gRPCClient, nsID, modelID, version, inputs)
-	case commonPB.Task_TASK_TEXT_TO_IMAGE.String():
+	case "TASK_CLASSIFICATION":
+		result, err = e.executeVisionTask(gRPCClient, nsID, modelID, version, inputs)
+	case "TASK_DETECTION":
+		result, err = e.executeVisionTask(gRPCClient, nsID, modelID, version, inputs)
+	case "TASK_KEYPOINT":
+		result, err = e.executeVisionTask(gRPCClient, nsID, modelID, version, inputs)
+	case "TASK_OCR":
+		result, err = e.executeVisionTask(gRPCClient, nsID, modelID, version, inputs)
+	case "TASK_INSTANCE_SEGMENTATION":
+		result, err = e.executeVisionTask(gRPCClient, nsID, modelID, version, inputs)
+	case "TASK_SEMANTIC_SEGMENTATION":
+		result, err = e.executeVisionTask(gRPCClient, nsID, modelID, version, inputs)
+	case "TASK_TEXT_TO_IMAGE":
 		result, err = e.executeTextToImage(gRPCClient, nsID, modelID, version, inputs)
-	case commonPB.Task_TASK_TEXT_GENERATION.String():
+	case "TASK_TEXT_GENERATION":
 		result, err = e.executeTextGeneration(gRPCClient, nsID, modelID, version, inputs)
-	case commonPB.Task_TASK_TEXT_GENERATION_CHAT.String():
+	case "TASK_TEXT_GENERATION_CHAT", "TASK_VISUAL_QUESTION_ANSWERING":
 		result, err = e.executeTextGenerationChat(gRPCClient, nsID, modelID, version, inputs)
-	case commonPB.Task_TASK_VISUAL_QUESTION_ANSWERING.String():
-		result, err = e.executeVisualQuestionAnswering(gRPCClient, nsID, modelID, version, inputs)
-	case commonPB.Task_TASK_IMAGE_TO_IMAGE.String():
-		result, err = e.executeImageToImage(gRPCClient, nsID, modelID, version, inputs)
 	default:
 		return fmt.Errorf("unsupported task: %s", e.Task)
 	}

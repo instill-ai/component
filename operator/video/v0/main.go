@@ -57,7 +57,7 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	case taskSubsampleVideoFrames:
 		e.execute = subsampleVideoFrames
 	default:
-		return nil, fmt.Errorf(x.Task + " task is not supported.")
+		return nil, fmt.Errorf("%s task is not supported", x.Task)
 	}
 
 	return e, nil

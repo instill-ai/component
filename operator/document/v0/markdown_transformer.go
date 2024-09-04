@@ -267,7 +267,7 @@ func ConvertToPDF(base64Encoded, fileExtension string) (string, error) {
 
 	tempDir, err := os.MkdirTemp("", "libreoffice")
 	if err != nil {
-		return "", fmt.Errorf("failed to create temporary directory: " + err.Error())
+		return "", fmt.Errorf("failed to create temporary directory: %s", err.Error())
 	}
 	defer os.RemoveAll(tempDir)
 
@@ -275,7 +275,7 @@ func ConvertToPDF(base64Encoded, fileExtension string) (string, error) {
 	cmd.Env = append(os.Environ(), "HOME="+tempDir)
 
 	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("failed to execute LibreOffice command: " + err.Error())
+		return "", fmt.Errorf("failed to execute LibreOffice command: %s", err.Error())
 	}
 
 	// LibreOffice is not executed in temp directory like inputFileName.

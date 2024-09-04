@@ -87,7 +87,7 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	case taskConvertToImages:
 		e.execute = e.convertPDFToImages
 	default:
-		return nil, fmt.Errorf(fmt.Sprintf("%s task is not supported.", x.Task))
+		return nil, fmt.Errorf("%s task is not supported", x.Task)
 	}
 
 	return e, nil

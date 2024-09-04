@@ -5,7 +5,8 @@
     "url": {
       "description": "Fill in your Milvus public URL endpoint with port number, e.g http://3.25.202.142:19530",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"
@@ -15,10 +16,11 @@
       "title": "Milvus URL Endpoint",
       "type": "string"
     },
-    "username":{
+    "username": {
       "description": "Fill in your Milvus username",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"
@@ -28,10 +30,11 @@
       "title": "Milvus Username",
       "type": "string"
     },
-    "password":{
+    "password": {
       "description": "Fill in your Milvus password",
       "instillUpstreamTypes": [
-        "value","reference"
+        "value",
+        "reference"
       ],
       "instillAcceptFormats": [
         "string"

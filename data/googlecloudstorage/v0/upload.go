@@ -14,7 +14,7 @@ import (
 func uploadToGCS(client *storage.Client, bucketName, objectName, data string) error {
 	wc := client.Bucket(bucketName).Object(objectName).NewWriter(context.Background())
 	b, _ := base64.StdEncoding.DecodeString(base.TrimBase64Mime(data))
-	if _, err := io.WriteString(wc, string(b)); err != nil {
+	if _, err := io.Writer.Write(wc, b); err != nil {
 		return err
 	}
 	return wc.Close()

@@ -138,7 +138,7 @@ func getRemovedTagsHTML(doc *goquery.Document, input ScrapeWebpageInput) string 
 		}
 	}
 
-	if input.OnlyIncludeTags == nil || len(input.OnlyIncludeTags) == 0 {
+	if len(input.OnlyIncludeTags) == 0 {
 		html, err := doc.Html()
 		if err != nil {
 			log.Println("error getting HTML: ", err)
