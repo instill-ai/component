@@ -348,7 +348,7 @@ func parseListFromBlock(block string, currentPosition int) []List {
 
 	// Set NextList & PreviousList & NextLevelList & PreviousLevelList
 	var lastListAtLevel = make(map[int]*List)
-
+	var indentStack []int
 	for i := range lists {
 		indent := lists[i].indentation
 
@@ -358,14 +358,28 @@ func parseListFromBlock(block string, currentPosition int) []List {
 			prev.NextList = &lists[i]
 		}
 
+		var prevIndent int
+		for j := len(indentStack) - 1; j >= 0; j-- {
+			if indentStack[j] < indent {
+				prevIndent = indentStack[j]
+				break
+			}
+		}
+
 		// Link to the previous level list if exists
-		if prevLevelList, ok := lastListAtLevel[indent-2]; ok {
-			lists[i].PreviousLevelList = prevLevelList
-			prevLevelList.NextLevelLists = append(prevLevelList.NextLevelLists, lists[i])
+		if prevLevelList, ok := lastListAtLevel[prevIndent]; ok {
+			if prevLevelList.indentation != lists[i].indentation {
+				lists[i].PreviousLevelList = prevLevelList
+				prevLevelList.NextLevelLists = append(prevLevelList.NextLevelLists, lists[i])
+			}
 		}
 
 		// Update the last list at this level
 		lastListAtLevel[indent] = &lists[i]
+
+		if len(indentStack) == 0 || indentStack[len(indentStack)-1] != indent {
+			indentStack = append(indentStack, indent)
+		}
 	}
 
 	return lists

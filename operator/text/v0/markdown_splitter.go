@@ -261,9 +261,14 @@ func (sp MarkdownTextSplitter) processChunks(lists []List) []ContentChunk {
 
 				// Overlap Handling: Start from final appended list if it's smaller than the overlap
 				if i > 0 && sizeOfString(lists[i-1].Text) <= sp.ChunkOverlap {
-					i -= 2
+					if i > 1 {
+						i -= 2
+					} else {
+						i--
+					}
 					addListCount = -1
 				} else {
+					i--
 					addListCount = 0
 				}
 			}
