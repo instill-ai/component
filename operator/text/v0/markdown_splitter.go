@@ -285,6 +285,14 @@ func (sp MarkdownTextSplitter) processChunks(lists []List) []ContentChunk {
 func (sp MarkdownTextSplitter) chunkLargeList(list List, prependStringSize int) []ContentChunk {
 	var chunks []ContentChunk
 	words := strings.Fields(list.Text)
+	var withSeparator bool
+	withSeparator = true
+	for _, word := range words {
+		if sizeOfString(word) > 50 { // longest word in English is 45 characters, set 50 as a threshold.
+			words = strings.Split(list.Text, "")
+			withSeparator = false
+		}
+	}
 	currentChunk := ""
 	currentChunkSize := 0
 	currentStartPosition := list.StartPosition
@@ -298,9 +306,13 @@ func (sp MarkdownTextSplitter) chunkLargeList(list List, prependStringSize int) 
 	for i := 0; i < len(words); {
 		wordSize := sizeOfString(words[i])
 		if currentChunkSize+wordSize <= chunkSizeToUse {
-			currentChunk += words[i] + " "
+			currentChunk += words[i]
 			currentChunkSize += wordSize
-			currentEndPosition += wordSize + 1
+			currentEndPosition += wordSize
+			if withSeparator {
+				currentChunk += " "
+				currentEndPosition++
+			}
 			i++
 		} else {
 			chunks = append(chunks, ContentChunk{
