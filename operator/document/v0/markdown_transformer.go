@@ -3,12 +3,9 @@ package document
 import (
 	"bytes"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -19,80 +16,67 @@ import (
 )
 
 type MarkdownTransformer interface {
-	Transform() (string, error)
+	Transform() (converterOutput, error)
 }
 
 type PDFToMarkdownTransformer struct {
 	Base64EncodedText string
 	FileExtension     string
 	DisplayImageTag   bool
-	Converter         string
+	PDFConvertFunc    func(string, bool) (converterOutput, error)
 }
 
-func (t PDFToMarkdownTransformer) Transform() (string, error) {
-	if false {
-		return extractPDFTextInMarkdownFormatDeprecate(t.Base64EncodedText, t.DisplayImageTag)
-	} else {
-		return extractPDFTextInMarkdownFormat(t.Base64EncodedText, t.DisplayImageTag)
-	}
+func (t PDFToMarkdownTransformer) Transform() (converterOutput, error) {
+	return t.PDFConvertFunc(t.Base64EncodedText, t.DisplayImageTag)
 }
 
 type DocxDocToMarkdownTransformer struct {
 	Base64EncodedText string
 	FileExtension     string
 	DisplayImageTag   bool
-	Converter         string
+	PDFConvertFunc    func(string, bool) (converterOutput, error)
 }
 
-func (t DocxDocToMarkdownTransformer) Transform() (string, error) {
+func (t DocxDocToMarkdownTransformer) Transform() (converterOutput, error) {
 
 	base64PDF, err := ConvertToPDF(t.Base64EncodedText, t.FileExtension)
 
 	if err != nil {
-		return "", fmt.Errorf("failed to encode file to base64: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to encode file to base64: %w", err)
 	}
 
-	if false {
-		return extractPDFTextInMarkdownFormatDeprecate(base64PDF, t.DisplayImageTag)
-	} else {
-		return extractPDFTextInMarkdownFormat(base64PDF, t.DisplayImageTag)
-	}
+	return t.PDFConvertFunc(base64PDF, t.DisplayImageTag)
 }
 
 type PptPptxToMarkdownTransformer struct {
 	Base64EncodedText string
 	FileExtension     string
 	DisplayImageTag   bool
-	Converter         string
+	PDFConvertFunc    func(string, bool) (converterOutput, error)
 }
 
-func (t PptPptxToMarkdownTransformer) Transform() (string, error) {
+func (t PptPptxToMarkdownTransformer) Transform() (converterOutput, error) {
 
 	base64PDF, err := ConvertToPDF(t.Base64EncodedText, t.FileExtension)
 
 	if err != nil {
-		return "", fmt.Errorf("failed to encode file to base64: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to encode file to base64: %w", err)
 	}
 
-	if false {
-		return extractPDFTextInMarkdownFormatDeprecate(base64PDF, t.DisplayImageTag)
-	} else {
-		return extractPDFTextInMarkdownFormat(base64PDF, t.DisplayImageTag)
-	}
+	return t.PDFConvertFunc(base64PDF, t.DisplayImageTag)
 }
 
 type HTMLToMarkdownTransformer struct {
 	Base64EncodedText string
 	FileExtension     string
 	DisplayImageTag   bool
-	Converter         string
 }
 
-func (t HTMLToMarkdownTransformer) Transform() (string, error) {
+func (t HTMLToMarkdownTransformer) Transform() (converterOutput, error) {
 
 	data, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(t.Base64EncodedText))
 	if err != nil {
-		return "", fmt.Errorf("failed to decode base64 to file: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to decode base64 to file: %w", err)
 	}
 
 	converter := md.NewConverter("", true, nil)
@@ -100,30 +84,30 @@ func (t HTMLToMarkdownTransformer) Transform() (string, error) {
 	html := string(data)
 	markdown, err := converter.ConvertString(html)
 	if err != nil {
-		return "", fmt.Errorf("failed to convert HTML to markdown: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to convert HTML to markdown: %w", err)
 	}
 
-	return markdown, nil
+	return converterOutput{Body: markdown}, nil
 }
 
 type XlsxToMarkdownTransformer struct {
 	Base64EncodedText string
 }
 
-func (t XlsxToMarkdownTransformer) Transform() (string, error) {
+func (t XlsxToMarkdownTransformer) Transform() (converterOutput, error) {
 
 	base64String := strings.Split(t.Base64EncodedText, ",")[1]
 	fileContent, err := base64.StdEncoding.DecodeString(base64String)
 
 	if err != nil {
-		return "", fmt.Errorf("failed to decode base64 to file: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to decode base64 to file: %w", err)
 	}
 
 	reader := bytes.NewReader(fileContent)
 
 	f, err := excelize.OpenReader(reader)
 	if err != nil {
-		return "", fmt.Errorf("failed to open reader: %w", err)
+		return converterOutput{}, fmt.Errorf("failed to open reader: %w", err)
 	}
 	defer f.Close()
 
@@ -134,7 +118,7 @@ func (t XlsxToMarkdownTransformer) Transform() (string, error) {
 		rows, err := f.GetRows(sheet)
 
 		if err != nil {
-			return "", fmt.Errorf("failed to get rows: %w", err)
+			return converterOutput{}, fmt.Errorf("failed to get rows: %w", err)
 		}
 
 		if len(rows) == 0 {
@@ -148,91 +132,7 @@ func (t XlsxToMarkdownTransformer) Transform() (string, error) {
 		result += "\n\n"
 	}
 
-	return result, nil
-}
-
-type pythonRunnerOutput struct {
-	Body string `json:"body"`
-}
-
-func extractPDFTextInMarkdownFormatDeprecate(base64Text string, displayImageTag bool) (string, error) {
-
-	paramsJSON, err := json.Marshal(map[string]interface{}{
-		"PDF":               base.TrimBase64Mime(base64Text),
-		"display-image-tag": displayImageTag,
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	cmdRunner := exec.Command(pythonInterpreter, "-c", pythonCode)
-	stdin, err := cmdRunner.StdinPipe()
-
-	if err != nil {
-		return "", err
-	}
-	errChan := make(chan error, 1)
-	go func() {
-		defer stdin.Close()
-		_, err := stdin.Write(paramsJSON)
-		if err != nil {
-			errChan <- err
-			return
-		}
-		errChan <- nil
-	}()
-
-	outputBytes, err := cmdRunner.CombinedOutput()
-	if err != nil {
-		return "", err
-	}
-
-	writeErr := <-errChan
-	if writeErr != nil {
-		return "", writeErr
-	}
-
-	var output pythonRunnerOutput
-	err = json.Unmarshal(outputBytes, &output)
-	if err != nil {
-		return "", err
-	}
-	return output.Body, nil
-}
-
-func extractPDFTextInMarkdownFormat(base64Text string, displayImageTag bool) (string, error) {
-	inputDir, err := os.MkdirTemp(os.TempDir(), "pdf")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.RemoveAll(inputDir)
-	outputDir, err := os.MkdirTemp(os.TempDir(), "pdf")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.RemoveAll(outputDir)
-
-	inputBytes, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(base64Text))
-	if err != nil {
-		return "", err
-	}
-	err = os.WriteFile(path.Join(inputDir, "document.pdf"), inputBytes, 0644)
-	if err != nil {
-		return "", err
-	}
-	cmdRunner := exec.Command("pdf2md", fmt.Sprintf("--inputFolderPath=%s", inputDir), fmt.Sprintf("--outputFolderPath=%s", outputDir))
-	err = cmdRunner.Run()
-	if err != nil {
-		return "", err
-	}
-
-	outputBytes, err := os.ReadFile(path.Join(outputDir, "document.md"))
-	if err != nil {
-		return "", err
-	}
-
-	return string(outputBytes), nil
+	return converterOutput{Body: result}, nil
 }
 
 func writeDecodeToFile(base64Str string, file *os.File) error {

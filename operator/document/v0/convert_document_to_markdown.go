@@ -12,13 +12,13 @@ import (
 type ConvertDocumentToMarkdownInput struct {
 	Document        string `json:"document"`
 	DisplayImageTag bool   `json:"display-image-tag"`
-	Converter       string `json:"converter"`
 	Filename        string `json:"filename"`
 }
 
 type ConvertDocumentToMarkdownOutput struct {
-	Body     string `json:"body"`
-	Filename string `json:"filename"`
+	Body     string   `json:"body"`
+	Filename string   `json:"filename"`
+	Images   []string `json:"images,omitempty"`
 }
 
 func ConvertDocumentToMarkdown(inputStruct *ConvertDocumentToMarkdownInput, transformerGetter MarkdownTransformerGetterFunc) (*ConvertDocumentToMarkdownOutput, error) {
@@ -39,13 +39,14 @@ func ConvertDocumentToMarkdown(inputStruct *ConvertDocumentToMarkdownInput, tran
 	if err != nil {
 		return nil, err
 	}
-	extractedTextInMarkdownFormat, err := transformer.Transform()
+	converterOutput, err := transformer.Transform()
 	if err != nil {
 		return nil, err
 	}
 
 	outputStruct := &ConvertDocumentToMarkdownOutput{
-		Body: extractedTextInMarkdownFormat,
+		Body:   converterOutput.Body,
+		Images: converterOutput.Images,
 	}
 
 	if inputStruct.Filename != "" {
@@ -82,28 +83,26 @@ func GetMarkdownTransformer(fileExtension string, inputStruct *ConvertDocumentTo
 			Base64EncodedText: inputStruct.Document,
 			FileExtension:     fileExtension,
 			DisplayImageTag:   inputStruct.DisplayImageTag,
-			Converter:         inputStruct.Converter,
+			PDFConvertFunc:    getPDFConvertFunc("pdfplumber"),
 		}, nil
 	case "doc", "docx":
 		return DocxDocToMarkdownTransformer{
 			Base64EncodedText: inputStruct.Document,
 			FileExtension:     fileExtension,
 			DisplayImageTag:   inputStruct.DisplayImageTag,
-			Converter:         inputStruct.Converter,
+			PDFConvertFunc:    getPDFConvertFunc("pdfplumber"),
 		}, nil
 	case "ppt", "pptx":
 		return PptPptxToMarkdownTransformer{
 			Base64EncodedText: inputStruct.Document,
 			FileExtension:     fileExtension,
 			DisplayImageTag:   inputStruct.DisplayImageTag,
-			Converter:         inputStruct.Converter,
+			PDFConvertFunc:    getPDFConvertFunc("pdfplumber"),
 		}, nil
 	case "html":
 		return HTMLToMarkdownTransformer{
 			Base64EncodedText: inputStruct.Document,
 			FileExtension:     fileExtension,
-			DisplayImageTag:   inputStruct.DisplayImageTag,
-			Converter:         inputStruct.Converter,
 		}, nil
 	case "xlsx":
 		return XlsxToMarkdownTransformer{
@@ -111,5 +110,13 @@ func GetMarkdownTransformer(fileExtension string, inputStruct *ConvertDocumentTo
 		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported file type")
+	}
+}
+
+// We could provide more converters in the future. For now, we only have one.
+func getPDFConvertFunc(converter string) func(string, bool) (converterOutput, error) {
+	switch converter {
+	default:
+		return convertPDFToMarkdownWithPDFPlumber
 	}
 }
