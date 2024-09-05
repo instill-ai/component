@@ -12,7 +12,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 )
 
 // TestConvertToText tests the convert to text task
@@ -87,9 +86,6 @@ func TestConvertToText(t *testing.T) {
 					"document": {Kind: &structpb.Value_StringValue{StringValue: base64DataURI}},
 				},
 			}
-			inputs := []*structpb.Struct{
-				input,
-			}
 
 			e, err := component.CreateExecution(base.ComponentExecution{
 				Component: component,
@@ -99,25 +95,28 @@ func TestConvertToText(t *testing.T) {
 
 			if test.name == "Convert xlsx file" {
 
-				ir := mock.NewInputReaderMock(c)
-				ow := mock.NewOutputWriterMock(c)
-				ir.ReadMock.Return(inputs, nil)
+				ir, ow, eh, job := base.GenerateMockJob(c)
+				ir.ReadMock.Return(input, nil)
 				ow.WriteMock.Optional().Return(nil)
-				err = e.Execute(context.Background(), ir, ow)
-				c.Assert(err, qt.ErrorMatches, "unsupported content type")
+				eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+					c.Assert(err, qt.ErrorMatches, "unsupported content type")
+				})
+				err = e.Execute(context.Background(), []*base.Job{job})
+				c.Assert(err, qt.IsNil)
+
 				return
 			}
 
-			ir := mock.NewInputReaderMock(c)
-			ow := mock.NewOutputWriterMock(c)
-			ir.ReadMock.Return(inputs, nil)
-			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
-				c.Assert(outputs[0].Fields["body"].GetStringValue(), qt.Not(qt.Equals), "")
-				c.Assert(outputs[0].Fields["meta"].GetStructValue(), qt.IsNotNil)
+			ir, ow, eh, job := base.GenerateMockJob(c)
+			ir.ReadMock.Return(input, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
+				c.Assert(output.Fields["body"].GetStringValue(), qt.Not(qt.Equals), "")
+				c.Assert(output.Fields["meta"].GetStructValue(), qt.IsNotNil)
 				return nil
 			})
+			eh.ErrorMock.Optional()
 
-			err = e.Execute(context.Background(), ir, ow)
+			err = e.Execute(context.Background(), []*base.Job{job})
 			c.Assert(err, qt.IsNil)
 
 		})

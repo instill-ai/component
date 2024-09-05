@@ -58,18 +58,20 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	return &execution{ComponentExecution: x}, nil
 }
 
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
-	outputs := []*structpb.Struct{}
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
-	for _, input := range inputs {
-		base64Struct := Base64{}
-		err := base.ConvertFromStructpb(input, &base64Struct)
+	for _, job := range jobs {
+		input, err := job.Input.Read(ctx)
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
+		}
+
+		base64Struct := Base64{}
+		err = base.ConvertFromStructpb(input, &base64Struct)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
 		}
 		switch e.Task {
 		case encode:
@@ -77,23 +79,30 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 		case decode:
 			base64Struct.Data, err = Decode(base64Struct.Data)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 		default:
 			return fmt.Errorf("not supported task: %s", e.Task)
 		}
 		outputJSON, err := json.Marshal(base64Struct)
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
-		output := structpb.Struct{}
-		err = protojson.Unmarshal(outputJSON, &output)
+		output := &structpb.Struct{}
+		err = protojson.Unmarshal(outputJSON, output)
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
-		outputs = append(outputs, &output)
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 	}
-	return out.Write(ctx, outputs)
+	return nil
 }
 
 func Encode(str string) string {

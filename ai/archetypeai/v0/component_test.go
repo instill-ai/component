@@ -11,7 +11,6 @@ import (
 
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 
@@ -274,21 +273,21 @@ func TestComponent_Execute(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.in)
 			c.Assert(err, qt.IsNil)
 
-			ir := mock.NewInputReaderMock(c)
-			ow := mock.NewOutputWriterMock(c)
-			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			ir, ow, eh, job := base.GenerateMockJob(c)
+			ir.ReadMock.Return(pbIn, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 				wantJSON, err := json.Marshal(tc.want)
 				c.Assert(err, qt.IsNil)
-				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				c.Check(wantJSON, qt.JSONEquals, output.AsMap())
 				return nil
 			})
-			err = exec.Execute(ctx, ir, ow)
-			if tc.wantErr != "" {
-				c.Check(errmsg.Message(err), qt.Matches, tc.wantErr)
-				return
-			}
+			eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+				if tc.wantErr != "" {
+					c.Check(errmsg.Message(err), qt.Matches, tc.wantErr)
+				}
+			})
 
+			err = exec.Execute(ctx, []*base.Job{job})
 			c.Check(err, qt.IsNil)
 		})
 	}

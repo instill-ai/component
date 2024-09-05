@@ -205,28 +205,29 @@ func (e *execution) registerAsset(data []byte, reg Register) (string, error) {
 	}
 }
 
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
-	var outputs []*structpb.Struct
-
-	for _, input := range inputs {
+	for _, job := range jobs {
+		input, err := job.Input.Read(ctx)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 
 		assetUrls := []string{}
 
 		inputStruct := Input{}
-		err := base.ConvertFromStructpb(input, &inputStruct)
+		err = base.ConvertFromStructpb(input, &inputStruct)
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
 
 		for _, image := range inputStruct.Images {
 			imageBytes, err := b64.StdEncoding.DecodeString(base.TrimBase64Mime(image))
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 			var commitLicense *CommitCustomLicense
@@ -263,7 +264,8 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 			}
 			assetCid, err := e.registerAsset(imageBytes, reg)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 			assetUrls = append(assetUrls, fmt.Sprintf("https://verify.numbersprotocol.io/asset-profile?nid=%s", assetCid))
@@ -275,13 +277,17 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 
 		output, err := base.ConvertToStructpb(outputStruct)
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
-		outputs = append(outputs, output)
-
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 	}
 
-	return out.Write(ctx, outputs)
+	return nil
 
 }
 

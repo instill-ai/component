@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/h2non/filetype"
 	"github.com/instill-ai/component/base"

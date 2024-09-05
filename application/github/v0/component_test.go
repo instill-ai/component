@@ -8,7 +8,6 @@ import (
 	qt "github.com/frankban/quicktest"
 	"github.com/google/go-github/v62/github"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -818,20 +817,19 @@ func taskTesting[inType any, outType any](testcases []TaskCase[inType, outType],
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			ir := mock.NewInputReaderMock(c)
-			ow := mock.NewOutputWriterMock(c)
-			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			ir, ow, eh, job := base.GenerateMockJob(c)
+			ir.ReadMock.Return(pbIn, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 				wantJSON, err := json.Marshal(tc.wantResp)
 				c.Assert(err, qt.IsNil)
-				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				c.Check(wantJSON, qt.JSONEquals, output.AsMap())
 				return nil
 			})
-			err = e.Execute(ctx, ir, ow)
-			if tc.wantErr != "" {
+			eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
 				c.Assert(err, qt.ErrorMatches, tc.wantErr)
-				return
-			}
+			})
+			err = e.Execute(ctx, []*base.Job{job})
+			c.Assert(err, qt.IsNil)
 
 		})
 	}

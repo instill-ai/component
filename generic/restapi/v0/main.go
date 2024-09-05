@@ -113,11 +113,7 @@ func getAuthentication(setup *structpb.Struct) (authentication, error) {
 	}
 }
 
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
 	method, ok := taskMethod[e.Task]
 	if !ok {
@@ -127,19 +123,25 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 		)
 	}
 
-	outputs := []*structpb.Struct{}
-	for _, input := range inputs {
+	for _, job := range jobs {
+		input, err := job.Input.Read(ctx)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 		taskIn := TaskInput{}
 		taskOut := TaskOutput{}
 
 		if err := base.ConvertFromStructpb(input, &taskIn); err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
 
 		// We may have different url in batch.
 		client, err := newClient(e.Setup, e.GetLogger())
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
 
 		// An API error is a valid output in this connector.
@@ -150,7 +152,8 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 
 		resp, err := req.Execute(method, taskIn.EndpointURL)
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
 
 		taskOut.StatusCode = resp.StatusCode()
@@ -165,12 +168,16 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 
 		output, err := base.ConvertToStructpb(taskOut)
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
-
-		outputs = append(outputs, output)
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 	}
-	return out.Write(ctx, outputs)
+	return nil
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {

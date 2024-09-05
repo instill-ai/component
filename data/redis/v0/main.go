@@ -56,12 +56,7 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	}, nil
 }
 
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
-	outputs := []*structpb.Struct{}
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
 	client, err := NewClient(e.Setup)
 	if err != nil {
@@ -69,48 +64,64 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 	}
 	defer client.Close()
 
-	for _, input := range inputs {
+	for _, job := range jobs {
+		input, err := job.Input.Read(ctx)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 		var output *structpb.Struct
 		switch e.Task {
 		case taskWriteChatMessage:
 			inputStruct := ChatMessageWriteInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 			outputStruct := WriteMessage(client, inputStruct)
 			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 		case taskWriteMultiModalChatMessage:
 			inputStruct := ChatMultiModalMessageWriteInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 			outputStruct := WriteMultiModelMessage(client, inputStruct)
 			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 		case taskRetrieveChatHistory:
 			inputStruct := ChatHistoryRetrieveInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 			outputStruct := RetrieveSessionMessages(client, inputStruct)
 			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 		default:
-			return fmt.Errorf("unsupported task: %s", e.Task)
+			job.Error.Error(ctx, fmt.Errorf("unsupported task: %s", e.Task))
+			continue
 		}
-		outputs = append(outputs, output)
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 	}
-	return out.Write(ctx, outputs)
+	return nil
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {

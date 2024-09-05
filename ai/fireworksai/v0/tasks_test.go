@@ -9,7 +9,6 @@ import (
 	qt "github.com/frankban/quicktest"
 	"github.com/gojuno/minimock/v3"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -94,17 +93,17 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "llama-v3p1-405b-instruct", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 			wantJSON, err := json.Marshal(TaskTextGenerationChatOuput{Text: "\nWhy did the tomato turn red?\nAnswer: Because it saw the salad dressing", Usage: TaskTextGenerationChatUsage{InputTokens: 10, OutputTokens: 18}})
 			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			c.Check(wantJSON, qt.JSONEquals, output.AsMap())
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = e.Execute(ctx, ir, ow)
+		err = e.Execute(ctx, []*base.Job{job})
 		c.Assert(err, qt.IsNil)
 
 	})
@@ -121,13 +120,15 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "gemini-1.5-pro", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
 		ow.WriteMock.Optional().Return(nil)
-		err = e.Execute(ctx, ir, ow)
+		eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+			c.Assert(err, qt.ErrorMatches, `error when sending chat request unsuccessful HTTP response`)
+		})
 
-		c.Assert(err, qt.ErrorMatches, `error when sending chat request unsuccessful HTTP response`)
+		err = e.Execute(ctx, []*base.Job{job})
+		c.Assert(err, qt.IsNil)
 	})
 
 	c.Run("ok - task embedding", func(c *qt.C) {
@@ -142,17 +143,17 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "nomic-ai/nomic-embed-text-v1.5", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 			wantJSON, err := json.Marshal(TaskTextEmbeddingsOutput{Embedding: []float32{0.1, 0.2, 0.3}, Usage: TaskTextEmbeddingsUsage{Tokens: 10}})
 			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			c.Check(wantJSON, qt.JSONEquals, output.AsMap())
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = e.Execute(ctx, ir, ow)
+		err = e.Execute(ctx, []*base.Job{job})
 		c.Assert(err, qt.IsNil)
 
 	})
@@ -169,12 +170,15 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "nomic-ai/nomic-embed-text-v1.87", "text": "The United Kingdom, made up of England, Scotland, Wales and Northern Ireland, is an island nation in northwestern Europe."})
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
 		ow.WriteMock.Optional().Return(nil)
-		err = e.Execute(ctx, ir, ow)
-		c.Assert(err, qt.ErrorMatches, `error when sending embeddings request unsuccessful HTTP response`)
+		eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+			c.Assert(err, qt.ErrorMatches, `error when sending embeddings request unsuccessful HTTP response`)
+		})
+
+		err = e.Execute(ctx, []*base.Job{job})
+		c.Assert(err, qt.IsNil)
 	})
 
 }

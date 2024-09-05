@@ -10,7 +10,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"github.com/instill-ai/x/errmsg"
 )
 
@@ -185,31 +184,29 @@ func TestOperator_Execute(t *testing.T) {
 			pbIn, err := structpb.NewStruct(tc.in)
 			c.Assert(err, qt.IsNil)
 
-			ir := mock.NewInputReaderMock(c)
-			ow := mock.NewOutputWriterMock(c)
-			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
-				c.Assert(outputs, qt.HasLen, 1)
+			ir, ow, eh, job := base.GenerateMockJob(c)
+			ir.ReadMock.Return(pbIn, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 
 				if tc.wantJSON != nil {
 					// Check JSON in the output string.
-					b := outputs[0].Fields["string"].GetStringValue()
+					b := output.Fields["string"].GetStringValue()
 					c.Check([]byte(b), qt.JSONEquals, tc.wantJSON)
 					return
 				}
 
-				gotJSON, err := outputs[0].MarshalJSON()
+				gotJSON, err := output.MarshalJSON()
 				c.Assert(err, qt.IsNil)
 				c.Check(gotJSON, qt.JSONEquals, tc.want)
 				return nil
 			})
+			eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+				if tc.wantErr != "" {
+					c.Check(errmsg.Message(err), qt.Matches, tc.wantErr)
+				}
+			})
 
-			err = exec.Execute(ctx, ir, ow)
-			if tc.wantErr != "" {
-				c.Check(errmsg.Message(err), qt.Matches, tc.wantErr)
-				return
-			}
-
+			err = exec.Execute(ctx, []*base.Job{job})
 			c.Check(err, qt.IsNil)
 
 		})

@@ -13,7 +13,6 @@ import (
 	qt "github.com/frankban/quicktest"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 )
@@ -114,16 +113,18 @@ func TestComponent_Execute(t *testing.T) {
 			c.Assert(err, qt.IsNil)
 
 			pbIn := new(structpb.Struct)
-			ir := mock.NewInputReaderMock(c)
-			ow := mock.NewOutputWriterMock(c)
-			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+			ir, ow, eh, job := base.GenerateMockJob(c)
+			ir.ReadMock.Return(pbIn, nil)
 			ow.WriteMock.Optional().Return(nil)
 
-			err = x.Execute(ctx, ir, ow)
-			c.Check(err, qt.IsNotNil)
+			eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+				want := "OpenAI responded with a 401 status code. Incorrect API key provided."
+				c.Check(errmsg.Message(err), qt.Equals, want)
+			})
 
-			want := "OpenAI responded with a 401 status code. Incorrect API key provided."
-			c.Check(errmsg.Message(err), qt.Equals, want)
+			err = x.Execute(ctx, []*base.Job{job})
+			c.Check(err, qt.IsNil)
+
 		})
 	}
 
@@ -136,16 +137,18 @@ func TestComponent_Execute(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
 		ow.WriteMock.Optional().Return(nil)
 
-		err = exec.Execute(ctx, ir, ow)
-		c.Check(err, qt.IsNotNil)
+		eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+			want := "FOOBAR task is not supported."
+			c.Check(errmsg.Message(err), qt.Equals, want)
+		})
 
-		want := "FOOBAR task is not supported."
-		c.Check(errmsg.Message(err), qt.Equals, want)
+		err = exec.Execute(ctx, []*base.Job{job})
+		c.Check(err, qt.IsNil)
+
 	})
 }
 

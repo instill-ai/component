@@ -110,68 +110,81 @@ func (e *execution) UsesInstillCredentials() bool {
 	return e.usesInstillCredentials
 }
 
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
-	client := newClient(e.Setup, e.GetLogger())
-	outputs := []*structpb.Struct{}
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
-	for _, input := range inputs {
+	client := newClient(e.Setup, e.GetLogger())
+
+	for _, job := range jobs {
+		input, err := job.Input.Read(ctx)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
+		var output *structpb.Struct
 		switch e.Task {
 		case TextToImageTask:
 			params, err := parseTextToImageReq(input)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 			resp := ImageTaskRes{}
 			req := client.R().SetResult(&resp).SetBody(params)
 
 			if _, err := req.Post(params.path); err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
-			output, err := textToImageOutput(resp)
+			output, err = textToImageOutput(resp)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
-			outputs = append(outputs, output)
 		case ImageToImageTask:
 			params, err := parseImageToImageReq(input)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 			data, ct, err := params.getBytes()
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 			resp := ImageTaskRes{}
 			req := client.R().SetBody(data).SetResult(&resp).SetHeader("Content-Type", ct)
 
 			if _, err := req.Post(params.path); err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
-			output, err := imageToImageOutput(resp)
+			output, err = imageToImageOutput(resp)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
-
-			outputs = append(outputs, output)
 
 		default:
-			return errmsg.AddMessage(
+			job.Error.Error(ctx, errmsg.AddMessage(
 				fmt.Errorf("not supported task: %s", e.Task),
 				fmt.Sprintf("%s task is not supported.", e.Task),
-			)
+			))
+			continue
 		}
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
+
 	}
-	return out.Write(ctx, outputs)
+	return nil
 }
 
 // Test checks the connector state.

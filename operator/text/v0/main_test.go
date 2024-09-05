@@ -6,7 +6,6 @@ import (
 
 	"github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -57,26 +56,21 @@ func TestOperator(t *testing.T) {
 			c.Assert(err, quicktest.IsNil)
 			c.Assert(execution, quicktest.IsNotNil)
 
-			input := []*structpb.Struct{&tc.input}
-
-			ir := mock.NewInputReaderMock(c)
-			ow := mock.NewOutputWriterMock(c)
-			ir.ReadMock.Return(input, nil)
-			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			ir, ow, eh, job := base.GenerateMockJob(c)
+			ir.ReadMock.Return(&tc.input, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 				if tc.name == "error case" {
-					c.Assert(outputs, quicktest.IsNil)
+					c.Assert(output, quicktest.IsNil)
 					return
 				}
-				c.Assert(outputs, quicktest.HasLen, 1)
 				return nil
 			})
-
-			err = execution.Execute(ctx, ir, ow)
-
-			if tc.name == "error case" {
-				c.Assert(err, quicktest.ErrorMatches, "not supported task: FAKE_TASK")
-				return
-			}
+			eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+				if tc.name == "error case" {
+					c.Assert(err, quicktest.ErrorMatches, "not supported task: FAKE_TASK")
+				}
+			})
+			err = execution.Execute(ctx, []*base.Job{job})
 			c.Assert(err, quicktest.IsNil)
 
 		})

@@ -13,7 +13,6 @@ import (
 	qt "github.com/frankban/quicktest"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 )
 
 const (
@@ -130,17 +129,17 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "llama-3.1-405b-reasoning", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 			wantJSON, err := json.Marshal(TaskTextGenerationChatOuput{Text: "\nWhy did the tomato turn red?\nAnswer: Because it saw the salad dressing", Usage: TaskTextGenerationChatUsage{InputTokens: 24, OutputTokens: 377}})
 			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			c.Check(wantJSON, qt.JSONEquals, output.AsMap())
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = e.Execute(ctx, ir, ow)
+		err = e.Execute(ctx, []*base.Job{job})
 		c.Assert(err, qt.IsNil)
 
 	})
@@ -159,13 +158,16 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(map[string]any{"model": "gemini", "prompt": "Tell me a joke"})
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
 		ow.WriteMock.Optional().Return(nil)
+		eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+			c.Assert(err, qt.ErrorMatches, `error when sending chat request no access to "gemini"`)
+		})
 
-		err = e.Execute(ctx, ir, ow)
-		c.Assert(err, qt.ErrorMatches, `error when sending chat request no access to "gemini"`)
+		err = e.Execute(ctx, []*base.Job{job})
+		c.Assert(err, qt.IsNil)
+
 	})
 
 }

@@ -69,11 +69,7 @@ func getSearchEngineID(setup *structpb.Struct) string {
 	return setup.GetFields()["cse-id"].GetStringValue()
 }
 
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
 	service, err := NewService(getAPIKey(e.Setup))
 	if err != nil || service == nil {
@@ -81,42 +77,54 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 	}
 	cseListCall := service.Cse.List().Cx(getSearchEngineID(e.Setup))
 
-	outputs := []*structpb.Struct{}
-
-	for _, input := range inputs {
+	for _, job := range jobs {
+		input, err := job.Input.Read(ctx)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 		switch e.Task {
 		case taskSearch:
 
 			inputStruct := SearchInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 			// Make the search request
 			outputStruct, err := search(cseListCall, inputStruct)
 
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 			outputJSON, err := json.Marshal(outputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
-			output := structpb.Struct{}
-			err = json.Unmarshal(outputJSON, &output)
+			output := &structpb.Struct{}
+			err = json.Unmarshal(outputJSON, output)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
-			outputs = append(outputs, &output)
+			err = job.Output.Write(ctx, output)
+			if err != nil {
+				job.Error.Error(ctx, err)
+				continue
+			}
 
 		default:
-			return fmt.Errorf("not supported task: %s", e.Task)
+			job.Error.Error(ctx, fmt.Errorf("not supported task: %s", e.Task))
+			continue
 		}
 	}
 
-	return out.Write(ctx, outputs)
+	return nil
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {

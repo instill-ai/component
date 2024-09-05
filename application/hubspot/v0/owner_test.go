@@ -10,7 +10,6 @@ import (
 	hubspot "github.com/belong-inc/go-hubspot"
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -122,30 +121,25 @@ func TestComponent_ExecuteGetOwnerTask(t *testing.T) {
 
 			c.Assert(err, qt.IsNil)
 
-			input := []*structpb.Struct{pbInput}
-
-			ir := mock.NewInputReaderMock(c)
-			ir.ReadMock.Return(input, nil)
-			ow := mock.NewOutputWriterMock(c)
-			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			ir, ow, eh, job := base.GenerateMockJob(c)
+			ir.ReadMock.Return(pbInput, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 				if tc.name == "error case" {
-					c.Assert(outputs, qt.IsNil)
+					c.Assert(output, qt.IsNil)
 					return
 				}
-				c.Assert(outputs, qt.HasLen, 1)
-				res := outputs[0]
-				resJSON, err := protojson.Marshal(res)
+				resJSON, err := protojson.Marshal(output)
 				c.Check(resJSON, qt.JSONEquals, tc.wantResp)
 				c.Assert(err, qt.IsNil)
 				return nil
 			})
+			eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+				if tc.wantErr != "" {
+					c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				}
+			})
 
-			err = e.Execute(ctx, ir, ow)
-			if tc.wantErr != "" {
-				c.Assert(err, qt.ErrorMatches, tc.wantErr)
-				return
-			}
-
+			err = e.Execute(ctx, []*base.Job{job})
 			c.Assert(err, qt.IsNil)
 
 		})

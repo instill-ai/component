@@ -8,8 +8,8 @@ import (
 	_ "embed"
 
 	qt "github.com/frankban/quicktest"
-
 	"github.com/instill-ai/component/internal/mock"
+
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -61,7 +61,7 @@ func TestExecutionWrapper_Execute(t *testing.T) {
 		{
 			name:    "nok - invalid input",
 			in:      map[string]any{"text": "What's Horace Andy's biggest hit?"},
-			wantErr: `inputs\[0\]: missing properties: 'model'`,
+			wantErr: `input: missing properties: 'model'`,
 		},
 		{
 			name:     "nok - check error",
@@ -128,19 +128,25 @@ func TestExecutionWrapper_Execute(t *testing.T) {
 
 			ir := mock.NewInputReaderMock(c)
 			ow := mock.NewOutputWriterMock(c)
-			ir.ReadMock.Return([]*structpb.Struct{pbin}, nil)
-			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			eh := mock.NewErrorHandlerMock(c)
+			job := &Job{
+				Input:  ir,
+				Output: ow,
+				Error:  eh,
+			}
+			ir.ReadMock.Return(pbin, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 				if tc.outErr != nil {
 					return tc.outErr
 				}
-				c.Assert(outputs, qt.HasLen, 1)
-				gotJSON, err := outputs[0].MarshalJSON()
+				gotJSON, err := output.MarshalJSON()
 				c.Assert(err, qt.IsNil)
 				c.Check(gotJSON, qt.JSONEquals, tc.want)
 				return nil
 			})
+			eh.ErrorMock.Optional()
 
-			err = xw.Execute(ctx, ir, ow)
+			err = xw.Execute(ctx, []*Job{job})
 			if tc.wantErr != "" {
 				c.Check(err, qt.IsNotNil)
 				c.Check(err, qt.ErrorMatches, tc.wantErr)
@@ -159,27 +165,28 @@ type testExec struct {
 	err error
 }
 
-func (e *testExec) Execute(ctx context.Context, ir InputReader, ow OutputWriter) error {
-	_, err := ir.Read(ctx)
-	if err != nil {
-		return err
+func (e *testExec) Execute(ctx context.Context, jobs []*Job) error {
+	for _, job := range jobs {
+		_, err := job.Input.Read(ctx)
+		if err != nil {
+			return err
+		}
 	}
+
 	if e.out == nil {
 		return e.err
 	}
 
-	pbout := make([]*structpb.Struct, len(e.out))
 	for i, o := range e.out {
 		pbo, err := structpb.NewStruct(o)
 		if err != nil {
 			panic(err)
 		}
-		pbout[i] = pbo
+		if err := jobs[i].Output.Write(ctx, pbo); err != nil {
+			return err
+		}
 	}
 
-	if err := ow.Write(ctx, pbout); err != nil {
-		return err
-	}
 	return e.err
 }
 

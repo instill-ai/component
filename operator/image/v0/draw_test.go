@@ -7,7 +7,7 @@ import (
 
 	_ "embed" // embed
 
-	"github.com/instill-ai/component/internal/mock"
+	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -44,19 +44,15 @@ func TestDrawClassification(t *testing.T) {
 		}
 	}
 
-	inputs := []*structpb.Struct{
-		inputDog,
-	}
-
 	e := &execution{}
 	e.Task = "TASK_DRAW_CLASSIFICATION"
 
-	ir := mock.NewInputReaderMock(t)
-	ow := mock.NewOutputWriterMock(t)
-	ir.ReadMock.Return(inputs, nil)
+	ir, ow, eh, job := base.GenerateMockJob(t)
+	ir.ReadMock.Return(inputDog, nil)
 	ow.WriteMock.Optional().Return(nil)
+	eh.ErrorMock.Optional()
 
-	if err := e.Execute(context.Background(), ir, ow); err != nil {
+	if err := e.Execute(context.Background(), []*base.Job{job}); err != nil {
 		t.Fatalf("drawClassification returned an error: %v", err)
 	}
 }
@@ -78,19 +74,14 @@ func TestDrawDetection(t *testing.T) {
 		}
 	}
 
-	inputs := []*structpb.Struct{
-		inputCOCO1,
-		// inputCOCO2,
-	}
-
 	e := &execution{}
 	e.Task = "TASK_DRAW_DETECTION"
 
-	ir := mock.NewInputReaderMock(t)
-	ow := mock.NewOutputWriterMock(t)
-	ir.ReadMock.Return(inputs, nil)
+	ir, ow, eh, job := base.GenerateMockJob(t)
+	ir.ReadMock.Return(inputCOCO1, nil)
 	ow.WriteMock.Optional().Return(nil)
-	if err := e.Execute(context.Background(), ir, ow); err != nil {
+	eh.ErrorMock.Optional()
+	if err := e.Execute(context.Background(), []*base.Job{job}); err != nil {
 		t.Fatalf("drawDetection returned an error: %v", err)
 	}
 }
@@ -112,19 +103,14 @@ func TestDrawKeypoint(t *testing.T) {
 		}
 	}
 
-	inputs := []*structpb.Struct{
-		inputCOCO1,
-		// inputCOCO2,
-	}
-
 	e := &execution{}
 	e.Task = "TASK_DRAW_KEYPOINT"
 
-	ir := mock.NewInputReaderMock(t)
-	ow := mock.NewOutputWriterMock(t)
-	ir.ReadMock.Return(inputs, nil)
+	ir, ow, eh, job := base.GenerateMockJob(t)
+	ir.ReadMock.Return(inputCOCO1, nil)
 	ow.WriteMock.Optional().Return(nil)
-	if err := e.Execute(context.Background(), ir, ow); err != nil {
+	eh.ErrorMock.Optional()
+	if err := e.Execute(context.Background(), []*base.Job{job}); err != nil {
 		t.Fatalf("drawKeypoint returned an error: %v", err)
 	}
 }
@@ -146,18 +132,14 @@ func TestDrawOCR(t *testing.T) {
 		}
 	}
 
-	inputs := []*structpb.Struct{
-		inputMM,
-	}
-
 	e := &execution{}
 	e.Task = "TASK_DRAW_OCR"
 
-	ir := mock.NewInputReaderMock(t)
-	ow := mock.NewOutputWriterMock(t)
-	ir.ReadMock.Return(inputs, nil)
+	ir, ow, eh, job := base.GenerateMockJob(t)
+	ir.ReadMock.Return(inputMM, nil)
 	ow.WriteMock.Optional().Return(nil)
-	if err := e.Execute(context.Background(), ir, ow); err != nil {
+	eh.ErrorMock.Optional()
+	if err := e.Execute(context.Background(), []*base.Job{job}); err != nil {
 		t.Fatalf("drawKeypoint returned an error: %v", err)
 	}
 }
@@ -195,13 +177,16 @@ func TestDrawInstanceSegmentation(t *testing.T) {
 	e := &execution{}
 	e.Task = "TASK_DRAW_INSTANCE_SEGMENTATION"
 
-	ir := mock.NewInputReaderMock(t)
-	ow := mock.NewOutputWriterMock(t)
-	ir.ReadMock.Return(inputs, nil)
-	ow.WriteMock.Optional().Return(nil)
-	if err := e.Execute(context.Background(), ir, ow); err != nil {
-		t.Fatalf("drawInstanceSegmentation returned an error: %v", err)
+	for _, input := range inputs {
+		ir, ow, eh, job := base.GenerateMockJob(t)
+		ir.ReadMock.Return(input, nil)
+		ow.WriteMock.Optional().Return(nil)
+		eh.ErrorMock.Optional()
+		if err := e.Execute(context.Background(), []*base.Job{job}); err != nil {
+			t.Fatalf("drawInstanceSegmentation returned an error: %v", err)
+		}
 	}
+
 }
 
 // TestDrawSemanticSegmentation tests the drawSemanticSegmentation function
@@ -214,19 +199,15 @@ func TestDrawSemanticSegmentation(t *testing.T) {
 		}
 	}
 
-	inputs := []*structpb.Struct{
-		inputCityscape,
-	}
-
 	e := &execution{}
 	e.Task = "TASK_DRAW_SEMANTIC_SEGMENTATION"
 
-	ir := mock.NewInputReaderMock(t)
-	ow := mock.NewOutputWriterMock(t)
-	ir.ReadMock.Return(inputs, nil)
+	ir, ow, eh, job := base.GenerateMockJob(t)
+	ir.ReadMock.Return(inputCityscape, nil)
 	ow.WriteMock.Optional().Return(nil)
+	eh.ErrorMock.Optional()
 
-	if err := e.Execute(context.Background(), ir, ow); err != nil {
+	if err := e.Execute(context.Background(), []*base.Job{job}); err != nil {
 		t.Fatalf("drawSemanticSegmentation returned an error: %v", err)
 	}
 }

@@ -9,7 +9,6 @@ import (
 	cohereSDK "github.com/cohere-ai/cohere-go/v2"
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -94,17 +93,17 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(commandTc.input)
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 			wantJSON, err := json.Marshal(commandTc.wantResp)
 			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			c.Check(wantJSON, qt.JSONEquals, output.AsMap())
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = exec.Execute(ctx, ir, ow)
+		err = exec.Execute(ctx, []*base.Job{job})
 		c.Assert(err, qt.IsNil)
 
 	})
@@ -131,17 +130,17 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(embedFloatTc.input)
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 			wantJSON, err := json.Marshal(embedFloatTc.wantResp)
 			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			c.Check(wantJSON, qt.JSONEquals, output.AsMap())
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = exec.Execute(ctx, ir, ow)
+		err = exec.Execute(ctx, []*base.Job{job})
 		c.Assert(err, qt.IsNil)
 
 	})
@@ -168,17 +167,17 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(embedIntTc.input)
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 			wantJSON, err := json.Marshal(embedIntTc.wantResp)
 			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			c.Check(wantJSON, qt.JSONEquals, output.AsMap())
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = exec.Execute(ctx, ir, ow)
+		err = exec.Execute(ctx, []*base.Job{job})
 		c.Assert(err, qt.IsNil)
 
 	})
@@ -204,17 +203,17 @@ func TestComponent_Tasks(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(rerankTc.input)
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 			wantJSON, err := json.Marshal(rerankTc.wantResp)
 			c.Assert(err, qt.IsNil)
-			c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+			c.Check(wantJSON, qt.JSONEquals, output.AsMap())
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = exec.Execute(ctx, ir, ow)
+		err = exec.Execute(ctx, []*base.Job{job})
 		c.Assert(err, qt.IsNil)
 
 	})
