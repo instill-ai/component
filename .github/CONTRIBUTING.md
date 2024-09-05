@@ -522,8 +522,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	return e, nil
 }
 
-func (e *execution) Execute(context.Context, []*structpb.Struct) ([]*structpb.Struct, error) {
-	return nil, nil
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
+	return nil
 }
 ```
 
@@ -555,26 +555,28 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 
 	return e, nil
 }
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
-	outputs := make([]*structpb.Struct, len(inputs))
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
 	// An execution  might take several inputs. One result will be returned for
 	// each one of them, containing the execution output for that set of
 	// parameters.
-	for i, input := range inputs {
+	for i, job := range jobs {
+    input, err := job.Input.Read(ctx)
+    if err != nil {
+      return err
+    }
 		output, err := e.execute(input)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		outputs[i] = output
+		err = job.Output.Write(ctx, output)
+    if err != nil {
+			return err
+		}
 	}
 
-	return out.Write(ctx, outputs)
+	return nil
 }
 
 func (e *execution) greet(in *structpb.Struct) (*structpb.Struct, error) {
@@ -655,13 +657,19 @@ func TestOperator_Execute(t *testing.T) {
 		pbIn, err := structpb.NewStruct(map[string]any{"target": "bolero-wombat"})
 		c.Assert(err, qt.IsNil)
 
-		got, err := exec.Execution.Execute(ctx, []*structpb.Struct{pbIn})
-		c.Check(err, qt.IsNil)
-		c.Assert(got, qt.HasLen, 1)
+    ir, ow, eh, job := base.GenerateMockJob(c)
+    ir.ReadMock.Return(&pbIn, nil)
+    ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
+      // Check JSON in the output string.
+      greeting := output.Fields["greeting"].GetStringValue()
+      c.Check(greeting, qt.Equals, "Hello, bolero-wombat!")
+      return nil
+    })
+    eh.ErrorMock.Optional()
 
-		// Check JSON in the output string.
-		greeting := got[0].Fields["greeting"].GetStringValue()
-		c.Check(greeting, qt.Equals, "Hello, bolero-wombat!")
+    err = execution.Execute(ctx, []*base.Job{job})
+    c.Assert(err, qt.IsNil)
+
 	})
 }
 
