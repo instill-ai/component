@@ -363,7 +363,7 @@
         "title": "Sentiment Score",
         "type": "integer"
       },
-      "intial-sentiment-score": {
+      "initial-sentiment-score": {
         "description": "The initial sentiment score of the ticket",
         "title": "Initial Sentiment Score",
         "type": "integer"
@@ -654,7 +654,7 @@
           "$ref": "#/$defs/ticket/forward-emails",
           "instillFormat": "array:string",
           "items": {
-            "title": "Foward Email",
+            "title": "Forward Email",
             "type": "string",
             "description": "One of the email address added while forwarding a ticket",
             "instillFormat": "string"
@@ -796,8 +796,8 @@
           "instillFormat": "integer",
           "instillUIOrder": 29
         },
-        "intial-sentiment-score": {
-          "$ref": "#/$defs/ticket/intial-sentiment-score",
+        "initial-sentiment-score": {
+          "$ref": "#/$defs/ticket/initial-sentiment-score",
           "instillFormat": "integer",
           "instillUIOrder": 30
         },
@@ -1897,6 +1897,17 @@
           "instillAcceptFormats": ["string"],
           "instillUIMultiline": false,
           "instillUpstreamTypes": ["value", "template", "reference"]
+        },
+        "length":{
+          "description": "The maximum number of IDs allowed is 500. The most recent IDs will be retrieved.",
+          "default": 50, 
+          "title": "Length",
+          "type": "integer",
+          "instillUIOrder": 1,
+          "instillFormat":"integer",
+          "instillAcceptFormats": ["integer"],
+          "instillUIMultiline": false,
+          "instillUpstreamTypes": ["value", "template", "reference"]
         }
       },
       "required": ["object-type"],
@@ -2196,7 +2207,7 @@
     }
   },
   "TASK_GET_ROLE":{
-    "instillShortDescription": "Get role using ID. This task will only work if you have admin privileges. Roles allow agents/collaborators to have different priviledges.",
+    "instillShortDescription": "Get role using ID. This task will only work if you have admin privileges. Roles allow agents/collaborators to have different privileges.",
     "input": {
       "description": "Role ID",
       "instillUIOrder": 0,

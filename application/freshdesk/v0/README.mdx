@@ -96,7 +96,7 @@ Get ticket using ID
 | Updated At | `updated-at` | string | Timestamp that denotes when the ticket was last updated. In UTC format. |
 | Attachments (optional) | `attachments` | array[object] | Ticket attachments (cannot be more than 20MB) |
 | Sentiment Score (optional) | `sentiment-score` | integer | Freshdesk uses AI to assess the emotional tone and attitude expressed in customer interaction. |
-| Initial Sentiment Score (optional) | `intial-sentiment-score` | integer | The initial sentiment score of the ticket |
+| Initial Sentiment Score (optional) | `initial-sentiment-score` | integer | The initial sentiment score of the ticket |
 | Custom Fields (optional) | `custom-fields` | object | Custom fields that the ticket have. Custom fields can be created or modified in Admin -> Ticket Fields |
 
 
@@ -366,6 +366,7 @@ Task to get all the IDs of existing contacts, companies, tickets, products, agen
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_ALL` |
 | Object Type (required) | `object-type` | string | Type of object to get IDs for |
+| Length | `length` | integer | The maximum number of IDs allowed is 500. The most recent IDs will be retrieved. |
 
 
 
@@ -447,7 +448,7 @@ Get agent using ID. This task will only work if you have admin privileges. Agent
 
 ### Get Role
 
-Get role using ID. This task will only work if you have admin privileges. Roles allow agents/collaborators to have different priviledges.
+Get role using ID. This task will only work if you have admin privileges. Roles allow agents/collaborators to have different privileges.
 
 
 | Input | ID | Type | Description |

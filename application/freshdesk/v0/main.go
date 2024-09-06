@@ -147,13 +147,6 @@ func convertTimestampResp(timestamp string) string {
 	return formattedTime
 }
 
-// func checkForNilInt64(input *[]int64) *[]int64 {
-// 	if *input == nil {
-// 		return &[]int64{}
-// 	}
-// 	return input
-// }
-
 func checkForNilString(input *[]string) *[]string {
 	if *input == nil {
 		return &[]string{}

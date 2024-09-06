@@ -47,6 +47,7 @@ func TestComponent_ExecuteGetAllTask(t *testing.T) {
 		name: "ok - task get all",
 		input: TaskGetAllInput{
 			ObjectType: "Tickets",
+			Limit:      7,
 		},
 		wantOutput: TaskGetAllOutput{
 			IDs:      []int64{1, 2, 3, 4, 5, 6, 7},
