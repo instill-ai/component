@@ -27,10 +27,10 @@ var (
 
 const (
 	apiBaseURL         = "https://app.asana.com/api/1.0"
-	TaskAsanaGoal      = "TASK_ASANA_GOAL"
-	TaskAsanaTask      = "TASK_ASANA_TASK"
-	TaskAsanaPortfolio = "TASK_ASANA_PORTFOLIO"
-	TaskAsanaProject   = "TASK_ASANA_PROJECT"
+	TaskAsanaGoal      = "TASK_CRUD_GOAL"
+	TaskAsanaTask      = "TASK_CRUD_TASK"
+	TaskAsanaPortfolio = "TASK_CRUD_PORTFOLIO"
+	TaskAsanaProject   = "TASK_CRUD_PROJECT"
 )
 
 type component struct {

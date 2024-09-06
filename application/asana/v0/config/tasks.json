@@ -1,6 +1,6 @@
 {
-  "TASK_ASANA_GOAL": {
-    "description": "Goal Related Task",
+  "TASK_CRUD_GOAL": {
+    "description": "Create, Update, Delete, Read and Duplicate goal in Asana",
     "instillShortDescription": "Goal Related Task, including get, update, delete, create, duplicate",
     "input": {
       "description": "Goal Related Task, including get, update, delete, create, duplicate",
@@ -435,7 +435,7 @@
           "instillShortDescription": "The users who likes the goal.",
           "instillUIOrder": 7,
           "title": "Likes",
-          "instillFormat": "array",
+          "instillFormat": "array:object",
           "type": "array",
           "items": {
             "type": "object",
@@ -478,12 +478,12 @@
       "type": "object"
     }
   },
-  "TASK_ASANA_TASK": {
-    "description": "Task Related Task",
-    "instillShortDescription": "Task Related Task, including get, update, delete, create, set parent, add tag, remove tag, add follower, remove follower, add project, remove project",
+  "TASK_CRUD_TASK": {
+    "description": "Create, Update, Delete, Read and Duplicate Task in Asana",
+    "instillShortDescription": "Task Related Task, including get, update, delete, create, duplicate",
     "input": {
-      "description": "Task Related Task, including get, update, delete, create, set parent, add tag, remove tag, add follower, remove follower, add project, remove project",
-      "instillShortDescription": "Task Related Task, including get, update, delete, create, set parent, add tag, remove tag, add follower, remove follower, add project, remove project",
+      "description": "Task Related Task, including get, update, delete, create, duplicate",
+      "instillShortDescription": "Task Related Task, including get, update, delete, create, duplicate",
       "instillUIOrder": 0,
       "instillEditOnNodeFields": [
         "action"
@@ -1303,7 +1303,7 @@
           "instillShortDescription": "The projects of the task.",
           "instillUIOrder": 4,
           "title": "Projects",
-          "instillFormat": "array",
+          "instillFormat": "array:object",
           "type": "array",
           "items": {
             "type": "object",
@@ -1360,7 +1360,7 @@
           "instillShortDescription": "The users who likes the task.",
           "instillUIOrder": 7,
           "title": "Likes",
-          "instillFormat": "array",
+          "instillFormat": "array:object",
           "type": "array",
           "items": {
             "type": "object",
@@ -1443,8 +1443,8 @@
       "type": "object"
     }
   },
-  "TASK_ASANA_PROJECT": {
-    "description": "Project Related Task",
+  "TASK_CRUD_PROJECT": {
+    "description": "Create, Update, Delete, Read and Duplicate project in Asana",
     "instillShortDescription": "Project Related Task, including get, update, delete, create, duplicate",
     "input": {
       "description": "Project Related Task, including get, update, delete, create, duplicate",
@@ -2183,11 +2183,11 @@
       "type": "object"
     }
   },
-  "TASK_ASANA_PORTFOLIO": {
-    "description": "Portfolio Related Task",
-    "instillShortDescription": "Portfolio Related Task, including get, update, delete, create, duplicate",
+  "TASK_CRUD_PORTFOLIO": {
+    "description": "Create, Update, Delete and Read portfolio in Asana",
+    "instillShortDescription": "Portfolio Related Task, including get, update, delete, create",
     "input": {
-      "description": "Portfolio Related Task, including get, update, delete, create, duplicate",
+      "description": "Portfolio Related Task, including get, update, delete, create",
       "instillUIOrder": 0,
       "instillEditOnNodeFields": [
         "action"

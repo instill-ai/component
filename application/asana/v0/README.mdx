@@ -8,10 +8,10 @@ description: "Learn about how to set up a VDP Asana component https://github.com
 The Asana component is an application component that allows users to do anything available on Asana.
 It can carry out the following tasks:
 
-- [Asana Goal](#asana-goal)
-- [Asana Task](#asana-task)
-- [Asana Project](#asana-project)
-- [Asana Portfolio](#asana-portfolio)
+- [Crud Goal](#crud-goal)
+- [Crud Task](#crud-task)
+- [Crud Project](#crud-project)
+- [Crud Portfolio](#crud-portfolio)
 
 
 
@@ -33,21 +33,21 @@ The component configuration is defined and maintained [here](https://github.com/
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Token (required) | `token` | string | Fill in your Asana Personal Access Token (PAT). You can generate one from <a href="https://app.asana.com/0/my-apps">developer console<a/> |
+| Token (required) | `token` | string | Fill in your Asana Personal Access Token (PAT). You can generate one from <a href="https://app.asana.com/0/my-apps">developer console</a> |
 
 
 
 
 ## Supported Tasks
 
-### Asana Goal
+### Crud Goal
 
 Goal Related Task, including get, update, delete, create, duplicate
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_ASANA_GOAL` |
+| Task ID (required) | `task` | string | `TASK_CRUD_GOAL` |
 | Action | `action` | object | action |
 
 
@@ -69,14 +69,14 @@ Goal Related Task, including get, update, delete, create, duplicate
 
 
 
-### Asana Task
+### Crud Task
 
-Task Related Task, including get, update, delete, create, set parent, add tag, remove tag, add follower, remove follower, add project, remove project
+Task Related Task, including get, update, delete, create, duplicate
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_ASANA_TASK` |
+| Task ID (required) | `task` | string | `TASK_CRUD_TASK` |
 | Action | `action` | object | Action |
 
 
@@ -103,14 +103,14 @@ Task Related Task, including get, update, delete, create, set parent, add tag, r
 
 
 
-### Asana Project
+### Crud Project
 
 Project Related Task, including get, update, delete, create, duplicate
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_ASANA_PROJECT` |
+| Task ID (required) | `task` | string | `TASK_CRUD_PROJECT` |
 | Action | `action` | object | action |
 
 
@@ -139,14 +139,14 @@ Project Related Task, including get, update, delete, create, duplicate
 
 
 
-### Asana Portfolio
+### Crud Portfolio
 
-Portfolio Related Task, including get, update, delete, create, duplicate
+Portfolio Related Task, including get, update, delete, create
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_ASANA_PORTFOLIO` |
+| Task ID (required) | `task` | string | `TASK_CRUD_PORTFOLIO` |
 | Action | `action` | object | action |
 
 

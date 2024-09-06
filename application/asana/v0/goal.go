@@ -115,16 +115,6 @@ func (c *Client) UpdateGoal(ctx context.Context, props *structpb.Struct) (*struc
 		},
 	})
 	req := c.Client.R().SetResult(&GoalTaskResp{}).SetBody(string(body))
-	// req := c.Client.R().SetResult(&GoalTaskResp{}).SetBody(map[string]interface{}{
-	// 	"data": &UpdateGoalReq{
-	// 		Name:    input.Name,
-	// 		Notes:   input.Notes,
-	// 		DueOn:   input.DueOn,
-	// 		StartOn: input.StartOn,
-	// 		Liked:   input.Liked,
-	// 		Status:  input.Status,
-	// 	},
-	// })
 
 	wantOptFields := parseWantOptionFields(Goal{})
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {

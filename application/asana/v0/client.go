@@ -37,7 +37,11 @@ func newClient(_ context.Context, setup *structpb.Struct, logger *zap.Logger) (*
 			"token not provided",
 		)
 	}
-
+	if baseURL == "" {
+		// Base URL is only left for mock server testing
+		// We can use the default base URL for the production
+		baseURL = apiBaseURL
+	}
 	asanaClient := httpclient.New(
 		"Asana-Client",
 		baseURL,
