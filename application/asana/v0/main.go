@@ -82,25 +82,31 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	return e, nil
 }
 
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
-	outputs := make([]*structpb.Struct, len(inputs))
-
-	for i, input := range inputs {
-		input, err := e.ComponentExecution.FillInDefaultValues(input)
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
+	for _, job := range jobs {
+		input, err := job.Input.Read(ctx)
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
+
+		// TODO: use FillInDefaultValues for all components
+		if _, err := e.FillInDefaultValues(input); err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
+
 		output, err := e.execute(ctx, input)
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
 
-		outputs[i] = output
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 	}
-
-	return out.Write(ctx, outputs)
+	return nil
 }
