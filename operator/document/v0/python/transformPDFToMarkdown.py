@@ -61,13 +61,14 @@ class PdfTransformer:
 		for page in self.pages:
 			for line in page.extract_text_lines():
 				height = int(line["bottom"] - line["top"])
+
 				if height > largest_text_height:
 					second_largest_text_height = largest_text_height
 					largest_text_height = height
 				elif height > second_largest_text_height and height < largest_text_height:
 					second_largest_text_height = height
-		self.title_height = largest_text_height * tolerance
-		self.subtitle_height = second_largest_text_height * tolerance
+		self.title_height = round(largest_text_height * tolerance)
+		self.subtitle_height = round(second_largest_text_height * tolerance)
 
 	def set_paragraph_information(self, lines):
 		def round_to_nearest_upper_bound(value, step=3): # for the golden sample case
@@ -79,6 +80,7 @@ class PdfTransformer:
 
 		distances = []
 		paragraph_width = 0
+		distances_to_left = []
 
 		for _, line in enumerate(lines):
 			if line["distance_to_next_line"] and line["distance_to_next_line"] > 0:
@@ -89,15 +91,24 @@ class PdfTransformer:
 			if line["line_width"] > paragraph_width:
 				paragraph_width = line["line_width"]
 
+			if line["x0"]:
+				distances_to_left.append(line["x0"])
+
 		# Find the most common distance
 		if distances:
 			common_distance = Counter(distances).most_common(1)[0][0]
 		else:
 			common_distance = 10 ## default value
 
+		if distances_to_left:
+			zero_indent_distance = min(distances_to_left)
+		else:
+			zero_indent_distance = 0
 		paragraph_distance = common_distance * 1.5
 		self.paragraph_distance = paragraph_distance
 		self.paragraph_width = paragraph_width
+		self.zero_indent_distance = zero_indent_distance
+
 
 	def execute(self):
 		self.set_line_type(self.title_height, self.subtitle_height, "indent")
@@ -305,6 +316,12 @@ class PdfTransformer:
 			else:
 				result += f"## {line['text']}\n"
 		elif "paragraph" in line["type"]:
+			# Deal with indentation
+			if self.zero_indent_distance != 0:
+				indent = round((line["x0"] - self.zero_indent_distance) // 10)  # to be tuned
+				if indent > 0:
+					result += " " * indent
+
 			result += line["text"]
 			if (
 				(i < len(lines) - 1) and
