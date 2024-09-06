@@ -78,10 +78,16 @@ func getRequestMetadata(vars map[string]any) metadata.MD {
 	return md
 }
 
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
+
+	var err error
+	inputs := make([]*structpb.Struct, len(jobs))
+	for idx, job := range jobs {
+		inputs[idx], err = job.Input.Read(ctx)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 	}
 
 	if len(inputs) <= 0 || inputs[0] == nil {
@@ -125,8 +131,15 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 	if err != nil {
 		return err
 	}
+	for idx, job := range jobs {
+		err = job.Output.Write(ctx, result[idx])
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
+	}
 
-	return out.Write(ctx, result)
+	return nil
 
 }
 

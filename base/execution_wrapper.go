@@ -2,7 +2,6 @@ package base
 
 import (
 	"context"
-	"sync"
 
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -15,64 +14,56 @@ type ExecutionWrapper struct {
 	IExecution
 }
 
-type inputReaderInterceptor struct {
-	InputReader
-	schema       string
-	usageHandler UsageHandler
-	inputs       []*structpb.Struct
+type inputReader struct {
+	schema string
+	input  *structpb.Struct
 }
 
-func (ir *inputReaderInterceptor) Read(ctx context.Context) (inputs []*structpb.Struct, err error) {
-	inputs, err = ir.InputReader.Read(ctx)
-	if err != nil {
-		return nil, err
+func NewInputReader(input *structpb.Struct, schema string) *inputReader {
+	return &inputReader{
+		input:  input,
+		schema: schema,
 	}
-	if err = Validate(inputs, ir.schema, "inputs"); err != nil {
-		return nil, err
-	}
-
-	if err = ir.usageHandler.Check(ctx, inputs); err != nil {
-		return nil, err
-	}
-	ir.inputs = inputs
-	return inputs, nil
 }
 
-func (ir *inputReaderInterceptor) GetInputs() []*structpb.Struct {
-	return ir.inputs
+func (ir *inputReader) Read(ctx context.Context) (input *structpb.Struct, err error) {
+	input = ir.input
+	if err = Validate(input, ir.schema, "input"); err != nil {
+		return nil, err
+	}
+	return input, nil
 }
 
-type outputWriterInterceptor struct {
+type outputWriter struct {
 	OutputWriter
-	mu                     sync.Mutex
-	schema                 string
-	inputReaderInterceptor *inputReaderInterceptor
-	outputs                []*structpb.Struct
+	schema string
+	output *structpb.Struct
 }
 
-func (ow *outputWriterInterceptor) Write(ctx context.Context, outputs []*structpb.Struct) (err error) {
+func NewOutputWriter(ow OutputWriter, schema string) *outputWriter {
+	return &outputWriter{
+		OutputWriter: ow,
+		schema:       schema,
+	}
+}
 
-	// There might be concurrent writes inside the Execute function, so we need
-	// to lock the data.​
-	ow.mu.Lock()
-	defer ow.mu.Unlock()
+func (ow *outputWriter) Write(ctx context.Context, output *structpb.Struct) (err error) {
 
-	// TODO: Skip output validation for now, as streaming contains partial data
-	// and is not compatible with it.
-	// if err := Validate(outputs, ow.schema, "outputs"); err != nil {
-	// 	return err
-	// }
-	ow.outputs = outputs
+	if err := Validate(output, ow.schema, "output"); err != nil {
+		return err
+	}
+	ow.output = output
 
-	return ow.OutputWriter.Write(ctx, outputs)
+	return ow.OutputWriter.Write(ctx, output)
 
 }
-func (ow *outputWriterInterceptor) GetOutputs() []*structpb.Struct {
-	return ow.outputs
+
+func (ow *outputWriter) GetOutput() *structpb.Struct {
+	return ow.output
 }
 
 // Execute wraps the execution method with validation and usage collection.
-func (e *ExecutionWrapper) Execute(ctx context.Context, ir InputReader, ow OutputWriter) error {
+func (e *ExecutionWrapper) Execute(ctx context.Context, jobs []*Job) (err error) {
 
 	newUH := e.GetComponent().UsageHandlerCreator()
 	h, err := newUH(e)
@@ -80,28 +71,71 @@ func (e *ExecutionWrapper) Execute(ctx context.Context, ir InputReader, ow Outpu
 		return err
 	}
 
-	iri := &inputReaderInterceptor{
-		InputReader:  ir,
-		schema:       e.GetTaskInputSchema(),
-		usageHandler: h,
+	inputs := make([]*structpb.Struct, len(jobs))
+	outputs := make([]*structpb.Struct, len(jobs))
+
+	// Note: We need to check usage of all inputs simultaneously, so all inputs
+	// must be read before execution.
+	for batchIdx, job := range jobs {
+		inputs[batchIdx], err = job.Input.Read(ctx)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 	}
 
-	owi := &outputWriterInterceptor{
-		OutputWriter:           ow,
-		schema:                 e.GetTaskOutputSchema(),
-		inputReaderInterceptor: iri,
+	if err = h.Check(ctx, inputs); err != nil {
+		return err
 	}
 
-	if err := e.IExecution.Execute(ctx, iri, owi); err != nil {
+	wrappedJobs := make([]*Job, len(jobs))
+	for batchIdx, job := range jobs {
+		wrappedJobs[batchIdx] = &Job{
+			Input:  NewInputReader(inputs[batchIdx], e.GetTaskInputSchema()),
+			Output: NewOutputWriter(job.Output, e.GetTaskOutputSchema()),
+			Error:  job.Error,
+		}
+	}
+
+	if err := e.IExecution.Execute(ctx, wrappedJobs); err != nil {
 		return err
 	}
 
 	// Since there might be multiple writes, we collect the usage at the end of
 	// the execution.​
-	if err := h.Collect(ctx, iri.GetInputs(), owi.GetOutputs()); err != nil {
+	for batchIdx, job := range wrappedJobs {
+		outputs[batchIdx] = job.Output.(*outputWriter).GetOutput()
+	}
+	if err := h.Collect(ctx, inputs, outputs); err != nil {
 		return err
 	}
 
 	return nil
 
+}
+
+func SequentialExecutor(ctx context.Context, jobs []*Job, execute func(*structpb.Struct) (*structpb.Struct, error)) error {
+	// The execution takes an array of inputs and returns an array of outputs,
+	// processed sequentially.
+	// Note: The `SequentialExecutor` does not support component streaming.
+	for _, job := range jobs {
+		input, err := job.Input.Read(ctx)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
+
+		output, err := execute(input)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
+
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
+	}
+	return nil
 }

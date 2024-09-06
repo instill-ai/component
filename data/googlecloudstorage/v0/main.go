@@ -65,19 +65,20 @@ func getJSONKey(setup *structpb.Struct) string {
 	return setup.GetFields()["json-key"].GetStringValue()
 }
 
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
-	outputs := []*structpb.Struct{}
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
 	client, err := NewClient(getJSONKey(e.Setup))
 	if err != nil || client == nil {
 		return fmt.Errorf("error creating GCS client: %v", err)
 	}
 	defer client.Close()
-	for _, input := range inputs {
+	for _, job := range jobs {
+		input, err := job.Input.Read(ctx)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
+
 		var output *structpb.Struct
 		bucketName := input.GetFields()["bucket-name"].GetStringValue()
 		switch e.Task {
@@ -86,7 +87,8 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 			data := input.GetFields()["data"].GetStringValue()
 			err = uploadToGCS(client, bucketName, objectName, data)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 			gsutilURI := fmt.Sprintf("gs://%s/%s", bucketName, objectName)
@@ -96,7 +98,8 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 			// Check whether the object is public or not
 			publicAccess, err := isObjectPublic(client, bucketName, objectName)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 			if publicAccess {
 				publicURL = fmt.Sprintf("https://storage.googleapis.com/%s/%s", bucketName, objectName)
@@ -116,39 +119,48 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 			outputStruct, err := readObjects(inputStruct, client, ctx)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 			output, err = base.ConvertToStructpb(outputStruct)
 
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 		case taskCreateBucket:
 			inputStruct := CreateBucketInput{}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 			outputStruct, err := createBucket(inputStruct, client, ctx)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 		}
-
-		outputs = append(outputs, output)
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 	}
-	return out.Write(ctx, outputs)
+	return nil
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {

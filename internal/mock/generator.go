@@ -3,6 +3,7 @@ package mock
 //go:generate minimock -g -i github.com/instill-ai/component/base.UsageHandler -o ./ -s "_mock.gen.go"
 //go:generate minimock -g -i github.com/instill-ai/component/base.InputReader -o ./ -s "_mock.gen.go"
 //go:generate minimock -g -i github.com/instill-ai/component/base.OutputWriter -o ./ -s "_mock.gen.go"
+//go:generate minimock -g -i github.com/instill-ai/component/base.ErrorHandler -o ./ -s "_mock.gen.go"
 //go:generate minimock -g -i github.com/instill-ai/component/operator/document/v0.commandRunner -o ./ -s "_mock.gen.go"
 //go:generate minimock -g -i io.WriteCloser -o ./ -s "_mock.gen.go"
 //go:generate minimock -g -i github.com/instill-ai/protogen-go/artifact/artifact/v1alpha.ArtifactPublicServiceClient -o ./ -s "_mock.gen.go"

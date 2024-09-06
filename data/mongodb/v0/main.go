@@ -132,21 +132,26 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 // dbClient wont be nil on component test (use mock dbClient)
 // collectionClient wont be nil on component test (use mock collectionClient)
 // collectionClient will be nil on task DropDatabase
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
-	outputs := make([]*structpb.Struct, len(inputs))
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
-	for i, input := range inputs {
-		output, err := e.execute(ctx, input)
+	for _, job := range jobs {
+		input, err := job.Input.Read(ctx)
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
 
-		outputs[i] = output
+		output, err := e.execute(ctx, input)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 	}
 
-	return out.Write(ctx, outputs)
+	return nil
 }

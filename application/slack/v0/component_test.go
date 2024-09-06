@@ -8,7 +8,6 @@ import (
 
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"github.com/slack-go/slack"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -151,22 +150,22 @@ func TestComponent_ExecuteWriteTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			ir := mock.NewInputReaderMock(c)
-			ow := mock.NewOutputWriterMock(c)
-			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			ir, ow, eh, job := base.GenerateMockJob(c)
+			ir.ReadMock.Return(pbIn, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 				wantJSON, err := json.Marshal(tc.wantResp)
 				c.Assert(err, qt.IsNil)
-				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				c.Check(wantJSON, qt.JSONEquals, output.AsMap())
 				return nil
 			})
+			eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+				if tc.wantErr != "" {
+					c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				}
+			})
 
-			err = e.Execute(ctx, ir, ow)
-
-			if tc.wantErr != "" {
-				c.Assert(err, qt.ErrorMatches, tc.wantErr)
-				return
-			}
+			err = e.Execute(ctx, []*base.Job{job})
+			c.Assert(err, qt.IsNil)
 
 		})
 	}
@@ -241,22 +240,22 @@ func TestComponent_ExecuteReadTask(t *testing.T) {
 			pbIn, err := base.ConvertToStructpb(tc.input)
 			c.Assert(err, qt.IsNil)
 
-			ir := mock.NewInputReaderMock(c)
-			ow := mock.NewOutputWriterMock(c)
-			ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+			ir, ow, eh, job := base.GenerateMockJob(c)
+			ir.ReadMock.Return(pbIn, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 				wantJSON, err := json.Marshal(tc.wantResp)
 				c.Assert(err, qt.IsNil)
-				c.Check(wantJSON, qt.JSONEquals, outputs[0].AsMap())
+				c.Check(wantJSON, qt.JSONEquals, output.AsMap())
 				return nil
 			})
+			eh.ErrorMock.Optional().Set(func(ctx context.Context, err error) {
+				if tc.wantErr != "" {
+					c.Assert(err, qt.ErrorMatches, tc.wantErr)
+				}
+			})
 
-			err = e.Execute(ctx, ir, ow)
-
-			if tc.wantErr != "" {
-				c.Assert(err, qt.ErrorMatches, tc.wantErr)
-				return
-			}
+			err = e.Execute(ctx, []*base.Job{job})
+			c.Assert(err, qt.IsNil)
 
 		})
 

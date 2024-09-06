@@ -25,14 +25,23 @@ type IExecution interface {
 	GetComponentID() string
 	UsesInstillCredentials() bool
 
-	Execute(context.Context, InputReader, OutputWriter) error
+	Execute(context.Context, []*Job) error
+}
+
+type Job struct {
+	Input  InputReader
+	Output OutputWriter
+	Error  ErrorHandler
 }
 
 type InputReader interface {
-	Read(ctx context.Context) (inputs []*structpb.Struct, err error)
+	Read(ctx context.Context) (input *structpb.Struct, err error)
 }
 type OutputWriter interface {
-	Write(ctx context.Context, outputs []*structpb.Struct) (err error)
+	Write(ctx context.Context, output *structpb.Struct) (err error)
+}
+type ErrorHandler interface {
+	Error(ctx context.Context, err error)
 }
 
 // ComponentExecution implements the common methods for component execution.
@@ -247,7 +256,7 @@ func FormatErrors(inputPath string, e jsonschema.Detailed, errors *[]string) {
 }
 
 // Validate the input and output format
-func Validate(data []*structpb.Struct, jsonSchema string, target string) error {
+func Validate(data *structpb.Struct, jsonSchema string, target string) error {
 
 	schStruct := &structpb.Struct{}
 	err := protojson.Unmarshal([]byte(jsonSchema), schStruct)
@@ -277,28 +286,25 @@ func Validate(data []*structpb.Struct, jsonSchema string, target string) error {
 	}
 	errors := []string{}
 
-	for idx := range data {
-		var v interface{}
-		jsonData, err := protojson.Marshal(data[idx])
-		if err != nil {
-			errors = append(errors, fmt.Sprintf("%s[%d]: data error", target, idx))
-			continue
-		}
+	var v interface{}
+	jsonData, err := protojson.Marshal(data)
+	if err != nil {
+		errors = append(errors, fmt.Sprintf("%s: data error", target))
+		return fmt.Errorf("%s", strings.Join(errors, "; "))
+	}
 
-		if err := json.Unmarshal(jsonData, &v); err != nil {
-			errors = append(errors, fmt.Sprintf("%s[%d]: data error", target, idx))
-			continue
-		}
+	if err := json.Unmarshal(jsonData, &v); err != nil {
+		errors = append(errors, fmt.Sprintf("%s: data error", target))
+		return fmt.Errorf("%s", strings.Join(errors, "; "))
+	}
 
-		if err = sch.Validate(v); err != nil {
-			e := err.(*jsonschema.ValidationError)
-
-			for _, valErr := range e.DetailedOutput().Errors {
-				inputPath := fmt.Sprintf("%s/%d", target, idx)
-				FormatErrors(inputPath, valErr, &errors)
-				for _, subValErr := range valErr.Errors {
-					FormatErrors(inputPath, subValErr, &errors)
-				}
+	if err = sch.Validate(v); err != nil {
+		e := err.(*jsonschema.ValidationError)
+		for _, valErr := range e.DetailedOutput().Errors {
+			inputPath := target
+			FormatErrors(inputPath, valErr, &errors)
+			for _, subValErr := range valErr.Errors {
+				FormatErrors(inputPath, subValErr, &errors)
 			}
 		}
 	}

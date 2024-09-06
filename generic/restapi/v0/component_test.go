@@ -13,7 +13,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 )
@@ -48,12 +47,12 @@ func TestComponent_Execute(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 
 		pbIn := new(structpb.Struct)
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Optional().Return(pbIn, nil)
 		ow.WriteMock.Optional().Return(nil)
+		eh.ErrorMock.Optional()
 
-		err = exec.Execute(ctx, ir, ow)
+		err = exec.Execute(ctx, []*base.Job{job})
 		c.Check(err, qt.IsNotNil)
 
 		want := "FOOBAR task is not supported."
@@ -96,17 +95,17 @@ func TestComponent_Execute(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
-			resp := outputs[0].AsMap()
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
+			resp := output.AsMap()
 			c.Check(resp["status-code"], qt.Equals, float64(http.StatusBadRequest))
 			c.Check(resp["body"], qt.ContentEquals, map[string]any{"message": "Bad request"})
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = exec.Execute(ctx, ir, ow)
+		err = exec.Execute(ctx, []*base.Job{job})
 		c.Check(err, qt.IsNil)
 
 	})
@@ -138,17 +137,17 @@ func TestComponent_Execute(t *testing.T) {
 
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
-			resp := outputs[0].AsMap()
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
+			resp := output.AsMap()
 			c.Check(resp["status-code"], qt.Equals, float64(http.StatusOK))
 			c.Check(resp["body"], qt.ContentEquals, map[string]any{"title": "Be the wheel"})
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = exec.Execute(ctx, ir, ow)
+		err = exec.Execute(ctx, []*base.Job{job})
 		c.Check(err, qt.IsNil)
 
 	})
@@ -180,17 +179,17 @@ func TestComponent_Execute(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
-			resp := outputs[0].AsMap()
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
+			resp := output.AsMap()
 			c.Check(resp["status-code"], qt.Equals, float64(http.StatusOK))
 			c.Check(resp["body"], qt.ContentEquals, map[string]any{"title": "Be the wheel"})
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = exec.Execute(ctx, ir, ow)
+		err = exec.Execute(ctx, []*base.Job{job})
 		c.Check(err, qt.IsNil)
 
 	})

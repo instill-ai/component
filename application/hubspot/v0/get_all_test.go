@@ -7,7 +7,6 @@ import (
 
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -91,28 +90,23 @@ func TestComponent_ExecuteGetAllTask(t *testing.T) {
 			"object-type": tc.input,
 		})
 
-		input := []*structpb.Struct{pbInput}
-
-		ir := mock.NewInputReaderMock(c)
-		ir.ReadMock.Return(input, nil)
-
-		ow := mock.NewOutputWriterMock(c)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbInput, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 			if tc.name == "error case" {
-				c.Assert(outputs, qt.IsNil)
+				c.Assert(output, qt.IsNil)
 				return
 			}
-			c.Assert(outputs, qt.HasLen, 1)
-			res := outputs[0]
-			resJSON, err := protojson.Marshal(res)
+			resJSON, err := protojson.Marshal(output)
 			c.Check(resJSON, qt.JSONEquals, tc.wantResp)
 			c.Assert(err, qt.IsNil)
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
 		c.Assert(err, qt.IsNil)
 
-		err = e.Execute(ctx, ir, ow)
+		err = e.Execute(ctx, []*base.Job{job})
 		c.Assert(err, qt.IsNil)
 
 	})

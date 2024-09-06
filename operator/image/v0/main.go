@@ -57,61 +57,71 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 }
 
 // Execute executes the derived execution
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
-	outputs := []*structpb.Struct{}
-	var base64ByteImg []byte
-	for _, input := range inputs {
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
+	var base64ByteImg []byte
+	for _, job := range jobs {
+
+		input, err := job.Input.Read(ctx)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 		b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(input.Fields["image"].GetStringValue()))
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
 
 		img, _, err := image.Decode(bytes.NewReader(b))
 		if err != nil {
-			return err
+			job.Error.Error(ctx, err)
+			continue
 		}
 
 		switch e.Task {
 		case "TASK_DRAW_CLASSIFICATION":
 			base64ByteImg, err = drawClassification(img, input.Fields["category"].GetStringValue(), input.Fields["score"].GetNumberValue())
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 		case "TASK_DRAW_DETECTION":
 			base64ByteImg, err = drawDetection(img, input.Fields["objects"].GetListValue().Values)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 		case "TASK_DRAW_KEYPOINT":
 			base64ByteImg, err = drawKeypoint(img, input.Fields["objects"].GetListValue().Values)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 		case "TASK_DRAW_OCR":
 			base64ByteImg, err = drawOCR(img, input.Fields["objects"].GetListValue().Values)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 		case "TASK_DRAW_INSTANCE_SEGMENTATION":
 			base64ByteImg, err = drawInstanceSegmentation(img, input.Fields["objects"].GetListValue().Values)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 		case "TASK_DRAW_SEMANTIC_SEGMENTATION":
 			base64ByteImg, err = drawSemanticSegmentation(img, input.Fields["stuffs"].GetListValue().Values)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 		default:
-			return fmt.Errorf("not supported task: %s", e.Task)
+			job.Error.Error(ctx, fmt.Errorf("not supported task: %s", e.Task))
+			continue
 		}
 
-		output := structpb.Struct{Fields: make(map[string]*structpb.Value)}
+		output := &structpb.Struct{Fields: make(map[string]*structpb.Value)}
 
 		output.Fields["image"] = &structpb.Value{
 			Kind: &structpb.Value_StringValue{
@@ -119,7 +129,10 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 			},
 		}
 
-		outputs = append(outputs, &output)
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			return err
+		}
 	}
-	return out.Write(ctx, outputs)
+	return nil
 }

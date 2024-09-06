@@ -12,7 +12,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 )
 
 func TestOperator(t *testing.T) {
@@ -51,18 +50,14 @@ func TestOperator(t *testing.T) {
 			c.Assert(err, qt.IsNil)
 			c.Assert(execution, qt.IsNotNil)
 
-			input := []*structpb.Struct{&tc.input}
-
-			ir := mock.NewInputReaderMock(c)
-			ow := mock.NewOutputWriterMock(c)
-			ir.ReadMock.Return(input, nil)
-			ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
-				c.Assert(outputs, qt.HasLen, 1)
+			ir, ow, eh, job := base.GenerateMockJob(c)
+			ir.ReadMock.Return(&tc.input, nil)
+			ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 				return nil
 			})
+			eh.ErrorMock.Optional()
 
-			err = execution.Execute(ctx, ir, ow)
-
+			err = execution.Execute(ctx, []*base.Job{job})
 			c.Assert(err, qt.IsNil)
 
 		})

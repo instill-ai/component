@@ -120,28 +120,27 @@ func (e *execution) UsesInstillCredentials() bool {
 	return e.usesInstillCredentials
 }
 
-type workerResult struct {
-	batchIdx int
-	err      error
-	output   *structpb.Struct
-	done     bool
-}
-
-func (e *execution) worker(ctx context.Context, client *httpclient.Client, batchIdx int, input *structpb.Struct, result chan<- *workerResult) {
+func (e *execution) worker(ctx context.Context, client *httpclient.Client, job *base.Job) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("panic: %+v", r)
-			result <- &workerResult{batchIdx: batchIdx, err: fmt.Errorf("panic: %+v", r)}
+			job.Error.Error(ctx, fmt.Errorf("panic: %+v", r))
+			return
 		}
-		result <- &workerResult{done: true}
 	}()
+
+	input, err := job.Input.Read(ctx)
+	if err != nil {
+		job.Error.Error(ctx, err)
+		return
+	}
 
 	switch e.Task {
 	case TextGenerationTask:
 		inputStruct := TextCompletionInput{}
 		err := base.ConvertFromStructpb(input, &inputStruct)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 
@@ -174,7 +173,7 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 		for _, image := range inputStruct.Images {
 			b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(image))
 			if err != nil {
-				result <- &workerResult{batchIdx: batchIdx, err: err}
+				job.Error.Error(ctx, err)
 				return
 			}
 			url := fmt.Sprintf("data:%s;base64,%s", mimetype.Detect(b).String(), base.TrimBase64Mime(image))
@@ -209,8 +208,7 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 						if inputStruct.ResponseFormat.JSONSchema != "" {
 							err = json.Unmarshal([]byte(inputStruct.ResponseFormat.JSONSchema), &sch)
 							if err != nil {
-								result <- &workerResult{batchIdx: batchIdx, err: err}
-
+								job.Error.Error(ctx, err)
 								return
 							}
 							body.ResponseFormat = &responseFormatReqStruct{
@@ -220,8 +218,7 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 						}
 
 					} else {
-						result <- &workerResult{batchIdx: batchIdx, err: fmt.Errorf("this model doesn't support response format: json_schema")}
-
+						job.Error.Error(ctx, fmt.Errorf("this model doesn't support response format: json_schema"))
 						return
 					}
 
@@ -233,13 +230,13 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 		req := client.SetDoNotParseResponse(true).R().SetBody(body)
 		restyResp, err := req.Post(completionsPath)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 
 		if restyResp.StatusCode() != 200 {
 			res := restyResp.Body()
-			result <- &workerResult{batchIdx: batchIdx, err: fmt.Errorf("send request to openai error with error code: %d, msg %s", restyResp.StatusCode(), res)}
+			job.Error.Error(ctx, fmt.Errorf("send request to openai error with error code: %d, msg %s", restyResp.StatusCode(), res))
 			return
 		}
 		scanner := bufio.NewScanner(restyResp.RawResponse.Body)
@@ -263,18 +260,19 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 			if count == 10 || res == "[DONE]" {
 				outputJSON, inErr := json.Marshal(outputStruct)
 				if inErr != nil {
-					result <- &workerResult{batchIdx: batchIdx, err: inErr}
+					job.Error.Error(ctx, inErr)
 					return
 				}
 				output := &structpb.Struct{}
 				inErr = protojson.Unmarshal(outputJSON, output)
 				if inErr != nil {
-					result <- &workerResult{batchIdx: batchIdx, err: inErr}
+					job.Error.Error(ctx, inErr)
 					return
 				}
-				result <- &workerResult{
-					batchIdx: batchIdx,
-					output:   output,
+				err = job.Output.Write(ctx, output)
+				if err != nil {
+					job.Error.Error(ctx, err)
+					return
 				}
 				if res == "[DONE]" {
 					break
@@ -286,7 +284,7 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 			response := &textCompletionResp{}
 			err = json.Unmarshal([]byte(res), response)
 			if err != nil {
-				result <- &workerResult{batchIdx: batchIdx, err: err}
+				job.Error.Error(ctx, err)
 				return
 			}
 
@@ -309,25 +307,26 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 		outputStruct.Usage = u
 		outputJSON, err := json.Marshal(outputStruct)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 		output := &structpb.Struct{}
 		err = protojson.Unmarshal(outputJSON, output)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
-		result <- &workerResult{
-			batchIdx: batchIdx,
-			output:   output,
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			return
 		}
 
 	case TextEmbeddingsTask:
 		inputStruct := TextEmbeddingsInput{}
 		err := base.ConvertFromStructpb(input, &inputStruct)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 
@@ -350,7 +349,7 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 		req := client.R().SetBody(reqParams).SetResult(&resp)
 
 		if _, err := req.Post(embeddingsPath); err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 
@@ -360,26 +359,27 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 
 		output, err := base.ConvertToStructpb(outputStruct)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
-		result <- &workerResult{
-			batchIdx: batchIdx,
-			output:   output,
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			return
 		}
 
 	case SpeechRecognitionTask:
 		inputStruct := AudioTranscriptionInput{}
 		err := base.ConvertFromStructpb(input, &inputStruct)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 
 			return
 		}
 
 		audioBytes, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(inputStruct.Audio))
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 
@@ -394,32 +394,33 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 			ResponseFormat: "verbose_json",
 		})
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 
 		resp := AudioTranscriptionResp{}
 		req := client.R().SetBody(data).SetResult(&resp).SetHeader("Content-Type", ct)
 		if _, err := req.Post(transcriptionsPath); err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 
 		output, err := base.ConvertToStructpb(resp)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
-		result <- &workerResult{
-			batchIdx: batchIdx,
-			output:   output,
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			return
 		}
 
 	case TextToSpeechTask:
 		inputStruct := TextToSpeechInput{}
 		err := base.ConvertFromStructpb(input, &inputStruct)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 
@@ -433,7 +434,7 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 
 		resp, err := req.Post(createSpeechPath)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 
@@ -444,12 +445,13 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 
 		output, err := base.ConvertToStructpb(outputStruct)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
-		result <- &workerResult{
-			batchIdx: batchIdx,
-			output:   output,
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			return
 		}
 
 	case TextToImageTask:
@@ -457,7 +459,7 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 		inputStruct := ImagesGenerationInput{}
 		err := base.ConvertFromStructpb(input, &inputStruct)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 
@@ -473,7 +475,7 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 		}).SetResult(&resp)
 
 		if _, err := req.Post(imgGenerationPath); err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
 
@@ -490,60 +492,41 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, batch
 
 		output, err := base.ConvertToStructpb(outputStruct)
 		if err != nil {
-			result <- &workerResult{batchIdx: batchIdx, err: err}
+			job.Error.Error(ctx, err)
 			return
 		}
-		result <- &workerResult{
-			batchIdx: batchIdx,
-			output:   output,
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			return
 		}
 
 	default:
-		result <- &workerResult{batchIdx: batchIdx, err: errmsg.AddMessage(
+		job.Error.Error(ctx, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", e.Task),
 			fmt.Sprintf("%s task is not supported.", e.Task),
-		)}
+		))
 		return
 	}
 }
 
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
+
 	client := newClient(e.Setup, e.GetLogger())
-	outputs := make([]*structpb.Struct, len(inputs))
 
-	result := make(chan *workerResult)
-	defer close(result)
-
-	for batchIdx, input := range inputs {
-		go e.worker(ctx, client, batchIdx, input, result)
+	// TODO: we can encapsulate this code into a `ConcurrentExecutor`.
+	// The `ConcurrentExecutor` will use goroutines to execute jobs in parallel.
+	var wg sync.WaitGroup
+	wg.Add(len(jobs))
+	for _, job := range jobs {
+		go func() {
+			defer wg.Done()
+			e.worker(ctx, client, job)
+		}()
 	}
+	wg.Wait()
 
-	// TODO: Optimize the concurrent implementation by
-	// 1. Creating InputReader/OutputWriter for single data instead of batch
-	// data
-	// 2. Moving concurrent implementation to the component base execution
-	count := 0
-	for {
-		r := <-result
-		if r.done {
-			count += 1
-			if count == len(inputs) {
-				break
-			}
-
-		} else if r.err != nil {
-			err = r.err
-		} else {
-			outputs[r.batchIdx] = r.output
-			err = out.Write(ctx, outputs)
-		}
-	}
-
-	return err
+	return nil
 }
 
 // Test checks the connector state.

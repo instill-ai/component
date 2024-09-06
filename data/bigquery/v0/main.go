@@ -79,12 +79,7 @@ func getTableName(setup *structpb.Struct) string {
 	return setup.GetFields()["table-name"].GetStringValue()
 }
 
-func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.OutputWriter) error {
-	inputs, err := in.Read(ctx)
-	if err != nil {
-		return err
-	}
-	outputs := []*structpb.Struct{}
+func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
 	client, err := NewClient(getJSONKey(e.Setup), getProjectID(e.Setup))
 	if err != nil || client == nil {
@@ -92,8 +87,14 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 	}
 	defer client.Close()
 
-	for _, input := range inputs {
+	for _, job := range jobs {
 		var output *structpb.Struct
+		input, err := job.Input.Read(ctx)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
+
 		switch e.Task {
 		case taskInsert, "":
 			datasetID := getDatasetID(e.Setup)
@@ -101,15 +102,18 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 			tableRef := client.Dataset(datasetID).Table(tableName)
 			metaData, err := tableRef.Metadata(context.Background())
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 			valueSaver, err := getDataSaver(input, metaData.Schema)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 			err = insertDataToBigQuery(getProjectID(e.Setup), datasetID, tableName, valueSaver, client)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 			output = &structpb.Struct{Fields: map[string]*structpb.Value{"status": {Kind: &structpb.Value_StringValue{StringValue: "success"}}}}
 		case taskRead:
@@ -122,23 +126,30 @@ func (e *execution) Execute(ctx context.Context, in base.InputReader, out base.O
 			}
 			err := base.ConvertFromStructpb(input, &inputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 			outputStruct, err := readDataFromBigQuery(inputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 			output, err = base.ConvertToStructpb(outputStruct)
 			if err != nil {
-				return err
+				job.Error.Error(ctx, err)
+				continue
 			}
 
 		default:
 			return fmt.Errorf("unsupported task: %s", e.Task)
 		}
-		outputs = append(outputs, output)
+		err = job.Output.Write(ctx, output)
+		if err != nil {
+			job.Error.Error(ctx, err)
+			continue
+		}
 	}
-	return out.Write(ctx, outputs)
+	return nil
 }
 
 func (c *component) Test(sysVars map[string]any, setup *structpb.Struct) error {
