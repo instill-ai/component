@@ -172,6 +172,7 @@ func (sp MarkdownTextSplitter) processChunks(lists []List) []ContentChunk {
 	currentStartPosition := 0
 	currentEndPosition := 0
 	isPrepended := false
+	shouldOverlapPreviousList := false
 
 	addListCount := 0
 	for i := 0; i < len(lists); i++ {
@@ -228,7 +229,6 @@ func (sp MarkdownTextSplitter) processChunks(lists []List) []ContentChunk {
 				var prependString string
 
 				for prependList.PreviousLevelList != nil {
-
 					prependList = prependList.PreviousLevelList
 					if len(prependList.Text) > 0 &&
 						sizeOfString(prependList.Text) <= sp.ChunkSize { // Do not prepend if the list is too large
@@ -236,7 +236,12 @@ func (sp MarkdownTextSplitter) processChunks(lists []List) []ContentChunk {
 					}
 				}
 				isPrepended = true
-				currentChunk += prependString + list.Text + "\n"
+				currentChunk += prependString + "\n"
+				if shouldOverlapPreviousList {
+					currentChunk += list.PreviousList.Text + "\n"
+					shouldOverlapPreviousList = false
+				}
+				currentChunk += list.Text + "\n"
 				currentChunkSize += sizeOfString(list.Text)
 				currentStartPosition = list.StartPosition
 				currentEndPosition = list.EndPosition
@@ -259,23 +264,33 @@ func (sp MarkdownTextSplitter) processChunks(lists []List) []ContentChunk {
 				currentStartPosition = 0 // To be set in !isPrepended Block
 				currentEndPosition = 0   // To be set in isPrepended Block
 
-				// Overlap Handling: Start from final appended list if it's smaller than the overlap
-				if i > 0 && sizeOfString(lists[i-1].Text) <= sp.ChunkOverlap {
+				overlapType := sp.overlapType(lists, i)
+				if overlapType == "no overlap" {
+					i--
+					addListCount = 0
+				} else if overlapType == "last chunk final list" {
 					if i > 1 {
 						i -= 2
 					} else {
 						i--
 					}
 					addListCount = -1
-				} else {
+				} else if overlapType == "previous list" {
+					shouldOverlapPreviousList = true
+					addListCount = -1
 					i--
-					addListCount = 0
 				}
 			}
 		}
 	}
 
 	if currentChunkSize > 0 {
+		// prepend header text if there is space in the chunk
+		list := lists[0]
+		if !strings.Contains(currentChunk, list.HeaderText) && currentChunkSize+sizeOfString(list.HeaderText) < sp.ChunkSize {
+			currentChunk = list.HeaderText + "\n" + currentChunk
+		}
+
 		contentChunks = append(contentChunks, ContentChunk{
 			Chunk:                currentChunk,
 			ContentStartPosition: currentStartPosition,
@@ -284,6 +299,39 @@ func (sp MarkdownTextSplitter) processChunks(lists []List) []ContentChunk {
 	}
 
 	return contentChunks
+}
+
+// To determine how to overlap the list
+func (sp MarkdownTextSplitter) overlapType(lists []List, i int) string {
+	if i == 0 {
+		return "no overlap"
+	}
+
+	sizeEnough := i > 0 && sizeOfString(lists[i-1].Text) <= sp.ChunkOverlap
+	finalList := lists[i-1]
+	sameType := finalList.isNumeric == lists[i].isNumeric
+	higherLevel := finalList.indentation > lists[i].indentation
+
+	if higherLevel {
+		previousListSizeEnough := lists[i].PreviousList != nil && sizeOfString(lists[i].PreviousList.Text) <= sp.ChunkOverlap
+		if previousListSizeEnough {
+			return "previous list"
+		} else {
+			return "no overlap"
+		}
+	}
+
+	sameLevel := finalList.indentation == lists[i].indentation
+	if !sameType && sameLevel {
+		return "no overlap"
+	}
+
+	if sizeEnough {
+		return "last chunk final list"
+	} else {
+		return "no overlap"
+	}
+
 }
 
 // chunkLargeList splits a large list item into multiple chunks by words
@@ -325,7 +373,7 @@ func (sp MarkdownTextSplitter) chunkLargeList(list List, prependStringSize int) 
 				ContentStartPosition: currentStartPosition,
 				ContentEndPosition:   currentEndPosition - 2,
 			})
-			overlapSize := sp.ChunkOverlap
+			overlapSize := sp.ChunkOverlap - prependStringSize
 			for overlapSize-sizeOfString(words[i])+1 >= 0 {
 				i--
 				if i == 0 {

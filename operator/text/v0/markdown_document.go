@@ -50,6 +50,7 @@ type List struct {
 	NextList          *List
 	PreviousList      *List
 	indentation       int
+	isNumeric         bool
 }
 
 func buildDocuments(rawRunes []rune) ([]MarkdownDocument, error) {
@@ -192,7 +193,8 @@ func readBlock(rawRunes []rune, currentPosition *int) string {
 	for *currentPosition < len(rawRunes) {
 		line := readLine(rawRunes, currentPosition)
 
-		if len(line) == 0 {
+		trimmedLine := strings.TrimSpace(line)
+		if len(trimmedLine) == 0 {
 			isEmptyLineCount++
 			if isEmptyLineCount >= 1 && len(block) > 0 {
 				break
@@ -335,6 +337,7 @@ func parseListFromBlock(block string, currentPosition int) []List {
 				StartPosition:  currentPosition,
 				EndPosition:    currentPosition + sizeOfString(line) - 1,
 				indentation:    indentLevel,
+				isNumeric:      isNumericList(line),
 			}
 			lists = append(lists, listItem)
 
@@ -354,8 +357,10 @@ func parseListFromBlock(block string, currentPosition int) []List {
 
 		// Link to the previous list at the same level
 		if prev, ok := lastListAtLevel[indent]; ok {
-			lists[i].PreviousList = prev
-			prev.NextList = &lists[i]
+			if prev.isNumeric == lists[i].isNumeric {
+				lists[i].PreviousList = prev
+				prev.NextList = &lists[i]
+			}
 		}
 
 		var prevIndent int
