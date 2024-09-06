@@ -1886,7 +1886,7 @@
     "input": {
       "description": "Object type",
       "instillUIOrder": 0,
-      "instillEditOnNodeFields": ["object-type"],
+      "instillEditOnNodeFields": ["object-type", "length"],
       "properties": {
         "object-type": {
           "description": "Type of object to get IDs for",
@@ -1910,7 +1910,7 @@
           "instillUpstreamTypes": ["value", "template", "reference"]
         }
       },
-      "required": ["object-type"],
+      "required": ["object-type", "length"],
       "title": "Input",
       "type": "object"
     },

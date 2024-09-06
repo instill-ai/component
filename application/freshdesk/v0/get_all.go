@@ -54,7 +54,7 @@ func (c *FreshdeskClient) GetAll(objectType string, pagination bool, paginationP
 // Task 1: Get All
 type TaskGetAllInput struct {
 	ObjectType string `json:"object-type"`
-	Limit      int    `json:"limit"`
+	Length     int    `json:"length"`
 }
 
 type TaskGetAllResponse struct {
@@ -74,7 +74,7 @@ func (e *execution) TaskGetAll(in *structpb.Struct) (*structpb.Struct, error) {
 		return nil, fmt.Errorf("failed to convert input to struct: %v", err)
 	}
 
-	if inputStruct.Limit < 0 || inputStruct.Limit > 500 {
+	if inputStruct.Length < 0 || inputStruct.Length > 500 {
 		return nil, fmt.Errorf("please set the limit between 0 and 500")
 	}
 
@@ -86,17 +86,16 @@ func (e *execution) TaskGetAll(in *structpb.Struct) (*structpb.Struct, error) {
 
 	counter := 0
 	outputStruct := TaskGetAllOutput{}
-	outputStruct.IDs = make([]int64, len(resp))
-	for index, value := range resp {
-		outputStruct.IDs[index] = value.ID
+	for _, value := range resp {
+		outputStruct.IDs = append(outputStruct.IDs, value.ID)
 		counter += 1
-		if counter == inputStruct.Limit {
+		if counter == inputStruct.Length {
 			break
 		}
 	}
 
-	if counter < inputStruct.Limit {
-		for paginationPath != "" && counter < inputStruct.Limit {
+	if counter < inputStruct.Length {
+		for paginationPath != "" && counter < inputStruct.Length {
 			respPage, nextPage, err := e.client.GetAll(inputStruct.ObjectType, true, paginationPath)
 
 			if err != nil {
@@ -106,7 +105,7 @@ func (e *execution) TaskGetAll(in *structpb.Struct) (*structpb.Struct, error) {
 			for _, value := range respPage {
 				outputStruct.IDs = append(outputStruct.IDs, value.ID)
 				counter += 1
-				if counter == inputStruct.Limit {
+				if counter == inputStruct.Length {
 					break
 				}
 			}
