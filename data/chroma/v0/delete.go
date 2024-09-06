@@ -54,14 +54,12 @@ func (e *execution) delete(in *structpb.Struct) (*structpb.Struct, error) {
 	}
 
 	var collID string
-	if e.Setup.Fields["api-key"].GetStringValue() == "mock-api-key" {
-		collID = "mock-collection-id"
-	} else {
-		collID, err = getCollectionID(inputStruct.CollectionName, e.client)
-		if err != nil {
-			return nil, err
-		}
+
+	collID, err = getCollectionID(inputStruct.CollectionName, e.client)
+	if err != nil {
+		return nil, err
 	}
+
 	req := e.client.R().SetBody(reqParams).SetResult(&resp)
 
 	res, err := req.Post(fmt.Sprintf(deletePath, collID))

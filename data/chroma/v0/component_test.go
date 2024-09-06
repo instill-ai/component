@@ -31,9 +31,11 @@ func TestComponent_ExecuteQueryTask(t *testing.T) {
 		wantResp QueryOutput
 		wantErr  string
 
-		wantClientPath string
-		wantClientReq  any
-		clientResp     string
+		wantClientPath              string
+		getCollectionWantClientPath string
+		wantClientReq               any
+		clientResp                  string
+		getCollectionClientResp     string
 	}{
 		{
 			name: "ok to vector search",
@@ -51,7 +53,8 @@ func TestComponent_ExecuteQueryTask(t *testing.T) {
 					Metadata: []map[string]any{{"name": "a"}, {"name": "b"}},
 				},
 			},
-			wantClientPath: fmt.Sprintf(queryPath, "mock-collection-id"),
+			wantClientPath:              fmt.Sprintf(queryPath, "mock-collection-id"),
+			getCollectionWantClientPath: fmt.Sprintf(getCollectionPath, "mock-collection"),
 			wantClientReq: QueryReq{
 				QueryEmbeddings: [][]float64{{0.1, 0.2}},
 				NResults:        2,
@@ -63,28 +66,43 @@ func TestComponent_ExecuteQueryTask(t *testing.T) {
 				"metadatas": [[{"name": "a"}, {"name": "b"}]],
 				"distances": [[1, 1]]
 			}`,
+			getCollectionClientResp: `{
+				"id": "mock-collection-id"
+			}`,
 		},
 	}
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
 			h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				c.Check(r.Method, qt.Equals, http.MethodPost)
-				c.Check(r.URL.Path, qt.Equals, tc.wantClientPath)
+				if r.URL.Path == tc.wantClientPath {
+					c.Check(r.Method, qt.Equals, http.MethodPost)
+					c.Check(r.URL.Path, qt.Equals, tc.wantClientPath)
 
-				c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
-				c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
-				c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
+					c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
 
-				c.Assert(r.Body, qt.IsNotNil)
-				defer r.Body.Close()
+					c.Assert(r.Body, qt.IsNotNil)
+					defer r.Body.Close()
 
-				body, err := io.ReadAll(r.Body)
-				c.Assert(err, qt.IsNil)
-				c.Check(body, qt.JSONEquals, tc.wantClientReq)
+					body, err := io.ReadAll(r.Body)
+					c.Assert(err, qt.IsNil)
+					c.Check(body, qt.JSONEquals, tc.wantClientReq)
 
-				w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
-				fmt.Fprintln(w, tc.clientResp)
+					w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+					fmt.Fprintln(w, tc.clientResp)
+				} else {
+					c.Check(r.Method, qt.Equals, http.MethodGet)
+					c.Check(r.URL.Path, qt.Equals, tc.getCollectionWantClientPath)
+
+					c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
+
+					w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+					fmt.Fprintln(w, tc.getCollectionClientResp)
+				}
 			})
 
 			milvusServer := httptest.NewServer(h)
@@ -135,9 +153,11 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 		wantResp DeleteOutput
 		wantErr  string
 
-		wantClientPath string
-		wantClientReq  any
-		clientResp     string
+		wantClientPath              string
+		getCollectionWantClientPath string
+		wantClientReq               any
+		clientResp                  string
+		getCollectionClientResp     string
 	}{
 		{
 			name: "ok to delete search",
@@ -148,33 +168,49 @@ func TestComponent_ExecuteDeleteTask(t *testing.T) {
 			wantResp: DeleteOutput{
 				Status: "Successfully deleted 1 items",
 			},
-			wantClientPath: fmt.Sprintf(deletePath, "mock-collection-id"),
+			wantClientPath:              fmt.Sprintf(deletePath, "mock-collection-id"),
+			getCollectionWantClientPath: fmt.Sprintf(getCollectionPath, "mock-collection"),
 			wantClientReq: DeleteReq{
 				IDs: []string{"mockID1"},
 			},
 			clientResp: `["mockID1"]`,
+			getCollectionClientResp: `{
+				"id": "mock-collection-id"
+			}`,
 		},
 	}
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
 			h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				c.Check(r.Method, qt.Equals, http.MethodPost)
-				c.Check(r.URL.Path, qt.Equals, tc.wantClientPath)
+				if r.URL.Path == tc.wantClientPath {
+					c.Check(r.Method, qt.Equals, http.MethodPost)
+					c.Check(r.URL.Path, qt.Equals, tc.wantClientPath)
 
-				c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
-				c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
-				c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
+					c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
 
-				c.Assert(r.Body, qt.IsNotNil)
-				defer r.Body.Close()
+					c.Assert(r.Body, qt.IsNotNil)
+					defer r.Body.Close()
 
-				body, err := io.ReadAll(r.Body)
-				c.Assert(err, qt.IsNil)
-				c.Check(body, qt.JSONEquals, tc.wantClientReq)
+					body, err := io.ReadAll(r.Body)
+					c.Assert(err, qt.IsNil)
+					c.Check(body, qt.JSONEquals, tc.wantClientReq)
 
-				w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
-				fmt.Fprintln(w, tc.clientResp)
+					w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+					fmt.Fprintln(w, tc.clientResp)
+				} else {
+					c.Check(r.Method, qt.Equals, http.MethodGet)
+					c.Check(r.URL.Path, qt.Equals, tc.getCollectionWantClientPath)
+
+					c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
+
+					w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+					fmt.Fprintln(w, tc.getCollectionClientResp)
+				}
 			})
 
 			milvusServer := httptest.NewServer(h)
@@ -226,9 +262,11 @@ func TestComponent_ExecuteUpsertTask(t *testing.T) {
 		wantResp UpsertOutput
 		wantErr  string
 
-		wantClientPath string
-		wantClientReq  any
-		clientResp     string
+		wantClientPath              string
+		getCollectionWantClientPath string
+		wantClientReq               any
+		clientResp                  string
+		getCollectionClientResp     string
 	}{
 		{
 			name: "ok to upsert search",
@@ -241,35 +279,51 @@ func TestComponent_ExecuteUpsertTask(t *testing.T) {
 			wantResp: UpsertOutput{
 				Status: "Successfully upserted 1 item",
 			},
-			wantClientPath: fmt.Sprintf(upsertPath, "mock-collection-id"),
+			wantClientPath:              fmt.Sprintf(upsertPath, "mock-collection-id"),
+			getCollectionWantClientPath: fmt.Sprintf(getCollectionPath, "mock-collection"),
 			wantClientReq: UpsertReq{
 				Embeddings: [][]float64{{0.1, 0.2}},
 				Metadatas:  []map[string]any{{"name": "a"}},
 				IDs:        []string{"mockID1"},
 			},
 			clientResp: `null`,
+			getCollectionClientResp: `{
+				"id": "mock-collection-id"
+			}`,
 		},
 	}
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
 			h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				c.Check(r.Method, qt.Equals, http.MethodPost)
-				c.Check(r.URL.Path, qt.Equals, tc.wantClientPath)
+				if r.URL.Path == tc.wantClientPath {
+					c.Check(r.Method, qt.Equals, http.MethodPost)
+					c.Check(r.URL.Path, qt.Equals, tc.wantClientPath)
 
-				c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
-				c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
-				c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
+					c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
 
-				c.Assert(r.Body, qt.IsNotNil)
-				defer r.Body.Close()
+					c.Assert(r.Body, qt.IsNotNil)
+					defer r.Body.Close()
 
-				body, err := io.ReadAll(r.Body)
-				c.Assert(err, qt.IsNil)
-				c.Check(body, qt.JSONEquals, tc.wantClientReq)
+					body, err := io.ReadAll(r.Body)
+					c.Assert(err, qt.IsNil)
+					c.Check(body, qt.JSONEquals, tc.wantClientReq)
 
-				w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
-				fmt.Fprintln(w, tc.clientResp)
+					w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+					fmt.Fprintln(w, tc.clientResp)
+				} else {
+					c.Check(r.Method, qt.Equals, http.MethodGet)
+					c.Check(r.URL.Path, qt.Equals, tc.getCollectionWantClientPath)
+
+					c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
+
+					w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+					fmt.Fprintln(w, tc.getCollectionClientResp)
+				}
 			})
 
 			milvusServer := httptest.NewServer(h)
@@ -321,9 +375,11 @@ func TestComponent_ExecuteBatchUpsertTask(t *testing.T) {
 		wantResp BatchUpsertOutput
 		wantErr  string
 
-		wantClientPath string
-		wantClientReq  any
-		clientResp     string
+		wantClientPath              string
+		getCollectionWantClientPath string
+		wantClientReq               any
+		clientResp                  string
+		getCollectionClientResp     string
 	}{
 		{
 			name: "ok to batch upsert search",
@@ -336,35 +392,51 @@ func TestComponent_ExecuteBatchUpsertTask(t *testing.T) {
 			wantResp: BatchUpsertOutput{
 				Status: "Successfully batch upserted 2 items",
 			},
-			wantClientPath: fmt.Sprintf(upsertPath, "mock-collection-id"),
+			wantClientPath:              fmt.Sprintf(upsertPath, "mock-collection-id"),
+			getCollectionWantClientPath: fmt.Sprintf(getCollectionPath, "mock-collection"),
 			wantClientReq: UpsertReq{
 				Embeddings: [][]float64{{0.1, 0.2}, {0.2, 0.3}},
 				Metadatas:  []map[string]any{{"name": "a"}, {"name": "b"}},
 				IDs:        []string{"mockID1", "mockID2"},
 			},
 			clientResp: `null`,
+			getCollectionClientResp: `{
+				"id": "mock-collection-id"
+			}`,
 		},
 	}
 
 	for _, tc := range testcases {
 		c.Run(tc.name, func(c *qt.C) {
 			h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				c.Check(r.Method, qt.Equals, http.MethodPost)
-				c.Check(r.URL.Path, qt.Equals, tc.wantClientPath)
+				if r.URL.Path == tc.wantClientPath {
+					c.Check(r.Method, qt.Equals, http.MethodPost)
+					c.Check(r.URL.Path, qt.Equals, tc.wantClientPath)
 
-				c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
-				c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
-				c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
+					c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
 
-				c.Assert(r.Body, qt.IsNotNil)
-				defer r.Body.Close()
+					c.Assert(r.Body, qt.IsNotNil)
+					defer r.Body.Close()
 
-				body, err := io.ReadAll(r.Body)
-				c.Assert(err, qt.IsNil)
-				c.Check(body, qt.JSONEquals, tc.wantClientReq)
+					body, err := io.ReadAll(r.Body)
+					c.Assert(err, qt.IsNil)
+					c.Check(body, qt.JSONEquals, tc.wantClientReq)
 
-				w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
-				fmt.Fprintln(w, tc.clientResp)
+					w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+					fmt.Fprintln(w, tc.clientResp)
+				} else {
+					c.Check(r.Method, qt.Equals, http.MethodGet)
+					c.Check(r.URL.Path, qt.Equals, tc.getCollectionWantClientPath)
+
+					c.Check(r.Header.Get("Content-Type"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Accept"), qt.Equals, httpclient.MIMETypeJSON)
+					c.Check(r.Header.Get("Authorization"), qt.Equals, "Bearer mock-api-key")
+
+					w.Header().Set("Content-Type", httpclient.MIMETypeJSON)
+					fmt.Fprintln(w, tc.getCollectionClientResp)
+				}
 			})
 
 			milvusServer := httptest.NewServer(h)

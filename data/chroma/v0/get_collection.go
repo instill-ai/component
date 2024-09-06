@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	getCollectionPath = "api/v1/collections/%s"
+	getCollectionPath = "/api/v1/collections/%s"
 )
 
 type GetCollectionResp struct {

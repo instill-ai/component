@@ -25,7 +25,7 @@
       ],
       "instillSecret": false,
       "instillUIOrder": 1,
-      "title": "Qdrant URL Endpoint",
+      "title": "Chroma URL Endpoint",
       "type": "string"
     }
   },
@@ -37,6 +37,6 @@
     "api-key",
     "url"
   ],
-  "title": "Qdrant Connection",
+  "title": "Chroma Connection",
   "type": "object"
 }
