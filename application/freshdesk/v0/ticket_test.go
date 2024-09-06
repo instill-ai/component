@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"github.com/instill-ai/component/internal/mock"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -100,19 +99,19 @@ func TestComponent_ExecuteGetTicketTask(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 
-			outJSON, err := protojson.Marshal(outputs[0])
+			outJSON, err := protojson.Marshal(output)
 			c.Assert(err, qt.IsNil)
 
 			c.Check(outJSON, qt.JSONEquals, tc.wantOutput)
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = e.Execute(ctx, ir, ow)
+		err = e.Execute(ctx, []*base.Job{job})
 
 		c.Assert(err, qt.IsNil)
 
@@ -182,21 +181,22 @@ func TestComponent_ExecuteCreateTicketTask(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 
-			outJSON, err := protojson.Marshal(outputs[0])
+			outJSON, err := protojson.Marshal(output)
 			c.Assert(err, qt.IsNil)
 
 			c.Check(outJSON, qt.JSONEquals, tc.wantOutput)
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = e.Execute(ctx, ir, ow)
+		err = e.Execute(ctx, []*base.Job{job})
 
 		c.Assert(err, qt.IsNil)
+
 	})
 }
 
@@ -252,19 +252,19 @@ func TestComponent_ExecuteReplyToTicketTask(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 
-			outJSON, err := protojson.Marshal(outputs[0])
+			outJSON, err := protojson.Marshal(output)
 			c.Assert(err, qt.IsNil)
 
 			c.Check(outJSON, qt.JSONEquals, tc.wantOutput)
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = e.Execute(ctx, ir, ow)
+		err = e.Execute(ctx, []*base.Job{job})
 
 		c.Assert(err, qt.IsNil)
 
@@ -327,19 +327,19 @@ func TestComponent_ExecuteCreateTicketNoteTask(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 
-			outJSON, err := protojson.Marshal(outputs[0])
+			outJSON, err := protojson.Marshal(output)
 			c.Assert(err, qt.IsNil)
 
 			c.Check(outJSON, qt.JSONEquals, tc.wantOutput)
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = e.Execute(ctx, ir, ow)
+		err = e.Execute(ctx, []*base.Job{job})
 
 		c.Assert(err, qt.IsNil)
 
@@ -439,19 +439,19 @@ func TestComponent_ExecuteGetAllConversationsTask(t *testing.T) {
 		pbIn, err := base.ConvertToStructpb(tc.input)
 		c.Assert(err, qt.IsNil)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 
-			outJSON, err := protojson.Marshal(outputs[0])
+			outJSON, err := protojson.Marshal(output)
 			c.Assert(err, qt.IsNil)
 
 			c.Check(outJSON, qt.JSONEquals, tc.wantOutput)
 			return nil
 		})
+		eh.ErrorMock.Optional()
 
-		err = e.Execute(ctx, ir, ow)
+		err = e.Execute(ctx, []*base.Job{job})
 
 		c.Assert(err, qt.IsNil)
 
