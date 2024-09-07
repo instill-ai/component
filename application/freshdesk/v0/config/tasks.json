@@ -1900,7 +1900,7 @@
         },
         "length":{
           "description": "The maximum number of IDs allowed is 500. The most recent IDs will be retrieved.",
-          "default": 50, 
+          "default": 500, 
           "title": "Length",
           "type": "integer",
           "instillUIOrder": 1,
