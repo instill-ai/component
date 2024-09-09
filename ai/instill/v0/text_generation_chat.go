@@ -98,7 +98,7 @@ func (e *execution) executeTextGenerationChat(grpcClient modelPB.ModelPublicServ
 				return nil, err
 			}
 			url := fmt.Sprintf("data:%s;base64,%s", mimetype.Detect(b).String(), base.TrimBase64Mime(image))
-			userContents = append(userContents, Content{Type: "image_url", ImageBase64: url})
+			userContents = append(userContents, Content{Type: "image-base64", ImageBase64: url})
 		}
 		messages = append(messages, Message{Role: "user", Content: userContents})
 

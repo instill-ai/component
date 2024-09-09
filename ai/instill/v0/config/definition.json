@@ -9,7 +9,8 @@
     "TASK_TEXT_GENERATION",
     "TASK_TEXT_GENERATION_CHAT",
     "TASK_TEXT_TO_IMAGE",
-    "TASK_VISUAL_QUESTION_ANSWERING"
+    "TASK_VISUAL_QUESTION_ANSWERING",
+    "TASK_CHAT"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/ai/instill",
