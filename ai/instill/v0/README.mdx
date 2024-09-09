@@ -18,6 +18,7 @@ It can carry out the following tasks:
 - [Text Generation Chat](#text-generation-chat)
 - [Text To Image](#text-to-image)
 - [Visual Question Answering](#visual-question-answering)
+- [Chat](#chat)
 
 
 
@@ -258,6 +259,34 @@ Answer questions based on a prompt and an image.
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_VISUAL_QUESTION_ANSWERING` |
+| Model Name (required) | `model-name` | string | The Instill Model model to be used. |
+| Prompt (required) | `prompt` | string | The prompt text |
+| System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is using a generic message as "You are a helpful assistant." |
+| Prompt Images | `prompt-images` | array[string] | The prompt images |
+| Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
+| Seed | `seed` | integer | The seed |
+| Temperature | `temperature` | number | The temperature for sampling |
+| Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Text | `text` | string | Text |
+
+
+
+
+
+
+### Chat
+
+Generate texts from input text prompts and chat history.
+
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_CHAT` |
 | Model Name (required) | `model-name` | string | The Instill Model model to be used. |
 | Prompt (required) | `prompt` | string | The prompt text |
 | System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is using a generic message as "You are a helpful assistant." |

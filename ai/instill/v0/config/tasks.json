@@ -572,5 +572,9 @@
   "TASK_VISUAL_QUESTION_ANSWERING": {
     "instillShortDescription": "Answer questions based on a prompt and an image.",
     "$ref": "#/TASK_TEXT_GENERATION_CHAT"
+  },
+  "TASK_CHAT": {
+    "instillShortDescription": "Generate texts from input text prompts and chat history.",
+    "$ref": "#/TASK_TEXT_GENERATION_CHAT"
   }
 }
