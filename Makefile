@@ -9,6 +9,13 @@ gen-mock:
 	@go install github.com/gojuno/minimock/v3/cmd/minimock@v3.3.13
 	@go generate -run minimock ./...
 
+# t stands for type of component and c stands for component name
+# Example: make gen-doc-test t=application c=slack
+gen-doc-test:
+	@cd ./tools/compogen && go install .
+	@rm ./${t}/${c}/v0/README.mdx
+	@go generate -run compogen ./${t}/${c}/v0
+
 test:
 # Install tesseract via `brew install tesseract`
 # Setup `export LIBRARY_PATH="/opt/homebrew/lib"` `export CPATH="/opt/homebrew/include"`

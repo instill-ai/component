@@ -130,6 +130,31 @@ func (g *READMEGenerator) parseTasks(configDir string) (map[string]task, error) 
 		return nil, fmt.Errorf("invalid tasks file:\n%w", asValidationError(err))
 	}
 
+	// for _, t := range tasks {
+	// 	for _, inputProperty := range t.Input.Properties {
+	// 		if inputProperty.Type == "object" {
+	// 		}
+	// 		if inputProperty.Type == "array" {
+	// 			if inputProperty.Items.Type == "object" {
+
+	// 			}
+	// 		}
+	// 	}
+
+	// 	for _, outputProperty := range t.Output.Properties {
+	// 		if outputProperty.Type == "object" {
+
+	// 		}
+	// 		if outputProperty.Type == "array" {
+	// 			if outputProperty.Items.Type == "object" {
+
+	// 			}
+	// 		}
+	// 	}
+	// }
+
+	fmt.Println("tasks", tasks["TASK_READ_MESSAGE"].Output.Properties["conversations"].Items.Properties)
+
 	return tasks, nil
 }
 
@@ -184,6 +209,8 @@ func (g *READMEGenerator) Generate() error {
 		return fmt.Errorf("converting to template params: %w", err)
 	}
 
+	fmt.Println("p", p.Tasks[0].Output)
+
 	return readme.Execute(out, p)
 }
 
@@ -194,7 +221,7 @@ func (g *READMEGenerator) loadExtraContent(section string) (string, error) {
 
 	extra, err := os.ReadFile(g.extraContentPaths[section])
 	if err != nil {
-		return "", fmt.Errorf("reading extra contents for sectino %s: %w", section, err)
+		return "", fmt.Errorf("reading extra contents for section %s: %w", section, err)
 	}
 
 	return string(extra), nil
