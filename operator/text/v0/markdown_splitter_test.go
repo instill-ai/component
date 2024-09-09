@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/frankban/quicktest"
-	"github.com/tmc/langchaingo/textsplitter"
 )
 
 func Test_MarkdownSplitter(t *testing.T) {
@@ -60,11 +59,15 @@ func Test_MarkdownSplitter(t *testing.T) {
 			inputStruct := testCase.input
 			setting := inputStruct.Strategy.Setting
 			split := NewMarkdownTextSplitter(
-				textsplitter.WithChunkSize(setting.ChunkSize),
-				textsplitter.WithChunkOverlap(setting.ChunkOverlap),
+				setting.ChunkSize,
+				setting.ChunkOverlap,
+				inputStruct.Text,
 			)
 
-			chunks, err := split.SplitText(inputStruct.Text)
+			err := split.Validate()
+			c.Assert(err, quicktest.IsNil)
+
+			chunks, err := split.SplitText()
 
 			c.Assert(err, quicktest.IsNil)
 

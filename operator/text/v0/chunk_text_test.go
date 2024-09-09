@@ -48,30 +48,37 @@ func TestChunkText(t *testing.T) {
 				Text: "Hello world.",
 				Strategy: Strategy{
 					Setting: Setting{
-						ChunkMethod: "Markdown",
-						ModelName:   "gpt-3.5-turbo",
-						ChunkSize:   5,
+						ChunkMethod:  "Markdown",
+						ModelName:    "gpt-3.5-turbo",
+						ChunkSize:    5,
+						ChunkOverlap: 2,
 					},
 				},
 			},
 			output: ChunkTextOutput{
 				TextChunks: []TextChunk{
 					{
-						Text:          "Hello",
+						Text:          "\nHello",
 						StartPosition: 0,
 						EndPosition:   4,
-						TokenCount:    1,
-					},
-					{
-						Text:          "world.",
-						StartPosition: 6,
-						EndPosition:   11,
 						TokenCount:    2,
 					},
+					{
+						Text:          "\nworld",
+						StartPosition: 6,
+						EndPosition:   10,
+						TokenCount:    2,
+					},
+					{
+						Text:          "\nld.",
+						StartPosition: 9,
+						EndPosition:   11,
+						TokenCount:    3,
+					},
 				},
-				ChunkNum:         2,
+				ChunkNum:         3,
 				TokenCount:       3,
-				ChunksTokenCount: 3,
+				ChunksTokenCount: 7,
 			},
 		},
 		{
@@ -111,7 +118,13 @@ func TestChunkText(t *testing.T) {
 
 	for _, tc := range testCases {
 		c.Run(tc.name, func(c *quicktest.C) {
-			output, err := chunkText(tc.input)
+			var output ChunkTextOutput
+			err := error(nil)
+			if tc.input.Strategy.Setting.ChunkMethod == "Markdown" {
+				output, err = chunkMarkdown(tc.input)
+			} else {
+				output, err = chunkText(tc.input)
+			}
 			c.Assert(err, quicktest.IsNil)
 			c.Check(output, quicktest.DeepEquals, tc.output)
 		})
@@ -153,54 +166,6 @@ func Test_ChunkPositionCalculator(t *testing.T) {
 			expectStartPosition:    49,
 			expectEndPosition:      80,
 		},
-		{
-			name:                   "Chinese text with Markdown Chunking 1",
-			positionCalculatorType: "MarkdownPositionCalculator",
-			rawTextFilePath:        "testdata/chinese_markdown/text1.txt",
-			chunkTextFilePath:      "testdata/chinese_markdown/chunk1_1.txt",
-			expectStartPosition:    4,
-			expectEndPosition:      46,
-		},
-		{
-			name:                   "Chinese text with Markdown Chunking 2",
-			positionCalculatorType: "MarkdownPositionCalculator",
-			rawTextFilePath:        "testdata/chinese_markdown/text1.txt",
-			chunkTextFilePath:      "testdata/chinese_markdown/chunk1_2.txt",
-			expectStartPosition:    49,
-			expectEndPosition:      91,
-		},
-		{
-			name:                   "Chinese text with Markdown Chunking 3",
-			positionCalculatorType: "MarkdownPositionCalculator",
-			rawTextFilePath:        "testdata/chinese_markdown/text1.txt",
-			chunkTextFilePath:      "testdata/chinese_markdown/chunk1_3.txt",
-			expectStartPosition:    98,
-			expectEndPosition:      140,
-		},
-		{
-			name:                   "English text with Markdown Chunking 1",
-			positionCalculatorType: "MarkdownPositionCalculator",
-			rawTextFilePath:        "testdata/english/text1.txt",
-			chunkTextFilePath:      "testdata/english/chunk1_1.txt",
-			expectStartPosition:    4,
-			expectEndPosition:      25,
-		},
-		{
-			name:                   "English text with Markdown Chunking 2",
-			positionCalculatorType: "MarkdownPositionCalculator",
-			rawTextFilePath:        "testdata/english/text1.txt",
-			chunkTextFilePath:      "testdata/english/chunk1_2.txt",
-			expectStartPosition:    16,
-			expectEndPosition:      47,
-		},
-		{
-			name:                   "English text with Markdown Chunking 3",
-			positionCalculatorType: "MarkdownPositionCalculator",
-			rawTextFilePath:        "testdata/english/text1.txt",
-			chunkTextFilePath:      "testdata/english/chunk1_3.txt",
-			expectStartPosition:    38,
-			expectEndPosition:      58,
-		},
 	}
 
 	for _, tc := range testCases {
@@ -208,8 +173,6 @@ func Test_ChunkPositionCalculator(t *testing.T) {
 			var calculator ChunkPositionCalculator
 			if tc.positionCalculatorType == "PositionCalculator" {
 				calculator = PositionCalculator{}
-			} else if tc.positionCalculatorType == "MarkdownPositionCalculator" {
-				calculator = MarkdownPositionCalculator{}
 			}
 			rawTextBytes, err := os.ReadFile(tc.rawTextFilePath)
 			c.Assert(err, quicktest.IsNil)

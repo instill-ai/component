@@ -70,7 +70,13 @@ func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 				continue
 			}
 
-			outputStruct, err := chunkText(inputStruct)
+			var outputStruct ChunkTextOutput
+			if inputStruct.Strategy.Setting.ChunkMethod == "Markdown" {
+				outputStruct, err = chunkMarkdown(inputStruct)
+			} else {
+				outputStruct, err = chunkText(inputStruct)
+			}
+
 			if err != nil {
 				job.Error.Error(ctx, err)
 				continue
