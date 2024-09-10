@@ -47,6 +47,17 @@ ${connection.<my-connection-id>}`.
 {{ loadExtraContent "setup" }}
 {{ end }}
 
+{{ if .SetupConfig.OneOf }}
+{{ range $key, $options := .SetupConfig.OneOf }}
+{{ range $idx, $option := $options }}
+
+#### {{ $key }} option: {{ $idx }}
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
+| {{ if $prop.Title }}{{ $prop.Title }} {{ else }} {{ $propKey }} {{ end }}  | {{ $propKey }} | {{ $prop.Type }} | {{ if $prop.Const }} please intput  "{{ $prop.Const }}" {{ else }} {{ $prop.Description }}  {{ end }} |{{ end }}{{ end }}{{ end }}
+{{ end }}
+
 ## Supported Tasks{{ range $i, $task := .Tasks}}
 
 ### {{ $task.Title }}
@@ -68,7 +79,8 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $schema.Properties }}
-| {{ $prop.Title }} | {{ $propKey }} | {{ $prop.Type }} | {{ $prop.Description }} |{{ end }}{{ end }}{{ end }}{{ end }}
+| {{ $prop.Title }} | {{ $propKey }} | {{ $prop.Type }} | {{ $prop.Description }} |{{ end }}
+{{ end }}{{ end }}{{ end }}{{ end }}
 
 {{ if $task.OneOf }}
 {{ range $key, $options := $task.OneOf }}
@@ -78,8 +90,8 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
-| {{ if $prop.Title }}{{ $prop.Title }} {{ else }} {{ $propKey }} {{ end }}  | {{ $propKey }} | {{ $prop.Type }} | {{ if $prop.Description }} {{ $prop.Description }} {{ else }} please intput  "{{ $prop.Const }}"  {{ end }} |{{ end }}{{ end }}{{ end }}{{ end }}
-{{ end }}
+| {{ if $prop.Title }}{{ $prop.Title }} {{ else }} {{ $propKey }} {{ end }}  | {{ $propKey }} | {{ $prop.Type }} | {{ if $prop.Const }} please intput  "{{ $prop.Const }}" {{ else }} {{ $prop.Description }}  {{ end }} |{{ end }}
+{{ end }}{{ end }}{{ end }}{{ end }}
 
 
 
@@ -87,7 +99,8 @@ ${connection.<my-connection-id>}`.
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |{{ range $task.Output }}
 | {{ .Title }}{{ if not .Required }} (optional){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
-{{ end }}{{ end }}
+{{ end }}
+
 
 {{ if $task.OutputObjects }}
 {{ range $idx, $objectSchemaMap := $task.OutputObjects }}
@@ -97,8 +110,9 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $schema.Properties }}
-| {{ $prop.Title }} | {{ $propKey }} | {{ $prop.Type }} | {{ $prop.Description }} |{{ end }}{{ end }}{{ end }}
-{{ end }}{{ end }}
+| {{ $prop.Title }} | {{ $propKey }} | {{ $prop.Type }} | {{ $prop.Description }} |{{ end }}
+{{ end }}{{ end }}{{ end }}{{ end }}
+
 {{ loadExtraContent $task.ID }}
 
 {{ end }}

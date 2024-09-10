@@ -220,6 +220,7 @@ type resourceProperty struct {
 type setupConfig struct {
 	Prerequisites string
 	Properties    []resourceProperty
+	OneOf         map[string][]objectSchema
 }
 
 type readmeParams struct {
@@ -259,6 +260,8 @@ func (p readmeParams) parseDefinition(d definition, s *objectSchema, tasks map[s
 	if s != nil {
 		p.SetupConfig.Properties = parseResourceProperties(s)
 	}
+
+	p.SetupConfig.parseOneOfProperties(s.Properties)
 
 	return p, nil
 }
@@ -419,6 +422,27 @@ func (rt *readmeTask) parseOneOfProperties(properties map[string]property) {
 		// Now, we only have 1 layer. So, we do not have to recursively parse.
 		if op.OneOf != nil {
 			rt.OneOf = map[string][]objectSchema{
+				key: op.OneOf,
+			}
+		}
+	}
+
+	return
+}
+
+func (sc *setupConfig) parseOneOfProperties(properties map[string]property) {
+	if properties == nil {
+		return
+	}
+
+	for key, op := range properties {
+		if op.Deprecated {
+			continue
+		}
+
+		// Now, we only have 1 layer. So, we do not have to recursively parse.
+		if op.OneOf != nil {
+			sc.OneOf = map[string][]objectSchema{
 				key: op.OneOf,
 			}
 		}
