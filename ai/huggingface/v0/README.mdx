@@ -470,21 +470,21 @@ Question Answering models can retrieve the answer to a question from a given tex
 
 
 
-#### Options
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
-| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 #### Inputs
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Context | context | string | The context for answering the question.  |
 | Question | question | string | The question  |
+
+
+
+#### Options
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
+| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
 
 
 
@@ -580,21 +580,21 @@ Sentence Similarity is the task of determining how similar two texts are.
 
 
 
-#### Inputs
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Sentences | sentences | array | A list of strings which will be compared against the source-sentence.  |
-| Source Sentence | source-sentence | string | The string that you wish to compare the other strings with. This can be a phrase, sentence, or longer passage, depending on the model being used.  |
-
-
-
 #### Options
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
+
+
+
+#### Inputs
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Sentences | sentences | array | A list of strings which will be compared against the source-sentence.  |
+| Source Sentence | source-sentence | string | The string that you wish to compare the other strings with. This can be a phrase, sentence, or longer passage, depending on the model being used.  |
 
 
 
