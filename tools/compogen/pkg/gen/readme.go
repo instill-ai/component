@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"sort"
 	"strings"
 	"text/template"
 	"unicode"
@@ -286,6 +287,9 @@ func parseREADMETasks(availableTasks []string, tasks map[string]task) ([]readmeT
 		rt.parseObjectProperties(t.Output.Properties, false)
 		rt.parseOneOfProperties(t.Input.Properties)
 
+		sortObjectsByKey(rt.InputObjects)
+		sortObjectsByKey(rt.OutputObjects)
+
 		if rt.Title = t.Title; rt.Title == "" {
 			rt.Title = componentbase.TaskIDToTitle(at)
 		}
@@ -457,6 +461,32 @@ func (sc *setupConfig) parseOneOfProperties(properties map[string]property) {
 	}
 
 	return
+}
+
+func sortObjectsByKey(objects []map[string]objectSchema) {
+	sort.Slice(objects, func(i, j int) bool {
+		keysI := getSortedKeys(objects[i])
+		keysJ := getSortedKeys(objects[j])
+		return compareKeys(keysI, keysJ)
+	})
+}
+
+func getSortedKeys(m map[string]objectSchema) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
+func compareKeys(keysI, keysJ []string) bool {
+	for i := 0; i < len(keysI) && i < len(keysJ); i++ {
+		if keysI[i] != keysJ[i] {
+			return keysI[i] < keysJ[i]
+		}
+	}
+	return len(keysI) < len(keysJ)
 }
 
 func firstToLower(s string) string {
