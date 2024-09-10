@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.27.0-beta](https://github.com/instill-ai/component/compare/v0.26.0-beta...v0.27.0-beta) (2024-09-10)
+
+
+### Features
+
+* add asana component ([#311](https://github.com/instill-ai/component/issues/311)) ([d0e1335](https://github.com/instill-ai/component/commit/d0e13352e518bf0929f8dc2cceb069567f2a60ac))
+* add chroma component ([#300](https://github.com/instill-ai/component/issues/300)) ([9fa57f6](https://github.com/instill-ai/component/commit/9fa57f68a7ffd3459982781a222f89b40916c6ea))
+* add Freshdesk component ([#274](https://github.com/instill-ai/component/issues/274)) ([b22203f](https://github.com/instill-ai/component/commit/b22203f7301c81a93a5dfc9a2c85793ae7020a1b))
+* **compogen:** add reference to integrations on Setup block ([#323](https://github.com/instill-ai/component/issues/323)) ([497f785](https://github.com/instill-ai/component/commit/497f785500522dcbbd528357dd6e1bafe440a3e3))
+* **document:** improve convert to markdown ([#310](https://github.com/instill-ai/component/issues/310)) ([b531c13](https://github.com/instill-ai/component/commit/b531c136e333098419fffdbbac9c4f0274e6b15a))
+* **document:** improve pdf to markdown ([#320](https://github.com/instill-ai/component/issues/320)) ([adae85a](https://github.com/instill-ai/component/commit/adae85a26f7d64b007fd6cdcd46db6ec48d3a7b9))
+* **instill:** adopt latest Instill Model protobufs ([#315](https://github.com/instill-ai/component/issues/315)) ([52b7d78](https://github.com/instill-ai/component/commit/52b7d78110ced622fdbf91dd46b28f861ab84c08))
+* **text:** add table and list concept into markdown chunking ([#317](https://github.com/instill-ai/component/issues/317)) ([60d5fdb](https://github.com/instill-ai/component/commit/60d5fdbf88bd98faa6df6f4050476dd246e211be))
+
+
+### Bug Fixes
+
+* **chroma:** change interface ([#319](https://github.com/instill-ai/component/issues/319)) ([1da8988](https://github.com/instill-ai/component/commit/1da89880435c54a1e1188d916dd5bb5861ab094f))
+
 ## [0.26.0-beta](https://github.com/instill-ai/component/compare/v0.25.0-beta...v0.26.0-beta) (2024-08-29)
 
 
