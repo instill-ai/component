@@ -15,6 +15,7 @@
   "id": "github",
   "public": true,
   "title": "GitHub",
+  "vendor": "GitHub",
   "description": "Do anything available on GitHub",
   "tombstone": false,
   "type": "COMPONENT_TYPE_APPLICATION",
