@@ -200,6 +200,8 @@ The component configuration is defined and maintained [here](https://github.com/
 
 
 
+
+
 ## Supported Tasks
 
 ### Dummy
@@ -212,9 +214,18 @@ The component configuration is defined and maintained [here](https://github.com/
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Orci (optional) | `orci` | string | Orci sagittis eu volutpat odio facilisis mauris sit |
+
+
+
 
 
 #### How to use the dummy task
@@ -237,6 +248,12 @@ This task is dummier than `TASK_DUMMY`.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Elementum | `elementum` | string | Tellus elementum sagittis vitae et |
@@ -244,6 +261,19 @@ This task is dummier than `TASK_DUMMY`.
 | Nullam non | `nullam_non` | number | Id faucibus nisl tincidunt eget nullam non |
 | Errors (optional) | `errors` | array[string] | Error messages, if any, during the dummy process |
 | Meta (optional) | `context` | any | Free-form metadata |
+
+
+
+
+
+
+
+#### Atem
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Arcu | arcu | string | Bibendum arcu vitae elementum curabitur vitae nunc sed velit |
+| Tincidunt tortor | tortor | string | Tincidunt tortor aliquam nulla |
 
 
 

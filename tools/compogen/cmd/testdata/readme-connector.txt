@@ -129,10 +129,12 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Dummy API key |
-| Organization ID | `organization` | string | Specify which organization is used for the requests |
+| API Key (required) | `api-key` | string | Fill in your Dummy API key  |
+| Organization ID | `organization` | string | Specify which organization is used for the requests  |
 
 This is some crucial information about setup: do it before execution.
+
+
 
 
 
@@ -148,9 +150,18 @@ This is some crucial information about setup: do it before execution.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Orci (optional) | `orci` | string | Orci sagittis eu volutpat odio facilisis mauris sit |
+
+
+
 
 
 
