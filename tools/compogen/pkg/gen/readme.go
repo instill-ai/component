@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"sort"
 	"strings"
 	"text/template"
 	"unicode"
@@ -359,7 +360,9 @@ func (rt *readmeTask) parseObjectProperties(properties map[string]property, isIn
 		return
 	}
 
-	for _, op := range properties {
+	sortedProperties := sortPropertiesByOrder(properties)
+
+	for _, op := range sortedProperties {
 		if op.Deprecated {
 			continue
 		}
@@ -407,6 +410,37 @@ func (rt *readmeTask) parseObjectProperties(properties map[string]property, isIn
 	}
 
 	return
+}
+
+func sortPropertiesByOrder(properties map[string]property) []property {
+	// Extract the keys
+	keys := make([]string, 0, len(properties))
+	for k := range properties {
+		keys = append(keys, k)
+	}
+
+	// Sort the keys based on the Order field in the property
+	sort.Slice(keys, func(i, j int) bool {
+		// Default to 0 if Order is nil
+		orderI := 0
+		if properties[keys[i]].Order != nil {
+			orderI = *properties[keys[i]].Order
+		}
+
+		orderJ := 0
+		if properties[keys[j]].Order != nil {
+			orderJ = *properties[keys[j]].Order
+		}
+
+		return orderI < orderJ
+	})
+
+	sortedProperties := make([]property, 0, len(properties))
+	for _, key := range keys {
+		sortedProperties = append(sortedProperties, properties[key])
+	}
+
+	return sortedProperties
 }
 
 func (rt *readmeTask) parseOneOfProperties(properties map[string]property) {
