@@ -197,15 +197,6 @@ Summarization is the task of producing a shorter version of a document while pre
 
 
 
-#### Options
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
-| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 #### Parameters
 
 | Field | Field ID | Type | Note |
@@ -217,6 +208,15 @@ Summarization is the task of producing a shorter version of a document while pre
 | Temperature | temperature | number | The temperature of the sampling operation. 1 means regular sampling, 0 means always take the highest score, 100.0 is getting closer to uniform probability.  |
 | Top K | top-k | integer | Integer to define the top tokens considered within the sample operation to create new text.  |
 | Top P | top-p | number | Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p.  |
+
+
+
+#### Options
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
+| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
 
 
 
@@ -306,15 +306,6 @@ Token classification is a natural language understanding task in which a label i
 
 
 
-#### Options
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
-| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 #### Parameters
 
 | Field | Field ID | Type | Note |
@@ -325,6 +316,15 @@ simple: Entities are grouped according to the default schema (B-, I- tags get me
 first: Same as the simple strategy except words cannot end up with different tags. Words will use the tag of the first token when there is ambiguity.
 average: Same as the simple strategy except words cannot end up with different tags. Scores are averaged across tokens and then the maximum label is applied.
 max: Same as the simple strategy except words cannot end up with different tags. Word entity will be the token with the maximum score.  |
+
+
+
+#### Options
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
+| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
 
 
 
@@ -533,14 +533,14 @@ Table Question Answering (Table QA) is the answering a question about an informa
 
 
 
+
+
 #### Options
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
 
 
 
@@ -580,21 +580,21 @@ Sentence Similarity is the task of determining how similar two texts are.
 
 
 
-#### Inputs
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Sentences | sentences | array | A list of strings which will be compared against the source-sentence.  |
-| Source Sentence | source-sentence | string | The string that you wish to compare the other strings with. This can be a phrase, sentence, or longer passage, depending on the model being used.  |
-
-
-
 #### Options
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
+
+
+
+#### Inputs
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Sentences | sentences | array | A list of strings which will be compared against the source-sentence.  |
+| Source Sentence | source-sentence | string | The string that you wish to compare the other strings with. This can be a phrase, sentence, or longer passage, depending on the model being used.  |
 
 
 
@@ -632,16 +632,6 @@ Conversational response modelling is the task of generating conversational text 
 
 
 
-#### Inputs
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Generated Responses | generated-responses | array | A list of strings corresponding to the earlier replies from the model.  |
-| Past User Inputs | past-user-inputs | array | A list of strings corresponding to the earlier replies from the user. Should be of the same length of generated-responses.  |
-| Text | text | string | The last input from the user in the conversation.  |
-
-
-
 #### Options
 
 | Field | Field ID | Type | Note |
@@ -662,6 +652,16 @@ Conversational response modelling is the task of generating conversational text 
 | Temperature | temperature | number | The temperature of the sampling operation. 1 means regular sampling, 0 means always take the highest score, 100.0 is getting closer to uniform probability.  |
 | Top K | top-k | integer | Integer to define the top tokens considered within the sample operation to create new text.  |
 | Top P | top-p | number | Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p.  |
+
+
+
+#### Inputs
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Generated Responses | generated-responses | array | A list of strings corresponding to the earlier replies from the model.  |
+| Past User Inputs | past-user-inputs | array | A list of strings corresponding to the earlier replies from the user. Should be of the same length of generated-responses.  |
+| Text | text | string | The last input from the user in the conversation.  |
 
 
 
@@ -804,6 +804,16 @@ Object Detection models allow users to identify objects of certain defined class
 
 
 
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Box | box | object | A dict (with keys [xmin,ymin,xmax,ymax]) representing the bounding box of a detected object. |
+| Label | label | string | The label for the class (model specific) of a detected object. |
+| Score | score | number | A float that represents how likely it is that the detected object belongs to the given class. |
+
+
+
 #### Box
 
 | Field | Field ID | Type | Note |
@@ -812,16 +822,6 @@ Object Detection models allow users to identify objects of certain defined class
 | X Min | xmin | number | X min |
 | Y Max | ymax | number | Y Max |
 | Y min | ymin | number | Y min |
-
-
-
-#### Objects
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Box | box | object | A dict (with keys [xmin,ymin,xmax,ymax]) representing the bounding box of a detected object. |
-| Label | label | string | The label for the class (model specific) of a detected object. |
-| Score | score | number | A float that represents how likely it is that the detected object belongs to the given class. |
 
 
 

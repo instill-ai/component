@@ -90,13 +90,22 @@ Get the list of all pull requests in a repository
 
 
 
-#### Commit stats
+#### Pull Requests
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Additions | additions | integer | number of additions in the commit |
-| Total changes | changes | integer | total number of changes in the commit |
-| Deletions | deletions | integer | number of deletions in the commit |
+| PR base | base | string | base commit of the PR (in SHA value) |
+| PR body | body | string | Body of the PR |
+| Number of PR comments | comments-num | integer | number of comments on the PR |
+| Commits | commits | array | commits in the PR |
+| Number of PR commits | commits-num | integer | number of commits in the PR |
+| PR diff url | diff-url | string | url to the diff of the PR |
+| PR head | head | string | head commit of the PR (in SHA value) |
+| PR id | id | integer | id of the PR |
+| PR number | number | integer | number of the PR |
+| Number of PR review comments | review-comments-num | integer | number of review comments in the PR |
+| PR state | state | string | state of the PR |
+| PR Title | title | string | Title of the PR |
 
 
 
@@ -123,22 +132,13 @@ Get the list of all pull requests in a repository
 
 
 
-#### Pull Requests
+#### Commit stats
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| PR base | base | string | base commit of the PR (in SHA value) |
-| PR body | body | string | Body of the PR |
-| Number of PR comments | comments-num | integer | number of comments on the PR |
-| Commits | commits | array | commits in the PR |
-| Number of PR commits | commits-num | integer | number of commits in the PR |
-| PR diff url | diff-url | string | url to the diff of the PR |
-| PR head | head | string | head commit of the PR (in SHA value) |
-| PR id | id | integer | id of the PR |
-| PR number | number | integer | number of the PR |
-| Number of PR review comments | review-comments-num | integer | number of review comments in the PR |
-| PR state | state | string | state of the PR |
-| PR Title | title | string | Title of the PR |
+| Additions | additions | integer | number of additions in the commit |
+| Total changes | changes | integer | total number of changes in the commit |
+| Deletions | deletions | integer | number of deletions in the commit |
 
 
 
@@ -186,16 +186,6 @@ Get a pull request from a repository, given the PR number. This will default to 
 
 
 
-#### Commit stats
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Additions | additions | integer | number of additions in the commit |
-| Total changes | changes | integer | total number of changes in the commit |
-| Deletions | deletions | integer | number of deletions in the commit |
-
-
-
 #### Commits
 
 | Field | Field ID | Type | Note |
@@ -216,6 +206,16 @@ Get a pull request from a repository, given the PR number. This will default to 
 | Deletions | deletions | integer | number of deletions in the commit |
 | File name | filename | string | name of the file |
 | Patch | patch | string | patch of the file |
+
+
+
+#### Commit stats
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Additions | additions | integer | number of additions in the commit |
+| Total changes | changes | integer | total number of changes in the commit |
+| Deletions | deletions | integer | number of deletions in the commit |
 
 
 
