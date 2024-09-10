@@ -36,6 +36,8 @@ The component configuration is defined and maintained [here](https://github.com/
 
 
 
+
+
 ## Supported Tasks
 
 ### Classification
@@ -51,10 +53,19 @@ Classify images into predefined categories.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Category | `category` | string | The predicted category of the input. |
 | Score | `score` | number | The confidence score of the predicted category of the input. |
+
+
+
 
 
 
@@ -74,9 +85,41 @@ Detect, localize and delineate multiple objects in images.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Objects | `objects` | array[object] | A list of detected instance bounding boxes. |
+
+
+
+
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
+| Category | category | string | The predicted category of the bounding box. |
+| RLE | rle | string | Run Length Encoding (RLE) of instance mask within the bounding box. |
+| Score | score | number | The confidence score of the predicted instance object. |
+
+
+
+#### Bounding Box
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Height | height | number | Bounding box height value |
+| Left | left | number | Bounding box left x-axis value |
+| Top | top | number | Bounding box top y-axis value |
+| Width | width | number | Bounding box width value |
 
 
 
@@ -96,9 +139,50 @@ Detect and localize multiple keypoints of objects in images.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Objects | `objects` | array[object] | A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object. |
+
+
+
+
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
+| Keypoints | keypoints | array | A keypoint group is composed of a list of pre-defined keypoints of a detected object. |
+| Score | score | number | The confidence score of the predicted object. |
+
+
+
+#### Keypoints
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Visibility Score | v | number | visibility score of the keypoint. |
+| X Coordinate | x | number | x coordinate of the keypoint. |
+| Y Coordinate | y | number | y coordinate of the keypoint. |
+
+
+
+#### Bounding Box
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Height | height | number | Bounding box height value |
+| Left | left | number | Bounding box left x-axis value |
+| Top | top | number | Bounding box top y-axis value |
+| Width | width | number | Bounding box width value |
 
 
 
@@ -118,9 +202,40 @@ Detect and localize multiple objects in images.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Objects | `objects` | array[object] | A list of detected objects. |
+
+
+
+
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
+| Category | category | string | The predicted category of the bounding box. |
+| Score | score | number | The confidence score of the predicted category of the bounding box. |
+
+
+
+#### Bounding box
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Height | height | number | Bounding box height value |
+| Left | left | number | Bounding box left x-axis value |
+| Top | top | number | Bounding box top y-axis value |
+| Width | width | number | Bounding box width value |
 
 
 
@@ -140,9 +255,40 @@ Detect and recognize text in images.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Objects | `objects` | array[object] | A list of detected bounding boxes. |
+
+
+
+
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
+| Score | score | number | The confidence score of the predicted object. |
+| Text | text | string | Text string recognised per bounding box. |
+
+
+
+#### Bounding Box
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Height | height | number | Bounding box height value |
+| Left | left | number | Bounding box left x-axis value |
+| Top | top | number | Bounding box top y-axis value |
+| Width | width | number | Bounding box width value |
 
 
 
@@ -162,9 +308,28 @@ Classify image pixels into predefined categories.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Stuffs | `stuffs` | array[object] | A list of RLE binary masks. |
+
+
+
+
+
+
+
+#### Stuffs
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Category | category | string | Category text string corresponding to each stuff mask. |
+| RLE | rle | string | Run Length Encoding (RLE) of each stuff mask within the image. |
 
 
 
@@ -188,9 +353,18 @@ Generate texts from input text prompts.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Text |
+
+
+
 
 
 
@@ -216,9 +390,46 @@ Generate texts from input text prompts and chat history.
 
 
 
+
+
+
+#### Chat history
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content | content | array | The message content  |
+| Role | role | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+
+
+
+#### Content
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Image URL | image-url | object | The image URL  |
+| Text | text | string | The text content.  |
+| Type | type | string | The type of the content part.  there are options: <br/>- text<br/>- image-url   |
+
+
+
+#### Image URL
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| URL | url | string | Either a URL of the image or the base64 encoded image data.  |
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Text |
+
+
+
 
 
 
@@ -242,9 +453,18 @@ Generate images from input text prompts.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Images | `images` | array[string] | Images |
+
+
+
 
 
 
@@ -270,9 +490,46 @@ Answer questions based on a prompt and an image.
 
 
 
+
+
+
+#### Chat history
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content | content | array | The message content  |
+| Role | role | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+
+
+
+#### Content
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Image URL | image-url | object | The image URL  |
+| Text | text | string | The text content.  |
+| Type | type | string | The type of the content part.  there are options: <br/>- text<br/>- image-url   |
+
+
+
+#### Image URL
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| URL | url | string | Either a URL of the image or the base64 encoded image data.  |
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Text |
+
+
+
 
 
 
@@ -298,9 +555,46 @@ Generate texts from input text prompts and chat history.
 
 
 
+
+
+
+#### Chat history
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content | content | array | The message content  |
+| Role | role | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+
+
+
+#### Content
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Image URL | image-url | object | The image URL  |
+| Text | text | string | The text content.  |
+| Type | type | string | The type of the content part.  there are options: <br/>- text<br/>- image-url   |
+
+
+
+#### Image URL
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| URL | url | string | Either a URL of the image or the base64 encoded image data.  |
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Text |
+
+
+
 
 
 

@@ -41,7 +41,9 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Archetype AI API key |
+| API Key (required) | `api-key` | string | Fill in your Archetype AI API key  |
+
+
 
 
 
@@ -61,9 +63,29 @@ Describe a video.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Descriptions | `descriptions` | array[object] | A set of descriptions corresponding to different moments in the video |
+
+
+
+
+
+
+
+#### Descriptions
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Description | description | string | The description of the frame |
+| Frame ID | frame-id | integer | The frame number in the video that is being described |
+| Timestamp | timestamp | number | The moment of the video (in seconds since the start) that is being described |
 
 
 
@@ -83,9 +105,18 @@ Summarize the image.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Response | `response` | string | A text responding to the query |
+
+
+
 
 
 
@@ -104,9 +135,18 @@ Upload file.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | File ID | `file-id` | string | The ID to reference the file in queries |
+
+
+
 
 
 

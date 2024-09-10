@@ -43,8 +43,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key | `api-key` | string | Fill in your OpenAI API key. To find your keys, visit your OpenAI's API Keys page. |
-| Organization ID | `organization` | string | Specify which organization is used for the requests. Usage will count against the specified organization's subscription quota. |
+| API Key | `api-key` | string | Fill in your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.  |
+| Organization ID | `organization` | string | Specify which organization is used for the requests. Usage will count against the specified organization's subscription quota.  |
+
+
 
 
 
@@ -74,10 +76,84 @@ Provide text outputs in response to their inputs.
 
 
 
+
+
+
+
+
+#### Chat history
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content | content | array | The message content  |
+| Role | role | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+
+
+
+#### Content
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Image URL | image-url | object | The image URL  |
+| Text | text | string | The text content.  |
+| Type | type | string | The type of the content part.  there are options: <br/>- text<br/>- image-url   |
+
+
+
+#### Image URL
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| URL | url | string | Either a URL of the image or the base64 encoded image data.  |
+
+
+
+
+
+
+#### response-format option: 0
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  type   | type | string |  please intput  "text"   |
+
+
+#### response-format option: 1
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  type   | type | string |  please intput  "json_object"   |
+
+
+#### response-format option: 2
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| JSON Schema   | json-schema | string |  Set up the schema of the structured output.    |
+|  type   | type | string |  please intput  "json_schema"   |
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Texts | `texts` | array[string] | Texts |
 | Usage (optional) | `usage` | object | Usage statistics related to the query |
+
+
+
+
+
+
+
+#### Usage
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Completion tokens | completion-tokens | integer | Total number of tokens used (completion) |
+| Prompt tokens | prompt-tokens | integer | Total number of tokens used (prompt) |
+| Total tokens | total-tokens | integer | Total number of tokens used (prompt + completion) |
 
 
 
@@ -98,9 +174,18 @@ Turn text into numbers, unlocking use cases like search.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Embedding | `embedding` | array[number] | Embedding of the input text |
+
+
+
 
 
 
@@ -123,9 +208,18 @@ Turn audio into text.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Generated text |
+
+
+
 
 
 
@@ -148,9 +242,18 @@ Turn text into lifelike spoken audio
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Audio (optional) | `audio` | string | AI generated audio |
+
+
+
 
 
 
@@ -174,9 +277,28 @@ Generate or manipulate images with DALL·E.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Images | `results` | array[object] | Generated results |
+
+
+
+
+
+
+
+#### Images
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Generated Image | image | string | Generated image |
+| Revised Prompt | revised-prompt | string | Revised prompt |
 
 
 

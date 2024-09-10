@@ -39,7 +39,9 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key | `api-key` | string | Fill in your Anthropic API key. To find your keys, visit the Anthropic console page. |
+| API Key | `api-key` | string | Fill in your Anthropic API key. To find your keys, visit the Anthropic console page.  |
+
+
 
 
 
@@ -66,10 +68,57 @@ Provide text outputs in response to text inputs.
 
 
 
+
+
+
+#### Chat history
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content | content | array | The message content  |
+| Role | role | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+
+
+
+#### Content
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Image URL | image-url | object | The image URL  |
+| Text | text | string | The text content.  |
+| Type | type | string | The type of the content part.  there are options: <br/>- text<br/>- image_url   |
+
+
+
+#### Image URL
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| URL | url | string | Either a URL of the image or the base64 encoded image data.  |
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Model Output |
 | Usage (optional) | `usage` | object | Usage tokens in Anthropic |
+
+
+
+
+
+
+
+#### Usage
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Input Tokens | input-tokens | number | The input tokens used by Anthropic |
+| Output Tokens | output-tokens | number | The output tokens used by Anthropic |
 
 
 

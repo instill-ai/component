@@ -339,7 +339,7 @@
       "instillUIOrder": 0,
       "properties": {
         "conversation": {
-          "description": "A facility dictionnary to send back for the next input (with the new user input addition).",
+          "description": "A facility dictionary to send back for the next input (with the new user input addition).",
           "instillUIOrder": 0,
           "properties": {
             "generated-responses": {
@@ -1081,6 +1081,7 @@
               ],
               "maximum": 120.0,
               "minimum": 0.0,
+              "description": "The amount of time in seconds that the query should take maximum. Network can cause some overhead so it will be a soft limit.",
               "title": "Max Time",
               "type": "number"
             },

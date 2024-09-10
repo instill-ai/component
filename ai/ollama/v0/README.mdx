@@ -40,8 +40,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Endpoint (required) | `endpoint` | string | Fill in your Ollama hosting endpoint. ### WARNING ###: As of 2024-07-26, the Ollama component does not support authentication methods. To prevent unauthorized access to your Ollama serving resources, please implement additional security measures such as IP whitelisting. |
-| Model Auto-Pull (required) | `auto-pull` | boolean | Automatically pull the requested models from the Ollama server if the model is not found in the local cache. |
+| Endpoint (required) | `endpoint` | string | Fill in your Ollama hosting endpoint. ### WARNING ###: As of 2024-07-26, the Ollama component does not support authentication methods. To prevent unauthorized access to your Ollama serving resources, please implement additional security measures such as IP whitelisting.  |
+| Model Auto-Pull (required) | `auto-pull` | boolean | Automatically pull the requested models from the Ollama server if the model is not found in the local cache.  |
+
+
 
 
 
@@ -68,9 +70,46 @@ Provide text outputs in response to text/image inputs.
 
 
 
+
+
+
+#### Chat history
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content | content | array | The message content  |
+| Role | role | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+
+
+
+#### Content
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Image URL | image-url | object | The image URL  |
+| Text | text | string | The text content.  |
+| Type | type | string | The type of the content part.  there are options: <br/>- text<br/>- image_url   |
+
+
+
+#### Image URL
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| URL | url | string | Either a URL of the image or the base64 encoded image data.  |
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Model Output |
+
+
+
 
 
 #### Local Ollama Instance
@@ -102,9 +141,18 @@ Turn text into a vector of numbers that capture its meaning, unlocking use cases
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Embedding | `embedding` | array[number] | Embedding of the input text |
+
+
+
 
 
 
