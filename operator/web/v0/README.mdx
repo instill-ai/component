@@ -28,6 +28,8 @@ The component configuration is defined and maintained [here](https://github.com/
 
 
 
+
+
 ## Supported Tasks
 
 ### Crawl Website
@@ -50,9 +52,30 @@ Crawl the website contents and manipulate html with jquery command. The sequence
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Pages | `pages` | array[object] | The scraped webpages |
+
+
+
+
+
+
+
+#### Pages
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Link | link | string | The full URL to which the webpage link is pointing, e.g., http://www.example.com/foo/bar. |
+| Link HTML | link-html | string | The scraped raw html of the link associated with this webpage link |
+| Link Text | link-text | string | The scraped text of the link associated with this webpage link, in plain text |
+| Title | title | string | The title of a webpage link, in plain text |
 
 
 
@@ -71,9 +94,18 @@ Scrape the sitemap information
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | List | `list` | array | The list of information in a sitemap |
+
+
+
 
 
 
@@ -97,6 +129,12 @@ Scrape the webpage contents and manipulate html with jquery command. The sequenc
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Content | `content` | string | The scraped plain content without html tags of the webpage |
@@ -104,6 +142,20 @@ Scrape the webpage contents and manipulate html with jquery command. The sequenc
 | HTML (optional) | `html` | string | The scraped html of the webpage |
 | Metadata (optional) | `metadata` | object | The metadata of the webpage |
 | Links on Page (optional) | `links-on-page` | array[string] | The list of links on the webpage |
+
+
+
+
+
+
+
+#### Metadata
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Description | description | string | The description of the webpage |
+| Source URL | source-url | string | The source URL of the webpage |
+| Title | title | string | The title of the webpage |
 
 
 

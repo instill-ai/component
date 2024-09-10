@@ -31,6 +31,8 @@ The component configuration is defined and maintained [here](https://github.com/
 
 
 
+
+
 ## Supported Tasks
 
 ### Draw Classification
@@ -48,9 +50,18 @@ Draw classification result on the image.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Image | `image` | string | Output image |
+
+
+
 
 
 
@@ -71,9 +82,40 @@ Draw detection result on the image.
 
 
 
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding box | bounding-box | object | The detected bounding box in (left, top, width, height) format.  |
+| Category | category | string | The predicted category of the bounding box.  |
+| Score | score | number | The confidence score of the predicted category of the bounding box.  |
+
+
+
+#### Bounding box
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Height | height | number | Bounding box height value  |
+| Left | left | number | Bounding box left x-axis value  |
+| Top | top | number | Bounding box top y-axis value  |
+| Width | width | number | Bounding box width value  |
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Image | `image` | string | Output image |
+
+
+
 
 
 
@@ -94,9 +136,50 @@ Draw keypoint result on the image.
 
 
 
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format.  |
+| Keypoints | keypoints | array | A keypoint group is composed of a list of pre-defined keypoints of a detected object.  |
+| Score | score | number | The confidence score of the predicted object.  |
+
+
+
+#### Bounding Box
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Height | height | number | Bounding box height value  |
+| Left | left | number | Bounding box left x-axis value  |
+| Top | top | number | Bounding box top y-axis value  |
+| Width | width | number | Bounding box width value  |
+
+
+
+#### Keypoints
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Visibility Score | v | number | visibility score of the keypoint.  |
+| X Coordinate | x | number | x coordinate of the keypoint.  |
+| Y Coordinate | y | number | y coordinate of the keypoint.  |
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Image | `image` | string | Output image |
+
+
+
 
 
 
@@ -117,9 +200,40 @@ Draw OCR result on the image.
 
 
 
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format.  |
+| Score | score | number | The confidence score of the predicted object.  |
+| Text | text | string | Text string recognised per bounding box.  |
+
+
+
+#### Bounding Box
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Height | height | number | Bounding box height value  |
+| Left | left | number | Bounding box left x-axis value  |
+| Top | top | number | Bounding box top y-axis value  |
+| Width | width | number | Bounding box width value  |
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Image | `image` | string | Output image |
+
+
+
 
 
 
@@ -140,9 +254,41 @@ Draw instance segmentation result on the image.
 
 
 
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format.  |
+| Category | category | string | The predicted category of the bounding box.  |
+| RLE | rle | string | Run Length Encoding (RLE) of instance mask within the bounding box.  |
+| Score | score | number | The confidence score of the predicted instance object.  |
+
+
+
+#### Bounding Box
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Height | height | number | Bounding box height value  |
+| Left | left | number | Bounding box left x-axis value  |
+| Top | top | number | Bounding box top y-axis value  |
+| Width | width | number | Bounding box width value  |
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Image | `image` | string | Output image |
+
+
+
 
 
 
@@ -163,9 +309,28 @@ Draw semantic segmentation result on the image.
 
 
 
+
+
+
+#### Stuffs
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Category | category | string | Category text string corresponding to each stuff mask.  |
+| RLE | rle | string | Run Length Encoding (RLE) of each stuff mask within the image.  |
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Image | `image` | string | Output image |
+
+
+
 
 
 
