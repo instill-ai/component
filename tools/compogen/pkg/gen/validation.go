@@ -24,7 +24,7 @@ func fieldErrorMessage(fe validator.FieldError) string {
 		return fe.Error() // default error
 	}
 
-	return fmt.Sprintf("%s field %s", fe.Field(), msg)
+	return fmt.Sprintf("%s: %s field %s", fe.Namespace(), fe.Field(), msg)
 }
 
 func asValidationError(err error) error {

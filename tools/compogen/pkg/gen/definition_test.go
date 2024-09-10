@@ -41,42 +41,42 @@ func TestDefinition_Validate(t *testing.T) {
 			modifier: func(d *definition) {
 				d.ID = ""
 			},
-			wantErr: "ID field is required",
+			wantErr: "definition.ID: ID field is required",
 		},
 		{
 			name: "nok - no title",
 			modifier: func(d *definition) {
 				d.Title = ""
 			},
-			wantErr: "Title field is required",
+			wantErr: "definition.Title: Title field is required",
 		},
 		{
 			name: "nok - no description",
 			modifier: func(d *definition) {
 				d.Description = ""
 			},
-			wantErr: "Description field is required",
+			wantErr: "definition.Description: Description field is required",
 		},
 		{
 			name: "nok - no release stage",
 			modifier: func(d *definition) {
 				d.ReleaseStage = 0
 			},
-			wantErr: "ReleaseStage field is required",
+			wantErr: "definition.ReleaseStage: ReleaseStage field is required",
 		},
 		{
 			name: "nok - zero tasks",
 			modifier: func(d *definition) {
 				d.AvailableTasks = []string{}
 			},
-			wantErr: "AvailableTasks field doesn't reach the minimum value / number of elements",
+			wantErr: "definition.AvailableTasks: AvailableTasks field doesn't reach the minimum value / number of elements",
 		},
 		{
 			name: "nok - invalid source URL",
 			modifier: func(d *definition) {
 				d.SourceURL = "github.com/instill-ai"
 			},
-			wantErr: "SourceURL field must be a valid URL",
+			wantErr: "definition.SourceURL: SourceURL field must be a valid URL",
 		},
 		{
 			name: "nok - multiple errors",
@@ -84,7 +84,7 @@ func TestDefinition_Validate(t *testing.T) {
 				d.Title = ""
 				d.Description = ""
 			},
-			wantErr: "Title field is required\nDescription field is required",
+			wantErr: "definition.Title: Title field is required\ndefinition.Description: Description field is required",
 		},
 	}
 

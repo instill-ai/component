@@ -49,7 +49,7 @@ func TestObjectSchema_Validate(t *testing.T) {
 			modifier: func(rs *objectSchema) {
 				rs.Properties = map[string]property{}
 			},
-			wantErr: "Properties field doesn't reach the minimum value / number of elements",
+			wantErr: "objectSchema.Properties: Properties field doesn't reach the minimum value / number of elements",
 		},
 		{
 			name: "nok - no title",
@@ -60,7 +60,7 @@ func TestObjectSchema_Validate(t *testing.T) {
 					Order:       &two,
 				}
 			},
-			wantErr: "Title field is required",
+			wantErr: `^objectSchema\.Properties\[wrong\]\.Title: Title field is required$`,
 		},
 		{
 			name: "nok - no description",
@@ -71,7 +71,7 @@ func TestObjectSchema_Validate(t *testing.T) {
 					Order: &two,
 				}
 			},
-			wantErr: "Description field is required",
+			wantErr: `^objectSchema\.Properties\[wrong\]\.Description: Description field is required$`,
 		},
 		{
 			name: "nok - no order",
@@ -82,7 +82,7 @@ func TestObjectSchema_Validate(t *testing.T) {
 					Type:        "zot",
 				}
 			},
-			wantErr: "Order field is required",
+			wantErr: `^objectSchema\.Properties\[wrong\]\.Order: Order field is required$`,
 		},
 	}
 
