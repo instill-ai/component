@@ -40,7 +40,9 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Token (required) | `token` | string | Fill in your Slack app access token. For more information about how to access to create app tokens, please refer to the Slack API documentation. |
+| Token (required) | `token` | string | Fill in your Slack app access token. For more information about how to access to create app tokens, please refer to the Slack API documentation.  |
+
+
 
 
 
@@ -60,9 +62,43 @@ Get the latest message since specific date
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Conversations | `conversations` | array[object] | An array of conversations with thread messages |
+
+
+
+
+
+
+
+#### Conversations
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Last Date | last-date | string | Date of the last message |
+| Start Conversation Message | message | string | message to start a conversation |
+| Start Date | start-date | string | when a conversation starts |
+| Replied messages | thread-reply-messages | array | replies in a conversation |
+| User UID | user-id | string | unique id from Slack |
+| User Name | user-name | string | user name in Slack |
+
+
+
+#### Replied messages
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Replied Time | datetime | string | replied datetime |
+| Replied Message | message | string | message to reply a conversation |
+| User UID | user-id | string | unique id from Slack |
+| User Name | user-name | string | user name in Slack |
 
 
 
@@ -82,9 +118,18 @@ send message to a specific channel
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result | `result` | string | result for sending message |
+
+
+
 
 
 

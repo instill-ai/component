@@ -47,7 +47,9 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Token | `token` | string | Fill in your GitHub access token for advanced usages. For more information about how to create tokens, please refer to the <a href="https://github.com/settings/tokens">github settings</a>. |
+| Token | `token` | string | Fill in your GitHub access token for advanced usages. For more information about how to create tokens, please refer to the <a href="https://github.com/settings/tokens">github settings</a>.  |
+
+
 
 
 
@@ -72,9 +74,71 @@ Get the list of all pull requests in a repository
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Pull Requests | `pull-requests` | array[object] | An array of PRs |
+
+
+
+
+
+
+
+#### Pull Requests
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| PR base | base | string | base commit of the PR (in SHA value) |
+| PR body | body | string | Body of the PR |
+| Number of PR comments | comments-num | integer | number of comments on the PR |
+| Commits | commits | array | commits in the PR |
+| Number of PR commits | commits-num | integer | number of commits in the PR |
+| PR diff url | diff-url | string | url to the diff of the PR |
+| PR head | head | string | head commit of the PR (in SHA value) |
+| PR id | id | integer | id of the PR |
+| PR number | number | integer | number of the PR |
+| Number of PR review comments | review-comments-num | integer | number of review comments in the PR |
+| PR state | state | string | state of the PR |
+| PR Title | title | string | Title of the PR |
+
+
+
+#### Commits
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Files | files | array | files in the commit |
+| Commit message | message | string | message of the commit |
+| Commit SHA | sha | string | SHA of the commit |
+| Commit stats | stats | object | stats of changes |
+
+
+
+#### Files
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Additions | additions | integer | number of additions in the commit |
+| Total changes | changes | integer | total number of changes in the commit |
+| Deletions | deletions | integer | number of deletions in the commit |
+| File name | filename | string | name of the file |
+| Patch | patch | string | patch of the file |
+
+
+
+#### Commit stats
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Additions | additions | integer | number of additions in the commit |
+| Total changes | changes | integer | total number of changes in the commit |
+| Deletions | deletions | integer | number of deletions in the commit |
 
 
 
@@ -92,6 +156,12 @@ Get a pull request from a repository, given the PR number. This will default to 
 | Owner (required) | `owner` | string | Owner of the repository |
 | Repository (required) | `repository` | string | Repository name |
 | PR Number | `pr-number` | integer | Number of the PR. `0` for the latest PR |
+
+
+
+
+
+
 
 
 
@@ -115,6 +185,43 @@ Get a pull request from a repository, given the PR number. This will default to 
 
 
 
+
+#### Commits
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Files | files | array | files in the commit |
+| Commit message | message | string | message of the commit |
+| Commit SHA | sha | string | SHA of the commit |
+| Commit stats | stats | object | stats of changes |
+
+
+
+#### Commit stats
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Additions | additions | integer | number of additions in the commit |
+| Total changes | changes | integer | total number of changes in the commit |
+| Deletions | deletions | integer | number of deletions in the commit |
+
+
+
+#### Files
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Additions | additions | integer | number of additions in the commit |
+| Total changes | changes | integer | total number of changes in the commit |
+| Deletions | deletions | integer | number of deletions in the commit |
+| File name | filename | string | name of the file |
+| Patch | patch | string | patch of the file |
+
+
+
+
+
+
 ### Get Commit
 
 Get a commit from a repository, given the commit SHA
@@ -129,12 +236,44 @@ Get a commit from a repository, given the commit SHA
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Commit SHA (optional) | `sha` | string | SHA of the commit |
 | Commit message (optional) | `message` | string | message of the commit |
 | Commit stats (optional) | `stats` | object | stats of changes |
 | Files (optional) | `files` | array[object] | files in the commit |
+
+
+
+
+
+
+
+#### Commit stats
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Additions | additions | integer | number of additions in the commit |
+| Total changes | changes | integer | total number of changes in the commit |
+| Deletions | deletions | integer | number of deletions in the commit |
+
+
+
+#### Files
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Additions | additions | integer | number of additions in the commit |
+| Total changes | changes | integer | total number of changes in the commit |
+| Deletions | deletions | integer | number of deletions in the commit |
+| File name | filename | string | name of the file |
+| Patch | patch | string | patch of the file |
 
 
 
@@ -160,9 +299,48 @@ Get the review comments in a pull request
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Comments | `comments` | array[object] | An array of comments |
+
+
+
+
+
+
+
+#### Comments
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Comment body | body | string | Body of the comment |
+| Commit SHA | commitId | string | SHA of the commit on which you want to comment |
+| Comment created at | created-at | string | Time the comment was created |
+| Comment id | id | integer | ID of the comment |
+| In Reply To | in-reply-to-id | integer | ID of the comment this comment is in reply to |
+| Comment end line | line | integer | The line of the blob in the pull request diff that the comment applies to. For a multi-line comment, the last line of the range that your comment applies to. |
+| Comment path | path | string | Path of the file the comment is on |
+| Comment end side | side | string | Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side |
+| Comment start line | start-line | integer | The first line in the pull request diff that your multi-line comment applies to. Only multi-line comment needs to fill this field. |
+| Comment start side | start-side | string | Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side |
+| Comment type | subject-type | string | Subject type of the comment, can be one of: line, file. Default is line |
+| Comment updated at | updated-at | string | Time the comment was updated |
+| User | user | object | User who created the comment |
+
+
+
+#### User
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| User id | id | integer | ID of the user |
+| User URL | url | string | URL of the user |
 
 
 
@@ -184,6 +362,28 @@ Create a review comment in pull request.
 
 
 
+
+
+
+#### Comment
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Comment body | body | string | Body of the comment  |
+| Commit SHA | commit-id | string | SHA of the commit on which you want to comment  |
+| Comment end line | line | integer | The line of the blob in the pull request diff that the comment applies to. For a multi-line comment, the last line of the range that your comment applies to.  |
+| Comment path | path | string | Path of the file the comment is on  |
+| Comment end side | side | string | Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side  there are options: <br/>- LEFT<br/>- RIGHT<br/>- side   |
+| Comment start line | start-line | integer | The first line in the pull request diff that your multi-line comment applies to. Only multi-line comment needs to fill this field.  |
+| Comment start side | start-side | string | Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side  there are options: <br/>- LEFT<br/>- RIGHT<br/>- side   |
+| Comment type | subject-type | string | Subject type of the comment, can be one of: line, file. Default is line  there are options: <br/>- line<br/>- file   |
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Comment id (optional) | `id` | integer | ID of the comment |
@@ -199,6 +399,19 @@ Create a review comment in pull request.
 | Comment created at (optional) | `created-at` | string | Time the comment was created |
 | Comment updated at (optional) | `updated-at` | string | Time the comment was updated |
 | User (optional) | `user` | object | User who created the comment |
+
+
+
+
+
+
+
+#### User
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| User id | id | integer | ID of the user |
+| User URL | url | string | URL of the user |
 
 
 
@@ -225,9 +438,34 @@ Get the list of all issues in a repository
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Issues | `issues` | array[object] | An array of issues |
+
+
+
+
+
+
+
+#### Issues
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Assignee | assignee | string | Assignee of the issue |
+| Assignees | assignees | array | Assignees of the issue |
+| Issue body | body | string | Body of the issue |
+| Is Pull Request | is-pull-request | boolean | Whether the issue is a pull request |
+| Labels | labels | array | Labels of the issue |
+| Issue number | number | integer | Number of the issue |
+| Issue state | state | string | State of the issue |
+| Issue title | title | string | Title of the issue |
 
 
 
@@ -248,6 +486,12 @@ Get an issue.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Issue number (optional) | `number` | integer | Number of the issue |
@@ -258,6 +502,9 @@ Get an issue.
 | Assignees (optional) | `assignees` | array[string] | Assignees of the issue |
 | Labels (optional) | `labels` | array[string] | Labels of the issue |
 | Is Pull Request (optional) | `is-pull-request` | boolean | Whether the issue is a pull request |
+
+
+
 
 
 
@@ -277,6 +524,12 @@ Get an issue.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Issue number (optional) | `number` | integer | Number of the issue |
@@ -287,6 +540,9 @@ Get an issue.
 | Assignees (optional) | `assignees` | array[string] | Assignees of the issue |
 | Labels (optional) | `labels` | array[string] | Labels of the issue |
 | Is Pull Request (optional) | `is-pull-request` | boolean | Whether the issue is a pull request |
+
+
+
 
 
 
@@ -309,6 +565,12 @@ Get an issue.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Webhook ID (optional) | `id` | integer | ID of the webhook |
@@ -316,6 +578,20 @@ Get an issue.
 | Ping URL (optional) | `ping-url` | string | URL to ping the webhook |
 | Test URL (optional) | `test-url` | string | URL to test the webhook |
 | Config (optional) | `config` | object | Configuration of the webhook |
+
+
+
+
+
+
+
+#### Config
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content Type | content-type | string | Content type of the webhook |
+| Insecure SSL | insecure-ssl | string | Whether the webhook is insecure |
+| Webhook URL | url | string | URL of the webhook |
 
 
 

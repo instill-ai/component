@@ -53,8 +53,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API key (required) | `api-key` | string | Fill in your Freshdesk API key. To find your key, go to profile settigs and on the right pane, you can get your key once you have completed the captcha verification. |
-| Domain (required) | `domain` | string | Your Freshdesk domain. You can find this by going to Admin -> Search for "Portals" -> Portal URL. Your portal URL will look like "yourdomain.freshdesk.com". Please only input your domain and not the whole URL. |
+| API key (required) | `api-key` | string | Fill in your Freshdesk API key. To find your key, go to profile settigs and on the right pane, you can get your key once you have completed the captcha verification.  |
+| Domain (required) | `domain` | string | Your Freshdesk domain. You can find this by going to Admin -> Search for "Portals" -> Portal URL. Your portal URL will look like "yourdomain.freshdesk.com". Please only input your domain and not the whole URL.  |
+
+
 
 
 
@@ -70,6 +72,12 @@ Get ticket using ID
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_TICKET` |
 | Ticket ID (required) | `ticket-id` | integer | The ID of the ticket |
+
+
+
+
+
+
 
 
 
@@ -113,6 +121,22 @@ Get ticket using ID
 
 
 
+
+
+
+#### Attachments
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Attachment Content Type | content-type | string | The type of the file |
+| Attachment Name | name | string | The name of the file |
+| Attachment URL | url | string | The URL to the attachment. |
+
+
+
+
+
+
 ### Create Ticket
 
 Create ticket
@@ -140,10 +164,19 @@ Create ticket
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Ticket ID | `ticket-id` | integer | The ID of the ticket |
 | Created At | `created-at` | string | Timestamp that denotes when the ticket/conversation was created. In UTC format. |
+
+
+
 
 
 
@@ -167,10 +200,19 @@ Reply to a ticket thread.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Conversation ID | `conversation-id` | integer | The ID of the note or reply that is associated with the ticket |
 | Created At | `created-at` | string | Timestamp that denotes when the ticket/conversation was created. In UTC format. |
+
+
+
 
 
 
@@ -194,10 +236,19 @@ Create a private/public note on a ticket thread.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Conversation ID | `conversation-id` | integer | The ID of the note or reply that is associated with the ticket |
 | Created At | `created-at` | string | Timestamp that denotes when the ticket/conversation was created. In UTC format. |
+
+
+
 
 
 
@@ -216,10 +267,38 @@ Get all the conversations in a ticket. (Conversations are replies and notes that
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Conversations | `conversations` | array[object] | An array of conversations |
 | Conversations Length | `conversations-length` | integer | Number of conversations |
+
+
+
+
+
+
+
+#### Conversations
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| BCC Emails | bcc-emails | array | Email addresses added in the 'bcc' field of the incoming ticket email |
+| Body Text | body-text | string | Content of the conversation |
+| CC Emails | cc-emails | array | Email addresses added in the 'cc' field of the incoming ticket email |
+| Conversation ID | conversation-id | integer | The ID of the note or reply that is associated with the ticket |
+| Created At | created-at | string | Timestamp that denotes when the ticket/conversation was created. In UTC format. |
+| From Email | from-email | string | Email address that is replying to the ticket or adding the note. |
+| Incoming | incoming | boolean | Set to true if a particular conversation should appear as being created from outside |
+| Incoming | private | boolean | Set to true if a note is private. Can be set only for notes. |
+| Support Email | support-email | string | Support email address. You can find it in Admin -> Email (under channel). |
+| To Emails | to-emails | array | Email addresses of agents/users who need to be notified about this conversation |
+| Incoming | user-id | integer | ID of the agent/contact replying to the ticket. |
 
 
 
@@ -235,6 +314,12 @@ Get contact using ID
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_CONTACT` |
 | Contact ID (required) | `contact-id` | integer | ID of the contact |
+
+
+
+
+
+
 
 
 
@@ -262,6 +347,21 @@ Get contact using ID
 | Created At (optional) | `created-at` | string | Timestamp that denotes when the contact was created. In UTC format. |
 | Updated At (optional) | `updated-at` | string | Timestamp that denotes when the contact was last updated. In UTC format. |
 | Custom Fields (optional) | `custom-fields` | object | Custom fields that the contact have. Custom fields can be created or modified in Admin -> Customer Fields |
+
+
+
+
+
+
+
+
+
+#### Other Companies
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Company ID | company-id | integer | ID of the company |
+| View All Tickets | view-all-tickets | boolean | Set to true if the contact can see all the tickets that are associated with the company. |
 
 
 
@@ -296,10 +396,19 @@ Create contact
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Contact ID | `contact-id` | integer | ID of the contact |
 | Created At | `created-at` | string | Timestamp that denotes when the contact was created. In UTC format. |
+
+
+
 
 
 
@@ -318,6 +427,12 @@ Get company using ID
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Name | `name` | string | Name of the company |
@@ -331,6 +446,12 @@ Get company using ID
 | Created At | `created-at` | string | Timestamp that denotes when the company was created. In UTC format. |
 | Updated At | `updated-at` | string | Timestamp that denotes when the company was last updated. In UTC format. |
 | Custom Fields (optional) | `custom-fields` | object | Custom fields that the company have. Custom fields can be created or modified in Admin -> Customer Fields |
+
+
+
+
+
+
 
 
 
@@ -356,10 +477,19 @@ Create company
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Company ID | `company-id` | integer | ID of the company |
 | Created At | `created-at` | string | Timestamp that denotes when the company was created. In UTC format. |
+
+
+
 
 
 
@@ -379,10 +509,19 @@ Task to get all the IDs of existing contacts, companies, tickets, products, agen
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | IDs | `ids` | array[integer] | List of IDs |
 | ID Length | `id-length` | integer | Number of IDs |
+
+
+
 
 
 
@@ -401,6 +540,12 @@ Get product using ID. This task will only work if you have admin privileges.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Name | `name` | string | Name of the product |
@@ -409,6 +554,9 @@ Get product using ID. This task will only work if you have admin privileges.
 | Created At | `created-at` | string | Timestamp that denotes when the product was created |
 | Updated At | `updated-at` | string | Timestamp that denotes when the product was last updated |
 | Default | `default` | boolean | Set to true if the product is the default product |
+
+
+
 
 
 
@@ -424,6 +572,12 @@ Get agent using ID. This task will only work if you have admin privileges. Agent
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_AGENT` |
 | Agent ID (required) | `agent-id` | integer | Agent ID |
+
+
+
+
+
+
 
 
 
@@ -455,6 +609,9 @@ Get agent using ID. This task will only work if you have admin privileges. Agent
 
 
 
+
+
+
 ### Get Role
 
 Get role using ID. This task will only work if you have admin privileges. Roles allow agents/collaborators to have different privileges.
@@ -464,6 +621,12 @@ Get role using ID. This task will only work if you have admin privileges. Roles 
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_ROLE` |
 | Role ID (required) | `role-id` | integer | Role ID |
+
+
+
+
+
+
 
 
 
@@ -481,6 +644,9 @@ Get role using ID. This task will only work if you have admin privileges. Roles 
 
 
 
+
+
+
 ### Get Group
 
 Get group using ID. This task will only work if you have admin privileges. Agents can be classified into groups such as Customer Support.
@@ -490,6 +656,12 @@ Get group using ID. This task will only work if you have admin privileges. Agent
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_GROUP` |
 | Group ID (required) | `group-id` | integer | Group ID |
+
+
+
+
+
+
 
 
 
@@ -511,6 +683,9 @@ Get group using ID. This task will only work if you have admin privileges. Agent
 
 
 
+
+
+
 ### Get Skill
 
 Get skill using ID. This task will only work if you have admin privileges. Agents can be assigned skills, and it is possible for tickets to be automatically assigned to agents based on the skills they have.
@@ -523,6 +698,12 @@ Get skill using ID. This task will only work if you have admin privileges. Agent
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Name | `name` | string | Name of the skill |
@@ -531,6 +712,9 @@ Get skill using ID. This task will only work if you have admin privileges. Agent
 | Conditions | `conditions` | array | Conditions for the skill |
 | Created At | `created-at` | string | Timestamp that denotes when the skill was created |
 | Updated At | `updated-at` | string | Timestamp that denotes when the skill was last updated |
+
+
+
 
 
 
