@@ -326,9 +326,9 @@ Get the review comments in a pull request
 | In Reply To | in-reply-to-id | integer | ID of the comment this comment is in reply to |
 | Comment end line | line | integer | The line of the blob in the pull request diff that the comment applies to. For a multi-line comment, the last line of the range that your comment applies to. |
 | Comment path | path | string | Path of the file the comment is on |
-| Comment end side | side | string | Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side |
+| Comment end side | side | string | Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side. |
 | Comment start line | start-line | integer | The first line in the pull request diff that your multi-line comment applies to. Only multi-line comment needs to fill this field. |
-| Comment start side | start-side | string | Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side |
+| Comment start side | start-side | string | Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side. |
 | Comment type | subject-type | string | Subject type of the comment, can be one of: line, file. Default is line |
 | Comment updated at | updated-at | string | Time the comment was updated |
 | User | user | object | User who created the comment |
@@ -373,10 +373,10 @@ Create a review comment in pull request.
 | Commit SHA | commit-id | string | SHA of the commit on which you want to comment  |
 | Comment end line | line | integer | The line of the blob in the pull request diff that the comment applies to. For a multi-line comment, the last line of the range that your comment applies to.  |
 | Comment path | path | string | Path of the file the comment is on  |
-| Comment end side | side | string | Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side  there are options: <br/>- LEFT<br/>- RIGHT<br/>- side   |
+| Comment end side | side | string | Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side.  There are options: <br/>- LEFT<br/>- RIGHT<br/>- side   |
 | Comment start line | start-line | integer | The first line in the pull request diff that your multi-line comment applies to. Only multi-line comment needs to fill this field.  |
-| Comment start side | start-side | string | Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side  there are options: <br/>- LEFT<br/>- RIGHT<br/>- side   |
-| Comment type | subject-type | string | Subject type of the comment, can be one of: line, file. Default is line  there are options: <br/>- line<br/>- file   |
+| Comment start side | start-side | string | Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side.  There are options: <br/>- LEFT<br/>- RIGHT<br/>- side   |
+| Comment type | subject-type | string | Subject type of the comment, can be one of: line, file. Default is line  There are options: <br/>- line<br/>- file   |
 
 
 
@@ -393,8 +393,8 @@ Create a review comment in pull request.
 | Comment path (optional) | `path` | string | Path of the file the comment is on |
 | Comment end line (optional) | `line` | integer | The line of the blob in the pull request diff that the comment applies to. For a multi-line comment, the last line of the range that your comment applies to. |
 | Comment start line (optional) | `start-line` | integer | The first line in the pull request diff that your multi-line comment applies to. Only multi-line comment needs to fill this field. |
-| Comment end side (optional) | `side` | string | Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side |
-| Comment start side (optional) | `start-side` | string | Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side |
+| Comment end side (optional) | `side` | string | Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side. |
+| Comment start side (optional) | `start-side` | string | Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side. |
 | Comment type (optional) | `subject-type` | string | Subject type of the comment, can be one of: line, file. Default is line |
 | Comment created at (optional) | `created-at` | string | Time the comment was created |
 | Comment updated at (optional) | `updated-at` | string | Time the comment was updated |

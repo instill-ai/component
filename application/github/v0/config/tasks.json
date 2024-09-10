@@ -277,8 +277,8 @@
           "type": "integer"
         },
         "side": {
-          "instillShortDescription": "Side of the end line, can be one of: LEFT, RIGHT, side. Default is side",
-          "description": "Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side",
+          "instillShortDescription": "Side of the end line, can be one of: LEFT, RIGHT, side. Default is side.",
+          "description": "Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side.",
           "default": "side",
           "enum": [
             "LEFT",
@@ -291,8 +291,8 @@
           "type": "string"
         },
         "start-side": {
-          "instillShortDescription": "Side of the start line, can be one of: LEFT, RIGHT, side. Default is side",
-          "description": "Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side",
+          "instillShortDescription": "Side of the start line, can be one of: LEFT, RIGHT, side. Default is side.",
+          "description": "Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side.",
           "default": "side",
           "enum": [
             "LEFT",

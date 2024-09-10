@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "engine": {
-      "description": "Choose the engine of your database",
+      "description": "Choose the engine of your database.",
       "instillUpstreamTypes": [
         "value",
         "reference",

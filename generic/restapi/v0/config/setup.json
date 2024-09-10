@@ -69,7 +69,7 @@
           "properties": {
             "auth-location": {
               "default": "header",
-              "description": "Add the API key to the header or query params",
+              "description": "Add the API key to the header or query params.",
               "enum": [
                 "header",
                 "query"
