@@ -198,6 +198,62 @@ cmp pkg/dummy/README.mdx want-readme.mdx
           "instillUIOrder": 0,
           "title": "Orci",
           "type": "string"
+        },
+        "conversations": {
+          "description": "An array of conversations with thread messages",
+          "instillUIOrder": 0,
+          "title": "Conversations",
+          "type": "array",
+          "items": {
+            "title": "conversation details",
+            "type": "object",
+            "properties": {
+              "message": {
+                "description": "message to start a conversation",
+                "instillUIOrder": 0,
+                "title": "Start Conversation Message",
+                "type": "string"
+              },
+              "start-date": {
+                "description": "when a conversation starts",
+                "instillUIOrder": 1,
+                "title": "Start Date",
+                "type": "string"
+              },
+              "last-date": {
+                "description": "Date of the last message",
+                "instillUIOrder": 2,
+                "title": "Last Date",
+                "type": "string"
+              },
+              "thread-reply-messages": {
+                "description": "replies in a conversation",
+                "instillUIOrder": 0,
+                "title": "Replied messages",
+                "type": "array",
+                "items": {
+                  "title": "relied details",
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "description": "message to reply a conversation",
+                      "instillFormat": "string",
+                      "instillUIOrder": 3,
+                      "title": "Replied Message",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "message",
+              "start-date"
+            ]
+          }
         }
       }
     }
@@ -325,10 +381,31 @@ This is some crucial information about setup: do it before execution.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
+| Conversations (optional) | `conversations` | array[object] | An array of conversations with thread messages |
 | Orci (optional) | `orci` | string | Orci sagittis eu volutpat odio facilisis mauris sit |
 
 
 
+
+
+
+
+#### Conversations
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Last Date | last-date | string | Date of the last message |
+| Start Conversation Message | message | string | message to start a conversation |
+| Start Date | start-date | string | when a conversation starts |
+| Replied messages | thread-reply-messages | array | replies in a conversation |
+
+
+
+#### Replied messages
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Replied Message | message | string | message to reply a conversation |
 
 
 
