@@ -42,7 +42,7 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range . }}
-| {{ .Title }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
+| {{ .Title }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} {{ if .Enum }} there are options: <br/>- {{ enumValues .Enum }}  {{ end }} |{{ end }}
 {{ end }}
 {{ loadExtraContent "setup" }}
 {{ end }}
@@ -55,7 +55,7 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
-| {{ if $prop.Title }}{{ $prop.Title }} {{ else }} {{ $propKey }} {{ end }}  | {{ $propKey }} | {{ $prop.Type }} | {{ if $prop.Const }} please intput  "{{ $prop.Const }}" {{ else }} {{ $prop.Description }}  {{ end }} |{{ end }}{{ end }}{{ end }}
+| {{ if $prop.Title }}{{ $prop.Title }} {{ else }} {{ $propKey }} {{ end }}  | {{ $propKey }} | {{ $prop.Type }} | {{ if $prop.Const }} please intput  "{{ $prop.Const }}" {{ else }} {{ $prop.Description }}  {{ end }} {{ if .Enum }} there are options: <br/>- {{ enumValues .Enum }}  {{ end }} |{{ end }}{{ end }}{{ end }}
 {{ end }}
 
 ## Supported Tasks{{ range $i, $task := .Tasks}}
@@ -79,7 +79,7 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $schema.Properties }}
-| {{ $prop.Title }} | {{ $propKey }} | {{ $prop.Type }} | {{ $prop.Description }} |{{ end }}
+| {{ $prop.Title }} | {{ $propKey }} | {{ $prop.Type }} | {{ $prop.Description }} {{ if .Enum }} there are options: <br/>- {{ enumValues .Enum }}  {{ end }} |{{ end }}
 {{ end }}{{ end }}{{ end }}{{ end }}
 
 {{ if $task.OneOf }}
@@ -90,7 +90,7 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
-| {{ if $prop.Title }}{{ $prop.Title }} {{ else }} {{ $propKey }} {{ end }}  | {{ $propKey }} | {{ $prop.Type }} | {{ if $prop.Const }} please intput  "{{ $prop.Const }}" {{ else }} {{ $prop.Description }}  {{ end }} |{{ end }}
+| {{ if $prop.Title }}{{ $prop.Title }} {{ else }} {{ $propKey }} {{ end }}  | {{ $propKey }} | {{ $prop.Type }} | {{ if $prop.Const }} please intput  "{{ $prop.Const }}" {{ else }} {{ $prop.Description }}  {{ end }} {{ if .Enum }} there are options: <br/>- {{ enumValues .Enum }}  {{ end }} |{{ end }}
 {{ end }}{{ end }}{{ end }}{{ end }}
 
 

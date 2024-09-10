@@ -161,6 +161,7 @@ func (g *READMEGenerator) Generate() error {
 		"firstToLower":     firstToLower,
 		"asAnchor":         blackfriday.SanitizedAnchorName,
 		"loadExtraContent": g.loadExtraContent,
+		"enumValues":       enumValues,
 		"hosts": func() []host {
 			return []host{
 				{Name: "Instill-Cloud", URL: "https://api.instill.tech"},
@@ -259,9 +260,8 @@ func (p readmeParams) parseDefinition(d definition, s *objectSchema, tasks map[s
 
 	if s != nil {
 		p.SetupConfig.Properties = parseResourceProperties(s)
+		p.SetupConfig.parseOneOfProperties(s.Properties)
 	}
-
-	p.SetupConfig.parseOneOfProperties(s.Properties)
 
 	return p, nil
 }
@@ -419,12 +419,20 @@ func (rt *readmeTask) parseOneOfProperties(properties map[string]property) {
 			continue
 		}
 
-		// Now, we only have 1 layer. So, we do not have to recursively parse.
+		if op.Type != "object" {
+			continue
+		}
+
 		if op.OneOf != nil {
-			rt.OneOf = map[string][]objectSchema{
-				key: op.OneOf,
+			if rt.OneOf[key] == nil {
+				rt.OneOf = map[string][]objectSchema{
+					key: op.OneOf,
+				}
+			} else {
+				rt.OneOf[key] = append(rt.OneOf[key], op.OneOf...)
 			}
 		}
+		rt.parseOneOfProperties(op.Properties)
 	}
 
 	return
@@ -463,4 +471,8 @@ func firstToLower(s string) string {
 	}
 
 	return string(mod) + s[size:]
+}
+
+func enumValues(enum []string) string {
+	return strings.Join(enum, "<br/>- ")
 }

@@ -18,6 +18,8 @@ type property struct {
 	OneOf []objectSchema `json:"oneOf,omitempty"`
 	Const string         `json:"const,omitempty"`
 
+	Enum []string `json:"enum,omitempty"`
+
 	Deprecated bool `json:"deprecated"`
 }
 
