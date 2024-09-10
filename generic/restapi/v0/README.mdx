@@ -46,9 +46,44 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Authentication (required) | `authentication` | object | Authentication method to use for the REST API |
+| Authentication (required) | `authentication` | object | Authentication method to use for the REST API  |
 
 
+
+
+
+
+
+
+#### authentication option: 0
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  auth-type   | auth-type | string |  please intput  "NO_AUTH"   |
+
+#### authentication option: 1
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  auth-type   | auth-type | string |  please intput  "BASIC_AUTH"   |
+| Password   | password | string |  Password for Basic auth    |
+| Username   | username | string |  Username for Basic Auth    |
+
+#### authentication option: 2
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Where to Add API Key to   | auth-location | string |  Add the API key to the header or query params    there are options: <br/>- header<br/>- query   |
+|  auth-type   | auth-type | string |  please intput  "API_KEY"   |
+| Key Name   | key | string |  Key name for API key authentication    |
+| Key Value   | value | string |  Key value for API key authentication    |
+
+#### authentication option: 3
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  auth-type   | auth-type | string |  please intput  "BEARER_TOKEN"   |
+| Token   | token | string |  Bearer token    |
 
 
 ## Supported Tasks
@@ -66,11 +101,23 @@ Send a HTTP GET request.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
 | Header | `header` | object | The HTTP header of the response |
+
+
+
+
+
+
 
 
 
@@ -91,11 +138,23 @@ Send a HTTP POST request.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
 | Header | `header` | object | The HTTP header of the response |
+
+
+
+
+
+
 
 
 
@@ -116,11 +175,23 @@ Send a HTTP PATCH request.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
 | Header | `header` | object | The HTTP header of the response |
+
+
+
+
+
+
 
 
 
@@ -141,11 +212,23 @@ Send a HTTP PUT request.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
 | Header | `header` | object | The HTTP header of the response |
+
+
+
+
+
+
 
 
 
@@ -166,11 +249,23 @@ Send a HTTP DELETE request.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
 | Header | `header` | object | The HTTP header of the response |
+
+
+
+
+
+
 
 
 
@@ -190,11 +285,23 @@ Send a HTTP HEAD request.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
 | Header | `header` | object | The HTTP header of the response |
+
+
+
+
+
+
 
 
 
@@ -215,11 +322,23 @@ Send a HTTP OPTIONS request.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
 | Header | `header` | object | The HTTP header of the response |
+
+
+
+
+
+
 
 
 
