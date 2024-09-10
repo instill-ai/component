@@ -121,6 +121,69 @@ cmp pkg/dummy/README.mdx want-readme.mdx
           "instillUIOrder": 0,
           "title": "Durna",
           "type": "string"
+        },
+        "strategy": {
+          "description": "Chunking strategy",
+          "instillUIOrder": 1,
+          "properties": {
+            "setting": {
+              "description": "Chunk Setting",
+              "additionalProperties": true,
+              "type": "object",
+              "title": "Chunk Setting",
+              "instillUIOrder": 0,
+              "required": [
+                "chunk-method"
+              ],
+              "oneOf": [
+                {
+                  "properties": {
+                    "chunk-method": {
+                      "const": "Token",
+                      "type": "string"
+                    },
+                    "model-name": {
+                      "description": "The name of the model used for tokenization.",
+                      "enum": [
+                        "gpt-4",
+                        "gpt-3.5-turbo"
+                      ],
+                      "instillUIOrder": 1,
+                      "title": "Model",
+                      "type": "string"
+                    }
+                  },
+                  "required": ["chunk-method"],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "chunk-method": {
+                      "const": "Markdown",
+                      "type": "string"
+                    },
+                    "model-name": {
+                      "description": "The name of the model used for tokenization.",
+                      "enum": [
+                        "gpt-4",
+                        "gpt-3.5-turbo"
+                      ],
+                      "instillUIOrder": 1,
+                      "title": "Model",
+                      "type": "string"
+                    }
+                  },
+                  "required": ["chunk-method"],
+                  "type": "object"
+                }
+              ]
+            }
+          },
+          "title": "Strategy",
+          "required": [
+            "setting"
+          ],
+          "type": "object"
         }
       },
       "required": [
@@ -221,10 +284,40 @@ This is some crucial information about setup: do it before execution.
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DUMMY` |
 | Durna (required) | `durna` | string | Lorem ipsum dolor sit amet, consectetur adipiscing elit |
+| Strategy | `strategy` | object | Chunking strategy |
 
 
 
 
+
+
+#### Strategy
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Chunk Setting | setting | object | Chunk Setting  |
+
+
+
+
+
+
+
+
+#### setting option: 0
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  chunk-method   | chunk-method | string |  please intput  "Token"   |
+| Model   | model-name | string |  The name of the model used for tokenization.    there are options: <br/>- gpt-4<br/>- gpt-3.5-turbo   |
+
+
+#### setting option: 1
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  chunk-method   | chunk-method | string |  please intput  "Markdown"   |
+| Model   | model-name | string |  The name of the model used for tokenization.    there are options: <br/>- gpt-4<br/>- gpt-3.5-turbo   |
 
 
 

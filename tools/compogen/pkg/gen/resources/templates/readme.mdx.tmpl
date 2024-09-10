@@ -74,7 +74,7 @@ ${connection.<my-connection-id>}`.
 {{ if $task.InputObjects }}
 {{ range $idx, $objectSchemaMap := $task.InputObjects }}
 {{ range $key, $schema := $objectSchemaMap }}
-{{ if $schema.Properties }} 
+{{ if $schema.Properties }}
 #### {{ $key }}
 
 | Field | Field ID | Type | Note |
