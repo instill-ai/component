@@ -21,6 +21,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
   "public": true,
   "id": "dummy",
   "title": "Dummy",
+  "vendor": "Dummy Inc.",
   "description": "Perform an action",
   "prerequisites": "An account at [dummy.io](https://dummy.io) is required.",
   "type": "COMPONENT_TYPE_DATA",
@@ -116,6 +117,15 @@ The component configuration is defined and maintained [here](https://github.com/
 
 <InfoBlock type="info" title="Prerequisites">An account at [dummy.io](https://dummy.io) is required.</InfoBlock>
 
+
+
+
+In order to communicate with Dummy Inc., the following connection details need to be
+provided. You may specify them directly in a pipeline recipe as key-value pairs
+withing the component's `setup` block, or you can create a **Connection** from
+the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
+page and reference the whole `setup` as `setup:
+${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |

@@ -223,6 +223,7 @@ type readmeParams struct {
 	ID            string
 	Title         string
 	Description   string
+	Vendor        string
 	IsDraft       bool
 	ComponentType ComponentType
 	ReleaseStage  releaseStage
@@ -244,6 +245,7 @@ func (p readmeParams) parseDefinition(d definition, s *objectSchema, tasks map[s
 
 	p.ID = d.ID
 	p.Title = d.Title
+	p.Vendor = d.Vendor
 	p.Description = d.Description
 	p.IsDraft = !d.Public
 	p.ReleaseStage = d.ReleaseStage

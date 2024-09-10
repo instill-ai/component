@@ -28,6 +28,15 @@ The component configuration is defined and maintained [here](https://github.com/
 ## Setup
 
 
+
+
+In order to communicate with Numbers Protocol, the following connection details need to be
+provided. You may specify them directly in a pipeline recipe as key-value pairs
+withing the component's `setup` block, or you can create a **Connection** from
+the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
+page and reference the whole `setup` as `setup:
+${connection.<my-connection-id>}`.
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Capture token (required) | `capture-token` | string | Fill in your Capture token in the Capture App. To access your tokens, you need a Capture App account and you can sign in with email or wallet to acquire the Capture Token. |

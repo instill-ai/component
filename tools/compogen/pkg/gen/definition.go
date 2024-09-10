@@ -42,4 +42,5 @@ type definition struct {
 	Public        bool   `json:"public"`
 	Type          string `json:"type"`
 	Prerequisites string `json:"prerequisites"`
+	Vendor        string `json:"vendor"`
 }

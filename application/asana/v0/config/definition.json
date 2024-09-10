@@ -10,6 +10,7 @@
   "id": "asana",
   "public": true,
   "title": "Asana",
+  "vendor": "Asana",
   "description": "Do anything available on Asana",
   "tombstone": false,
   "type": "COMPONENT_TYPE_APPLICATION",

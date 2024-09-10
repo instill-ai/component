@@ -42,6 +42,15 @@ The component configuration is defined and maintained [here](https://github.com/
 ## Setup
 
 
+
+
+In order to communicate with Freshdesk, the following connection details need to be
+provided. You may specify them directly in a pipeline recipe as key-value pairs
+withing the component's `setup` block, or you can create a **Connection** from
+the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
+page and reference the whole `setup` as `setup:
+${connection.<my-connection-id>}`.
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | API key (required) | `api-key` | string | Fill in your Freshdesk API key. To find your key, go to profile settigs and on the right pane, you can get your key once you have completed the captcha verification. |
