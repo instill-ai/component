@@ -428,7 +428,8 @@
           }
         },
         "usage": {
-          "$ref": "#/$defs/command-usage"
+          "$ref": "#/$defs/command-usage",
+          "instillUIOrder": 2
         }
       },
       "required": [

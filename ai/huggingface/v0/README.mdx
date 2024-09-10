@@ -84,15 +84,6 @@ Generating text is the task of producing new text. These models can, for example
 
 
 
-#### Options
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
-| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 #### Parameters
 
 | Field | Field ID | Type | Note |
@@ -106,6 +97,15 @@ Generating text is the task of producing new text. These models can, for example
 | Temperature | temperature | number | The temperature of the sampling operation. 1 means regular sampling, 0 means always take the highest score, 100.0 is getting closer to uniform probability.  |
 | Top K | top-k | integer | Integer to define the top tokens considered within the sample operation to create new text.  |
 | Top P | top-p | number | Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p.  |
+
+
+
+#### Options
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
+| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
 
 
 
@@ -417,21 +417,21 @@ Zero-shot text classification is a task in natural language processing where a m
 
 
 
-#### Options
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
-| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 #### Parameters
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Candidate Labels | candidate-labels | array | a list of strings that are potential classes for inputs. (max 10 candidate-labels, for more, simply run multiple requests, results are going to be misleading if using too many candidate-labels anyway. If you want to keep the exact same, you can simply run multi-label=True and do the scaling on your end. )  |
 | Multi Label | multi-label | boolean | Boolean that is set to True if classes can overlap  |
+
+
+
+#### Options
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
+| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
 
 
 
@@ -580,21 +580,21 @@ Sentence Similarity is the task of determining how similar two texts are.
 
 
 
-#### Options
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
-| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 #### Inputs
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Sentences | sentences | array | A list of strings which will be compared against the source-sentence.  |
 | Source Sentence | source-sentence | string | The string that you wish to compare the other strings with. This can be a phrase, sentence, or longer passage, depending on the model being used.  |
+
+
+
+#### Options
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
+| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
 
 
 
@@ -632,12 +632,13 @@ Conversational response modelling is the task of generating conversational text 
 
 
 
-#### Options
+#### Inputs
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
-| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
+| Generated Responses | generated-responses | array | A list of strings corresponding to the earlier replies from the model.  |
+| Past User Inputs | past-user-inputs | array | A list of strings corresponding to the earlier replies from the user. Should be of the same length of generated-responses.  |
+| Text | text | string | The last input from the user in the conversation.  |
 
 
 
@@ -655,13 +656,12 @@ Conversational response modelling is the task of generating conversational text 
 
 
 
-#### Inputs
+#### Options
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Generated Responses | generated-responses | array | A list of strings corresponding to the earlier replies from the model.  |
-| Past User Inputs | past-user-inputs | array | A list of strings corresponding to the earlier replies from the user. Should be of the same length of generated-responses.  |
-| Text | text | string | The last input from the user in the conversation.  |
+| Use Cache | use-cache | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
+| Wait For Model | wait-for-model | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
 
 
 

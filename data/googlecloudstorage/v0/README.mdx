@@ -114,41 +114,13 @@ Read objects from Google Cloud Storage.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Audio Objects (optional) | `audio-objects` | array[object] | The audio objects in the bucket |
-| Document Objects (optional) | `document-objects` | array[object] | The document objects in the bucket |
-| Image Objects (optional) | `image-objects` | array[object] | The image objects in the bucket |
 | Text Objects (optional) | `text-objects` | array[object] | The text objects in the bucket |
+| Image Objects (optional) | `image-objects` | array[object] | The image objects in the bucket |
+| Document Objects (optional) | `document-objects` | array[object] | The document objects in the bucket |
+| Audio Objects (optional) | `audio-objects` | array[object] | The audio objects in the bucket |
 | Video Objects (optional) | `video-objects` | array[object] | The video objects in the bucket |
 
 
-
-
-
-
-
-#### Image Objects
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Attributes | attributes | object | The attributes of the object |
-| Data | data | string | The data of the object |
-
-
-
-#### Attributes
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Content Disposition | content-disposition | string | The content disposition of the object |
-| Content Encoding | content-encoding | string | The content encoding of the object |
-| Content Language | content-language | string | The content language of the object |
-| Content Type | content-type | string | The content type of the object |
-| Media Link | media-link | string | The media link of the object |
-| Metadata | metadata | object | The object metadata |
-| Object Name | name | string | The name of the object |
-| Owner | owner | string | The owner of the object |
-| Size | size | integer | The size of the object |
-| Storage Class | storage-class | string | The storage class of the object |
 
 
 
@@ -182,7 +154,35 @@ Read objects from Google Cloud Storage.
 
 
 
-#### Video Objects
+#### Image Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Attributes | attributes | object | The attributes of the object |
+| Data | data | string | The data of the object |
+
+
+
+#### Attributes
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content Disposition | content-disposition | string | The content disposition of the object |
+| Content Encoding | content-encoding | string | The content encoding of the object |
+| Content Language | content-language | string | The content language of the object |
+| Content Type | content-type | string | The content type of the object |
+| Media Link | media-link | string | The media link of the object |
+| Metadata | metadata | object | The object metadata |
+| Object Name | name | string | The name of the object |
+| Owner | owner | string | The owner of the object |
+| Size | size | integer | The size of the object |
+| Storage Class | storage-class | string | The storage class of the object |
+
+
+
+
+
+#### Document Objects
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -238,7 +238,7 @@ Read objects from Google Cloud Storage.
 
 
 
-#### Document Objects
+#### Video Objects
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
