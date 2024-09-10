@@ -130,31 +130,6 @@ func (g *READMEGenerator) parseTasks(configDir string) (map[string]task, error) 
 		return nil, fmt.Errorf("invalid tasks file:\n%w", asValidationError(err))
 	}
 
-	// for _, t := range tasks {
-	// 	for _, inputProperty := range t.Input.Properties {
-	// 		if inputProperty.Type == "object" {
-	// 		}
-	// 		if inputProperty.Type == "array" {
-	// 			if inputProperty.Items.Type == "object" {
-
-	// 			}
-	// 		}
-	// 	}
-
-	// 	for _, outputProperty := range t.Output.Properties {
-	// 		if outputProperty.Type == "object" {
-
-	// 		}
-	// 		if outputProperty.Type == "array" {
-	// 			if outputProperty.Items.Type == "object" {
-
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	fmt.Println("tasks", tasks["TASK_READ_MESSAGE"].Output.Properties["conversations"].Items.Properties)
-
 	return tasks, nil
 }
 
@@ -209,8 +184,6 @@ func (g *READMEGenerator) Generate() error {
 		return fmt.Errorf("converting to template params: %w", err)
 	}
 
-	fmt.Println("p", p.Tasks[0].Output)
-
 	return readme.Execute(out, p)
 }
 
@@ -228,11 +201,14 @@ func (g *READMEGenerator) loadExtraContent(section string) (string, error) {
 }
 
 type readmeTask struct {
-	ID          string
-	Title       string
-	Description string
-	Input       []resourceProperty
-	Output      []resourceProperty
+	ID            string
+	Title         string
+	Description   string
+	Input         []resourceProperty
+	InputObjects  []map[string]objectSchema
+	OneOf         map[string][]objectSchema
+	Output        []resourceProperty
+	OutputObjects []map[string]objectSchema
 }
 
 type resourceProperty struct {
@@ -288,6 +264,7 @@ func (p readmeParams) parseDefinition(d definition, s *objectSchema, tasks map[s
 }
 
 func parseREADMETasks(availableTasks []string, tasks map[string]task) ([]readmeTask, error) {
+
 	readmeTasks := make([]readmeTask, len(availableTasks))
 	for i, at := range availableTasks {
 		t, ok := tasks[at]
@@ -301,6 +278,10 @@ func parseREADMETasks(availableTasks []string, tasks map[string]task) ([]readmeT
 			Input:       parseResourceProperties(t.Input),
 			Output:      parseResourceProperties(t.Output),
 		}
+
+		rt.parseObjectProperties(t.Input.Properties, true)
+		rt.parseObjectProperties(t.Output.Properties, false)
+		rt.parseOneOfProperties(t.Input.Properties)
 
 		if rt.Title = t.Title; rt.Title == "" {
 			rt.Title = componentbase.TaskIDToTitle(at)
@@ -368,6 +349,82 @@ func parseResourceProperties(o *objectSchema) []resourceProperty {
 	})
 
 	return props
+}
+
+func (rt *readmeTask) parseObjectProperties(properties map[string]property, isInput bool) {
+	if properties == nil {
+		return
+	}
+
+	for _, op := range properties {
+		if op.Deprecated {
+			continue
+		}
+
+		if op.Type != "object" && (op.Type != "array" || op.Items.Type != "object") {
+			continue
+		}
+
+		if op.Type == "object" {
+
+			if isInput {
+				rt.InputObjects = append(rt.InputObjects, map[string]objectSchema{
+					op.Title: {
+						Properties: op.Properties,
+					},
+				})
+				rt.parseObjectProperties(op.Properties, isInput)
+			} else {
+				rt.OutputObjects = append(rt.OutputObjects, map[string]objectSchema{
+					op.Title: {
+						Properties: op.Properties,
+					},
+				})
+				rt.parseObjectProperties(op.Properties, isInput)
+			}
+		} else { // else if op.Type == "array" && op.Items.Type == "object"
+
+			if isInput {
+				rt.InputObjects = append(rt.InputObjects, map[string]objectSchema{
+					op.Title: {
+						Properties: op.Items.Properties,
+					},
+				})
+
+				rt.parseObjectProperties(op.Items.Properties, isInput)
+			} else {
+				rt.OutputObjects = append(rt.OutputObjects, map[string]objectSchema{
+					op.Title: {
+						Properties: op.Items.Properties,
+					},
+				})
+				rt.parseObjectProperties(op.Items.Properties, isInput)
+			}
+		}
+	}
+
+	return
+}
+
+func (rt *readmeTask) parseOneOfProperties(properties map[string]property) {
+	if properties == nil {
+		return
+	}
+
+	for key, op := range properties {
+		if op.Deprecated {
+			continue
+		}
+
+		// Now, we only have 1 layer. So, we do not have to recursively parse.
+		if op.OneOf != nil {
+			rt.OneOf = map[string][]objectSchema{
+				key: op.OneOf,
+			}
+		}
+	}
+
+	return
 }
 
 func firstToLower(s string) string {

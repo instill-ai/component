@@ -60,12 +60,45 @@ ${connection.<my-connection-id>}`.
 | {{ .Title }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
 {{ end }}
 
+{{ if $task.InputObjects }}
+{{ range $idx, $objectSchemaMap := $task.InputObjects }}
+{{ range $key, $schema := $objectSchemaMap }}
+{{ if $schema.Properties }} 
+#### {{ $key }}
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $schema.Properties }}
+| {{ $prop.Title }} | {{ $propKey }} | {{ $prop.Type }} | {{ $prop.Description }} |{{ end }}{{ end }}{{ end }}{{ end }}
+
+{{ if $task.OneOf }}
+{{ range $key, $options := $task.OneOf }}
+{{ range $idx, $option := $options }}
+{{ if $option.Properties }}
+#### {{ $key }} option: {{ $idx }}
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
+| {{ if $prop.Title }}{{ $prop.Title }} {{ else }} {{ $propKey }} {{ end }}  | {{ $propKey }} | {{ $prop.Type }} | {{ if $prop.Description }} {{ $prop.Description }} {{ else }} please intput  "{{ $prop.Const }}"  {{ end }} |{{ end }}{{ end }}{{ end }}{{ end }}
+{{ end }}
+
+
+
 {{ if $task.Output }}
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |{{ range $task.Output }}
 | {{ .Title }}{{ if not .Required }} (optional){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
-{{ end }}
+{{ end }}{{ end }}
 
+{{ if $task.OutputObjects }}
+{{ range $idx, $objectSchemaMap := $task.OutputObjects }}
+{{ range $key, $schema := $objectSchemaMap }}
+{{ if $schema.Properties }}
+#### {{ $key }}
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $schema.Properties }}
+| {{ $prop.Title }} | {{ $propKey }} | {{ $prop.Type }} | {{ $prop.Description }} |{{ end }}{{ end }}{{ end }}
+{{ end }}{{ end }}
 {{ loadExtraContent $task.ID }}
 
 {{ end }}

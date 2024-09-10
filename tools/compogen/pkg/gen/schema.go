@@ -15,11 +15,13 @@ type property struct {
 
 	Properties map[string]property `json:"properties" validate:"omitempty,dive"`
 
+	OneOf []objectSchema `json:"oneOf,omitempty"`
+	Const string         `json:"const,omitempty"`
+
 	Deprecated bool `json:"deprecated"`
 }
 
 type objectSchema struct {
 	Properties map[string]property `json:"properties" validate:"gt=0,dive"`
-	OneOf      []objectSchema      `json:"oneOf" validate:"omitempty,dive"`
 	Required   []string            `json:"required"`
 }
