@@ -45,6 +45,63 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       "instillUIOrder": 0,
       "title": "API Key",
       "type": "string"
+    },
+    "authentication": {
+      "description": "Authentication method to use for the Dummy",
+      "instillUIOrder": 0,
+      "oneOf": [
+        {
+          "properties": {
+            "auth-type": {
+              "const": "NO_AUTH",
+              "description": "No Authentication",
+              "instillUIOrder": 0,
+              "order": 0,
+              "type": "string"
+            }
+          },
+          "required": [
+            "auth-type"
+          ],
+          "title": "No Auth"
+        },
+        {
+          "properties": {
+            "auth-type": {
+              "const": "AUTH_1",
+              "description": "Auth 1",
+              "instillUIOrder": 0,
+              "order": 0,
+              "type": "string"
+            },
+            "auth-way": {
+              "description": "ways for Auth 1",
+              "instillUpstreamTypes": [
+                "value"
+              ],
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "enum": [
+                "header",
+                "query"
+              ],
+              "instillUIOrder": 1,
+              "order": 1,
+              "title": "Auth Way",
+              "type": "string"
+            }
+          },
+          "required": [
+            "auth-type",
+            "auth-way"
+          ],
+          "title": "Auth 1"
+        }
+      ],
+      "order": 1,
+      "title": "Authentication",
+      "type": "object"
     }
   },
   "required": [
@@ -130,12 +187,29 @@ ${connection.<my-connection-id>}`.
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | API Key (required) | `api-key` | string | Fill in your Dummy API key  |
+| Authentication | `authentication` | object | Authentication method to use for the Dummy  |
 | Organization ID | `organization` | string | Specify which organization is used for the requests  |
 
 This is some crucial information about setup: do it before execution.
 
 
 
+
+
+
+
+#### authentication option: 0
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  auth-type   | auth-type | string |  please intput  "NO_AUTH"   |
+
+#### authentication option: 1
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  auth-type   | auth-type | string |  please intput  "AUTH_1"   |
+| Auth Way   | auth-way | string |  ways for Auth 1    there are options: <br/>- header<br/>- query   |
 
 
 ## Supported Tasks
