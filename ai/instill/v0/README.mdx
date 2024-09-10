@@ -101,17 +101,6 @@ Detect, localize and delineate multiple objects in images.
 
 
 
-#### Objects
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
-| Category | category | string | The predicted category of the bounding box. |
-| RLE | rle | string | Run Length Encoding (RLE) of instance mask within the bounding box. |
-| Score | score | number | The confidence score of the predicted instance object. |
-
-
-
 #### Bounding Box
 
 | Field | Field ID | Type | Note |
@@ -120,6 +109,17 @@ Detect, localize and delineate multiple objects in images.
 | Left | left | number | Bounding box left x-axis value |
 | Top | top | number | Bounding box top y-axis value |
 | Width | width | number | Bounding box width value |
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
+| Category | category | string | The predicted category of the bounding box. |
+| RLE | rle | string | Run Length Encoding (RLE) of instance mask within the bounding box. |
+| Score | score | number | The confidence score of the predicted instance object. |
 
 
 
@@ -155,16 +155,6 @@ Detect and localize multiple keypoints of objects in images.
 
 
 
-#### Objects
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
-| Keypoints | keypoints | array | A keypoint group is composed of a list of pre-defined keypoints of a detected object. |
-| Score | score | number | The confidence score of the predicted object. |
-
-
-
 #### Bounding Box
 
 | Field | Field ID | Type | Note |
@@ -183,6 +173,16 @@ Detect and localize multiple keypoints of objects in images.
 | Visibility Score | v | number | visibility score of the keypoint. |
 | X Coordinate | x | number | x coordinate of the keypoint. |
 | Y Coordinate | y | number | y coordinate of the keypoint. |
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
+| Keypoints | keypoints | array | A keypoint group is composed of a list of pre-defined keypoints of a detected object. |
+| Score | score | number | The confidence score of the predicted object. |
 
 
 
@@ -218,16 +218,6 @@ Detect and localize multiple objects in images.
 
 
 
-#### Objects
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Bounding box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
-| Category | category | string | The predicted category of the bounding box. |
-| Score | score | number | The confidence score of the predicted category of the bounding box. |
-
-
-
 #### Bounding box
 
 | Field | Field ID | Type | Note |
@@ -236,6 +226,16 @@ Detect and localize multiple objects in images.
 | Left | left | number | Bounding box left x-axis value |
 | Top | top | number | Bounding box top y-axis value |
 | Width | width | number | Bounding box width value |
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
+| Category | category | string | The predicted category of the bounding box. |
+| Score | score | number | The confidence score of the predicted category of the bounding box. |
 
 
 
@@ -271,16 +271,6 @@ Detect and recognize text in images.
 
 
 
-#### Objects
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
-| Score | score | number | The confidence score of the predicted object. |
-| Text | text | string | Text string recognised per bounding box. |
-
-
-
 #### Bounding Box
 
 | Field | Field ID | Type | Note |
@@ -289,6 +279,16 @@ Detect and recognize text in images.
 | Left | left | number | Bounding box left x-axis value |
 | Top | top | number | Bounding box top y-axis value |
 | Width | width | number | Bounding box width value |
+
+
+
+#### Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Bounding Box | bounding-box | object | The detected bounding box in (left, top, width, height) format. |
+| Score | score | number | The confidence score of the predicted object. |
+| Text | text | string | Text string recognised per bounding box. |
 
 
 
