@@ -44,8 +44,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Qdrant API key. Please refer to clusters in Qdrant data access control |
-| Qdrant URL Endpoint (required) | `url` | string | Fill in your Qdrant URL endpoint. Please refer to clusters in Qdrant cluster details |
+| API Key (required) | `api-key` | string | Fill in your Qdrant API key. Please refer to clusters in Qdrant data access control  |
+| Qdrant URL Endpoint (required) | `url` | string | Fill in your Qdrant URL endpoint. Please refer to clusters in Qdrant cluster details  |
+
+
 
 
 
@@ -70,10 +72,40 @@ Perform a vector search on a collection
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
+
+
+
+
+
+
+
+#### Result
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| IDs | ids | array | The ids returned from the vector search operation |
+| Metadata | metadata | array | The metadata returned from the vector search operation |
+| Points | points | array | The points returned from the vector search operation |
+| Vectors | vectors | array | The vectors returned from the vector search operation |
+
+
+
+
 
 
 
@@ -96,9 +128,21 @@ Insert multiple vector points into a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch upsert status |
+
+
+
 
 
 
@@ -121,9 +165,21 @@ Upsert a vector point into a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
+
+
+
 
 
 
@@ -145,9 +201,21 @@ Delete vector points from a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -167,9 +235,21 @@ Create a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create collection status |
+
+
+
 
 
 
@@ -188,9 +268,18 @@ Delete a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
+
+
+
 
 
 

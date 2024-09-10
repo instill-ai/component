@@ -41,11 +41,13 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Host (required) | `host` | string | Redis host to connect to |
-| Port (required) | `port` | integer | Port of Redis |
-| Username | `username` | string | Username associated with Redis |
-| Password | `password` | string | Password associated with Redis |
-| SSL Connection | `ssl` | boolean | Indicates whether SSL encryption protocol will be used to connect to Redis. It is recommended to use SSL connection if possible. |
+| Host (required) | `host` | string | Redis host to connect to  |
+| Port (required) | `port` | integer | Port of Redis  |
+| Username | `username` | string | Username associated with Redis  |
+| Password | `password` | string | Password associated with Redis  |
+| SSL Connection | `ssl` | boolean | Indicates whether SSL encryption protocol will be used to connect to Redis. It is recommended to use SSL connection if possible.  |
+
+
 
 
 
@@ -66,9 +68,49 @@ Retrieve chat history from Redis.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Chat Message | `messages` | array[object] | Messages |
+
+
+
+
+
+
+
+#### Chat Message
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content | content | array | The message content |
+| Metadata | metadata | object | The message metadata |
+| Role | role | string | The message role, i.e. 'system', 'user' or 'assistant' |
+
+
+
+#### Content
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Image URL | image-url | object | The image URL |
+| Text | text | string | The text content. |
+| Type | type | string | The type of the content part. |
+
+
+
+#### Image URL
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| URL | url | string | Either a URL of the image or the base64 encoded image data. |
+
+
 
 
 
@@ -90,9 +132,21 @@ Write chat message into Redis.
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | boolean | The status of the write operation |
+
+
+
 
 
 
@@ -114,9 +168,21 @@ Write multi-modal chat message into Redis.
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | boolean | The status of the write operation |
+
+
+
 
 
 

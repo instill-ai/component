@@ -41,7 +41,9 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| JSON Key File contents (required) | `json-key` | string | Contents of the JSON key file with access to the bucket. |
+| JSON Key File contents (required) | `json-key` | string | Contents of the JSON key file with access to the bucket.  |
+
+
 
 
 
@@ -62,6 +64,12 @@ Upload data to Google Cloud Storage.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Authenticated URL (optional) | `authenticated-url` | string | Only users granted permission can access the object with this link |
@@ -69,6 +77,9 @@ Upload data to Google Cloud Storage.
 | Public Access (optional) | `public-access` | boolean | Whether the object is publicly accessible |
 | Public URL (optional) | `public-url` | string | Anyone with this link can access the object on the public Internet |
 | Upload Status | `status` | string | Status of the upload operation |
+
+
+
 
 
 
@@ -95,6 +106,12 @@ Read objects from Google Cloud Storage.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Audio Objects (optional) | `audio-objects` | array[object] | The audio objects in the bucket |
@@ -102,6 +119,150 @@ Read objects from Google Cloud Storage.
 | Image Objects (optional) | `image-objects` | array[object] | The image objects in the bucket |
 | Text Objects (optional) | `text-objects` | array[object] | The text objects in the bucket |
 | Video Objects (optional) | `video-objects` | array[object] | The video objects in the bucket |
+
+
+
+
+
+
+
+#### Image Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Attributes | attributes | object | The attributes of the object |
+| Data | data | string | The data of the object |
+
+
+
+#### Attributes
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content Disposition | content-disposition | string | The content disposition of the object |
+| Content Encoding | content-encoding | string | The content encoding of the object |
+| Content Language | content-language | string | The content language of the object |
+| Content Type | content-type | string | The content type of the object |
+| Media Link | media-link | string | The media link of the object |
+| Metadata | metadata | object | The object metadata |
+| Object Name | name | string | The name of the object |
+| Owner | owner | string | The owner of the object |
+| Size | size | integer | The size of the object |
+| Storage Class | storage-class | string | The storage class of the object |
+
+
+
+
+
+#### Text Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Attributes | attributes | object | The attributes of the object |
+| Data | data | string | The data of the object |
+
+
+
+#### Attributes
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content Disposition | content-disposition | string | The content disposition of the object |
+| Content Encoding | content-encoding | string | The content encoding of the object |
+| Content Language | content-language | string | The content language of the object |
+| Content Type | content-type | string | The content type of the object |
+| Media Link | media-link | string | The media link of the object |
+| Metadata | metadata | object | The object metadata |
+| Object Name | name | string | The name of the object |
+| Owner | owner | string | The owner of the object |
+| Size | size | integer | The size of the object |
+| Storage Class | storage-class | string | The storage class of the object |
+
+
+
+
+
+#### Video Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Attributes | attributes | object | The attributes of the object |
+| Data | data | string | The data of the object |
+
+
+
+#### Attributes
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content Disposition | content-disposition | string | The content disposition of the object |
+| Content Encoding | content-encoding | string | The content encoding of the object |
+| Content Language | content-language | string | The content language of the object |
+| Content Type | content-type | string | The content type of the object |
+| Media Link | media-link | string | The media link of the object |
+| Metadata | metadata | object | The object metadata |
+| Object Name | name | string | The name of the object |
+| Owner | owner | string | The owner of the object |
+| Size | size | integer | The size of the object |
+| Storage Class | storage-class | string | The storage class of the object |
+
+
+
+
+
+#### Audio Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Attributes | attributes | object | The attributes of the object |
+| Data | data | string | The data of the object |
+
+
+
+#### Attributes
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content Disposition | content-disposition | string | The content disposition of the object |
+| Content Encoding | content-encoding | string | The content encoding of the object |
+| Content Language | content-language | string | The content language of the object |
+| Content Type | content-type | string | The content type of the object |
+| Media Link | media-link | string | The media link of the object |
+| Metadata | metadata | object | The object metadata |
+| Object Name | name | string | The name of the object |
+| Owner | owner | string | The owner of the object |
+| Size | size | integer | The size of the object |
+| Storage Class | storage-class | string | The storage class of the object |
+
+
+
+
+
+#### Document Objects
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Attributes | attributes | object | The attributes of the object |
+| Data | data | string | The data of the object |
+
+
+
+#### Attributes
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Content Disposition | content-disposition | string | The content disposition of the object |
+| Content Encoding | content-encoding | string | The content encoding of the object |
+| Content Language | content-language | string | The content language of the object |
+| Content Type | content-type | string | The content type of the object |
+| Media Link | media-link | string | The media link of the object |
+| Metadata | metadata | object | The object metadata |
+| Object Name | name | string | The name of the object |
+| Owner | owner | string | The owner of the object |
+| Size | size | integer | The size of the object |
+| Storage Class | storage-class | string | The storage class of the object |
+
+
 
 
 
@@ -122,11 +283,20 @@ Read objects from Google Cloud Storage.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result (optional) | `result` | string | The result of the operation |
 | Bucket Name (optional) | `name` | string | The name of the bucket |
 | Location (optional) | `location` | string | The location of the bucket |
+
+
+
 
 
 

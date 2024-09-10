@@ -48,9 +48,11 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Milvus URL Endpoint (required) | `url` | string | Fill in your Milvus public URL endpoint with port number, e.g http://3.25.202.142:19530 |
-| Milvus Username (required) | `username` | string | Fill in your Milvus username |
-| Milvus Password (required) | `password` | string | Fill in your Milvus password |
+| Milvus URL Endpoint (required) | `url` | string | Fill in your Milvus public URL endpoint with port number, e.g http://3.25.202.142:19530  |
+| Milvus Username (required) | `username` | string | Fill in your Milvus username  |
+| Milvus Password (required) | `password` | string | Fill in your Milvus password  |
+
+
 
 
 
@@ -78,10 +80,38 @@ Perform a vector search on a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
+
+
+
+
+
+
+
+#### Result
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Data | data | array | The points returned from the vector search operation |
+| IDs | ids | array | The ids returned from the vector search operation |
+| Metadata | metadata | array | The metadata returned from the vector search operation |
+| Vectors | vectors | array | The vectors returned from the vector search operation |
+
+
+
+
 
 
 
@@ -102,9 +132,21 @@ Insert a vector data into a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
+
+
+
 
 
 
@@ -125,9 +167,21 @@ Insert a batch of vector data into a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch upsert status |
+
+
+
 
 
 
@@ -148,9 +202,18 @@ Delete vector data from a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -176,9 +239,25 @@ Create a collectio, please refer to [Create-Collection](https://milvus.io/docs/m
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create collection status |
+
+
+
 
 
 
@@ -197,9 +276,18 @@ Drop a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop collection status |
+
+
+
 
 
 
@@ -219,9 +307,18 @@ Create a partition in a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create partition status |
+
+
+
 
 
 
@@ -241,9 +338,18 @@ Drop a partition from a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop partition status |
+
+
+
 
 
 
@@ -263,9 +369,21 @@ Create an index in a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create index status |
+
+
+
 
 
 
@@ -285,9 +403,18 @@ Drop an index from a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop index status |
+
+
+
 
 
 

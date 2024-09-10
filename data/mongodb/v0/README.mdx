@@ -48,7 +48,9 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| URI (required) | `uri` | string | Fill in your MongoDB URI |
+| URI (required) | `uri` | string | Fill in your MongoDB URI  |
+
+
 
 
 
@@ -70,9 +72,21 @@ Perform an insert operation
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Insert status |
+
+
+
 
 
 
@@ -94,9 +108,21 @@ Perform an insert many operation
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Insert many status |
+
+
+
 
 
 
@@ -120,10 +146,37 @@ Perform a find operation
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result | `result` | object | Result of the find operation |
 | Status | `status` | string | Find status |
+
+
+
+
+
+
+
+#### Result
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Metadata | data | array | The data returned from the find operation |
+| Documents | documents | array | The documents returned from the find operation |
+| IDs | ids | array | The ids returned from the find operation |
+
+
+
+
 
 
 
@@ -146,9 +199,23 @@ Perform an update operation
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Update status |
+
+
+
 
 
 
@@ -170,9 +237,21 @@ Perform a delete operation
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -192,9 +271,18 @@ Delete the collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
+
+
+
 
 
 
@@ -213,9 +301,18 @@ Delete the database
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete database status |
+
+
+
 
 
 
@@ -238,9 +335,21 @@ Create a search index, only works for M10 or larger clusters
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create index status |
+
+
+
 
 
 
@@ -261,9 +370,18 @@ Drop a search index, only works for M10 or larger clusters
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete index status |
+
+
+
 
 
 
@@ -291,10 +409,38 @@ Perform a vector search operation
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
+
+
+
+
+
+
+
+#### Result
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Documents | documents | array | The documents returned from the vector search operation |
+| IDs | ids | array | The ids returned from the vector search operation |
+| Metadata | metadata | array | The metadata returned from the vector search operation |
+| Vectors | vectors | array | The vectors returned from the vector search operation |
+
+
+
+
 
 
 

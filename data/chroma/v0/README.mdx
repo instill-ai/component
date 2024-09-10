@@ -44,8 +44,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Chroma API key |
-| Chroma URL Endpoint (required) | `url` | string | Fill in your Chroma hosted public URL endpoint with port, e.g http://1.2.3:8000 |
+| API Key (required) | `api-key` | string | Fill in your Chroma API key  |
+| Chroma URL Endpoint (required) | `url` | string | Fill in your Chroma hosted public URL endpoint with port, e.g http://1.2.3:8000  |
+
+
 
 
 
@@ -69,9 +71,21 @@ Upsert multiple vector items into a collection, existing items will be updated
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch add status |
+
+
+
 
 
 
@@ -95,9 +109,21 @@ Upsert a vector item into a collection, existing item will be updated
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Add status |
+
+
+
 
 
 
@@ -121,10 +147,38 @@ Perform a vector search on a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
+
+
+
+
+
+
+
+#### Result
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| IDs | ids | array | The ids returned from the vector search operation |
+| Items | items | array | The items returned from the vector search operation |
+| Metadata | metadata | array | The metadata returned from the vector search operation |
+| Vectors | vectors | array | The vectors returned from the vector search operation |
+
+
+
+
 
 
 
@@ -146,9 +200,21 @@ Delete vector items from a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -170,9 +236,23 @@ Create a collection
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create collection status |
+
+
+
 
 
 
@@ -191,9 +271,18 @@ Delete a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
+
+
+
 
 
 

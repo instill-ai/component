@@ -46,8 +46,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Cloud ID (required) | `cloud-id` | string | Fill in the Cloud ID for the Elasticsearch instance |
-| API Key (required) | `api-key` | string | Fill in the API key for the Elasticsearch instance (please use encoded one) |
+| Cloud ID (required) | `cloud-id` | string | Fill in the Cloud ID for the Elasticsearch instance  |
+| API Key (required) | `api-key` | string | Fill in the API key for the Elasticsearch instance (please use encoded one)  |
+
+
 
 
 
@@ -73,10 +75,37 @@ Search for documents in Elasticsearch, support full text search
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Search operation status |
 | Result | `result` | object | Result of the search operation |
+
+
+
+
+
+
+
+#### Result
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Data | data | array | The data returned from the search operation |
+| Documents | documents | array | The documents returned from the search operation |
+| IDs | ids | array | The ids returned from the search operation |
+
+
+
+
 
 
 
@@ -103,10 +132,38 @@ Search for vector similarity search in Elasticsearch
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Search operation status |
 | Result | `result` | object | Result of the vector search operation |
+
+
+
+
+
+
+
+#### Result
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Documents | documents | array | The documents returned from the vector search operation |
+| IDs | ids | array | The ids returned from the vector search operation |
+| Metadata | metadata | array | The metadata returned from the vector search operation |
+| Vectors | vectors | array | The vectors returned from the vector search operation |
+
+
+
+
 
 
 
@@ -127,9 +184,21 @@ Index a document into Elasticsearch
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Index operation status |
+
+
+
 
 
 
@@ -150,9 +219,21 @@ Index multiple documents into Elasticsearch with bulk API
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Index operation status |
+
+
+
 
 
 
@@ -176,9 +257,23 @@ Update a document in Elasticsearch
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Update operation status |
+
+
+
 
 
 
@@ -201,9 +296,21 @@ Delete documents from Elasticsearch
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete operation status |
+
+
+
 
 
 
@@ -223,9 +330,21 @@ Create an index in Elasticsearch
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create index operation status |
+
+
+
 
 
 
@@ -244,9 +363,18 @@ Delete an index in Elasticsearch
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete index operation status |
+
+
+
 
 
 

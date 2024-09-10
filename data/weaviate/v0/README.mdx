@@ -44,8 +44,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Weaviate API key. Please refer to clusters in Weaviate Console |
-| Weaviate URL Endpoint (required) | `url` | string | Fill in your Weaviate base URL without https:// or http://. Please refer to clusters in Weaviate Console |
+| API Key (required) | `api-key` | string | Fill in your Weaviate API key. Please refer to clusters in Weaviate Console  |
+| Weaviate URL Endpoint (required) | `url` | string | Fill in your Weaviate base URL without https:// or http://. Please refer to clusters in Weaviate Console  |
+
+
 
 
 
@@ -69,10 +71,38 @@ Perform a vector search on a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Upsert status |
+
+
+
+
+
+
+
+#### Result
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| IDs | ids | array | The ids returned from the vector search operation |
+| Metadata | metadata | array | The metadata returned from the vector search operation |
+| Objects | objects | array | The objects returned from the vector search operation |
+| Vectors | vectors | array | The vectors returned from the vector search operation |
+
+
+
+
 
 
 
@@ -94,9 +124,21 @@ Insert multiple vector objects into a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch insert status |
+
+
+
 
 
 
@@ -118,9 +160,21 @@ Insert a vector object into a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
+
+
+
 
 
 
@@ -142,9 +196,21 @@ Update vector object in a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Update status |
+
+
+
 
 
 
@@ -165,9 +231,21 @@ Delete vector objects from a collection
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -186,9 +264,18 @@ Delete a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
+
+
+
 
 
 

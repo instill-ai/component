@@ -46,15 +46,42 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Engine (required) | `engine` | string | Choose the engine of your database |
-| Username (required) | `username` | string | Fill in your account username |
-| Password (required) | `password` | string | Fill in your account password |
-| Database Name (required) | `database-name` | string | Fill in the name of your database |
-| Host (required) | `host` | string | Fill in the host of your database |
-| Port (required) | `port` | number | Fill in the port of your database |
-| SSL/TLS (required) | `ssl-tls` | object | Enable SSL/TLS |
+| Engine (required) | `engine` | string | Choose the engine of your database  there are options: <br/>- MySQL<br/>- PostgreSQL<br/>- SQL Server<br/>- Oracle<br/>- MariaDB<br/>- Firebird   |
+| Username (required) | `username` | string | Fill in your account username  |
+| Password (required) | `password` | string | Fill in your account password  |
+| Database Name (required) | `database-name` | string | Fill in the name of your database  |
+| Host (required) | `host` | string | Fill in the host of your database  |
+| Port (required) | `port` | number | Fill in the port of your database  |
+| SSL/TLS (required) | `ssl-tls` | object | Enable SSL/TLS  |
 
 
+
+
+
+
+
+
+#### ssl-tls option: 0
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  ssl-tls-type   | ssl-tls-type | string |  please intput  "NO TLS"   |
+
+#### ssl-tls option: 1
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| CA Certificate   | ssl-tls-ca | string |  Base64 encoded CA certificate file    |
+|  ssl-tls-type   | ssl-tls-type | string |  please intput  "TLS"   |
+
+#### ssl-tls option: 2
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| CA Certificate   | ssl-tls-ca | string |  Base64 encoded CA certificate file    |
+| Client Certificate   | ssl-tls-cert | string |  Base64 encoded client certificate file    |
+| Client Key   | ssl-tls-key | string |  Base64 encoded client key file    |
+|  ssl-tls-type   | ssl-tls-type | string |  please intput  "mTLS"   |
 
 
 ## Supported Tasks
@@ -72,9 +99,21 @@ Perform insert operation
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Insert status |
+
+
+
 
 
 
@@ -94,9 +133,21 @@ Perform insert operation with multiple rows
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Insert many status |
+
+
+
 
 
 
@@ -117,9 +168,21 @@ Perform update operation
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Update status |
+
+
+
 
 
 
@@ -141,10 +204,22 @@ Perform select operation
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Rows | `rows` | array[object] | The rows returned from the select operation |
 | Status | `status` | string | Select status |
+
+
+
+
+
+
 
 
 
@@ -164,9 +239,18 @@ Perform delete operation
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -186,9 +270,21 @@ Create a table in the database
 
 
 
+
+
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create table status |
+
+
+
 
 
 
@@ -207,9 +303,18 @@ Drop a table in the database
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop table status |
+
+
+
 
 
 
