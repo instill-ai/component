@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"strings"
 
+	"log"
+
 	"github.com/tmc/langchaingo/textsplitter"
 )
 
@@ -406,6 +408,8 @@ func (sp MarkdownTextSplitter) chunkPlainText(content Content, headers []Header)
 		textsplitter.WithChunkOverlap(sp.ChunkOverlap),
 	)
 
+	fmt.Println("=== content.PlainText", content.PlainText)
+
 	chunks, err := split.SplitText(content.PlainText)
 
 	if err != nil {
@@ -432,6 +436,10 @@ func (sp MarkdownTextSplitter) chunkPlainText(content Content, headers []Header)
 
 		if shouldScanRawTextFromPreviousChunk(startPosition, endPosition) {
 			previousChunkIndex := len(contentChunks) - 1
+			if previousChunkIndex < 0 {
+				log.Println("There may be missing chunks in the content because of parsing errors in the markdown_document")
+				continue
+			}
 			previousChunk := contentChunks[previousChunkIndex]
 			startPosition, endPosition = getChunkPositions(rawRunes, chunkRunes, previousChunk.ContentStartPosition+1)
 		}
