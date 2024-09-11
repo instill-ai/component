@@ -191,7 +191,8 @@
               },
               "required": [
                 "action",
-                "goal-gid"
+                "goal-gid",
+                "liked"
               ],
               "instillEditOnNodeFields": [
                 "action",
@@ -337,11 +338,60 @@
                   ],
                   "instillFormat": "boolean",
                   "type": "boolean"
+                },
+                "workspace": {
+                  "description": "GID of the workspace.  You can find one by filling the access token in the <a href=\"https://developers.asana.com/reference/getworkspaces\">Asana API Playground</a>",
+                  "instillShortDescription": "GID of the workspace",
+                  "instillUIOrder": 5,
+                  "title": "Workspace",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
+                },
+                "time-period": {
+                  "description": "GID of the time period. You can find one by filling the workspace id in the <a href=\"https://developers.asana.com/reference/gettimeperiods\">Asana API Playground</a>",
+                  "instillShortDescription": "Time Period",
+                  "instillUIOrder": 6,
+                  "title": "Time Period",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
+                },
+                "owner": {
+                  "description": "User GID of the Owner. You can find one by filling the workspace id in the <a href=\"https://developers.asana.com/reference/getusers\">Asana API Playground</a>",
+                  "instillShortDescription": "Owner",
+                  "instillUIOrder": 7,
+                  "title": "Owner",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
                 }
               },
               "required": [
                 "action",
-                "name"
+                "name",
+                "liked"
               ],
               "instillEditOnNodeFields": [
                 "action",

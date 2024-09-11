@@ -7,6 +7,7 @@ import (
 
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util/httpclient"
+	_logger "github.com/instill-ai/component/tools/logger"
 	"github.com/instill-ai/x/errmsg"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -24,13 +25,16 @@ type AuthConfig struct {
 }
 
 func newClient(_ context.Context, setup *structpb.Struct, logger *zap.Logger) (*Client, error) {
+	var debug _logger.Session
+	defer debug.SessionStart("GetGoal", _logger.Develop).SessionEnd()
 	var authConfig AuthConfig
 	if err := base.ConvertFromStructpb(setup, &authConfig); err != nil {
 		return nil, err
 	}
 
-	token := authConfig.Token
+	token := strings.TrimSpace(authConfig.Token)
 	baseURL := authConfig.BaseURL
+	debug.Info("auth", token)
 	if token == "" {
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("token not provided"),

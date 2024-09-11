@@ -24,13 +24,13 @@ type SimpleProject struct {
 type Goal struct {
 	GID       string `json:"gid" api:"gid"`
 	Name      string `json:"name" api:"name"`
-	Owner     User   `json:"owner" api:"owner"`
+	Owner     User   `json:"owner" api:"owner.name"`
 	Notes     string `json:"notes" api:"notes"`
 	HTMLNotes string `json:"html-notes" api:"html_notes"`
 	DueOn     string `json:"due-on" api:"due_on"`
 	StartOn   string `json:"start-on" api:"start_on"`
 	Liked     bool   `json:"liked" api:"liked"`
-	Likes     []Like `json:"likes" api:"likes"`
+	Likes     []Like `json:"likes" api:"likes.user.name"`
 }
 
 type TaskParent struct {
