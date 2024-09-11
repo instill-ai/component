@@ -40,26 +40,24 @@ Chunk text with different strategies
 | Task ID (required) | `task` | string | `TASK_CHUNK_TEXT` |
 | Text (required) | `text` | string | Text to be chunked |
 | Strategy (required) | `strategy` | object | Chunking strategy |
+| Chunk Setting | `strategy.setting` | [setting](#setting-details) | Chunk Setting |
+
+
+
+
+<details>
+<summary>
+<strong> <a id="setting-details"></a>The <code>setting</code> object</strong>  
+</summary>
+</br>
+<code>strategy.setting</code> must fulfill one of the following schemas:
 
 
 
 
 
 
-#### Strategy
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Chunk Setting | setting | object | Chunk Setting  |
-
-
-
-
-
-
-
-
-#### setting option: 0
+##### Token setting
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -71,7 +69,7 @@ Chunk text with different strategies
 | Model   | model-name | string |  The name of the model used for tokenization.    There are options: <br/>- gpt-4<br/>- gpt-3.5-turbo<br/>- text-davinci-003<br/>- text-davinci-002<br/>- text-davinci-001<br/>- text-curie-001<br/>- text-babbage-001<br/>- text-ada-001<br/>- davinci<br/>- curie<br/>- babbage<br/>- ada<br/>- code-davinci-002<br/>- code-davinci-001<br/>- code-cushman-002<br/>- code-cushman-001<br/>- davinci-codex<br/>- cushman-codex<br/>- text-davinci-edit-001<br/>- code-davinci-edit-001<br/>- text-embedding-ada-002<br/>- text-similarity-davinci-001<br/>- text-similarity-curie-001<br/>- text-similarity-babbage-001<br/>- text-similarity-ada-001<br/>- text-search-davinci-doc-001<br/>- text-search-curie-doc-001<br/>- text-search-babbage-doc-001<br/>- text-search-ada-doc-001<br/>- code-search-babbage-code-001<br/>- code-search-ada-code-001<br/>- gpt2   |
 
 
-#### setting option: 1
+##### Markdown setting
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -83,7 +81,7 @@ Chunk text with different strategies
 | Separators   | separators | array |  A list of strings representing the separators used to split the text.    |
 
 
-#### setting option: 2
+##### Markdown setting
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -94,6 +92,7 @@ Chunk text with different strategies
 | Model   | model-name | string |  The name of the model used for tokenization.    There are options: <br/>- gpt-4<br/>- gpt-3.5-turbo<br/>- text-davinci-003<br/>- text-davinci-002<br/>- text-davinci-001<br/>- text-curie-001<br/>- text-babbage-001<br/>- text-ada-001<br/>- davinci<br/>- curie<br/>- babbage<br/>- ada<br/>- code-davinci-002<br/>- code-davinci-001<br/>- code-cushman-002<br/>- code-cushman-001<br/>- davinci-codex<br/>- cushman-codex<br/>- text-davinci-edit-001<br/>- code-davinci-edit-001<br/>- text-embedding-ada-002<br/>- text-similarity-davinci-001<br/>- text-similarity-curie-001<br/>- text-similarity-babbage-001<br/>- text-similarity-ada-001<br/>- text-search-davinci-doc-001<br/>- text-search-curie-doc-001<br/>- text-search-babbage-doc-001<br/>- text-search-ada-doc-001<br/>- code-search-babbage-code-001<br/>- code-search-ada-code-001<br/>- gpt2   |
 
 
+</details>
 
 
 
@@ -101,25 +100,14 @@ Chunk text with different strategies
 | :--- | :--- | :--- | :--- |
 | Token Count | `token-count` | integer | Total count of tokens in the original input text |
 | Text Chunks | `text-chunks` | array[object] | Text chunks after splitting |
+| End Position | `text-chunks.end-position` | integer | The ending position of the chunk in the original text |
+| Start Position | `text-chunks.start-position` | integer | The starting position of the chunk in the original text |
+| Text | `text.chunks.text` | string | Text chunk after splitting |
+| Token Count | `text-chunks.token-count` | integer | Count of tokens in a chunk |
+
+
 | Number of Text Chunks | `chunk-num` | integer | Total number of output text chunks |
 | Token Count Chunks | `chunks-token-count` | integer | Total count of tokens in the output text chunks |
-
-
-
-
-
-
-
-#### Text Chunks
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| End Position | end-position | integer | The ending position of the chunk in the original text |
-| Start Position | start-position | integer | The starting position of the chunk in the original text |
-| Text | text | string | Text chunk after splitting |
-| Token Count | token-count | integer | Count of tokens in a chunk |
-
-
 
 
 
