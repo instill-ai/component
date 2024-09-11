@@ -6,20 +6,23 @@ import base64
 from collections import Counter
 
 class PdfTransformer:
-	def __init__(self, x, display_image_tag=False):
+	def __init__(self, x, display_image_tag=False, image_index=0):
 		# self.path = path
 		# x can be a path or a file object.
 		self.pdf = pdfplumber.open(x)
-		self.pages = self.pdf.pages
+		self.raw_pages = self.pdf.pages
 		self.metadata = self.pdf.metadata
+		self.display_image_tag = display_image_tag
+		self.image_index = image_index
 
+	def preprocess(self):
 		self.set_heights()
 		self.lines = []
 		self.tables = []
 		self.images = []
 		self.base64_images = []
-		if display_image_tag:
-			self.process_image()
+		if self.display_image_tag:
+			self.process_image(self.image_index)
 
 		for page in self.pages:
 			page_lines = page.extract_text_lines(
@@ -33,8 +36,7 @@ class PdfTransformer:
 
 		self.result = ""
 
-	def process_image(self):
-		i = 0
+	def process_image(self, i):
 		for page in self.pages:
 			images = page.images
 			for image in images:
@@ -44,6 +46,7 @@ class PdfTransformer:
 				img_base64 = self.encode_image(image, page)
 				image["img_base64"] = img_base64
 				self.images.append(image)
+		self.image_index = i
 
 	def encode_image(self, image, page):
 		bbox = [image['x0'], page.cropbox[3]-image['y1'],  image['x1'], page.cropbox[3]-image['y0']]
@@ -57,18 +60,31 @@ class PdfTransformer:
 
 	def set_heights(self):
 		tolerance = 0.95
+		heights = []
 		largest_text_height, second_largest_text_height = 0, 0
 		for page in self.pages:
 			for line in page.extract_text_lines():
 				height = int(line["bottom"] - line["top"])
-
+				heights.append(height)
 				if height > largest_text_height:
 					second_largest_text_height = largest_text_height
 					largest_text_height = height
 				elif height > second_largest_text_height and height < largest_text_height:
 					second_largest_text_height = height
-		self.title_height = round(largest_text_height * tolerance)
-		self.subtitle_height = round(second_largest_text_height * tolerance)
+		
+		counter = Counter(heights)
+
+		# if there are too many subtitles, we don't use the title height.
+		# 50 is a temp number. It should be tuned.
+		if counter[largest_text_height] > 50:
+			self.title_height = float("inf")
+		else:
+			self.title_height = round(largest_text_height * tolerance)
+		
+		if counter[second_largest_text_height] > 50 or self.title_height == float("inf"):
+			self.subtitle_height = float("inf")
+		else:
+			self.subtitle_height = round(second_largest_text_height * tolerance)
 
 	def set_paragraph_information(self, lines):
 		def round_to_nearest_upper_bound(value, step=3): # for the golden sample case
@@ -417,11 +433,29 @@ if __name__ == "__main__":
 	decoded_bytes = base64.b64decode(pdf_string)
 	pdf_file_obj = BytesIO(decoded_bytes)
 	pdf = PdfTransformer(pdf_file_obj, display_image_tag)
+
+	result = ""
+	images = []
+	separator_number = 30
+	image_idx = 0
+
 	try:
-		body = pdf.execute()
-		images = pdf.base64_images
+		times = len(pdf.raw_pages) // separator_number + 1
+		for i in range(times):
+			pdf = PdfTransformer(pdf_file_obj, display_image_tag, image_idx)
+			if i == times - 1:
+				pdf.pages = pdf.raw_pages[i*separator_number:]
+			else:
+				pdf.pages = pdf.raw_pages[i*separator_number:(i+1)*separator_number]
+
+			pdf.preprocess()
+			image_idx = pdf.image_index
+			result += pdf.execute()
+			for image in pdf.base64_images:
+				images.append(image)
+			
 		output = {
-			"body": body,
+			"body": result,
 			"images": images,
 		}
 		print(json.dumps(output))
