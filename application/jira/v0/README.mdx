@@ -82,7 +82,7 @@ List all boards in Jira
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Boards (optional) | `boards` | array[object] | A array of boards in Jira |
+| [Boards](#boards) (optional) | `boards` | array[object] | A array of boards in Jira |
 | Start At | `start-at` | integer | The starting index of the returned boards. Base index: 0 |
 | Max Results | `max-results` | integer | The maximum number of boards |
 | Total | `total` | integer | The total number of boards |
@@ -91,6 +91,8 @@ List all boards in Jira
 
 
 
+<details>
+<summary> Output Objects in List Boards</summary>
 
 
 
@@ -98,10 +100,14 @@ List all boards in Jira
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| ID | id | integer | The ID of the board |
-| Name | name | string | The name of the board |
-| Self | self | string | The URL of the board |
-| Type | type | string | The type of the board |
+| ID | `id` | integer | The ID of the board |
+| Name | `name` | string | The name of the board |
+| Self | `self` | string | The URL of the board |
+| Type | `type` | string | The type of the board |
+
+
+
+</details>
 
 
 
@@ -117,77 +123,97 @@ List issues in Jira
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_LIST_ISSUES` |
 | Board Name (required) | `board-name` | string | The name of the board |
-| Range | `range` | object | Choose the range of issues to return. Default is `all` |
+| [Range](#range) | `range` | object | Choose the range of issues to return. Default is `all` |
 | Start At | `start-at` | integer | The starting index of the returned boards. Base index: 0. Default is 0 |
 | Max Results | `max-results` | integer | The maximum number of boards to return. Default is 50 |
 
 
 
+<details>
+<summary> Input Objects in List Issues</summary>
 
 
 
 
 
+</details>
 
 
 
-#### range option: 0
 
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  range   | range | string |  please intput  "All"   |
-
-
-#### range option: 1
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  range   | range | string |  please intput  "Standard Issues"   |
+<details>
+<summary> Range </summary>
+`range` must fulfill one of the following schemas:
 
 
-#### range option: 2
+#### All
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  range   | range | string |  please intput  "Epics only"   |
+|  | `range` | string |  Must be "All"   |
 
 
-#### range option: 3
 
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  range   | range | string |  please intput  "In backlog only"   |
-
-
-#### range option: 4
+#### Standard Issues
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Epic Key   | epic-key | string |  The Key of the epic, e.g. `JRA-1330`    |
-|  range   | range | string |  please intput  "Issues of an epic"   |
+|  | `range` | string |  Must be "Standard Issues"   |
 
 
-#### range option: 5
 
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  range   | range | string |  please intput  "Issues of a sprint"   |
-| Sprint Name   | sprint-name | string |  The name of the sprint    |
-
-
-#### range option: 6
+#### Epics only
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  range   | range | string |  please intput  "Issues without epic assigned"   |
+|  | `range` | string |  Must be "Epics only"   |
 
 
-#### range option: 7
+
+#### In backlog only
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| JQL   | jql | string |  The JQL query. For example, `type = "Task" AND status = "Done"`. For more information, see <a href="https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-search-in-jira-cloud/">Advanced searching</a>    |
-|  range   | range | string |  please intput  "JQL query"   |
+|  | `range` | string |  Must be "In backlog only"   |
+
+
+
+#### Issues of an epic
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Epic Key | `epic-key` | string |  The Key of the epic, e.g. `JRA-1330`   |
+|  | `range` | string |  Must be "Issues of an epic"   |
+
+
+
+#### Issues of a sprint
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `range` | string |  Must be "Issues of a sprint"   |
+| Sprint Name | `sprint-name` | string |  The name of the sprint   |
+
+
+
+#### Issues without epic assigned
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `range` | string |  Must be "Issues without epic assigned"   |
+
+
+
+#### JQL query
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| JQL | `jql` | string |  The JQL query. For example, `type = "Task" AND status = "Done"`. For more information, see <a href="https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-search-in-jira-cloud/">Advanced searching</a>   |
+|  | `range` | string |  Must be "JQL query"   |
+
+
+</details>
+
 
 
 
@@ -195,7 +221,7 @@ List issues in Jira
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Issues (optional) | `issues` | array[object] | A array of issues in Jira |
+| [Issues](#issues) (optional) | `issues` | array[object] | A array of issues in Jira |
 | Start At | `start-at` | integer | The starting index of the returned boards. Base index: 0 |
 | Max Results | `max-results` | integer | The maximum number of boards |
 | Total | `total` | integer | The total number of boards |
@@ -203,6 +229,8 @@ List issues in Jira
 
 
 
+<details>
+<summary> Output Objects in List Issues</summary>
 
 
 
@@ -210,16 +238,22 @@ List issues in Jira
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Description | description | string | The description of the issue |
-| Fields | fields | object | The fields of the issue. All navigable and Agile fields are returned |
-| ID | id | string | The ID of the issue |
-| Issue Type | issue-type | string | The type of the issue, can be: `Task`, `Epic` |
-| Key | key | string | The key of the issue, e.g. `JRA-1330` |
-| Self | self | string | The URL of the issue |
-| Status | status | string | The status of the issue, can be: `To Do`, `In Progress`, `Done` |
-| Summary | summary | string | The summary of the issue |
+| Description | `description` | string | The description of the issue |
+| [Fields](#fields) | `fields` | object | The fields of the issue. All navigable and Agile fields are returned |
+| ID | `id` | string | The ID of the issue |
+| Issue Type | `issue-type` | string | The type of the issue, can be: `Task`, `Epic` |
+| Key | `key` | string | The key of the issue, e.g. `JRA-1330` |
+| Self | `self` | string | The URL of the issue |
+| Status | `status` | string | The status of the issue, can be: `To Do`, `In Progress`, `Done` |
+| Summary | `summary` | string | The summary of the issue |
 
 
+
+
+
+
+
+</details>
 
 
 
@@ -248,7 +282,7 @@ List sprints in Jira
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Sprints (optional) | `sprints` | array[object] | A array of sprints in Jira |
+| [Sprints](#sprints) (optional) | `sprints` | array[object] | A array of sprints in Jira |
 | Start At | `start-at` | integer | The starting index of the returned boards. Base index: 0 |
 | Max Results | `max-results` | integer | The maximum number of boards |
 | Total | `total` | integer | The total number of boards |
@@ -256,6 +290,8 @@ List sprints in Jira
 
 
 
+<details>
+<summary> Output Objects in List Sprints</summary>
 
 
 
@@ -263,15 +299,19 @@ List sprints in Jira
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Complete Date | complete-date | string | The complete date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
-| End Date | end-date | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
-| Goal | goal | string | The Goal of the sprint |
-| ID | id | integer | The ID of the sprint |
-| Name | name | string | The name of the sprint |
-| Origin Board ID | origin-board-id | integer | The ID of the origin board |
-| Self | self | string | The URL of the sprint |
-| Start Date | start-date | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
-| State | state | string | The state of the sprint, can be: `active`, `closed`, `future` |
+| Complete Date | `complete-date` | string | The complete date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| End Date | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| Goal | `goal` | string | The Goal of the sprint |
+| ID | `id` | integer | The ID of the sprint |
+| Name | `name` | string | The name of the sprint |
+| Origin Board ID | `origin-board-id` | integer | The ID of the origin board |
+| Self | `self` | string | The URL of the sprint |
+| Start Date | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
+| State | `state` | string | The state of the sprint, can be: `active`, `closed`, `future` |
+
+
+
+</details>
 
 
 
@@ -302,7 +342,7 @@ Get an issue in Jira
 | ID | `id` | string | The ID of the issue |
 | Key | `key` | string | The key of the issue, e.g. `JRA-1330` |
 | Self | `self` | string | The URL of the issue |
-| Fields | `fields` | object | The fields of the issue. All navigable and Agile fields are returned |
+| [Fields](#fields) | `fields` | object | The fields of the issue. All navigable and Agile fields are returned |
 | Issue Type (optional) | `issue-type` | string | The type of the issue, can be: `Task`, `Epic` |
 | Summary (optional) | `summary` | string | The summary of the issue |
 | Description (optional) | `description` | string | The description of the issue |
@@ -311,8 +351,14 @@ Get an issue in Jira
 
 
 
+<details>
+<summary> Output Objects in Get Issue</summary>
 
 
+
+
+
+</details>
 
 
 
@@ -366,48 +412,64 @@ Create an issue in Jira
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_ISSUE` |
 | Project Key (required) | `project-key` | string | The key of the project, e.g. `INS` |
-| Issue Type (required) | `issue-type` | object | The type of the issue, can be: `Task`, `Epic`, `Subtask`, etc. |
+| [Issue Type](#issue-type) (required) | `issue-type` | object | The type of the issue, can be: `Task`, `Epic`, `Subtask`, etc. |
 | Summary | `summary` | string | The summary of the issue |
 | Description | `description` | string | The description of the issue |
 
 
 
+<details>
+<summary> Input Objects in Create Issue</summary>
 
 
 
 
 
+</details>
 
 
 
-#### issue-type option: 0
 
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  issue-type   | issue-type | string |  please intput  "Epic"   |
-
-
-#### issue-type option: 1
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  issue-type   | issue-type | string |  please intput  "Task"   |
+<details>
+<summary> Issue-type </summary>
+`issue-type` must fulfill one of the following schemas:
 
 
-#### issue-type option: 2
+#### Epic
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  issue-type   | issue-type | string |  please intput  "Subtask"   |
-| Parent Key   | parent-key | string |  The key of the parent issue, e.g. `JRA-1330`    |
+|  | `issue-type` | string |  Must be "Epic"   |
 
 
-#### issue-type option: 3
+
+#### Task
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Issue Type   | custom-issue-type | string |  The type of the issue, can be: `Task`, `Epic`, `Subtask`, etc.    |
-|  issue-type   | issue-type | string |  please intput  "Other"   |
+|  | `issue-type` | string |  Must be "Task"   |
+
+
+
+#### Subtask
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `issue-type` | string |  Must be "Subtask"   |
+| Parent Key | `parent-key` | string |  The key of the parent issue, e.g. `JRA-1330`   |
+
+
+
+#### Other
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Issue Type | `custom-issue-type` | string |  The type of the issue, can be: `Task`, `Epic`, `Subtask`, etc.   |
+|  | `issue-type` | string |  Must be "Other"   |
+
+
+</details>
+
 
 
 
@@ -418,7 +480,7 @@ Create an issue in Jira
 | ID | `id` | string | The ID of the issue |
 | Key | `key` | string | The key of the issue, e.g. `JRA-1330` |
 | Self | `self` | string | The URL of the issue |
-| Fields | `fields` | object | The fields of the issue. All navigable and Agile fields are returned |
+| [Fields](#fields) | `fields` | object | The fields of the issue. All navigable and Agile fields are returned |
 | Issue Type (optional) | `issue-type` | string | The type of the issue, can be: `Task`, `Epic` |
 | Summary (optional) | `summary` | string | The summary of the issue |
 | Description (optional) | `description` | string | The description of the issue |
@@ -427,8 +489,14 @@ Create an issue in Jira
 
 
 
+<details>
+<summary> Output Objects in Create Issue</summary>
 
 
+
+
+
+</details>
 
 
 
@@ -445,32 +513,46 @@ Update an issue in Jira
 | Task ID (required) | `task` | string | `TASK_UPDATE_ISSUE` |
 | Issue Key (required) | `issue-key` | string | The key of the issue, e.g. `JRA-1330` |
 | Notify Users | `notify-users` | boolean | Whether to notify users |
-| Update | `update` | object | Update an issue in Jira |
+| [Update](#update) | `update` | object | Update an issue in Jira |
+
+
+
+<details>
+<summary> Input Objects in Update Issue</summary>
 
 
 
 
 
+</details>
 
 
 
 
+<details>
+<summary> Update </summary>
+`update` must fulfill one of the following schemas:
 
 
-#### update option: 0
+#### Custom Update
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  update   | update | string |  please intput  "Custom Update"   |
-| Update Fields   | update-fields | array |  The fields to update    |
+|  | `update` | string |  Must be "Custom Update"   |
+| [Update Fields](#update-fields) | `update-fields` | array |  The fields to update   |
 
 
-#### update option: 1
+
+#### Move Issue to Epic
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Epic Key   | epic-key | string |  The key of the epic, e.g. `JRA-1330`    |
-|  update   | update | string |  please intput  "Move Issue to Epic"   |
+| Epic Key | `epic-key` | string |  The key of the epic, e.g. `JRA-1330`   |
+|  | `update` | string |  Must be "Move Issue to Epic"   |
+
+
+</details>
+
 
 
 
@@ -481,7 +563,7 @@ Update an issue in Jira
 | ID | `id` | string | The ID of the issue |
 | Key | `key` | string | The key of the issue, e.g. `JRA-1330` |
 | Self | `self` | string | The URL of the issue |
-| Fields | `fields` | object | The fields of the issue. All navigable and Agile fields are returned |
+| [Fields](#fields) | `fields` | object | The fields of the issue. All navigable and Agile fields are returned |
 | Issue Type (optional) | `issue-type` | string | The type of the issue, can be: `Task`, `Epic` |
 | Summary (optional) | `summary` | string | The summary of the issue |
 | Description (optional) | `description` | string | The description of the issue |
@@ -490,8 +572,14 @@ Update an issue in Jira
 
 
 
+<details>
+<summary> Output Objects in Update Issue</summary>
 
 
+
+
+
+</details>
 
 
 

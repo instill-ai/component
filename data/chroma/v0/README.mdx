@@ -64,15 +64,21 @@ Upsert multiple vector items into a collection, existing items will be updated
 | Task ID (required) | `task` | string | `TASK_BATCH_UPSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the item into |
 | Array ID (required) | `array-id` | array[string] | The array of id |
-| Array Metadata (required) | `array-metadata` | array[object] | The array of vector metadata |
+| [Array Metadata](#array-metadata) (required) | `array-metadata` | array[object] | The array of vector metadata |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
 | Array Document | `array-document` | array[string] | The array of document string values |
 | Array URI | `array-uri` | array[string] | The array of uri |
 
 
 
+<details>
+<summary> Input Objects in Batch Upsert</summary>
 
 
+
+
+
+</details>
 
 
 
@@ -102,15 +108,21 @@ Upsert a vector item into a collection, existing item will be updated
 | Task ID (required) | `task` | string | `TASK_UPSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the item into |
 | ID (required) | `id` | string | The ID of the item |
-| Metadata (required) | `metadata` | object | The vector metadata |
+| [Metadata](#metadata) (required) | `metadata` | object | The vector metadata |
 | Vector (required) | `vector` | array[number] | An array of dimensions for the vector value |
 | Document | `document` | string | The document string value |
 | URI | `uri` | string | The uri of the item |
 
 
 
+<details>
+<summary> Input Objects in Upsert</summary>
 
 
+
+
+
+</details>
 
 
 
@@ -141,14 +153,20 @@ Perform a vector search on a collection
 | Collection Name (required) | `collection-name` | string | The name of the collection to perform vector similarity search on |
 | Vector (required) | `vector` | array[number] | An array of dimensions for the vector query. |
 | N Results (required) | `n-results` | integer | The N amount of items to return from the vector search operation |
-| Filter | `filter` | object | The metadata filter to be applied to the data with Chroma where filter, please refer to [using-where-filters](https://docs.trychroma.com/guides#using-where-filters) |
+| [Filter](#filter) | `filter` | object | The metadata filter to be applied to the data with Chroma where filter, please refer to [using-where-filters](https://docs.trychroma.com/guides#using-where-filters) |
 | Filter Document | `filter-document` | string | The document content filter to be applied to the data, please refer to [filtering-by-document-contents](https://docs.trychroma.com/guides#filtering-by-document-contents) |
 | Fields | `fields` | array[string] | The fields to be returned from the vector search operation |
 
 
 
+<details>
+<summary> Input Objects in Query</summary>
 
 
+
+
+
+</details>
 
 
 
@@ -158,12 +176,14 @@ Perform a vector search on a collection
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Result | `result` | object | Result of the vector search operation |
+| [Result](#result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
 
 
 
 
+<details>
+<summary> Output Objects in Query</summary>
 
 
 
@@ -171,14 +191,22 @@ Perform a vector search on a collection
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| IDs | ids | array | The ids returned from the vector search operation |
-| Items | items | array | The items returned from the vector search operation |
-| Metadata | metadata | array | The metadata returned from the vector search operation |
-| Vectors | vectors | array | The vectors returned from the vector search operation |
+| IDs | `ids` | array | The ids returned from the vector search operation |
+| [Items](#items) | `items` | array | The items returned from the vector search operation |
+| [Metadata](#metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| Vectors | `vectors` | array | The vectors returned from the vector search operation |
 
 
 
 
+
+
+
+
+
+
+
+</details>
 
 
 
@@ -195,13 +223,19 @@ Delete vector items from a collection
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to delete the object from |
 | ID | `id` | string | The ID of the item |
-| Filter | `filter` | object | The metadata filter to be applied to the data with Chroma where filter, please refer to [using-where-filters](https://docs.trychroma.com/guides#using-where-filters) |
+| [Filter](#filter) | `filter` | object | The metadata filter to be applied to the data with Chroma where filter, please refer to [using-where-filters](https://docs.trychroma.com/guides#using-where-filters) |
 | Filter Document | `filter-document` | string | The document content filter to be applied to the data, please refer to [filtering-by-document-contents](https://docs.trychroma.com/guides#filtering-by-document-contents) |
 
 
 
+<details>
+<summary> Input Objects in Delete</summary>
 
 
+
+
+
+</details>
 
 
 
@@ -230,16 +264,24 @@ Create a collection
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_COLLECTION` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to create |
-| Config | `metadata` | object | The metadata of the collection. Please refer to [creating-inspecting-and-deleting-collection](https://docs.trychroma.com/guides#creating,-inspecting,-and-deleting-collections) |
-| Configuration | `configuration` | object | The configuration of the collection. Please refer to [creating-inspecting-and-deleting-collection](https://docs.trychroma.com/guides#creating,-inspecting,-and-deleting-collections) |
+| [Config](#config) | `metadata` | object | The metadata of the collection. Please refer to [creating-inspecting-and-deleting-collection](https://docs.trychroma.com/guides#creating,-inspecting,-and-deleting-collections) |
+| [Configuration](#configuration) | `configuration` | object | The configuration of the collection. Please refer to [creating-inspecting-and-deleting-collection](https://docs.trychroma.com/guides#creating,-inspecting,-and-deleting-collections) |
 | Get or Create | `get-or-create` | boolean | If true, the collection will be created if it does not exist |
 
 
 
+<details>
+<summary> Input Objects in Create Collection</summary>
 
 
 
 
+
+
+
+
+
+</details>
 
 
 

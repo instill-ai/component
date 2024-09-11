@@ -60,7 +60,7 @@ Provide text outputs in response to text inputs.
 | Prompt (required) | `prompt` | string | The prompt text |
 | System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is set using a generic message as "You are a helpful assistant." |
 | Prompt Images | `prompt-images` | array[string] | The prompt images (Note: The prompt images will be injected in the order they are provided to the 'prompt' message. Anthropic doesn't support sending images via image-url, use this field instead) |
-| Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
+| [Chat history](#chat-history) | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
 | Seed | `seed` | integer | The seed (Note: Not supported by Anthropic Models) |
 | Temperature | `temperature` | number | The temperature for sampling |
 | Top K | `top-k` | integer | Top k for sampling |
@@ -68,6 +68,8 @@ Provide text outputs in response to text inputs.
 
 
 
+<details>
+<summary> Input Objects in Text Generation Chat</summary>
 
 
 
@@ -75,8 +77,10 @@ Provide text outputs in response to text inputs.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Content | content | array | The message content  |
-| Role | role | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+| [Content](#content) | `content` | array | The message content  |
+| Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+
+
 
 
 
@@ -84,9 +88,11 @@ Provide text outputs in response to text inputs.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Image URL | image-url | object | The image URL  |
-| Text | text | string | The text content.  |
-| Type | type | string | The type of the content part.  There are options: <br/>- text<br/>- image_url   |
+| [Image URL](#image-url) | `image-url` | object | The image URL  |
+| Text | `text` | string | The text content.  |
+| Type | `type` | string | The type of the content part.  <br/>Enum: <br/><ul><li>text</li><li>image_url</li></ul>  |
+
+
 
 
 
@@ -94,7 +100,11 @@ Provide text outputs in response to text inputs.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| URL | url | string | Either a URL of the image or the base64 encoded image data.  |
+| URL | `url` | string | Either a URL of the image or the base64 encoded image data.  |
+
+
+
+</details>
 
 
 
@@ -105,11 +115,13 @@ Provide text outputs in response to text inputs.
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Model Output |
-| Usage (optional) | `usage` | object | Usage tokens in Anthropic |
+| [Usage](#usage) (optional) | `usage` | object | Usage tokens in Anthropic |
 
 
 
 
+<details>
+<summary> Output Objects in Text Generation Chat</summary>
 
 
 
@@ -117,8 +129,12 @@ Provide text outputs in response to text inputs.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Input Tokens | input-tokens | number | The input tokens used by Anthropic |
-| Output Tokens | output-tokens | number | The output tokens used by Anthropic |
+| Input Tokens | `input-tokens` | number | The input tokens used by Anthropic |
+| Output Tokens | `output-tokens` | number | The output tokens used by Anthropic |
+
+
+
+</details>
 
 
 

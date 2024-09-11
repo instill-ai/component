@@ -66,16 +66,24 @@ Perform a vector search on a collection
 | Vector (required) | `vector` | array[number] | An array of dimensions for the vector query. |
 | Limit (required) | `limit` | integer | The limit of points, empty for all points |
 | Payloads | `payloads` | array[string] | The payloads to return in the points. If empty then all payloads will be returned |
-| Filter | `filter` | object | The properties filter to be applied to the data with Qdrant filter, please refer to https://api.qdrant.tech/api-reference/search/points filter section |
-| Params | `params` | object | The additional parameters to be passed to the search, please refer to https://api.qdrant.tech/api-reference/search/points params section |
+| [Filter](#filter) | `filter` | object | The properties filter to be applied to the data with Qdrant filter, please refer to https://api.qdrant.tech/api-reference/search/points filter section |
+| [Params](#params) | `params` | object | The additional parameters to be passed to the search, please refer to https://api.qdrant.tech/api-reference/search/points params section |
 | Min Score | `min-score` | number | The minimum score of the points to be returned |
 
 
 
+<details>
+<summary> Input Objects in Vector Search</summary>
 
 
 
 
+
+
+
+
+
+</details>
 
 
 
@@ -85,12 +93,14 @@ Perform a vector search on a collection
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Result | `result` | object | Result of the vector search operation |
+| [Result](#result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
 
 
 
 
+<details>
+<summary> Output Objects in Vector Search</summary>
 
 
 
@@ -98,14 +108,22 @@ Perform a vector search on a collection
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| IDs | ids | array | The ids returned from the vector search operation |
-| Metadata | metadata | array | The metadata returned from the vector search operation |
-| Points | points | array | The points returned from the vector search operation |
-| Vectors | vectors | array | The vectors returned from the vector search operation |
+| IDs | `ids` | array | The ids returned from the vector search operation |
+| [Metadata](#metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| [Points](#points) | `points` | array | The points returned from the vector search operation |
+| Vectors | `vectors` | array | The vectors returned from the vector search operation |
 
 
 
 
+
+
+
+
+
+
+
+</details>
 
 
 
@@ -122,14 +140,20 @@ Insert multiple vector points into a collection
 | Task ID (required) | `task` | string | `TASK_BATCH_UPSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the point into |
 | Array ID (required) | `array-id` | array[string] | The array of id |
-| Array Metadata | `array-metadata` | array[object] | The array of vector metadata payload |
+| [Array Metadata](#array-metadata) | `array-metadata` | array[object] | The array of vector metadata payload |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
 | Ordering | `ordering` | string | The ordering guarantees of the batch upsert |
 
 
 
+<details>
+<summary> Input Objects in Batch Upsert</summary>
 
 
+
+
+
+</details>
 
 
 
@@ -159,14 +183,20 @@ Upsert a vector point into a collection
 | Task ID (required) | `task` | string | `TASK_UPSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the point into |
 | ID (required) | `id` | string | The ID of the point |
-| Metadata | `metadata` | object | The vector metadata payload |
+| [Metadata](#metadata) | `metadata` | object | The vector metadata payload |
 | Vector (required) | `vector` | array[number] | An array of dimensions for the vector value |
 | Ordering | `ordering` | string | The ordering guarantees of the batch upsert |
 
 
 
+<details>
+<summary> Input Objects in Upsert</summary>
 
 
+
+
+
+</details>
 
 
 
@@ -196,13 +226,19 @@ Delete vector points from a collection
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to delete the object from |
 | ID | `id` | string | The ID of the point |
-| Filter | `filter` | object | The properties filter to be applied to the data with Qdrant filter, please refer to https://api.qdrant.tech/api-reference/points/delete-points filter section |
+| [Filter](#filter) | `filter` | object | The properties filter to be applied to the data with Qdrant filter, please refer to https://api.qdrant.tech/api-reference/points/delete-points filter section |
 | Ordering | `ordering` | string | The ordering guarantees of the batch upsert |
 
 
 
+<details>
+<summary> Input Objects in Delete</summary>
 
 
+
+
+
+</details>
 
 
 
@@ -231,12 +267,18 @@ Create a collection
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_COLLECTION` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to create |
-| Config (required) | `config` | object | The configuration of the collection. Please refer to https://api.qdrant.tech/api-reference/collections/create-collection |
+| [Config](#config) (required) | `config` | object | The configuration of the collection. Please refer to https://api.qdrant.tech/api-reference/collections/create-collection |
+
+
+
+<details>
+<summary> Input Objects in Create Collection</summary>
 
 
 
 
 
+</details>
 
 
 

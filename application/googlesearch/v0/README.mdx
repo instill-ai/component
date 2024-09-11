@@ -72,11 +72,13 @@ Search data via Google Search Engine.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Results | `results` | array[object] | The returned search results from Google |
+| [Results](#results) | `results` | array[object] | The returned search results from Google |
 
 
 
 
+<details>
+<summary> Output Objects in Search</summary>
 
 
 
@@ -84,11 +86,15 @@ Search data via Google Search Engine.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Link | link | string | The full URL to which the search result is pointing, e.g., http://www.example.com/foo/bar. |
-| Link HTML | link-html | string | The scraped raw html of the link associated with this search result |
-| Link Text | link-text | string | The scraped text of the link associated with this search result, in plain text |
-| Snippet | snippet | string | The snippet from the page associated with this search result, in plain text |
-| Title | title | string | The title of a search result, in plain text |
+| Link | `link` | string | The full URL to which the search result is pointing, e.g., http://www.example.com/foo/bar. |
+| Link HTML | `link-html` | string | The scraped raw html of the link associated with this search result |
+| Link Text | `link-text` | string | The scraped text of the link associated with this search result, in plain text |
+| Snippet | `snippet` | string | The snippet from the page associated with this search result, in plain text |
+| Title | `title` | string | The title of a search result, in plain text |
+
+
+
+</details>
 
 
 

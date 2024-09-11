@@ -60,11 +60,13 @@ Crawl the website contents and manipulate html with jquery command. The sequence
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Pages | `pages` | array[object] | The scraped webpages |
+| [Pages](#pages) | `pages` | array[object] | The scraped webpages |
 
 
 
 
+<details>
+<summary> Output Objects in Crawl Website</summary>
 
 
 
@@ -72,10 +74,14 @@ Crawl the website contents and manipulate html with jquery command. The sequence
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Link | link | string | The full URL to which the webpage link is pointing, e.g., http://www.example.com/foo/bar. |
-| Link HTML | link-html | string | The scraped raw html of the link associated with this webpage link |
-| Link Text | link-text | string | The scraped text of the link associated with this webpage link, in plain text |
-| Title | title | string | The title of a webpage link, in plain text |
+| Link | `link` | string | The full URL to which the webpage link is pointing, e.g., http://www.example.com/foo/bar. |
+| Link HTML | `link-html` | string | The scraped raw html of the link associated with this webpage link |
+| Link Text | `link-text` | string | The scraped text of the link associated with this webpage link, in plain text |
+| Title | `title` | string | The title of a webpage link, in plain text |
+
+
+
+</details>
 
 
 
@@ -140,12 +146,14 @@ Scrape the webpage contents and manipulate html with jquery command. The sequenc
 | Content | `content` | string | The scraped plain content without html tags of the webpage |
 | Markdown | `markdown` | string | The scraped markdown of the webpage |
 | HTML (optional) | `html` | string | The scraped html of the webpage |
-| Metadata (optional) | `metadata` | object | The metadata of the webpage |
+| [Metadata](#metadata) (optional) | `metadata` | object | The metadata of the webpage |
 | Links on Page (optional) | `links-on-page` | array[string] | The list of links on the webpage |
 
 
 
 
+<details>
+<summary> Output Objects in Scrape Webpage</summary>
 
 
 
@@ -153,9 +161,13 @@ Scrape the webpage contents and manipulate html with jquery command. The sequenc
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Description | description | string | The description of the webpage |
-| Source URL | source-url | string | The source URL of the webpage |
-| Title | title | string | The title of the webpage |
+| Description | `description` | string | The description of the webpage |
+| Source URL | `source-url` | string | The source URL of the webpage |
+| Title | `title` | string | The title of the webpage |
+
+
+
+</details>
 
 
 

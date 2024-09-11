@@ -480,12 +480,14 @@ Retrieve all the messages inside a thread (conversation inbox). The messages wil
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Messages | `results` | array[object] | An array of messages |
+| [Messages](#messages) | `results` | array[object] | An array of messages |
 | Number of Messages | `no-of-messages` | integer | The number of messages in a thread |
 
 
 
 
+<details>
+<summary> Output Objects in Get Thread</summary>
 
 
 
@@ -493,13 +495,15 @@ Retrieve all the messages inside a thread (conversation inbox). The messages wil
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Channel Account ID | channel-account-id | string | The ID of an account that is part of the channel-id channel. |
-| Channel ID | channel-id | string | The ID of a generic channel returned from the channels endpoint, like 1000 for live chat, 1001 for Facebook Messenger, 1002 for email, etc. |
-| Start Conversation Message | created-at | string | message to start a conversation |
-| Recipients | recipients | array | Recipients' information |
-| Sender | sender | object | Sender's information |
-| Subject | subject | string | The subject of the message |
-| Text | text | string | The content of the message |
+| Channel Account ID | `channel-account-id` | string | The ID of an account that is part of the channel-id channel. |
+| Channel ID | `channel-id` | string | The ID of a generic channel returned from the channels endpoint, like 1000 for live chat, 1001 for Facebook Messenger, 1002 for email, etc. |
+| Start Conversation Message | `created-at` | string | message to start a conversation |
+| [Recipients](#recipients) | `recipients` | array | Recipients' information |
+| [Sender](#sender) | `sender` | object | Sender's information |
+| Subject | `subject` | string | The subject of the message |
+| Text | `text` | string | The content of the message |
+
+
 
 
 
@@ -507,10 +511,12 @@ Retrieve all the messages inside a thread (conversation inbox). The messages wil
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Actor ID | sender-actor-id | string | The actor ID of the sender |
-| Name | sender-name | string | The name of the sender |
-| Type | sender-type | string | Specify the category of sender information |
-| Value | sender-value | string | Contains the actual sender information (e.g.: email address) |
+| Actor ID | `sender-actor-id` | string | The actor ID of the sender |
+| Name | `sender-name` | string | The name of the sender |
+| Type | `sender-type` | string | Specify the category of sender information |
+| Value | `sender-value` | string | Contains the actual sender information (e.g.: email address) |
+
+
 
 
 
@@ -518,9 +524,13 @@ Retrieve all the messages inside a thread (conversation inbox). The messages wil
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Name | name | string | The name of the recipient |
-| Type | type | string | Specify the category of recipient information |
-| Value | value | string | Contains the actual recipient information (e.g.: email address) |
+| Name | `name` | string | The name of the recipient |
+| Type | `type` | string | Specify the category of recipient information |
+| Value | `value` | string | Contains the actual recipient information (e.g.: email address) |
+
+
+
+</details>
 
 
 
@@ -620,7 +630,7 @@ Get information about HubSpot owner using either owner ID or user ID. For more i
 | Email | `email` | string | Email |
 | Owner ID | `owner-id` | string | Owner ID. Usually used to associate the owner with other objects. |
 | User ID | `user-id` | string | User ID. Usually used to indicate the owner who performed the action. User ID can be seen in Update Deal task output. |
-| Teams (optional) | `teams` | array[object] | The owner's teams information |
+| [Teams](#teams) (optional) | `teams` | array[object] | The owner's teams information |
 | Created At | `created-at` | string | Created at |
 | Updated At | `updated-at` | string | Updated at |
 | Archived | `archived` | boolean | Archived |
@@ -628,6 +638,8 @@ Get information about HubSpot owner using either owner ID or user ID. For more i
 
 
 
+<details>
+<summary> Output Objects in Get Owner</summary>
 
 
 
@@ -635,9 +647,13 @@ Get information about HubSpot owner using either owner ID or user ID. For more i
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Team ID | team-id | string | The ID of the team |
-| Team Name | team-name | string | The name of the team |
-| Team Primary | team-primary | boolean | Indicate whether this team is the primary team of the owner |
+| Team ID | `team-id` | string | The ID of the team |
+| Team Name | `team-name` | string | The name of the team |
+| Team Primary | `team-primary` | boolean | Indicate whether this team is the primary team of the owner |
+
+
+
+</details>
 
 
 

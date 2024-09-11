@@ -70,11 +70,13 @@ Get the latest message since specific date
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Conversations | `conversations` | array[object] | An array of conversations with thread messages |
+| [Conversations](#conversations) | `conversations` | array[object] | An array of conversations with thread messages |
 
 
 
 
+<details>
+<summary> Output Objects in Read Message</summary>
 
 
 
@@ -82,12 +84,14 @@ Get the latest message since specific date
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Last Date | last-date | string | Date of the last message |
-| Start Conversation Message | message | string | message to start a conversation |
-| Start Date | start-date | string | when a conversation starts |
-| Replied messages | thread-reply-messages | array | replies in a conversation |
-| User UID | user-id | string | unique id from Slack |
-| User Name | user-name | string | user name in Slack |
+| Last Date | `last-date` | string | Date of the last message |
+| Start Conversation Message | `message` | string | message to start a conversation |
+| Start Date | `start-date` | string | when a conversation starts |
+| [Replied messages](#replied-messages) | `thread-reply-messages` | array | replies in a conversation |
+| User UID | `user-id` | string | unique id from Slack |
+| User Name | `user-name` | string | user name in Slack |
+
+
 
 
 
@@ -95,10 +99,14 @@ Get the latest message since specific date
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Replied Time | datetime | string | replied datetime |
-| Replied Message | message | string | message to reply a conversation |
-| User UID | user-id | string | unique id from Slack |
-| User Name | user-name | string | user name in Slack |
+| Replied Time | `datetime` | string | replied datetime |
+| Replied Message | `message` | string | message to reply a conversation |
+| User UID | `user-id` | string | unique id from Slack |
+| User Name | `user-name` | string | user name in Slack |
+
+
+
+</details>
 
 
 

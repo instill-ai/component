@@ -76,11 +76,13 @@ Retrieve chat history from Redis.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Chat Message | `messages` | array[object] | Messages |
+| [Chat Message](#chat-message) | `messages` | array[object] | Messages |
 
 
 
 
+<details>
+<summary> Output Objects in Retrieve Chat History</summary>
 
 
 
@@ -88,9 +90,11 @@ Retrieve chat history from Redis.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Content | content | array | The message content |
-| Metadata | metadata | object | The message metadata |
-| Role | role | string | The message role, i.e. 'system', 'user' or 'assistant' |
+| [Content](#content) | `content` | array | The message content |
+| [Metadata](#metadata) | `metadata` | object | The message metadata |
+| Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant' |
+
+
 
 
 
@@ -98,9 +102,11 @@ Retrieve chat history from Redis.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Image URL | image-url | object | The image URL |
-| Text | text | string | The text content. |
-| Type | type | string | The type of the content part. |
+| [Image URL](#image-url) | `image-url` | object | The image URL |
+| Text | `text` | string | The text content. |
+| Type | `type` | string | The type of the content part. |
+
+
 
 
 
@@ -108,9 +114,15 @@ Retrieve chat history from Redis.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| URL | url | string | Either a URL of the image or the base64 encoded image data. |
+| URL | `url` | string | Either a URL of the image or the base64 encoded image data. |
 
 
+
+
+
+
+
+</details>
 
 
 
@@ -128,12 +140,18 @@ Write chat message into Redis.
 | Session ID (required) | `session-id` | string | A unique identifier for the chat session |
 | Role (required) | `role` | string | The message role, i.e. 'system', 'user' or 'assistant' |
 | Content (required) | `content` | string | The message content |
-| Metadata | `metadata` | object | The message metadata |
+| [Metadata](#metadata) | `metadata` | object | The message metadata |
+
+
+
+<details>
+<summary> Input Objects in Write Chat Message</summary>
 
 
 
 
 
+</details>
 
 
 
@@ -164,12 +182,18 @@ Write multi-modal chat message into Redis.
 | Session ID (required) | `session-id` | string | A unique identifier for the chat session |
 | Role (required) | `role` | string | The message role, i.e. 'system', 'user' or 'assistant' |
 | Content (required) | `content` | string | The multi-modal message content |
-| Metadata | `metadata` | object | The message metadata |
+| [Metadata](#metadata) | `metadata` | object | The message metadata |
+
+
+
+<details>
+<summary> Input Objects in Write Multi Modal Chat Message</summary>
 
 
 
 
 
+</details>
 
 
 

@@ -59,58 +59,74 @@ Goal Related Task, including get, update, delete, create, duplicate
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CRUD_GOAL` |
-| Action | `action` | object | action |
+| [Action](#action) | `action` | object | action |
+
+
+
+<details>
+<summary> Input Objects in Crud Goal</summary>
 
 
 
 
 
+</details>
 
 
 
 
+<details>
+<summary> Action </summary>
+`action` must fulfill one of the following schemas:
 
 
-#### action option: 0
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "get"   |
-| Goal ID   | goal-gid | string |  Globally unique identifier (GID) for the goal. You can find the GID of a goal from the URL of the goal in Asana. For example, if the URL of the goal is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.    |
-
-
-#### action option: 1
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "update"   |
-| Due Date   | due-on | string |  The date on which the goal is due. In the format YYYY-MM-DD.    |
-| Goal ID   | goal-gid | string |  Globally unique identifier (GID) for the goal. You can find the GID of a goal from the URL of the goal in Asana. For example, if the URL of the goal is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.    |
-| Liked   | liked | boolean |  Whether the goal is liked by the user.    |
-| Goal Name   | name | string |  The name of the goal.    |
-| Goal Note   | notes | string |  The notes of the goal.    |
-| Start Date   | start-on | string |  The date on which the goal starts. In the format YYYY-MM-DD.    |
-| Status   | status | string |  The current status of this goal. When the goal is open, its status can be green, yellow, and red to reflect "On Track", "At Risk", and "Off Track", respectively. When the goal is closed, the value can be missed, achieved, partial, or dropped.    There are options: <br/>- green<br/>- yellow<br/>- red<br/>- missed<br/>- achieved<br/>- partial<br/>- dropped   |
-
-
-#### action option: 2
+#### get
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "delete"   |
-| Goal ID   | goal-gid | string |  Globally unique identifier (GID) for the goal. You can find the GID of a goal from the URL of the goal in Asana. For example, if the URL of the goal is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.    |
+|  | `action` | string |  Must be "get"   |
+| Goal ID | `goal-gid` | string |  Globally unique identifier (GID) for the goal. You can find the GID of a goal from the URL of the goal in Asana. For example, if the URL of the goal is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.   |
 
 
-#### action option: 3
+
+#### update
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "create"   |
-| Due Date   | due-on | string |  The date on which the goal is due. In the format YYYY-MM-DD.    |
-| Liked   | liked | boolean |  Whether the goal is liked by the user.    |
-| Goal Name   | name | string |  The name of the goal.    |
-| Goal Note   | notes | string |  The notes of the goal.    |
-| Start Date   | start-on | string |  The date on which the goal starts. In the format YYYY-MM-DD.    |
+|  | `action` | string |  Must be "update"   |
+| Due Date | `due-on` | string |  The date on which the goal is due. In the format YYYY-MM-DD.   |
+| Goal ID | `goal-gid` | string |  Globally unique identifier (GID) for the goal. You can find the GID of a goal from the URL of the goal in Asana. For example, if the URL of the goal is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.   |
+| Liked | `liked` | boolean |  Whether the goal is liked by the user.   |
+| Goal Name | `name` | string |  The name of the goal.   |
+| Goal Note | `notes` | string |  The notes of the goal.   |
+| Start Date | `start-on` | string |  The date on which the goal starts. In the format YYYY-MM-DD.   |
+| Status | `status` | string |  The current status of this goal. When the goal is open, its status can be green, yellow, and red to reflect "On Track", "At Risk", and "Off Track", respectively. When the goal is closed, the value can be missed, achieved, partial, or dropped.   <br/>Enum: <br/><ul><li>green</li><li>yellow</li><li>red</li><li>missed</li><li>achieved</li><li>partial</li><li>dropped</li></ul>  |
+
+
+
+#### delete
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "delete"   |
+| Goal ID | `goal-gid` | string |  Globally unique identifier (GID) for the goal. You can find the GID of a goal from the URL of the goal in Asana. For example, if the URL of the goal is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.   |
+
+
+
+#### create
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "create"   |
+| Due Date | `due-on` | string |  The date on which the goal is due. In the format YYYY-MM-DD.   |
+| Liked | `liked` | boolean |  Whether the goal is liked by the user.   |
+| Goal Name | `name` | string |  The name of the goal.   |
+| Goal Note | `notes` | string |  The notes of the goal.   |
+| Start Date | `start-on` | string |  The date on which the goal starts. In the format YYYY-MM-DD.   |
+
+
+</details>
+
 
 
 
@@ -120,17 +136,19 @@ Goal Related Task, including get, update, delete, create, duplicate
 | :--- | :--- | :--- | :--- |
 | Goal ID (optional) | `gid` | string | Globally unique identifier (GID) for the goal. |
 | Goal Name (optional) | `name` | string | The name of the goal. |
-| Owner (optional) | `owner` | object | The owner of the goal. |
+| [Owner](#owner) (optional) | `owner` | object | The owner of the goal. |
 | Goal Note (optional) | `notes` | string | The notes of the goal. |
 | Goal HTML Note (optional) | `html-notes` | string | The notes of the goal in HTML format. |
 | Due Date (optional) | `due-on` | string | The date on which the goal is due. In the format YYYY-MM-DD. |
 | Start Date (optional) | `start-on` | string | The date on which the goal starts. In the format YYYY-MM-DD. |
 | Liked (optional) | `liked` | boolean | Whether the goal is liked by the user. |
-| Likes (optional) | `likes` | array[object] | The users who likes the goal. |
+| [Likes](#likes) (optional) | `likes` | array[object] | The users who likes the goal. |
 
 
 
 
+<details>
+<summary> Output Objects in Crud Goal</summary>
 
 
 
@@ -138,8 +156,10 @@ Goal Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Owner ID | gid | string | Globally unique identifier (GID) for the owner. |
-| Owner Name | name | string | The name of the owner. |
+| Owner ID | `gid` | string | Globally unique identifier (GID) for the owner. |
+| Owner Name | `name` | string | The name of the owner. |
+
+
 
 
 
@@ -147,9 +167,13 @@ Goal Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Like ID | like-gid | string | Globally unique identifier (GID) for the like. |
-| User Name | name | string | The name of the user. |
-| User ID | user-gid | string | Globally unique identifier (GID) for the user. |
+| Like ID | `like-gid` | string | Globally unique identifier (GID) for the like. |
+| User Name | `name` | string | The name of the user. |
+| User ID | `user-gid` | string | Globally unique identifier (GID) for the user. |
+
+
+
+</details>
 
 
 
@@ -164,113 +188,134 @@ Task Related Task, including get, update, delete, create, duplicate
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CRUD_TASK` |
-| Action | `action` | object | Action |
+| [Action](#action) | `action` | object | Action |
+
+
+
+<details>
+<summary> Input Objects in Crud Task</summary>
 
 
 
 
 
+</details>
 
 
 
 
+<details>
+<summary> Action </summary>
+`action` must fulfill one of the following schemas:
 
 
-#### action option: 0
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "get"   |
-| Task ID   | task-gid | string |  Globally unique identifier (GID) for the task.    |
-
-
-#### action option: 1
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "update"   |
-| Approval Status   | approval-status | string |  The approval status of the task. If you set completed to true, this field will be set to approved.    There are options: <br/>- pending<br/>- approved<br/>- rejected<br/>- changes_requested   |
-| Assignee   | assignee | string |  GID of the assignee.    |
-| Completed   | completed | boolean |  Whether the task is currently marked complete.    |
-| Liked   | liked | boolean |  Whether the task is liked by the user.    |
-| Name of the task   | name | string |  Name of the task. This is generally a short sentence fragment that fits on a line in the UI for maximum readability. However, it can be longer.    |
-| Notes of the task   | notes | string |  Free-form textual information associated with the task (i.e. its description).    |
-| Parent Task   | parent | string |  GID of the parent task.    |
-| Resource Subtype   | resource-subtype | string |  The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning.    There are options: <br/>- default_task<br/>- milestone<br/>- section<br/>- approval   |
-| Task ID   | task-gid | string |  Globally unique identifier (GID) for the task.    |
-
-
-#### action option: 2
+#### get
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "delete"   |
-| Task ID   | task-gid | string |  Globally unique identifier (GID) for the task.    |
+|  | `action` | string |  Must be "get"   |
+| Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
 
 
-#### action option: 3
 
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "create"   |
-| Approval Status   | approval-status | string |  The approval status of the task. If you set completed to true, this field will be set to approved.    There are options: <br/>- pending<br/>- approved<br/>- rejected<br/>- changes_requested   |
-| Assignee   | assignee | string |  GID of the assignee.    |
-| Completed   | completed | boolean |  Whether the task is currently marked complete.    |
-| Due Date & Time   | due-at | string |  Date and time on which work begins for the task, or null if the task has no start time. This takes an ISO 8601 date string in UTC.    |
-| Liked   | liked | boolean |  Whether the task is liked by the user.    |
-| Task Name   | name | string |  The name of the task.    |
-| Task Notes   | notes | string |  The notes of the task.    |
-| Parent Task   | parent | string |  GID of the parent task.    |
-| Resource Subtype   | resource-subtype | string |  The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning.    There are options: <br/>- default_task<br/>- milestone<br/>- section<br/>- approval   |
-| Start Date & Time   | start-at | string |  The UTC date and time on which this task is due, or null if the task has no due time. This takes an ISO 8601 date string in UTC.    |
-
-
-#### action option: 4
+#### update
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "duplicate"   |
-| Name   | name | string |  Name of the new task. This is generally a short sentence fragment that fits on a line in the UI for maximum readability. However, it can be longer.    |
-| Task ID   | task-gid | string |  Globally unique identifier (GID) for the task.    |
+|  | `action` | string |  Must be "update"   |
+| Approval Status | `approval-status` | string |  The approval status of the task. If you set completed to true, this field will be set to approved.   <br/>Enum: <br/><ul><li>pending</li><li>approved</li><li>rejected</li><li>changes_requested</li></ul>  |
+| Assignee | `assignee` | string |  GID of the assignee.   |
+| Completed | `completed` | boolean |  Whether the task is currently marked complete.   |
+| Liked | `liked` | boolean |  Whether the task is liked by the user.   |
+| Name of the task | `name` | string |  Name of the task. This is generally a short sentence fragment that fits on a line in the UI for maximum readability. However, it can be longer.   |
+| Notes of the task | `notes` | string |  Free-form textual information associated with the task (i.e. its description).   |
+| Parent Task | `parent` | string |  GID of the parent task.   |
+| Resource Subtype | `resource-subtype` | string |  The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning.   <br/>Enum: <br/><ul><li>default_task</li><li>milestone</li><li>section</li><li>approval</li></ul>  |
+| Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
 
 
-#### action option: 5
 
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "set parent"   |
-| Parent Task   | parent | string |  GID of the parent task.    |
-| Task ID   | task-gid | string |  Globally unique identifier (GID) for the task.    |
-
-
-#### action option: 6
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "edit tag"   |
-| Edit option   | edit-option | string |  Edit option. You can choose to add or remove the tag.    There are options: <br/>- add<br/>- remove   |
-| Tag ID   | tag-gid | string |  Globally unique identifier (GID) for the tag.    |
-| Task ID   | task-gid | string |  Globally unique identifier (GID) for the task.    |
-
-
-#### action option: 7
+#### delete
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "edit follower"   |
-| Edit option   | edit-option | string |  Edit option. You can choose to add or remove the follower.    There are options: <br/>- add<br/>- remove   |
-| Followers   | followers | string |  This can either be the string "me", an email, or the gid of a user. For multiple followers, separate them with commas.    |
-| Task ID   | task-gid | string |  Globally unique identifier (GID) for the task.    |
+|  | `action` | string |  Must be "delete"   |
+| Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
 
 
-#### action option: 8
+
+#### create
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "edit project"   |
-| Edit option   | edit-option | string |  Edit option. You can choose to add or remove the project.    There are options: <br/>- add<br/>- remove   |
-| Project ID   | project-gid | string |  Globally unique identifier (GID) for the project.    |
-| Task ID   | task-gid | string |  Globally unique identifier (GID) for the task.    |
+|  | `action` | string |  Must be "create"   |
+| Approval Status | `approval-status` | string |  The approval status of the task. If you set completed to true, this field will be set to approved.   <br/>Enum: <br/><ul><li>pending</li><li>approved</li><li>rejected</li><li>changes_requested</li></ul>  |
+| Assignee | `assignee` | string |  GID of the assignee.   |
+| Completed | `completed` | boolean |  Whether the task is currently marked complete.   |
+| Due Date & Time | `due-at` | string |  Date and time on which work begins for the task, or null if the task has no start time. This takes an ISO 8601 date string in UTC.   |
+| Liked | `liked` | boolean |  Whether the task is liked by the user.   |
+| Task Name | `name` | string |  The name of the task.   |
+| Task Notes | `notes` | string |  The notes of the task.   |
+| Parent Task | `parent` | string |  GID of the parent task.   |
+| Resource Subtype | `resource-subtype` | string |  The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning.   <br/>Enum: <br/><ul><li>default_task</li><li>milestone</li><li>section</li><li>approval</li></ul>  |
+| Start Date & Time | `start-at` | string |  The UTC date and time on which this task is due, or null if the task has no due time. This takes an ISO 8601 date string in UTC.   |
+
+
+
+#### duplicate
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "duplicate"   |
+| Name | `name` | string |  Name of the new task. This is generally a short sentence fragment that fits on a line in the UI for maximum readability. However, it can be longer.   |
+| Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
+
+
+
+#### set parent
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "set parent"   |
+| Parent Task | `parent` | string |  GID of the parent task.   |
+| Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
+
+
+
+#### edit tag
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "edit tag"   |
+| Edit option | `edit-option` | string |  Edit option. You can choose to add or remove the tag.   <br/>Enum: <br/><ul><li>add</li><li>remove</li></ul>  |
+| Tag ID | `tag-gid` | string |  Globally unique identifier (GID) for the tag.   |
+| Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
+
+
+
+#### edit follower
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "edit follower"   |
+| Edit option | `edit-option` | string |  Edit option. You can choose to add or remove the follower.   <br/>Enum: <br/><ul><li>add</li><li>remove</li></ul>  |
+| Followers | `followers` | string |  This can either be the string "me", an email, or the gid of a user. For multiple followers, separate them with commas.   |
+| Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
+
+
+
+#### edit project
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "edit project"   |
+| Edit option | `edit-option` | string |  Edit option. You can choose to add or remove the project.   <br/>Enum: <br/><ul><li>add</li><li>remove</li></ul>  |
+| Project ID | `project-gid` | string |  Globally unique identifier (GID) for the project.   |
+| Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
+
+
+</details>
+
 
 
 
@@ -283,10 +328,10 @@ Task Related Task, including get, update, delete, create, duplicate
 | Task Notes (optional) | `notes` | string | The notes of the task. |
 | Task Notes in HTML format (optional) | `html-notes` | string | The notes of the task in HTML format. |
 | Due Date (optional) | `due-on` | string | The date on which the task is due. In the format YYYY-MM-DD. |
-| Projects (optional) | `projects` | array[object] | The projects of the task. |
+| [Projects](#projects) (optional) | `projects` | array[object] | The projects of the task. |
 | Start Date (optional) | `start-on` | string | The date on which the task starts. In the format YYYY-MM-DD. |
 | Liked (optional) | `liked` | boolean | Whether the task is liked by the user. |
-| Likes (optional) | `likes` | array[object] | The users who likes the task. |
+| [Likes](#likes) (optional) | `likes` | array[object] | The users who likes the task. |
 | Approval Status (optional) | `approval-status` | string | The approval status of the task. If you set completed to true, this field will be set to approved. |
 | Resource Subtype (optional) | `resource-subtype` | string | The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning. |
 | Completed (optional) | `completed` | boolean | Whether the task is currently marked complete. |
@@ -296,6 +341,8 @@ Task Related Task, including get, update, delete, create, duplicate
 
 
 
+<details>
+<summary> Output Objects in Crud Task</summary>
 
 
 
@@ -303,8 +350,10 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Project Name | name | string | The name of the project. |
-| Project ID | project-gid | string | Globally unique identifier (GID) for the project. |
+| Project Name | `name` | string | The name of the project. |
+| Project ID | `project-gid` | string | Globally unique identifier (GID) for the project. |
+
+
 
 
 
@@ -312,9 +361,13 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Like ID | like-gid | string | Globally unique identifier (GID) for the like. |
-| User Name | name | string | The name of the user. |
-| User ID | user-gid | string | Globally unique identifier (GID) for the user. |
+| Like ID | `like-gid` | string | Globally unique identifier (GID) for the like. |
+| User Name | `name` | string | The name of the user. |
+| User ID | `user-gid` | string | Globally unique identifier (GID) for the user. |
+
+
+
+</details>
 
 
 
@@ -329,73 +382,90 @@ Project Related Task, including get, update, delete, create, duplicate
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CRUD_PROJECT` |
-| Action | `action` | object | action |
+| [Action](#action) | `action` | object | action |
+
+
+
+<details>
+<summary> Input Objects in Crud Project</summary>
 
 
 
 
 
+</details>
 
 
 
 
+<details>
+<summary> Action </summary>
+`action` must fulfill one of the following schemas:
 
 
-#### action option: 0
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "get"   |
-| Project ID   | project-gid | string |  Globally unique identifier (GID) for the project.    |
-
-
-#### action option: 1
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "update"   |
-| Archived   | archived | boolean |  Whether the project is archived.    |
-| Update Color   | color | string |  The color of the project.    There are options: <br/>- dark_pink<br/>- dark_green<br/>- dark_blue<br/>- dark_red<br/>- dark_teal<br/>- dark_brown<br/>- dark_orange<br/>- dark_purple<br/>- dark_warm_gray<br/>- light_pink<br/>- light_green<br/>- light_blue<br/>- light_red<br/>- light_teal<br/>- light_brown<br/>- light_orange<br/>- light_purple<br/>- light_warm_gray<br/>- none<br/>- null   |
-| Due Date   | due-on | string |  The date on which the project is due. In the format YYYY-MM-DD.    |
-| Project Name   | name | string |  The name of the project.    |
-| Project Note   | notes | string |  The notes of the project.    |
-| Update Privacy Setting   | privacy-setting | string |  The privacy setting of the project.    There are options: <br/>- public to workspace<br/>- private to team<br/>- private   |
-| Project ID   | project-gid | string |  Globally unique identifier (GID) for the project.    |
-| Start Date   | start-on | string |  The date on which the project starts. In the format YYYY-MM-DD.    |
-
-
-#### action option: 2
+#### get
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "delete"   |
-| Project ID   | project-gid | string |  Globally unique identifier (GID) for the project.    |
+|  | `action` | string |  Must be "get"   |
+| Project ID | `project-gid` | string |  Globally unique identifier (GID) for the project.   |
 
 
-#### action option: 3
 
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "create"   |
-| Update Color   | color | string |  The color of the project.    There are options: <br/>- dark_pink<br/>- dark_green<br/>- dark_blue<br/>- dark_red<br/>- dark_teal<br/>- dark_brown<br/>- dark_orange<br/>- dark_purple<br/>- dark_warm_gray<br/>- light_pink<br/>- light_green<br/>- light_blue<br/>- light_red<br/>- light_teal<br/>- light_brown<br/>- light_orange<br/>- light_purple<br/>- light_warm_gray<br/>- none<br/>- null   |
-| Due Date   | due-on | string |  The date on which the project is due. In the format YYYY-MM-DD.    |
-| Project Name   | name | string |  The name of the project.    |
-| Project Note   | notes | string |  The notes of the project.    |
-| Update Privacy Setting   | privacy-setting | string |  The privacy setting of the project.    There are options: <br/>- public to workspace<br/>- private to team<br/>- private   |
-| Start Date   | start-on | string |  The date on which the project starts. In the format YYYY-MM-DD.    |
-
-
-#### action option: 4
+#### update
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "duplicate"   |
-| Due Date   | due-on | string |  Sets the last due date in the duplicated project to the given date. The rest of the due dates will be offset by the same amount as the due dates in the original project. In the format YYYY-MM-DD.    |
-| New Project Name   | name | string |  The name of the new project.    |
-| Project ID   | project-gid | string |  Globally unique identifier (GID) for the project. You can find the GID of a goal from the URL of the project in Asana. For example, if the URL of the project is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.    |
-| Should Skip Weekends (For auto-shifted dates)   | should-skip-weekends | boolean |  Determines if the auto-shifted dates should skip weekends.    |
-| Start Date   | start-on | string |  Sets the first start date in the duplicated project to the given date. The rest of the start dates will be offset by the same amount as the start dates in the original project. In the format YYYY-MM-DD.    |
-| Team ID   | team | string |  Globally unique identifier (GID) for the team of the new project. If team is not defined, the new project will be in the same team as the the original project.    |
+|  | `action` | string |  Must be "update"   |
+| Archived | `archived` | boolean |  Whether the project is archived.   |
+| Update Color | `color` | string |  The color of the project.   <br/>Enum: <br/><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul>  |
+| Due Date | `due-on` | string |  The date on which the project is due. In the format YYYY-MM-DD.   |
+| Project Name | `name` | string |  The name of the project.   |
+| Project Note | `notes` | string |  The notes of the project.   |
+| Update Privacy Setting | `privacy-setting` | string |  The privacy setting of the project.   <br/>Enum: <br/><ul><li>public to workspace</li><li>private to team</li><li>private</li></ul>  |
+| Project ID | `project-gid` | string |  Globally unique identifier (GID) for the project.   |
+| Start Date | `start-on` | string |  The date on which the project starts. In the format YYYY-MM-DD.   |
+
+
+
+#### delete
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "delete"   |
+| Project ID | `project-gid` | string |  Globally unique identifier (GID) for the project.   |
+
+
+
+#### create
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "create"   |
+| Update Color | `color` | string |  The color of the project.   <br/>Enum: <br/><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul>  |
+| Due Date | `due-on` | string |  The date on which the project is due. In the format YYYY-MM-DD.   |
+| Project Name | `name` | string |  The name of the project.   |
+| Project Note | `notes` | string |  The notes of the project.   |
+| Update Privacy Setting | `privacy-setting` | string |  The privacy setting of the project.   <br/>Enum: <br/><ul><li>public to workspace</li><li>private to team</li><li>private</li></ul>  |
+| Start Date | `start-on` | string |  The date on which the project starts. In the format YYYY-MM-DD.   |
+
+
+
+#### duplicate
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "duplicate"   |
+| Due Date | `due-on` | string |  Sets the last due date in the duplicated project to the given date. The rest of the due dates will be offset by the same amount as the due dates in the original project. In the format YYYY-MM-DD.   |
+| New Project Name | `name` | string |  The name of the new project.   |
+| Project ID | `project-gid` | string |  Globally unique identifier (GID) for the project. You can find the GID of a goal from the URL of the project in Asana. For example, if the URL of the project is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.   |
+| Should Skip Weekends (For auto-shifted dates) | `should-skip-weekends` | boolean |  Determines if the auto-shifted dates should skip weekends.   |
+| Start Date | `start-on` | string |  Sets the first start date in the duplicated project to the given date. The rest of the start dates will be offset by the same amount as the start dates in the original project. In the format YYYY-MM-DD.   |
+| Team ID | `team` | string |  Globally unique identifier (GID) for the team of the new project. If team is not defined, the new project will be in the same team as the the original project.   |
+
+
+</details>
+
 
 
 
@@ -405,7 +475,7 @@ Project Related Task, including get, update, delete, create, duplicate
 | :--- | :--- | :--- | :--- |
 | Project ID (optional) | `gid` | string | Globally unique identifier (GID) for the project. |
 | Project Name (optional) | `name` | string | The name of the project. |
-| Owner (optional) | `owner` | object | The owner of the project. |
+| [Owner](#owner) (optional) | `owner` | object | The owner of the project. |
 | Project Note (optional) | `notes` | string | The notes of the project. |
 | Project HTML Note (optional) | `html-notes` | string | The notes of the project in HTML format. |
 | Due Date (optional) | `due-on` | string | The date on which the project is due. In the format YYYY-MM-DD. |
@@ -414,15 +484,17 @@ Project Related Task, including get, update, delete, create, duplicate
 | Color (optional) | `color` | string | The color of the project. |
 | Privacy Setting (optional) | `privacy-setting` | string | The privacy setting of the project. |
 | Archived (optional) | `archived` | boolean | Whether the project is archived. |
-| Completed By (optional) | `completed-by` | object | The user who completed the project. |
-| Current Status (optional) | `current-status` | object | The current status of the project. |
-| Custom Fields (optional) | `custom-fields` | object | The custom fields of the project. |
-| Custom Field Settings (optional) | `custom-field-settings` | object | The custom field settings of the project. |
+| [Completed By](#completed-by) (optional) | `completed-by` | object | The user who completed the project. |
+| [Current Status](#current-status) (optional) | `current-status` | object | The current status of the project. |
+| [Custom Fields](#custom-fields) (optional) | `custom-fields` | object | The custom fields of the project. |
+| [Custom Field Settings](#custom-field-settings) (optional) | `custom-field-settings` | object | The custom field settings of the project. |
 | Modified At (optional) | `modified-at` | string | The time at which the project was last modified. |
 
 
 
 
+<details>
+<summary> Output Objects in Crud Project</summary>
 
 
 
@@ -430,8 +502,10 @@ Project Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Owner ID | gid | string | Globally unique identifier (GID) for the owner. |
-| Owner Name | name | string | The name of the owner. |
+| Owner ID | `gid` | string | Globally unique identifier (GID) for the owner. |
+| Owner Name | `name` | string | The name of the owner. |
+
+
 
 
 
@@ -439,14 +513,24 @@ Project Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| User ID | gid | string | Globally unique identifier (GID) for the user. |
-| User Name | name | string | The name of the user. |
+| User ID | `gid` | string | Globally unique identifier (GID) for the user. |
+| User Name | `name` | string | The name of the user. |
 
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+</details>
 
 
 
@@ -461,55 +545,71 @@ Portfolio Related Task, including get, update, delete, create
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CRUD_PORTFOLIO` |
-| Action | `action` | object | action |
+| [Action](#action) | `action` | object | action |
+
+
+
+<details>
+<summary> Input Objects in Crud Portfolio</summary>
 
 
 
 
 
+</details>
 
 
 
 
+<details>
+<summary> Action </summary>
+`action` must fulfill one of the following schemas:
 
 
-#### action option: 0
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "get"   |
-| Portfolio ID   | portfolio-gid | string |  Globally unique identifier (GID) for the portfolio.    |
-
-
-#### action option: 1
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "update"   |
-| Update Color   | color | string |  The color of the portfolio.    There are options: <br/>- dark_pink<br/>- dark_green<br/>- dark_blue<br/>- dark_red<br/>- dark_teal<br/>- dark_brown<br/>- dark_orange<br/>- dark_purple<br/>- dark_warm_gray<br/>- light_pink<br/>- light_green<br/>- light_blue<br/>- light_red<br/>- light_teal<br/>- light_brown<br/>- light_orange<br/>- light_purple<br/>- light_warm_gray<br/>- none<br/>- null   |
-| Portfolio Name   | name | string |  The name of the portfolio.    |
-| Portfolio ID   | portfolio-gid | string |  Globally unique identifier (GID) for the portfolio.    |
-| Public   | public | boolean |  Whether the portfolio is public.    |
-| Workspace   | workspace | string |  The workspace of the portfolio. Please fill in the Globally unique identifier (GID) for the workspace.    |
-
-
-#### action option: 2
+#### get
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "delete"   |
-| Portfolio ID   | portfolio-gid | string |  Globally unique identifier (GID) for the portfolio.    |
+|  | `action` | string |  Must be "get"   |
+| Portfolio ID | `portfolio-gid` | string |  Globally unique identifier (GID) for the portfolio.   |
 
 
-#### action option: 3
+
+#### update
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  action   | action | string |  please intput  "create"   |
-| Color   | color | string |  The color of the portfolio.    There are options: <br/>- dark_pink<br/>- dark_green<br/>- dark_blue<br/>- dark_red<br/>- dark_teal<br/>- dark_brown<br/>- dark_orange<br/>- dark_purple<br/>- dark_warm_gray<br/>- light_pink<br/>- light_green<br/>- light_blue<br/>- light_red<br/>- light_teal<br/>- light_brown<br/>- light_orange<br/>- light_purple<br/>- light_warm_gray<br/>- none<br/>- null   |
-| Portfolio Name   | name | string |  The name of the portfolio.    |
-| Public   | public | boolean |  Whether the portfolio is public.    |
-| Workspace   | workspace | string |  The workspace of the portfolio. Please fill in the Globally unique identifier (GID) for the workspace.    |
+|  | `action` | string |  Must be "update"   |
+| Update Color | `color` | string |  The color of the portfolio.   <br/>Enum: <br/><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul>  |
+| Portfolio Name | `name` | string |  The name of the portfolio.   |
+| Portfolio ID | `portfolio-gid` | string |  Globally unique identifier (GID) for the portfolio.   |
+| Public | `public` | boolean |  Whether the portfolio is public.   |
+| Workspace | `workspace` | string |  The workspace of the portfolio. Please fill in the Globally unique identifier (GID) for the workspace.   |
+
+
+
+#### delete
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "delete"   |
+| Portfolio ID | `portfolio-gid` | string |  Globally unique identifier (GID) for the portfolio.   |
+
+
+
+#### create
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `action` | string |  Must be "create"   |
+| Color | `color` | string |  The color of the portfolio.   <br/>Enum: <br/><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul>  |
+| Portfolio Name | `name` | string |  The name of the portfolio.   |
+| Public | `public` | boolean |  Whether the portfolio is public.   |
+| Workspace | `workspace` | string |  The workspace of the portfolio. Please fill in the Globally unique identifier (GID) for the workspace.   |
+
+
+</details>
+
 
 
 
@@ -519,19 +619,21 @@ Portfolio Related Task, including get, update, delete, create
 | :--- | :--- | :--- | :--- |
 | Portfolio ID (optional) | `gid` | string | Globally unique identifier (GID) for the portfolio. |
 | Portfolio Name (optional) | `name` | string | The name of the portfolio. |
-| Owner (optional) | `owner` | object | The owner of the portfolio. |
+| [Owner](#owner) (optional) | `owner` | object | The owner of the portfolio. |
 | Due Date (optional) | `due-on` | string | The date on which the portfolio is due. In the format YYYY-MM-DD. |
 | Start Date (optional) | `start-on` | string | The date on which the portfolio starts. In the format YYYY-MM-DD. |
 | Color (optional) | `color` | string | The color of the portfolio. |
 | Public (optional) | `public` | boolean | Whether the portfolio is public. |
-| Created By (optional) | `created-by` | object | The user who created the portfolio. |
-| Current Status (optional) | `current-status` | object | The current status of the portfolio. |
-| Custom Fields (optional) | `custom-fields` | object | The custom fields of the portfolio. |
-| Custom Field Settings (optional) | `custom-field-settings` | object | The custom field settings of the portfolio. |
+| [Created By](#created-by) (optional) | `created-by` | object | The user who created the portfolio. |
+| [Current Status](#current-status) (optional) | `current-status` | object | The current status of the portfolio. |
+| [Custom Fields](#custom-fields) (optional) | `custom-fields` | object | The custom fields of the portfolio. |
+| [Custom Field Settings](#custom-field-settings) (optional) | `custom-field-settings` | object | The custom field settings of the portfolio. |
 
 
 
 
+<details>
+<summary> Output Objects in Crud Portfolio</summary>
 
 
 
@@ -539,8 +641,10 @@ Portfolio Related Task, including get, update, delete, create
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Owner ID | gid | string | Globally unique identifier (GID) for the owner. |
-| Owner Name | name | string | The name of the owner. |
+| Owner ID | `gid` | string | Globally unique identifier (GID) for the owner. |
+| Owner Name | `name` | string | The name of the owner. |
+
+
 
 
 
@@ -548,14 +652,24 @@ Portfolio Related Task, including get, update, delete, create
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| User ID | gid | string | Globally unique identifier (GID) for the user. |
-| User Name | name | string | The name of the user. |
+| User ID | `gid` | string | Globally unique identifier (GID) for the user. |
+| User Name | `name` | string | The name of the user. |
 
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+</details>
 
 
 

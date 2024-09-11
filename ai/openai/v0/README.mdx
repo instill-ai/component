@@ -65,17 +65,19 @@ Provide text outputs in response to their inputs.
 | Prompt (required) | `prompt` | string | The prompt text |
 | System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is using a generic message as "You are a helpful assistant." |
 | Image | `images` | array[string] | The images |
-| Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
+| [Chat history](#chat-history) | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
 | Temperature | `temperature` | number | What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.  We generally recommend altering this or `top-p` but not both.  |
 | N | `n` | integer | How many chat completion choices to generate for each input message. Note that you will be charged based on the number of generated tokens across all of the choices. Keep `n` as `1` to minimize costs. |
 | Max Tokens | `max-tokens` | integer | The maximum number of tokens that can be generated in the chat completion.  The total length of input tokens and generated tokens is limited by the model's context length. |
-| Response Format | `response-format` | object | Response format. |
+| [Response Format](#response-format) | `response-format` | object | Response format. |
 | Top P | `top-p` | number | An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.  We generally recommend altering this or `temperature` but not both.  |
 | Presence Penalty | `presence-penalty` | number | Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. |
 | Frequency Penalty | `frequency-penalty` | number | Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. |
 
 
 
+<details>
+<summary> Input Objects in Text Generation</summary>
 
 
 
@@ -83,8 +85,10 @@ Provide text outputs in response to their inputs.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Content | content | array | The message content  |
-| Role | role | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+| [Content](#content) | `content` | array | The message content  |
+| Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+
+
 
 
 
@@ -92,9 +96,11 @@ Provide text outputs in response to their inputs.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Image URL | image-url | object | The image URL  |
-| Text | text | string | The text content.  |
-| Type | type | string | The type of the content part.  There are options: <br/>- text<br/>- image-url   |
+| [Image URL](#image-url) | `image-url` | object | The image URL  |
+| Text | `text` | string | The text content.  |
+| Type | `type` | string | The type of the content part.  <br/>Enum: <br/><ul><li>text</li><li>image-url</li></ul>  |
+
+
 
 
 
@@ -102,7 +108,7 @@ Provide text outputs in response to their inputs.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| URL | url | string | Either a URL of the image or the base64 encoded image data.  |
+| URL | `url` | string | Either a URL of the image or the base64 encoded image data.  |
 
 
 
@@ -110,27 +116,42 @@ Provide text outputs in response to their inputs.
 
 
 
-
-#### response-format option: 0
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  type   | type | string |  please intput  "text"   |
+</details>
 
 
-#### response-format option: 1
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  type   | type | string |  please intput  "json_object"   |
 
 
-#### response-format option: 2
+<details>
+<summary> Response-format </summary>
+`response-format` must fulfill one of the following schemas:
+
+
+#### text
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| JSON Schema   | json-schema | string |  Set up the schema of the structured output.    |
-|  type   | type | string |  please intput  "json_schema"   |
+|  | `type` | string |  Must be "text"   |
+
+
+
+#### json_object
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+|  | `type` | string |  Must be "json_object"   |
+
+
+
+#### json_schema
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| JSON Schema | `json-schema` | string |  Set up the schema of the structured output.   |
+|  | `type` | string |  Must be "json_schema"   |
+
+
+</details>
+
 
 
 
@@ -139,11 +160,13 @@ Provide text outputs in response to their inputs.
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Texts | `texts` | array[string] | Texts |
-| Usage (optional) | `usage` | object | Usage statistics related to the query |
+| [Usage](#usage) (optional) | `usage` | object | Usage statistics related to the query |
 
 
 
 
+<details>
+<summary> Output Objects in Text Generation</summary>
 
 
 
@@ -151,9 +174,13 @@ Provide text outputs in response to their inputs.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Completion tokens | completion-tokens | integer | Total number of tokens used (completion) |
-| Prompt tokens | prompt-tokens | integer | Total number of tokens used (prompt) |
-| Total tokens | total-tokens | integer | Total number of tokens used (prompt + completion) |
+| Completion tokens | `completion-tokens` | integer | Total number of tokens used (completion) |
+| Prompt tokens | `prompt-tokens` | integer | Total number of tokens used (prompt) |
+| Total tokens | `total-tokens` | integer | Total number of tokens used (prompt + completion) |
+
+
+
+</details>
 
 
 
@@ -285,11 +312,13 @@ Generate or manipulate images with DALL·E.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Images | `results` | array[object] | Generated results |
+| [Images](#images) | `results` | array[object] | Generated results |
 
 
 
 
+<details>
+<summary> Output Objects in Text To Image</summary>
 
 
 
@@ -297,8 +326,12 @@ Generate or manipulate images with DALL·E.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Generated Image | image | string | Generated image |
-| Revised Prompt | revised-prompt | string | Revised prompt |
+| Generated Image | `image` | string | Generated image |
+| Revised Prompt | `revised-prompt` | string | Revised prompt |
+
+
+
+</details>
 
 
 

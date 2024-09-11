@@ -46,42 +46,47 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Engine (required) | `engine` | string | Choose the engine of your database.  There are options: <br/>- MySQL<br/>- PostgreSQL<br/>- SQL Server<br/>- Oracle<br/>- MariaDB<br/>- Firebird   |
+| Engine (required) | `engine` | string | Choose the engine of your database.  <br/>Enum: <br/><ul><li>MySQL</li><li>PostgreSQL</li><li>SQL Server</li><li>Oracle</li><li>MariaDB</li><li>Firebird</li></ul>  |
 | Username (required) | `username` | string | Fill in your account username  |
 | Password (required) | `password` | string | Fill in your account password  |
 | Database Name (required) | `database-name` | string | Fill in the name of your database  |
 | Host (required) | `host` | string | Fill in the host of your database  |
 | Port (required) | `port` | number | Fill in the port of your database  |
-| SSL/TLS (required) | `ssl-tls` | object | Enable SSL/TLS  |
+| [SSL/TLS](#ssl-tls) (required) | `ssl-tls` | object | Enable SSL/TLS  |
 
 
 
 
 
 
+<details>
+<summary> Ssl-tls </summary>
+`ssl-tls` must fulfill one of the following schemas:
 
-
-#### ssl-tls option: 0
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-|  ssl-tls-type   | ssl-tls-type | string |  please intput  "NO TLS"   |
-
-#### ssl-tls option: 1
+#### NO TLS
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| CA Certificate   | ssl-tls-ca | string |  Base64 encoded CA certificate file    |
-|  ssl-tls-type   | ssl-tls-type | string |  please intput  "TLS"   |
+|  | `ssl-tls-type` | string |  Must be "NO TLS"   |
 
-#### ssl-tls option: 2
+#### TLS
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| CA Certificate   | ssl-tls-ca | string |  Base64 encoded CA certificate file    |
-| Client Certificate   | ssl-tls-cert | string |  Base64 encoded client certificate file    |
-| Client Key   | ssl-tls-key | string |  Base64 encoded client key file    |
-|  ssl-tls-type   | ssl-tls-type | string |  please intput  "mTLS"   |
+| CA Certificate | `ssl-tls-ca` | string |  Base64 encoded CA certificate file    |
+|  | `ssl-tls-type` | string |  Must be "TLS"   |
+
+#### mTLS
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| CA Certificate | `ssl-tls-ca` | string |  Base64 encoded CA certificate file    |
+| Client Certificate | `ssl-tls-cert` | string |  Base64 encoded client certificate file    |
+| Client Key | `ssl-tls-key` | string |  Base64 encoded client key file    |
+|  | `ssl-tls-type` | string |  Must be "mTLS"   |
+
+</details>
+
 
 
 ## Supported Tasks
@@ -95,12 +100,18 @@ Perform insert operation
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_INSERT` |
 | Table Name (required) | `table-name` | string | The table name in the database to insert data into |
-| Data (required) | `data` | object | The data to be inserted |
+| [Data](#data) (required) | `data` | object | The data to be inserted |
+
+
+
+<details>
+<summary> Input Objects in Insert</summary>
 
 
 
 
 
+</details>
 
 
 
@@ -129,12 +140,18 @@ Perform insert operation with multiple rows
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_INSERT_MANY` |
 | Table Name (required) | `table-name` | string | The table name in the database to insert data into |
-| Data (required) | `array-data` | array[object] | The array data to be inserted |
+| [Data](#data) (required) | `array-data` | array[object] | The array data to be inserted |
+
+
+
+<details>
+<summary> Input Objects in Insert Many</summary>
 
 
 
 
 
+</details>
 
 
 
@@ -164,12 +181,18 @@ Perform update operation
 | Task ID (required) | `task` | string | `TASK_UPDATE` |
 | Table Name (required) | `table-name` | string | The table name in the database to update data into |
 | Filter (required) | `filter` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause |
-| Update (required) | `update-data` | object | The new data to be updated to |
+| [Update](#update) (required) | `update-data` | object | The new data to be updated to |
+
+
+
+<details>
+<summary> Input Objects in Update</summary>
 
 
 
 
 
+</details>
 
 
 
@@ -212,14 +235,20 @@ Perform select operation
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Rows | `rows` | array[object] | The rows returned from the select operation |
+| [Rows](#rows) | `rows` | array[object] | The rows returned from the select operation |
 | Status | `status` | string | Select status |
 
 
 
 
+<details>
+<summary> Output Objects in Select</summary>
 
 
+
+
+
+</details>
 
 
 
@@ -266,12 +295,18 @@ Create a table in the database
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_TABLE` |
 | Table Name (required) | `table-name` | string | The table name in the database to be created |
-| Columns (required) | `columns-structure` | object | The columns structure to be created in the table, json with value string, e.g \{"name": "VARCHAR(255)", "age": "INT not null"\} |
+| [Columns](#columns) (required) | `columns-structure` | object | The columns structure to be created in the table, json with value string, e.g \{"name": "VARCHAR(255)", "age": "INT not null"\} |
+
+
+
+<details>
+<summary> Input Objects in Create Table</summary>
 
 
 
 
 
+</details>
 
 
 
