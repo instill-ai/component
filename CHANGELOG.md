@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.27.1-beta](https://github.com/instill-ai/component/compare/v0.27.0-beta...v0.27.1-beta) (2024-09-11)
+
+
+### Bug Fixes
+
+* **document:** fix memory increasing problem ([#326](https://github.com/instill-ai/component/issues/326)) ([e56cf5c](https://github.com/instill-ai/component/commit/e56cf5c96b427cbb10b2bf9fbd8a9d213c55fae1))
+* **text:** markdown chunking bug ([#325](https://github.com/instill-ai/component/issues/325)) ([9866a91](https://github.com/instill-ai/component/commit/9866a91b1804657c990ad010d566a393f09b5ee8))
+
 ## [0.27.0-beta](https://github.com/instill-ai/component/compare/v0.26.0-beta...v0.27.0-beta) (2024-09-10)
 
 
