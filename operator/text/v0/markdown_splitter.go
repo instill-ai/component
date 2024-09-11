@@ -408,8 +408,6 @@ func (sp MarkdownTextSplitter) chunkPlainText(content Content, headers []Header)
 		textsplitter.WithChunkOverlap(sp.ChunkOverlap),
 	)
 
-	fmt.Println("=== content.PlainText", content.PlainText)
-
 	chunks, err := split.SplitText(content.PlainText)
 
 	if err != nil {
