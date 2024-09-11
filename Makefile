@@ -16,17 +16,14 @@ local-gen-doc:
 	@if [ -z "$(t)" ] && [ -z "$(c)" ]; then \
 		cd ./tools/compogen && go install .; \
 		cd ../..; \
-		rm -f $$(find . -name README.mdx | paste -d ' ' -s -); \
 		go generate -run compogen ./...; \
 	elif [ -z "$(c)" ]; then \
 		cd ./tools/compogen && go install .; \
 		cd ../../${t}; \
-		rm $$(find . -name README.mdx | paste -d ' ' -s -); \
 		go generate -run compogen ./...; \
 	else \
 		cd ./tools/compogen && go install .; \
 		cd ../..; \
-		rm ${t}/${c}/v0/README.mdx; \
 		go generate -run compogen ./${t}/${c}/v0; \
 	fi
 

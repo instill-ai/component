@@ -159,10 +159,13 @@ func (g *READMEGenerator) Generate() error {
 	}
 
 	readme, err := template.New("readme").Funcs(template.FuncMap{
-		"firstToLower":     firstToLower,
-		"asAnchor":         blackfriday.SanitizedAnchorName,
-		"loadExtraContent": g.loadExtraContent,
-		"enumValues":       enumValues,
+		"firstToLower":      firstToLower,
+		"asAnchor":          blackfriday.SanitizedAnchorName,
+		"loadExtraContent":  g.loadExtraContent,
+		"enumValues":        enumValues,
+		"firstToCapital":    firstToCapital,
+		"findConstantValue": findConstantValue,
+		"AnchorObjectTitle": AnchorObjectTitle,
 		"hosts": func() []host {
 			return []host{
 				{Name: "Instill-Cloud", URL: "https://api.instill.tech"},
@@ -508,5 +511,53 @@ func firstToLower(s string) string {
 }
 
 func enumValues(enum []string) string {
-	return strings.Join(enum, "<br/>- ")
+	result := "<br/>Enum: <br/><ul>"
+	for i, e := range enum {
+		result += fmt.Sprintf("<li>%s</li>", e)
+		if i == len(enum)-1 {
+			result += "</ul>"
+		}
+	}
+	return result
+}
+
+func firstToCapital(s string) string {
+	r, size := utf8.DecodeRuneInString(s)
+	if r == utf8.RuneError && size <= 1 {
+		return s
+	}
+
+	mod := unicode.ToUpper(r)
+	if r == mod {
+		return s
+	}
+
+	return string(mod) + s[size:]
+}
+
+func findConstantValue(option objectSchema) string {
+	for _, prop := range option.Properties {
+		if prop.Const != "" {
+			return prop.Const
+		}
+	}
+	return ""
+}
+
+func AnchorObjectTitle(p interface{}) string {
+	switch prop := p.(type) {
+	case resourceProperty:
+		return anchorObjectTitleFromProperty(prop.property)
+	case property:
+		return anchorObjectTitleFromProperty(prop)
+	default:
+		return ""
+	}
+}
+
+func anchorObjectTitleFromProperty(prop property) string {
+	if prop.Type == "object" || (prop.Type == "array" && prop.Items.Type == "object") || (prop.Type == "array[object]") {
+		return fmt.Sprintf("[%s](#%s)", prop.Title, blackfriday.SanitizedAnchorName(prop.Title))
+	}
+	return prop.Title
 }

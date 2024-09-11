@@ -115,7 +115,7 @@
               "description": "Chunk Setting",
               "additionalProperties": true,
               "type": "object",
-              "title": "Chunk Setting",
+              "title": "Setting",
               "instillUIOrder": 0,
               "required": [
                 "chunk-method"
@@ -125,7 +125,8 @@
                   "properties": {
                     "chunk-method": {
                       "const": "Token",
-                      "type": "string"
+                      "type": "string",
+                      "title": "Chunk Method"
                     },
                     "chunk-size": {
                       "$ref": "#/$defs/chunk-size"
@@ -192,7 +193,8 @@
                   "properties": {
                     "chunk-method": {
                       "const": "Recursive",
-                      "type": "string"
+                      "type": "string",
+                      "title": "Chunk Method"
                     },
                     "chunk-size": {
                       "$ref": "#/$defs/chunk-size"
@@ -254,7 +256,8 @@
                   "properties": {
                     "chunk-method": {
                       "const": "Markdown",
-                      "type": "string"
+                      "type": "string",
+                      "title": "Chunk Method"
                     },
                     "chunk-size": {
                       "$ref": "#/$defs/chunk-size"
