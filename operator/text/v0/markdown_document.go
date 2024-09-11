@@ -128,14 +128,19 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 				currentContent.Type = "plaintext"
 				currentContent.BlockStartPosition = currentPosition
 				currentContent.BlockEndPosition = currentPosition
-
+				meetHeaderTimes := 0
 				for currentPosition < endPositionOfBlock {
 
 					line := readLine(rawRunes, &currentPosition)
 					currentContent.BlockEndPosition += sizeOfString(line) + 1
 
 					if isHeader(line) {
-						header := parseHeader(line)
+						meetHeaderTimes++
+
+						if meetHeaderTimes > 0 && len(paragraph) > 0 {
+							currentContent.PlainText = paragraph
+							doc.Contents = append(doc.Contents, currentContent)
+						}
 						if endOfDocument(doc) {
 							currentPosition -= sizeOfString(line) + 1
 							currentContent.PlainText = paragraph
@@ -145,6 +150,7 @@ func buildDocument(rawRunes []rune, previousDocument *MarkdownDocument, startPos
 							end = true
 							break
 						}
+						header := parseHeader(line)
 						currentHeaderLevel = header.Level
 						headers[header.Level-1] = &header
 					} else {
