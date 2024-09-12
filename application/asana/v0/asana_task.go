@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"github.com/instill-ai/x/errmsg"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -16,11 +15,7 @@ type AsanaTask struct {
 
 func (c *Client) GoalRelatedTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
 	var task AsanaTask
-	var debug logger.Session
-	defer debug.SessionStart("GoalRelatedTask", logger.Develop).SessionEnd()
 	if err := base.ConvertFromStructpb(props, &task); err != nil {
-		debug.Error("ConvertFromStructpb", err)
-		debug.Error("props", props)
 		return nil, err
 	}
 	switch task.Action {
