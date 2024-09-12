@@ -402,6 +402,7 @@
             {
               "properties": {
                 "range": {
+                  "title": "Range",
                   "const": "All",
                   "type": "string"
                 }
@@ -418,6 +419,7 @@
             {
               "properties": {
                 "range": {
+                  "title": "Range",
                   "const": "Standard Issues",
                   "type": "string"
                 }
@@ -434,6 +436,7 @@
             {
               "properties": {
                 "range": {
+                  "title": "Range",
                   "const": "Epics only",
                   "type": "string"
                 }
@@ -450,6 +453,7 @@
             {
               "properties": {
                 "range": {
+                  "title": "Range",
                   "const": "In backlog only",
                   "type": "string"
                 }
@@ -466,6 +470,7 @@
             {
               "properties": {
                 "range": {
+                  "title": "Range",
                   "const": "Issues of an epic",
                   "type": "string"
                 },
@@ -500,6 +505,7 @@
             {
               "properties": {
                 "range": {
+                  "title": "Range",
                   "const": "Issues of a sprint",
                   "type": "string"
                 },
@@ -534,6 +540,7 @@
             {
               "properties": {
                 "range": {
+                  "title": "Range",
                   "const": "Issues without epic assigned",
                   "type": "string"
                 }
@@ -550,6 +557,7 @@
             {
               "properties": {
                 "range": {
+                  "title": "Range",
                   "const": "JQL query",
                   "type": "string"
                 },
@@ -857,6 +865,7 @@
             {
               "properties": {
                 "issue-type": {
+                  "title": "Issue Type",
                   "const": "Epic",
                   "type": "string"
                 }
@@ -873,6 +882,7 @@
             {
               "properties": {
                 "issue-type": {
+                  "title": "Issue Type",
                   "const": "Task",
                   "type": "string"
                 }
@@ -889,6 +899,7 @@
             {
               "properties": {
                 "issue-type": {
+                  "title": "Issue Type",
                   "const": "Subtask",
                   "type": "string"
                 },
@@ -923,6 +934,7 @@
             {
               "properties": {
                 "issue-type": {
+                  "title": "Issue Type",
                   "const": "Other",
                   "type": "string"
                 },
@@ -1049,6 +1061,7 @@
             {
               "properties": {
                 "update": {
+                  "title": "Update",
                   "const": "Custom Update",
                   "type": "string"
                 },
@@ -1120,6 +1133,7 @@
             {
               "properties": {
                 "update": {
+                  "title": "Update",
                   "const": "Move Issue to Epic",
                   "type": "string"
                 },

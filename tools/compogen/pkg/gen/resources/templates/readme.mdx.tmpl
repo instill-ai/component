@@ -51,9 +51,12 @@ ${connection.<my-connection-id>}`.
 {{ range $key, $options := .SetupConfig.OneOf }}
 <details>
 <summary> {{ firstToCapital $key }} </summary>
+
+#### {{ firstToCapital $key }}
+
 `{{ $key }}` must fulfill one of the following schemas:
 {{ range $idx, $option := $options }}
-#### {{ findConstantValue $option }}
+##### {{ findConstantValue $option }}
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
@@ -97,10 +100,13 @@ ${connection.<my-connection-id>}`.
 {{ range $key, $options := $task.OneOf }}
 <details>
 <summary> {{ firstToCapital $key }} </summary>
+
+#### {{ firstToCapital $key }}
+
 `{{ $key }}` must fulfill one of the following schemas:
 {{ range $idx, $option := $options }}
 {{ if $option.Properties }}
-#### {{ findConstantValue $option }}
+##### {{ findConstantValue $option }}
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}

@@ -52,7 +52,7 @@ ${connection.<my-connection-id>}`.
 | Database Name (required) | `database-name` | string | Fill in the name of your database  |
 | Host (required) | `host` | string | Fill in the host of your database  |
 | Port (required) | `port` | number | Fill in the port of your database  |
-| [SSL/TLS](#ssl-tls) (required) | `ssl-tls` | object | Enable SSL/TLS  |
+| SSL/TLS (required) | `ssl-tls` | object | Enable SSL/TLS  |
 
 
 
@@ -61,29 +61,32 @@ ${connection.<my-connection-id>}`.
 
 <details>
 <summary> Ssl-tls </summary>
+
+#### Ssl-tls
+
 `ssl-tls` must fulfill one of the following schemas:
 
-#### NO TLS
+##### NO TLS
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `ssl-tls-type` | string |  Must be "NO TLS"   |
+| SSL/TLS Type | `ssl-tls-type` | string |  Must be "NO TLS"   |
 
-#### TLS
+##### TLS
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | CA Certificate | `ssl-tls-ca` | string |  Base64 encoded CA certificate file    |
-|  | `ssl-tls-type` | string |  Must be "TLS"   |
+| SSL/TLS Type | `ssl-tls-type` | string |  Must be "TLS"   |
 
-#### mTLS
+##### mTLS
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | CA Certificate | `ssl-tls-ca` | string |  Base64 encoded CA certificate file    |
 | Client Certificate | `ssl-tls-cert` | string |  Base64 encoded client certificate file    |
 | Client Key | `ssl-tls-key` | string |  Base64 encoded client key file    |
-|  | `ssl-tls-type` | string |  Must be "mTLS"   |
+| SSL/TLS Type | `ssl-tls-type` | string |  Must be "mTLS"   |
 
 </details>
 
@@ -100,18 +103,9 @@ Perform insert operation
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_INSERT` |
 | Table Name (required) | `table-name` | string | The table name in the database to insert data into |
-| [Data](#data) (required) | `data` | object | The data to be inserted |
+| Data (required) | `data` | object | The data to be inserted |
 
 
-
-<details>
-<summary> Input Objects in Insert</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -181,18 +175,9 @@ Perform update operation
 | Task ID (required) | `task` | string | `TASK_UPDATE` |
 | Table Name (required) | `table-name` | string | The table name in the database to update data into |
 | Filter (required) | `filter` | string | The filter to be applied to the data with SQL syntax, which starts with WHERE clause |
-| [Update](#update) (required) | `update-data` | object | The new data to be updated to |
+| Update (required) | `update-data` | object | The new data to be updated to |
 
 
-
-<details>
-<summary> Input Objects in Update</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -295,18 +280,9 @@ Create a table in the database
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_TABLE` |
 | Table Name (required) | `table-name` | string | The table name in the database to be created |
-| [Columns](#columns) (required) | `columns-structure` | object | The columns structure to be created in the table, json with value string, e.g \{"name": "VARCHAR(255)", "age": "INT not null"\} |
+| Columns (required) | `columns-structure` | object | The columns structure to be created in the table, json with value string, e.g \{"name": "VARCHAR(255)", "age": "INT not null"\} |
 
 
-
-<details>
-<summary> Input Objects in Create Table</summary>
-
-
-
-
-
-</details>
 
 
 

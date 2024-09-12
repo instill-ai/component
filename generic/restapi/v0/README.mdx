@@ -46,7 +46,7 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Authentication](#authentication) (required) | `authentication` | object | Authentication method to use for the REST API  |
+| Authentication (required) | `authentication` | object | Authentication method to use for the REST API  |
 
 
 
@@ -55,23 +55,26 @@ ${connection.<my-connection-id>}`.
 
 <details>
 <summary> Authentication </summary>
+
+#### Authentication
+
 `authentication` must fulfill one of the following schemas:
 
-#### NO_AUTH
+##### NO_AUTH
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `auth-type` | string |  Must be "NO_AUTH"   |
+| Auth Type | `auth-type` | string |  Must be "NO_AUTH"   |
 
-#### BASIC_AUTH
+##### BASIC_AUTH
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `auth-type` | string |  Must be "BASIC_AUTH"   |
+| Auth Type | `auth-type` | string |  Must be "BASIC_AUTH"   |
 | Password | `password` | string |  Password for Basic auth    |
 | Username | `username` | string |  Username for Basic Auth    |
 
-#### API_KEY
+##### API_KEY
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -80,11 +83,11 @@ ${connection.<my-connection-id>}`.
 | Key Name | `key` | string |  Key name for API key authentication    |
 | Key Value | `value` | string |  Key value for API key authentication    |
 
-#### BEARER_TOKEN
+##### BEARER_TOKEN
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `auth-type` | string |  Must be "BEARER_TOKEN"   |
+| Auth Type | `auth-type` | string |  Must be "BEARER_TOKEN"   |
 | Token | `token` | string |  Bearer token    |
 
 </details>
@@ -116,19 +119,10 @@ Send a HTTP GET request.
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
-| [Header](#header) | `header` | object | The HTTP header of the response |
+| Header | `header` | object | The HTTP header of the response |
 
 
 
-
-<details>
-<summary> Output Objects in Get</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -159,19 +153,10 @@ Send a HTTP POST request.
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
-| [Header](#header) | `header` | object | The HTTP header of the response |
+| Header | `header` | object | The HTTP header of the response |
 
 
 
-
-<details>
-<summary> Output Objects in Post</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -202,19 +187,10 @@ Send a HTTP PATCH request.
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
-| [Header](#header) | `header` | object | The HTTP header of the response |
+| Header | `header` | object | The HTTP header of the response |
 
 
 
-
-<details>
-<summary> Output Objects in Patch</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -245,19 +221,10 @@ Send a HTTP PUT request.
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
-| [Header](#header) | `header` | object | The HTTP header of the response |
+| Header | `header` | object | The HTTP header of the response |
 
 
 
-
-<details>
-<summary> Output Objects in Put</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -288,19 +255,10 @@ Send a HTTP DELETE request.
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
-| [Header](#header) | `header` | object | The HTTP header of the response |
+| Header | `header` | object | The HTTP header of the response |
 
 
 
-
-<details>
-<summary> Output Objects in Delete</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -330,19 +288,10 @@ Send a HTTP HEAD request.
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
-| [Header](#header) | `header` | object | The HTTP header of the response |
+| Header | `header` | object | The HTTP header of the response |
 
 
 
-
-<details>
-<summary> Output Objects in Head</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -373,19 +322,10 @@ Send a HTTP OPTIONS request.
 | :--- | :--- | :--- | :--- |
 | Status Code | `status-code` | integer | The HTTP status code of the response |
 | Body | `body` | any | The body of the response |
-| [Header](#header) | `header` | object | The HTTP header of the response |
+| Header | `header` | object | The HTTP header of the response |
 
 
 
-
-<details>
-<summary> Output Objects in Options</summary>
-
-
-
-
-
-</details>
 
 
 

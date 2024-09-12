@@ -101,6 +101,7 @@
               "description": "Choose the type of SSL/TLS",
               "instillUIOrder": 0,
               "order": 0,
+              "title": "SSL/TLS Type",
               "type": "string"
             }
           },
@@ -116,6 +117,7 @@
               "description": "Choose the type of SSL/TLS",
               "instillUIOrder": 0,
               "order": 0,
+              "title": "SSL/TLS Type",
               "type": "string"
             },
             "ssl-tls-ca": {
@@ -146,6 +148,7 @@
               "description": "Choose the type of SSL/TLS",
               "instillUIOrder": 0,
               "order": 0,
+              "title": "SSL/TLS Type",
               "type": "string"
             },
             "ssl-tls-ca": {

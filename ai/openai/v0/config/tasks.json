@@ -425,7 +425,8 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "const": "text"
+                  "const": "text",
+                  "title": "Type"
                 }
               },
               "required": [
@@ -437,7 +438,8 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "const": "json_object"
+                  "const": "json_object",
+                  "title": "Type"
                 }
               },
               "required": [
@@ -449,7 +451,8 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "const": "json_schema"
+                  "const": "json_schema",
+                  "title": "Type"
                 },
                 "json-schema": {
                   "description": "Set up the schema of the structured output.",

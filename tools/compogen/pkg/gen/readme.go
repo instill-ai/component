@@ -370,7 +370,11 @@ func (rt *readmeTask) parseObjectProperties(properties map[string]property, isIn
 			continue
 		}
 
-		if op.Type != "object" && (op.Type != "array" || op.Items.Type != "object") {
+		if op.Type != "object" && op.Type != "array[object]" && (op.Type != "array" || op.Items.Type != "object") {
+			continue
+		}
+
+		if isSemiStructuredObject(op) {
 			continue
 		}
 
@@ -391,7 +395,7 @@ func (rt *readmeTask) parseObjectProperties(properties map[string]property, isIn
 				})
 				rt.parseObjectProperties(op.Properties, isInput)
 			}
-		} else { // else if op.Type == "array" && op.Items.Type == "object"
+		} else { // op.Type == "array[object]" || (op.Type == "array" || op.Items.Type == "object")
 
 			if isInput {
 				rt.InputObjects = append(rt.InputObjects, map[string]objectSchema{
@@ -556,8 +560,15 @@ func AnchorObjectTitle(p interface{}) string {
 }
 
 func anchorObjectTitleFromProperty(prop property) string {
+	if isSemiStructuredObject(prop) {
+		return prop.Title
+	}
 	if prop.Type == "object" || (prop.Type == "array" && prop.Items.Type == "object") || (prop.Type == "array[object]") {
 		return fmt.Sprintf("[%s](#%s)", prop.Title, blackfriday.SanitizedAnchorName(prop.Title))
 	}
 	return prop.Title
+}
+
+func isSemiStructuredObject(p property) bool {
+	return p.Type == "object" && p.Properties == nil
 }

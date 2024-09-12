@@ -160,7 +160,7 @@
                 "option": {
                   "const": "existing catalog",
                   "type": "string",
-                  "title": "Existing Catalog"
+                  "title": "Option"
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"
@@ -216,7 +216,7 @@
                 "option": {
                   "const": "create new catalog",
                   "type": "string",
-                  "title": "Create New Catalog"
+                  "title": "Option"
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"
@@ -367,7 +367,7 @@
                 "option": {
                   "const": "existing catalog",
                   "type": "string",
-                  "title": "Existing Catalog"
+                  "title": "Option"
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"
@@ -425,7 +425,7 @@
                 "option": {
                   "const": "create new catalog",
                   "type": "string",
-                  "title": "Create New Catalog"
+                  "title": "Option"
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"

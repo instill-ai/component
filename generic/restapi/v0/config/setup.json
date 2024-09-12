@@ -13,6 +13,7 @@
               "description": "No Authentication",
               "instillUIOrder": 0,
               "order": 0,
+              "title": "Auth Type",
               "type": "string"
             }
           },
@@ -28,6 +29,7 @@
               "description": "Basic auth",
               "instillUIOrder": 0,
               "order": 0,
+              "title": "Auth Type",
               "type": "string"
             },
             "password": {
@@ -136,6 +138,7 @@
               "description": "Bearer token authentication",
               "instillUIOrder": 0,
               "order": 0,
+              "title": "Auth Type",
               "type": "string"
             },
             "token": {

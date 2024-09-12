@@ -23,6 +23,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "get",
                   "type": "string"
                 },
@@ -57,6 +58,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "update",
                   "type": "string"
                 },
@@ -200,6 +202,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "delete",
                   "type": "string"
                 },
@@ -234,6 +237,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "create",
                   "type": "string"
                 },
