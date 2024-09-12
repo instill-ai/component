@@ -37,6 +37,14 @@ func TestConvertDocumentToMarkdown(t *testing.T) {
 			name:     "Convert XLSX file",
 			filepath: "testdata/test.xlsx",
 		},
+		{
+			name:     "Convert XLS file",
+			filepath: "testdata/test.xls",
+		},
+		{
+			name:     "Convert CSV file",
+			filepath: "testdata/test.csv",
+		},
 	}
 	for _, test := range tests {
 		c.Run(test.name, func(c *quicktest.C) {
@@ -81,6 +89,10 @@ func mimeTypeByExtension(filepath string) string {
 		return "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 	case "testdata/test.xlsx":
 		return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+	case "testdata/test.xls":
+		return "application/vnd.ms-excel"
+	case "testdata/test.csv":
+		return "text/csv"
 	default:
 		return ""
 	}

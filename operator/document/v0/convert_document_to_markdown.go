@@ -77,6 +77,7 @@ func (e *execution) convertDocumentToMarkdown(input *structpb.Struct) (*structpb
 }
 
 func GetMarkdownTransformer(fileExtension string, inputStruct *ConvertDocumentToMarkdownInput) (MarkdownTransformer, error) {
+	fmt.Println("fileExtension: ", fileExtension)
 	switch fileExtension {
 	case "pdf":
 		return PDFToMarkdownTransformer{
@@ -106,6 +107,14 @@ func GetMarkdownTransformer(fileExtension string, inputStruct *ConvertDocumentTo
 		}, nil
 	case "xlsx":
 		return XlsxToMarkdownTransformer{
+			Base64EncodedText: inputStruct.Document,
+		}, nil
+	case "xls":
+		return XlsToMarkdownTransformer{
+			Base64EncodedText: inputStruct.Document,
+		}, nil
+	case "csv":
+		return CSVToMarkdownTransformer{
 			Base64EncodedText: inputStruct.Document,
 		}, nil
 	default:

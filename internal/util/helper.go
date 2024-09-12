@@ -171,6 +171,10 @@ func TransformContentTypeToFileExtension(contentType string) string {
 		return "pdf"
 	case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
 		return "xlsx"
+	case "application/vnd.ms-excel":
+		return "xls"
+	case "text/csv":
+		return "csv"
 	}
 	return ""
 }
