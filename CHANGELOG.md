@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.27.3-beta](https://github.com/instill-ai/component/compare/v0.27.2-beta...v0.27.3-beta) (2024-09-12)
+
+
+### Bug Fixes
+
+* **text:** bug of infinity loop ([#331](https://github.com/instill-ai/component/issues/331)) ([4387219](https://github.com/instill-ai/component/commit/4387219335b965599a68fdf3075668538f6825ae))
+* **text:** fix memory problem ([#333](https://github.com/instill-ai/component/issues/333)) ([2a74fee](https://github.com/instill-ai/component/commit/2a74fee3709b7e9c750999a283fd8cc4c9d53bcb))
+
 ## [0.27.2-beta](https://github.com/instill-ai/component/compare/v0.27.1-beta...v0.27.2-beta) (2024-09-12)
 
 
