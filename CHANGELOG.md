@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.27.2-beta](https://github.com/instill-ai/component/compare/v0.27.1-beta...v0.27.2-beta) (2024-09-12)
+
+
+### Miscellaneous Chores
+
+* release v0.27.2-beta ([2b08252](https://github.com/instill-ai/component/commit/2b08252ce88e9f068a895717b937617f932e2186))
+
 ## [0.27.1-beta](https://github.com/instill-ai/component/compare/v0.27.0-beta...v0.27.1-beta) (2024-09-11)
 
 
