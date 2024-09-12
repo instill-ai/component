@@ -57,6 +57,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
               "description": "No Authentication",
               "instillUIOrder": 0,
               "order": 0,
+              "title": "Auth Type",
               "type": "string"
             }
           },
@@ -72,6 +73,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
               "description": "Auth 1",
               "instillUIOrder": 0,
               "order": 0,
+              "title": "Auth Type",
               "type": "string"
             },
             "auth-way": {
@@ -140,7 +142,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
                   "properties": {
                     "chunk-method": {
                       "const": "Token",
-                      "type": "string"
+                      "type": "string",
+                      "title": "Chunk Method"
                     },
                     "model-name": {
                       "description": "The name of the model used for tokenization.",
@@ -160,7 +163,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
                   "properties": {
                     "chunk-method": {
                       "const": "Markdown",
-                      "type": "string"
+                      "type": "string",
+                      "title": "Chunk Method"
                     },
                     "model-name": {
                       "description": "The name of the model used for tokenization.",
@@ -315,20 +319,28 @@ This is some crucial information about setup: do it before execution.
 
 
 
+<details>
+<summary> Authentication </summary>
 
+#### Authentication
 
-#### authentication option: 0
+`authentication` must fulfill one of the following schemas:
+
+##### NO_AUTH
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  auth-type   | auth-type | string |  please intput  "NO_AUTH"   |
+| Auth Type | `auth-type` | string |  Must be "NO_AUTH"   |
 
-#### authentication option: 1
+##### AUTH_1
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  auth-type   | auth-type | string |  please intput  "AUTH_1"   |
-| Auth Way   | auth-way | string |  ways for Auth 1    There are options: <br/>- header<br/>- query   |
+| Auth Type | `auth-type` | string |  Must be "AUTH_1"   |
+| Auth Way | `auth-way` | string |  ways for Auth 1    <br/>Enum: <br/><ul><li>header</li><li>query</li></ul>  |
+
+</details>
+
 
 
 ## Supported Tasks
@@ -340,10 +352,12 @@ This is some crucial information about setup: do it before execution.
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DUMMY` |
 | Durna (required) | `durna` | string | Lorem ipsum dolor sit amet, consectetur adipiscing elit |
-| Strategy | `strategy` | object | Chunking strategy |
+| [Strategy](#strategy) | `strategy` | object | Chunking strategy |
 
 
 
+<details>
+<summary> Input Objects in Dummy</summary>
 
 
 
@@ -351,29 +365,42 @@ This is some crucial information about setup: do it before execution.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Chunk Setting | setting | object | Chunk Setting  |
+| Chunk Setting | `setting` | object | Chunk Setting  |
+
+
+
+</details>
 
 
 
 
+<details>
+<summary> Setting </summary>
+
+#### Setting
+
+`setting` must fulfill one of the following schemas:
 
 
-
-
-#### setting option: 0
+##### Token
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  chunk-method   | chunk-method | string |  please intput  "Token"   |
-| Model   | model-name | string |  The name of the model used for tokenization.    There are options: <br/>- gpt-4<br/>- gpt-3.5-turbo   |
+| Chunk Method | `chunk-method` | string |  Must be "Token"   |
+| Model | `model-name` | string |  The name of the model used for tokenization.   <br/>Enum: <br/><ul><li>gpt-4</li><li>gpt-3.5-turbo</li></ul>  |
 
 
-#### setting option: 1
+
+##### Markdown
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  chunk-method   | chunk-method | string |  please intput  "Markdown"   |
-| Model   | model-name | string |  The name of the model used for tokenization.    There are options: <br/>- gpt-4<br/>- gpt-3.5-turbo   |
+| Chunk Method | `chunk-method` | string |  Must be "Markdown"   |
+| Model | `model-name` | string |  The name of the model used for tokenization.   <br/>Enum: <br/><ul><li>gpt-4</li><li>gpt-3.5-turbo</li></ul>  |
+
+
+</details>
+
 
 
 
@@ -381,12 +408,14 @@ This is some crucial information about setup: do it before execution.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Conversations (optional) | `conversations` | array[object] | An array of conversations with thread messages |
+| [Conversations](#conversations) (optional) | `conversations` | array[object] | An array of conversations with thread messages |
 | Orci (optional) | `orci` | string | Orci sagittis eu volutpat odio facilisis mauris sit |
 
 
 
 
+<details>
+<summary> Output Objects in Dummy</summary>             
 
 
 
@@ -394,10 +423,11 @@ This is some crucial information about setup: do it before execution.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Last Date | last-date | string | Date of the last message |
-| Start Conversation Message | message | string | message to start a conversation |
-| Start Date | start-date | string | when a conversation starts |
-| Replied messages | thread-reply-messages | array | replies in a conversation |
+| Last Date | `last-date` | string | Date of the last message |
+| Start Conversation Message | `message` | string | message to start a conversation |
+| Start Date | `start-date` | string | when a conversation starts |
+| [Replied messages](#replied-messages) | `thread-reply-messages` | array | replies in a conversation |
+
 
 
 
@@ -405,7 +435,11 @@ This is some crucial information about setup: do it before execution.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Replied Message | message | string | message to reply a conversation |
+| Replied Message | `message` | string | message to reply a conversation |
+
+
+
+</details>
 
 
 
