@@ -31,6 +31,7 @@ const (
 
 	cfgAPIKey       = "api-key"
 	cfgOrganization = "organization"
+	retryCount      = 3
 )
 
 var (
@@ -513,6 +514,7 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, job *
 func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
 	client := newClient(e.Setup, e.GetLogger())
+	client.SetRetryCount(retryCount)
 
 	// TODO: we can encapsulate this code into a `ConcurrentExecutor`.
 	// The `ConcurrentExecutor` will use goroutines to execute jobs in parallel.
