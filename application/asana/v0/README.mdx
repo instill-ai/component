@@ -94,7 +94,7 @@ Goal Related Task, including get, update, delete, create, duplicate
 | Goal Name | `name` | string |  The name of the goal.   |
 | Goal Note | `notes` | string |  The notes of the goal.   |
 | Start Date | `start-on` | string |  The date on which the goal starts. In the format YYYY-MM-DD.   |
-| Status | `status` | string |  The current status of this goal. When the goal is open, its status can be green, yellow, and red to reflect "On Track", "At Risk", and "Off Track", respectively. When the goal is closed, the value can be missed, achieved, partial, or dropped.   <br/>Enum: <br/><ul><li>green</li><li>yellow</li><li>red</li><li>missed</li><li>achieved</li><li>partial</li><li>dropped</li></ul>  |
+| Status | `status` | string |  The current status of this goal. When the goal is open, its status can be green, yellow, and red to reflect "On Track", "At Risk", and "Off Track", respectively. When the goal is closed, the value can be missed, achieved, partial, or dropped.   <br/><details> <summary>Enum: </summary><ul><li>green</li><li>yellow</li><li>red</li><li>missed</li><li>achieved</li><li>partial</li><li>dropped</li></ul></details>  |
 
 
 
@@ -201,7 +201,7 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "get"   |
+| Action | `action` | string |  Must be "get"   |
 | Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
 
 
@@ -210,7 +210,7 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "update"   |
+| Action | `action` | string |  Must be "update"   |
 | Approval Status | `approval-status` | string |  The approval status of the task. If you set completed to true, this field will be set to approved.   <br/>Enum: <br/><ul><li>pending</li><li>approved</li><li>rejected</li><li>changes_requested</li></ul>  |
 | Assignee | `assignee` | string |  GID of the assignee.   |
 | Completed | `completed` | boolean |  Whether the task is currently marked complete.   |
@@ -227,7 +227,7 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "delete"   |
+| Action | `action` | string |  Must be "delete"   |
 | Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
 
 
@@ -236,7 +236,7 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "create"   |
+| Action | `action` | string |  Must be "create"   |
 | Approval Status | `approval-status` | string |  The approval status of the task. If you set completed to true, this field will be set to approved.   <br/>Enum: <br/><ul><li>pending</li><li>approved</li><li>rejected</li><li>changes_requested</li></ul>  |
 | Assignee | `assignee` | string |  GID of the assignee.   |
 | Completed | `completed` | boolean |  Whether the task is currently marked complete.   |
@@ -254,7 +254,7 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "duplicate"   |
+| Action | `action` | string |  Must be "duplicate"   |
 | Name | `name` | string |  Name of the new task. This is generally a short sentence fragment that fits on a line in the UI for maximum readability. However, it can be longer.   |
 | Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
 
@@ -264,7 +264,7 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "set parent"   |
+| Action | `action` | string |  Must be "set parent"   |
 | Parent Task | `parent` | string |  GID of the parent task.   |
 | Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
 
@@ -274,7 +274,7 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "edit tag"   |
+| Action | `action` | string |  Must be "edit tag"   |
 | Edit option | `edit-option` | string |  Edit option. You can choose to add or remove the tag.   <br/>Enum: <br/><ul><li>add</li><li>remove</li></ul>  |
 | Tag ID | `tag-gid` | string |  Globally unique identifier (GID) for the tag.   |
 | Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
@@ -285,7 +285,7 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "edit follower"   |
+| Action | `action` | string |  Must be "edit follower"   |
 | Edit option | `edit-option` | string |  Edit option. You can choose to add or remove the follower.   <br/>Enum: <br/><ul><li>add</li><li>remove</li></ul>  |
 | Followers | `followers` | string |  This can either be the string "me", an email, or the gid of a user. For multiple followers, separate them with commas.   |
 | Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
@@ -296,7 +296,7 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "edit project"   |
+| Action | `action` | string |  Must be "edit project"   |
 | Edit option | `edit-option` | string |  Edit option. You can choose to add or remove the project.   <br/>Enum: <br/><ul><li>add</li><li>remove</li></ul>  |
 | Project ID | `project-gid` | string |  Globally unique identifier (GID) for the project.   |
 | Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
@@ -389,7 +389,7 @@ Project Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "get"   |
+| Action | `action` | string |  Must be "get"   |
 | Project ID | `project-gid` | string |  Globally unique identifier (GID) for the project.   |
 
 
@@ -398,9 +398,9 @@ Project Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "update"   |
+| Action | `action` | string |  Must be "update"   |
 | Archived | `archived` | boolean |  Whether the project is archived.   |
-| Update Color | `color` | string |  The color of the project.   <br/>Enum: <br/><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul>  |
+| Update Color | `color` | string |  The color of the project.   <br/><details> <summary>Enum: </summary><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul></details>  |
 | Due Date | `due-on` | string |  The date on which the project is due. In the format YYYY-MM-DD.   |
 | Project Name | `name` | string |  The name of the project.   |
 | Project Note | `notes` | string |  The notes of the project.   |
@@ -414,7 +414,7 @@ Project Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "delete"   |
+| Action | `action` | string |  Must be "delete"   |
 | Project ID | `project-gid` | string |  Globally unique identifier (GID) for the project.   |
 
 
@@ -423,8 +423,8 @@ Project Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "create"   |
-| Update Color | `color` | string |  The color of the project.   <br/>Enum: <br/><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul>  |
+| Action | `action` | string |  Must be "create"   |
+| Update Color | `color` | string |  The color of the project.   <br/><details> <summary>Enum: </summary><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul></details>  |
 | Due Date | `due-on` | string |  The date on which the project is due. In the format YYYY-MM-DD.   |
 | Project Name | `name` | string |  The name of the project.   |
 | Project Note | `notes` | string |  The notes of the project.   |
@@ -437,7 +437,7 @@ Project Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "duplicate"   |
+| Action | `action` | string |  Must be "duplicate"   |
 | Due Date | `due-on` | string |  Sets the last due date in the duplicated project to the given date. The rest of the due dates will be offset by the same amount as the due dates in the original project. In the format YYYY-MM-DD.   |
 | New Project Name | `name` | string |  The name of the new project.   |
 | Project ID | `project-gid` | string |  Globally unique identifier (GID) for the project. You can find the GID of a goal from the URL of the project in Asana. For example, if the URL of the project is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.   |
@@ -534,7 +534,7 @@ Portfolio Related Task, including get, update, delete, create
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "get"   |
+| Action | `action` | string |  Must be "get"   |
 | Portfolio ID | `portfolio-gid` | string |  Globally unique identifier (GID) for the portfolio.   |
 
 
@@ -543,8 +543,8 @@ Portfolio Related Task, including get, update, delete, create
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "update"   |
-| Update Color | `color` | string |  The color of the portfolio.   <br/>Enum: <br/><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul>  |
+| Action | `action` | string |  Must be "update"   |
+| Update Color | `color` | string |  The color of the portfolio.   <br/><details> <summary>Enum: </summary><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul></details>  |
 | Portfolio Name | `name` | string |  The name of the portfolio.   |
 | Portfolio ID | `portfolio-gid` | string |  Globally unique identifier (GID) for the portfolio.   |
 | Public | `public` | boolean |  Whether the portfolio is public.   |
@@ -556,7 +556,7 @@ Portfolio Related Task, including get, update, delete, create
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "delete"   |
+| Action | `action` | string |  Must be "delete"   |
 | Portfolio ID | `portfolio-gid` | string |  Globally unique identifier (GID) for the portfolio.   |
 
 
@@ -565,8 +565,8 @@ Portfolio Related Task, including get, update, delete, create
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-|  | `action` | string |  Must be "create"   |
-| Color | `color` | string |  The color of the portfolio.   <br/>Enum: <br/><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul>  |
+| Action | `action` | string |  Must be "create"   |
+| Color | `color` | string |  The color of the portfolio.   <br/><details> <summary>Enum: </summary><ul><li>dark_pink</li><li>dark_green</li><li>dark_blue</li><li>dark_red</li><li>dark_teal</li><li>dark_brown</li><li>dark_orange</li><li>dark_purple</li><li>dark_warm_gray</li><li>light_pink</li><li>light_green</li><li>light_blue</li><li>light_red</li><li>light_teal</li><li>light_brown</li><li>light_orange</li><li>light_purple</li><li>light_warm_gray</li><li>none</li><li>null</li></ul></details>  |
 | Portfolio Name | `name` | string |  The name of the portfolio.   |
 | Public | `public` | boolean |  Whether the portfolio is public.   |
 | Workspace | `workspace` | string |  The workspace of the portfolio. Please fill in the Globally unique identifier (GID) for the workspace.   |

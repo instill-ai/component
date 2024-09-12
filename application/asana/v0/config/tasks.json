@@ -507,6 +507,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "get",
                   "type": "string"
                 },
@@ -541,6 +542,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "update",
                   "type": "string"
                 },
@@ -714,6 +716,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "delete",
                   "type": "string"
                 },
@@ -748,6 +751,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "create",
                   "type": "string"
                 },
@@ -939,6 +943,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "duplicate",
                   "type": "string"
                 },
@@ -991,6 +996,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "set parent",
                   "type": "string"
                 },
@@ -1043,6 +1049,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "edit tag",
                   "type": "string"
                 },
@@ -1116,6 +1123,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "edit follower",
                   "type": "string"
                 },
@@ -1189,6 +1197,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "edit project",
                   "type": "string"
                 },
@@ -1471,6 +1480,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "get",
                   "type": "string"
                 },
@@ -1505,6 +1515,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "update",
                   "type": "string"
                 },
@@ -1679,6 +1690,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "delete",
                   "type": "string"
                 },
@@ -1713,6 +1725,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "create",
                   "type": "string"
                 },
@@ -1855,6 +1868,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "duplicate",
                   "type": "string"
                 },
@@ -2211,6 +2225,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "get",
                   "type": "string"
                 },
@@ -2245,6 +2260,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "update",
                   "type": "string"
                 },
@@ -2365,6 +2381,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "delete",
                   "type": "string"
                 },
@@ -2399,6 +2416,7 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "create",
                   "type": "string"
                 },
