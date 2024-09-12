@@ -10,7 +10,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"github.com/instill-ai/x/errmsg"
 )
 
@@ -84,9 +83,6 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 }
 
 func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
-	var debug logger.Session
-	defer debug.SessionStart("Execute", logger.Develop).SessionEnd()
-
 	for _, job := range jobs {
 		input, err := job.Input.Read(ctx)
 		if err != nil {
@@ -103,8 +99,6 @@ func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 		if input.GetFields()["action"].GetStringValue() == "" {
 			action = input.GetFields()["action"].GetStructValue()
 		}
-		debug.Info("input", input)
-		debug.Info("action", action)
 		output, err := e.execute(ctx, action)
 		if err != nil {
 			job.Error.Error(ctx, err)

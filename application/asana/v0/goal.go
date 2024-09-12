@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -57,15 +56,10 @@ type GetGoalInput struct {
 }
 
 func (c *Client) GetGoal(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("GetGoal", logger.Develop).SessionEnd()
-
 	var input GetGoalInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
-		debug.Error("ConvertFromStructpb", err)
 		return nil, err
 	}
-	debug.Info("input", input)
 	apiEndpoint := "/goals/" + input.ID
 	req := c.Client.R().SetResult(&GoalTaskResp{})
 
@@ -74,16 +68,12 @@ func (c *Client) GetGoal(ctx context.Context, props *structpb.Struct) (*structpb
 		return nil, err
 	}
 
-	// debug.Info("req", req)
-	debug.Info("header", req.Header.Values("Authorization"))
 	resp, err := req.Get(apiEndpoint)
 	if err != nil {
 		return nil, err
 	}
 	goal := resp.Result().(*GoalTaskResp)
 	out := goalResp2Output(goal)
-	debug.Info("goal", goal)
-	debug.Info("out", out)
 	return base.ConvertToStructpb(out)
 }
 
@@ -108,12 +98,8 @@ type UpdateGoalReq struct {
 }
 
 func (c *Client) UpdateGoal(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("UpdateGoal", logger.Develop).SessionEnd()
-
 	var input UpdateGoalInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
-		debug.Error("ConvertFromStructpb", err)
 		return nil, err
 	}
 
@@ -129,14 +115,12 @@ func (c *Client) UpdateGoal(ctx context.Context, props *structpb.Struct) (*struc
 			Status:  input.Status,
 		},
 	})
-	debug.Info("body", string(body))
 	req := c.Client.R().SetResult(&GoalTaskResp{}).SetBody(string(body))
 
 	wantOptFields := parseWantOptionFields(Goal{})
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
-	debug.Info("header", req.Header.Values("Authorization"))
 	resp, err := req.Put(apiEndpoint)
 
 	if err != nil {
@@ -144,8 +128,6 @@ func (c *Client) UpdateGoal(ctx context.Context, props *structpb.Struct) (*struc
 	}
 	goal := resp.Result().(*GoalTaskResp)
 	out := goalResp2Output(goal)
-	debug.Info("goal", goal)
-	debug.Info("out", out)
 	return base.ConvertToStructpb(out)
 }
 

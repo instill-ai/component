@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -44,19 +43,15 @@ type GetJobInput struct {
 }
 
 func (c *Client) GetJob(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("Get Job", logger.Develop).SessionEnd()
 	var input GetJobInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
 
 	apiEndpoint := fmt.Sprintf("/jobs/%s", input.ID)
-	debug.Info("apiEndpoint", apiEndpoint)
 	req := c.Client.R().SetResult(&JobTaskResp{})
 
 	wantOptFields := parseWantOptionFields(Job{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -67,9 +62,6 @@ func (c *Client) GetJob(ctx context.Context, props *structpb.Struct) (*structpb.
 
 	job := resp.Result().(*JobTaskResp)
 	out := JobResp2Output(job)
-
-	debug.Info("job", job)
-	debug.Info("out", out)
 
 	return base.ConvertToStructpb(out)
 }

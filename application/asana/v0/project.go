@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -76,8 +75,6 @@ type GetProjectInput struct {
 }
 
 func (c *Client) GetProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("GetProject", logger.Develop).SessionEnd()
 	var input GetProjectInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
@@ -97,8 +94,6 @@ func (c *Client) GetProject(ctx context.Context, props *structpb.Struct) (*struc
 
 	project := resp.Result().(*ProjectTaskResp)
 	out := projectResp2Output(project)
-	debug.Info("project", project)
-	debug.Info("out", out)
 	return base.ConvertToStructpb(out)
 }
 

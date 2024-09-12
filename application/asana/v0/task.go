@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/tools/logger"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -72,8 +71,6 @@ type GetTaskInput struct {
 }
 
 func (c *Client) GetTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("Get Task", logger.Develop).SessionEnd()
 	var input GetTaskInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
@@ -93,9 +90,6 @@ func (c *Client) GetTask(ctx context.Context, props *structpb.Struct) (*structpb
 
 	task := resp.Result().(*TaskTaskResp)
 	out := taskResp2Output(task)
-
-	debug.Info("task", task)
-	debug.Info("out", out)
 
 	return base.ConvertToStructpb(out)
 }
@@ -125,8 +119,6 @@ type UpdateTaskReq struct {
 }
 
 func (c *Client) UpdateTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("Update Task", logger.Develop).SessionEnd()
 	var input UpdateTaskInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
@@ -154,10 +146,8 @@ func (c *Client) UpdateTask(ctx context.Context, props *structpb.Struct) (*struc
 	bytebody, _ := json.Marshal(jsonBody)
 	body := string(bytebody)
 	req.SetBody(body)
-	debug.Info("req.Body", body)
 
 	wantOptFields := parseWantOptionFields(Task{})
-	debug.Info("wantOptFields", wantOptFields)
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
@@ -169,8 +159,6 @@ func (c *Client) UpdateTask(ctx context.Context, props *structpb.Struct) (*struc
 	}
 	task := resp.Result().(*TaskTaskResp)
 	out := taskResp2Output(task)
-	debug.Info("task", task)
-	debug.Info("out", out)
 	return base.ConvertToStructpb(out)
 }
 
@@ -275,8 +263,6 @@ type DuplicateTaskReq struct {
 }
 
 func (c *Client) DuplicateTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("DuplicateTask", logger.Develop).SessionEnd()
 	var input DuplicateTaskInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
@@ -303,7 +289,6 @@ func (c *Client) DuplicateTask(ctx context.Context, props *structpb.Struct) (*st
 		return nil, err
 	}
 	task := resp.Result().(*TaskTaskResp)
-	debug.Info("task", task)
 	getJobProps, _ := base.ConvertToStructpb(map[string]interface{}{
 		"action":  "get",
 		"job-gid": task.Data.GID,
@@ -455,8 +440,6 @@ type TaskEditProjectReq struct {
 }
 
 func (c *Client) TaskEditProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
-	var debug logger.Session
-	defer debug.SessionStart("TaskEditProject", logger.Develop).SessionEnd()
 
 	var input TaskEditProjectInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
@@ -475,8 +458,6 @@ func (c *Client) TaskEditProject(ctx context.Context, props *structpb.Struct) (*
 		},
 	})
 	req := c.Client.R().SetBody(string(body))
-	debug.Info("apiEndpoint", apiEndpoint)
-	debug.Info("req.Body", string(body))
 	_, err := req.Post(apiEndpoint)
 	if err != nil {
 		return nil, err
