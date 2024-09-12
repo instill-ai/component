@@ -415,7 +415,7 @@ This is some crucial information about setup: do it before execution.
 
 
 <details>
-<summary> Output Objects in Dummy</summary>             
+<summary> Output Objects in Dummy</summary>
 
 
 
@@ -427,6 +427,7 @@ This is some crucial information about setup: do it before execution.
 | Start Conversation Message | `message` | string | message to start a conversation |
 | Start Date | `start-date` | string | when a conversation starts |
 | [Replied messages](#replied-messages) | `thread-reply-messages` | array | replies in a conversation |
+
 
 
 
