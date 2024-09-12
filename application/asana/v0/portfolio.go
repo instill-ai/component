@@ -44,6 +44,15 @@ func portfolioResp2Output(resp *PortfolioTaskResp) PortfolioTaskOutput {
 			CustomFieldSettings: resp.Data.CustomFieldSettings,
 		},
 	}
+	if out.CurrentStatus == nil {
+		out.CurrentStatus = []map[string]interface{}{}
+	}
+	if out.CustomFields == nil {
+		out.CustomFields = []map[string]interface{}{}
+	}
+	if out.CustomFieldSettings == nil {
+		out.CustomFieldSettings = []map[string]interface{}{}
+	}
 	return out
 }
 
@@ -85,10 +94,10 @@ type UpdatePortfolioInput struct {
 }
 
 type UpdatePortfolioReq struct {
-	Name      string `json:"name"`
-	Color     string `json:"color"`
+	Name      string `json:"name,omitempty"`
+	Color     string `json:"color,omitempty"`
 	Public    bool   `json:"public"`
-	Workspace string `json:"workspace"`
+	Workspace string `json:"workspace,omitempty"`
 }
 
 func (c *Client) UpdatePortfolio(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -133,7 +142,7 @@ type CreatePortfolioInput struct {
 
 type CreatePortfolioReq struct {
 	Name      string `json:"name"`
-	Color     string `json:"color"`
+	Color     string `json:"color,omitempty"`
 	Public    bool   `json:"public"`
 	Workspace string `json:"workspace"`
 }
@@ -186,6 +195,6 @@ func (c *Client) DeletePortfolio(ctx context.Context, props *structpb.Struct) (*
 	if err != nil {
 		return nil, err
 	}
-	out := PortfolioTaskOutput{}
+	out := portfolioResp2Output(&PortfolioTaskResp{})
 	return base.ConvertToStructpb(out)
 }

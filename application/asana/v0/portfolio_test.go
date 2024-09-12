@@ -138,7 +138,11 @@ func testDeletePortfolio(t *testing.T) {
 				ID:     "1234567890",
 			},
 			wantResp: PortfolioTaskOutput{
-				Portfolio: Portfolio{},
+				Portfolio: Portfolio{
+					CurrentStatus:       []map[string]interface{}{},
+					CustomFields:        []map[string]interface{}{},
+					CustomFieldSettings: []map[string]interface{}{},
+				},
 			},
 		},
 		{
