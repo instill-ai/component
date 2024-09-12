@@ -1,11 +1,11 @@
 ---
-title: "Artifact"
+title: "Instill Artifact"
 lang: "en-US"
 draft: false
-description: "Learn about how to set up a VDP Artifact component https://github.com/instill-ai/instill-core"
+description: "Learn about how to set up a VDP Instill Artifact component https://github.com/instill-ai/instill-core"
 ---
 
-The Artifact component is a data component that allows users to manipulate and smart search files and data in the artifact store.
+The Instill Artifact component is a data component that allows users to manipulate and smart search files and data in the artifact store.
 It can carry out the following tasks:
 
 - [Upload File](#upload-file)
@@ -30,7 +30,7 @@ p.s. In Instill Cloud case, you do not need to set up the OpenAI API key.
 
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/artifact/v0/config/definition.json).
+The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/instillartifact/v0/config/definition.json).
 
 
 
@@ -505,7 +505,7 @@ Recipe for the [Ask your Catalog](https://instill.tech/instill-ai/pipelines/ask-
 version: v1beta
 component:
     artifact-0:
-        type: artifact
+        type: instill-artifact
         task: TASK_ASK
         input:
             catalog-id: ${variable.catalog_name}

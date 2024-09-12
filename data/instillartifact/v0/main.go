@@ -1,5 +1,5 @@
 //go:generate compogen readme ./config ./README.mdx --extraContents intro=.compogen/extra-intro.mdx --extraContents bottom=.compogen/bottom.mdx
-package artifact
+package instillartifact
 
 import (
 	"context"
