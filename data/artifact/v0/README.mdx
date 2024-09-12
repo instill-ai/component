@@ -48,28 +48,22 @@ Upload and process the files into chunks into Catalog
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UPLOAD_FILE` |
-| [Options](#options) (required) | `options` | object | Choose to upload the files to existing catalog or create a new catalog |
+| Options (required) | `options` | object | Choose to upload the files to existing catalog or create a new catalog |
 
 
-
-<details>
-<summary> Input Objects in Upload File</summary>
-
-
-
-
-
-</details>
 
 
 
 
 <details>
 <summary> Options </summary>
+
+#### Options
+
 `options` must fulfill one of the following schemas:
 
 
-#### existing catalog
+##### existing catalog
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -77,11 +71,11 @@ Upload and process the files into chunks into Catalog
 | File | `file` | string |  base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML file to be uploaded into catalog   |
 | File Name | `file-name` | string |  The name of the file, please remember to add the file extension in the end of file name. e.g. 'example.pdf'   |
 | Namespace | `namespace` | string |  Fill in your namespace, you can get namespace through the tab of switching namespace   |
-| Existing Catalog | `option` | string |  Must be "existing catalog"   |
+| Option | `option` | string |  Must be "existing catalog"   |
 
 
 
-#### create new catalog
+##### create new catalog
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -90,7 +84,7 @@ Upload and process the files into chunks into Catalog
 | File | `file` | string |  base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML file to be uploaded into catalog   |
 | File Name | `file-name` | string |  The name of the file, please remember to add the file extension in the end of file name. e.g. 'example.pdf'   |
 | Namespace | `namespace` | string |  Fill in your namespace, you can get namespace through the tab of switching namespace   |
-| Create New Catalog | `option` | string |  Must be "create new catalog"   |
+| Option | `option` | string |  Must be "create new catalog"   |
 | Tags | `tags` | array |  Tags for the catalog   |
 
 
@@ -143,28 +137,22 @@ Upload and process the files into chunks into Catalog
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UPLOAD_FILES` |
-| [Options](#options) (required) | `options` | object | Choose to upload the files to existing catalog or create a new catalog |
+| Options (required) | `options` | object | Choose to upload the files to existing catalog or create a new catalog |
 
 
-
-<details>
-<summary> Input Objects in Upload Files</summary>
-
-
-
-
-
-</details>
 
 
 
 
 <details>
 <summary> Options </summary>
+
+#### Options
+
 `options` must fulfill one of the following schemas:
 
 
-#### existing catalog
+##### existing catalog
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -172,11 +160,11 @@ Upload and process the files into chunks into Catalog
 | File Names | `file-names` | array |  The names of the files, please remember to add the file extension in the end of file name. e.g. 'example.pdf'   |
 | Files | `files` | array |  base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML files to be uploaded into catalog   |
 | Namespace | `namespace` | string |  Fill in your namespace, you can get namespace through the tab of switching namespace   |
-| Existing Catalog | `option` | string |  Must be "existing catalog"   |
+| Option | `option` | string |  Must be "existing catalog"   |
 
 
 
-#### create new catalog
+##### create new catalog
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -185,7 +173,7 @@ Upload and process the files into chunks into Catalog
 | File Names | `file-names` | array |  The names of the files, please remember to add the file extension in the end of file name. e.g. 'example.pdf'   |
 | Files | `files` | array |  base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML files to be uploaded into catalog   |
 | Namespace | `namespace` | string |  Fill in your namespace, you can get namespace through the tab of switching namespace   |
-| Create New Catalog | `option` | string |  Must be "create new catalog"   |
+| Option | `option` | string |  Must be "create new catalog"   |
 | Tags | `tags` | array |  Tags for the catalog   |
 
 

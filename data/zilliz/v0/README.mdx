@@ -73,18 +73,9 @@ Perform a vector search on a collection
 | Filter | `filter` | string | The properties filter to be applied to the data with zilliz scalar filter, please refer to [filtered-search](https://docs.zilliz.com/docs/single-vector-search?_highlight=filter/docs/single-vector-search#filtered-search) |
 | Offset | `offset` | integer | The offset of the data to return |
 | Grouping Field | `grouping-field` | string | The name of the field to group the data by, please refer to [grouping-search](https://docs.zilliz.com/docs/release-notes-290?_highlight=grouping&_highlight=field/docs/release-notes-290#grouping-search) |
-| [Search Parameters](#search-parameters) | `search-params` | object | The search parameters to be applied to the data with zilliz search parameters, please refer to [search-parameters](https://docs.zilliz.com/docs/single-vector-search?_highlight=search&_highlight=params/docs/single-vector-search#search-parameters) |
+| Search Parameters | `search-params` | object | The search parameters to be applied to the data with zilliz search parameters, please refer to [search-parameters](https://docs.zilliz.com/docs/single-vector-search?_highlight=search&_highlight=params/docs/single-vector-search#search-parameters) |
 
 
-
-<details>
-<summary> Input Objects in Vector Search</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -141,18 +132,9 @@ Insert a vector data into a collection
 | Task ID (required) | `task` | string | `TASK_UPSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the data into |
 | Partition Name | `partition-name` | string | The name of the partition to upsert the data from. If empty then default partition will be used |
-| [Data](#data) (required) | `data` | object | The data |
+| Data (required) | `data` | object | The data |
 
 
-
-<details>
-<summary> Input Objects in Upsert</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -256,30 +238,13 @@ Create a collection, please refer to [create-collection-v2](https://docs.zilliz.
 | Collection Name (required) | `collection-name` | string | The name of the collection to create |
 | Dimension (required) | `dimension` | integer | The dimension of the collection |
 | ID Type | `id-type` | string | The type of the id |
-| [Schema](#schema) | `schema` | object | The schema of the collection |
+| Schema | `schema` | object | The schema of the collection |
 | Auto ID | `auto-id` | boolean | Whether to auto generate id |
 | Metric Type | `metric-type` | string | The metric type of the collection |
-| [Index Parameters](#index-parameters) | `index-params` | object | The index parameters to be applied to the collection with zilliz index parameters, please refer to [index-parameter](https://zilliz.io/docs/single-vector-search.md#Index-parameters) |
-| [Parameters](#parameters) | `params` | object | The parameters to be applied to the collection with zilliz parameters, please refer to [parameters](https://zilliz.io/docs/single-vector-search.md#Parameters) |
+| Index Parameters | `index-params` | object | The index parameters to be applied to the collection with zilliz index parameters, please refer to [index-parameter](https://zilliz.io/docs/single-vector-search.md#Index-parameters) |
+| Parameters | `params` | object | The parameters to be applied to the collection with zilliz parameters, please refer to [parameters](https://zilliz.io/docs/single-vector-search.md#Parameters) |
 
 
-
-<details>
-<summary> Input Objects in Create Collection</summary>
-
-
-
-
-
-
-
-
-
-
-
-
-
-</details>
 
 
 

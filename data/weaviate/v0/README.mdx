@@ -66,19 +66,10 @@ Perform a vector search on a collection
 | Vector | `vector` | array[number] | An array of dimensions for the vector query, optional. If not provided, all objects will be returned |
 | Limit | `limit` | integer | The limit of objects, empty for all objects |
 | Fields | `fields` | array[string] | The fields to return in the objects. If empty then all fields will be returned |
-| [Filter](#filter) | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters |
+| Filter | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters |
 | Tenant | `tenant` | string | The tenant to perform the vector search on |
 
 
-
-<details>
-<summary> Input Objects in Vector Search</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -178,18 +169,9 @@ Insert a vector object into a collection
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the object into |
 | ID | `id` | string | The ID of the object |
 | Vector (required) | `vector` | array[number] | An array of dimensions for the vector value |
-| [Metadata](#metadata) (required) | `metadata` | object | The vector metadata properties |
+| Metadata (required) | `metadata` | object | The vector metadata properties |
 
 
-
-<details>
-<summary> Input Objects in Insert</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -220,18 +202,9 @@ Update vector object in a collection
 | Collection Name (required) | `collection-name` | string | The name of the collection to update the object in |
 | ID (required) | `id` | string | The ID of the object |
 | Update Vector | `update-vector` | array[number] | The updated vector value, optional |
-| [Update Metadata](#update-metadata) | `update-metadata` | object | The updated vector metadata properties, optional |
+| Update Metadata | `update-metadata` | object | The updated vector metadata properties, optional |
 
 
-
-<details>
-<summary> Input Objects in Update</summary>
-
-
-
-
-
-</details>
 
 
 
@@ -261,18 +234,9 @@ Delete vector objects from a collection
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to delete the object from |
 | ID | `id` | string | The ID of the object |
-| [Filter](#filter) | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters |
+| Filter | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters |
 
 
-
-<details>
-<summary> Input Objects in Delete</summary>
-
-
-
-
-
-</details>
 
 
 

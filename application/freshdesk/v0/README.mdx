@@ -114,7 +114,7 @@ Get ticket using ID
 | [Attachments](#attachments) (optional) | `attachments` | array[object] | Ticket attachments (cannot be more than 20MB) |
 | Sentiment Score (optional) | `sentiment-score` | integer | Freshdesk uses AI to assess the emotional tone and attitude expressed in customer interaction. |
 | Initial Sentiment Score (optional) | `initial-sentiment-score` | integer | The initial sentiment score of the ticket |
-| [Custom Fields](#custom-fields) (optional) | `custom-fields` | object | Custom fields that the ticket have. Custom fields can be created or modified in Admin -> Ticket Fields |
+| Custom Fields (optional) | `custom-fields` | object | Custom fields that the ticket have. Custom fields can be created or modified in Admin -> Ticket Fields |
 
 
 
@@ -131,10 +131,6 @@ Get ticket using ID
 | Attachment Content Type | `content-type` | string | The type of the file |
 | Attachment Name | `name` | string | The name of the file |
 | Attachment URL | `url` | string | The URL to the attachment. |
-
-
-
-
 
 
 
@@ -360,7 +356,7 @@ Get contact using ID
 | Other Phone Numbers (optional) | `other-phone-numbers` | array[string] | List of other phone numbers of the contact |
 | Created At (optional) | `created-at` | string | Timestamp that denotes when the contact was created. In UTC format. |
 | Updated At (optional) | `updated-at` | string | Timestamp that denotes when the contact was last updated. In UTC format. |
-| [Custom Fields](#custom-fields) (optional) | `custom-fields` | object | Custom fields that the contact have. Custom fields can be created or modified in Admin -> Customer Fields |
+| Custom Fields (optional) | `custom-fields` | object | Custom fields that the contact have. Custom fields can be created or modified in Admin -> Customer Fields |
 
 
 
@@ -376,10 +372,6 @@ Get contact using ID
 | :--- | :--- | :--- | :--- |
 | Company ID | `company-id` | integer | ID of the company |
 | View All Tickets | `view-all-tickets` | boolean | Set to true if the contact can see all the tickets that are associated with the company. |
-
-
-
-
 
 
 
@@ -467,19 +459,10 @@ Get company using ID
 | Industry (optional) | `industry` | string | The industry in which the company operates. To look at all the possible values or create custom values, please go to Admin -> Customer Fields. |
 | Created At | `created-at` | string | Timestamp that denotes when the company was created. In UTC format. |
 | Updated At | `updated-at` | string | Timestamp that denotes when the company was last updated. In UTC format. |
-| [Custom Fields](#custom-fields) (optional) | `custom-fields` | object | Custom fields that the company have. Custom fields can be created or modified in Admin -> Customer Fields |
+| Custom Fields (optional) | `custom-fields` | object | Custom fields that the company have. Custom fields can be created or modified in Admin -> Customer Fields |
 
 
 
-
-<details>
-<summary> Output Objects in Get Company</summary>
-
-
-
-
-
-</details>
 
 
 
