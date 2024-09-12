@@ -26,7 +26,7 @@ type AuthConfig struct {
 
 func newClient(_ context.Context, setup *structpb.Struct, logger *zap.Logger) (*Client, error) {
 	var debug _logger.Session
-	defer debug.SessionStart("GetGoal", _logger.Develop).SessionEnd()
+	defer debug.SessionStart("newClient", _logger.Develop).SessionEnd()
 	var authConfig AuthConfig
 	if err := base.ConvertFromStructpb(setup, &authConfig); err != nil {
 		return nil, err

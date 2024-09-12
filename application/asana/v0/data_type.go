@@ -16,6 +16,12 @@ type RawLike struct {
 	User    User   `json:"user"`
 }
 
+type Job struct {
+	GID        string  `json:"gid" api:"gid"`
+	NewTask    Task    `json:"task" api:"new_task.name"`
+	NewProject Project `json:"project" api:"new_project.name"`
+}
+
 type SimpleProject struct {
 	GID  string `json:"gid"`
 	Name string `json:"name"`
@@ -44,16 +50,16 @@ type Task struct {
 	Name            string          `json:"name" api:"name"`
 	Notes           string          `json:"notes" api:"notes"`
 	HTMLNotes       string          `json:"html-notes" api:"html_notes"`
-	Projects        []SimpleProject `json:"projects" api:"projects"`
+	Projects        []SimpleProject `json:"projects" api:"projects.name"`
 	DueOn           string          `json:"due-on" api:"due_on"`
 	StartOn         string          `json:"start-on" api:"start_on"`
 	Liked           bool            `json:"liked" api:"liked"`
-	Likes           []Like          `json:"likes" api:"likes"`
+	Likes           []Like          `json:"likes" api:"likes.user.name"`
 	ApprovalStatus  string          `json:"approval-status" api:"approval_status"`
-	ResourceSubtype string          `json:"resource-subtype"`
+	ResourceSubtype string          `json:"resource-subtype" api:"resource_subtype"`
 	Completed       bool            `json:"completed" api:"completed"`
-	Assignee        string          `json:"assignee" api:"assignee"`
-	Parent          string          `json:"parent" api:"parent"`
+	Assignee        string          `json:"assignee" api:"assignee.name"`
+	Parent          string          `json:"parent" api:"parent.name"`
 }
 
 type Project struct {
