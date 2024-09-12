@@ -25,10 +25,19 @@ class PdfTransformer:
 			self.process_image(self.image_index)
 
 		for page in self.pages:
+			kwargs = {
+				"return_chars": False,
+				"extra_attrs": ["x0", "x1", "top", "bottom", "text"],
+			}
+
 			page_lines = page.extract_text_lines(
 				layout=True,
 				x_tolerance_ratio=0.1,
+				**kwargs
 			)
+			page.flush_cache()
+			page.get_textmap.cache_clear()
+
 			self.process_line(page_lines, page.page_number)
 			self.process_table(page)
 
@@ -63,7 +72,10 @@ class PdfTransformer:
 		heights = []
 		largest_text_height, second_largest_text_height = 0, 0
 		for page in self.pages:
-			for line in page.extract_text_lines():
+			lines = page.extract_text_lines()
+			page.flush_cache()
+			page.get_textmap.cache_clear()
+			for line in lines:
 				height = int(line["bottom"] - line["top"])
 				heights.append(height)
 				if height > largest_text_height:
