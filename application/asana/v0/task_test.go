@@ -190,7 +190,10 @@ func testDeleteTask(t *testing.T) {
 				ID:     "1234567890",
 			},
 			wantResp: TaskTaskOutput{
-				Task: Task{},
+				Task: Task{
+					Projects: []SimpleProject{},
+					Likes:    []Like{},
+				},
 			},
 		},
 		{

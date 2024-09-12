@@ -36,14 +36,14 @@ func testGetProject(t *testing.T) {
 					ModifiedAt:     "2021-01-01",
 					PrivacySetting: "public_to_workspace",
 					CompletedBy:    User{GID: "123", Name: "Admin User"},
-					CurrentStatus: map[string]string{
-						"status": "completed",
+					CurrentStatus: []map[string]interface{}{
+						{"status": "completed"},
 					},
-					CustomFields: map[string]string{
-						"field": "value",
+					CustomFields: []map[string]interface{}{
+						{"field": "value"},
 					},
-					CustomFieldSettings: map[string]string{
-						"field": "value",
+					CustomFieldSettings: []map[string]interface{}{
+						{"field": "value"},
 					},
 				},
 			},
@@ -87,14 +87,14 @@ func testUpdateProject(t *testing.T) {
 					ModifiedAt:     "2021-01-01",
 					PrivacySetting: "public_to_workspace",
 					CompletedBy:    User{GID: "123", Name: "Admin User"},
-					CurrentStatus: map[string]string{
-						"status": "completed",
+					CurrentStatus: []map[string]interface{}{
+						{"status": "completed"},
 					},
-					CustomFields: map[string]string{
-						"field": "value",
+					CustomFields: []map[string]interface{}{
+						{"field": "value"},
 					},
-					CustomFieldSettings: map[string]string{
-						"field": "value",
+					CustomFieldSettings: []map[string]interface{}{
+						{"field": "value"},
 					},
 				},
 			},
@@ -139,14 +139,14 @@ func testCreateProject(t *testing.T) {
 					Completed:      false,
 					Archived:       false,
 					CompletedBy:    User{GID: "123", Name: "Admin User"},
-					CurrentStatus: map[string]string{
-						"status": "on_track",
+					CurrentStatus: []map[string]interface{}{
+						{"status": "on_track"},
 					},
-					CustomFields: map[string]string{
-						"field": "value",
+					CustomFields: []map[string]interface{}{
+						{"field": "value"},
 					},
-					CustomFieldSettings: map[string]string{
-						"field": "value",
+					CustomFieldSettings: []map[string]interface{}{
+						{"field": "value"},
 					},
 				},
 			},
@@ -173,7 +173,11 @@ func testDeleteProject(t *testing.T) {
 				ID:     "1234567890",
 			},
 			wantResp: ProjectTaskOutput{
-				Project: Project{},
+				Project: Project{
+					CurrentStatus:       []map[string]interface{}{},
+					CustomFields:        []map[string]interface{}{},
+					CustomFieldSettings: []map[string]interface{}{},
+				},
 			},
 		},
 		{
@@ -216,14 +220,14 @@ func testDuplicateProject(t *testing.T) {
 					ModifiedAt:     "2021-01-01",
 					PrivacySetting: "public_to_workspace",
 					CompletedBy:    User{GID: "123", Name: "Admin User"},
-					CurrentStatus: map[string]string{
-						"status": "completed",
+					CurrentStatus: []map[string]interface{}{
+						{"status": "completed"},
 					},
-					CustomFields: map[string]string{
-						"field": "value",
+					CustomFields: []map[string]interface{}{
+						{"field": "value"},
 					},
-					CustomFieldSettings: map[string]string{
-						"field": "value",
+					CustomFieldSettings: []map[string]interface{}{
+						{"field": "value"},
 					},
 				},
 			},

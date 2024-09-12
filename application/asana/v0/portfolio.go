@@ -14,17 +14,17 @@ type PortfolioTaskOutput struct {
 
 type PortfolioTaskResp struct {
 	Data struct {
-		GID                 string            `json:"gid"`
-		Name                string            `json:"name"`
-		Owner               User              `json:"owner"`
-		DueOn               string            `json:"due_on"`
-		StartOn             string            `json:"start_on"`
-		Color               string            `json:"color"`
-		Public              bool              `json:"public"`
-		CreatedBy           User              `json:"created_by"`
-		CurrentStatus       map[string]string `json:"current_status"`
-		CustomFields        map[string]string `json:"custom_fields"`
-		CustomFieldSettings map[string]string `json:"custom_field_settings"`
+		GID                 string                   `json:"gid"`
+		Name                string                   `json:"name"`
+		Owner               User                     `json:"owner"`
+		DueOn               string                   `json:"due_on"`
+		StartOn             string                   `json:"start_on"`
+		Color               string                   `json:"color"`
+		Public              bool                     `json:"public"`
+		CreatedBy           User                     `json:"created_by"`
+		CurrentStatus       []map[string]interface{} `json:"current_status"`
+		CustomFields        []map[string]interface{} `json:"custom_fields"`
+		CustomFieldSettings []map[string]interface{} `json:"custom_field_settings"`
 	} `json:"data"`
 }
 
