@@ -177,7 +177,13 @@ func (sp MarkdownTextSplitter) processChunks(lists []List) []ContentChunk {
 	shouldOverlapPreviousList := false
 
 	addListCount := 0
+	countI := map[int]int{}
 	for i := 0; i < len(lists); i++ {
+		countI[i] = 0
+	}
+
+	for i := 0; i < len(lists); i++ {
+		countI[i]++
 		list := lists[i]
 
 		// Add the title
@@ -271,7 +277,8 @@ func (sp MarkdownTextSplitter) processChunks(lists []List) []ContentChunk {
 					i--
 					addListCount = 0
 				} else if overlapType == "last chunk final list" {
-					if i > 1 {
+					// countI[i] < 10 is a protection against infinite loop. A list item should not be split more than 5 times.
+					if i > 1 && countI[i] < 5 {
 						i -= 2
 					} else {
 						i--
@@ -328,7 +335,9 @@ func (sp MarkdownTextSplitter) overlapType(lists []List, i int) string {
 		return "no overlap"
 	}
 
-	if sizeEnough {
+	isInfinityLoop := (i > 0 && sizeOfString(lists[i-1].Text)+sizeOfString((lists[i].Text)) > sp.ChunkSize)
+
+	if sizeEnough && !isInfinityLoop {
 		return "last chunk final list"
 	} else {
 		return "no overlap"
