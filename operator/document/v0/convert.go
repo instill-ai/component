@@ -3,6 +3,8 @@ package document
 import (
 	"bytes"
 	"fmt"
+	"image"
+	"image/png"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -33,7 +35,7 @@ var (
 		"text/url":                                                                  true,
 		"text/xml":                                                                  true,
 		"application/xml":                                                           true,
-		"image/jpeg":                                                                false,
+		"image/jpeg":                                                                true,
 		"image/png":                                                                 true,
 		"image/tif":                                                                 true,
 		"image/tiff":                                                                true,
@@ -69,8 +71,18 @@ type docconvConverter struct{}
 
 func (d docconvConverter) convert(contentType string, b []byte) (ConvertToTextOutput, error) {
 
+	if contentType == "image/jpeg" {
+		pngData, err := convertJpegToPng(b)
+		if err != nil {
+			return ConvertToTextOutput{}, fmt.Errorf("error converting jpeg to png: %v", err)
+		}
+		b = pngData
+		contentType = "image/png"
+	}
+
 	res, err := docconv.Convert(bytes.NewReader(b), contentType, false)
 	if err != nil {
+		fmt.Println("Error converting document to text", err)
 		return ConvertToTextOutput{}, err
 	}
 
@@ -84,6 +96,22 @@ func (d docconvConverter) convert(contentType string, b []byte) (ConvertToTextOu
 		MSecs: res.MSecs,
 		Error: res.Error,
 	}, nil
+}
+
+func convertJpegToPng(jpegData []byte) ([]byte, error) {
+	img, _, err := image.Decode(bytes.NewReader(jpegData))
+	if err != nil {
+		return nil, err
+	}
+
+	var pngBuffer bytes.Buffer
+
+	err = png.Encode(&pngBuffer, img)
+	if err != nil {
+		return nil, err
+	}
+
+	return pngBuffer.Bytes(), nil
 }
 
 type uft8EncodedFileConverter struct{}
