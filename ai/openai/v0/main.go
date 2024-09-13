@@ -182,145 +182,195 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, job *
 		}
 		messages = append(messages, multiModalMessage{Role: "user", Content: userContents})
 
-		body := textCompletionReq{
-			Messages:         messages,
-			Model:            inputStruct.Model,
-			MaxTokens:        inputStruct.MaxTokens,
-			Temperature:      inputStruct.Temperature,
-			N:                inputStruct.N,
-			TopP:             inputStruct.TopP,
-			PresencePenalty:  inputStruct.PresencePenalty,
-			FrequencyPenalty: inputStruct.FrequencyPenalty,
-			Stream:           true,
-			StreamOptions: streamOptions{
-				IncludeUsage: true,
-			},
-		}
+		// Note: The o1-series models don't support streaming.
+		if inputStruct.Model == "o1-preview" || inputStruct.Model == "o1-mini" {
 
-		// workaround, the OpenAI service can not accept this param
-		if inputStruct.Model != "gpt-4-vision-preview" {
-			if inputStruct.ResponseFormat != nil {
-				body.ResponseFormat = &responseFormatReqStruct{
-					Type: inputStruct.ResponseFormat.Type,
-				}
-				if inputStruct.ResponseFormat.Type == "json_schema" {
-					if inputStruct.Model == "gpt-4o-mini" || inputStruct.Model == "gpt-4o-2024-08-06" {
-						sch := map[string]any{}
-						if inputStruct.ResponseFormat.JSONSchema != "" {
-							err = json.Unmarshal([]byte(inputStruct.ResponseFormat.JSONSchema), &sch)
-							if err != nil {
-								job.Error.Error(ctx, err)
-								return
-							}
-							body.ResponseFormat = &responseFormatReqStruct{
-								Type:       inputStruct.ResponseFormat.Type,
-								JSONSchema: sch,
-							}
-						}
-
-					} else {
-						job.Error.Error(ctx, fmt.Errorf("this model doesn't support response format: json_schema"))
-						return
-					}
-
-				}
+			body := textCompletionReq{
+				Messages:         messages,
+				Model:            inputStruct.Model,
+				MaxTokens:        inputStruct.MaxTokens,
+				Temperature:      inputStruct.Temperature,
+				N:                inputStruct.N,
+				TopP:             inputStruct.TopP,
+				PresencePenalty:  inputStruct.PresencePenalty,
+				FrequencyPenalty: inputStruct.FrequencyPenalty,
+			}
+			resp := textCompletionResp{}
+			req := client.R().SetResult(&resp).SetBody(body)
+			if _, err := req.Post(completionsPath); err != nil {
+				job.Error.Error(ctx, err)
+				return
 			}
 
-		}
-
-		req := client.SetDoNotParseResponse(true).R().SetBody(body)
-		restyResp, err := req.Post(completionsPath)
-		if err != nil {
-			job.Error.Error(ctx, err)
-			return
-		}
-
-		if restyResp.StatusCode() != 200 {
-			res := restyResp.Body()
-			job.Error.Error(ctx, fmt.Errorf("send request to openai error with error code: %d, msg %s", restyResp.StatusCode(), res))
-			return
-		}
-		scanner := bufio.NewScanner(restyResp.RawResponse.Body)
-
-		outputStruct := TextCompletionOutput{}
-
-		u := usage{}
-		count := 0
-		for scanner.Scan() {
-
-			res := scanner.Text()
-
-			if len(res) == 0 {
-				continue
+			outputStruct := TextCompletionOutput{
+				Texts: []string{},
+				Usage: usage(resp.Usage),
 			}
-			res = strings.Replace(res, "data: ", "", 1)
-
-			// Note: Since we haven’t provided delta updates for the
-			// messages, we’re reducing the number of event streams by
-			// returning the response every ten iterations.
-			if count == 10 || res == "[DONE]" {
-				outputJSON, inErr := json.Marshal(outputStruct)
-				if inErr != nil {
-					job.Error.Error(ctx, inErr)
-					return
-				}
-				output := &structpb.Struct{}
-				inErr = protojson.Unmarshal(outputJSON, output)
-				if inErr != nil {
-					job.Error.Error(ctx, inErr)
-					return
-				}
-				err = job.Output.Write(ctx, output)
-				if err != nil {
-					job.Error.Error(ctx, err)
-					return
-				}
-				if res == "[DONE]" {
-					break
-				}
-				count = 0
+			for _, c := range resp.Choices {
+				outputStruct.Texts = append(outputStruct.Texts, c.Message.Content)
 			}
 
-			count += 1
-			response := &textCompletionResp{}
-			err = json.Unmarshal([]byte(res), response)
+			outputJSON, err := json.Marshal(outputStruct)
+			if err != nil {
+				job.Error.Error(ctx, err)
+				return
+			}
+			output := &structpb.Struct{}
+			err = protojson.Unmarshal(outputJSON, output)
+			if err != nil {
+				job.Error.Error(ctx, err)
+				return
+			}
+			err = job.Output.Write(ctx, output)
 			if err != nil {
 				job.Error.Error(ctx, err)
 				return
 			}
 
-			if outputStruct.Texts == nil {
-				outputStruct.Texts = make([]string, len(response.Choices))
+		} else {
+			body := textCompletionReq{
+				Messages:         messages,
+				Model:            inputStruct.Model,
+				MaxTokens:        inputStruct.MaxTokens,
+				Temperature:      inputStruct.Temperature,
+				N:                inputStruct.N,
+				TopP:             inputStruct.TopP,
+				PresencePenalty:  inputStruct.PresencePenalty,
+				FrequencyPenalty: inputStruct.FrequencyPenalty,
+				Stream:           true,
+				StreamOptions: &streamOptions{
+					IncludeUsage: true,
+				},
 			}
-			for idx, c := range response.Choices {
-				outputStruct.Texts[idx] += c.Delta.Content
+
+			// workaround, the OpenAI service can not accept this param
+			if inputStruct.Model != "gpt-4-vision-preview" {
+				if inputStruct.ResponseFormat != nil {
+					body.ResponseFormat = &responseFormatReqStruct{
+						Type: inputStruct.ResponseFormat.Type,
+					}
+					if inputStruct.ResponseFormat.Type == "json_schema" {
+						if inputStruct.Model == "gpt-4o-mini" || inputStruct.Model == "gpt-4o-2024-08-06" {
+							sch := map[string]any{}
+							if inputStruct.ResponseFormat.JSONSchema != "" {
+								err = json.Unmarshal([]byte(inputStruct.ResponseFormat.JSONSchema), &sch)
+								if err != nil {
+									job.Error.Error(ctx, err)
+									return
+								}
+								body.ResponseFormat = &responseFormatReqStruct{
+									Type:       inputStruct.ResponseFormat.Type,
+									JSONSchema: sch,
+								}
+							}
+
+						} else {
+							job.Error.Error(ctx, fmt.Errorf("this model doesn't support response format: json_schema"))
+							return
+						}
+
+					}
+				}
 
 			}
 
-			u = usage{
-				PromptTokens:     response.Usage.PromptTokens,
-				CompletionTokens: response.Usage.CompletionTokens,
-				TotalTokens:      response.Usage.TotalTokens,
+			req := client.SetDoNotParseResponse(true).R().SetBody(body)
+			restyResp, err := req.Post(completionsPath)
+			if err != nil {
+				job.Error.Error(ctx, err)
+				return
 			}
 
-		}
+			if restyResp.StatusCode() != 200 {
 
-		outputStruct.Usage = u
-		outputJSON, err := json.Marshal(outputStruct)
-		if err != nil {
-			job.Error.Error(ctx, err)
-			return
-		}
-		output := &structpb.Struct{}
-		err = protojson.Unmarshal(outputJSON, output)
-		if err != nil {
-			job.Error.Error(ctx, err)
-			return
-		}
-		err = job.Output.Write(ctx, output)
-		if err != nil {
-			job.Error.Error(ctx, err)
-			return
+				res := restyResp.Body()
+				fmt.Println()
+				fmt.Println("res", restyResp)
+				job.Error.Error(ctx, fmt.Errorf("send request to openai error with error code: %d, msg %s", restyResp.StatusCode(), res))
+				return
+			}
+			scanner := bufio.NewScanner(restyResp.RawResponse.Body)
+
+			outputStruct := TextCompletionOutput{}
+
+			u := usage{}
+			count := 0
+			for scanner.Scan() {
+
+				res := scanner.Text()
+
+				if len(res) == 0 {
+					continue
+				}
+				res = strings.Replace(res, "data: ", "", 1)
+
+				// Note: Since we haven’t provided delta updates for the
+				// messages, we’re reducing the number of event streams by
+				// returning the response every ten iterations.
+				if count == 10 || res == "[DONE]" {
+					outputJSON, inErr := json.Marshal(outputStruct)
+					if inErr != nil {
+						job.Error.Error(ctx, inErr)
+						return
+					}
+					output := &structpb.Struct{}
+					inErr = protojson.Unmarshal(outputJSON, output)
+					if inErr != nil {
+						job.Error.Error(ctx, inErr)
+						return
+					}
+					err = job.Output.Write(ctx, output)
+					if err != nil {
+						job.Error.Error(ctx, err)
+						return
+					}
+					if res == "[DONE]" {
+						break
+					}
+					count = 0
+				}
+
+				count += 1
+				response := &textCompletionStreamResp{}
+				err = json.Unmarshal([]byte(res), response)
+				if err != nil {
+					job.Error.Error(ctx, err)
+					return
+				}
+
+				if outputStruct.Texts == nil {
+					outputStruct.Texts = make([]string, len(response.Choices))
+				}
+				for idx, c := range response.Choices {
+					outputStruct.Texts[idx] += c.Delta.Content
+
+				}
+
+				u = usage{
+					PromptTokens:     response.Usage.PromptTokens,
+					CompletionTokens: response.Usage.CompletionTokens,
+					TotalTokens:      response.Usage.TotalTokens,
+				}
+
+			}
+
+			outputStruct.Usage = u
+			outputJSON, err := json.Marshal(outputStruct)
+			if err != nil {
+				job.Error.Error(ctx, err)
+				return
+			}
+			output := &structpb.Struct{}
+			err = protojson.Unmarshal(outputJSON, output)
+			if err != nil {
+				job.Error.Error(ctx, err)
+				return
+			}
+			err = job.Output.Write(ctx, output)
+			if err != nil {
+				job.Error.Error(ctx, err)
+				return
+			}
 		}
 
 	case TextEmbeddingsTask:

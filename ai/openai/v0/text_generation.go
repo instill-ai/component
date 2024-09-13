@@ -47,7 +47,7 @@ type textCompletionReq struct {
 	FrequencyPenalty *float32                 `json:"frequency_penalty,omitempty"`
 	ResponseFormat   *responseFormatReqStruct `json:"response_format,omitempty"`
 	Stream           bool                     `json:"stream"`
-	StreamOptions    streamOptions            `json:"stream_options"`
+	StreamOptions    *streamOptions           `json:"stream_options,omitempty"`
 }
 
 type streamOptions struct {
@@ -79,6 +79,13 @@ type Content struct {
 	ImageURL *ImageURL `json:"image_url,omitempty"`
 }
 
+type textCompletionStreamResp struct {
+	ID      string          `json:"id"`
+	Object  string          `json:"object"`
+	Created int             `json:"created"`
+	Choices []streamChoices `json:"choices"`
+	Usage   usageOpenAI     `json:"usage"`
+}
 type textCompletionResp struct {
 	ID      string      `json:"id"`
 	Object  string      `json:"object"`
@@ -92,10 +99,16 @@ type outputMessage struct {
 	Content string `json:"content"`
 }
 
-type choices struct {
+type streamChoices struct {
 	Index        int           `json:"index"`
 	FinishReason string        `json:"finish_reason"`
 	Delta        outputMessage `json:"delta"`
+}
+
+type choices struct {
+	Index        int           `json:"index"`
+	FinishReason string        `json:"finish_reason"`
+	Message      outputMessage `json:"message"`
 }
 
 type usageOpenAI struct {
