@@ -71,7 +71,9 @@ func buildDocuments(rawRunes []rune) ([]MarkdownDocument, error) {
 
 		// Move to the next section
 		currentPosition = endPosition
-		previousDocument = &documents[len(documents)-1]
+		if len(documents) > 0 {
+			previousDocument = &documents[len(documents)-1]
+		}
 	}
 
 	return documents, nil
