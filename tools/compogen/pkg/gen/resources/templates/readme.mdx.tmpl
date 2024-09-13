@@ -42,7 +42,7 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range . }}
-| {{ AnchorObjectTitle . }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
+| {{ AnchorSetup . }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
 {{ end }}
 {{ loadExtraContent "setup" }}
 {{ end }}
@@ -50,17 +50,17 @@ ${connection.<my-connection-id>}`.
 {{ if .SetupConfig.OneOf }}
 {{ range $key, $options := .SetupConfig.OneOf }}
 <details>
-<summary> {{ firstToCapital $key }} </summary>
+<summary>The <code>{{ $key }}</code> Object </summary>
 
-#### {{ firstToCapital $key }}
+#### {{ kebabToTitle $key }}
 
 `{{ $key }}` must fulfill one of the following schemas:
 {{ range $idx, $option := $options }}
-##### {{ findConstantValue $option }}
+##### `{{ findConstantValue $option }}`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
-| {{ AnchorObjectTitle $prop }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be `"{{ $prop.Const }}"` {{ else }} {{ $prop.Description }}  {{ end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
+| {{ AnchorSetup $prop }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be `"{{ $prop.Const }}"` {{ else }} {{ $prop.Description }}  {{ end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
 {{ end }}
 </details>
 {{ end }}
@@ -76,7 +76,7 @@ ${connection.<my-connection-id>}`.
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `{{ $task.ID }}` |{{ range $task.Input }}
-| {{ AnchorObjectTitle . }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
+| {{ AnchorTaskObject . $task }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
 {{ end }}
 
 {{ if $task.InputObjects }}
@@ -85,35 +85,37 @@ ${connection.<my-connection-id>}`.
 {{ range $idx, $objectSchemaMap := $task.InputObjects }}
 {{ range $key, $schema := $objectSchemaMap }}
 {{ if $schema.Properties }}
-#### {{ $key }}
+{{ HeaderWithID $key $task }}
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $schema.Properties }}
-| {{ AnchorObjectTitle $prop }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ $prop.Description }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
+| {{ AnchorTaskObject $prop $task }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ $prop.Description }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
 {{ end }}
 {{ end }}
 {{ end }}
 </details>
 {{ end }}
 
-{{ if $task.OneOf }}
-{{ range $key, $options := $task.OneOf }}
+{{ if $task.OneOfs }}
+{{ range $idx, $oneOf := $task.OneOfs }}
+{{ range $key, $options := $oneOf }}
 <details>
-<summary> {{ firstToCapital $key }} </summary>
+<summary>The <code>{{ $key }}</code> Object </summary>
 
-#### {{ firstToCapital $key }}
+{{ HeaderWithID $key $task }}
 
 `{{ $key }}` must fulfill one of the following schemas:
 {{ range $idx, $option := $options }}
 {{ if $option.Properties }}
-##### {{ findConstantValue $option }}
+##### `{{ findConstantValue $option }}`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
-| {{ AnchorObjectTitle $prop }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be `"{{ $prop.Const }}"` {{ else }} {{ $prop.Description }} {{ end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
+| {{ $prop.Title }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be `"{{ $prop.Const }}"` {{ else }} {{ $prop.Description }} {{ end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
 {{ end }}
 {{ end }}
 </details>
+{{ end }}
 {{ end }}
 {{ end }}
 
@@ -122,7 +124,7 @@ ${connection.<my-connection-id>}`.
 {{ if $task.Output }}
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |{{ range $task.Output }}
-| {{ AnchorObjectTitle . }}{{ if not .Required }} (optional){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
+| {{ AnchorTaskObject . $task }}{{ if not .Required }} (optional){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
 {{ end }}
 
 
@@ -132,11 +134,11 @@ ${connection.<my-connection-id>}`.
 {{ range $idx, $objectSchemaMap := $task.OutputObjects }}
 {{ range $key, $schema := $objectSchemaMap }}
 {{ if $schema.Properties }}
-#### {{ $key }}
+{{ HeaderWithID $key $task }}
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $schema.Properties }}
-| {{ AnchorObjectTitle $prop }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ $prop.Description }} |{{ end }}
+| {{ AnchorTaskObject $prop $task }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ $prop.Description }} |{{ end }}
 {{ end }}
 {{ end }}
 {{ end }}
