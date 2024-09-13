@@ -71,7 +71,9 @@ func buildDocuments(rawRunes []rune) ([]MarkdownDocument, error) {
 
 		// Move to the next section
 		currentPosition = endPosition
-		previousDocument = &documents[len(documents)-1]
+		if len(documents) > 0 {
+			previousDocument = &documents[len(documents)-1]
+		}
 	}
 
 	return documents, nil
@@ -233,15 +235,15 @@ func readLine(rawRunes []rune, currentPosition *int) string {
 func isTable(block string) bool {
 	lines := strings.Split(block, "\n")
 	for _, line := range lines {
-		if isTableStart(line) {
-			return true
+		if !isRow(line) {
+			return false
 		}
 	}
-	return false
+	return true
 }
 
 // Helper function to determine if a line starts a table
-func isTableStart(line string) bool {
+func isRow(line string) bool {
 	trimmedLine := strings.TrimSpace(line)
 	if len(trimmedLine) == 0 {
 		return false
@@ -273,7 +275,7 @@ func parseTableFromBlock(block string) Table {
 	for i, line := range lines {
 		// Preserve the original line without trimming spaces
 
-		if i == 0 && !isTableStart(line) {
+		if i == 0 && !isRow(line) {
 			// The first line is the header text if it's not a table row
 			headerText = line
 			continue
@@ -282,7 +284,7 @@ func parseTableFromBlock(block string) Table {
 		if isTableSeparator(line) {
 			table.TableSeparator = line
 			inHeader = false
-		} else if isTableStart(line) {
+		} else if isRow(line) {
 			// Process table header or data row
 			if inHeader {
 				headerRow = line
@@ -310,8 +312,8 @@ func parseTableFromBlock(block string) Table {
 // Helper function to determine if a block is a list
 func isList(block string) bool {
 	lines := strings.Split(block, "\n")
-	for _, line := range lines {
-		if isListStart(line) {
+	for i, line := range lines {
+		if i < 5 && isListStart(line) {
 			return true
 		}
 	}
