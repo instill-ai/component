@@ -93,7 +93,7 @@ Detect, localize and delineate multiple objects in images.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Objects](#objects) | `objects` | array[object] | A list of detected instance bounding boxes. |
+| [Objects](#instance-segmentation-objects) | `objects` | array[object] | A list of detected instance bounding boxes. |
 
 
 
@@ -103,11 +103,11 @@ Detect, localize and delineate multiple objects in images.
 
 
 
-#### Objects
+<h4 id="instance-segmentation-objects">Objects</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Bounding Box](#bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format. |
+| [Bounding Box](#instance-segmentation-bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format. |
 | Category | `category` | string | The predicted category of the bounding box. |
 | RLE | `rle` | string | Run Length Encoding (RLE) of instance mask within the bounding box. |
 | Score | `score` | number | The confidence score of the predicted instance object. |
@@ -116,7 +116,7 @@ Detect, localize and delineate multiple objects in images.
 
 
 
-#### Bounding Box
+<h4 id="instance-segmentation-bounding-box">Bounding Box</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -155,7 +155,7 @@ Detect and localize multiple keypoints of objects in images.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Objects](#objects) | `objects` | array[object] | A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object. |
+| [Objects](#keypoint-objects) | `objects` | array[object] | A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object. |
 
 
 
@@ -165,19 +165,19 @@ Detect and localize multiple keypoints of objects in images.
 
 
 
-#### Objects
+<h4 id="keypoint-objects">Objects</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Bounding Box](#bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format. |
-| [Keypoints](#keypoints) | `keypoints` | array | A keypoint group is composed of a list of pre-defined keypoints of a detected object. |
+| [Bounding Box](#keypoint-bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format. |
+| [Keypoints](#keypoint-keypoints) | `keypoints` | array | A keypoint group is composed of a list of pre-defined keypoints of a detected object. |
 | Score | `score` | number | The confidence score of the predicted object. |
 
 
 
 
 
-#### Keypoints
+<h4 id="keypoint-keypoints">Keypoints</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -189,7 +189,7 @@ Detect and localize multiple keypoints of objects in images.
 
 
 
-#### Bounding Box
+<h4 id="keypoint-bounding-box">Bounding Box</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -228,7 +228,7 @@ Detect and localize multiple objects in images.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Objects](#objects) | `objects` | array[object] | A list of detected objects. |
+| [Objects](#detection-objects) | `objects` | array[object] | A list of detected objects. |
 
 
 
@@ -238,11 +238,11 @@ Detect and localize multiple objects in images.
 
 
 
-#### Objects
+<h4 id="detection-objects">Objects</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Bounding box](#bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format. |
+| [Bounding box](#detection-bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format. |
 | Category | `category` | string | The predicted category of the bounding box. |
 | Score | `score` | number | The confidence score of the predicted category of the bounding box. |
 
@@ -250,7 +250,7 @@ Detect and localize multiple objects in images.
 
 
 
-#### Bounding box
+<h4 id="detection-bounding-box">Bounding box</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -289,7 +289,7 @@ Detect and recognize text in images.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Objects](#objects) | `objects` | array[object] | A list of detected bounding boxes. |
+| [Objects](#ocr-objects) | `objects` | array[object] | A list of detected bounding boxes. |
 
 
 
@@ -299,11 +299,11 @@ Detect and recognize text in images.
 
 
 
-#### Objects
+<h4 id="ocr-objects">Objects</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Bounding Box](#bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format. |
+| [Bounding Box](#ocr-bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format. |
 | Score | `score` | number | The confidence score of the predicted object. |
 | Text | `text` | string | Text string recognised per bounding box. |
 
@@ -311,7 +311,7 @@ Detect and recognize text in images.
 
 
 
-#### Bounding Box
+<h4 id="ocr-bounding-box">Bounding Box</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -350,7 +350,7 @@ Classify image pixels into predefined categories.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Stuffs](#stuffs) | `stuffs` | array[object] | A list of RLE binary masks. |
+| [Stuffs](#semantic-segmentation-stuffs) | `stuffs` | array[object] | A list of RLE binary masks. |
 
 
 
@@ -360,7 +360,7 @@ Classify image pixels into predefined categories.
 
 
 
-#### Stuffs
+<h4 id="semantic-segmentation-stuffs">Stuffs</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -423,7 +423,7 @@ Generate texts from input text prompts and chat history.
 | Prompt (required) | `prompt` | string | The prompt text |
 | System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is using a generic message as "You are a helpful assistant." |
 | Prompt Images | `prompt-images` | array[string] | The prompt images |
-| [Chat history](#chat-history) | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
+| [Chat history](#text-generation-chat-chat-history) | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
 | Seed | `seed` | integer | The seed |
 | Temperature | `temperature` | number | The temperature for sampling |
 | Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
@@ -435,30 +435,30 @@ Generate texts from input text prompts and chat history.
 
 
 
-#### Chat history
+<h4 id="text-generation-chat-chat-history">Chat history</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Content](#content) | `content` | array | The message content  |
+| [Content](#text-generation-chat-content) | `content` | array | The message content  |
 | Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant'  |
 
 
 
 
 
-#### Content
+<h4 id="text-generation-chat-content">Content</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Image URL](#image-url) | `image-url` | object | The image URL  |
+| [Image URL](#text-generation-chat-image-url) | `image-url` | object | The image URL  |
 | Text | `text` | string | The text content.  |
-| Type | `type` | string | The type of the content part.  <br/>Enum: <br/><ul><li>text</li><li>image-url</li></ul>  |
+| Type | `type` | string | The type of the content part.  <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`text`</li><li>`image-url`</li></ul></details>  |
 
 
 
 
 
-#### Image URL
+<h4 id="text-generation-chat-image-url">Image URL</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -533,7 +533,7 @@ Answer questions based on a prompt and an image.
 | Prompt (required) | `prompt` | string | The prompt text |
 | System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is using a generic message as "You are a helpful assistant." |
 | Prompt Images | `prompt-images` | array[string] | The prompt images |
-| [Chat history](#chat-history) | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
+| [Chat history](#visual-question-answering-chat-history) | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
 | Seed | `seed` | integer | The seed |
 | Temperature | `temperature` | number | The temperature for sampling |
 | Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
@@ -545,30 +545,30 @@ Answer questions based on a prompt and an image.
 
 
 
-#### Chat history
+<h4 id="visual-question-answering-chat-history">Chat history</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Content](#content) | `content` | array | The message content  |
+| [Content](#visual-question-answering-content) | `content` | array | The message content  |
 | Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant'  |
 
 
 
 
 
-#### Content
+<h4 id="visual-question-answering-content">Content</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Image URL](#image-url) | `image-url` | object | The image URL  |
+| [Image URL](#visual-question-answering-image-url) | `image-url` | object | The image URL  |
 | Text | `text` | string | The text content.  |
-| Type | `type` | string | The type of the content part.  <br/>Enum: <br/><ul><li>text</li><li>image-url</li></ul>  |
+| Type | `type` | string | The type of the content part.  <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`text`</li><li>`image-url`</li></ul></details>  |
 
 
 
 
 
-#### Image URL
+<h4 id="visual-question-answering-image-url">Image URL</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -608,7 +608,7 @@ Generate texts from input text prompts and chat history.
 | Prompt (required) | `prompt` | string | The prompt text |
 | System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is using a generic message as "You are a helpful assistant." |
 | Prompt Images | `prompt-images` | array[string] | The prompt images |
-| [Chat history](#chat-history) | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
+| [Chat history](#chat-chat-history) | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
 | Seed | `seed` | integer | The seed |
 | Temperature | `temperature` | number | The temperature for sampling |
 | Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
@@ -620,30 +620,30 @@ Generate texts from input text prompts and chat history.
 
 
 
-#### Chat history
+<h4 id="chat-chat-history">Chat history</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Content](#content) | `content` | array | The message content  |
+| [Content](#chat-content) | `content` | array | The message content  |
 | Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant'  |
 
 
 
 
 
-#### Content
+<h4 id="chat-content">Content</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Image URL](#image-url) | `image-url` | object | The image URL  |
+| [Image URL](#chat-image-url) | `image-url` | object | The image URL  |
 | Text | `text` | string | The text content.  |
-| Type | `type` | string | The type of the content part.  <br/>Enum: <br/><ul><li>text</li><li>image-url</li></ul>  |
+| Type | `type` | string | The type of the content part.  <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`text`</li><li>`image-url`</li></ul></details>  |
 
 
 
 
 
-#### Image URL
+<h4 id="chat-image-url">Image URL</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |

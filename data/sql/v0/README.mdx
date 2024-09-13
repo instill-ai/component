@@ -46,13 +46,13 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Engine (required) | `engine` | string | Choose the engine of your database.  <br/><details> <summary>Enum: </summary><ul><li>MySQL</li><li>PostgreSQL</li><li>SQL Server</li><li>Oracle</li><li>MariaDB</li><li>Firebird</li></ul></details>  |
+| Engine (required) | `engine` | string | Choose the engine of your database.  <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`MySQL`</li><li>`PostgreSQL`</li><li>`SQL Server`</li><li>`Oracle`</li><li>`MariaDB`</li><li>`Firebird`</li></ul></details>  |
 | Username (required) | `username` | string | Fill in your account username  |
 | Password (required) | `password` | string | Fill in your account password  |
 | Database Name (required) | `database-name` | string | Fill in the name of your database  |
 | Host (required) | `host` | string | Fill in the host of your database  |
 | Port (required) | `port` | number | Fill in the port of your database  |
-| SSL/TLS (required) | `ssl-tls` | object | Enable SSL/TLS  |
+| [SSL/TLS](#ssl-tls) (required) | `ssl-tls` | object | Enable SSL/TLS  |
 
 
 
@@ -60,33 +60,33 @@ ${connection.<my-connection-id>}`.
 
 
 <details>
-<summary> Ssl-tls </summary>
+<summary>The <code>ssl-tls</code> Object </summary>
 
-#### Ssl-tls
+#### Ssl Tls
 
 `ssl-tls` must fulfill one of the following schemas:
 
-##### NO TLS
+##### `NO TLS`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| SSL/TLS Type | `ssl-tls-type` | string |  Must be "NO TLS"   |
+| SSL/TLS Type | `ssl-tls-type` | string |  Must be `"NO TLS"`   |
 
-##### TLS
+##### `TLS`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | CA Certificate | `ssl-tls-ca` | string |  Base64 encoded CA certificate file    |
-| SSL/TLS Type | `ssl-tls-type` | string |  Must be "TLS"   |
+| SSL/TLS Type | `ssl-tls-type` | string |  Must be `"TLS"`   |
 
-##### mTLS
+##### `mTLS`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | CA Certificate | `ssl-tls-ca` | string |  Base64 encoded CA certificate file    |
 | Client Certificate | `ssl-tls-cert` | string |  Base64 encoded client certificate file    |
 | Client Key | `ssl-tls-key` | string |  Base64 encoded client key file    |
-| SSL/TLS Type | `ssl-tls-type` | string |  Must be "mTLS"   |
+| SSL/TLS Type | `ssl-tls-type` | string |  Must be `"mTLS"`   |
 
 </details>
 
@@ -134,7 +134,7 @@ Perform insert operation with multiple rows
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_INSERT_MANY` |
 | Table Name (required) | `table-name` | string | The table name in the database to insert data into |
-| [Data](#data) (required) | `array-data` | array[object] | The array data to be inserted |
+| [Data](#insert-many-data) (required) | `array-data` | array[object] | The array data to be inserted |
 
 
 
@@ -220,7 +220,7 @@ Perform select operation
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Rows](#rows) | `rows` | array[object] | The rows returned from the select operation |
+| [Rows](#select-rows) | `rows` | array[object] | The rows returned from the select operation |
 | Status | `status` | string | Select status |
 
 

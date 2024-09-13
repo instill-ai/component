@@ -48,22 +48,32 @@ Upload and process the files into chunks into Catalog
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UPLOAD_FILE` |
-| Options (required) | `options` | object | Choose to upload the files to existing catalog or create a new catalog |
+| [Options](#upload-file-options) (required) | `options` | object | Choose to upload the files to existing catalog or create a new catalog |
 
+
+
+<details>
+<summary> Input Objects in Upload File</summary>
+
+
+
+
+
+</details>
 
 
 
 
 
 <details>
-<summary> Options </summary>
+<summary>The <code>options</code> Object </summary>
 
-#### Options
+<h4 id="upload-file-options">Options</h4>
 
 `options` must fulfill one of the following schemas:
 
 
-##### existing catalog
+##### `existing catalog`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -71,11 +81,11 @@ Upload and process the files into chunks into Catalog
 | File | `file` | string |  base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML file to be uploaded into catalog   |
 | File Name | `file-name` | string |  The name of the file, please remember to add the file extension in the end of file name. e.g. 'example.pdf'   |
 | Namespace | `namespace` | string |  Fill in your namespace, you can get namespace through the tab of switching namespace   |
-| Option | `option` | string |  Must be "existing catalog"   |
+| Option | `option` | string |  Must be `"existing catalog"`   |
 
 
 
-##### create new catalog
+##### `create new catalog`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -84,7 +94,7 @@ Upload and process the files into chunks into Catalog
 | File | `file` | string |  base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML file to be uploaded into catalog   |
 | File Name | `file-name` | string |  The name of the file, please remember to add the file extension in the end of file name. e.g. 'example.pdf'   |
 | Namespace | `namespace` | string |  Fill in your namespace, you can get namespace through the tab of switching namespace   |
-| Option | `option` | string |  Must be "create new catalog"   |
+| Option | `option` | string |  Must be `"create new catalog"`   |
 | Tags | `tags` | array |  Tags for the catalog   |
 
 
@@ -95,9 +105,10 @@ Upload and process the files into chunks into Catalog
 
 
 
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [File](#file) | `file` | object | Result of uploading file into catalog |
+| [File](#upload-file-file) | `file` | object | Result of uploading file into catalog |
 | Status | `status` | boolean | The status of trigger file processing, if succeeded, return true |
 
 
@@ -108,7 +119,7 @@ Upload and process the files into chunks into Catalog
 
 
 
-#### File
+<h4 id="upload-file-file">File</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -137,22 +148,32 @@ Upload and process the files into chunks into Catalog
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UPLOAD_FILES` |
-| Options (required) | `options` | object | Choose to upload the files to existing catalog or create a new catalog |
+| [Options](#upload-files-options) (required) | `options` | object | Choose to upload the files to existing catalog or create a new catalog |
 
+
+
+<details>
+<summary> Input Objects in Upload Files</summary>
+
+
+
+
+
+</details>
 
 
 
 
 
 <details>
-<summary> Options </summary>
+<summary>The <code>options</code> Object </summary>
 
-#### Options
+<h4 id="upload-files-options">Options</h4>
 
 `options` must fulfill one of the following schemas:
 
 
-##### existing catalog
+##### `existing catalog`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -160,11 +181,11 @@ Upload and process the files into chunks into Catalog
 | File Names | `file-names` | array |  The names of the files, please remember to add the file extension in the end of file name. e.g. 'example.pdf'   |
 | Files | `files` | array |  base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML files to be uploaded into catalog   |
 | Namespace | `namespace` | string |  Fill in your namespace, you can get namespace through the tab of switching namespace   |
-| Option | `option` | string |  Must be "existing catalog"   |
+| Option | `option` | string |  Must be `"existing catalog"`   |
 
 
 
-##### create new catalog
+##### `create new catalog`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -173,7 +194,7 @@ Upload and process the files into chunks into Catalog
 | File Names | `file-names` | array |  The names of the files, please remember to add the file extension in the end of file name. e.g. 'example.pdf'   |
 | Files | `files` | array |  base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML files to be uploaded into catalog   |
 | Namespace | `namespace` | string |  Fill in your namespace, you can get namespace through the tab of switching namespace   |
-| Option | `option` | string |  Must be "create new catalog"   |
+| Option | `option` | string |  Must be `"create new catalog"`   |
 | Tags | `tags` | array |  Tags for the catalog   |
 
 
@@ -184,9 +205,10 @@ Upload and process the files into chunks into Catalog
 
 
 
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Files](#files) | `files` | array[object] | Files metadata in catalog |
+| [Files](#upload-files-files) | `files` | array[object] | Files metadata in catalog |
 | Status | `status` | boolean | The status of trigger file processing, if ALL succeeded, return true |
 
 
@@ -197,7 +219,7 @@ Upload and process the files into chunks into Catalog
 
 
 
-#### Files
+<h4 id="upload-files-files">Files</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -239,7 +261,7 @@ get the metadata of the files in the catalog
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Files](#files) | `files` | array[object] | Files metadata in catalog |
+| [Files](#get-files-metadata-files) | `files` | array[object] | Files metadata in catalog |
 
 
 
@@ -249,7 +271,7 @@ get the metadata of the files in the catalog
 
 
 
-#### Files
+<h4 id="get-files-metadata-files">Files</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -292,7 +314,7 @@ get the metadata of the chunks from a file in the catalog
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Chunks](#chunks) | `chunks` | array[object] | Chunks metadata of the file in catalog |
+| [Chunks](#get-chunks-metadata-chunks) | `chunks` | array[object] | Chunks metadata of the file in catalog |
 
 
 
@@ -302,7 +324,7 @@ get the metadata of the chunks from a file in the catalog
 
 
 
-#### Chunks
+<h4 id="get-chunks-metadata-chunks">Chunks</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -413,7 +435,7 @@ search the chunks in the catalog
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Chunks](#chunks) | `chunks` | array[object] | Chunks data from smart search |
+| [Chunks](#retrieve-chunks) | `chunks` | array[object] | Chunks data from smart search |
 
 
 
@@ -423,7 +445,7 @@ search the chunks in the catalog
 
 
 
-#### Chunks
+<h4 id="retrieve-chunks">Chunks</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -465,7 +487,7 @@ Reply the questions based on the files in the catalog
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Answer | `answer` | string | Answers data from smart search |
-| [Chunks](#chunks) (optional) | `chunks` | array[object] | Chunks data to answer question |
+| [Chunks](#ask-chunks) (optional) | `chunks` | array[object] | Chunks data to answer question |
 
 
 
@@ -475,7 +497,7 @@ Reply the questions based on the files in the catalog
 
 
 
-#### Chunks
+<h4 id="ask-chunks">Chunks</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |

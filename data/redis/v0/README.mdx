@@ -76,7 +76,7 @@ Retrieve chat history from Redis.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Chat Message](#chat-message) | `messages` | array[object] | Messages |
+| [Chat Message](#retrieve-chat-history-chat-message) | `messages` | array[object] | Messages |
 
 
 
@@ -86,11 +86,11 @@ Retrieve chat history from Redis.
 
 
 
-#### Chat Message
+<h4 id="retrieve-chat-history-chat-message">Chat Message</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Content](#content) | `content` | array | The message content |
+| [Content](#retrieve-chat-history-content) | `content` | array | The message content |
 | Metadata | `metadata` | object | The message metadata |
 | Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant' |
 
@@ -98,11 +98,11 @@ Retrieve chat history from Redis.
 
 
 
-#### Content
+<h4 id="retrieve-chat-history-content">Content</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Image URL](#image-url) | `image-url` | object | The image URL |
+| [Image URL](#retrieve-chat-history-image-url) | `image-url` | object | The image URL |
 | Text | `text` | string | The text content. |
 | Type | `type` | string | The type of the content part. |
 
@@ -110,7 +110,7 @@ Retrieve chat history from Redis.
 
 
 
-#### Image URL
+<h4 id="retrieve-chat-history-image-url">Image URL</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |

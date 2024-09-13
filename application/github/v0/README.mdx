@@ -82,7 +82,7 @@ Get the list of all pull requests in a repository
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Pull Requests](#pull-requests) | `pull-requests` | array[object] | An array of PRs |
+| [Pull Requests](#list-pull-requests-pull-requests) | `pull-requests` | array[object] | An array of PRs |
 
 
 
@@ -92,14 +92,14 @@ Get the list of all pull requests in a repository
 
 
 
-#### Pull Requests
+<h4 id="list-pull-requests-pull-requests">Pull Requests</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | PR base | `base` | string | base commit of the PR (in SHA value) |
 | PR body | `body` | string | Body of the PR |
 | Number of PR comments | `comments-num` | integer | number of comments on the PR |
-| [Commits](#commits) | `commits` | array | commits in the PR |
+| [Commits](#list-pull-requests-commits) | `commits` | array | commits in the PR |
 | Number of PR commits | `commits-num` | integer | number of commits in the PR |
 | PR diff url | `diff-url` | string | url to the diff of the PR |
 | PR head | `head` | string | head commit of the PR (in SHA value) |
@@ -113,20 +113,20 @@ Get the list of all pull requests in a repository
 
 
 
-#### Commits
+<h4 id="list-pull-requests-commits">Commits</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Files](#files) | `files` | array | files in the commit |
+| [Files](#list-pull-requests-files) | `files` | array | files in the commit |
 | Commit message | `message` | string | message of the commit |
 | Commit SHA | `sha` | string | SHA of the commit |
-| [Commit stats](#commit-stats) | `stats` | object | stats of changes |
+| [Commit stats](#list-pull-requests-commit-stats) | `stats` | object | stats of changes |
 
 
 
 
 
-#### Commit stats
+<h4 id="list-pull-requests-commit-stats">Commit stats</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -138,7 +138,7 @@ Get the list of all pull requests in a repository
 
 
 
-#### Files
+<h4 id="list-pull-requests-files">Files</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -190,7 +190,7 @@ Get a pull request from a repository, given the PR number. This will default to 
 | Number of PR comments (optional) | `comments-num` | integer | number of comments on the PR |
 | Number of PR commits (optional) | `commits-num` | integer | number of commits in the PR |
 | Number of PR review comments (optional) | `review-comments-num` | integer | number of review comments in the PR |
-| [Commits](#commits) (optional) | `commits` | array[object] | commits in the PR |
+| [Commits](#get-pull-request-commits) (optional) | `commits` | array[object] | commits in the PR |
 
 
 
@@ -200,20 +200,20 @@ Get a pull request from a repository, given the PR number. This will default to 
 
 
 
-#### Commits
+<h4 id="get-pull-request-commits">Commits</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Files](#files) | `files` | array | files in the commit |
+| [Files](#get-pull-request-files) | `files` | array | files in the commit |
 | Commit message | `message` | string | message of the commit |
 | Commit SHA | `sha` | string | SHA of the commit |
-| [Commit stats](#commit-stats) | `stats` | object | stats of changes |
+| [Commit stats](#get-pull-request-commit-stats) | `stats` | object | stats of changes |
 
 
 
 
 
-#### Commit stats
+<h4 id="get-pull-request-commit-stats">Commit stats</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -225,7 +225,7 @@ Get a pull request from a repository, given the PR number. This will default to 
 
 
 
-#### Files
+<h4 id="get-pull-request-files">Files</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -268,8 +268,8 @@ Get a commit from a repository, given the commit SHA
 | :--- | :--- | :--- | :--- |
 | Commit SHA (optional) | `sha` | string | SHA of the commit |
 | Commit message (optional) | `message` | string | message of the commit |
-| [Commit stats](#commit-stats) (optional) | `stats` | object | stats of changes |
-| [Files](#files) (optional) | `files` | array[object] | files in the commit |
+| [Commit stats](#get-commit-commit-stats) (optional) | `stats` | object | stats of changes |
+| [Files](#get-commit-files) (optional) | `files` | array[object] | files in the commit |
 
 
 
@@ -279,7 +279,7 @@ Get a commit from a repository, given the commit SHA
 
 
 
-#### Commit stats
+<h4 id="get-commit-commit-stats">Commit stats</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -291,7 +291,7 @@ Get a commit from a repository, given the commit SHA
 
 
 
-#### Files
+<h4 id="get-commit-files">Files</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -337,7 +337,7 @@ Get the review comments in a pull request
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Comments](#comments) | `comments` | array[object] | An array of comments |
+| [Comments](#list-review-comments-comments) | `comments` | array[object] | An array of comments |
 
 
 
@@ -347,7 +347,7 @@ Get the review comments in a pull request
 
 
 
-#### Comments
+<h4 id="list-review-comments-comments">Comments</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -363,13 +363,13 @@ Get the review comments in a pull request
 | Comment start side | `start-side` | string | Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side. |
 | Comment type | `subject-type` | string | Subject type of the comment, can be one of: line, file. Default is line |
 | Comment updated at | `updated-at` | string | Time the comment was updated |
-| [User](#user) | `user` | object | User who created the comment |
+| [User](#list-review-comments-user) | `user` | object | User who created the comment |
 
 
 
 
 
-#### User
+<h4 id="list-review-comments-user">User</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -396,7 +396,7 @@ Create a review comment in pull request.
 | Owner (required) | `owner` | string | Owner of the repository |
 | Repository (required) | `repository` | string | Repository name |
 | PR Number (required) | `pr-number` | integer | Number of the PR |
-| [Comment](#comment) (required) | `comment` | object | The comment to be added |
+| [Comment](#create-review-comment-comment) (required) | `comment` | object | The comment to be added |
 
 
 
@@ -405,7 +405,7 @@ Create a review comment in pull request.
 
 
 
-#### Comment
+<h4 id="create-review-comment-comment">Comment</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -413,10 +413,10 @@ Create a review comment in pull request.
 | Commit SHA | `commit-id` | string | SHA of the commit on which you want to comment  |
 | Comment end line | `line` | integer | The line of the blob in the pull request diff that the comment applies to. For a multi-line comment, the last line of the range that your comment applies to.  |
 | Comment path | `path` | string | Path of the file the comment is on  |
-| Comment end side | `side` | string | Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side.  <br/>Enum: <br/><ul><li>LEFT</li><li>RIGHT</li><li>side</li></ul>  |
+| Comment end side | `side` | string | Side of the end line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side.  <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`LEFT`</li><li>`RIGHT`</li><li>`side`</li></ul></details>  |
 | Comment start line | `start-line` | integer | The first line in the pull request diff that your multi-line comment applies to. Only multi-line comment needs to fill this field.  |
-| Comment start side | `start-side` | string | Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side.  <br/>Enum: <br/><ul><li>LEFT</li><li>RIGHT</li><li>side</li></ul>  |
-| Comment type | `subject-type` | string | Subject type of the comment, can be one of: line, file. Default is line  <br/>Enum: <br/><ul><li>line</li><li>file</li></ul>  |
+| Comment start side | `start-side` | string | Side of the start line, can be one of: LEFT, RIGHT, side. LEFT is the left side of the diff (deletion), RIGHT is the right side of the diff (addition), and side is the comment on the PR as a whole. Default is side.  <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`LEFT`</li><li>`RIGHT`</li><li>`side`</li></ul></details>  |
+| Comment type | `subject-type` | string | Subject type of the comment, can be one of: line, file. Default is line  <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`line`</li><li>`file`</li></ul></details>  |
 
 
 
@@ -442,7 +442,7 @@ Create a review comment in pull request.
 | Comment type (optional) | `subject-type` | string | Subject type of the comment, can be one of: line, file. Default is line |
 | Comment created at (optional) | `created-at` | string | Time the comment was created |
 | Comment updated at (optional) | `updated-at` | string | Time the comment was updated |
-| [User](#user) (optional) | `user` | object | User who created the comment |
+| [User](#create-review-comment-user) (optional) | `user` | object | User who created the comment |
 
 
 
@@ -452,7 +452,7 @@ Create a review comment in pull request.
 
 
 
-#### User
+<h4 id="create-review-comment-user">User</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -496,7 +496,7 @@ Get the list of all issues in a repository
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Issues](#issues) | `issues` | array[object] | An array of issues |
+| [Issues](#list-issues-issues) | `issues` | array[object] | An array of issues |
 
 
 
@@ -506,7 +506,7 @@ Get the list of all issues in a repository
 
 
 
-#### Issues
+<h4 id="list-issues-issues">Issues</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -633,7 +633,7 @@ Get an issue.
 | Webhook URL (optional) | `url` | string | URL of the webhook |
 | Ping URL (optional) | `ping-url` | string | URL to ping the webhook |
 | Test URL (optional) | `test-url` | string | URL to test the webhook |
-| [Config](#config) (optional) | `config` | object | Configuration of the webhook |
+| [Config](#create-webhook-config) (optional) | `config` | object | Configuration of the webhook |
 
 
 
@@ -643,7 +643,7 @@ Get an issue.
 
 
 
-#### Config
+<h4 id="create-webhook-config">Config</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |

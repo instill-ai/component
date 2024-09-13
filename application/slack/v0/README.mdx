@@ -70,7 +70,7 @@ Get the latest message since specific date
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Conversations](#conversations) | `conversations` | array[object] | An array of conversations with thread messages |
+| [Conversations](#read-message-conversations) | `conversations` | array[object] | An array of conversations with thread messages |
 
 
 
@@ -80,14 +80,14 @@ Get the latest message since specific date
 
 
 
-#### Conversations
+<h4 id="read-message-conversations">Conversations</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Last Date | `last-date` | string | Date of the last message |
 | Start Conversation Message | `message` | string | message to start a conversation |
 | Start Date | `start-date` | string | when a conversation starts |
-| [Replied messages](#replied-messages) | `thread-reply-messages` | array | replies in a conversation |
+| [Replied messages](#read-message-replied-messages) | `thread-reply-messages` | array | replies in a conversation |
 | User UID | `user-id` | string | unique id from Slack |
 | User Name | `user-name` | string | user name in Slack |
 
@@ -95,7 +95,7 @@ Get the latest message since specific date
 
 
 
-#### Replied messages
+<h4 id="read-message-replied-messages">Replied messages</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |

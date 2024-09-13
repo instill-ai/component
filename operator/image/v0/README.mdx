@@ -77,7 +77,7 @@ Draw detection result on the image.
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DRAW_DETECTION` |
 | Image (required) | `image` | string | Input image |
-| [Objects](#objects) (required) | `objects` | array[object] | A list of detected objects. |
+| [Objects](#draw-detection-objects) (required) | `objects` | array[object] | A list of detected objects. |
 | Show Score | `showScore` | boolean | Show model confidence score on each instance |
 
 
@@ -87,11 +87,11 @@ Draw detection result on the image.
 
 
 
-#### Objects
+<h4 id="draw-detection-objects">Objects</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Bounding box](#bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format.  |
+| [Bounding box](#draw-detection-bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format.  |
 | Category | `category` | string | The predicted category of the bounding box.  |
 | Score | `score` | number | The confidence score of the predicted category of the bounding box.  |
 
@@ -99,7 +99,7 @@ Draw detection result on the image.
 
 
 
-#### Bounding box
+<h4 id="draw-detection-bounding-box">Bounding box</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -139,7 +139,7 @@ Draw keypoint result on the image.
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DRAW_KEYPOINT` |
 | Image (required) | `image` | string | Input image |
-| [Objects](#objects) (required) | `objects` | array[object] | A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object. |
+| [Objects](#draw-keypoint-objects) (required) | `objects` | array[object] | A list of keypoint objects, a keypoint object includes all the pre-defined keypoints of a detected object. |
 | Show Score | `showScore` | boolean | Show model confidence score on each instance |
 
 
@@ -149,19 +149,19 @@ Draw keypoint result on the image.
 
 
 
-#### Objects
+<h4 id="draw-keypoint-objects">Objects</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Bounding Box](#bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format.  |
-| [Keypoints](#keypoints) | `keypoints` | array | A keypoint group is composed of a list of pre-defined keypoints of a detected object.  |
+| [Bounding Box](#draw-keypoint-bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format.  |
+| [Keypoints](#draw-keypoint-keypoints) | `keypoints` | array | A keypoint group is composed of a list of pre-defined keypoints of a detected object.  |
 | Score | `score` | number | The confidence score of the predicted object.  |
 
 
 
 
 
-#### Keypoints
+<h4 id="draw-keypoint-keypoints">Keypoints</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -173,7 +173,7 @@ Draw keypoint result on the image.
 
 
 
-#### Bounding Box
+<h4 id="draw-keypoint-bounding-box">Bounding Box</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -213,7 +213,7 @@ Draw OCR result on the image.
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DRAW_OCR` |
 | Image (required) | `image` | string | Input image |
-| [Objects](#objects) (required) | `objects` | array[object] | A list of detected bounding boxes. |
+| [Objects](#draw-ocr-objects) (required) | `objects` | array[object] | A list of detected bounding boxes. |
 | Show Score | `showScore` | boolean | Show model confidence score on each instance |
 
 
@@ -223,11 +223,11 @@ Draw OCR result on the image.
 
 
 
-#### Objects
+<h4 id="draw-ocr-objects">Objects</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Bounding Box](#bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format.  |
+| [Bounding Box](#draw-ocr-bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format.  |
 | Score | `score` | number | The confidence score of the predicted object.  |
 | Text | `text` | string | Text string recognised per bounding box.  |
 
@@ -235,7 +235,7 @@ Draw OCR result on the image.
 
 
 
-#### Bounding Box
+<h4 id="draw-ocr-bounding-box">Bounding Box</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -275,7 +275,7 @@ Draw instance segmentation result on the image.
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DRAW_INSTANCE_SEGMENTATION` |
 | Image (required) | `image` | string | Input image |
-| [Objects](#objects) (required) | `objects` | array[object] | A list of detected instance bounding boxes. |
+| [Objects](#draw-instance-segmentation-objects) (required) | `objects` | array[object] | A list of detected instance bounding boxes. |
 | Show Score | `showScore` | boolean | Show model confidence score on each instance |
 
 
@@ -285,11 +285,11 @@ Draw instance segmentation result on the image.
 
 
 
-#### Objects
+<h4 id="draw-instance-segmentation-objects">Objects</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Bounding Box](#bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format.  |
+| [Bounding Box](#draw-instance-segmentation-bounding-box) | `bounding-box` | object | The detected bounding box in (left, top, width, height) format.  |
 | Category | `category` | string | The predicted category of the bounding box.  |
 | RLE | `rle` | string | Run Length Encoding (RLE) of instance mask within the bounding box.  |
 | Score | `score` | number | The confidence score of the predicted instance object.  |
@@ -298,7 +298,7 @@ Draw instance segmentation result on the image.
 
 
 
-#### Bounding Box
+<h4 id="draw-instance-segmentation-bounding-box">Bounding Box</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -339,7 +339,7 @@ Draw semantic segmentation result on the image.
 | Task ID (required) | `task` | string | `TASK_DRAW_SEMANTIC_SEGMENTATION` |
 | Image (required) | `image` | string | Input image |
 | Show Score | `showScore` | boolean | Show model confidence score on each instance |
-| [Stuffs](#stuffs) (required) | `stuffs` | array[object] | A list of RLE binary masks. |
+| [Stuffs](#draw-semantic-segmentation-stuffs) (required) | `stuffs` | array[object] | A list of RLE binary masks. |
 
 
 
@@ -348,7 +348,7 @@ Draw semantic segmentation result on the image.
 
 
 
-#### Stuffs
+<h4 id="draw-semantic-segmentation-stuffs">Stuffs</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |

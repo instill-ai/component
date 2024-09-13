@@ -60,7 +60,7 @@ Provide text outputs in response to text inputs.
 | Prompt (required) | `prompt` | string | The prompt text |
 | System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is set using a generic message as "You are a helpful assistant." |
 | Prompt Images | `prompt-images` | array[string] | The prompt images (Note: Only a subset of OSS models support image inputs) |
-| [Chat history](#chat-history) | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\} |
+| [Chat history](#text-generation-chat-chat-history) | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\} |
 | Seed | `seed` | integer | The seed |
 | Temperature | `temperature` | number | The temperature for sampling |
 | Top K | `top-k` | integer | Integer to define the top tokens considered within the sample operation to create new text |
@@ -75,30 +75,30 @@ Provide text outputs in response to text inputs.
 
 
 
-#### Chat history
+<h4 id="text-generation-chat-chat-history">Chat history</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Content](#content) | `content` | array | The message content  |
+| [Content](#text-generation-chat-content) | `content` | array | The message content  |
 | Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant'  |
 
 
 
 
 
-#### Content
+<h4 id="text-generation-chat-content">Content</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Image URL](#image-url) | `image-url` | object | The image URL  |
+| [Image URL](#text-generation-chat-image-url) | `image-url` | object | The image URL  |
 | Text | `text` | string | The text content.  |
-| Type | `type` | string | The type of the content part.  <br/>Enum: <br/><ul><li>text</li><li>image_url</li></ul>  |
+| Type | `type` | string | The type of the content part.  <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`text`</li><li>`image_url`</li></ul></details>  |
 
 
 
 
 
-#### Image URL
+<h4 id="text-generation-chat-image-url">Image URL</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -117,7 +117,7 @@ Provide text outputs in response to text inputs.
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Model Output |
-| [Usage](#usage) (optional) | `usage` | object | Token usage on the GroqCloud platform text generation models |
+| [Usage](#text-generation-chat-usage) (optional) | `usage` | object | Token usage on the GroqCloud platform text generation models |
 
 
 
@@ -127,7 +127,7 @@ Provide text outputs in response to text inputs.
 
 
 
-#### Usage
+<h4 id="text-generation-chat-usage">Usage</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |

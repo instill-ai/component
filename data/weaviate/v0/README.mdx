@@ -79,7 +79,7 @@ Perform a vector search on a collection
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Result](#result) | `result` | object | Result of the vector search operation |
+| [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Upsert status |
 
 
@@ -90,13 +90,13 @@ Perform a vector search on a collection
 
 
 
-#### Result
+<h4 id="vector-search-result">Result</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | IDs | `ids` | array | The ids returned from the vector search operation |
-| [Metadata](#metadata) | `metadata` | array | The metadata returned from the vector search operation |
-| [Objects](#objects) | `objects` | array | The objects returned from the vector search operation |
+| [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| [Objects](#vector-search-objects) | `objects` | array | The objects returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
 
 
@@ -126,7 +126,7 @@ Insert multiple vector objects into a collection
 | Task ID (required) | `task` | string | `TASK_BATCH_INSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the object into |
 | Array ID | `array-id` | array[string] | The array of id |
-| [Array Metadata](#array-metadata) (required) | `array-metadata` | array[object] | The array of vector metadata properties |
+| [Array Metadata](#batch-insert-array-metadata) (required) | `array-metadata` | array[object] | The array of vector metadata properties |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
 
 

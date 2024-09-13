@@ -64,7 +64,7 @@ Upsert multiple vector items into a collection, existing items will be updated
 | Task ID (required) | `task` | string | `TASK_BATCH_UPSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the item into |
 | Array ID (required) | `array-id` | array[string] | The array of id |
-| [Array Metadata](#array-metadata) (required) | `array-metadata` | array[object] | The array of vector metadata |
+| [Array Metadata](#batch-upsert-array-metadata) (required) | `array-metadata` | array[object] | The array of vector metadata |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
 | Array Document | `array-document` | array[string] | The array of document string values |
 | Array URI | `array-uri` | array[string] | The array of uri |
@@ -158,7 +158,7 @@ Perform a vector search on a collection
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Result](#result) | `result` | object | Result of the vector search operation |
+| [Result](#query-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
 
 
@@ -169,13 +169,13 @@ Perform a vector search on a collection
 
 
 
-#### Result
+<h4 id="query-result">Result</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | IDs | `ids` | array | The ids returned from the vector search operation |
-| [Items](#items) | `items` | array | The items returned from the vector search operation |
-| [Metadata](#metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| [Items](#query-items) | `items` | array | The items returned from the vector search operation |
+| [Metadata](#query-metadata) | `metadata` | array | The metadata returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
 
 

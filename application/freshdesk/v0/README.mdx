@@ -111,7 +111,7 @@ Get ticket using ID
 | Next Response Escalated (optional) | `next-response-escalated` | boolean | Set to true if the ticket has been escalated as the result of next response time being breached |
 | Created At | `created-at` | string | Timestamp that denotes when the ticket/conversation was created. In UTC format. |
 | Updated At | `updated-at` | string | Timestamp that denotes when the ticket was last updated. In UTC format. |
-| [Attachments](#attachments) (optional) | `attachments` | array[object] | Ticket attachments (cannot be more than 20MB) |
+| [Attachments](#get-ticket-attachments) (optional) | `attachments` | array[object] | Ticket attachments (cannot be more than 20MB) |
 | Sentiment Score (optional) | `sentiment-score` | integer | Freshdesk uses AI to assess the emotional tone and attitude expressed in customer interaction. |
 | Initial Sentiment Score (optional) | `initial-sentiment-score` | integer | The initial sentiment score of the ticket |
 | Custom Fields (optional) | `custom-fields` | object | Custom fields that the ticket have. Custom fields can be created or modified in Admin -> Ticket Fields |
@@ -124,7 +124,7 @@ Get ticket using ID
 
 
 
-#### Attachments
+<h4 id="get-ticket-attachments">Attachments</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -279,7 +279,7 @@ Get all the conversations in a ticket. (Conversations are replies and notes that
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Conversations](#conversations) | `conversations` | array[object] | An array of conversations |
+| [Conversations](#get-all-conversations-conversations) | `conversations` | array[object] | An array of conversations |
 | Conversations Length | `conversations-length` | integer | Number of conversations |
 
 
@@ -290,7 +290,7 @@ Get all the conversations in a ticket. (Conversations are replies and notes that
 
 
 
-#### Conversations
+<h4 id="get-all-conversations-conversations">Conversations</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -352,7 +352,7 @@ Get contact using ID
 | Deleted (optional) | `deleted` | boolean | Set to true if the contact is deleted |
 | Active (optional) | `active` | boolean | Set to true if the contact has been verified |
 | Other Emails (optional) | `other-emails` | array[string] | List of other email addresses of the contact |
-| [Other Companies](#other-companies) (optional) | `other-companies` | array[object] | List of other companies to which the contact belongs |
+| [Other Companies](#get-contact-other-companies) (optional) | `other-companies` | array[object] | List of other companies to which the contact belongs |
 | Other Phone Numbers (optional) | `other-phone-numbers` | array[string] | List of other phone numbers of the contact |
 | Created At (optional) | `created-at` | string | Timestamp that denotes when the contact was created. In UTC format. |
 | Updated At (optional) | `updated-at` | string | Timestamp that denotes when the contact was last updated. In UTC format. |
@@ -366,7 +366,7 @@ Get contact using ID
 
 
 
-#### Other Companies
+<h4 id="get-contact-other-companies">Other Companies</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |

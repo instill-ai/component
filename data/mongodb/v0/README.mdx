@@ -101,7 +101,7 @@ Perform an insert many operation
 | Database Name (required) | `database-name` | string | The name of the database in MongoDB |
 | Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
 | Array ID | `array-id` | array[string] | The array of id |
-| [Data](#data) (required) | `array-data` | array[object] | The array data to be inserted |
+| [Data](#insert-many-data) (required) | `array-data` | array[object] | The array data to be inserted |
 
 
 
@@ -157,7 +157,7 @@ Perform a find operation
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Result](#result) | `result` | object | Result of the find operation |
+| [Result](#find-result) | `result` | object | Result of the find operation |
 | Status | `status` | string | Find status |
 
 
@@ -168,12 +168,12 @@ Perform a find operation
 
 
 
-#### Result
+<h4 id="find-result">Result</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Metadata](#metadata) | `data` | array | The data returned from the find operation |
-| [Documents](#documents) | `documents` | array | The documents returned from the find operation |
+| [Metadata](#find-metadata) | `data` | array | The data returned from the find operation |
+| [Documents](#find-documents) | `documents` | array | The documents returned from the find operation |
 | IDs | `ids` | array | The ids returned from the find operation |
 
 
@@ -416,7 +416,7 @@ Perform a vector search operation
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Result](#result) | `result` | object | Result of the vector search operation |
+| [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
 
 
@@ -427,13 +427,13 @@ Perform a vector search operation
 
 
 
-#### Result
+<h4 id="vector-search-result">Result</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Documents](#documents) | `documents` | array | The documents returned from the vector search operation |
+| [Documents](#vector-search-documents) | `documents` | array | The documents returned from the vector search operation |
 | IDs | `ids` | array | The ids returned from the vector search operation |
-| [Metadata](#metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
 
 

@@ -84,7 +84,7 @@ Search for documents in Elasticsearch, support full text search
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Search operation status |
-| [Result](#result) | `result` | object | Result of the search operation |
+| [Result](#search-result) | `result` | object | Result of the search operation |
 
 
 
@@ -94,12 +94,12 @@ Search for documents in Elasticsearch, support full text search
 
 
 
-#### Result
+<h4 id="search-result">Result</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Data](#data) | `data` | array | The data returned from the search operation |
-| [Documents](#documents) | `documents` | array | The documents returned from the search operation |
+| [Data](#search-data) | `data` | array | The data returned from the search operation |
+| [Documents](#search-documents) | `documents` | array | The documents returned from the search operation |
 | IDs | `ids` | array | The ids returned from the search operation |
 
 
@@ -148,7 +148,7 @@ Search for vector similarity search in Elasticsearch
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Search operation status |
-| [Result](#result) | `result` | object | Result of the vector search operation |
+| [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 
 
 
@@ -158,13 +158,13 @@ Search for vector similarity search in Elasticsearch
 
 
 
-#### Result
+<h4 id="vector-search-result">Result</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| [Documents](#documents) | `documents` | array | The documents returned from the vector search operation |
+| [Documents](#vector-search-documents) | `documents` | array | The documents returned from the vector search operation |
 | IDs | `ids` | array | The ids returned from the vector search operation |
-| [Metadata](#metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
 
 
@@ -226,7 +226,7 @@ Index multiple documents into Elasticsearch with bulk API
 | Task ID (required) | `task` | string | `TASK_MULTI_INDEX` |
 | Index Name (required) | `index-name` | string | Name of the Elasticsearch index |
 | Array ID | `array-id` | array[string] | The array of id |
-| [Array Data](#array-data) (required) | `array-data` | array[object] | Array data to be indexed |
+| [Array Data](#multi-index-array-data) (required) | `array-data` | array[object] | Array data to be indexed |
 
 
 

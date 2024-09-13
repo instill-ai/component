@@ -39,7 +39,7 @@ Chunk text with different strategies
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CHUNK_TEXT` |
 | Text (required) | `text` | string | Text to be chunked |
-| [Strategy](#strategy) (required) | `strategy` | object | Chunking strategy |
+| [Strategy](#chunk-text-strategy) (required) | `strategy` | object | Chunking strategy |
 
 
 
@@ -48,65 +48,71 @@ Chunk text with different strategies
 
 
 
-#### Strategy
+<h4 id="chunk-text-strategy">Strategy</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Setting | `setting` | object | Chunk Setting  |
+| [Setting](#chunk-text-setting) | `setting` | object | Chunk Setting  |
+
+
+
+
 
 
 
 </details>
+
 
 
 
 
 <details>
-<summary> Setting </summary>
+<summary>The <code>setting</code> Object </summary>
 
-#### Setting
+<h4 id="chunk-text-setting">Setting</h4>
 
 `setting` must fulfill one of the following schemas:
 
 
-##### Token
+##### `Token`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Allowed Special Tokens | `allowed-special` | array |  A list of special tokens that are allowed within chunks.   |
-| Chunk Method | `chunk-method` | string |  Must be "Token"   |
+| Chunk Method | `chunk-method` | string |  Must be `"Token"`   |
 | Chunk Overlap | `chunk-overlap` | integer |  Determines the number of tokens that overlap between consecutive chunks   |
 | Chunk Size | `chunk-size` | integer |  Specifies the maximum size of each chunk in terms of the number of tokens   |
 | Disallowed Special Tokens | `disallowed-special` | array |  A list of special tokens that should not appear within chunks.   |
-| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details> <summary>Enum: </summary><ul><li>gpt-4</li><li>gpt-3.5-turbo</li><li>text-davinci-003</li><li>text-davinci-002</li><li>text-davinci-001</li><li>text-curie-001</li><li>text-babbage-001</li><li>text-ada-001</li><li>davinci</li><li>curie</li><li>babbage</li><li>ada</li><li>code-davinci-002</li><li>code-davinci-001</li><li>code-cushman-002</li><li>code-cushman-001</li><li>davinci-codex</li><li>cushman-codex</li><li>text-davinci-edit-001</li><li>code-davinci-edit-001</li><li>text-embedding-ada-002</li><li>text-similarity-davinci-001</li><li>text-similarity-curie-001</li><li>text-similarity-babbage-001</li><li>text-similarity-ada-001</li><li>text-search-davinci-doc-001</li><li>text-search-curie-doc-001</li><li>text-search-babbage-doc-001</li><li>text-search-ada-doc-001</li><li>code-search-babbage-code-001</li><li>code-search-ada-code-001</li><li>gpt2</li></ul></details>  |
+| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li><li>`text-davinci-003`</li><li>`text-davinci-002`</li><li>`text-davinci-001`</li><li>`text-curie-001`</li><li>`text-babbage-001`</li><li>`text-ada-001`</li><li>`davinci`</li><li>`curie`</li><li>`babbage`</li><li>`ada`</li><li>`code-davinci-002`</li><li>`code-davinci-001`</li><li>`code-cushman-002`</li><li>`code-cushman-001`</li><li>`davinci-codex`</li><li>`cushman-codex`</li><li>`text-davinci-edit-001`</li><li>`code-davinci-edit-001`</li><li>`text-embedding-ada-002`</li><li>`text-similarity-davinci-001`</li><li>`text-similarity-curie-001`</li><li>`text-similarity-babbage-001`</li><li>`text-similarity-ada-001`</li><li>`text-search-davinci-doc-001`</li><li>`text-search-curie-doc-001`</li><li>`text-search-babbage-doc-001`</li><li>`text-search-ada-doc-001`</li><li>`code-search-babbage-code-001`</li><li>`code-search-ada-code-001`</li><li>`gpt2`</li></ul></details>  |
 
 
 
-##### Recursive
+##### `Recursive`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Chunk Method | `chunk-method` | string |  Must be "Recursive"   |
+| Chunk Method | `chunk-method` | string |  Must be `"Recursive"`   |
 | Chunk Overlap | `chunk-overlap` | integer |  Determines the number of tokens that overlap between consecutive chunks   |
 | Chunk Size | `chunk-size` | integer |  Specifies the maximum size of each chunk in terms of the number of tokens   |
 | Keep Separator | `keep-separator` | boolean |  A flag indicating whether to keep the separator characters at the beginning or end of chunks   |
-| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details> <summary>Enum: </summary><ul><li>gpt-4</li><li>gpt-3.5-turbo</li><li>text-davinci-003</li><li>text-davinci-002</li><li>text-davinci-001</li><li>text-curie-001</li><li>text-babbage-001</li><li>text-ada-001</li><li>davinci</li><li>curie</li><li>babbage</li><li>ada</li><li>code-davinci-002</li><li>code-davinci-001</li><li>code-cushman-002</li><li>code-cushman-001</li><li>davinci-codex</li><li>cushman-codex</li><li>text-davinci-edit-001</li><li>code-davinci-edit-001</li><li>text-embedding-ada-002</li><li>text-similarity-davinci-001</li><li>text-similarity-curie-001</li><li>text-similarity-babbage-001</li><li>text-similarity-ada-001</li><li>text-search-davinci-doc-001</li><li>text-search-curie-doc-001</li><li>text-search-babbage-doc-001</li><li>text-search-ada-doc-001</li><li>code-search-babbage-code-001</li><li>code-search-ada-code-001</li><li>gpt2</li></ul></details>  |
+| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li><li>`text-davinci-003`</li><li>`text-davinci-002`</li><li>`text-davinci-001`</li><li>`text-curie-001`</li><li>`text-babbage-001`</li><li>`text-ada-001`</li><li>`davinci`</li><li>`curie`</li><li>`babbage`</li><li>`ada`</li><li>`code-davinci-002`</li><li>`code-davinci-001`</li><li>`code-cushman-002`</li><li>`code-cushman-001`</li><li>`davinci-codex`</li><li>`cushman-codex`</li><li>`text-davinci-edit-001`</li><li>`code-davinci-edit-001`</li><li>`text-embedding-ada-002`</li><li>`text-similarity-davinci-001`</li><li>`text-similarity-curie-001`</li><li>`text-similarity-babbage-001`</li><li>`text-similarity-ada-001`</li><li>`text-search-davinci-doc-001`</li><li>`text-search-curie-doc-001`</li><li>`text-search-babbage-doc-001`</li><li>`text-search-ada-doc-001`</li><li>`code-search-babbage-code-001`</li><li>`code-search-ada-code-001`</li><li>`gpt2`</li></ul></details>  |
 | Separators | `separators` | array |  A list of strings representing the separators used to split the text.   |
 
 
 
-##### Markdown
+##### `Markdown`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Chunk Method | `chunk-method` | string |  Must be "Markdown"   |
+| Chunk Method | `chunk-method` | string |  Must be `"Markdown"`   |
 | Chunk Overlap | `chunk-overlap` | integer |  Determines the number of tokens that overlap between consecutive chunks   |
 | Chunk Size | `chunk-size` | integer |  Specifies the maximum size of each chunk in terms of the number of tokens   |
 | Code Blocks | `code-blocks` | boolean |  A flag indicating whether code blocks should be treated as a single unit   |
-| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details> <summary>Enum: </summary><ul><li>gpt-4</li><li>gpt-3.5-turbo</li><li>text-davinci-003</li><li>text-davinci-002</li><li>text-davinci-001</li><li>text-curie-001</li><li>text-babbage-001</li><li>text-ada-001</li><li>davinci</li><li>curie</li><li>babbage</li><li>ada</li><li>code-davinci-002</li><li>code-davinci-001</li><li>code-cushman-002</li><li>code-cushman-001</li><li>davinci-codex</li><li>cushman-codex</li><li>text-davinci-edit-001</li><li>code-davinci-edit-001</li><li>text-embedding-ada-002</li><li>text-similarity-davinci-001</li><li>text-similarity-curie-001</li><li>text-similarity-babbage-001</li><li>text-similarity-ada-001</li><li>text-search-davinci-doc-001</li><li>text-search-curie-doc-001</li><li>text-search-babbage-doc-001</li><li>text-search-ada-doc-001</li><li>code-search-babbage-code-001</li><li>code-search-ada-code-001</li><li>gpt2</li></ul></details>  |
+| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li><li>`text-davinci-003`</li><li>`text-davinci-002`</li><li>`text-davinci-001`</li><li>`text-curie-001`</li><li>`text-babbage-001`</li><li>`text-ada-001`</li><li>`davinci`</li><li>`curie`</li><li>`babbage`</li><li>`ada`</li><li>`code-davinci-002`</li><li>`code-davinci-001`</li><li>`code-cushman-002`</li><li>`code-cushman-001`</li><li>`davinci-codex`</li><li>`cushman-codex`</li><li>`text-davinci-edit-001`</li><li>`code-davinci-edit-001`</li><li>`text-embedding-ada-002`</li><li>`text-similarity-davinci-001`</li><li>`text-similarity-curie-001`</li><li>`text-similarity-babbage-001`</li><li>`text-similarity-ada-001`</li><li>`text-search-davinci-doc-001`</li><li>`text-search-curie-doc-001`</li><li>`text-search-babbage-doc-001`</li><li>`text-search-ada-doc-001`</li><li>`code-search-babbage-code-001`</li><li>`code-search-ada-code-001`</li><li>`gpt2`</li></ul></details>  |
 
 
 </details>
+
 
 
 
@@ -116,7 +122,7 @@ Chunk text with different strategies
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Token Count | `token-count` | integer | Total count of tokens in the original input text |
-| [Text Chunks](#text-chunks) | `text-chunks` | array[object] | Text chunks after splitting |
+| [Text Chunks](#chunk-text-text-chunks) | `text-chunks` | array[object] | Text chunks after splitting |
 | Number of Text Chunks | `chunk-num` | integer | Total number of output text chunks |
 | Token Count Chunks | `chunks-token-count` | integer | Total count of tokens in the output text chunks |
 
@@ -128,7 +134,7 @@ Chunk text with different strategies
 
 
 
-#### Text Chunks
+<h4 id="chunk-text-text-chunks">Text Chunks</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |

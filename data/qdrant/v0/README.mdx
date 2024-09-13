@@ -80,7 +80,7 @@ Perform a vector search on a collection
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| [Result](#result) | `result` | object | Result of the vector search operation |
+| [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
 
 
@@ -91,13 +91,13 @@ Perform a vector search on a collection
 
 
 
-#### Result
+<h4 id="vector-search-result">Result</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | IDs | `ids` | array | The ids returned from the vector search operation |
-| [Metadata](#metadata) | `metadata` | array | The metadata returned from the vector search operation |
-| [Points](#points) | `points` | array | The points returned from the vector search operation |
+| [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| [Points](#vector-search-points) | `points` | array | The points returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
 
 
@@ -127,7 +127,7 @@ Insert multiple vector points into a collection
 | Task ID (required) | `task` | string | `TASK_BATCH_UPSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the point into |
 | Array ID (required) | `array-id` | array[string] | The array of id |
-| [Array Metadata](#array-metadata) | `array-metadata` | array[object] | The array of vector metadata payload |
+| [Array Metadata](#batch-upsert-array-metadata) | `array-metadata` | array[object] | The array of vector metadata payload |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
 | Ordering | `ordering` | string | The ordering guarantees of the batch upsert |
 
