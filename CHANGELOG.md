@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.27.4-beta](https://github.com/instill-ai/component/compare/v0.27.3-beta...v0.27.4-beta) (2024-09-13)
+
+
+### Features
+
+* **openai:** add support for o1-series models ([#338](https://github.com/instill-ai/component/issues/338)) ([7048854](https://github.com/instill-ai/component/commit/7048854083b1d462d6b22bb74881d9c7ccfa2a72))
+
+
+### Bug Fixes
+
+* **text:** fix bugs for short file ([#340](https://github.com/instill-ai/component/issues/340)) ([23966e3](https://github.com/instill-ai/component/commit/23966e37bf813d4c88d46342e69666508d004419))
+
+
+### Miscellaneous Chores
+
+* release v0.27.4-beta ([24aba44](https://github.com/instill-ai/component/commit/24aba44fe3dd094378cc462806a8df8a9691db38))
+
 ## [0.27.3-beta](https://github.com/instill-ai/component/compare/v0.27.2-beta...v0.27.3-beta) (2024-09-12)
 
 
