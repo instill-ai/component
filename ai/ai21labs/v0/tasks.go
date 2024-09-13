@@ -142,10 +142,16 @@ func (e *execution) TaskTextEmbeddings(in *structpb.Struct) (*structpb.Struct, e
 		return nil, err
 	}
 
+	scriptOutput, err := getTokenCountWithPythonScript(input.Text, "jamba-1.5-mini") // need clarification on model, we are not sure if this is the correct model check : https://docs.ai21.com/reference/embeddings-ref
+
+	if err != nil {
+		return nil, err
+	}
+
 	output := TaskTextEmbeddingsOutput{
 		Embedding: resp.Results[0].Embedding,
 		Usage: ai.EmbeddingTextModelUsage{
-			Tokens: len(input.Text) / 2, // IMPORTANT: this is a rough estimate, but the embedding API does not return token counts for now (2024-07-21)
+			Tokens: scriptOutput.TokenCount,
 		},
 	}
 	return base.ConvertToStructpb(output)

@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	cfgAPIKey = "api-key"
-	baseURL   = "https://api.ai21.com/"
+	cfgAPIKey                = "api-key"
+	baseURL                  = "https://api.ai21.com/"
+	pythonInterpreter string = "/opt/venv/bin/python"
 )
 
 const ()
@@ -27,6 +28,9 @@ var (
 	setupJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
+
+	//go:embed python/AI21labsTokenizer.py
+	pythonAI21labsTokenizer string
 
 	once sync.Once
 	comp *component
