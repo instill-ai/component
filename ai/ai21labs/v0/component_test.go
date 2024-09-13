@@ -9,7 +9,6 @@ import (
 
 	qt "github.com/frankban/quicktest"
 	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/mock"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
 	"go.uber.org/zap"
@@ -114,7 +113,7 @@ func TestComponent_Connection(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := cmp.CreateExecution(base.ComponentExecution{
+		e, err := cmp.CreateExecution(base.ComponentExecution{
 			Component: cmp,
 			Task:      "TASK_TEXT_GENERATION_CHAT",
 			Setup:     setup,
@@ -122,14 +121,15 @@ func TestComponent_Connection(t *testing.T) {
 		c.Assert(err, qt.IsNil)
 		pbIn := new(structpb.Struct)
 
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 			return nil
 		})
 
-		err = exec.Execute(ctx, ir, ow)
+		eh.ErrorMock.Optional()
+
+		err = e.Execute(ctx, []*base.Job{job})
 		c.Assert(err, qt.IsNil)
 
 	})
@@ -144,22 +144,23 @@ func TestComponent_Connection(t *testing.T) {
 		})
 		c.Assert(err, qt.IsNil)
 
-		exec, err := cmp.CreateExecution(base.ComponentExecution{
+		e, err := cmp.CreateExecution(base.ComponentExecution{
 			Component: cmp,
 			Task:      "TASK_TEXT_GENERATION_CHAT",
 			Setup:     setup,
 		})
 		c.Assert(err, qt.IsNil)
 		pbIn := new(structpb.Struct)
-		ir := mock.NewInputReaderMock(c)
-		ow := mock.NewOutputWriterMock(c)
-		ir.ReadMock.Return([]*structpb.Struct{pbIn}, nil)
-		ow.WriteMock.Optional().Set(func(ctx context.Context, outputs []*structpb.Struct) (err error) {
+		ir, ow, eh, job := base.GenerateMockJob(c)
+		ir.ReadMock.Return(pbIn, nil)
+		ow.WriteMock.Optional().Set(func(ctx context.Context, output *structpb.Struct) (err error) {
 			return nil
 		})
 
-		err = exec.Execute(ctx, ir, ow)
-		c.Assert(err, qt.IsNotNil)
+		eh.ErrorMock.Optional()
+
+		err = e.Execute(ctx, []*base.Job{job})
+		c.Assert(err, qt.IsNil)
 
 		want := "AI21labs responded with a 401 status code. Incorrect API key provided."
 		c.Check(errmsg.Message(err), qt.Equals, want)
