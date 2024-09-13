@@ -60,7 +60,7 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
-| {{ AnchorObjectTitle $prop }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be "{{ $prop.Const }}" {{ else }} {{ $prop.Description }}  {{ end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
+| {{ AnchorObjectTitle $prop }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be `"{{ $prop.Const }}"` {{ else }} {{ $prop.Description }}  {{ end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
 {{ end }}
 </details>
 {{ end }}
@@ -110,7 +110,7 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
-| {{ AnchorObjectTitle $prop }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be "{{ $prop.Const }}" {{ else }} {{ $prop.Description }} {{ end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
+| {{ AnchorObjectTitle $prop }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be `"{{ $prop.Const }}"` {{ else }} {{ $prop.Description }} {{ end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
 {{ end }}
 {{ end }}
 </details>

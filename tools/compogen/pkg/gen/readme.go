@@ -517,20 +517,16 @@ func firstToLower(s string) string {
 func enumValues(enum []string) string {
 	length := len(enum)
 	var result string
-	if length <= 5 {
-		result = "<br/>Enum: <br/><ul>"
-	} else {
-		result = "<br/><details> <summary>Enum: </summary><ul>"
-	}
+	result = "<br/><details> <summary><strong>Enum values</strong>: </summary><ul>"
+
 	for i, e := range enum {
-		result += fmt.Sprintf("<li>%s</li>", e)
+		result += fmt.Sprintf("<li>`%s`</li>", e)
 		if i == length-1 {
 			result += "</ul>"
 		}
 	}
-	if length > 5 {
-		result += "</details>"
-	}
+	result += "</details>"
+
 	return result
 }
 
