@@ -31,6 +31,7 @@ func TestObjectSchema_Validate(t *testing.T) {
 				},
 			},
 			Required: []string{"a"},
+			Title:   "Object Schema",
 		}
 	}
 
