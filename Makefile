@@ -9,24 +9,6 @@ gen-mock:
 	@go install github.com/gojuno/minimock/v3/cmd/minimock@v3.3.13
 	@go generate -run minimock ./...
 
-# For the future compogen developer, they can use this command to generate the documentation for the component by modified compogen tool.
-# t stands for type of component and c stands for component name
-# Example: make local-gen-doc t=application c=slack
-local-gen-doc:
-	@if [ -z "$(t)" ] && [ -z "$(c)" ]; then \
-		cd ./tools/compogen && go install .; \
-		cd ../..; \
-		go generate -run compogen ./...; \
-	elif [ -z "$(c)" ]; then \
-		cd ./tools/compogen && go install .; \
-		cd ../../${t}; \
-		go generate -run compogen ./...; \
-	else \
-		cd ./tools/compogen && go install .; \
-		cd ../..; \
-		go generate -run compogen ./${t}/${c}/v0; \
-	fi
-
 test:
 # Install tesseract via `brew install tesseract`
 # Setup `export LIBRARY_PATH="/opt/homebrew/lib"` `export CPATH="/opt/homebrew/include"`
