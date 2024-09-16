@@ -126,7 +126,9 @@
                     "chunk-method": {
                       "const": "Token",
                       "type": "string",
-                      "title": "Chunk Method"
+                      "title": "Chunk Method",
+                      "description": "Chunking based on tokenization.",
+                      "instillUIOrder": 0
                     },
                     "chunk-size": {
                       "$ref": "#/$defs/chunk-size"
@@ -195,7 +197,9 @@
                     "chunk-method": {
                       "const": "Recursive",
                       "type": "string",
-                      "title": "Chunk Method"
+                      "title": "Chunk Method",
+                      "description": "Chunking based on recursive splitting.",
+                      "instillUIOrder": 0
                     },
                     "chunk-size": {
                       "$ref": "#/$defs/chunk-size"
@@ -259,7 +263,9 @@
                     "chunk-method": {
                       "const": "Markdown",
                       "type": "string",
-                      "title": "Chunk Method"
+                      "title": "Chunk Method",
+                      "description": "Chunking based on recursive splitting with markdown format.",
+                      "instillUIOrder": 0
                     },
                     "chunk-size": {
                       "$ref": "#/$defs/chunk-size"
