@@ -28,6 +28,8 @@ The component configuration is defined and maintained [here](https://github.com/
 
 
 
+
+
 ## Supported Tasks
 
 ### Convert To Markdown
@@ -44,11 +46,20 @@ Convert document to text in Markdown format.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Body | `body` | string | Markdown text converted from the PDF document |
 | Filename (optional) | `filename` | string | The name of the file |
 | Images (optional) | `images` | array[string] | Images extracted from the document |
+
+
+
 
 
 
@@ -68,6 +79,12 @@ Convert document to text.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Body | `body` | string | Plain text converted from the document |
@@ -75,6 +92,9 @@ Convert document to text.
 | Meta | `meta` | object | Metadata extracted from the document |
 | MSecs | `msecs` | number | Time taken to convert the document |
 | Error | `error` | string | Error message if any during the conversion process |
+
+
+
 
 
 
@@ -94,10 +114,19 @@ Convert PDF to images.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Images | `images` | array[string] | Images converted from the PDF document |
 | Filenames (optional) | `filenames` | array[string] | The filenames of the images. The filenames will be appended with the page number. e.g. 'example-1.jpg' |
+
+
+
 
 
 

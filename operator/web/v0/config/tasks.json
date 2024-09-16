@@ -251,24 +251,28 @@
                 "description": "The URL of the webpage",
                 "instillFormat": "string",
                 "title": "URL",
+                "instillUIOrder": 0,
                 "type": "string"
               },
               "lastmod": {
                 "description": "The last modified time of the webpage with ISO 8601 format",
                 "instillFormat": "string",
                 "title": "Last Modified",
+                "instillUIOrder": 1,
                 "type": "string"
               },
               "changefreq": {
                 "description": "The change frequency of the webpage",
                 "instillFormat": "string",
                 "title": "Change Frequency",
+                "instillUIOrder": 2,
                 "type": "string"
               },
               "priority": {
                 "description": "The priority of the webpage",
                 "instillFormat": "number",
                 "title": "Priority",
+                "instillUIOrder": 3,
                 "type": "number"
               }
             },
@@ -423,18 +427,21 @@
               "description": "The title of the webpage",
               "instillFormat": "string",
               "title": "Title",
+              "instillUIOrder": 0,
               "type": "string"
             },
             "description": {
               "description": "The description of the webpage",
               "instillFormat": "string",
               "title": "Description",
+              "instillUIOrder": 1,
               "type": "string"
             },
             "source-url": {
               "description": "The source URL of the webpage",
               "instillFormat": "string",
               "title": "Source URL",
+              "instillUIOrder": 2,
               "type": "string"
             }
           },

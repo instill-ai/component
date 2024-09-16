@@ -43,8 +43,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key | `api-key` | string | Fill in your OpenAI API key. To find your keys, visit your OpenAI's API Keys page. |
-| Organization ID | `organization` | string | Specify which organization is used for the requests. Usage will count against the specified organization's subscription quota. |
+| API Key | `api-key` | string | Fill in your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.  |
+| Organization ID | `organization` | string | Specify which organization is used for the requests. Usage will count against the specified organization's subscription quota.  |
+
+
 
 
 
@@ -63,21 +65,123 @@ Provide text outputs in response to their inputs.
 | Prompt (required) | `prompt` | string | The prompt text |
 | System message | `system-message` | string | The system message helps set the behavior of the assistant. For example, you can modify the personality of the assistant or provide specific instructions about how it should behave throughout the conversation. By default, the model’s behavior is using a generic message as "You are a helpful assistant." |
 | Image | `images` | array[string] | The images |
-| Chat history | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
+| [Chat history](#text-generation-chat-history) | `chat-history` | array[object] | Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}. |
 | Temperature | `temperature` | number | What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.  We generally recommend altering this or `top-p` but not both.  |
 | N | `n` | integer | How many chat completion choices to generate for each input message. Note that you will be charged based on the number of generated tokens across all of the choices. Keep `n` as `1` to minimize costs. |
 | Max Tokens | `max-tokens` | integer | The maximum number of tokens that can be generated in the chat completion.  The total length of input tokens and generated tokens is limited by the model's context length. |
-| Response Format | `response-format` | object | Response format. |
+| [Response Format](#text-generation-response-format) | `response-format` | object | Response format. |
 | Top P | `top-p` | number | An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.  We generally recommend altering this or `temperature` but not both.  |
 | Presence Penalty | `presence-penalty` | number | Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. |
 | Frequency Penalty | `frequency-penalty` | number | Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. |
 
 
 
+<details>
+<summary> Input Objects in Text Generation</summary>
+
+
+
+<h4 id="text-generation-chat-history">Chat history</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| [Content](#text-generation-content) | `content` | array | The message content  |
+| Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+
+
+
+
+
+<h4 id="text-generation-content">Content</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| [Image URL](#text-generation-image-url) | `image-url` | object | The image URL  |
+| Text | `text` | string | The text content.  |
+| Type | `type` | string | The type of the content part.  <br/><details><summary><strong>Enum values</strong></summary><ul><li>`text`</li><li>`image-url`</li></ul></details>  |
+
+
+
+
+
+<h4 id="text-generation-image-url">Image URL</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| URL | `url` | string | Either a URL of the image or the base64 encoded image data.  |
+
+
+
+</details>
+
+
+
+
+
+<details>
+<summary>The <code>response-format</code> Object </summary>
+
+<h4 id="text-generation-response-format">Response Format</h4>
+
+`response-format` must fulfill one of the following schemas:
+
+
+##### `Text`
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Type | `type` | string |  Must be `"text"`   |
+
+
+
+##### `JSON Object`
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Type | `type` | string |  Must be `"json_object"`   |
+
+
+
+##### `JSON Schema`
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| JSON Schema | `json-schema` | string |  Set up the schema of the structured output.   |
+| Type | `type` | string |  Must be `"json_schema"`   |
+
+
+</details>
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Texts | `texts` | array[string] | Texts |
-| Usage (optional) | `usage` | object | Usage statistics related to the query |
+| [Usage](#text-generation-usage) (optional) | `usage` | object | Usage statistics related to the query |
+
+
+
+
+<details>
+<summary> Output Objects in Text Generation</summary>
+
+
+
+<h4 id="text-generation-usage">Usage</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Completion tokens | `completion-tokens` | integer | Total number of tokens used (completion) |
+| Prompt tokens | `prompt-tokens` | integer | Total number of tokens used (prompt) |
+| Total tokens | `total-tokens` | integer | Total number of tokens used (prompt + completion) |
+
+
+
+</details>
 
 
 
@@ -98,9 +202,18 @@ Turn text into numbers, unlocking use cases like search.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Embedding | `embedding` | array[number] | Embedding of the input text |
+
+
+
 
 
 
@@ -123,9 +236,18 @@ Turn audio into text.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Generated text |
+
+
+
 
 
 
@@ -148,9 +270,18 @@ Turn text into lifelike spoken audio
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Audio (optional) | `audio` | string | AI generated audio |
+
+
+
 
 
 
@@ -174,9 +305,34 @@ Generate or manipulate images with DALL·E.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Images | `results` | array[object] | Generated results |
+| [Images](#text-to-image-images) | `results` | array[object] | Generated results |
+
+
+
+
+<details>
+<summary> Output Objects in Text To Image</summary>
+
+
+
+<h4 id="text-to-image-images">Images</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Generated Image | `image` | string | Generated image |
+| Revised Prompt | `revised-prompt` | string | Revised prompt |
+
+
+
+</details>
 
 
 

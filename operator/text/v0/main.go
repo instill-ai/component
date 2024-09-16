@@ -1,4 +1,4 @@
-//go:generate compogen readme ./config ./README.mdx --extraContents TASK_CHUNK_TEXT=.compogen/extra-chunk-text.mdx
+//go:generate compogen readme ./config ./README.mdx
 package text
 
 import (

@@ -8,17 +8,24 @@
             "properties": {
               "url": {
                 "description": "Either a URL of the image or the base64 encoded image data.",
-                "type": "string"
+                "type": "string",
+                "title": "URL",
+                "instillUIOrder": 0
               }
             },
             "required": [
               "url"
             ],
+            "title": "Image URL",
+            "description": "The image URL",
+            "instillUIOrder": 0,
             "type": "object"
           },
           "text": {
             "description": "The text content.",
             "instillFormat": "string",
+            "title": "Text",
+            "instillUIOrder": 1,
             "type": "string"
           },
           "type": {
@@ -28,6 +35,8 @@
               "image_url"
             ],
             "instillFormat": "string",
+            "title": "Type",
+            "instillUIOrder": 2,
             "type": "string"
           }
         },

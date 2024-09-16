@@ -23,8 +23,11 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "get",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Get Goal",
+                  "instillUIOrder": 0
                 },
                 "goal-gid": {
                   "description": "Globally unique identifier (GID) for the goal. You can find the GID of a goal from the URL of the goal in Asana. For example, if the URL of the goal is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.",
@@ -52,13 +55,19 @@
                 "goal-gid"
               ],
               "instillFormat": "object",
+              "title": "Get",
+              "description": "Get Goal",
+              "instillUIOrder": 0,
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "update",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Update Goal",
+                  "instillUIOrder": 0
                 },
                 "goal-gid": {
                   "description": "Globally unique identifier (GID) for the goal. You can find the GID of a goal from the URL of the goal in Asana. For example, if the URL of the goal is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.",
@@ -195,13 +204,19 @@
                 "status"
               ],
               "instillFormat": "object",
+              "title": "Update",
+              "description": "Update Goal",
+              "instillUIOrder": 0,
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "delete",
-                  "type": "string"
+                  "type": "string",
+                  "instillUIOrder": 0,
+                  "description": "Delete goal."
                 },
                 "goal-gid": {
                   "description": "Globally unique identifier (GID) for the goal. You can find the GID of a goal from the URL of the goal in Asana. For example, if the URL of the goal is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.",
@@ -228,14 +243,20 @@
                 "action",
                 "goal-gid"
               ],
+              "title": "Delete",
+              "description": "Delete Goal.",
+              "instillUIOrder": 0,
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "create",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Create Goal.",
+                  "instillUIOrder": 0
                 },
                 "name": {
                   "description": "The name of the goal.",
@@ -330,6 +351,9 @@
                 "start-on",
                 "liked"
               ],
+              "title": "Create",
+              "description": "Create Goal",
+              "instillUIOrder": 0,
               "instillFormat": "object",
               "type": "object"
             }
@@ -503,8 +527,11 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "get",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Get Task",
+                  "instillUIOrder": 0
                 },
                 "task-gid": {
                   "description": "Globally unique identifier (GID) for the task.",
@@ -531,14 +558,20 @@
                 "action",
                 "task-gid"
               ],
+              "title": "Get",
+              "description": "Get Task",
+              "instillUIOrder": 0,
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "update",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Update Task",
+                  "instillUIOrder": 0
                 },
                 "task-gid": {
                   "description": "Globally unique identifier (GID) for the task.",
@@ -704,14 +737,20 @@
                 "assignee",
                 "parent"
               ],
+              "description": "Update Task",
+              "instillUIOrder": 0,
+              "title": "Update",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "delete",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Delete Task",
+                  "instillUIOrder": 0
                 },
                 "task-gid": {
                   "description": "Globally unique identifier (GID) for the task.",
@@ -738,14 +777,20 @@
                 "action",
                 "task-gid"
               ],
+              "description": "Delete Task",
+              "instillUIOrder": 0,
+              "title": "Delete",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "create",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Create Task",
+                  "instillUIOrder": 0
                 },
                 "name": {
                   "description": "The name of the task.",
@@ -929,14 +974,20 @@
                 "start-at",
                 "due-at"
               ],
+              "description": "Create Task",
+              "instillUIOrder": 0,
+              "title": "Create",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "duplicate",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Duplicate Task",
+                  "instillUIOrder": 0
                 },
                 "task-gid": {
                   "description": "Globally unique identifier (GID) for the task.",
@@ -981,14 +1032,20 @@
                 "task-gid",
                 "name"
               ],
+              "description": "Duplicate Task",
+              "instillUIOrder": 0,
+              "title": "Duplicate",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "set parent",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Set Parent Task",
+                  "instillUIOrder": 0
                 },
                 "task-gid": {
                   "description": "Globally unique identifier (GID) for the task.",
@@ -1033,14 +1090,20 @@
                 "task-gid",
                 "parent"
               ],
+              "description": "Set Parent Task",
+              "instillUIOrder": 0,
+              "title": "Set Parent",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "edit tag",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Edit Tag",
+                  "instillUIOrder": 0
                 },
                 "task-gid": {
                   "description": "Globally unique identifier (GID) for the task.",
@@ -1106,14 +1169,20 @@
                 "tag-gid",
                 "edit-option"
               ],
+              "description": "Edit Tag",
+              "instillUIOrder": 0,
+              "title": "Edit Tag",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "edit follower",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Edit follower.",
+                  "instillUIOrder": 0
                 },
                 "task-gid": {
                   "description": "Globally unique identifier (GID) for the task.",
@@ -1179,14 +1248,20 @@
                 "follower-gid",
                 "edit-option"
               ],
+              "description": "Edit Follower",
+              "instillUIOrder": 0,
+              "title": "Edit Follower",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "edit project",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Edit project.",
+                  "instillUIOrder": 0
                 },
                 "task-gid": {
                   "description": "Globally unique identifier (GID) for the task.",
@@ -1252,6 +1327,9 @@
                 "project-gid",
                 "edit-option"
               ],
+              "description": "Edit Project",
+              "instillUIOrder": 0,
+              "title": "Edit Project",
               "instillFormat": "object",
               "type": "object"
             }
@@ -1467,8 +1545,11 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "get",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Get Project",
+                  "instillUIOrder": 0
                 },
                 "project-gid": {
                   "description": "Globally unique identifier (GID) for the project.",
@@ -1495,14 +1576,20 @@
                 "action",
                 "project-gid"
               ],
+              "description": "Get Project.",
+              "instillUIOrder": 0,
+              "title": "Get",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "update",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Update Project.",
+                  "instillUIOrder": 0
                 },
                 "project-gid": {
                   "description": "Globally unique identifier (GID) for the project.",
@@ -1669,14 +1756,20 @@
                 "privacy-setting",
                 "archived"
               ],
+              "description": "Update Project",
+              "instillUIOrder": 0,
+              "title": "Update",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "delete",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Delete project.",
+                  "instillUIOrder": 0
                 },
                 "project-gid": {
                   "description": "Globally unique identifier (GID) for the project.",
@@ -1703,14 +1796,20 @@
                 "action",
                 "project-gid"
               ],
+              "description": "Delete Project",
+              "instillUIOrder": 0,
+              "title": "Delete",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "create",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Create project.",
+                  "instillUIOrder": 0
                 },
                 "name": {
                   "description": "The name of the project.",
@@ -1845,14 +1944,20 @@
                 "color",
                 "privacy-setting"
               ],
+              "description": "Create Project",
+              "instillUIOrder": 0,
+              "title": "Create",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "duplicate",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Duplicate project.",
+                  "instillUIOrder": 0
                 },
                 "project-gid": {
                   "description": "Globally unique identifier (GID) for the project. You can find the GID of a goal from the URL of the project in Asana. For example, if the URL of the project is https://app.asana.com/0/goal/1234567890, then the GID is 1234567890.",
@@ -1961,6 +2066,9 @@
                 "due-on",
                 "start-on"
               ],
+              "description": "Duplicate Project",
+              "instillUIOrder": 0,
+              "title": "Duplicate",
               "instillFormat": "object",
               "type": "object"
             }
@@ -2207,8 +2315,11 @@
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "get",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Get portfolio.",
+                  "instillUIOrder": 0
                 },
                 "portfolio-gid": {
                   "description": "Globally unique identifier (GID) for the portfolio.",
@@ -2235,14 +2346,20 @@
                 "action",
                 "portfolio-gid"
               ],
+              "description": "Get Portfolio",
+              "instillUIOrder": 0,
+              "title": "Get",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "update",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Update portfolio.",
+                  "instillUIOrder": 0
                 },
                 "portfolio-gid": {
                   "description": "Globally unique identifier (GID) for the portfolio.",
@@ -2355,14 +2472,20 @@
                 "public",
                 "workspace"
               ],
+              "description": "Update Portfolio",
+              "instillUIOrder": 0,
+              "title": "Update",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "delete",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Delete portfolio.",
+                  "instillUIOrder": 0
                 },
                 "portfolio-gid": {
                   "description": "Globally unique identifier (GID) for the portfolio.",
@@ -2389,14 +2512,20 @@
                 "action",
                 "portfolio-gid"
               ],
+              "description": "Delete Portfolio",
+              "instillUIOrder": 0,
+              "title": "Delete",
               "instillFormat": "object",
               "type": "object"
             },
             {
               "properties": {
                 "action": {
+                  "title": "Action",
                   "const": "create",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Create portfolio.",
+                  "instillUIOrder": 0
                 },
                 "name": {
                   "description": "The name of the portfolio.",
@@ -2493,6 +2622,9 @@
                 "public",
                 "workspace"
               ],
+              "description": "Create Portfolio",
+              "instillUIOrder": 0,
+              "title": "Create",
               "instillFormat": "object",
               "type": "object"
             }

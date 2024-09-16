@@ -40,8 +40,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Pinecone AI API key. You can create an api key in Pinecone Console |
-| Pinecone Base URL (required) | `url` | string | Fill in your Pinecone base URL. It is in the form |
+| API Key (required) | `api-key` | string | Fill in your Pinecone AI API key. You can create an api key in Pinecone Console  |
+| Pinecone Base URL (required) | `url` | string | Fill in your Pinecone base URL. It is in the form  |
+
+
 
 
 
@@ -67,10 +69,37 @@ Retrieve the ids of the most similar items in a namespace, along with their simi
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Namespace | `namespace` | string | The namespace of the query |
-| Matches | `matches` | array[object] | The matches returned for the query |
+| [Matches](#query-matches) | `matches` | array[object] | The matches returned for the query |
+
+
+
+
+<details>
+<summary> Output Objects in Query</summary>
+
+
+
+<h4 id="query-matches">Matches</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| ID | `id` | string | The ID of the matched vector |
+| Metadata | `metadata` | object | Metadata |
+| Score | `score` | number | A measure of similarity between this vector and the query vector. The higher the score, the more similar they are. |
+| Values | `values` | array | Vector data values |
+
+
+
+</details>
 
 
 
@@ -92,9 +121,18 @@ Writes vectors into a namespace. If a new value is upserted for an existing vect
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Upserted Count | `upserted-count` | integer | Number of records modified or added |
+
+
+
 
 
 

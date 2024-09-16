@@ -9,13 +9,22 @@ type property struct {
 
 	// If Type is array, Items defines the element type.
 	Items struct {
-		Type string `json:"type"`
+		Type       string              `json:"type"`
+		Properties map[string]property `json:"properties" validate:"omitempty,dive"`
 	} `json:"items"`
+
+	Properties map[string]property `json:"properties" validate:"omitempty,dive"`
+
+	OneOf []objectSchema `json:"oneOf" validate:"dive"`
+	Const string         `json:"const,omitempty"`
+
+	Enum []string `json:"enum,omitempty"`
 
 	Deprecated bool `json:"deprecated"`
 }
 
 type objectSchema struct {
 	Properties map[string]property `json:"properties" validate:"gt=0,dive"`
+	Title      string              `json:"title" validate:"required"`
 	Required   []string            `json:"required"`
 }

@@ -53,7 +53,9 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Token (required) | `token` | string | Fill in your HubSpot private app access token. Go here for [more information](https://developers.hubspot.com/docs/api/private-apps) |
+| Token (required) | `token` | string | Fill in your HubSpot private app access token. Go here for [more information](https://developers.hubspot.com/docs/api/private-apps)  |
+
+
 
 
 
@@ -72,6 +74,12 @@ Get contact information using contact ID or Email
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Owner ID (optional) | `owner-id` | string | The user who is assigned to the object |
@@ -84,6 +92,9 @@ Get contact information using contact ID or Email
 | Lifecycle Stage (optional) | `lifecycle-stage` | string | Lifecycle stages are used to track how contacts or companies move forward in your process. Default format is in small letters, all words are combined. Example: salesqualifiedlead. However, remember to check internal value for custom fields. |
 | Lead Status (optional) | `lead-status` | string | The contact's sales, prospecting or outreach status. Default format is in capital letters, with _ as space. Example: IN_PROGRESS. However, remember to check internal value for custom fields. |
 | Contact ID | `contact-id` | string | Contact ID |
+
+
+
 
 
 
@@ -113,9 +124,18 @@ Create new contact
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Contact ID | `contact-id` | string | Contact ID |
+
+
+
 
 
 
@@ -134,6 +154,12 @@ Get deal information using deal ID
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Owner ID (optional) | `owner-id` | string | The user who is assigned to the object |
@@ -145,6 +171,9 @@ Get deal information using deal ID
 | Close Date (optional) | `close-date` | string | Date the deal was closed. Set automatically by HubSpot. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z |
 | Create Date (optional) | `create-date` | string | Create date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z |
 | Associated Contact IDs (optional) | `associated-contact-ids` | array[string] | Contact IDs associated with the object |
+
+
+
 
 
 
@@ -170,9 +199,18 @@ Create new deal
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Deal ID | `deal-id` | string | Deal ID |
+
+
+
 
 
 
@@ -199,10 +237,19 @@ Update existing deal
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Updated By User ID | `updated-by-user-id` | string | User ID that updated the deal |
 | Updated At | `updated-at` | string | The time when the deal was updated |
+
+
+
 
 
 
@@ -218,6 +265,12 @@ Get company information using company ID
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_COMPANY` |
 | Company ID (required) | `company-id` | string | Input company ID |
+
+
+
+
+
+
 
 
 
@@ -239,6 +292,9 @@ Get company information using company ID
 | Total Revenue (optional) | `total-revenue` | number | Total revenue. Calculated automatically by HubSpot |
 | Linkedin Page (optional) | `linkedin-page` | string | Linkedin page of the company |
 | Associated Contact IDs (optional) | `associated-contact-ids` | array[string] | Contact IDs associated with the object |
+
+
+
 
 
 
@@ -271,9 +327,18 @@ Create new company
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Company ID | `company-id` | string | Company ID |
+
+
+
 
 
 
@@ -292,6 +357,12 @@ Get ticket information using ticket ID
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Owner ID (optional) | `owner-id` | string | The user who is assigned to the object |
@@ -305,6 +376,9 @@ Get ticket information using ticket ID
 | Create Date (optional) | `create-date` | string | Create date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z |
 | Last Modified Date (optional) | `last-modified-date` | string | Last modified date. Format is in ISO 8601. Example: 2024-07-01T11:47:40.388Z |
 | Associated Contact IDs (optional) | `associated-contact-ids` | array[string] | Contact IDs associated with the object |
+
+
+
 
 
 
@@ -330,9 +404,18 @@ Create new ticket
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Ticket ID | `ticket-id` | string | Ticket ID |
+
+
+
 
 
 
@@ -359,9 +442,18 @@ Update existing ticket
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Updated At | `updated-at` | string | The time when the ticket was updated |
+
+
+
 
 
 
@@ -380,10 +472,65 @@ Retrieve all the messages inside a thread (conversation inbox). The messages wil
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Messages | `results` | array[object] | An array of messages |
+| [Messages](#get-thread-messages) | `results` | array[object] | An array of messages |
 | Number of Messages | `no-of-messages` | integer | The number of messages in a thread |
+
+
+
+
+<details>
+<summary> Output Objects in Get Thread</summary>
+
+
+
+<h4 id="get-thread-messages">Messages</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Channel Account ID | `channel-account-id` | string | The ID of an account that is part of the channel-id channel. |
+| Channel ID | `channel-id` | string | The ID of a generic channel returned from the channels endpoint, like 1000 for live chat, 1001 for Facebook Messenger, 1002 for email, etc. |
+| Start Conversation Message | `created-at` | string | message to start a conversation |
+| [Recipients](#get-thread-recipients) | `recipients` | array | Recipients' information |
+| [Sender](#get-thread-sender) | `sender` | object | Sender's information |
+| Subject | `subject` | string | The subject of the message |
+| Text | `text` | string | The content of the message |
+
+
+
+
+
+<h4 id="get-thread-sender">Sender</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Actor ID | `sender-actor-id` | string | The actor ID of the sender |
+| Name | `sender-name` | string | The name of the sender |
+| Type | `sender-type` | string | Specify the category of sender information |
+| Value | `sender-value` | string | Contains the actual sender information (e.g.: email address) |
+
+
+
+
+
+<h4 id="get-thread-recipients">Recipients</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Name | `name` | string | The name of the recipient |
+| Type | `type` | string | Specify the category of recipient information |
+| Value | `value` | string | Contains the actual recipient information (e.g.: email address) |
+
+
+
+</details>
 
 
 
@@ -407,9 +554,18 @@ Insert message into a thread (only support email thread)
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | The message status |
+
+
+
 
 
 
@@ -429,10 +585,19 @@ Get the object IDs associated with contact ID (contact->objects). If you are try
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Object ID Array  | `object-ids` | array[string] | An array of object ID associated with the contact |
 | Object IDs Length | `object-ids-length` | integer | The number of object IDs |
+
+
+
 
 
 
@@ -452,6 +617,12 @@ Get information about HubSpot owner using either owner ID or user ID. For more i
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | First Name | `first-name` | string | First name |
@@ -459,10 +630,30 @@ Get information about HubSpot owner using either owner ID or user ID. For more i
 | Email | `email` | string | Email |
 | Owner ID | `owner-id` | string | Owner ID. Usually used to associate the owner with other objects. |
 | User ID | `user-id` | string | User ID. Usually used to indicate the owner who performed the action. User ID can be seen in Update Deal task output. |
-| Teams (optional) | `teams` | array[object] | The owner's teams information |
+| [Teams](#get-owner-teams) (optional) | `teams` | array[object] | The owner's teams information |
 | Created At | `created-at` | string | Created at |
 | Updated At | `updated-at` | string | Updated at |
 | Archived | `archived` | boolean | Archived |
+
+
+
+
+<details>
+<summary> Output Objects in Get Owner</summary>
+
+
+
+<h4 id="get-owner-teams">Teams</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Team ID | `team-id` | string | The ID of the team |
+| Team Name | `team-name` | string | The name of the team |
+| Team Primary | `team-primary` | boolean | Indicate whether this team is the primary team of the owner |
+
+
+
+</details>
 
 
 
@@ -481,10 +672,19 @@ Get all the IDs for a specific object (e.g. all contact IDs)
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Object ID Array  | `object-ids` | array[string] | An array of object ID |
 | Object IDs Length | `object-ids-length` | integer | The number of object IDs |
+
+
+
 
 
 

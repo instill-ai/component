@@ -46,8 +46,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Zilliz URL Endpoint (required) | `url` | string | Fill in your Zilliz public URL endpoint |
-| Zilliz API Key (required) | `api-key` | string | Fill in your Zilliz API key |
+| Zilliz URL Endpoint (required) | `url` | string | Fill in your Zilliz public URL endpoint  |
+| Zilliz API Key (required) | `api-key` | string | Fill in your Zilliz API key  |
+
+
 
 
 
@@ -75,10 +77,45 @@ Perform a vector search on a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Result | `result` | object | Result of the vector search operation |
+| [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
+
+
+
+
+<details>
+<summary> Output Objects in Vector Search</summary>
+
+
+
+<h4 id="vector-search-result">Result</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| [Data](#vector-search-data) | `data` | array | The points returned from the vector search operation |
+| IDs | `ids` | array | The ids returned from the vector search operation |
+| [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| Vectors | `vectors` | array | The vectors returned from the vector search operation |
+
+
+
+
+
+
+
+
+
+
+
+</details>
 
 
 
@@ -99,9 +136,18 @@ Insert a vector data into a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
+
+
+
 
 
 
@@ -118,13 +164,31 @@ Insert a batch of vector data into a collection
 | Task ID (required) | `task` | string | `TASK_BATCH_UPSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the data into |
 | Partition Name | `partition-name` | string | The name of the partition to upsert the data from. If empty then default partition will be used |
-| Array Data (required) | `array-data` | array[object] | The data |
+| [Array Data](#batch-upsert-array-data) (required) | `array-data` | array[object] | The data |
+
+
+
+<details>
+<summary> Input Objects in Batch Upsert</summary>
+
+
+
+
+
+</details>
+
+
+
+
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch upsert status |
+
+
+
 
 
 
@@ -145,9 +209,18 @@ Delete vector data from a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -173,9 +246,18 @@ Create a collection, please refer to [create-collection-v2](https://docs.zilliz.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create collection status |
+
+
+
 
 
 
@@ -194,9 +276,18 @@ Drop a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop collection status |
+
+
+
 
 
 
@@ -216,9 +307,18 @@ Create a partition in a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create partition status |
+
+
+
 
 
 
@@ -238,9 +338,18 @@ Drop a partition from a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop partition status |
+
+
+
 
 
 

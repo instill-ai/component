@@ -43,10 +43,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Server Address (required) | `server-address` | string | The address of the email server |
-| Server Port (required) | `server-port` | integer | The port of the email server |
-| Email Address (required) | `email-address` | string | The email address of the user |
-| App Password (required) | `password` | string | The password of the App passwords in Gmail settings |
+| Server Address (required) | `server-address` | string | The address of the email server  |
+| Server Port (required) | `server-port` | integer | The port of the email server  |
+| Email Address (required) | `email-address` | string | The email address of the user  |
+| App Password (required) | `password` | string | The password of the App passwords in Gmail settings  |
 
 Supported Provider Samples for Sending Email
 
@@ -76,6 +76,8 @@ For App Password, please follow the steps below:
 
 
 
+
+
 ## Supported Tasks
 
 ### Send Email
@@ -94,9 +96,18 @@ Send an email to recipients
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result | `result` | string | The result of sending the email |
+
+
+
 
 
 
@@ -111,26 +122,62 @@ Read emails from a mailbox
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_READ_EMAILS` |
-| Search | `search` | object | The search criteria for the emails |
+| [Search](#read-emails-search) | `search` | object | The search criteria for the emails |
+
+
+
+<details>
+<summary> Input Objects in Read Emails</summary>
+
+
+
+<h4 id="read-emails-search">Search</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Search Date | `date` | string | Search for emails with the date the email was sent  |
+| Limit | `limit` | integer | The maximum number of emails to search for  |
+| Mailbox | `mailbox` | string | The mailbox to search for emails  |
+| Search Message | `search-email-message` | string | Search for emails with a specific message  |
+| Search From | `search-from` | string | Search for emails from a specific email address  |
+| Search Subject | `search-subject` | string | Search for emails with a specific subject  |
+| Search To | `search-to` | string | Search for emails to a specific email address  |
+
+
+
+</details>
+
+
+
+
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Emails | `emails` | array[object] | The emails that match the search criteria |
+| [Emails](#read-emails-emails) | `emails` | array[object] | The emails that match the search criteria |
 
 
-#### Search object
+
+
+<details>
+<summary> Output Objects in Read Emails</summary>
+
+
+
+<h4 id="read-emails-emails">Emails</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Mailbox (required) | `mailbox` | string | The mailbox you want to fetch from email server |
-| Search Subject | `search-subject` | string | The text you want to search in the subject of the email |
-| Search From | `search-from` | string | The email address you want to search in the from field of the email |
-| Search To | `search-to` | string | The email address you want to search in the to field of the email |
-| Search Date | `search-date` | string | The date you want to search in the email |
-| Search Email Message | `search-email-message` | string | The text you want to search in the email message |
-| Limit | `limit` | integer | The maximum number of emails to search for |
+| Date | `date` | string | The date the email was sent |
+| From | `from` | string | The email address of the sender |
+| Message | `message` | string | The message of the email |
+| Subject | `subject` | string | The subject of the email |
+| To | `to` | array | The email addresses of the recipient |
+
+
+
+</details>
 
 
 #### Mailbox
@@ -148,18 +195,6 @@ Take Gmail as an example, the mailbox names are following.
 #### Search From and Search To
 You need to input the exact same email address with `<` as a prefix and `>` as a suffix as the email you want to search for.
 For example, if you want to search for the email from `email@example.com`, you need to input `<email@example.com>`.
-
-
-
-#### Emails object
-
-| Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |
-| Date | `date` | string | The date of the email |
-| From | `from` | string | The email address of the sender |
-| To | `to` | array[string] | The email address of the recipient |
-| Subject | `subject` | string | The subject of the email |
-| Message | `message` | string | The message of the email |
 
 
 

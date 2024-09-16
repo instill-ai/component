@@ -3,7 +3,7 @@
     "chat-message": {
       "properties": {
         "content": {
-          "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/multi-modal-content",
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/467caa4c05cf75d88e2036555529ecf6aa163b5c/resources/schemas/schema.json#/$defs/instill-types/multi-modal-content",
           "description": "The message content",
           "instillUIOrder": 1,
           "title": "Content"
@@ -217,7 +217,7 @@
       "instillUIOrder": 0,
       "properties": {
         "embedding": {
-          "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/embedding",
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/467caa4c05cf75d88e2036555529ecf6aa163b5c/resources/schemas/schema.json#/$defs/instill-types/embedding",
           "description": "Embedding of the input text",
           "instillUIOrder": 0,
           "title": "Embedding"
@@ -429,31 +429,42 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "const": "text"
+                  "const": "text",
+                  "title": "Type",
+                  "description": "Text",
+                  "instillUIOrder": 0
                 }
               },
               "required": [
                 "type"
               ],
+              "title": "Text",
               "type": "object"
             },
             {
               "properties": {
                 "type": {
                   "type": "string",
-                  "const": "json_object"
+                  "const": "json_object",
+                  "title": "Type",
+                  "description": "JSON Object",
+                  "instillUIOrder": 0
                 }
               },
               "required": [
                 "type"
               ],
+              "title": "JSON Object",
               "type": "object"
             },
             {
               "properties": {
                 "type": {
                   "type": "string",
-                  "const": "json_schema"
+                  "const": "json_schema",
+                  "title": "Type",
+                  "description": "JSON Schema",
+                  "instillUIOrder": 0
                 },
                 "json-schema": {
                   "description": "Set up the schema of the structured output.",
@@ -475,6 +486,7 @@
                 "type",
                 "json-schema"
               ],
+              "title": "JSON Schema",
               "type": "object"
             }
           ],
@@ -574,18 +586,21 @@
               "title": "Total tokens",
               "description": "Total number of tokens used (prompt + completion)",
               "instillFormat": "integer",
+              "instillUIOrder": 0,
               "type": "integer"
             },
             "completion-tokens": {
               "title": "Completion tokens",
               "description": "Total number of tokens used (completion)",
               "instillFormat": "integer",
+              "instillUIOrder": 1,
               "type": "integer"
             },
             "prompt-tokens": {
               "title": "Prompt tokens",
               "description": "Total number of tokens used (prompt)",
               "instillFormat": "integer",
+              "instillUIOrder": 2,
               "type": "integer"
             }
           },
@@ -759,6 +774,7 @@
                 "title": "Generated Image",
                 "description": "Generated image",
                 "instillFormat": "image/webp",
+                "instillUIOrder": 0,
                 "type": "string"
               },
               "revised-prompt": {
@@ -766,6 +782,7 @@
                 "description": "Revised prompt",
                 "instillFormat": "string",
                 "instillUIMultiline": true,
+                "instillUIOrder": 1,
                 "type": "string"
               }
             },

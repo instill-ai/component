@@ -58,7 +58,7 @@
       "instillUIOrder": 0,
       "properties": {
         "messages": {
-          "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/chat-messages",
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/467caa4c05cf75d88e2036555529ecf6aa163b5c/resources/schemas/schema.json#/$defs/instill-types/chat-messages",
           "description": "Messages",
           "instillUIOrder": 0
         }
@@ -159,7 +159,7 @@
       "instillUIOrder": 0,
       "properties": {
         "content": {
-          "$ref": "https://raw.githubusercontent.com/instill-ai/component/d1321e11b3a824c7616296fbe34a4d9cdc73c767/schema.json#/$defs/instill-types/multi-modal-content",
+          "$ref": "https://raw.githubusercontent.com/instill-ai/component/467caa4c05cf75d88e2036555529ecf6aa163b5c/resources/schemas/schema.json#/$defs/instill-types/multi-modal-content",
           "description": "The multi-modal message content",
           "instillAcceptFormats": [
             "structured/multi-modal-content"

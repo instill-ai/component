@@ -48,9 +48,11 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Milvus URL Endpoint (required) | `url` | string | Fill in your Milvus public URL endpoint with port number, e.g http://3.25.202.142:19530 |
-| Milvus Username (required) | `username` | string | Fill in your Milvus username |
-| Milvus Password (required) | `password` | string | Fill in your Milvus password |
+| Milvus URL Endpoint (required) | `url` | string | Fill in your Milvus public URL endpoint with port number, e.g http://3.25.202.142:19530  |
+| Milvus Username (required) | `username` | string | Fill in your Milvus username  |
+| Milvus Password (required) | `password` | string | Fill in your Milvus password  |
+
+
 
 
 
@@ -78,10 +80,45 @@ Perform a vector search on a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Result | `result` | object | Result of the vector search operation |
+| [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
+
+
+
+
+<details>
+<summary> Output Objects in Vector Search</summary>
+
+
+
+<h4 id="vector-search-result">Result</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| [Data](#vector-search-data) | `data` | array | The points returned from the vector search operation |
+| IDs | `ids` | array | The ids returned from the vector search operation |
+| [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| Vectors | `vectors` | array | The vectors returned from the vector search operation |
+
+
+
+
+
+
+
+
+
+
+
+</details>
 
 
 
@@ -102,9 +139,18 @@ Insert a vector data into a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
+
+
+
 
 
 
@@ -121,13 +167,31 @@ Insert a batch of vector data into a collection
 | Task ID (required) | `task` | string | `TASK_BATCH_UPSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the data into |
 | Partition Name | `partition-name` | string | The name of the partition to upsert the data from. If empty then default partition will be used |
-| Array Data (required) | `array-data` | array[object] | The data |
+| [Array Data](#batch-upsert-array-data) (required) | `array-data` | array[object] | The data |
+
+
+
+<details>
+<summary> Input Objects in Batch Upsert</summary>
+
+
+
+
+
+</details>
+
+
+
+
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch upsert status |
+
+
+
 
 
 
@@ -148,9 +212,18 @@ Delete vector data from a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -171,14 +244,32 @@ Create a collectio, please refer to [Create-Collection](https://milvus.io/docs/m
 | Schema | `schema` | object | The schema of the collection |
 | Auto ID | `auto-id` | boolean | Whether to auto generate id |
 | Metric Type | `metric-type` | string | The metric type of the collection |
-| Index Parameters | `index-params` | array[object] | The index parameters to be applied to the collection with milvus index parameters, please refer to [Create](https://milvus.io/api-reference/restful/v2.4.x/v2/Collection%20(v2)/Create.md) |
+| [Index Parameters](#create-collection-index-parameters) | `index-params` | array[object] | The index parameters to be applied to the collection with milvus index parameters, please refer to [Create](https://milvus.io/api-reference/restful/v2.4.x/v2/Collection%20(v2)/Create.md) |
 | Parameters | `params` | object | The parameters to be applied to the collection with milvus parameters, please refer to [Parameters](https://milvus.io/docs/single-vector-search.md#Parameters) |
+
+
+
+<details>
+<summary> Input Objects in Create Collection</summary>
+
+
+
+
+
+</details>
+
+
+
+
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create collection status |
+
+
+
 
 
 
@@ -197,9 +288,18 @@ Drop a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop collection status |
+
+
+
 
 
 
@@ -219,9 +319,18 @@ Create a partition in a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create partition status |
+
+
+
 
 
 
@@ -241,9 +350,18 @@ Drop a partition from a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop partition status |
+
+
+
 
 
 
@@ -263,9 +381,18 @@ Create an index in a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create index status |
+
+
+
 
 
 
@@ -285,9 +412,18 @@ Drop an index from a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop index status |
+
+
+
 
 
 

@@ -21,7 +21,7 @@
       "instillAcceptFormats": [
         "integer"
       ],
-      "instillUIOrder": 0,
+      "instillUIOrder": 1,
       "instillUpstreamTypes": [
         "value",
         "reference"
@@ -36,7 +36,7 @@
       "instillAcceptFormats": [
         "integer"
       ],
-      "instillUIOrder": 1,
+      "instillUIOrder": 2,
       "instillUpstreamTypes": [
         "value",
         "reference"
@@ -84,7 +84,7 @@
       "instillAcceptFormats": [
         "string"
       ],
-      "instillUIOrder": 2,
+      "instillUIOrder": 3,
       "instillUpstreamTypes": [
         "value",
         "reference",
@@ -115,6 +115,8 @@
               "description": "Chunk Setting",
               "additionalProperties": true,
               "type": "object",
+              "title": "Setting",
+              "instillUIOrder": 0,
               "required": [
                 "chunk-method"
               ],
@@ -123,7 +125,10 @@
                   "properties": {
                     "chunk-method": {
                       "const": "Token",
-                      "type": "string"
+                      "type": "string",
+                      "title": "Chunk Method",
+                      "description": "Chunking based on tokenization.",
+                      "instillUIOrder": 0
                     },
                     "chunk-size": {
                       "$ref": "#/$defs/chunk-size"
@@ -184,13 +189,17 @@
                     "allowed-special",
                     "disallowed-special"
                   ],
+                  "title": "Token",
                   "type": "object"
                 },
                 {
                   "properties": {
                     "chunk-method": {
                       "const": "Recursive",
-                      "type": "string"
+                      "type": "string",
+                      "title": "Chunk Method",
+                      "description": "Chunking based on recursive splitting.",
+                      "instillUIOrder": 0
                     },
                     "chunk-size": {
                       "$ref": "#/$defs/chunk-size"
@@ -207,7 +216,7 @@
                       "instillAcceptFormats": [
                         "array:string"
                       ],
-                      "instillUIOrder": 2,
+                      "instillUIOrder": 3,
                       "items": {
                         "instillUIMultiline": false,
                         "type": "string"
@@ -225,7 +234,7 @@
                       "instillAcceptFormats": [
                         "boolean"
                       ],
-                      "instillUIOrder": 3,
+                      "instillUIOrder": 4,
                       "instillUpstreamTypes": [
                         "value",
                         "reference",
@@ -246,13 +255,17 @@
                     "separators",
                     "keep-separator"
                   ],
+                  "title": "Recursive",
                   "type": "object"
                 },
                 {
                   "properties": {
                     "chunk-method": {
                       "const": "Markdown",
-                      "type": "string"
+                      "type": "string",
+                      "title": "Chunk Method",
+                      "description": "Chunking based on recursive splitting with markdown format.",
+                      "instillUIOrder": 0
                     },
                     "chunk-size": {
                       "$ref": "#/$defs/chunk-size"
@@ -288,6 +301,7 @@
                     "model-name",
                     "code-blocks"
                   ],
+                  "title": "Markdown",
                   "type": "object"
                 }
               ]
@@ -330,24 +344,28 @@
                 "description": "Text chunk after splitting",
                 "instillFormat": "string",
                 "instillUIMultiline": true,
+                "instillUIOrder": 0,
                 "type": "string"
               },
               "start-position": {
                 "title": "Start Position",
                 "description": "The starting position of the chunk in the original text",
                 "instillFormat": "integer",
+                "instillUIOrder": 1,
                 "type": "integer"
               },
               "end-position": {
                 "title": "End Position",
                 "description": "The ending position of the chunk in the original text",
                 "instillFormat": "integer",
+                "instillUIOrder": 2,
                 "type": "integer"
               },
               "token-count": {
                 "title": "Token Count",
                 "description": "Count of tokens in a chunk",
                 "instillFormat": "integer",
+                "instillUIOrder": 3,
                 "type": "integer"
               }
             },

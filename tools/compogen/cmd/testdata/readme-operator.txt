@@ -62,7 +62,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       },
       "required": [
         "durna"
-      ]
+      ],
+      "title": "Input"
     },
     "output": {
       "properties": {
@@ -73,7 +74,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
           "title": "Orci",
           "type": "string"
         }
-      }
+      },
+      "title": "Output"
     }
   },
   "TASK_DUMMIER_THAN_DUMMY": {
@@ -90,7 +92,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       },
       "required": [
         "cursus"
-      ]
+      ],
+      "title": "Input"
     },
     "output": {
       "properties": {
@@ -148,7 +151,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
         "atem",
         "nullam_non",
         "error"
-      ]
+      ],
+      "title": "Output"
     }
   }
 }
@@ -200,6 +204,8 @@ The component configuration is defined and maintained [here](https://github.com/
 
 
 
+
+
 ## Supported Tasks
 
 ### Dummy
@@ -212,9 +218,18 @@ The component configuration is defined and maintained [here](https://github.com/
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Orci (optional) | `orci` | string | Orci sagittis eu volutpat odio facilisis mauris sit |
+
+
+
 
 
 #### How to use the dummy task
@@ -237,13 +252,38 @@ This task is dummier than `TASK_DUMMY`.
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Elementum | `elementum` | string | Tellus elementum sagittis vitae et |
-| Atem | `atem` | object | This object should comply witht he format \{"tortor": "something", "arcu": "something else"\} |
+| [Atem](#dummier-atem) | `atem` | object | This object should comply witht he format \{"tortor": "something", "arcu": "something else"\} |
 | Nullam non | `nullam_non` | number | Id faucibus nisl tincidunt eget nullam non |
 | Errors (optional) | `errors` | array[string] | Error messages, if any, during the dummy process |
 | Meta (optional) | `context` | any | Free-form metadata |
+
+
+
+
+<details>
+<summary> Output Objects in Dummier</summary>
+
+
+
+<h4 id="dummier-atem">Atem</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Arcu | `arcu` | string | Bibendum arcu vitae elementum curabitur vitae nunc sed velit |
+| Tincidunt tortor | `tortor` | string | Tincidunt tortor aliquam nulla |
+
+
+
+</details>
 
 
 

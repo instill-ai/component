@@ -48,7 +48,9 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| URI (required) | `uri` | string | Fill in your MongoDB URI |
+| URI (required) | `uri` | string | Fill in your MongoDB URI  |
+
+
 
 
 
@@ -70,9 +72,18 @@ Perform an insert operation
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Insert status |
+
+
+
 
 
 
@@ -90,13 +101,31 @@ Perform an insert many operation
 | Database Name (required) | `database-name` | string | The name of the database in MongoDB |
 | Collection Name (required) | `collection-name` | string | The name of the collection in MongoDB |
 | Array ID | `array-id` | array[string] | The array of id |
-| Data (required) | `array-data` | array[object] | The array data to be inserted |
+| [Data](#insert-many-data) (required) | `array-data` | array[object] | The array data to be inserted |
+
+
+
+<details>
+<summary> Input Objects in Insert Many</summary>
+
+
+
+
+
+</details>
+
+
+
+
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Insert many status |
+
+
+
 
 
 
@@ -120,10 +149,44 @@ Perform a find operation
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Result | `result` | object | Result of the find operation |
+| [Result](#find-result) | `result` | object | Result of the find operation |
 | Status | `status` | string | Find status |
+
+
+
+
+<details>
+<summary> Output Objects in Find</summary>
+
+
+
+<h4 id="find-result">Result</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| [Metadata](#find-metadata) | `data` | array | The data returned from the find operation |
+| [Documents](#find-documents) | `documents` | array | The documents returned from the find operation |
+| IDs | `ids` | array | The ids returned from the find operation |
+
+
+
+
+
+
+
+
+
+
+
+</details>
 
 
 
@@ -146,9 +209,18 @@ Perform an update operation
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Update status |
+
+
+
 
 
 
@@ -170,9 +242,18 @@ Perform a delete operation
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -192,9 +273,18 @@ Delete the collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
+
+
+
 
 
 
@@ -213,9 +303,18 @@ Delete the database
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete database status |
+
+
+
 
 
 
@@ -238,9 +337,18 @@ Create a search index, only works for M10 or larger clusters
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create index status |
+
+
+
 
 
 
@@ -261,9 +369,18 @@ Drop a search index, only works for M10 or larger clusters
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete index status |
+
+
+
 
 
 
@@ -291,10 +408,45 @@ Perform a vector search operation
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Result | `result` | object | Result of the vector search operation |
+| [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
+
+
+
+
+<details>
+<summary> Output Objects in Vector Search</summary>
+
+
+
+<h4 id="vector-search-result">Result</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| [Documents](#vector-search-documents) | `documents` | array | The documents returned from the vector search operation |
+| IDs | `ids` | array | The ids returned from the vector search operation |
+| [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| Vectors | `vectors` | array | The vectors returned from the vector search operation |
+
+
+
+
+
+
+
+
+
+
+
+</details>
 
 
 

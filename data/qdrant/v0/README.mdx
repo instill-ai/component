@@ -44,8 +44,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Qdrant API key. Please refer to clusters in Qdrant data access control |
-| Qdrant URL Endpoint (required) | `url` | string | Fill in your Qdrant URL endpoint. Please refer to clusters in Qdrant cluster details |
+| API Key (required) | `api-key` | string | Fill in your Qdrant API key. Please refer to clusters in Qdrant data access control  |
+| Qdrant URL Endpoint (required) | `url` | string | Fill in your Qdrant URL endpoint. Please refer to clusters in Qdrant cluster details  |
+
+
 
 
 
@@ -70,10 +72,45 @@ Perform a vector search on a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Result | `result` | object | Result of the vector search operation |
+| [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
+
+
+
+
+<details>
+<summary> Output Objects in Vector Search</summary>
+
+
+
+<h4 id="vector-search-result">Result</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| IDs | `ids` | array | The ids returned from the vector search operation |
+| [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| [Points](#vector-search-points) | `points` | array | The points returned from the vector search operation |
+| Vectors | `vectors` | array | The vectors returned from the vector search operation |
+
+
+
+
+
+
+
+
+
+
+
+</details>
 
 
 
@@ -90,15 +127,33 @@ Insert multiple vector points into a collection
 | Task ID (required) | `task` | string | `TASK_BATCH_UPSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the point into |
 | Array ID (required) | `array-id` | array[string] | The array of id |
-| Array Metadata | `array-metadata` | array[object] | The array of vector metadata payload |
+| [Array Metadata](#batch-upsert-array-metadata) | `array-metadata` | array[object] | The array of vector metadata payload |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
 | Ordering | `ordering` | string | The ordering guarantees of the batch upsert |
+
+
+
+<details>
+<summary> Input Objects in Batch Upsert</summary>
+
+
+
+
+
+</details>
+
+
+
+
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch upsert status |
+
+
+
 
 
 
@@ -121,9 +176,18 @@ Upsert a vector point into a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
+
+
+
 
 
 
@@ -145,9 +209,18 @@ Delete vector points from a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -167,9 +240,18 @@ Create a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create collection status |
+
+
+
 
 
 
@@ -188,9 +270,18 @@ Delete a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
+
+
+
 
 
 

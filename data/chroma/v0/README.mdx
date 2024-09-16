@@ -44,8 +44,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Chroma API key |
-| Chroma URL Endpoint (required) | `url` | string | Fill in your Chroma hosted public URL endpoint with port, e.g http://1.2.3:8000 |
+| API Key (required) | `api-key` | string | Fill in your Chroma API key  |
+| Chroma URL Endpoint (required) | `url` | string | Fill in your Chroma hosted public URL endpoint with port, e.g http://1.2.3:8000  |
+
+
 
 
 
@@ -62,16 +64,34 @@ Upsert multiple vector items into a collection, existing items will be updated
 | Task ID (required) | `task` | string | `TASK_BATCH_UPSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the item into |
 | Array ID (required) | `array-id` | array[string] | The array of id |
-| Array Metadata (required) | `array-metadata` | array[object] | The array of vector metadata |
+| [Array Metadata](#batch-upsert-array-metadata) (required) | `array-metadata` | array[object] | The array of vector metadata |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
 | Array Document | `array-document` | array[string] | The array of document string values |
 | Array URI | `array-uri` | array[string] | The array of uri |
 
 
 
+<details>
+<summary> Input Objects in Batch Upsert</summary>
+
+
+
+
+
+</details>
+
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch add status |
+
+
+
 
 
 
@@ -95,9 +115,18 @@ Upsert a vector item into a collection, existing item will be updated
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Add status |
+
+
+
 
 
 
@@ -121,10 +150,45 @@ Perform a vector search on a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Result | `result` | object | Result of the vector search operation |
+| [Result](#query-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
+
+
+
+
+<details>
+<summary> Output Objects in Query</summary>
+
+
+
+<h4 id="query-result">Result</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| IDs | `ids` | array | The ids returned from the vector search operation |
+| [Items](#query-items) | `items` | array | The items returned from the vector search operation |
+| [Metadata](#query-metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| Vectors | `vectors` | array | The vectors returned from the vector search operation |
+
+
+
+
+
+
+
+
+
+
+
+</details>
 
 
 
@@ -146,9 +210,18 @@ Delete vector items from a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -170,9 +243,18 @@ Create a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create collection status |
+
+
+
 
 
 
@@ -191,9 +273,18 @@ Delete a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
+
+
+
 
 
 

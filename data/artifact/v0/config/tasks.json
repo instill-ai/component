@@ -160,7 +160,9 @@
                 "option": {
                   "const": "existing catalog",
                   "type": "string",
-                  "title": "Existing Catalog"
+                  "title": "Option",
+                  "description": "Existing catalog.",
+                  "instillUIOrder": 0
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"
@@ -209,6 +211,7 @@
                 "file",
                 "file-name"
               ],
+              "title": "Existing Catalog",
               "type": "object"
             },
             {
@@ -216,7 +219,9 @@
                 "option": {
                   "const": "create new catalog",
                   "type": "string",
-                  "title": "Create New Catalog"
+                  "title": "Option",
+                  "description": "Create new catalog.",
+                  "instillUIOrder": 0
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"
@@ -297,6 +302,7 @@
                 "description",
                 "tags"
               ],
+              "title": "Create New Catalog",
               "type": "object"
             }
           ]
@@ -367,7 +373,9 @@
                 "option": {
                   "const": "existing catalog",
                   "type": "string",
-                  "title": "Existing Catalog"
+                  "title": "Option",
+                  "description": "Existing catalog.",
+                  "instillUIOrder": 0
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"
@@ -418,6 +426,7 @@
                 "files",
                 "file-names"
               ],
+              "title": "Existing Catalog",
               "type": "object"
             },
             {
@@ -425,7 +434,9 @@
                 "option": {
                   "const": "create new catalog",
                   "type": "string",
-                  "title": "Create New Catalog"
+                  "title": "Option",
+                  "description": "Create new catalog.",
+                  "instillUIOrder": 0
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"
@@ -508,6 +519,7 @@
                 "description",
                 "tags"
               ],
+              "title": "Create New Catalog",
               "type": "object"
             }
           ]

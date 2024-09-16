@@ -44,8 +44,10 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Weaviate API key. Please refer to clusters in Weaviate Console |
-| Weaviate URL Endpoint (required) | `url` | string | Fill in your Weaviate base URL without https:// or http://. Please refer to clusters in Weaviate Console |
+| API Key (required) | `api-key` | string | Fill in your Weaviate API key. Please refer to clusters in Weaviate Console  |
+| Weaviate URL Endpoint (required) | `url` | string | Fill in your Weaviate base URL without https:// or http://. Please refer to clusters in Weaviate Console  |
+
+
 
 
 
@@ -69,10 +71,45 @@ Perform a vector search on a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Result | `result` | object | Result of the vector search operation |
+| [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Upsert status |
+
+
+
+
+<details>
+<summary> Output Objects in Vector Search</summary>
+
+
+
+<h4 id="vector-search-result">Result</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| IDs | `ids` | array | The ids returned from the vector search operation |
+| [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
+| [Objects](#vector-search-objects) | `objects` | array | The objects returned from the vector search operation |
+| Vectors | `vectors` | array | The vectors returned from the vector search operation |
+
+
+
+
+
+
+
+
+
+
+
+</details>
 
 
 
@@ -89,14 +126,32 @@ Insert multiple vector objects into a collection
 | Task ID (required) | `task` | string | `TASK_BATCH_INSERT` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to upsert the object into |
 | Array ID | `array-id` | array[string] | The array of id |
-| Array Metadata (required) | `array-metadata` | array[object] | The array of vector metadata properties |
+| [Array Metadata](#batch-insert-array-metadata) (required) | `array-metadata` | array[object] | The array of vector metadata properties |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
+
+
+
+<details>
+<summary> Input Objects in Batch Insert</summary>
+
+
+
+
+
+</details>
+
+
+
+
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch insert status |
+
+
+
 
 
 
@@ -118,9 +173,18 @@ Insert a vector object into a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
+
+
+
 
 
 
@@ -142,9 +206,18 @@ Update vector object in a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Update status |
+
+
+
 
 
 
@@ -165,9 +238,18 @@ Delete vector objects from a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+
+
+
 
 
 
@@ -186,9 +268,18 @@ Delete a collection
 
 
 
+
+
+
+
+
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
+
+
+
 
 
 

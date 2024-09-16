@@ -45,6 +45,65 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       "instillUIOrder": 0,
       "title": "API Key",
       "type": "string"
+    },
+    "authentication": {
+      "description": "Authentication method to use for the Dummy",
+      "instillUIOrder": 0,
+      "oneOf": [
+        {
+          "properties": {
+            "auth-type": {
+              "const": "NO_AUTH",
+              "description": "No Authentication",
+              "instillUIOrder": 0,
+              "order": 0,
+              "title": "Auth Type",
+              "type": "string"
+            }
+          },
+          "required": [
+            "auth-type"
+          ],
+          "title": "No Auth"
+        },
+        {
+          "properties": {
+            "auth-type": {
+              "const": "AUTH_1",
+              "description": "Auth 1",
+              "instillUIOrder": 0,
+              "order": 0,
+              "title": "Auth Type",
+              "type": "string"
+            },
+            "auth-way": {
+              "description": "ways for Auth 1",
+              "instillUpstreamTypes": [
+                "value"
+              ],
+              "instillAcceptFormats": [
+                "string"
+              ],
+              "enum": [
+                "header",
+                "query"
+              ],
+              "instillUIOrder": 1,
+              "order": 1,
+              "title": "Auth Way",
+              "type": "string"
+            }
+          },
+          "required": [
+            "auth-type",
+            "auth-way"
+          ],
+          "title": "Auth 1"
+        }
+      ],
+      "order": 1,
+      "title": "Authentication",
+      "type": "object"
     }
   },
   "required": [
@@ -64,11 +123,83 @@ cmp pkg/dummy/README.mdx want-readme.mdx
           "instillUIOrder": 0,
           "title": "Durna",
           "type": "string"
+        },
+        "strategy": {
+          "description": "Chunking strategy",
+          "instillUIOrder": 1,
+          "properties": {
+            "setting": {
+              "description": "Chunk Setting",
+              "additionalProperties": true,
+              "type": "object",
+              "title": "Chunk Setting",
+              "instillUIOrder": 0,
+              "required": [
+                "chunk-method"
+              ],
+              "oneOf": [
+                {
+                  "properties": {
+                    "chunk-method": {
+                      "const": "Token",
+                      "type": "string",
+                      "title": "Chunk Method",
+                      "description": "Chunking based on tokenization.",
+                      "instillUIOrder": 0
+                    },
+                    "model-name": {
+                      "description": "The name of the model used for tokenization.",
+                      "enum": [
+                        "gpt-4",
+                        "gpt-3.5-turbo"
+                      ],
+                      "instillUIOrder": 1,
+                      "title": "Model",
+                      "type": "string"
+                    }
+                  },
+                  "title": "Token",
+                  "required": ["chunk-method"],
+                  "type": "object"
+                },
+                {
+                  "properties": {
+                    "chunk-method": {
+                      "const": "Markdown",
+                      "type": "string",
+                      "title": "Chunk Method",
+                      "description": "Chunking based on recursive splitting with markdown format.",
+                      "instillUIOrder": 0
+                    },
+                    "model-name": {
+                      "description": "The name of the model used for tokenization.",
+                      "enum": [
+                        "gpt-4",
+                        "gpt-3.5-turbo"
+                      ],
+                      "instillUIOrder": 1,
+                      "title": "Model",
+                      "type": "string"
+                    }
+                  },
+                  "title": "Markdown",
+                  "required": ["chunk-method"],
+                  "type": "object"
+                }
+              ]
+            }
+          },
+          "title": "Strategy",
+          "required": [
+            "setting"
+          ],
+          "type": "object"
         }
       },
       "required": [
         "durna"
-      ]
+      ],
+      "title": "Input"
     },
     "output": {
       "properties": {
@@ -78,8 +209,65 @@ cmp pkg/dummy/README.mdx want-readme.mdx
           "instillUIOrder": 0,
           "title": "Orci",
           "type": "string"
+        },
+        "conversations": {
+          "description": "An array of conversations with thread messages",
+          "instillUIOrder": 0,
+          "title": "Conversations",
+          "type": "array",
+          "items": {
+            "title": "conversation details",
+            "type": "object",
+            "properties": {
+              "message": {
+                "description": "message to start a conversation",
+                "instillUIOrder": 0,
+                "title": "Start Conversation Message",
+                "type": "string"
+              },
+              "start-date": {
+                "description": "when a conversation starts",
+                "instillUIOrder": 1,
+                "title": "Start Date",
+                "type": "string"
+              },
+              "last-date": {
+                "description": "Date of the last message",
+                "instillUIOrder": 2,
+                "title": "Last Date",
+                "type": "string"
+              },
+              "thread-reply-messages": {
+                "description": "replies in a conversation",
+                "instillUIOrder": 0,
+                "title": "Replied messages",
+                "type": "array",
+                "items": {
+                  "title": "relied details",
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "description": "message to reply a conversation",
+                      "instillFormat": "string",
+                      "instillUIOrder": 3,
+                      "title": "Replied Message",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "message",
+              "start-date"
+            ]
+          }
         }
-      }
+      },
+      "title": "Output"
     }
   }
 }
@@ -129,10 +317,37 @@ ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| API Key (required) | `api-key` | string | Fill in your Dummy API key |
-| Organization ID | `organization` | string | Specify which organization is used for the requests |
+| API Key (required) | `api-key` | string | Fill in your Dummy API key  |
+| [Authentication](#authentication) | `authentication` | object | Authentication method to use for the Dummy  |
+| Organization ID | `organization` | string | Specify which organization is used for the requests  |
 
 This is some crucial information about setup: do it before execution.
+
+
+
+
+
+<details>
+<summary>The <code>authentication</code> Object </summary>
+
+#### Authentication
+
+`authentication` must fulfill one of the following schemas:
+
+##### `No Auth`
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Auth Type | `auth-type` | string |  Must be `"NO_AUTH"`   |
+
+##### `Auth 1`
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Auth Type | `auth-type` | string |  Must be `"AUTH_1"`   |
+| Auth Way | `auth-way` | string |  ways for Auth 1    <br/><details><summary><strong>Enum values</strong></summary><ul><li>`header`</li><li>`query`</li></ul></details>  |
+
+</details>
 
 
 
@@ -145,12 +360,97 @@ This is some crucial information about setup: do it before execution.
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DUMMY` |
 | Durna (required) | `durna` | string | Lorem ipsum dolor sit amet, consectetur adipiscing elit |
+| [Strategy](#dummy-strategy) | `strategy` | object | Chunking strategy |
+
+
+
+<details>
+<summary> Input Objects in Dummy</summary>
+
+
+
+<h4 id="dummy-strategy">Strategy</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| [Chunk Setting](#dummy-chunk-setting) | `setting` | object | Chunk Setting  |
+
+
+
+</details>
+
+
+
+
+
+<details>
+<summary>The <code>setting</code> Object </summary>
+
+<h4 id="dummy-setting">Setting</h4>
+
+`setting` must fulfill one of the following schemas:
+
+
+##### `Token`
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Chunk Method | `chunk-method` | string |  Must be `"Token"`   |
+| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li></ul></details>  |
+
+
+
+##### `Markdown`
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Chunk Method | `chunk-method` | string |  Must be `"Markdown"`   |
+| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li></ul></details>  |
+
+
+</details>
+
+
+
+
 
 
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
+| [Conversations](#dummy-conversations) (optional) | `conversations` | array[object] | An array of conversations with thread messages |
 | Orci (optional) | `orci` | string | Orci sagittis eu volutpat odio facilisis mauris sit |
+
+
+
+
+<details>
+<summary> Output Objects in Dummy</summary>
+
+
+
+<h4 id="dummy-conversations">Conversations</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Last Date | `last-date` | string | Date of the last message |
+| Start Conversation Message | `message` | string | message to start a conversation |
+| Start Date | `start-date` | string | when a conversation starts |
+| [Replied messages](#dummy-replied-messages) | `thread-reply-messages` | array | replies in a conversation |
+
+
+
+
+
+<h4 id="dummy-replied-messages">Replied messages</h4>
+
+| Field | Field ID | Type | Note |
+| :--- | :--- | :--- | :--- |
+| Replied Message | `message` | string | message to reply a conversation |
+
+
+
+</details>
 
 
 

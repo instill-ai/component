@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"sort"
 	"strings"
 	"text/template"
 	"unicode"
@@ -158,9 +159,15 @@ func (g *READMEGenerator) Generate() error {
 	}
 
 	readme, err := template.New("readme").Funcs(template.FuncMap{
-		"firstToLower":     firstToLower,
-		"asAnchor":         blackfriday.SanitizedAnchorName,
-		"loadExtraContent": g.loadExtraContent,
+		"firstToLower":      firstToLower,
+		"asAnchor":          blackfriday.SanitizedAnchorName,
+		"loadExtraContent":  g.loadExtraContent,
+		"enumValues":        enumValues,
+		"findConstantValue": findConstantValue,
+		"AnchorSetup":       AnchorSetup,
+		"AnchorTaskObject":  AnchorTaskObject,
+		"kebabToTitle":      kebabToTitle,
+		"HeaderWithID":      HeaderWithID,
 		"hosts": func() []host {
 			return []host{
 				{Name: "Instill-Cloud", URL: "https://api.instill.tech"},
@@ -194,18 +201,21 @@ func (g *READMEGenerator) loadExtraContent(section string) (string, error) {
 
 	extra, err := os.ReadFile(g.extraContentPaths[section])
 	if err != nil {
-		return "", fmt.Errorf("reading extra contents for sectino %s: %w", section, err)
+		return "", fmt.Errorf("reading extra contents for section %s: %w", section, err)
 	}
 
 	return string(extra), nil
 }
 
 type readmeTask struct {
-	ID          string
-	Title       string
-	Description string
-	Input       []resourceProperty
-	Output      []resourceProperty
+	ID            string
+	Title         string
+	Description   string
+	Input         []resourceProperty
+	InputObjects  []map[string]objectSchema
+	OneOfs        []map[string][]objectSchema
+	Output        []resourceProperty
+	OutputObjects []map[string]objectSchema
 }
 
 type resourceProperty struct {
@@ -217,6 +227,7 @@ type resourceProperty struct {
 type setupConfig struct {
 	Prerequisites string
 	Properties    []resourceProperty
+	OneOf         map[string][]objectSchema
 }
 
 type readmeParams struct {
@@ -255,12 +266,14 @@ func (p readmeParams) parseDefinition(d definition, s *objectSchema, tasks map[s
 
 	if s != nil {
 		p.SetupConfig.Properties = parseResourceProperties(s)
+		p.SetupConfig.parseOneOfProperties(s.Properties)
 	}
 
 	return p, nil
 }
 
 func parseREADMETasks(availableTasks []string, tasks map[string]task) ([]readmeTask, error) {
+
 	readmeTasks := make([]readmeTask, len(availableTasks))
 	for i, at := range availableTasks {
 		t, ok := tasks[at]
@@ -274,6 +287,10 @@ func parseREADMETasks(availableTasks []string, tasks map[string]task) ([]readmeT
 			Input:       parseResourceProperties(t.Input),
 			Output:      parseResourceProperties(t.Output),
 		}
+
+		rt.parseObjectProperties(t.Input.Properties, true)
+		rt.parseObjectProperties(t.Output.Properties, false)
+		rt.parseOneOfsProperties(t.Input.Properties)
 
 		if rt.Title = t.Title; rt.Title == "" {
 			rt.Title = componentbase.TaskIDToTitle(at)
@@ -343,6 +360,152 @@ func parseResourceProperties(o *objectSchema) []resourceProperty {
 	return props
 }
 
+func (rt *readmeTask) parseObjectProperties(properties map[string]property, isInput bool) {
+	if properties == nil {
+		return
+	}
+
+	sortedProperties := sortPropertiesByOrder(properties)
+
+	for _, op := range sortedProperties {
+		if op.Deprecated {
+			continue
+		}
+
+		if op.Type != "object" && op.Type != "array[object]" && (op.Type != "array" || op.Items.Type != "object") {
+			continue
+		}
+
+		if op.Type == "object" && op.Properties == nil {
+			continue
+		}
+
+		if op.Type == "array[object]" && op.Items.Properties == nil {
+			continue
+		}
+
+		if isSemiStructuredObject(op) {
+			continue
+		}
+
+		if op.Type == "object" {
+
+			if isInput {
+				rt.InputObjects = append(rt.InputObjects, map[string]objectSchema{
+					op.Title: {
+						Properties: op.Properties,
+					},
+				})
+				rt.parseObjectProperties(op.Properties, isInput)
+			} else {
+				rt.OutputObjects = append(rt.OutputObjects, map[string]objectSchema{
+					op.Title: {
+						Properties: op.Properties,
+					},
+				})
+				rt.parseObjectProperties(op.Properties, isInput)
+			}
+		} else { // op.Type == "array[object]" || (op.Type == "array" || op.Items.Type == "object")
+
+			if isInput {
+				rt.InputObjects = append(rt.InputObjects, map[string]objectSchema{
+					op.Title: {
+						Properties: op.Items.Properties,
+					},
+				})
+
+				rt.parseObjectProperties(op.Items.Properties, isInput)
+			} else {
+				rt.OutputObjects = append(rt.OutputObjects, map[string]objectSchema{
+					op.Title: {
+						Properties: op.Items.Properties,
+					},
+				})
+				rt.parseObjectProperties(op.Items.Properties, isInput)
+			}
+		}
+	}
+
+	return
+}
+
+func sortPropertiesByOrder(properties map[string]property) []property {
+	// Extract the keys
+	keys := make([]string, 0, len(properties))
+	for k := range properties {
+		keys = append(keys, k)
+	}
+
+	// Sort the keys based on the Order field in the property
+	sort.Slice(keys, func(i, j int) bool {
+		// Default to 0 if Order is nil
+		orderI := 0
+		if properties[keys[i]].Order != nil {
+			orderI = *properties[keys[i]].Order
+		}
+
+		orderJ := 0
+		if properties[keys[j]].Order != nil {
+			orderJ = *properties[keys[j]].Order
+		}
+
+		return orderI < orderJ
+	})
+
+	sortedProperties := make([]property, 0, len(properties))
+	for _, key := range keys {
+		sortedProperties = append(sortedProperties, properties[key])
+	}
+
+	return sortedProperties
+}
+
+func (rt *readmeTask) parseOneOfsProperties(properties map[string]property) {
+	if properties == nil {
+		return
+	}
+
+	for key, op := range properties {
+		if op.Deprecated {
+			continue
+		}
+
+		if op.Type != "object" {
+			continue
+		}
+
+		if op.OneOf != nil {
+			rt.OneOfs = append(rt.OneOfs, map[string][]objectSchema{
+				key: op.OneOf,
+			})
+		}
+		rt.parseOneOfsProperties(op.Properties)
+	}
+
+	return
+}
+
+func (sc *setupConfig) parseOneOfProperties(properties map[string]property) {
+	if properties == nil {
+		return
+	}
+
+	for key, op := range properties {
+		if op.Deprecated {
+			continue
+		}
+
+		// Now, we only have 1 layer. So, we do not have to recursively parse.
+		if op.OneOf != nil {
+			sc.OneOf = map[string][]objectSchema{
+				key: op.OneOf,
+			}
+		}
+	}
+
+	return
+}
+
 func firstToLower(s string) string {
 	r, size := utf8.DecodeRuneInString(s)
 	if r == utf8.RuneError && size <= 1 {
@@ -355,4 +518,101 @@ func firstToLower(s string) string {
 	}
 
 	return string(mod) + s[size:]
+}
+
+func enumValues(enum []string) string {
+	length := len(enum)
+	var result string
+	result = "<br/><details><summary><strong>Enum values</strong></summary><ul>"
+
+	for i, e := range enum {
+		result += fmt.Sprintf("<li>`%s`</li>", e)
+		if i == length-1 {
+			result += "</ul>"
+		}
+	}
+	result += "</details>"
+
+	return result
+}
+
+func findConstantValue(option objectSchema) string {
+	for _, prop := range option.Properties {
+		if prop.Const != "" {
+			return option.Title
+		}
+	}
+	return ""
+}
+
+func kebabToTitle(s string) string {
+	words := strings.Split(s, "-")
+
+	for i, word := range words {
+		words[i] = toTitle(word)
+	}
+
+	return strings.Join(words, " ")
+}
+
+func toTitle(s string) string {
+	if len(s) == 0 {
+		return s
+	}
+	return string(unicode.ToUpper(rune(s[0]))) + s[1:]
+}
+
+func AnchorSetup(p interface{}) string {
+	switch prop := p.(type) {
+	case resourceProperty:
+		return anchorSetupFromProperty(prop.property)
+	case property:
+		return anchorSetupFromProperty(prop)
+	default:
+		return ""
+	}
+}
+
+func anchorSetupFromProperty(prop property) string {
+	if isSemiStructuredObject(prop) {
+		return prop.Title
+	}
+	if prop.Type == "object" ||
+		(prop.Type == "array" && prop.Items.Type == "object") ||
+		(prop.Type == "array[object]") {
+		return fmt.Sprintf("[%s](#%s)", prop.Title, blackfriday.SanitizedAnchorName(prop.Title))
+	}
+	return prop.Title
+}
+
+func isSemiStructuredObject(p property) bool {
+	return p.Type == "object" && p.Properties == nil && p.OneOf == nil
+}
+
+func AnchorTaskObject(p interface{}, task readmeTask) string {
+	switch prop := p.(type) {
+	case resourceProperty:
+		return anchorTaskWithProperty(prop.property, task.Title)
+	case property:
+		return anchorTaskWithProperty(prop, task.Title)
+	default:
+		return ""
+	}
+
+}
+
+func anchorTaskWithProperty(prop property, taskName string) string {
+	if isSemiStructuredObject(prop) {
+		return prop.Title
+	}
+	if prop.Type == "object" ||
+		(prop.Type == "array" && prop.Items.Type == "object") ||
+		(prop.Type == "array[object]") {
+		return fmt.Sprintf("[%s](#%s-%s)", prop.Title, blackfriday.SanitizedAnchorName(taskName), blackfriday.SanitizedAnchorName(prop.Title))
+	}
+	return prop.Title
+}
+
+func HeaderWithID(key string, task readmeTask) string {
+	return fmt.Sprintf(`<h4 id="%s-%s">%s</h4>`, blackfriday.SanitizedAnchorName(task.Title), blackfriday.SanitizedAnchorName(key), kebabToTitle(key))
 }
