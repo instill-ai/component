@@ -376,6 +376,14 @@ func (rt *readmeTask) parseObjectProperties(properties map[string]property, isIn
 			continue
 		}
 
+		if op.Type == "object" && op.Properties == nil {
+			continue
+		}
+
+		if op.Type == "array[object]" && op.Items.Properties == nil {
+			continue
+		}
+
 		if isSemiStructuredObject(op) {
 			continue
 		}
