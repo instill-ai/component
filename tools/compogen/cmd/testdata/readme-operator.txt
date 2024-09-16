@@ -62,7 +62,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       },
       "required": [
         "durna"
-      ]
+      ],
+      "title": "Input"
     },
     "output": {
       "properties": {
@@ -73,7 +74,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
           "title": "Orci",
           "type": "string"
         }
-      }
+      },
+      "title": "Output"
     }
   },
   "TASK_DUMMIER_THAN_DUMMY": {
@@ -90,7 +92,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       },
       "required": [
         "cursus"
-      ]
+      ],
+      "title": "Input"
     },
     "output": {
       "properties": {
@@ -148,7 +151,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
         "atem",
         "nullam_non",
         "error"
-      ]
+      ],
+      "title": "Output"
     }
   }
 }

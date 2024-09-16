@@ -143,7 +143,9 @@ cmp pkg/dummy/README.mdx want-readme.mdx
                     "chunk-method": {
                       "const": "Token",
                       "type": "string",
-                      "title": "Chunk Method"
+                      "title": "Chunk Method",
+                      "description": "Chunking based on tokenization.",
+                      "instillUIOrder": 0
                     },
                     "model-name": {
                       "description": "The name of the model used for tokenization.",
@@ -165,7 +167,9 @@ cmp pkg/dummy/README.mdx want-readme.mdx
                     "chunk-method": {
                       "const": "Markdown",
                       "type": "string",
-                      "title": "Chunk Method"
+                      "title": "Chunk Method",
+                      "description": "Chunking based on recursive splitting with markdown format.",
+                      "instillUIOrder": 0
                     },
                     "model-name": {
                       "description": "The name of the model used for tokenization.",
@@ -194,7 +198,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
       },
       "required": [
         "durna"
-      ]
+      ],
+      "title": "Input"
     },
     "output": {
       "properties": {
@@ -261,7 +266,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
             ]
           }
         }
-      }
+      },
+      "title": "Output"
     }
   }
 }
@@ -328,18 +334,18 @@ This is some crucial information about setup: do it before execution.
 
 `authentication` must fulfill one of the following schemas:
 
-##### `NO_AUTH`
+##### `No Auth`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Auth Type | `auth-type` | string |  Must be `"NO_AUTH"`   |
 
-##### `AUTH_1`
+##### `Auth 1`
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Auth Type | `auth-type` | string |  Must be `"AUTH_1"`   |
-| Auth Way | `auth-way` | string |  ways for Auth 1    <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`header`</li><li>`query`</li></ul></details>  |
+| Auth Way | `auth-way` | string |  ways for Auth 1    <br/><details><summary><strong>Enum values</strong></summary><ul><li>`header`</li><li>`query`</li></ul></details>  |
 
 </details>
 
@@ -394,7 +400,7 @@ This is some crucial information about setup: do it before execution.
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Chunk Method | `chunk-method` | string |  Must be `"Token"`   |
-| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li></ul></details>  |
+| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li></ul></details>  |
 
 
 
@@ -403,7 +409,7 @@ This is some crucial information about setup: do it before execution.
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Chunk Method | `chunk-method` | string |  Must be `"Markdown"`   |
-| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details> <summary><strong>Enum values</strong>: </summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li></ul></details>  |
+| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li></ul></details>  |
 
 
 </details>
