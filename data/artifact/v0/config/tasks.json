@@ -209,6 +209,7 @@
                 "file",
                 "file-name"
               ],
+              "title": "Existing Catalog",
               "type": "object"
             },
             {
@@ -297,6 +298,7 @@
                 "description",
                 "tags"
               ],
+              "title": "Create New Catalog",
               "type": "object"
             }
           ]
@@ -418,6 +420,7 @@
                 "files",
                 "file-names"
               ],
+              "title": "Existing Catalog",
               "type": "object"
             },
             {
@@ -508,6 +511,7 @@
                 "description",
                 "tags"
               ],
+              "title": "Create New Catalog",
               "type": "object"
             }
           ]

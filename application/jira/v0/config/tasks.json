@@ -413,6 +413,7 @@
               "instillEditOnNodeFields": [
                 "range"
               ],
+              "title": "All",
               "instillFormat": "object",
               "type": "object"
             },
@@ -430,6 +431,7 @@
               "instillEditOnNodeFields": [
                 "range"
               ],
+              "title": "Standard Issues",
               "instillFormat": "object",
               "type": "object"
             },
@@ -447,6 +449,7 @@
               "instillEditOnNodeFields": [
                 "range"
               ],
+              "title": "Epics only",
               "instillFormat": "object",
               "type": "object"
             },
@@ -464,6 +467,7 @@
               "instillEditOnNodeFields": [
                 "range"
               ],
+              "title": "In Backlog Only",
               "instillFormat": "object",
               "type": "object"
             },
@@ -499,6 +503,7 @@
                 "range",
                 "epic-key"
               ],
+              "title": "Issues of an Epic",
               "instillFormat": "object",
               "type": "object"
             },
@@ -534,6 +539,7 @@
                 "range",
                 "sprint-name"
               ],
+              "title": "Issues of a Sprint",
               "instillFormat": "object",
               "type": "object"
             },
@@ -551,6 +557,7 @@
               "instillEditOnNodeFields": [
                 "range"
               ],
+              "title": "Issues without Epic Assigned",
               "instillFormat": "object",
               "type": "object"
             },
@@ -586,6 +593,7 @@
                 "range",
                 "jql"
               ],
+              "title": "JQL Query",
               "instillFormat": "object",
               "type": "object"
             }
@@ -876,6 +884,7 @@
               "required": [
                 "issue-type"
               ],
+              "title": "Epic",
               "instillFormat": "object",
               "type": "object"
             },
@@ -893,6 +902,7 @@
               "required": [
                 "issue-type"
               ],
+              "title": "Task",
               "instillFormat": "object",
               "type": "object"
             },
@@ -928,6 +938,7 @@
                 "issue-type",
                 "parent-key"
               ],
+              "title": "Subtask",
               "instillFormat": "object",
               "type": "object"
             },
@@ -963,6 +974,7 @@
                 "issue-type",
                 "custom-issue-type"
               ],
+              "title": "Other",
               "instillFormat": "object",
               "type": "object"
             }
@@ -1127,6 +1139,7 @@
                 "update",
                 "update-fields"
               ],
+              "title": "Custom Update",
               "instillFormat": "object",
               "type": "object"
             },
@@ -1162,6 +1175,7 @@
                 "update",
                 "epic-key"
               ],
+              "title": "Move Issue to Epic",
               "instillFormat": "object",
               "type": "object"
             }

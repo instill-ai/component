@@ -106,6 +106,7 @@
               "title": "Text Embeddings"
             }
           },
+          "title": "Text Embeddings",
           "type": "object"
         }
       ],

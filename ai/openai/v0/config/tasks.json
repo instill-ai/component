@@ -432,6 +432,7 @@
               "required": [
                 "type"
               ],
+              "title": "Text",
               "type": "object"
             },
             {
@@ -445,6 +446,7 @@
               "required": [
                 "type"
               ],
+              "title": "JSON Object",
               "type": "object"
             },
             {
@@ -474,6 +476,7 @@
                 "type",
                 "json-schema"
               ],
+              "title": "JSON Schema",
               "type": "object"
             }
           ],

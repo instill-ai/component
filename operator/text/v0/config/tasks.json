@@ -187,6 +187,7 @@
                     "allowed-special",
                     "disallowed-special"
                   ],
+                  "title": "Token",
                   "type": "object"
                 },
                 {
@@ -250,6 +251,7 @@
                     "separators",
                     "keep-separator"
                   ],
+                  "title": "Recursive",
                   "type": "object"
                 },
                 {
@@ -293,6 +295,7 @@
                     "model-name",
                     "code-blocks"
                   ],
+                  "title": "Markdown",
                   "type": "object"
                 }
               ]

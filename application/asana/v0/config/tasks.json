@@ -53,6 +53,7 @@
                 "goal-gid"
               ],
               "instillFormat": "object",
+              "title": "Get",
               "type": "object"
             },
             {
@@ -197,6 +198,7 @@
                 "status"
               ],
               "instillFormat": "object",
+              "title": "Update",
               "type": "object"
             },
             {
@@ -231,6 +233,7 @@
                 "action",
                 "goal-gid"
               ],
+              "title": "Delete",
               "instillFormat": "object",
               "type": "object"
             },
@@ -334,6 +337,7 @@
                 "start-on",
                 "liked"
               ],
+              "title": "Create",
               "instillFormat": "object",
               "type": "object"
             }
@@ -536,6 +540,7 @@
                 "action",
                 "task-gid"
               ],
+              "title": "Get",
               "instillFormat": "object",
               "type": "object"
             },
@@ -710,6 +715,7 @@
                 "assignee",
                 "parent"
               ],
+              "title": "Update",
               "instillFormat": "object",
               "type": "object"
             },
@@ -745,6 +751,7 @@
                 "action",
                 "task-gid"
               ],
+              "title": "Delete",
               "instillFormat": "object",
               "type": "object"
             },
@@ -937,6 +944,7 @@
                 "start-at",
                 "due-at"
               ],
+              "title": "Create",
               "instillFormat": "object",
               "type": "object"
             },
@@ -990,6 +998,7 @@
                 "task-gid",
                 "name"
               ],
+              "title": "Duplicate",
               "instillFormat": "object",
               "type": "object"
             },
@@ -1043,6 +1052,7 @@
                 "task-gid",
                 "parent"
               ],
+              "title": "Set Parent",
               "instillFormat": "object",
               "type": "object"
             },
@@ -1117,6 +1127,7 @@
                 "tag-gid",
                 "edit-option"
               ],
+              "title": "Edit Tag",
               "instillFormat": "object",
               "type": "object"
             },
@@ -1191,6 +1202,7 @@
                 "follower-gid",
                 "edit-option"
               ],
+              "title": "Edit Follower",
               "instillFormat": "object",
               "type": "object"
             },
@@ -1265,6 +1277,7 @@
                 "project-gid",
                 "edit-option"
               ],
+              "title": "Edit Project",
               "instillFormat": "object",
               "type": "object"
             }
@@ -1509,6 +1522,7 @@
                 "action",
                 "project-gid"
               ],
+              "title": "Get",
               "instillFormat": "object",
               "type": "object"
             },
@@ -1684,6 +1698,7 @@
                 "privacy-setting",
                 "archived"
               ],
+              "title": "Update",
               "instillFormat": "object",
               "type": "object"
             },
@@ -1719,6 +1734,7 @@
                 "action",
                 "project-gid"
               ],
+              "title": "Delete",
               "instillFormat": "object",
               "type": "object"
             },
@@ -1862,6 +1878,7 @@
                 "color",
                 "privacy-setting"
               ],
+              "title": "Create",
               "instillFormat": "object",
               "type": "object"
             },
@@ -1979,6 +1996,7 @@
                 "due-on",
                 "start-on"
               ],
+              "title": "Duplicate",
               "instillFormat": "object",
               "type": "object"
             }
@@ -2254,6 +2272,7 @@
                 "action",
                 "portfolio-gid"
               ],
+              "title": "Get",
               "instillFormat": "object",
               "type": "object"
             },
@@ -2375,6 +2394,7 @@
                 "public",
                 "workspace"
               ],
+              "title": "Update",
               "instillFormat": "object",
               "type": "object"
             },
@@ -2410,6 +2430,7 @@
                 "action",
                 "portfolio-gid"
               ],
+              "title": "Delete",
               "instillFormat": "object",
               "type": "object"
             },
@@ -2515,6 +2536,7 @@
                 "public",
                 "workspace"
               ],
+              "title": "Create",
               "instillFormat": "object",
               "type": "object"
             }
