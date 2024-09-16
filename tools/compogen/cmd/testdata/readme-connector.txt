@@ -156,6 +156,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
                       "type": "string"
                     }
                   },
+                  "title": "Token",
                   "required": ["chunk-method"],
                   "type": "object"
                 },
@@ -177,6 +178,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
                       "type": "string"
                     }
                   },
+                  "title": "Markdown",
                   "required": ["chunk-method"],
                   "type": "object"
                 }

@@ -515,7 +515,7 @@ func firstToLower(s string) string {
 func enumValues(enum []string) string {
 	length := len(enum)
 	var result string
-	result = "<br/><details> <summary><strong>Enum values</strong>: </summary><ul>"
+	result = "<br/><details><summary><strong>Enum values</strong></summary><ul>"
 
 	for i, e := range enum {
 		result += fmt.Sprintf("<li>`%s`</li>", e)
@@ -531,7 +531,7 @@ func enumValues(enum []string) string {
 func findConstantValue(option objectSchema) string {
 	for _, prop := range option.Properties {
 		if prop.Const != "" {
-			return prop.Const
+			return option.Title
 		}
 	}
 	return ""
