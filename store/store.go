@@ -18,6 +18,7 @@ import (
 	"github.com/instill-ai/component/ai/mistralai/v0"
 	"github.com/instill-ai/component/ai/ollama/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
+	openaiv1 "github.com/instill-ai/component/ai/openai/v1"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
 	"github.com/instill-ai/component/application/asana/v0"
 	"github.com/instill-ai/component/application/email/v0"
@@ -119,6 +120,12 @@ func Init(
 		{
 			// OpenAI
 			conn := openai.Init(baseComp)
+			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+			compStore.Import(conn)
+		}
+		{
+			// OpenAIv1
+			conn := openaiv1.Init(baseComp)
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
