@@ -160,7 +160,9 @@
                 "option": {
                   "const": "existing catalog",
                   "type": "string",
-                  "title": "Option"
+                  "title": "Option",
+                  "description": "Existing catalog.",
+                  "instillUIOrder": 0
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"
@@ -217,7 +219,9 @@
                 "option": {
                   "const": "create new catalog",
                   "type": "string",
-                  "title": "Option"
+                  "title": "Option",
+                  "description": "Create new catalog.",
+                  "instillUIOrder": 0
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"
@@ -369,7 +373,9 @@
                 "option": {
                   "const": "existing catalog",
                   "type": "string",
-                  "title": "Option"
+                  "title": "Option",
+                  "description": "Existing catalog.",
+                  "instillUIOrder": 0
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"
@@ -428,7 +434,9 @@
                 "option": {
                   "const": "create new catalog",
                   "type": "string",
-                  "title": "Option"
+                  "title": "Option",
+                  "description": "Create new catalog.",
+                  "instillUIOrder": 0
                 },
                 "namespace": {
                   "$ref": "#/$defs/namespace"
