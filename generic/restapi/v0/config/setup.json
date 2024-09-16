@@ -92,7 +92,8 @@
               "description": "API key authentication",
               "instillUIOrder": 0,
               "order": 0,
-              "type": "string"
+              "type": "string",
+              "title": "Auth Type"
             },
             "key": {
               "default": "X-API-Key",
