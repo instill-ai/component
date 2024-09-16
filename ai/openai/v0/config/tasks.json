@@ -426,7 +426,9 @@
                 "type": {
                   "type": "string",
                   "const": "text",
-                  "title": "Type"
+                  "title": "Type",
+                  "description": "Text",
+                  "instillUIOrder": 0
                 }
               },
               "required": [
@@ -440,7 +442,9 @@
                 "type": {
                   "type": "string",
                   "const": "json_object",
-                  "title": "Type"
+                  "title": "Type",
+                  "description": "JSON Object",
+                  "instillUIOrder": 0
                 }
               },
               "required": [
@@ -454,7 +458,9 @@
                 "type": {
                   "type": "string",
                   "const": "json_schema",
-                  "title": "Type"
+                  "title": "Type",
+                  "description": "JSON Schema",
+                  "instillUIOrder": 0
                 },
                 "json-schema": {
                   "description": "Set up the schema of the structured output.",
