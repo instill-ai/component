@@ -77,7 +77,6 @@ func (e *execution) convertDocumentToMarkdown(input *structpb.Struct) (*structpb
 }
 
 func GetMarkdownTransformer(fileExtension string, inputStruct *ConvertDocumentToMarkdownInput) (MarkdownTransformer, error) {
-	fmt.Println("fileExtension: ", fileExtension)
 	switch fileExtension {
 	case "pdf":
 		return PDFToMarkdownTransformer{
