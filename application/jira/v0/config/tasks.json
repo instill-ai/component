@@ -404,7 +404,9 @@
                 "range": {
                   "title": "Range",
                   "const": "All",
-                  "type": "string"
+                  "type": "string",
+                  "description": "All issues.",
+                  "instillUIOrder": 0
                 }
               },
               "required": [
@@ -413,6 +415,8 @@
               "instillEditOnNodeFields": [
                 "range"
               ],
+              "description": "All issues",
+              "instillUIOrder": 0,
               "title": "All",
               "instillFormat": "object",
               "type": "object"
@@ -422,7 +426,9 @@
                 "range": {
                   "title": "Range",
                   "const": "Standard Issues",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Standard issues.",
+                  "instillUIOrder": 0
                 }
               },
               "required": [
@@ -431,6 +437,8 @@
               "instillEditOnNodeFields": [
                 "range"
               ],
+              "description": "Standard issues",
+              "instillUIOrder": 0,
               "title": "Standard Issues",
               "instillFormat": "object",
               "type": "object"
@@ -440,7 +448,9 @@
                 "range": {
                   "title": "Range",
                   "const": "Epics only",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Epics only.",
+                  "instillUIOrder": 0
                 }
               },
               "required": [
@@ -449,6 +459,8 @@
               "instillEditOnNodeFields": [
                 "range"
               ],
+              "description": "Epics only",
+              "instillUIOrder": 0,
               "title": "Epics only",
               "instillFormat": "object",
               "type": "object"
@@ -458,7 +470,9 @@
                 "range": {
                   "title": "Range",
                   "const": "In backlog only",
-                  "type": "string"
+                  "type": "string",
+                  "description": "In backlog only.",
+                  "instillUIOrder": 0
                 }
               },
               "required": [
@@ -467,6 +481,8 @@
               "instillEditOnNodeFields": [
                 "range"
               ],
+              "description": "In backlog only",
+              "instillUIOrder": 0,
               "title": "In Backlog Only",
               "instillFormat": "object",
               "type": "object"
@@ -476,7 +492,9 @@
                 "range": {
                   "title": "Range",
                   "const": "Issues of an epic",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Issues of an epic.",
+                  "instillUIOrder": 0
                 },
                 "epic-key": {
                   "title": "Epic Key",
@@ -503,6 +521,8 @@
                 "range",
                 "epic-key"
               ],
+              "description": "Issues of an epic",
+              "instillUIOrder": 0,
               "title": "Issues of an Epic",
               "instillFormat": "object",
               "type": "object"
@@ -512,7 +532,9 @@
                 "range": {
                   "title": "Range",
                   "const": "Issues of a sprint",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Issues of a sprint.",
+                  "instillUIOrder": 0
                 },
                 "sprint-name": {
                   "title": "Sprint Name",
@@ -539,6 +561,8 @@
                 "range",
                 "sprint-name"
               ],
+              "description": "Issues of a sprint",
+              "instillUIOrder": 0,
               "title": "Issues of a Sprint",
               "instillFormat": "object",
               "type": "object"
@@ -548,7 +572,9 @@
                 "range": {
                   "title": "Range",
                   "const": "Issues without epic assigned",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Issues without epic assigned.",
+                  "instillUIOrder": 0
                 }
               },
               "required": [
@@ -557,6 +583,8 @@
               "instillEditOnNodeFields": [
                 "range"
               ],
+              "description": "Issues without Epic Assigned",
+              "instillUIOrder": 0,
               "title": "Issues without Epic Assigned",
               "instillFormat": "object",
               "type": "object"
@@ -566,7 +594,9 @@
                 "range": {
                   "title": "Range",
                   "const": "JQL query",
-                  "type": "string"
+                  "type": "string",
+                  "description": "JQL query.",
+                  "instillUIOrder": 0
                 },
                 "jql": {
                   "title": "JQL",
@@ -593,6 +623,8 @@
                 "range",
                 "jql"
               ],
+              "description": "JQL query",
+              "instillUIOrder": 0,
               "title": "JQL Query",
               "instillFormat": "object",
               "type": "object"
@@ -875,7 +907,9 @@
                 "issue-type": {
                   "title": "Issue Type",
                   "const": "Epic",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Epic",
+                  "instillUIOrder": 0
                 }
               },
               "instillEditOnNodeFields": [
@@ -884,6 +918,8 @@
               "required": [
                 "issue-type"
               ],
+              "description": "Epic",
+              "instillUIOrder": 0,
               "title": "Epic",
               "instillFormat": "object",
               "type": "object"
@@ -893,7 +929,9 @@
                 "issue-type": {
                   "title": "Issue Type",
                   "const": "Task",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Task",
+                  "instillUIOrder": 0
                 }
               },
               "instillEditOnNodeFields": [
@@ -902,6 +940,8 @@
               "required": [
                 "issue-type"
               ],
+              "description": "Task",
+              "instillUIOrder": 0,
               "title": "Task",
               "instillFormat": "object",
               "type": "object"
@@ -911,7 +951,9 @@
                 "issue-type": {
                   "title": "Issue Type",
                   "const": "Subtask",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Subtask",
+                  "instillUIOrder": 0
                 },
                 "parent-key": {
                   "title": "Parent Key",
@@ -938,6 +980,8 @@
                 "issue-type",
                 "parent-key"
               ],
+              "description": "Subtask",
+              "instillUIOrder": 0,
               "title": "Subtask",
               "instillFormat": "object",
               "type": "object"
@@ -947,7 +991,9 @@
                 "issue-type": {
                   "title": "Issue Type",
                   "const": "Other",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Other",
+                  "instillUIOrder": 0
                 },
                 "custom-issue-type": {
                   "title": "Issue Type",
@@ -974,6 +1020,8 @@
                 "issue-type",
                 "custom-issue-type"
               ],
+              "description": "Other",
+              "instillUIOrder": 0,
               "title": "Other",
               "instillFormat": "object",
               "type": "object"
@@ -1075,7 +1123,9 @@
                 "update": {
                   "title": "Update",
                   "const": "Custom Update",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Custom update",
+                  "instillUIOrder": 0
                 },
                 "update-fields": {
                   "title": "Update Fields",
@@ -1128,7 +1178,8 @@
                       "field-name"
                     ],
                     "type": "object"
-                  }
+                  },
+                  "instillUIOrder": 1
                 }
               },
               "required": [
@@ -1139,6 +1190,8 @@
                 "update",
                 "update-fields"
               ],
+              "description": "Custom update",
+              "instillUIOrder": 0,
               "title": "Custom Update",
               "instillFormat": "object",
               "type": "object"
@@ -1148,7 +1201,9 @@
                 "update": {
                   "title": "Update",
                   "const": "Move Issue to Epic",
-                  "type": "string"
+                  "type": "string",
+                  "description": "Move issue to epic",
+                  "instillUIOrder": 0
                 },
                 "epic-key": {
                   "title": "Epic Key",
@@ -1175,6 +1230,8 @@
                 "update",
                 "epic-key"
               ],
+              "description": "Move issue to epic",
+              "instillUIOrder": 0,
               "title": "Move Issue to Epic",
               "instillFormat": "object",
               "type": "object"
