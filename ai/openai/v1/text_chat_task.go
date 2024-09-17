@@ -236,7 +236,7 @@ func sendRequest(chatReq textChatReq, client httpclient.IClient, job *base.Job, 
 			return outputStruct, fmt.Errorf("failed to unmarshal response: %w", err)
 		}
 
-		if outputStruct.Data.Choices == nil || len(outputStruct.Data.Choices) == 0 {
+		if len(outputStruct.Data.Choices) == 0 {
 			outputStruct.Data.Choices = make([]ai.Choice, len(response.Choices))
 		}
 		for idx, c := range response.Choices {
