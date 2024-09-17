@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
+	"github.com/gabriel-vasile/mimetype"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/h2non/filetype"
@@ -225,4 +226,34 @@ func ConvertDataFrameToMarkdownTable(rows [][]string) string {
 	}
 
 	return sb.String()
+}
+
+func InSlice(slice []string, item string) bool {
+	for _, i := range slice {
+		if i == item {
+			return true
+		}
+	}
+	return false
+}
+
+func GetDataURL(base64Image string) string {
+
+	if hasDataPrefix(base64Image) {
+		return base64Image
+	}
+
+	b, err := base64.StdEncoding.DecodeString(base.TrimBase64Mime(base64Image))
+
+	if err != nil {
+		return base64Image
+	}
+
+	dataURL := fmt.Sprintf("data:%s;base64,%s", mimetype.Detect(b).String(), base.TrimBase64Mime(base64Image))
+
+	return dataURL
+}
+
+func hasDataPrefix(base64Image string) bool {
+	return strings.HasPrefix(base64Image, "data:")
 }

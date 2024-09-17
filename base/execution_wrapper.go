@@ -2,6 +2,8 @@ package base
 
 import (
 	"context"
+	"fmt"
+	"sync"
 
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -138,4 +140,40 @@ func SequentialExecutor(ctx context.Context, jobs []*Job, execute func(*structpb
 		}
 	}
 	return nil
+}
+
+func ConcurrentExecutor(ctx context.Context, jobs []*Job, execute func(*structpb.Struct, *Job, context.Context) (*structpb.Struct, error)) error {
+	var wg sync.WaitGroup
+	wg.Add(len(jobs))
+	for _, job := range jobs {
+		go func() {
+			defer wg.Done()
+			defer recoverJobError(ctx, job)
+			input, err := job.Input.Read(ctx)
+			if err != nil {
+				job.Error.Error(ctx, err)
+				return
+			}
+			output, err := execute(input, job, ctx)
+			if err != nil {
+				job.Error.Error(ctx, err)
+				return
+			}
+			err = job.Output.Write(ctx, output)
+			if err != nil {
+				job.Error.Error(ctx, err)
+				return
+			}
+		}()
+	}
+	wg.Wait()
+	return nil
+}
+
+func recoverJobError(ctx context.Context, job *Job) {
+	if r := recover(); r != nil {
+		fmt.Printf("panic: %+v", r)
+		job.Error.Error(ctx, fmt.Errorf("panic: %+v", r))
+		return
+	}
 }

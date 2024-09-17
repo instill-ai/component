@@ -1,6 +1,7 @@
 package httpclient
 
 import (
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"net/http"
@@ -19,6 +20,79 @@ const (
 	// MIMETypeJSON defines the MIME type for JSON documents.
 	MIMETypeJSON = "application/json"
 )
+
+type IClient interface {
+	AddRetryAfterErrorCondition() *resty.Client
+	AddRetryCondition(condition resty.RetryConditionFunc) *resty.Client
+	AddRetryHook(hook resty.OnRetryFunc) *resty.Client
+	Clone() *resty.Client
+	DisableTrace() *resty.Client
+	EnableTrace() *resty.Client
+	GetClient() *http.Client
+	IsProxySet() bool
+	NewRequest() *resty.Request
+	OnAfterResponse(m resty.ResponseMiddleware) *resty.Client
+	OnBeforeRequest(m resty.RequestMiddleware) *resty.Client
+	OnError(h resty.ErrorHook) *resty.Client
+	OnInvalid(h resty.ErrorHook) *resty.Client
+	OnPanic(h resty.ErrorHook) *resty.Client
+	OnRequestLog(rl resty.RequestLogCallback) *resty.Client
+	OnResponseLog(rl resty.ResponseLogCallback) *resty.Client
+	OnSuccess(h resty.SuccessHook) *resty.Client
+	R() *resty.Request
+	RemoveProxy() *resty.Client
+	SetAllowGetMethodPayload(a bool) *resty.Client
+	SetAuthScheme(scheme string) *resty.Client
+	SetAuthToken(token string) *resty.Client
+	SetBaseURL(url string) *resty.Client
+	SetBasicAuth(username string, password string) *resty.Client
+	SetCertificates(certs ...tls.Certificate) *resty.Client
+	SetCloseConnection(close bool) *resty.Client
+	SetContentLength(l bool) *resty.Client
+	SetCookie(hc *http.Cookie) *resty.Client
+	SetCookieJar(jar http.CookieJar) *resty.Client
+	SetCookies(cs []*http.Cookie) *resty.Client
+	SetDebug(d bool) *resty.Client
+	SetDebugBodyLimit(sl int64) *resty.Client
+	SetDigestAuth(username string, password string) *resty.Client
+	SetDisableWarn(d bool) *resty.Client
+	SetDoNotParseResponse(parse bool) *resty.Client
+	SetError(err interface{}) *resty.Client
+	SetFormData(data map[string]string) *resty.Client
+	SetHeader(header string, value string) *resty.Client
+	SetHeaderVerbatim(header string, value string) *resty.Client
+	SetHeaders(headers map[string]string) *resty.Client
+	SetHostURL(url string) *resty.Client
+	SetJSONEscapeHTML(b bool) *resty.Client
+	SetJSONMarshaler(marshaler func(v interface{}) ([]byte, error)) *resty.Client
+	SetJSONUnmarshaler(unmarshaler func(data []byte, v interface{}) error) *resty.Client
+	SetLogger(l resty.Logger) *resty.Client
+	SetOutputDirectory(dirPath string) *resty.Client
+	SetPathParam(param string, value string) *resty.Client
+	SetPathParams(params map[string]string) *resty.Client
+	SetPreRequestHook(h resty.PreRequestHook) *resty.Client
+	SetProxy(proxyURL string) *resty.Client
+	SetQueryParam(param string, value string) *resty.Client
+	SetQueryParams(params map[string]string) *resty.Client
+	SetRateLimiter(rl resty.RateLimiter) *resty.Client
+	SetRawPathParam(param string, value string) *resty.Client
+	SetRawPathParams(params map[string]string) *resty.Client
+	SetRedirectPolicy(policies ...interface{}) *resty.Client
+	SetRetryAfter(callback resty.RetryAfterFunc) *resty.Client
+	SetRetryCount(count int) *resty.Client
+	SetRetryMaxWaitTime(maxWaitTime time.Duration) *resty.Client
+	SetRetryResetReaders(b bool) *resty.Client
+	SetRetryWaitTime(waitTime time.Duration) *resty.Client
+	SetRootCertificate(pemFilePath string) *resty.Client
+	SetRootCertificateFromString(pemContent string) *resty.Client
+	SetScheme(scheme string) *resty.Client
+	SetTLSClientConfig(config *tls.Config) *resty.Client
+	SetTimeout(timeout time.Duration) *resty.Client
+	SetTransport(transport http.RoundTripper) *resty.Client
+	SetXMLMarshaler(marshaler func(v interface{}) ([]byte, error)) *resty.Client
+	SetXMLUnmarshaler(unmarshaler func(data []byte, v interface{}) error) *resty.Client
+	Transport() (*http.Transport, error)
+}
 
 // Client performs HTTP requests for connectors, implementing error handling
 // and logging in a consistent way.
