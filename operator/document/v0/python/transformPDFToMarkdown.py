@@ -14,6 +14,7 @@ class PdfTransformer:
 		self.metadata = self.pdf.metadata
 		self.display_image_tag = display_image_tag
 		self.image_index = image_index
+		self.errors = []
 
 	def preprocess(self):
 		self.set_heights()
@@ -43,14 +44,20 @@ class PdfTransformer:
 				image["page_number"] = page.page_number
 				image["img_number"] = i
 				i += 1
-				img_base64 = self.encode_image(image, page)
+				img_base64 = self.encode_image(image, page, i)
 				image["img_base64"] = img_base64
 				self.images.append(image)
 		self.image_index = i
 
-	def encode_image(self, image, page):
+	def encode_image(self, image, page, i):
 		bbox = [image['x0'], page.cropbox[3]-image['y1'],  image['x1'], page.cropbox[3]-image['y0']]
-		img_page = page.crop(bbox=bbox)
+		# There is a bug in pdfplumber that it can't target the image position correctly.
+		try:
+			img_page = page.crop(bbox=bbox)
+		except Exception as e:
+			self.errors.append(f"image {i} got error: {str(e)}, so it convert all pages into image.")
+			img_page = page
+
 		img_obj = img_page.to_image(resolution=500)
 		buffer = BytesIO()
 		img_obj.save(buffer, format="PNG")
@@ -441,6 +448,7 @@ if __name__ == "__main__":
 	images = []
 	separator_number = 30
 	image_idx = 0
+	errors = []
 
 	try:
 		times = len(pdf.raw_pages) // separator_number + 1
@@ -456,11 +464,14 @@ if __name__ == "__main__":
 			result += pdf.execute()
 			for image in pdf.base64_images:
 				images.append(image)
+
+			errors += pdf.errors
 			
 		output = {
 			"body": result,
 			"images": images,
+			"error": errors
 		}
 		print(json.dumps(output))
 	except Exception as e:
-		print(json.dumps({"error": str(e)}))
+		print(json.dumps({"error": [str(e)]}))
