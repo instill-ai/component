@@ -101,9 +101,7 @@ func New(name, host string, options ...Option) *Client {
 		SetBaseURL(host).
 		SetHeader("Accept", MIMETypeJSON).
 		SetTimeout(reqTimeout).
-		SetTransport(&http.Transport{
-			DisableKeepAlives: true,
-		})
+		SetTransport(&http.Transport{MaxIdleConns: 20})
 
 	c := &Client{
 		Client: r,

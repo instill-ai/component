@@ -8,8 +8,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gabriel-vasile/mimetype"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -31,7 +33,7 @@ const (
 
 	cfgAPIKey       = "api-key"
 	cfgOrganization = "organization"
-	retryCount      = 3
+	retryCount      = 10 // Note: sometime OpenAI service are not stable
 )
 
 var (
@@ -284,8 +286,6 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, job *
 			if restyResp.StatusCode() != 200 {
 
 				res := restyResp.Body()
-				fmt.Println()
-				fmt.Println("res", restyResp)
 				job.Error.Error(ctx, fmt.Errorf("send request to openai error with error code: %d, msg %s", restyResp.StatusCode(), res))
 				return
 			}
@@ -398,7 +398,6 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, job *
 		}
 
 		req := client.R().SetBody(reqParams).SetResult(&resp)
-
 		if _, err := req.Post(embeddingsPath); err != nil {
 			job.Error.Error(ctx, err)
 			return
@@ -565,18 +564,22 @@ func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
 	client := newClient(e.Setup, e.GetLogger())
 	client.SetRetryCount(retryCount)
+	client.SetRetryWaitTime(1 * time.Second)
 
 	// TODO: we can encapsulate this code into a `ConcurrentExecutor`.
 	// The `ConcurrentExecutor` will use goroutines to execute jobs in parallel.
-	var wg sync.WaitGroup
-	wg.Add(len(jobs))
-	for _, job := range jobs {
-		go func() {
-			defer wg.Done()
-			e.worker(ctx, client, job)
-		}()
+	batchSize := 4
+	for batch := range slices.Chunk(jobs, batchSize) {
+		var wg sync.WaitGroup
+		wg.Add(len(batch))
+		for _, job := range batch {
+			go func() {
+				defer wg.Done()
+				e.worker(ctx, client, job)
+			}()
+		}
+		wg.Wait()
 	}
-	wg.Wait()
 
 	return nil
 }
