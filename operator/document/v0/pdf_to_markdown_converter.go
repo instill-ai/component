@@ -11,7 +11,7 @@ import (
 type converterOutput struct {
 	Body   string   `json:"body"`
 	Images []string `json:"images"`
-	Error  string   `json:"error"`
+	Error  []string `json:"error"`
 }
 
 func convertPDFToMarkdownWithPDFPlumber(base64Text string, displayImageTag bool) (converterOutput, error) {

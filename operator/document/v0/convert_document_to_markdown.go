@@ -48,7 +48,7 @@ func ConvertDocumentToMarkdown(inputStruct *ConvertDocumentToMarkdownInput, tran
 	outputStruct := &ConvertDocumentToMarkdownOutput{
 		Body:   converterOutput.Body,
 		Images: converterOutput.Images,
-		Error:  converterOutput.Error,
+		Error:  strings.Join(converterOutput.Error, "\n"),
 	}
 
 	if inputStruct.Filename != "" {
