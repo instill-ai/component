@@ -19,6 +19,7 @@ type ConvertDocumentToMarkdownOutput struct {
 	Body     string   `json:"body"`
 	Filename string   `json:"filename"`
 	Images   []string `json:"images,omitempty"`
+	Error    string   `json:"error,omitempty"`
 }
 
 func ConvertDocumentToMarkdown(inputStruct *ConvertDocumentToMarkdownInput, transformerGetter MarkdownTransformerGetterFunc) (*ConvertDocumentToMarkdownOutput, error) {
@@ -47,6 +48,7 @@ func ConvertDocumentToMarkdown(inputStruct *ConvertDocumentToMarkdownInput, tran
 	outputStruct := &ConvertDocumentToMarkdownOutput{
 		Body:   converterOutput.Body,
 		Images: converterOutput.Images,
+		Error:  converterOutput.Error,
 	}
 
 	if inputStruct.Filename != "" {

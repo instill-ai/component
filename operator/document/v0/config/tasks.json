@@ -80,6 +80,13 @@
           },
           "title": "Images",
           "type": "array"
+        },
+        "error": {
+          "description": "Error message if any during the conversion process",
+          "instillFormat": "string",
+          "instillUIOrder": 3,
+          "title": "Error",
+          "type": "string"
         }
       },
       "required": [

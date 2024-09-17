@@ -54,8 +54,8 @@ func convertPDFToMarkdownWithPDFPlumber(base64Text string, displayImageTag bool)
 	}
 
 	err = json.Unmarshal(outputBytes, &output)
-	if err != nil || output.Error != "" {
-		return output, fmt.Errorf("failed to unmarshal output: %w, %s", err, output.Error)
+	if err != nil {
+		return output, fmt.Errorf("failed to unmarshal output: %w", err)
 	}
 
 	return output, nil
