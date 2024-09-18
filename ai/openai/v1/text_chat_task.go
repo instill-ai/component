@@ -101,30 +101,8 @@ func (r *O1ModelRequester) SendChatRequest(_ *base.Job, _ context.Context) (*str
 		return nil, fmt.Errorf("failed to send chat request: %w, %s", err, errMsg)
 	}
 
-	outputStruct := ai.TextChatOutput{
-		Data: ai.OutputData{
-			Choices: make([]ai.Choice, len(resp.Choices)),
-		},
-		Metadata: ai.Metadata{
-			Usage: ai.Usage{
-				CompletionTokens: resp.Usage.ChatTokens,
-				PromptTokens:     resp.Usage.PromptTokens,
-				TotalTokens:      resp.Usage.TotalTokens,
-			},
-		},
-	}
-
-	for i, choice := range resp.Choices {
-		outputStruct.Data.Choices[i] = ai.Choice{
-			FinishReason: choice.FinishReason,
-			Index:        choice.Index,
-			Message: ai.OutputMessage{
-				Content: choice.Message.Content,
-				Role:    choice.Message.Role,
-			},
-			Created: resp.Created,
-		}
-	}
+	outputStruct := ai.TextChatOutput{}
+	setOutputStruct(&outputStruct, resp)
 
 	return base.ConvertToStructpb(outputStruct)
 }
@@ -209,29 +187,16 @@ func sendRequest(chatReq textChatReq, client httpclient.IClient, job *base.Job, 
 	rawBody := restyResp.RawBody()
 	defer rawBody.Close()
 	bodyBytes, err := io.ReadAll(rawBody)
+	if err != nil {
+		return outputStruct, fmt.Errorf("failed to read response body: %w", err)
+	}
+
 	err = json.Unmarshal(bodyBytes, &resp)
 	if err != nil {
 		return outputStruct, fmt.Errorf("failed to unmarshal response: %w", err)
 	}
 
-	outputStruct.Data.Choices = make([]ai.Choice, len(resp.Choices))
-	for i, choice := range resp.Choices {
-		outputStruct.Data.Choices[i] = ai.Choice{
-			FinishReason: choice.FinishReason,
-			Index:        choice.Index,
-			Message: ai.OutputMessage{
-				Content: choice.Message.Content,
-				Role:    choice.Message.Role,
-			},
-			Created: resp.Created,
-		}
-	}
-
-	outputStruct.Metadata.Usage = ai.Usage{
-		CompletionTokens: resp.Usage.ChatTokens,
-		PromptTokens:     resp.Usage.PromptTokens,
-		TotalTokens:      resp.Usage.TotalTokens,
-	}
+	setOutputStruct(&outputStruct, resp)
 
 	return outputStruct, nil
 }
@@ -336,8 +301,6 @@ func convertToTextChatReq(input ai.TextChatInput) textChatReq {
 		Seed:        params.Seed,
 	}
 
-	fmt.Println("textChatReq===", textChatReq)
-
 	if stream {
 		textChatReq.Stream = true
 		textChatReq.StreamOptions = &streamOptions{
@@ -382,6 +345,27 @@ func buildMessages(input ai.TextChatInput) []interface{} {
 	}
 
 	return messages
+}
+
+func setOutputStruct(outputStruct *ai.TextChatOutput, resp textChatResp) {
+	outputStruct.Data.Choices = make([]ai.Choice, len(resp.Choices))
+	for i, choice := range resp.Choices {
+		outputStruct.Data.Choices[i] = ai.Choice{
+			FinishReason: choice.FinishReason,
+			Index:        choice.Index,
+			Message: ai.OutputMessage{
+				Content: choice.Message.Content,
+				Role:    choice.Message.Role,
+			},
+			Created: resp.Created,
+		}
+	}
+
+	outputStruct.Metadata.Usage = ai.Usage{
+		CompletionTokens: resp.Usage.ChatTokens,
+		PromptTokens:     resp.Usage.PromptTokens,
+		TotalTokens:      resp.Usage.TotalTokens,
+	}
 }
 
 // API request and response structures
