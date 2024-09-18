@@ -5,8 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"strings"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/instill-ai/component/ai"
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
@@ -93,8 +96,9 @@ func (r *O1ModelRequester) SendChatRequest(_ *base.Job, _ context.Context) (*str
 
 	req := client.R().SetResult(&resp).SetBody(chatReq)
 
-	if _, err := req.Post(completionsPath); err != nil {
-		return nil, fmt.Errorf("failed to send chat request: %w", err)
+	if resp, err := req.Post(completionsPath); err != nil {
+		errMsg := resp.Body()
+		return nil, fmt.Errorf("failed to send chat request: %w, %s", err, errMsg)
 	}
 
 	outputStruct := ai.TextChatOutput{
@@ -144,7 +148,7 @@ func (r *SupportJSONOutputModelRequester) SendChatRequest(job *base.Job, ctx con
 	output, err := sendRequest(chatReq, r.Client, job, ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to send chat request: %w", err)
+		return nil, err
 	}
 
 	return base.ConvertToStructpb(output)
@@ -168,7 +172,7 @@ func (r *ChatModelRequester) SendChatRequest(job *base.Job, ctx context.Context)
 	output, err := sendRequest(chatReq, r.Client, job, ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to send chat request: %w", err)
+		return nil, err
 	}
 
 	return base.ConvertToStructpb(output)
@@ -186,15 +190,58 @@ func sendRequest(chatReq textChatReq, client httpclient.IClient, job *base.Job, 
 	}
 
 	if restyResp.StatusCode() != 200 {
-		res := restyResp.Body()
-		return outputStruct, fmt.Errorf("send request to openai error with error code: %d, msg %s", restyResp.StatusCode(), res)
+		rawBody := restyResp.RawBody()
+		defer rawBody.Close()
+		bodyBytes, err := io.ReadAll(rawBody)
+		return outputStruct, fmt.Errorf("send request to openai error with error code: %d, msg %s, %s", restyResp.StatusCode(), bodyBytes, err)
 	}
 
-	scanner := bufio.NewScanner(restyResp.RawResponse.Body)
+	if chatReq.Stream {
+		err = streaming(restyResp, job, ctx, &outputStruct)
+		if err != nil {
+			return outputStruct, fmt.Errorf("failed to stream response: %w", err)
+		}
 
-	var u ai.Usage
+		return outputStruct, nil
+	}
 
+	resp := textChatResp{}
+	rawBody := restyResp.RawBody()
+	defer rawBody.Close()
+	bodyBytes, err := io.ReadAll(rawBody)
+	err = json.Unmarshal(bodyBytes, &resp)
+	if err != nil {
+		return outputStruct, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	outputStruct.Data.Choices = make([]ai.Choice, len(resp.Choices))
+	for i, choice := range resp.Choices {
+		outputStruct.Data.Choices[i] = ai.Choice{
+			FinishReason: choice.FinishReason,
+			Index:        choice.Index,
+			Message: ai.OutputMessage{
+				Content: choice.Message.Content,
+				Role:    choice.Message.Role,
+			},
+			Created: resp.Created,
+		}
+	}
+
+	outputStruct.Metadata.Usage = ai.Usage{
+		CompletionTokens: resp.Usage.ChatTokens,
+		PromptTokens:     resp.Usage.PromptTokens,
+		TotalTokens:      resp.Usage.TotalTokens,
+	}
+
+	return outputStruct, nil
+}
+
+func streaming(resp *resty.Response, job *base.Job, ctx context.Context, outputStruct *ai.TextChatOutput) error {
+
+	scanner := bufio.NewScanner(resp.RawResponse.Body)
 	count := 0
+	var err error
+
 	for scanner.Scan() {
 
 		res := scanner.Text()
@@ -205,22 +252,24 @@ func sendRequest(chatReq textChatReq, client httpclient.IClient, job *base.Job, 
 
 		res = strings.Replace(res, "data: ", "", 1)
 
+		log.Printf("openai response: %s", res)
+
 		// Note: Since we haven’t provided delta updates for the
 		// messages, we’re reducing the number of event streams by
 		// returning the response every ten iterations.
 		if count == 10 || res == "[DONE]" {
 			outputJSON, inErr := json.Marshal(outputStruct)
 			if inErr != nil {
-				return outputStruct, inErr
+				return inErr
 			}
 			output := &structpb.Struct{}
 			inErr = protojson.Unmarshal(outputJSON, output)
 			if inErr != nil {
-				return outputStruct, inErr
+				return inErr
 			}
 			err = job.Output.Write(ctx, output)
 			if err != nil {
-				return outputStruct, err
+				return err
 			}
 			if res == "[DONE]" {
 				break
@@ -233,54 +282,70 @@ func sendRequest(chatReq textChatReq, client httpclient.IClient, job *base.Job, 
 		err = json.Unmarshal([]byte(res), response)
 
 		if err != nil {
-			return outputStruct, fmt.Errorf("failed to unmarshal response: %w", err)
+			return fmt.Errorf("failed to unmarshal response: %w", err)
 		}
 
-		if len(outputStruct.Data.Choices) == 0 {
-			outputStruct.Data.Choices = make([]ai.Choice, len(response.Choices))
-		}
-		for idx, c := range response.Choices {
-			outputStruct.Data.Choices[idx].Message.Content += c.Delta.Content
+		for _, c := range response.Choices {
+			// Now, there is no document to describe it.
+			// But, when we test it, we found that the choices idx is not in order.
+			// So, we need to get idx from the choice, and the len of the choices is always 1.
+			responseIdx := c.Index
+
+			if responseIdx >= len(outputStruct.Data.Choices) {
+				outputStruct.Data.Choices = append(outputStruct.Data.Choices, ai.Choice{})
+			}
+
+			outputStruct.Data.Choices[responseIdx].Message.Content += c.Delta.Content
 
 			if c.Delta.Role != "" {
-				outputStruct.Data.Choices[idx].Message.Role = c.Delta.Role
+				outputStruct.Data.Choices[responseIdx].Message.Role = c.Delta.Role
 			}
+
+			if c.FinishReason != "" {
+				outputStruct.Data.Choices[responseIdx].FinishReason = c.FinishReason
+			}
+			outputStruct.Data.Choices[responseIdx].Index = c.Index
+			outputStruct.Data.Choices[responseIdx].Created = response.Created
 		}
 
 		if response.Usage.TotalTokens > 0 {
-			u = ai.Usage{
+			outputStruct.Metadata.Usage = ai.Usage{
 				CompletionTokens: response.Usage.ChatTokens,
 				PromptTokens:     response.Usage.PromptTokens,
 				TotalTokens:      response.Usage.TotalTokens,
 			}
 		}
 	}
-
-	outputStruct.Metadata.Usage = u
-
-	return outputStruct, nil
+	return nil
 }
 
 // Build the vendor-specific request structure
 func convertToTextChatReq(input ai.TextChatInput) textChatReq {
 	messages := buildMessages(input)
 
-	temp := float32(input.Parameter.Temperature)
-	topP := float32(input.Parameter.TopP)
-	n := input.Parameter.N
-	maxTokens := input.Parameter.MaxTokens
-	seed := input.Parameter.Seed
+	params := input.Parameter
+	stream := params.Stream
 
-	return textChatReq{
+	textChatReq := textChatReq{
 		Model:       input.Data.Model,
 		Messages:    messages,
-		MaxTokens:   &maxTokens,
-		Temperature: &temp,
-		N:           &n,
-		TopP:        &topP,
-		Seed:        &seed,
-		Stream:      input.Parameter.Stream,
+		MaxTokens:   params.MaxTokens,
+		Temperature: params.Temperature,
+		N:           params.N,
+		TopP:        params.TopP,
+		Seed:        params.Seed,
 	}
+
+	fmt.Println("textChatReq===", textChatReq)
+
+	if stream {
+		textChatReq.Stream = true
+		textChatReq.StreamOptions = &streamOptions{
+			IncludeUsage: true,
+		}
+		return textChatReq
+	}
+	return textChatReq
 }
 
 func buildMessages(input ai.TextChatInput) []interface{} {
@@ -302,10 +367,17 @@ func buildMessages(input ai.TextChatInput) []interface{} {
 			}
 		}
 
-		messages[i] = map[string]interface{}{
-			"role":    msg.Role,
-			"name":    msg.Name,
-			"content": content,
+		if msg.Name == "" {
+			messages[i] = map[string]interface{}{
+				"role":    msg.Role,
+				"content": content,
+			}
+		} else {
+			messages[i] = map[string]interface{}{
+				"role":    msg.Role,
+				"name":    msg.Name,
+				"content": content,
+			}
 		}
 	}
 

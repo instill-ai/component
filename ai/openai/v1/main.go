@@ -49,8 +49,6 @@ type execution struct {
 
 // Init returns an initialized OpenAI connector.
 func Init(bc base.Component) *component {
-	// TODO: manipulate the tasksJSON to insert the model list and credit model list
-	// TODO: manipulate the tasksJSON to insert more params for specific vendors
 	once.Do(func() {
 		comp = &component{Component: bc}
 		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
