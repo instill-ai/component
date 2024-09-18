@@ -110,6 +110,14 @@ func GetMarkdownTransformer(fileExtension string, inputStruct *ConvertDocumentTo
 		return XlsxToMarkdownTransformer{
 			Base64EncodedText: inputStruct.Document,
 		}, nil
+	case "xls":
+		return XlsToMarkdownTransformer{
+			Base64EncodedText: inputStruct.Document,
+		}, nil
+	case "csv":
+		return CSVToMarkdownTransformer{
+			Base64EncodedText: inputStruct.Document,
+		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported file type")
 	}

@@ -15,6 +15,7 @@ require (
 	github.com/cohere-ai/cohere-go/v2 v2.8.5
 	github.com/emersion/go-imap/v2 v2.0.0-beta.3
 	github.com/emersion/go-message v0.18.1
+	github.com/extrame/xls v0.0.1
 	github.com/fatih/color v1.16.0
 	github.com/fogleman/gg v1.3.0
 	github.com/frankban/quicktest v1.14.6
@@ -77,6 +78,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/chromedp/cdproto v0.0.0-20240801214329-3f85d328b335 // indirect
 	github.com/chromedp/sysutil v1.0.0 // indirect
+	github.com/extrame/ole2 v0.0.0-20160812065207-d69429661ad7 // indirect
 	github.com/go-openapi/analysis v0.21.2 // indirect
 	github.com/go-openapi/errors v0.22.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect

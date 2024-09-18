@@ -3,6 +3,7 @@ package document
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/csv"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,6 +11,7 @@ import (
 	"strings"
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
+	"github.com/extrame/xls"
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
 	"github.com/xuri/excelize/v2"
@@ -131,6 +133,86 @@ func (t XlsxToMarkdownTransformer) Transform() (converterOutput, error) {
 		result += util.ConvertDataFrameToMarkdownTable(rows)
 		result += "\n\n"
 	}
+
+	return converterOutput{Body: result}, nil
+}
+
+type XlsToMarkdownTransformer struct {
+	Base64EncodedText string
+}
+
+func (t XlsToMarkdownTransformer) Transform() (converterOutput, error) {
+
+	base64String := strings.Split(t.Base64EncodedText, ",")[1]
+	fileContent, err := base64.StdEncoding.DecodeString(base64String)
+
+	output := converterOutput{}
+
+	if err != nil {
+		return output, fmt.Errorf("failed to decode base64 to file: %w", err)
+	}
+
+	reader := bytes.NewReader(fileContent)
+
+	xlsFile, err := xls.OpenReader(reader, "utf-8")
+	if err != nil {
+		return output, fmt.Errorf("failed to open XLS reader: %w", err)
+	}
+
+	result := ""
+	for i := 0; i < xlsFile.NumSheets(); i++ {
+		sheet := xlsFile.GetSheet(i)
+		if sheet == nil {
+			continue
+		}
+
+		result += fmt.Sprintf("# %s\n", sheet.Name)
+		dataFrame := make([][]string, 0)
+
+		for rowIndex := 0; rowIndex <= int(sheet.MaxRow); rowIndex++ {
+			row := sheet.Row(rowIndex)
+			if row == nil {
+				continue
+			}
+			dataRow := make([]string, 0)
+			for colIndex := 0; colIndex <= int(row.LastCol()); colIndex++ {
+				cell := row.Col(colIndex)
+				dataRow = append(dataRow, cell)
+			}
+			dataFrame = append(dataFrame, dataRow)
+		}
+
+		result += util.ConvertDataFrameToMarkdownTable(dataFrame)
+		result += "\n\n"
+	}
+
+	output.Body = result
+	return output, nil
+
+}
+
+type CSVToMarkdownTransformer struct {
+	Base64EncodedText string
+}
+
+func (t CSVToMarkdownTransformer) Transform() (converterOutput, error) {
+
+	base64String := strings.Split(t.Base64EncodedText, ",")[1]
+	fileContent, err := base64.StdEncoding.DecodeString(base64String)
+
+	if err != nil {
+		return converterOutput{}, fmt.Errorf("failed to decode base64 to file: %w", err)
+	}
+
+	reader := csv.NewReader(bytes.NewReader(fileContent))
+
+	records, err := reader.ReadAll()
+
+	if err != nil {
+		return converterOutput{}, fmt.Errorf("failed to read csv: %w", err)
+	}
+
+	result := util.ConvertDataFrameToMarkdownTable(records)
 
 	return converterOutput{Body: result}, nil
 }
