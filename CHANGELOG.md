@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.27.5-beta](https://github.com/instill-ai/component/compare/v0.27.4-beta...v0.27.5-beta) (2024-09-18)
+
+
+### Features
+
+* **compogen:** automate to add missing parts in the document ([#324](https://github.com/instill-ai/component/issues/324)) ([e5d6dfe](https://github.com/instill-ai/component/commit/e5d6dfeded0a8c962959b5bb4ccec93912750ca2))
+
+
+### Bug Fixes
+
+* **document:** fix the bug from pdfplumber ([#342](https://github.com/instill-ai/component/issues/342)) ([72f4931](https://github.com/instill-ai/component/commit/72f4931dcb78070272cecb7b079b377a61f1d2fc))
+
+
+### Miscellaneous Chores
+
+* release v0.27.5-beta ([24dfda9](https://github.com/instill-ai/component/commit/24dfda9e573e2e317a32ae06f142f803ba5ad6ae))
+
 ## [0.27.4-beta](https://github.com/instill-ai/component/compare/v0.27.3-beta...v0.27.4-beta) (2024-09-13)
 
 
