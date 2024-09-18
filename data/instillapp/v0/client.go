@@ -18,6 +18,7 @@ const maxPayloadSize int = 1024 * 1024 * 32
 func initAppClient(serverURL string) (pbClient appPB.AppPublicServiceClient, connection Connection, err error) {
 	var clientDialOpts grpc.DialOption
 
+	// To call the app backend, we need to consider the security.
 	if strings.HasPrefix(serverURL, "https://") {
 		clientDialOpts = grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{InsecureSkipVerify: true}))
 	} else {

@@ -13,7 +13,7 @@ import (
 
 type ReadChatHistoryInput struct {
 	Namespace       string `json:"namespace"`
-	AppUid          string `json:"app-id"`
+	AppUID          string `json:"app-id"`
 	ConversationID  string `json:"conversation-id"`
 	Role            string `json:"role"`
 	MessageType     string `json:"message-type"`
@@ -115,7 +115,7 @@ func (e *execution) readChatHistory(input *structpb.Struct) (*structpb.Struct, e
 
 	res, err := appClient.ListMessages(ctx, &appPB.ListMessagesRequest{
 		NamespaceId:           inputStruct.Namespace,
-		AppId:                 inputStruct.AppUid,
+		AppId:                 inputStruct.AppUID,
 		ConversationId:        inputStruct.ConversationID,
 		IncludeSystemMessages: true,
 	})
@@ -133,7 +133,7 @@ func (e *execution) readChatHistory(input *structpb.Struct) (*structpb.Struct, e
 	for res.NextPageToken != "" || (len(output.Messages) < inputStruct.MaxMessageCount && inputStruct.MaxMessageCount > 0) {
 		res, err = appClient.ListMessages(ctx, &appPB.ListMessagesRequest{
 			NamespaceId:           inputStruct.Namespace,
-			AppId:                 inputStruct.AppUid,
+			AppId:                 inputStruct.AppUID,
 			ConversationId:        inputStruct.ConversationID,
 			IncludeSystemMessages: true,
 			PageToken:             res.NextPageToken,
@@ -152,7 +152,7 @@ func (e *execution) readChatHistory(input *structpb.Struct) (*structpb.Struct, e
 
 type WriteChatMessageInput struct {
 	Namespace      string       `json:"namespace"`
-	AppUid         string       `json:"app-id"`
+	AppUID         string       `json:"app-id"`
 	ConversationID string       `json:"conversation-id"`
 	Message        WriteMessage `json:"message"`
 }
@@ -200,7 +200,7 @@ func (e *execution) writeChatMessage(input *structpb.Struct) (*structpb.Struct, 
 
 	conversations, err := appClient.ListConversations(ctx, &appPB.ListConversationsRequest{
 		NamespaceId:    inputStruct.Namespace,
-		AppId:          inputStruct.AppUid,
+		AppId:          inputStruct.AppUID,
 		ConversationId: inputStruct.ConversationID,
 	})
 
@@ -211,7 +211,7 @@ func (e *execution) writeChatMessage(input *structpb.Struct) (*structpb.Struct, 
 	if len(conversations.Conversations) == 0 {
 		_, err = appClient.CreateConversation(ctx, &appPB.CreateConversationRequest{
 			NamespaceId:    inputStruct.Namespace,
-			AppId:          inputStruct.AppUid,
+			AppId:          inputStruct.AppUID,
 			ConversationId: inputStruct.ConversationID,
 		})
 
@@ -222,7 +222,7 @@ func (e *execution) writeChatMessage(input *structpb.Struct) (*structpb.Struct, 
 
 	res, err := appClient.CreateMessage(ctx, &appPB.CreateMessageRequest{
 		NamespaceId:    inputStruct.Namespace,
-		AppId:          inputStruct.AppUid,
+		AppId:          inputStruct.AppUID,
 		ConversationId: inputStruct.ConversationID,
 		Role:           inputStruct.Message.Role,
 		Type:           appPB.Message_MessageType(appPB.Message_MessageType_value["MESSAGE_TYPE_TEXT"]),
