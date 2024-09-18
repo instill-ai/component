@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"strings"
 	"sync"
 	"time"
@@ -283,9 +284,10 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, job *
 			}
 
 			if restyResp.StatusCode() != 200 {
-
-				res := restyResp.Body()
-				job.Error.Error(ctx, fmt.Errorf("send request to openai error with error code: %d, msg %s", restyResp.StatusCode(), res))
+				rawBody := restyResp.RawBody()
+				defer rawBody.Close()
+				bodyBytes, err := io.ReadAll(rawBody)
+				job.Error.Error(ctx, fmt.Errorf("send request to openai error with error code: %d, msg %s, %s", restyResp.StatusCode(), bodyBytes, err))
 				return
 			}
 			scanner := bufio.NewScanner(restyResp.RawResponse.Body)
@@ -337,11 +339,15 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, job *
 					return
 				}
 
-				if outputStruct.Texts == nil {
-					outputStruct.Texts = make([]string, len(response.Choices))
-				}
-				for idx, c := range response.Choices {
-					outputStruct.Texts[idx] += c.Delta.Content
+				for _, c := range response.Choices {
+					// Now, there is no document to describe it.
+					// But, when we test it, we found that the choices idx is not in order.
+					// So, we need to get idx from the choice, and the len of the choices is always 1.
+					responseIdx := c.Index
+					if len(outputStruct.Texts) <= responseIdx {
+						outputStruct.Texts = append(outputStruct.Texts, "")
+					}
+					outputStruct.Texts[responseIdx] += c.Delta.Content
 
 				}
 
