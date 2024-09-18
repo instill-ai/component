@@ -8,7 +8,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -560,6 +559,13 @@ func (e *execution) worker(ctx context.Context, client *httpclient.Client, job *
 	}
 }
 
+func chunk(items []*base.Job, batchSize int) (chunks [][]*base.Job) {
+	for batchSize < len(items) {
+		items, chunks = items[batchSize:], append(chunks, items[0:batchSize:batchSize])
+	}
+	return append(chunks, items)
+}
+
 func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 
 	client := newClient(e.Setup, e.GetLogger())
@@ -569,7 +575,7 @@ func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 	// TODO: we can encapsulate this code into a `ConcurrentExecutor`.
 	// The `ConcurrentExecutor` will use goroutines to execute jobs in parallel.
 	batchSize := 4
-	for batch := range slices.Chunk(jobs, batchSize) {
+	for _, batch := range chunk(jobs, batchSize) {
 		var wg sync.WaitGroup
 		wg.Add(len(batch))
 		for _, job := range batch {
