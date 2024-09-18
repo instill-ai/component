@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "api-token": {
+      "description": "Fill in your API Tokens. It is only for CE version. In Cloud, you do not need to fill this field. You can create an api token in [Settings > API Tokens](https://instill.tech/settings/profile). ",
+      "instillUpstreamTypes": [
+        "reference"
+      ],
+      "instillAcceptFormats": [
+        "string"
+      ],
+      "instillSecret": true,
+      "instillUIOrder": 0,
+      "title": "API Token",
+      "type": "string"
+    }
+  },
+  "required": [],
+  "title": "Instill App Connection",
+  "type": "object"
+}
