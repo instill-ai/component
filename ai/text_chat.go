@@ -2,7 +2,7 @@ package ai
 
 type TextChatInput struct {
 	Data      InputData `json:"data"`
-	Parameter Parameter `json:"parameter"`
+	Parameter Parameter `json:"parameter,omitempty"`
 }
 
 type InputData struct {
@@ -11,18 +11,18 @@ type InputData struct {
 }
 
 type Parameter struct {
-	MaxTokens   int     `json:"max-tokens"`
-	Seed        int     `json:"seed"`
-	N           int     `json:"n"`
-	Temperature float64 `json:"temperature"`
-	TopP        float64 `json:"top-p"`
-	Stream      bool    `json:"stream"`
+	MaxTokens   *int     `json:"max-tokens,omitempty"`
+	Seed        *int     `json:"seed,omitempty"`
+	N           *int     `json:"n,omitempty"`
+	Temperature *float32 `json:"temperature,omitempty"`
+	TopP        *float32 `json:"top-p,omitempty"`
+	Stream      bool     `json:"stream,omitempty"`
 }
 
 type InputMessage struct {
 	Contents []Content `json:"content"`
 	Role     string    `json:"role"`
-	Name     string    `json:"name"`
+	Name     string    `json:"name,omitempty"`
 }
 
 type Content struct {
