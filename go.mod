@@ -33,7 +33,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/h2non/filetype v1.1.3
 	github.com/iFaceless/godub v0.0.0-20200728093528-a30bb4d1a0f1
-	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240918145852-831865c7d175
+	github.com/instill-ai/protogen-go v0.3.3-alpha.0.20240920092128-7922db226754
 	github.com/instill-ai/x v0.4.0-alpha
 	github.com/itchyny/gojq v0.12.14
 	github.com/jmoiron/sqlx v1.4.0
