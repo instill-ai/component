@@ -122,6 +122,12 @@ func Init(
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
+		// {
+
+		// 	conn := universalai.Init(baseComp)
+		// 	conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+		// 	compStore.Import(conn)
+		// }
 		{
 			// Anthropic
 			conn := anthropic.Init(baseComp)
@@ -163,6 +169,7 @@ func Init(
 			compStore.Import(conn)
 		}
 
+		// compStore.Import(instillapp.Init(baseComp))
 		compStore.Import(bigquery.Init(baseComp))
 		compStore.Import(googlecloudstorage.Init(baseComp))
 		compStore.Import(googlesearch.Init(baseComp))
