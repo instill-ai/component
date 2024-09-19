@@ -82,7 +82,7 @@
           "type": "string"
         },
         "duration": {
-          "description": "The duration between now and how long ago to retrieve the chat history from. i.e. 2h45m5s. Valid time units are \"ns\", \"us\" (or \"µs\"), \"ms\", \"s\", \"m\", \"h\".  The default is all with blank setting.",
+          "description": "The duration between now and how long ago to retrieve the chat history from. i.e. 2h45m5s. Valid time units are \"ns\", \"us\" (or \"\u00b5s\"), \"ms\", \"s\", \"m\", \"h\".  The default is all with blank setting.",
           "instillUIOrder": 5,
           "instillAcceptFormats": [
             "string"
