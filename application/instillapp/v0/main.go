@@ -21,8 +21,6 @@ const (
 var (
 	//go:embed config/definition.json
 	definitionJSON []byte
-	//go:embed config/setup.json
-	setupJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
 	once      sync.Once
@@ -48,7 +46,7 @@ type Connection interface {
 func Init(bc base.Component) *component {
 	once.Do(func() {
 		comp = &component{Component: bc}
-		err := comp.LoadDefinition(definitionJSON, setupJSON, tasksJSON, nil)
+		err := comp.LoadDefinition(definitionJSON, nil, tasksJSON, nil)
 		if err != nil {
 			panic(err)
 		}
