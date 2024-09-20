@@ -22,6 +22,11 @@
   "instillEditOnNodeFields": [
     "token"
   ],
+  "instillOAuthConfig": {
+    "authUrl":   "https://slack.com/oauth/v2/authorize",
+    "accessUrl": "https://slack.com/api/oauth.v2.access",
+    "scopes":    []
+  },
   "title": "Slack Connection",
   "type": "object"
 }
