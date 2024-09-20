@@ -141,6 +141,7 @@ func testCreateTask(t *testing.T) {
 				Completed:       true,
 				Assignee:        "123",
 				Parent:          "1234",
+				Workspace:       "1308068054504137",
 			},
 			wantResp: TaskTaskOutput{
 				Task: Task{
@@ -189,7 +190,10 @@ func testDeleteTask(t *testing.T) {
 				ID:     "1234567890",
 			},
 			wantResp: TaskTaskOutput{
-				Task: Task{},
+				Task: Task{
+					Projects: []SimpleProject{},
+					Likes:    []Like{},
+				},
 			},
 		},
 		{

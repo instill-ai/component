@@ -2,6 +2,7 @@ package asana
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -51,7 +52,9 @@ func taskResp2Output(resp *TaskTaskResp) TaskTaskOutput {
 			Parent:          resp.Data.Parent.GID,
 		},
 	}
-
+	if out.Projects == nil {
+		out.Projects = []SimpleProject{}
+	}
 	for _, like := range resp.Data.Likes {
 		out.Likes = append(out.Likes, Like{
 			LikeGID:  like.LikeGID,
@@ -87,6 +90,7 @@ func (c *Client) GetTask(ctx context.Context, props *structpb.Struct) (*structpb
 
 	task := resp.Result().(*TaskTaskResp)
 	out := taskResp2Output(task)
+
 	return base.ConvertToStructpb(out)
 }
 
@@ -104,14 +108,14 @@ type UpdateTaskInput struct {
 }
 
 type UpdateTaskReq struct {
-	Name            string `json:"name"`
-	ResourceSubtype string `json:"resource_subtype"`
-	ApprovalStatus  string `json:"approval_status"`
+	Name            string `json:"name,omitempty"`
+	ResourceSubtype string `json:"resource_subtype,omitempty"`
+	ApprovalStatus  string `json:"approval_status,omitempty"`
 	Completed       bool   `json:"completed"`
 	Liked           bool   `json:"liked"`
-	Notes           string `json:"notes"`
-	Assignee        string `json:"assignee"`
-	Parent          string `json:"parent"`
+	Notes           string `json:"notes,omitempty"`
+	Assignee        string `json:"assignee,omitempty"`
+	Parent          string `json:"parent,omitempty"`
 }
 
 func (c *Client) UpdateTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -121,19 +125,27 @@ func (c *Client) UpdateTask(ctx context.Context, props *structpb.Struct) (*struc
 	}
 
 	apiEndpoint := fmt.Sprintf("/tasks/%s", input.ID)
-	req := c.Client.R().SetResult(&TaskTaskResp{}).SetBody(
-		map[string]interface{}{
-			"data": &UpdateTaskReq{
-				Name:            input.Name,
-				ResourceSubtype: input.ResourceSubtype,
-				ApprovalStatus:  input.ApprovalStatus,
-				Completed:       input.Completed,
-				Liked:           input.Liked,
-				Notes:           input.Notes,
-				Assignee:        input.Assignee,
-				Parent:          input.Parent,
-			},
-		})
+	req := c.Client.R().SetResult(&TaskTaskResp{})
+	rawBody, _ := json.Marshal(map[string]interface{}{
+		"data": &UpdateTaskReq{
+			Name:            input.Name,
+			ResourceSubtype: input.ResourceSubtype,
+			ApprovalStatus:  input.ApprovalStatus,
+			Completed:       input.Completed,
+			Liked:           input.Liked,
+			Notes:           input.Notes,
+			Assignee:        input.Assignee,
+			Parent:          input.Parent,
+		},
+	})
+	var jsonBody map[string]map[string]interface{}
+	_ = json.Unmarshal(rawBody, &jsonBody)
+	if input.ApprovalStatus != "" || input.ResourceSubtype != "" {
+		delete(jsonBody["data"], "completed")
+	}
+	bytebody, _ := json.Marshal(jsonBody)
+	body := string(bytebody)
+	req.SetBody(body)
 
 	wantOptFields := parseWantOptionFields(Task{})
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
@@ -162,19 +174,21 @@ type CreateTaskInput struct {
 	Parent          string `json:"parent"`
 	StartAt         string `json:"start-at"`
 	DueAt           string `json:"due-at"`
+	Workspace       string `json:"workspace"`
 }
 
 type CreateTaskReq struct {
 	Name            string `json:"name"`
-	Notes           string `json:"notes"`
-	ResourceSubtype string `json:"resource_subtype"`
-	ApprovalStatus  string `json:"approval_status"`
+	Notes           string `json:"notes,omitempty"`
+	ResourceSubtype string `json:"resource_subtype,omitempty"`
+	ApprovalStatus  string `json:"approval_status,omitempty"`
 	Completed       bool   `json:"completed"`
 	Liked           bool   `json:"liked"`
-	Assignee        string `json:"assignee"`
-	Parent          string `json:"parent"`
-	StartAt         string `json:"start_at"`
-	DueAt           string `json:"due_at"`
+	Assignee        string `json:"assignee,omitempty"`
+	Parent          string `json:"parent,omitempty"`
+	StartAt         string `json:"start_at,omitempty"`
+	DueAt           string `json:"due_at,omitempty"`
+	Workspace       string `json:"workspace"`
 }
 
 func (c *Client) CreateTask(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -197,6 +211,7 @@ func (c *Client) CreateTask(ctx context.Context, props *structpb.Struct) (*struc
 				Parent:          input.Parent,
 				StartAt:         input.StartAt,
 				DueAt:           input.DueAt,
+				Workspace:       input.Workspace,
 			},
 		})
 	wantOptFields := parseWantOptionFields(Task{})
@@ -231,7 +246,7 @@ func (c *Client) DeleteTask(ctx context.Context, props *structpb.Struct) (*struc
 	if err != nil {
 		return nil, err
 	}
-	out := TaskTaskOutput{}
+	out := taskResp2Output(&TaskTaskResp{})
 	return base.ConvertToStructpb(out)
 
 }
@@ -274,8 +289,22 @@ func (c *Client) DuplicateTask(ctx context.Context, props *structpb.Struct) (*st
 		return nil, err
 	}
 	task := resp.Result().(*TaskTaskResp)
-	out := taskResp2Output(task)
-	return base.ConvertToStructpb(out)
+	getJobProps, _ := base.ConvertToStructpb(map[string]interface{}{
+		"action":  "get",
+		"job-gid": task.Data.GID,
+	})
+	var jobInfoMap Job
+	if jobInfo, err := c.GetJob(ctx, getJobProps); err != nil {
+		return nil, err
+	} else {
+		_ = base.ConvertFromStructpb(jobInfo, &jobInfoMap)
+	}
+	getProps, _ := base.ConvertToStructpb(map[string]interface{}{
+		"action":   "get",
+		"task-gid": jobInfoMap.NewTask.GID,
+	})
+
+	return c.GetTask(ctx, getProps)
 }
 
 type TaskSetParentInput struct {
@@ -312,8 +341,11 @@ func (c *Client) TaskSetParent(ctx context.Context, props *structpb.Struct) (*st
 		return nil, err
 	}
 	task := resp.Result().(*TaskTaskResp)
-	out := taskResp2Output(task)
-	return base.ConvertToStructpb(out)
+	getProps, _ := base.ConvertToStructpb(map[string]interface{}{
+		"action":   "get",
+		"task-gid": task.Data.GID,
+	})
+	return c.GetTask(ctx, getProps)
 }
 
 type TaskEditTagInput struct {
@@ -408,6 +440,7 @@ type TaskEditProjectReq struct {
 }
 
 func (c *Client) TaskEditProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
+
 	var input TaskEditProjectInput
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
@@ -419,14 +452,12 @@ func (c *Client) TaskEditProject(ctx context.Context, props *structpb.Struct) (*
 	} else if input.EditOption == "remove" {
 		apiEndpoint += "removeProject"
 	}
-
-	req := c.Client.R().SetBody(
-		map[string]interface{}{
-			"data": &TaskEditProjectReq{
-				ProjectID: input.ProjectID,
-			},
+	body, _ := json.Marshal(map[string]interface{}{
+		"data": &TaskEditProjectReq{
+			ProjectID: input.ProjectID,
 		},
-	)
+	})
+	req := c.Client.R().SetBody(string(body))
 	_, err := req.Post(apiEndpoint)
 	if err != nil {
 		return nil, err

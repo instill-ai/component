@@ -191,7 +191,8 @@
               },
               "required": [
                 "action",
-                "goal-gid"
+                "goal-gid",
+                "liked"
               ],
               "instillEditOnNodeFields": [
                 "action",
@@ -337,11 +338,60 @@
                   ],
                   "instillFormat": "boolean",
                   "type": "boolean"
+                },
+                "workspace": {
+                  "description": "GID of the workspace.  You can find one by filling the access token in the <a href=\"https://developers.asana.com/reference/getworkspaces\">Asana API Playground</a>",
+                  "instillShortDescription": "GID of the workspace",
+                  "instillUIOrder": 5,
+                  "title": "Workspace",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
+                },
+                "time-period": {
+                  "description": "GID of the time period. You can find one by filling the workspace id in the <a href=\"https://developers.asana.com/reference/gettimeperiods\">Asana API Playground</a>",
+                  "instillShortDescription": "Time Period",
+                  "instillUIOrder": 6,
+                  "title": "Time Period",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
+                },
+                "owner": {
+                  "description": "User GID of the Owner. You can find one by filling the workspace id in the <a href=\"https://developers.asana.com/reference/getusers\">Asana API Playground</a>",
+                  "instillShortDescription": "Owner",
+                  "instillUIOrder": 7,
+                  "title": "Owner",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
                 }
               },
               "required": [
                 "action",
-                "name"
+                "name",
+                "liked"
               ],
               "instillEditOnNodeFields": [
                 "action",
@@ -606,7 +656,6 @@
                   "type": "string"
                 },
                 "resource-subtype": {
-                  "default": "default-task",
                   "description": "The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning.",
                   "instillShortDescription": "The subtype of this resource",
                   "instillUIOrder": 2,
@@ -615,7 +664,8 @@
                     "default_task",
                     "milestone",
                     "section",
-                    "approval"
+                    "approval",
+                    "custom"
                   ],
                   "instillUpstreamTypes": [
                     "value"
@@ -723,7 +773,8 @@
               },
               "required": [
                 "action",
-                "task-gid"
+                "task-gid",
+                "liked"
               ],
               "instillEditOnNodeFields": [
                 "action",
@@ -825,7 +876,7 @@
                   "type": "string"
                 },
                 "resource-subtype": {
-                  "default": "default-task",
+                  "default": "default_task",
                   "description": "The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning.",
                   "instillShortDescription": "The subtype of this resource",
                   "instillUIOrder": 2,
@@ -834,7 +885,8 @@
                     "default_task",
                     "milestone",
                     "section",
-                    "approval"
+                    "approval",
+                    "custom"
                   ],
                   "instillUpstreamTypes": [
                     "value"
@@ -956,10 +1008,29 @@
                   ],
                   "instillFormat": "string",
                   "type": "string"
+                },
+                "workspace": {
+                  "description": "GID of the workspace.  You can find one by filling the access token in the <a href=\"https://developers.asana.com/reference/getworkspaces\">Asana API Playground</a>",
+                  "instillShortDescription": "GID of the workspace",
+                  "instillUIOrder": 11,
+                  "title": "Workspace",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
                 }
               },
               "required": [
-                "action"
+                "action",
+                "workspace",
+                "name",
+                "liked"
               ],
               "instillEditOnNodeFields": [
                 "action",
@@ -1239,7 +1310,7 @@
               "required": [
                 "action",
                 "task-gid",
-                "follower-gid",
+                "followers",
                 "edit-option"
               ],
               "instillEditOnNodeFields": [
@@ -1386,7 +1457,7 @@
           "items": {
             "type": "object",
             "properties": {
-              "project-gid": {
+              "gid": {
                 "description": "Globally unique identifier (GID) for the project.",
                 "instillShortDescription": "Project ID",
                 "instillUIOrder": 0,
@@ -1404,7 +1475,7 @@
               }
             },
             "required": [
-              "project-gid",
+              "gid",
               "name"
             ]
           }
@@ -1676,24 +1747,24 @@
                   "instillShortDescription": "Update Color",
                   "instillUIOrder": 5,
                   "enum": [
-                    "dark_pink",
-                    "dark_green",
-                    "dark_blue",
-                    "dark_red",
-                    "dark_teal",
-                    "dark_brown",
-                    "dark_orange",
-                    "dark_purple",
-                    "dark_warm_gray",
-                    "light_pink",
-                    "light_green",
-                    "light_blue",
-                    "light_red",
-                    "light_teal",
-                    "light_brown",
-                    "light_orange",
-                    "light_purple",
-                    "light_warm_gray",
+                    "dark-pink",
+                    "dark-green",
+                    "dark-blue",
+                    "dark-red",
+                    "dark-teal",
+                    "dark-brown",
+                    "dark-orange",
+                    "dark-purple",
+                    "dark-warm-gray",
+                    "light-pink",
+                    "light-green",
+                    "light-blue",
+                    "light-red",
+                    "light-teal",
+                    "light-brown",
+                    "light-orange",
+                    "light-purple",
+                    "light-warm-gray",
                     "none",
                     "null"
                   ],
@@ -1743,7 +1814,8 @@
               },
               "required": [
                 "action",
-                "project-gid"
+                "project-gid",
+                "archived"
               ],
               "instillEditOnNodeFields": [
                 "action",
@@ -1880,24 +1952,24 @@
                   "instillShortDescription": "Update Color",
                   "instillUIOrder": 5,
                   "enum": [
-                    "dark_pink",
-                    "dark_green",
-                    "dark_blue",
-                    "dark_red",
-                    "dark_teal",
-                    "dark_brown",
-                    "dark_orange",
-                    "dark_purple",
-                    "dark_warm_gray",
-                    "light_pink",
-                    "light_green",
-                    "light_blue",
-                    "light_red",
-                    "light_teal",
-                    "light_brown",
-                    "light_orange",
-                    "light_purple",
-                    "light_warm_gray",
+                    "dark-pink",
+                    "dark-green",
+                    "dark-blue",
+                    "dark-red",
+                    "dark-teal",
+                    "dark-brown",
+                    "dark-orange",
+                    "dark-purple",
+                    "dark-warm-gray",
+                    "light-pink",
+                    "light-green",
+                    "light-blue",
+                    "light-red",
+                    "light-teal",
+                    "light-brown",
+                    "light-orange",
+                    "light-purple",
+                    "light-warm-gray",
                     "none",
                     "null"
                   ],
@@ -1923,6 +1995,38 @@
                   ],
                   "instillUpstreamTypes": [
                     "value"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
+                },
+                "workspace": {
+                  "description": "Globally unique identifier (GID) for the workspace. You can find one by filling the access token in the <a href=\"https://developers.asana.com/reference/getworkspaces\">Asana API Playground</a>",
+                  "instillShortDescription": "Workspace ID",
+                  "instillUIOrder": 7,
+                  "title": "Workspace ID",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
+                  ],
+                  "instillAcceptFormats": [
+                    "string"
+                  ],
+                  "instillFormat": "string",
+                  "type": "string"
+                },
+                "team": {
+                  "description": "Globally unique identifier (GID) for the team of the new project.",
+                  "instillShortDescription": "Team ID of the new project",
+                  "instillUIOrder": 8,
+                  "title": "Team ID",
+                  "instillUpstreamTypes": [
+                    "value",
+                    "reference",
+                    "template"
                   ],
                   "instillAcceptFormats": [
                     "string"
@@ -2009,7 +2113,7 @@
                 },
                 "due-on": {
                   "description": "Sets the last due date in the duplicated project to the given date. The rest of the due dates will be offset by the same amount as the due dates in the original project. In the format YYYY-MM-DD.",
-                  "instillShortDescription": "Update Due Date",
+                  "instillShortDescription": "Due Date (You should only specify exactly one of due-on or start-on)",
                   "instillUIOrder": 3,
                   "title": "Due Date",
                   "instillUpstreamTypes": [
@@ -2025,7 +2129,7 @@
                 },
                 "start-on": {
                   "description": "Sets the first start date in the duplicated project to the given date. The rest of the start dates will be offset by the same amount as the start dates in the original project. In the format YYYY-MM-DD.",
-                  "instillShortDescription": "Update Start Date",
+                  "instillShortDescription": "Start Date (You should only specify exactly one of due-on or start-on)",
                   "instillUIOrder": 4,
                   "title": "Start Date",
                   "instillUpstreamTypes": [
@@ -2173,28 +2277,6 @@
           "description": "The color of the project.",
           "instillShortDescription": "Color",
           "instillUIOrder": 7,
-          "enum": [
-            "dark_pink",
-            "dark_green",
-            "dark_blue",
-            "dark_red",
-            "dark_teal",
-            "dark_brown",
-            "dark_orange",
-            "dark_purple",
-            "dark_warm_gray",
-            "light_pink",
-            "light_green",
-            "light_blue",
-            "light_red",
-            "light_teal",
-            "light_brown",
-            "light_orange",
-            "light_purple",
-            "light_warm_gray",
-            "none",
-            "null"
-          ],
           "title": "Color",
           "instillFormat": "string",
           "type": "string"
@@ -2204,11 +2286,6 @@
           "instillShortDescription": "Privacy Setting",
           "instillUIOrder": 8,
           "title": "Privacy Setting",
-          "enum": [
-            "public to workspace",
-            "private to team",
-            "private"
-          ],
           "instillFormat": "string",
           "type": "string"
         },
@@ -2256,8 +2333,14 @@
           "instillUIOrder": 11,
           "title": "Current Status",
           "required": [],
-          "instillFormat": "semi-structured/json",
-          "type": "object"
+          "instillFormat": "array:semi-structured/json",
+          "type": "array",
+          "items": {
+            "instillFormat": "semi-structured/json",
+            "properties": {},
+            "required": [],
+            "type": "object"
+          }
         },
         "custom-fields": {
           "description": "The custom fields of the project.",
@@ -2265,8 +2348,14 @@
           "instillUIOrder": 12,
           "title": "Custom Fields",
           "required": [],
-          "instillFormat": "semi-structured/json",
-          "type": "object"
+          "instillFormat": "array:semi-structured/json",
+          "type": "array",
+          "items": {
+            "instillFormat": "semi-structured/json",
+            "properties": {},
+            "required": [],
+            "type": "object"
+          }
         },
         "custom-field-settings": {
           "description": "The custom field settings of the project.",
@@ -2274,8 +2363,14 @@
           "instillUIOrder": 13,
           "title": "Custom Field Settings",
           "required": [],
-          "instillFormat": "semi-structured/json",
-          "type": "object"
+          "instillFormat": "array:semi-structured/json",
+          "type": "array",
+          "items": {
+            "instillFormat": "semi-structured/json",
+            "properties": {},
+            "required": [],
+            "type": "object"
+          }
         },
         "modified-at": {
           "description": "The time at which the project was last modified.",
@@ -2398,24 +2493,24 @@
                   "instillShortDescription": "Update Color",
                   "instillUIOrder": 5,
                   "enum": [
-                    "dark_pink",
-                    "dark_green",
-                    "dark_blue",
-                    "dark_red",
-                    "dark_teal",
-                    "dark_brown",
-                    "dark_orange",
-                    "dark_purple",
-                    "dark_warm_gray",
-                    "light_pink",
-                    "light_green",
-                    "light_blue",
-                    "light_red",
-                    "light_teal",
-                    "light_brown",
-                    "light_orange",
-                    "light_purple",
-                    "light_warm_gray",
+                    "dark-pink",
+                    "dark-green",
+                    "dark-blue",
+                    "dark-red",
+                    "dark-teal",
+                    "dark-brown",
+                    "dark-orange",
+                    "dark-purple",
+                    "dark-warm-gray",
+                    "light-pink",
+                    "light-green",
+                    "light-blue",
+                    "light-red",
+                    "light-teal",
+                    "light-brown",
+                    "light-orange",
+                    "light-purple",
+                    "light-warm-gray",
                     "none",
                     "null"
                   ],
@@ -2548,24 +2643,24 @@
                   "instillShortDescription": "Color",
                   "instillUIOrder": 5,
                   "enum": [
-                    "dark_pink",
-                    "dark_green",
-                    "dark_blue",
-                    "dark_red",
-                    "dark_teal",
-                    "dark_brown",
-                    "dark_orange",
-                    "dark_purple",
-                    "dark_warm_gray",
-                    "light_pink",
-                    "light_green",
-                    "light_blue",
-                    "light_red",
-                    "light_teal",
-                    "light_brown",
-                    "light_orange",
-                    "light_purple",
-                    "light_warm_gray",
+                    "dark-pink",
+                    "dark-green",
+                    "dark-blue",
+                    "dark-red",
+                    "dark-teal",
+                    "dark-brown",
+                    "dark-orange",
+                    "dark-purple",
+                    "dark-warm-gray",
+                    "light-pink",
+                    "light-green",
+                    "light-blue",
+                    "light-red",
+                    "light-teal",
+                    "light-brown",
+                    "light-orange",
+                    "light-purple",
+                    "light-warm-gray",
                     "none",
                     "null"
                   ],
@@ -2612,7 +2707,9 @@
               },
               "required": [
                 "action",
-                "portfolio-gid"
+                "workspace",
+                "name",
+                "public"
               ],
               "instillEditOnNodeFields": [
                 "action",
@@ -2705,28 +2802,6 @@
           "description": "The color of the portfolio.",
           "instillShortDescription": "Color",
           "instillUIOrder": 7,
-          "enum": [
-            "dark_pink",
-            "dark_green",
-            "dark_blue",
-            "dark_red",
-            "dark_teal",
-            "dark_brown",
-            "dark_orange",
-            "dark_purple",
-            "dark_warm_gray",
-            "light_pink",
-            "light_green",
-            "light_blue",
-            "light_red",
-            "light_teal",
-            "light_brown",
-            "light_orange",
-            "light_purple",
-            "light_warm_gray",
-            "none",
-            "null"
-          ],
           "title": "Color",
           "instillFormat": "string",
           "type": "string"
@@ -2775,8 +2850,14 @@
           "instillUIOrder": 11,
           "title": "Current Status",
           "required": [],
-          "instillFormat": "semi-structured/json",
-          "type": "object"
+          "instillFormat": "array:semi-structured/json",
+          "type": "array",
+          "items": {
+            "instillFormat": "semi-structured/json",
+            "properties": {},
+            "required": [],
+            "type": "object"
+          }
         },
         "custom-fields": {
           "description": "The custom fields of the portfolio.",
@@ -2784,8 +2865,14 @@
           "instillUIOrder": 12,
           "title": "Custom Fields",
           "required": [],
-          "instillFormat": "semi-structured/json",
-          "type": "object"
+          "instillFormat": "array:semi-structured/json",
+          "type": "array",
+          "items": {
+            "instillFormat": "semi-structured/json",
+            "properties": {},
+            "required": [],
+            "type": "object"
+          }
         },
         "custom-field-settings": {
           "description": "The custom field settings of the portfolio.",
@@ -2793,8 +2880,14 @@
           "instillUIOrder": 13,
           "title": "Custom Field Settings",
           "required": [],
-          "instillFormat": "semi-structured/json",
-          "type": "object"
+          "instillFormat": "array:semi-structured/json",
+          "type": "array",
+          "items": {
+            "instillFormat": "semi-structured/json",
+            "properties": {},
+            "required": [],
+            "type": "object"
+          }
         }
       },
       "required": [],

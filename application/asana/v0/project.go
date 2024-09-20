@@ -2,6 +2,7 @@ package asana
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -15,22 +16,22 @@ type ProjectTaskOutput struct {
 
 type ProjectTaskResp struct {
 	Data struct {
-		GID                 string            `json:"gid"`
-		Name                string            `json:"name"`
-		Owner               User              `json:"owner"`
-		Notes               string            `json:"notes"`
-		HTMLNotes           string            `json:"html_notes"`
-		DueOn               string            `json:"due_on"`
-		StartOn             string            `json:"start_on"`
-		Completed           bool              `json:"completed"`
-		Color               string            `json:"color"`
-		PrivacySetting      string            `json:"privacy_setting"`
-		Archived            bool              `json:"archived"`
-		CompletedBy         User              `json:"completed_by"`
-		CurrentStatus       map[string]string `json:"current_status"`
-		CustomFields        map[string]string `json:"custom_fields"`
-		CustomFieldSettings map[string]string `json:"custom_field_settings"`
-		ModifiedAt          string            `json:"modified_at"`
+		GID                 string                   `json:"gid"`
+		Name                string                   `json:"name"`
+		Owner               User                     `json:"owner"`
+		Notes               string                   `json:"notes"`
+		HTMLNotes           string                   `json:"html_notes"`
+		DueOn               string                   `json:"due_on"`
+		StartOn             string                   `json:"start_on"`
+		Completed           bool                     `json:"completed"`
+		Color               string                   `json:"color"`
+		PrivacySetting      string                   `json:"privacy_setting"`
+		Archived            bool                     `json:"archived"`
+		CompletedBy         User                     `json:"completed_by"`
+		CurrentStatus       []map[string]interface{} `json:"current_status"`
+		CustomFields        []map[string]interface{} `json:"custom_fields"`
+		CustomFieldSettings []map[string]interface{} `json:"custom_field_settings"`
+		ModifiedAt          string                   `json:"modified_at"`
 	} `json:"data"`
 }
 
@@ -55,6 +56,16 @@ func projectResp2Output(resp *ProjectTaskResp) ProjectTaskOutput {
 			ModifiedAt:          resp.Data.ModifiedAt,
 		},
 	}
+	if out.CurrentStatus == nil {
+		out.CurrentStatus = []map[string]interface{}{}
+	}
+	if out.CustomFields == nil {
+		out.CustomFields = []map[string]interface{}{}
+	}
+	if out.CustomFieldSettings == nil {
+		out.CustomFieldSettings = []map[string]interface{}{}
+	}
+
 	return out
 }
 
@@ -99,12 +110,12 @@ type UpdateProjectInput struct {
 }
 
 type UpdateProjectReq struct {
-	Name           string `json:"name"`
-	Notes          string `json:"notes"`
-	DueOn          string `json:"due_on"`
-	StartOn        string `json:"start_on"`
-	Color          string `json:"color"`
-	PrivacySetting string `json:"privacy_setting"`
+	Name           string `json:"name,omitempty"`
+	Notes          string `json:"notes,omitempty"`
+	DueOn          string `json:"due_on,omitempty"`
+	StartOn        string `json:"start_on,omitempty"`
+	Color          string `json:"color,omitempty"`
+	PrivacySetting string `json:"privacy_setting,omitempty"`
 	Archived       bool   `json:"archived"`
 }
 
@@ -115,7 +126,7 @@ func (c *Client) UpdateProject(ctx context.Context, props *structpb.Struct) (*st
 	}
 
 	apiEndpoint := fmt.Sprintf("/projects/%s", input.ID)
-	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(
+	body, _ := json.Marshal(
 		map[string]interface{}{
 			"data": &UpdateProjectReq{
 				Name:           input.Name,
@@ -127,6 +138,7 @@ func (c *Client) UpdateProject(ctx context.Context, props *structpb.Struct) (*st
 				Archived:       input.Archived,
 			},
 		})
+	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(string(body))
 
 	wantOptFields := parseWantOptionFields(Project{})
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
@@ -151,15 +163,19 @@ type CreateProjectInput struct {
 	StartOn        string `json:"start-on"`
 	Color          string `json:"color"`
 	PrivacySetting string `json:"privacy-setting"`
+	Workspace      string `json:"workspace"`
+	Team           string `json:"team"`
 }
 
 type CreateProjectReq struct {
-	Name           string `json:"name"`
-	Notes          string `json:"notes"`
-	DueOn          string `json:"due_on"`
-	StartOn        string `json:"start_on"`
-	Color          string `json:"color"`
-	PrivacySetting string `json:"privacy_setting"`
+	Name           string `json:"name,omitempty"`
+	Notes          string `json:"notes,omitempty"`
+	DueOn          string `json:"due_on,omitempty"`
+	StartOn        string `json:"start_on,omitempty"`
+	Color          string `json:"color,omitempty"`
+	PrivacySetting string `json:"privacy_setting,omitempty"`
+	Workspace      string `json:"workspace"`
+	Team           string `json:"team"`
 }
 
 func (c *Client) CreateProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -169,7 +185,7 @@ func (c *Client) CreateProject(ctx context.Context, props *structpb.Struct) (*st
 	}
 
 	apiEndpoint := "/projects"
-	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(
+	body, _ := json.Marshal(
 		map[string]interface{}{
 			"data": &CreateProjectReq{
 				Name:           input.Name,
@@ -178,8 +194,12 @@ func (c *Client) CreateProject(ctx context.Context, props *structpb.Struct) (*st
 				StartOn:        input.StartOn,
 				Color:          input.Color,
 				PrivacySetting: strings.Replace(input.PrivacySetting, " ", "_", -1),
+				Workspace:      input.Workspace,
+				Team:           input.Team,
 			},
 		})
+
+	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(string(body))
 	wantOptFields := parseWantOptionFields(Project{})
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
@@ -212,7 +232,8 @@ func (c *Client) DeleteProject(ctx context.Context, props *structpb.Struct) (*st
 	if err != nil {
 		return nil, err
 	}
-	out := ProjectTaskOutput{}
+
+	out := projectResp2Output(&ProjectTaskResp{})
 	return base.ConvertToStructpb(out)
 }
 
@@ -233,9 +254,10 @@ type ScheduleDates struct {
 }
 type DuplicateProjectReq struct {
 	Name          string        `json:"name"`
-	Team          string        `json:"team"`
+	Team          string        `json:"team,omitempty"`
 	Include       string        `json:"include"`
 	ScheduleDates ScheduleDates `json:"schedule_dates"`
+	// schedule_dates requires exactly one of due_on or start_on.
 }
 
 func (c *Client) DuplicateProject(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -245,7 +267,7 @@ func (c *Client) DuplicateProject(ctx context.Context, props *structpb.Struct) (
 	}
 
 	apiEndpoint := fmt.Sprintf("/projects/%s/duplicate", input.ID)
-	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(
+	body, _ := json.Marshal(
 		map[string]interface{}{
 			"data": &DuplicateProjectReq{
 				Name: input.Name,
@@ -258,8 +280,8 @@ func (c *Client) DuplicateProject(ctx context.Context, props *structpb.Struct) (
 					StartOn:            input.StartOn,
 				},
 			},
-		},
-	)
+		})
+	req := c.Client.R().SetResult(&ProjectTaskResp{}).SetBody(body)
 
 	wantOptFields := parseWantOptionFields(Project{})
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
@@ -271,6 +293,22 @@ func (c *Client) DuplicateProject(ctx context.Context, props *structpb.Struct) (
 		return nil, err
 	}
 	project := resp.Result().(*ProjectTaskResp)
-	out := projectResp2Output(project)
-	return base.ConvertToStructpb(out)
+	// out := projectResp2Output(project)
+
+	getJobProps, _ := base.ConvertToStructpb(map[string]interface{}{
+		"action":  "get",
+		"job-gid": project.Data.GID,
+	})
+	var jobInfoMap Job
+	if jobInfo, err := c.GetJob(ctx, getJobProps); err != nil {
+		return nil, err
+	} else {
+		_ = base.ConvertFromStructpb(jobInfo, &jobInfoMap)
+	}
+	getProps, _ := base.ConvertToStructpb(map[string]interface{}{
+		"action":      "get",
+		"project-gid": jobInfoMap.NewProject.GID,
+	})
+
+	return c.GetProject(ctx, getProps)
 }

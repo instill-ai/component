@@ -102,12 +102,15 @@ func testCreateGoal(t *testing.T) {
 			_type: "ok",
 			name:  "Create goal",
 			input: CreateGoalInput{
-				Action:  "create",
-				Name:    "Test Goal",
-				Notes:   "Modified Notes",
-				DueOn:   "2021-01-02",
-				StartOn: "2021-01-01",
-				Liked:   true,
+				Action:     "create",
+				Name:       "Test Goal",
+				Notes:      "Modified Notes",
+				DueOn:      "2021-01-02",
+				StartOn:    "2021-01-01",
+				Liked:      true,
+				Workspace:  "1308068054504137",
+				TimePeriod: "1308068168028231",
+				Owner:      "1308068131615343",
 			},
 			wantResp: GoalTaskOutput{
 				Goal: Goal{
@@ -151,7 +154,9 @@ func testDeleteGoal(t *testing.T) {
 				ID:     "1234567890",
 			},
 			wantResp: GoalTaskOutput{
-				Goal: Goal{},
+				Goal: Goal{
+					Likes: []Like{},
+				},
 			},
 		},
 		{

@@ -37,6 +37,7 @@ func goalResp2Output(resp *GoalTaskResp) GoalTaskOutput {
 			DueOn:     resp.Data.DueOn,
 			StartOn:   resp.Data.StartOn,
 			Liked:     resp.Data.Liked,
+			Likes:     []Like{},
 		},
 	}
 	for _, like := range resp.Data.Likes {
@@ -59,7 +60,6 @@ func (c *Client) GetGoal(ctx context.Context, props *structpb.Struct) (*structpb
 	if err := base.ConvertFromStructpb(props, &input); err != nil {
 		return nil, err
 	}
-
 	apiEndpoint := "/goals/" + input.ID
 	req := c.Client.R().SetResult(&GoalTaskResp{})
 
@@ -67,6 +67,7 @@ func (c *Client) GetGoal(ctx context.Context, props *structpb.Struct) (*structpb
 	if err := addQueryOptions(req, map[string]interface{}{"opt_fields": wantOptFields}); err != nil {
 		return nil, err
 	}
+
 	resp, err := req.Get(apiEndpoint)
 	if err != nil {
 		return nil, err
@@ -92,7 +93,7 @@ type UpdateGoalReq struct {
 	Notes   string `json:"notes,omitempty"`
 	DueOn   string `json:"due_on,omitempty"`
 	StartOn string `json:"start_on,omitempty"`
-	Liked   bool   `json:"liked,omitempty"`
+	Liked   bool   `json:"liked"`
 	Status  string `json:"status,omitempty"`
 }
 
@@ -131,19 +132,25 @@ func (c *Client) UpdateGoal(ctx context.Context, props *structpb.Struct) (*struc
 }
 
 type CreateGoalInput struct {
-	Action  string `json:"action"`
-	Name    string `json:"name"`
-	Notes   string `json:"notes"`
-	DueOn   string `json:"due-on"`
-	StartOn string `json:"start-on"`
-	Liked   bool   `json:"liked"`
+	Action     string `json:"action"`
+	Name       string `json:"name"`
+	Notes      string `json:"notes"`
+	DueOn      string `json:"due-on"`
+	StartOn    string `json:"start-on"`
+	Liked      bool   `json:"liked"`
+	Workspace  string `json:"workspace"`
+	TimePeriod string `json:"time-period"`
+	Owner      string `json:"owner"`
 }
 type CreateGoalReq struct {
-	Name    string `json:"name"`
-	Notes   string `json:"notes"`
-	DueOn   string `json:"due_on"`
-	StartOn string `json:"start_on"`
-	Liked   bool   `json:"liked"`
+	Name       string `json:"name"`
+	Notes      string `json:"notes"`
+	DueOn      string `json:"due_on"`
+	StartOn    string `json:"start_on"`
+	Liked      bool   `json:"liked"`
+	Workspace  string `json:"workspace"`
+	TimePeriod string `json:"time_period"`
+	Owner      string `json:"owner"`
 }
 
 func (c *Client) CreateGoal(ctx context.Context, props *structpb.Struct) (*structpb.Struct, error) {
@@ -156,11 +163,14 @@ func (c *Client) CreateGoal(ctx context.Context, props *structpb.Struct) (*struc
 	req := c.Client.R().SetResult(&GoalTaskResp{}).SetBody(
 		map[string]interface{}{
 			"data": &CreateGoalReq{
-				Name:    input.Name,
-				Notes:   input.Notes,
-				DueOn:   input.DueOn,
-				StartOn: input.StartOn,
-				Liked:   input.Liked,
+				Name:       input.Name,
+				Notes:      input.Notes,
+				DueOn:      input.DueOn,
+				StartOn:    input.StartOn,
+				Liked:      input.Liked,
+				Workspace:  input.Workspace,
+				TimePeriod: input.TimePeriod,
+				Owner:      input.Owner,
 			},
 		})
 	wantOptFields := parseWantOptionFields(Goal{})
@@ -194,7 +204,7 @@ func (c *Client) DeleteGoal(ctx context.Context, props *structpb.Struct) (*struc
 	if err != nil {
 		return nil, err
 	}
-
-	out := GoalTaskOutput{}
+	goal := GoalTaskResp{}
+	out := goalResp2Output(&goal)
 	return base.ConvertToStructpb(out)
 }

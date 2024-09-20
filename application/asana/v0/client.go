@@ -29,7 +29,7 @@ func newClient(_ context.Context, setup *structpb.Struct, logger *zap.Logger) (*
 		return nil, err
 	}
 
-	token := authConfig.Token
+	token := strings.TrimSpace(authConfig.Token)
 	baseURL := authConfig.BaseURL
 	if token == "" {
 		return nil, errmsg.AddMessage(

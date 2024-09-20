@@ -95,8 +95,11 @@ func (e *execution) Execute(ctx context.Context, jobs []*base.Job) error {
 			job.Error.Error(ctx, err)
 			continue
 		}
-
-		output, err := e.execute(ctx, input)
+		action := input
+		if input.GetFields()["action"].GetStringValue() == "" {
+			action = input.GetFields()["action"].GetStructValue()
+		}
+		output, err := e.execute(ctx, action)
 		if err != nil {
 			job.Error.Error(ctx, err)
 			continue
