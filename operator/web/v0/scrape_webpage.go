@@ -199,7 +199,14 @@ func setOutput(output *ScrapeWebpageOutput, input ScrapeWebpageInput, doc *goque
 		SourceURL:   input.URL,
 	}
 	output.Metadata = metadata
-	output.LinksOnPage = getAllLinksOnPage(doc)
+
+	links, err := getAllLinksOnPage(doc, input.URL)
+
+	if err != nil {
+		return fmt.Errorf("failed to get links on page: %v", err)
+	}
+
+	output.LinksOnPage = links
 
 	return nil
 
@@ -221,15 +228,36 @@ func getMarkdown(html, url string) (string, error) {
 	return markdown, nil
 }
 
-func getAllLinksOnPage(doc *goquery.Document) []string {
+func getAllLinksOnPage(doc *goquery.Document, url string) ([]string, error) {
 	links := []string{}
+
+	domain, err := util.GetDomainFromURL(url)
+
+	if err != nil {
+		return nil, fmt.Errorf("error getting domain from URL: %v", err)
+	}
+
+	appendedLinks := map[string]bool{}
 
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
 		link, ok := s.Attr("href")
 		if ok {
-			links = append(links, link)
+			link = getValidLink(link, domain)
+			if !appendedLinks[link] {
+				links = append(links, link)
+				appendedLinks[link] = true
+			}
 		}
 	})
 
-	return links
+	return links, nil
+}
+
+func getValidLink(link, domain string) string {
+	if strings.HasPrefix(link, "https://") || strings.HasPrefix(link, "http://") {
+		return link
+	} else {
+		link = "https://" + domain + link
+		return link
+	}
 }
