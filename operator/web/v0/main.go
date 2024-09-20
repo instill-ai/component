@@ -59,7 +59,7 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 
 	switch x.Task {
 	case taskCrawlWebsite:
-		e.execute = e.Scrape
+		e.execute = e.CrawlWebsite
 	case taskScrapeSitemap:
 		// To make mocking easier
 		e.externalCaller = scrapSitemapCaller

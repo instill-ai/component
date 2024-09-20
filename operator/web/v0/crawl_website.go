@@ -80,7 +80,7 @@ func existsInSlice(slice []string, item string) bool {
 }
 
 // Scrape crawls a webpage and returns a slice of PageInfo
-func (e *execution) Scrape(input *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) CrawlWebsite(input *structpb.Struct) (*structpb.Struct, error) {
 	inputStruct := ScrapeWebsiteInput{}
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
