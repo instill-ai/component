@@ -70,6 +70,16 @@ func Test_uploadFile(t *testing.T) {
 
 			clientMock := mock.NewArtifactPublicServiceClientMock(mc)
 			if tc.option == "create new catalog" {
+				clientMock.ListCatalogsMock.
+					Times(1).
+					Expect(minimock.AnyContext,
+						&artifactPB.ListCatalogsRequest{
+							NamespaceId: "fakeNs",
+						},
+					).Return(&artifactPB.ListCatalogsResponse{
+					Catalogs: []*artifactPB.Catalog{},
+				}, nil)
+
 				clientMock.
 					CreateCatalogMock.
 					Times(1).
