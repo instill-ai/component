@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"net/url"
 	"strings"
@@ -80,7 +81,7 @@ func existsInSlice(slice []string, item string) bool {
 }
 
 // Scrape crawls a webpage and returns a slice of PageInfo
-func (e *execution) Scrape(input *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) CrawlWebsite(input *structpb.Struct) (*structpb.Struct, error) {
 	inputStruct := ScrapeWebsiteInput{}
 	err := base.ConvertFromStructpb(input, &inputStruct)
 
@@ -104,7 +105,9 @@ func (e *execution) Scrape(input *structpb.Struct) (*structpb.Struct, error) {
 
 	pageLinks := []string{}
 
-	c := colly.NewCollector()
+	c := colly.NewCollector(
+		colly.Async(),
+	)
 	if len(inputStruct.AllowedDomains) > 0 {
 		c.AllowedDomains = inputStruct.AllowedDomains
 	}
@@ -114,7 +117,10 @@ func (e *execution) Scrape(input *structpb.Struct) (*structpb.Struct, error) {
 	// Wont be called if error occurs
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
-		_ = c.Visit(e.Request.AbsoluteURL(link))
+		err := c.Visit(e.Request.AbsoluteURL(link))
+		if err != nil {
+			log.Println("Error visiting link:", link, "Error:", err)
+		}
 	})
 
 	// Set error handler
@@ -182,6 +188,7 @@ func (e *execution) Scrape(input *structpb.Struct) (*structpb.Struct, error) {
 		inputStruct.TargetURL = "https://" + inputStruct.TargetURL
 	}
 	_ = c.Visit(inputStruct.TargetURL)
+	c.Wait()
 
 	outputStruct, err := base.ConvertToStructpb(output)
 	if err != nil {
