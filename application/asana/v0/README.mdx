@@ -117,7 +117,10 @@ Goal Related Task, including get, update, delete, create, duplicate
 | Liked | `liked` | boolean |  Whether the goal is liked by the user.   |
 | Goal Name | `name` | string |  The name of the goal.   |
 | Goal Note | `notes` | string |  The notes of the goal.   |
+| Owner | `owner` | string |  User GID of the Owner. You can find one by filling the workspace id in the <a href="https://developers.asana.com/reference/getusers">Asana API Playground</a>   |
 | Start Date | `start-on` | string |  The date on which the goal starts. In the format YYYY-MM-DD.   |
+| Time Period | `time-period` | string |  GID of the time period. You can find one by filling the workspace id in the <a href="https://developers.asana.com/reference/gettimeperiods">Asana API Playground</a>   |
+| Workspace | `workspace` | string |  GID of the workspace.  You can find one by filling the access token in the <a href="https://developers.asana.com/reference/getworkspaces">Asana API Playground</a>   |
 
 
 </details>
@@ -221,7 +224,7 @@ Task Related Task, including get, update, delete, create, duplicate
 | Name of the task | `name` | string |  Name of the task. This is generally a short sentence fragment that fits on a line in the UI for maximum readability. However, it can be longer.   |
 | Notes of the task | `notes` | string |  Free-form textual information associated with the task (i.e. its description).   |
 | Parent Task | `parent` | string |  GID of the parent task.   |
-| Resource Subtype | `resource-subtype` | string |  The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`default_task`</li><li>`milestone`</li><li>`section`</li><li>`approval`</li></ul></details>  |
+| Resource Subtype | `resource-subtype` | string |  The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`default_task`</li><li>`milestone`</li><li>`section`</li><li>`approval`</li><li>`custom`</li></ul></details>  |
 | Task ID | `task-gid` | string |  Globally unique identifier (GID) for the task.   |
 
 
@@ -248,8 +251,9 @@ Task Related Task, including get, update, delete, create, duplicate
 | Task Name | `name` | string |  The name of the task.   |
 | Task Notes | `notes` | string |  The notes of the task.   |
 | Parent Task | `parent` | string |  GID of the parent task.   |
-| Resource Subtype | `resource-subtype` | string |  The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`default_task`</li><li>`milestone`</li><li>`section`</li><li>`approval`</li></ul></details>  |
+| Resource Subtype | `resource-subtype` | string |  The subtype of this resource. Different subtypes retain many of the same fields and behavior, but may render differently in Asana or represent resources with different semantic meaning.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`default_task`</li><li>`milestone`</li><li>`section`</li><li>`approval`</li><li>`custom`</li></ul></details>  |
 | Start Date & Time | `start-at` | string |  The UTC date and time on which this task is due, or null if the task has no due time. This takes an ISO 8601 date string in UTC.   |
+| Workspace | `workspace` | string |  GID of the workspace.  You can find one by filling the access token in the <a href="https://developers.asana.com/reference/getworkspaces">Asana API Playground</a>   |
 
 
 
@@ -342,8 +346,8 @@ Task Related Task, including get, update, delete, create, duplicate
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
+| Project ID | `gid` | string | Globally unique identifier (GID) for the project. |
 | Project Name | `name` | string | The name of the project. |
-| Project ID | `project-gid` | string | Globally unique identifier (GID) for the project. |
 
 
 
@@ -405,7 +409,7 @@ Project Related Task, including get, update, delete, create, duplicate
 | :--- | :--- | :--- | :--- |
 | Action | `action` | string |  Must be `"update"`   |
 | Archived | `archived` | boolean |  Whether the project is archived.   |
-| Update Color | `color` | string |  The color of the project.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`dark_pink`</li><li>`dark_green`</li><li>`dark_blue`</li><li>`dark_red`</li><li>`dark_teal`</li><li>`dark_brown`</li><li>`dark_orange`</li><li>`dark_purple`</li><li>`dark_warm_gray`</li><li>`light_pink`</li><li>`light_green`</li><li>`light_blue`</li><li>`light_red`</li><li>`light_teal`</li><li>`light_brown`</li><li>`light_orange`</li><li>`light_purple`</li><li>`light_warm_gray`</li><li>`none`</li><li>`null`</li></ul></details>  |
+| Update Color | `color` | string |  The color of the project.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`dark-pink`</li><li>`dark-green`</li><li>`dark-blue`</li><li>`dark-red`</li><li>`dark-teal`</li><li>`dark-brown`</li><li>`dark-orange`</li><li>`dark-purple`</li><li>`dark-warm-gray`</li><li>`light-pink`</li><li>`light-green`</li><li>`light-blue`</li><li>`light-red`</li><li>`light-teal`</li><li>`light-brown`</li><li>`light-orange`</li><li>`light-purple`</li><li>`light-warm-gray`</li><li>`none`</li><li>`null`</li></ul></details>  |
 | Due Date | `due-on` | string |  The date on which the project is due. In the format YYYY-MM-DD.   |
 | Project Name | `name` | string |  The name of the project.   |
 | Project Note | `notes` | string |  The notes of the project.   |
@@ -429,12 +433,14 @@ Project Related Task, including get, update, delete, create, duplicate
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Action | `action` | string |  Must be `"create"`   |
-| Update Color | `color` | string |  The color of the project.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`dark_pink`</li><li>`dark_green`</li><li>`dark_blue`</li><li>`dark_red`</li><li>`dark_teal`</li><li>`dark_brown`</li><li>`dark_orange`</li><li>`dark_purple`</li><li>`dark_warm_gray`</li><li>`light_pink`</li><li>`light_green`</li><li>`light_blue`</li><li>`light_red`</li><li>`light_teal`</li><li>`light_brown`</li><li>`light_orange`</li><li>`light_purple`</li><li>`light_warm_gray`</li><li>`none`</li><li>`null`</li></ul></details>  |
+| Update Color | `color` | string |  The color of the project.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`dark-pink`</li><li>`dark-green`</li><li>`dark-blue`</li><li>`dark-red`</li><li>`dark-teal`</li><li>`dark-brown`</li><li>`dark-orange`</li><li>`dark-purple`</li><li>`dark-warm-gray`</li><li>`light-pink`</li><li>`light-green`</li><li>`light-blue`</li><li>`light-red`</li><li>`light-teal`</li><li>`light-brown`</li><li>`light-orange`</li><li>`light-purple`</li><li>`light-warm-gray`</li><li>`none`</li><li>`null`</li></ul></details>  |
 | Due Date | `due-on` | string |  The date on which the project is due. In the format YYYY-MM-DD.   |
 | Project Name | `name` | string |  The name of the project.   |
 | Project Note | `notes` | string |  The notes of the project.   |
 | Update Privacy Setting | `privacy-setting` | string |  The privacy setting of the project.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`public to workspace`</li><li>`private to team`</li><li>`private`</li></ul></details>  |
 | Start Date | `start-on` | string |  The date on which the project starts. In the format YYYY-MM-DD.   |
+| Team ID | `team` | string |  Globally unique identifier (GID) for the team of the new project.   |
+| Workspace ID | `workspace` | string |  Globally unique identifier (GID) for the workspace. You can find one by filling the access token in the <a href="https://developers.asana.com/reference/getworkspaces">Asana API Playground</a>   |
 
 
 
@@ -473,9 +479,9 @@ Project Related Task, including get, update, delete, create, duplicate
 | Privacy Setting (optional) | `privacy-setting` | string | The privacy setting of the project. |
 | Archived (optional) | `archived` | boolean | Whether the project is archived. |
 | [Completed By](#crud-project-completed-by) (optional) | `completed-by` | object | The user who completed the project. |
-| Current Status (optional) | `current-status` | array[object] | The current status of the project. |
-| Custom Fields (optional) | `custom-fields` | array[object] | The custom fields of the project. |
-| Custom Field Settings (optional) | `custom-field-settings` | array[object] | The custom field settings of the project. |
+| [Current Status](#crud-project-current-status) (optional) | `current-status` | array[object] | The current status of the project. |
+| [Custom Fields](#crud-project-custom-fields) (optional) | `custom-fields` | array[object] | The custom fields of the project. |
+| [Custom Field Settings](#crud-project-custom-field-settings) (optional) | `custom-field-settings` | array[object] | The custom field settings of the project. |
 | Modified At (optional) | `modified-at` | string | The time at which the project was last modified. |
 
 
@@ -503,6 +509,18 @@ Project Related Task, including get, update, delete, create, duplicate
 | :--- | :--- | :--- | :--- |
 | User ID | `gid` | string | Globally unique identifier (GID) for the user. |
 | User Name | `name` | string | The name of the user. |
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -551,7 +569,7 @@ Portfolio Related Task, including get, update, delete, create
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Action | `action` | string |  Must be `"update"`   |
-| Update Color | `color` | string |  The color of the portfolio.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`dark_pink`</li><li>`dark_green`</li><li>`dark_blue`</li><li>`dark_red`</li><li>`dark_teal`</li><li>`dark_brown`</li><li>`dark_orange`</li><li>`dark_purple`</li><li>`dark_warm_gray`</li><li>`light_pink`</li><li>`light_green`</li><li>`light_blue`</li><li>`light_red`</li><li>`light_teal`</li><li>`light_brown`</li><li>`light_orange`</li><li>`light_purple`</li><li>`light_warm_gray`</li><li>`none`</li><li>`null`</li></ul></details>  |
+| Update Color | `color` | string |  The color of the portfolio.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`dark-pink`</li><li>`dark-green`</li><li>`dark-blue`</li><li>`dark-red`</li><li>`dark-teal`</li><li>`dark-brown`</li><li>`dark-orange`</li><li>`dark-purple`</li><li>`dark-warm-gray`</li><li>`light-pink`</li><li>`light-green`</li><li>`light-blue`</li><li>`light-red`</li><li>`light-teal`</li><li>`light-brown`</li><li>`light-orange`</li><li>`light-purple`</li><li>`light-warm-gray`</li><li>`none`</li><li>`null`</li></ul></details>  |
 | Portfolio Name | `name` | string |  The name of the portfolio.   |
 | Portfolio ID | `portfolio-gid` | string |  Globally unique identifier (GID) for the portfolio.   |
 | Public | `public` | boolean |  Whether the portfolio is public.   |
@@ -573,7 +591,7 @@ Portfolio Related Task, including get, update, delete, create
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Action | `action` | string |  Must be `"create"`   |
-| Color | `color` | string |  The color of the portfolio.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`dark_pink`</li><li>`dark_green`</li><li>`dark_blue`</li><li>`dark_red`</li><li>`dark_teal`</li><li>`dark_brown`</li><li>`dark_orange`</li><li>`dark_purple`</li><li>`dark_warm_gray`</li><li>`light_pink`</li><li>`light_green`</li><li>`light_blue`</li><li>`light_red`</li><li>`light_teal`</li><li>`light_brown`</li><li>`light_orange`</li><li>`light_purple`</li><li>`light_warm_gray`</li><li>`none`</li><li>`null`</li></ul></details>  |
+| Color | `color` | string |  The color of the portfolio.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`dark-pink`</li><li>`dark-green`</li><li>`dark-blue`</li><li>`dark-red`</li><li>`dark-teal`</li><li>`dark-brown`</li><li>`dark-orange`</li><li>`dark-purple`</li><li>`dark-warm-gray`</li><li>`light-pink`</li><li>`light-green`</li><li>`light-blue`</li><li>`light-red`</li><li>`light-teal`</li><li>`light-brown`</li><li>`light-orange`</li><li>`light-purple`</li><li>`light-warm-gray`</li><li>`none`</li><li>`null`</li></ul></details>  |
 | Portfolio Name | `name` | string |  The name of the portfolio.   |
 | Public | `public` | boolean |  Whether the portfolio is public.   |
 | Workspace | `workspace` | string |  The workspace of the portfolio. Please fill in the Globally unique identifier (GID) for the workspace.   |
@@ -597,9 +615,9 @@ Portfolio Related Task, including get, update, delete, create
 | Color (optional) | `color` | string | The color of the portfolio. |
 | Public (optional) | `public` | boolean | Whether the portfolio is public. |
 | [Created By](#crud-portfolio-created-by) (optional) | `created-by` | object | The user who created the portfolio. |
-| Current Status (optional) | `current-status` | array[object] | The current status of the portfolio. |
-| Custom Fields (optional) | `custom-fields` | array[object] | The custom fields of the portfolio. |
-| Custom Field Settings (optional) | `custom-field-settings` | array[object] | The custom field settings of the portfolio. |
+| [Current Status](#crud-portfolio-current-status) (optional) | `current-status` | array[object] | The current status of the portfolio. |
+| [Custom Fields](#crud-portfolio-custom-fields) (optional) | `custom-fields` | array[object] | The custom fields of the portfolio. |
+| [Custom Field Settings](#crud-portfolio-custom-field-settings) (optional) | `custom-field-settings` | array[object] | The custom field settings of the portfolio. |
 
 
 
@@ -626,6 +644,18 @@ Portfolio Related Task, including get, update, delete, create
 | :--- | :--- | :--- | :--- |
 | User ID | `gid` | string | Globally unique identifier (GID) for the user. |
 | User Name | `name` | string | The name of the user. |
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
