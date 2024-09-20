@@ -1,4 +1,4 @@
-package artifact
+package instillartifact
 
 import (
 	"encoding/base64"
