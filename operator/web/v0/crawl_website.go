@@ -105,7 +105,9 @@ func (e *execution) CrawlWebsite(input *structpb.Struct) (*structpb.Struct, erro
 
 	pageLinks := []string{}
 
-	c := colly.NewCollector()
+	c := colly.NewCollector(
+		colly.Async(),
+	)
 	if len(inputStruct.AllowedDomains) > 0 {
 		c.AllowedDomains = inputStruct.AllowedDomains
 	}
@@ -186,6 +188,7 @@ func (e *execution) CrawlWebsite(input *structpb.Struct) (*structpb.Struct, erro
 		inputStruct.TargetURL = "https://" + inputStruct.TargetURL
 	}
 	_ = c.Visit(inputStruct.TargetURL)
+	c.Wait()
 
 	outputStruct, err := base.ConvertToStructpb(output)
 	if err != nil {
