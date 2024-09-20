@@ -70,19 +70,35 @@ func (e *execution) uploadFile(input *structpb.Struct) (*structpb.Struct, error)
 	ctx = metadata.NewOutgoingContext(ctx, getRequestMetadata(e.SystemVariables))
 
 	if inputStruct.isNewCatalog() {
-		_, err = artifactClient.CreateCatalog(ctx, &artifactPB.CreateCatalogRequest{
+
+		catalogs, err := artifactClient.ListCatalogs(ctx, &artifactPB.ListCatalogsRequest{
 			NamespaceId: inputStruct.Options.Namespace,
-			Name:        inputStruct.Options.CatalogID,
-			Description: inputStruct.Options.Description,
-			Tags:        inputStruct.Options.Tags,
 		})
 
 		if err != nil {
-			if strings.Contains(err.Error(), "knowledge base name already exists") {
+			return nil, fmt.Errorf("failed to list catalogs: %w", err)
+		}
+
+		found := false
+		for _, catalog := range catalogs.Catalogs {
+			if catalog.Name == inputStruct.Options.CatalogID {
+				found = true
 				log.Println("Catalog already exists, skipping creation")
-			} else {
-				return nil, fmt.Errorf("failed to create new catalog: %w", err)
 			}
+		}
+
+		fmt.Println("found", found)
+		if !found {
+			_, err = artifactClient.CreateCatalog(ctx, &artifactPB.CreateCatalogRequest{
+				NamespaceId: inputStruct.Options.Namespace,
+				Name:        inputStruct.Options.CatalogID,
+				Description: inputStruct.Options.Description,
+				Tags:        inputStruct.Options.Tags,
+			})
+		}
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to create new catalog: %w", err)
 		}
 	}
 
@@ -293,6 +309,27 @@ func (e *execution) getFilesMetadata(input *structpb.Struct) (*structpb.Struct, 
 		Files: []FileOutput{},
 	}
 
+	output.setOutput(filesRes)
+
+	for filesRes != nil && filesRes.NextPageToken != "" {
+		filesRes, err = artifactClient.ListCatalogFiles(ctx, &artifactPB.ListCatalogFilesRequest{
+			NamespaceId: inputStruct.Namespace,
+			CatalogId:   inputStruct.CatalogID,
+			PageToken:   filesRes.NextPageToken,
+		})
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to list catalog files: %w", err)
+		}
+
+		output.setOutput(filesRes)
+	}
+
+	return base.ConvertToStructpb(output)
+
+}
+
+func (output *GetFilesMetadataOutput) setOutput(filesRes *artifactPB.ListCatalogFilesResponse) {
 	for _, filePB := range filesRes.Files {
 		output.Files = append(output.Files, FileOutput{
 			FileUID:    filePB.FileUid,
@@ -301,12 +338,8 @@ func (e *execution) getFilesMetadata(input *structpb.Struct) (*structpb.Struct, 
 			CreateTime: filePB.CreateTime.AsTime().Format(time.RFC3339),
 			UpdateTime: filePB.UpdateTime.AsTime().Format(time.RFC3339),
 			Size:       filePB.Size,
-			CatalogID:  inputStruct.CatalogID,
 		})
 	}
-
-	return base.ConvertToStructpb(output)
-
 }
 
 type GetChunksMetadataInput struct {
