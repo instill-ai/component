@@ -111,7 +111,8 @@ func requestToWebpage(url string, timeout int) (*goquery.Document, error) {
 		chromedp.OuterHTML("html", &htmlContent),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get HTML content: %v", err)
+		log.Println("Cannot get dynamic content, so scrape the static content only", err)
+		return httpRequest(url)
 	}
 
 	htmlReader := strings.NewReader(htmlContent)

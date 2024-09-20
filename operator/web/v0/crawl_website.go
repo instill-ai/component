@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"net/url"
 	"strings"
@@ -114,7 +115,10 @@ func (e *execution) CrawlWebsite(input *structpb.Struct) (*structpb.Struct, erro
 	// Wont be called if error occurs
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
-		_ = c.Visit(e.Request.AbsoluteURL(link))
+		err := c.Visit(e.Request.AbsoluteURL(link))
+		if err != nil {
+			log.Println("Error visiting link:", link, "Error:", err)
+		}
 	})
 
 	// Set error handler
