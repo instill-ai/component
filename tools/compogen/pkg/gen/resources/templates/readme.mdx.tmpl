@@ -7,146 +7,157 @@ description: "Learn about how to set up a VDP {{ .Title }} component https://git
 
 The {{ .Title }} component is {{ .ComponentType.IndefiniteArticle }} {{ .ComponentType }} component that allows users to {{ firstToLower .Description }}.
 It can carry out the following tasks:
-{{ range .Tasks }}
-- [{{ .Title }}](#{{ asAnchor .Title}}){{ end }}
+{{- range .Tasks }}
+- [{{ .Title }}](#{{ asAnchor .Title}}){{- end }}
 
-{{ loadExtraContent "intro" }}
+{{- loadExtraContent "intro" }}
 
 ## Release Stage
 
 `{{ .ReleaseStage.String }}`
 
-{{ loadExtraContent "release" }}
+{{- loadExtraContent "release" }}
 
 ## Configuration
 
-The component configuration is defined and maintained [here]({{ .SourceURL }}/config/definition.json).
+The component definition and tasks are defined in the [definition.json]({{ .SourceURL }}/config/definition.json) and [tasks.json]({{ .SourceURL }}/config/tasks.json) files respectively.
 
-{{ loadExtraContent "config" }}
-
+{{- loadExtraContent "config" }}
 {{ if or .SetupConfig.Prerequisites .SetupConfig.Properties }}
 ## Setup
 {{ with .SetupConfig.Prerequisites}}
 <InfoBlock type="info" title="Prerequisites">{{ . }}</InfoBlock>
-{{ end }}
+{{- end }}
 {{ $vendor := .Vendor }}
-{{ with .SetupConfig.Properties }}
-
+{{- with .SetupConfig.Properties }}
 In order to communicate with {{ if $vendor }}{{ $vendor }}{{ else }}the
 external application{{ end }}, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
 
 | Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |{{ range . }}
-| {{ AnchorSetup . }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
-{{ end }}
-{{ loadExtraContent "setup" }}
-{{ end }}
+| :--- | :--- | :--- | :--- |
+{{- range . }}
+| {{ anchorSetup . }}{{ if .Required }} (required){{- end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |
+{{- end }}
+{{- end }}
 
-{{ if .SetupConfig.OneOf }}
-{{ range $key, $options := .SetupConfig.OneOf }}
+{{ loadExtraContent "setup" }}
+{{- end }}
+{{ if .SetupConfig.OneOf -}}
+{{- range $key, $options := .SetupConfig.OneOf -}}
 <details>
 <summary>The <code>{{ $key }}</code> Object </summary>
 
-#### {{ kebabToTitle $key }}
+{{ headerWithID $key "setup" }}
 
 `{{ $key }}` must fulfill one of the following schemas:
-{{ range $idx, $option := $options }}
-##### `{{ findConstantValue $option }}`
+{{- range $idx, $option := $options }}
+
+{{ findConstantValue $option "setup" }}
 
 | Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
-| {{ AnchorSetup $prop }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be `"{{ $prop.Const }}"` {{ else }} {{ $prop.Description }}  {{ end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
-{{ end }}
+| :--- | :--- | :--- | :--- |
+{{- range $propKey, $prop := $option.Properties }}
+| {{ anchorSetup $prop }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be `"{{ $prop.Const }}"` {{ else }} {{ $prop.Description }}  {{- end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |
+{{- end }}
+{{- end }}
 </details>
-{{ end }}
-{{ end }}
+{{- end }}
+{{- end }}
 
-## Supported Tasks{{ range $i, $task := .Tasks}}
-
+## Supported Tasks
+{{ range $i, $task := .Tasks}}
 ### {{ $task.Title }}
 {{ with $task.Description }}
 {{ . }}
-{{ end }}
+{{- end }}
 {{ if $task.Input }}
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `{{ $task.ID }}` |{{ range $task.Input }}
-| {{ AnchorTaskObject . $task }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
-{{ end }}
+| Task ID (required) | `task` | string | `{{ $task.ID }}` |
+{{- range $task.Input }}
+| {{ anchorTaskObject . $task }}{{ if .Required }} (required){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |
+{{- end }}
+{{- end }}
 
-{{ if $task.InputObjects }}
+{{ if $task.InputObjects -}}
 <details>
 <summary> Input Objects in {{ $task.Title }}</summary>
 {{ range $idx, $objectSchemaMap := $task.InputObjects }}
-{{ range $key, $schema := $objectSchemaMap }}
-{{ if $schema.Properties }}
-{{ HeaderWithID $key $task }}
-
+{{- range $key, $schema := $objectSchemaMap }}
+{{- if $schema.Properties }}
+{{ headerWithID $key $task }}
+{{ with $schema.Description }}
+{{ . }}
+{{ end }}
 | Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $schema.Properties }}
-| {{ AnchorTaskObject $prop $task }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ $prop.Description }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
-{{ end }}
-{{ end }}
-{{ end }}
+| :--- | :--- | :--- | :--- |
+{{- range $propKey, $prop := $schema.Properties }}
+| {{ anchorTaskObject $prop $task }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ $prop.Description }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
 </details>
-{{ end }}
+{{- end }}
 
-{{ if $task.OneOfs }}
-{{ range $idx, $oneOf := $task.OneOfs }}
-{{ range $key, $options := $oneOf }}
+{{ if $task.OneOfs -}}
+{{ range $idx, $oneOf := $task.OneOfs -}}
+{{ range $key, $options := $oneOf -}}
 <details>
 <summary>The <code>{{ $key }}</code> Object </summary>
 
-{{ HeaderWithID $key $task }}
+{{ headerWithID $key $task }}
 
 `{{ $key }}` must fulfill one of the following schemas:
-{{ range $idx, $option := $options }}
+{{- range $idx, $option := $options }}
 {{ if $option.Properties }}
-##### `{{ findConstantValue $option }}`
-
+{{ findConstantValue $option $task }}
+{{ with $option.Description }}
+{{ . }}
+{{ end }}
 | Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $option.Properties }}
-| {{ $prop.Title }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be `"{{ $prop.Const }}"` {{ else }} {{ $prop.Description }} {{ end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |{{ end }}
-{{ end }}
-{{ end }}
+| :--- | :--- | :--- | :--- |
+{{- range $propKey, $prop := $option.Properties }}
+| {{ $prop.Title }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ if $prop.Const }} Must be `"{{ $prop.Const }}"` {{ else }} {{ $prop.Description }} {{- end }} {{ if .Enum }} {{ enumValues .Enum }} {{ end }} |
+{{- end }}
+{{- end }}
+{{- end }}
 </details>
-{{ end }}
-{{ end }}
-{{ end }}
+{{- end }}
+{{- end }}
+{{- end }}
 
-
-
-{{ if $task.Output }}
+{{ if $task.Output -}}
 | Output | ID | Type | Description |
-| :--- | :--- | :--- | :--- |{{ range $task.Output }}
-| {{ AnchorTaskObject . $task }}{{ if not .Required }} (optional){{ end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |{{ end }}
-{{ end }}
-
-
+| :--- | :--- | :--- | :--- |
+{{- range $task.Output }}
+| {{ anchorTaskObject . $task }}{{ if not .Required }} (optional){{- end }} | `{{ .ID }}` | {{ .Type }} | {{ .Description }} |
+{{- end }}
+{{- end }}
 {{ if $task.OutputObjects }}
 <details>
 <summary> Output Objects in {{ $task.Title }}</summary>
-{{ range $idx, $objectSchemaMap := $task.OutputObjects }}
-{{ range $key, $schema := $objectSchemaMap }}
-{{ if $schema.Properties }}
-{{ HeaderWithID $key $task }}
+{{- range $idx, $objectSchemaMap := $task.OutputObjects }}
+{{- range $key, $schema := $objectSchemaMap }}
+{{- if $schema.Properties }}
+
+{{ headerWithID $key $task }}
 
 | Field | Field ID | Type | Note |
-| :--- | :--- | :--- | :--- |{{ range $propKey, $prop := $schema.Properties }}
-| {{ AnchorTaskObject $prop $task }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ $prop.Description }} |{{ end }}
-{{ end }}
-{{ end }}
-{{ end }}
+| :--- | :--- | :--- | :--- |
+{{- range $propKey, $prop := $schema.Properties }}
+| {{ anchorTaskObject $prop $task }} | `{{ $propKey }}` | {{ $prop.Type }} | {{ $prop.Description }} |
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
 </details>
-{{ end }}
-
-{{ loadExtraContent $task.ID }}
-
-{{ end }}
-
-{{ loadExtraContent "bottom" }}
+{{ end -}}
+{{- loadExtraContent $task.ID -}}
+{{- end -}}
+{{- loadExtraContent "bottom" -}}

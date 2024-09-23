@@ -17,6 +17,8 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/russross/blackfriday/v2"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	componentbase "github.com/instill-ai/component/base"
 )
@@ -159,15 +161,15 @@ func (g *READMEGenerator) Generate() error {
 	}
 
 	readme, err := template.New("readme").Funcs(template.FuncMap{
-		"firstToLower":      firstToLower,
-		"asAnchor":          blackfriday.SanitizedAnchorName,
-		"loadExtraContent":  g.loadExtraContent,
-		"enumValues":        enumValues,
-		"findConstantValue": findConstantValue,
-		"AnchorSetup":       AnchorSetup,
-		"AnchorTaskObject":  AnchorTaskObject,
-		"kebabToTitle":      kebabToTitle,
-		"HeaderWithID":      HeaderWithID,
+		"firstToLower":          firstToLower,
+		"asAnchor":              blackfriday.SanitizedAnchorName,
+		"loadExtraContent":      g.loadExtraContent,
+		"enumValues":            enumValues,
+		"findConstantValue":     findConstantValue,
+		"anchorSetup":           anchorSetup,
+		"anchorTaskObject":      anchorTaskObject,
+		"titleCaseWithArticles": titleCaseWithArticles,
+		"headerWithID":          headerWithID,
 		"hosts": func() []host {
 			return []host{
 				{Name: "Instill-Cloud", URL: "https://api.instill.tech"},
@@ -393,14 +395,16 @@ func (rt *readmeTask) parseObjectProperties(properties map[string]property, isIn
 			if isInput {
 				rt.InputObjects = append(rt.InputObjects, map[string]objectSchema{
 					op.Title: {
-						Properties: op.Properties,
+						Properties:  op.Properties,
+						Description: op.Description,
 					},
 				})
 				rt.parseObjectProperties(op.Properties, isInput)
 			} else {
 				rt.OutputObjects = append(rt.OutputObjects, map[string]objectSchema{
 					op.Title: {
-						Properties: op.Properties,
+						Properties:  op.Properties,
+						Description: op.Description,
 					},
 				})
 				rt.parseObjectProperties(op.Properties, isInput)
@@ -410,7 +414,8 @@ func (rt *readmeTask) parseObjectProperties(properties map[string]property, isIn
 			if isInput {
 				rt.InputObjects = append(rt.InputObjects, map[string]objectSchema{
 					op.Title: {
-						Properties: op.Items.Properties,
+						Properties:  op.Items.Properties,
+						Description: op.Description,
 					},
 				})
 
@@ -418,7 +423,8 @@ func (rt *readmeTask) parseObjectProperties(properties map[string]property, isIn
 			} else {
 				rt.OutputObjects = append(rt.OutputObjects, map[string]objectSchema{
 					op.Title: {
-						Properties: op.Items.Properties,
+						Properties:  op.Items.Properties,
+						Description: op.Description,
 					},
 				})
 				rt.parseObjectProperties(op.Items.Properties, isInput)
@@ -536,33 +542,72 @@ func enumValues(enum []string) string {
 	return result
 }
 
-func findConstantValue(option objectSchema) string {
+func findConstantValue(option objectSchema, taskOrString interface{}) string {
+	var prefix string
+	switch v := taskOrString.(type) {
+	case readmeTask:
+		prefix = blackfriday.SanitizedAnchorName(v.Title)
+	case string:
+		prefix = blackfriday.SanitizedAnchorName(v)
+	default:
+		// Handle unexpected types, maybe return an error or use a default value
+		prefix = "unknown"
+	}
+
 	for _, prop := range option.Properties {
 		if prop.Const != "" {
-			return option.Title
+			return fmt.Sprintf(`<h5 id="%s-%s"><code>%s</code></h5>`, prefix, blackfriday.SanitizedAnchorName(option.Title), option.Title)
 		}
 	}
 	return ""
 }
 
-func kebabToTitle(s string) string {
-	words := strings.Split(s, "-")
+// List of words to keep in lowercase (articles, conjunctions, prepositions)
+var lowercaseWords = map[string]bool{
+	"a":    true,
+	"an":   true,
+	"the":  true,
+	"and":  true,
+	"or":   true,
+	"but":  true,
+	"nor":  true,
+	"for":  true,
+	"on":   true,
+	"in":   true,
+	"with": true,
+	"at":   true,
+	"by":   true,
+	"to":   true,
+}
 
+// titleCaseWithArticles keeps certain words (articles, conjunctions, prepositions) lowercase.
+func titleCaseWithArticles(s string) string {
+	// Create a Title case transformer
+	titleCaser := cases.Title(language.English)
+
+	// Replace dashes and underscores with spaces
+	cleaned := strings.ReplaceAll(strings.ReplaceAll(s, "-", " "), "_", " ")
+
+	// Split the string into words
+	words := strings.Fields(cleaned)
+
+	// Apply title case to each word
 	for i, word := range words {
-		words[i] = toTitle(word)
+		lowerWord := strings.ToLower(word)
+		if i != 0 && lowercaseWords[lowerWord] {
+			// Keep the word lowercase if it's not the first word and is in the lowercaseWords list
+			words[i] = lowerWord
+		} else {
+			// Otherwise, apply title case
+			words[i] = titleCaser.String(word)
+		}
 	}
 
+	// Join the words with spaces to maintain spaces between words
 	return strings.Join(words, " ")
 }
 
-func toTitle(s string) string {
-	if len(s) == 0 {
-		return s
-	}
-	return string(unicode.ToUpper(rune(s[0]))) + s[1:]
-}
-
-func AnchorSetup(p interface{}) string {
+func anchorSetup(p interface{}) string {
 	switch prop := p.(type) {
 	case resourceProperty:
 		return anchorSetupFromProperty(prop.property)
@@ -589,7 +634,7 @@ func isSemiStructuredObject(p property) bool {
 	return p.Type == "object" && p.Properties == nil && p.OneOf == nil
 }
 
-func AnchorTaskObject(p interface{}, task readmeTask) string {
+func anchorTaskObject(p interface{}, task readmeTask) string {
 	switch prop := p.(type) {
 	case resourceProperty:
 		return anchorTaskWithProperty(prop.property, task.Title)
@@ -613,6 +658,16 @@ func anchorTaskWithProperty(prop property, taskName string) string {
 	return prop.Title
 }
 
-func HeaderWithID(key string, task readmeTask) string {
-	return fmt.Sprintf(`<h4 id="%s-%s">%s</h4>`, blackfriday.SanitizedAnchorName(task.Title), blackfriday.SanitizedAnchorName(key), kebabToTitle(key))
+func headerWithID(key string, taskOrString interface{}) string {
+	var prefix string
+	switch v := taskOrString.(type) {
+	case readmeTask:
+		prefix = blackfriday.SanitizedAnchorName(v.Title)
+	case string:
+		prefix = blackfriday.SanitizedAnchorName(v)
+	default:
+		// Handle unexpected types, maybe return an error or use a default value
+		prefix = "unknown"
+	}
+	return fmt.Sprintf(`<h4 id="%s-%s">%s</h4>`, prefix, blackfriday.SanitizedAnchorName(key), titleCaseWithArticles(key))
 }
