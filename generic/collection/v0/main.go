@@ -3,11 +3,14 @@ package collection
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"sync"
 
 	_ "embed"
 
+	"github.com/samber/lo"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
@@ -15,8 +18,11 @@ import (
 )
 
 const (
-	taskAssign      = "TASK_ASSIGN"
-	taskAppendArray = "TASK_APPEND_ARRAY"
+	taskAssign       = "TASK_ASSIGN"
+	taskUnion        = "TASK_UNION"
+	taskIntersection = "TASK_INTERSECTION"
+	taskDifference   = "TASK_DIFFERENCE"
+	taskAppendArray  = "TASK_APPEND_ARRAY"
 )
 
 var (
@@ -59,6 +65,12 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	switch x.Task {
 	case taskAssign:
 		e.execute = e.assign
+	case taskUnion:
+		e.execute = e.union
+	case taskIntersection:
+		e.execute = e.intersection
+	case taskDifference:
+		e.execute = e.difference
 	case taskAppendArray:
 		e.execute = e.appendArray
 	default:
@@ -68,6 +80,139 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		)
 	}
 	return e, nil
+}
+
+func (e *execution) union(in *structpb.Struct) (*structpb.Struct, error) {
+	sets := in.Fields["sets"].GetListValue().Values
+	cache := [][]string{}
+
+	for _, s := range sets {
+		c := []string{}
+		for _, v := range s.GetListValue().Values {
+			b, err := protojson.Marshal(v)
+			if err != nil {
+				return nil, err
+			}
+			c = append(c, string(b))
+		}
+		cache = append(cache, c)
+	}
+
+	set := &structpb.ListValue{Values: []*structpb.Value{}}
+	un := lo.Union(cache...)
+	for _, u := range un {
+		var a any
+		err := json.Unmarshal([]byte(u), &a)
+		if err != nil {
+			return nil, err
+		}
+		v, err := structpb.NewValue(a)
+		if err != nil {
+			return nil, err
+		}
+		set.Values = append(set.Values, v)
+	}
+
+	out := &structpb.Struct{Fields: make(map[string]*structpb.Value)}
+	out.Fields["set"] = structpb.NewListValue(set)
+	return out, nil
+}
+
+func (e *execution) intersection(in *structpb.Struct) (*structpb.Struct, error) {
+	sets := in.Fields["sets"].GetListValue().Values
+
+	if len(sets) == 1 {
+		out := &structpb.Struct{Fields: make(map[string]*structpb.Value)}
+		out.Fields["set"] = structpb.NewListValue(sets[0].GetListValue())
+		return out, nil
+	}
+
+	curr := make([]string, len(sets[0].GetListValue().Values))
+	for idx, v := range sets[0].GetListValue().Values {
+		b, err := protojson.Marshal(v)
+		if err != nil {
+			return nil, err
+		}
+		curr[idx] = string(b)
+	}
+
+	for _, s := range sets[1:] {
+		next := make([]string, len(s.GetListValue().Values))
+		for idx, v := range s.GetListValue().Values {
+			b, err := protojson.Marshal(v)
+			if err != nil {
+				return nil, err
+			}
+			next[idx] = string(b)
+		}
+
+		i := lo.Intersect(curr, next)
+		curr = i
+
+	}
+
+	set := &structpb.ListValue{Values: make([]*structpb.Value, len(curr))}
+
+	for idx, c := range curr {
+		var a any
+		err := json.Unmarshal([]byte(c), &a)
+		if err != nil {
+			return nil, err
+		}
+		v, err := structpb.NewValue(a)
+		if err != nil {
+			return nil, err
+		}
+		set.Values[idx] = v
+	}
+
+	out := &structpb.Struct{Fields: make(map[string]*structpb.Value)}
+	out.Fields["set"] = structpb.NewListValue(set)
+	return out, nil
+}
+
+func (e *execution) difference(in *structpb.Struct) (*structpb.Struct, error) {
+	setA := in.Fields["set-a"]
+	setB := in.Fields["set-b"]
+
+	valuesA := make([]string, len(setA.GetListValue().Values))
+	for idx, v := range setA.GetListValue().Values {
+		b, err := protojson.Marshal(v)
+		if err != nil {
+			return nil, err
+		}
+		valuesA[idx] = string(b)
+	}
+
+	valuesB := make([]string, len(setB.GetListValue().Values))
+	for idx, v := range setB.GetListValue().Values {
+		b, err := protojson.Marshal(v)
+		if err != nil {
+			return nil, err
+		}
+		valuesB[idx] = string(b)
+	}
+	dif, _ := lo.Difference(valuesA, valuesB)
+
+	set := &structpb.ListValue{Values: make([]*structpb.Value, len(dif))}
+
+	for idx, c := range dif {
+		var a any
+
+		err := json.Unmarshal([]byte(c), &a)
+		if err != nil {
+			return nil, err
+		}
+		v, err := structpb.NewValue(a)
+		if err != nil {
+			return nil, err
+		}
+		set.Values[idx] = v
+	}
+
+	out := &structpb.Struct{Fields: make(map[string]*structpb.Value)}
+	out.Fields["set"] = structpb.NewListValue(set)
+	return out, nil
 }
 
 func (e *execution) assign(in *structpb.Struct) (*structpb.Struct, error) {
