@@ -3,17 +3,19 @@ package restapi
 
 import (
 	"context"
-	_ "embed"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"sync"
 
-	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/x/errmsg"
+	_ "embed"
+
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/x/errmsg"
 
 	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )

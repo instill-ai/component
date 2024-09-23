@@ -8,9 +8,11 @@ import (
 	"sort"
 
 	"github.com/google/uuid"
-	"github.com/instill-ai/component/base"
-	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	ffmpeg "github.com/u2takey/ffmpeg-go"
+
+	"github.com/instill-ai/component/base"
 )
 
 type SubsampleVideoInput struct {

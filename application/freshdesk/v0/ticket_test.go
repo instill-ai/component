@@ -4,13 +4,14 @@ import (
 	"context"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
+	"github.com/gojuno/minimock/v3"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 
-	"github.com/gojuno/minimock/v3"
+	qt "github.com/frankban/quicktest"
+
 	"github.com/instill-ai/component/base"
-	"go.uber.org/zap"
 )
 
 const (

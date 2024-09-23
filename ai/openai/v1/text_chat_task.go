@@ -10,12 +10,13 @@ import (
 	"strings"
 
 	"github.com/go-resty/resty/v2"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/structpb"
+
 	"github.com/instill-ai/component/ai"
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
 	"github.com/instill-ai/component/internal/util/httpclient"
-	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const (

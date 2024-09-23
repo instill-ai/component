@@ -7,10 +7,12 @@ import (
 	"net/url"
 	"strings"
 
+	"google.golang.org/protobuf/types/known/structpb"
+
 	colly "github.com/gocolly/colly/v2"
+
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type PageInfo struct {

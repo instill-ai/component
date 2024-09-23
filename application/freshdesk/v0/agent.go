@@ -3,8 +3,9 @@ package freshdesk
 import (
 	"fmt"
 
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 // This file is used to handle "Get Agent", "Get Role", "Get Skill"  and "Get Group" tasks.

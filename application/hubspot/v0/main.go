@@ -4,13 +4,16 @@ package hubspot
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"sync"
 
-	hubspot "github.com/belong-inc/go-hubspot"
-	"github.com/instill-ai/component/base"
+	_ "embed"
+
 	"google.golang.org/protobuf/types/known/structpb"
+
+	hubspot "github.com/belong-inc/go-hubspot"
+
+	"github.com/instill-ai/component/base"
 )
 
 const (

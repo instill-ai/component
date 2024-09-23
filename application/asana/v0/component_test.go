@@ -7,11 +7,13 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
-	"github.com/instill-ai/component/application/asana/v0/mockasana"
-	"github.com/instill-ai/component/base"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/application/asana/v0/mockasana"
+	"github.com/instill-ai/component/base"
 )
 
 const (

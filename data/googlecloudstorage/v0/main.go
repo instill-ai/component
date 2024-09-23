@@ -3,9 +3,10 @@ package googlecloudstorage
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"sync"
+
+	_ "embed"
 
 	"cloud.google.com/go/storage"
 	"google.golang.org/api/option"

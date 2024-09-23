@@ -6,10 +6,12 @@ import (
 	"sync"
 	"testing"
 
-	cohereSDK "github.com/cohere-ai/cohere-go/v2"
-	"github.com/cohere-ai/cohere-go/v2/core"
-	qt "github.com/frankban/quicktest"
 	"go.uber.org/zap"
+
+	cohereSDK "github.com/cohere-ai/cohere-go/v2"
+	qt "github.com/frankban/quicktest"
+
+	"github.com/cohere-ai/cohere-go/v2/core"
 )
 
 func newMockClient() *cohereClient {

@@ -8,9 +8,9 @@ import (
 	"io"
 	"sync"
 
+	"github.com/PuerkitoBio/goquery"
 	"google.golang.org/protobuf/types/known/structpb"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/instill-ai/component/base"
 )
 

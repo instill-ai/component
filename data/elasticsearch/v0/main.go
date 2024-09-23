@@ -3,14 +3,15 @@ package elasticsearch
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"io"
 	"sync"
 
-	"google.golang.org/protobuf/types/known/structpb"
+	_ "embed"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"google.golang.org/protobuf/types/known/structpb"
+
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/x/errmsg"
 )

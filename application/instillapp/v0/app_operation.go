@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/instill-ai/component/base"
-	appPB "github.com/instill-ai/protogen-go/app/app/v1alpha"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
+
+	appPB "github.com/instill-ai/protogen-go/app/app/v1alpha"
 )
 
 type ReadChatHistoryInput struct {

@@ -4,11 +4,12 @@ import (
 	"context"
 	"sync"
 
-	cohereSDK "github.com/cohere-ai/cohere-go/v2"
-	cohereClientSDK "github.com/cohere-ai/cohere-go/v2/client"
 	"github.com/cohere-ai/cohere-go/v2/core"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	cohereSDK "github.com/cohere-ai/cohere-go/v2"
+	cohereClientSDK "github.com/cohere-ai/cohere-go/v2/client"
 )
 
 type cohereClient struct {

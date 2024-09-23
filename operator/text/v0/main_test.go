@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	"github.com/frankban/quicktest"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 func TestOperator(t *testing.T) {

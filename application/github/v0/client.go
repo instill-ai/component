@@ -6,9 +6,10 @@ import (
 	"net/http"
 
 	"github.com/google/go-github/v62/github"
-	"github.com/instill-ai/x/errmsg"
 	"golang.org/x/oauth2"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/x/errmsg"
 )
 
 type RepoInfoInterface interface {

@@ -7,9 +7,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest/observer"
+
+	qt "github.com/frankban/quicktest"
 
 	"github.com/instill-ai/x/errmsg"
 )

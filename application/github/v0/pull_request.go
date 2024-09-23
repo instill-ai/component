@@ -6,9 +6,10 @@ import (
 	"fmt"
 
 	"github.com/google/go-github/v62/github"
+	"google.golang.org/protobuf/types/known/structpb"
+
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/x/errmsg"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type PullRequestService interface {

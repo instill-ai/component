@@ -6,6 +6,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
+
 	modelPB "github.com/instill-ai/protogen-go/model/model/v1alpha"
 )
 

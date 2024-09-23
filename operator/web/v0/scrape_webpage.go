@@ -10,10 +10,11 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
-	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/util"
 	"github.com/k3a/html2text"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/util"
 )
 
 type ScrapeWebpageInput struct {

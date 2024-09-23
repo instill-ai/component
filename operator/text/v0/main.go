@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sync"
 
-	_ "embed" // embed
+	_ "embed"
 
 	"github.com/instill-ai/component/base"
 )

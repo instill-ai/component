@@ -8,8 +8,9 @@ import (
 	"testing"
 
 	"code.sajari.com/docconv"
-	qt "github.com/frankban/quicktest"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
 
 	"github.com/instill-ai/component/base"
 )

@@ -4,9 +4,9 @@ import (
 	"encoding/base64"
 	"fmt"
 
+	"github.com/gabriel-vasile/mimetype"
 	"google.golang.org/protobuf/types/known/structpb"
 
-	"github.com/gabriel-vasile/mimetype"
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/base"
 

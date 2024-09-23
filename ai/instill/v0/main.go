@@ -3,11 +3,12 @@ package instill
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"strings"
 	"sync"
 	"time"
+
+	_ "embed"
 
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/proto"

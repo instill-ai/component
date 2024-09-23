@@ -8,11 +8,12 @@ import (
 	"net/url"
 	"strings"
 
-	md "github.com/JohannesKaufmann/html-to-markdown"
-	"github.com/gabriel-vasile/mimetype"
-
 	"github.com/PuerkitoBio/goquery"
+	"github.com/gabriel-vasile/mimetype"
 	"github.com/h2non/filetype"
+
+	md "github.com/JohannesKaufmann/html-to-markdown"
+
 	"github.com/instill-ai/component/base"
 )
 

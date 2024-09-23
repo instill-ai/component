@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
-	mistralSDK "github.com/gage-technologies/mistral-go"
-	"github.com/instill-ai/component/base"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
+	mistralSDK "github.com/gage-technologies/mistral-go"
+
+	"github.com/instill-ai/component/base"
 )
 
 type MockMistralClient struct {

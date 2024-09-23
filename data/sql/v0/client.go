@@ -9,7 +9,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/instill-ai/component/base"
 	"github.com/jmoiron/sqlx"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -17,6 +16,8 @@ import (
 	_ "github.com/lib/pq"
 	_ "github.com/nakagami/firebirdsql"
 	_ "github.com/sijms/go-ora"
+
+	"github.com/instill-ai/component/base"
 )
 
 var enginesMTLS = map[string]string{

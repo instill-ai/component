@@ -5,8 +5,9 @@ import (
 	"strings"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 const (

@@ -5,9 +5,11 @@ import (
 	"strconv"
 	"strings"
 
-	hubspot "github.com/belong-inc/go-hubspot"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	hubspot "github.com/belong-inc/go-hubspot"
+
+	"github.com/instill-ai/component/base"
 )
 
 // Get Deal

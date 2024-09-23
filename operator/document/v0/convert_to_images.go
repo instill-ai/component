@@ -8,8 +8,9 @@ import (
 	"strings"
 
 	"github.com/gen2brain/go-fitz"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 type ConvertPDFToImagesInput struct {

@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"reflect"
 
-	tiktoken "github.com/pkoukk/tiktoken-go"
 	"github.com/tmc/langchaingo/textsplitter"
+
+	tiktoken "github.com/pkoukk/tiktoken-go"
 )
 
 type ChunkTextInput struct {

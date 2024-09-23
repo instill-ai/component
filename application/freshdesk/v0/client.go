@@ -4,9 +4,10 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/instill-ai/component/internal/util/httpclient"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/internal/util/httpclient"
 )
 
 func newClient(setup *structpb.Struct, logger *zap.Logger) *FreshdeskClient {

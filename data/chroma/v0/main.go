@@ -3,14 +3,16 @@ package chroma
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"sync"
+
+	_ "embed"
+
+	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const (

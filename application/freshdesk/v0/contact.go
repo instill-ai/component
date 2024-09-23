@@ -5,8 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 // name, email, phone, mobile, description, job_title, tags, language, time_zone, company_id, unique_external_id, twitter_id, view_all_tickets, deletedc, other_companies, created_at, updated_at

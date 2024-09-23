@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/instill-ai/component/base"
 	"github.com/xwb1989/sqlparser"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 type InsertInput struct {

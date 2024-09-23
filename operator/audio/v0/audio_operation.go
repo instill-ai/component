@@ -8,8 +8,9 @@ import (
 
 	"github.com/iFaceless/godub"
 	"github.com/iFaceless/godub/wav"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 type ChunkAudiosInput struct {

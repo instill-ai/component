@@ -6,9 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/instill-ai/component/base"
 	"github.com/slack-go/slack"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 type UserInputReadTask struct {

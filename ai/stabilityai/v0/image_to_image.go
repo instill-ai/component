@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"mime/multipart"
 
+	"google.golang.org/protobuf/types/known/structpb"
+
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const imageToImagePathTemplate = "/v1/generation/%s/image-to-image"

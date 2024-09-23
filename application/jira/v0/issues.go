@@ -2,16 +2,19 @@ package jira
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"reflect"
 	"strings"
 
+	_ "embed"
+
 	"github.com/go-resty/resty/v2"
+	"google.golang.org/protobuf/types/known/structpb"
+
+	jsoniter "github.com/json-iterator/go"
+
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/x/errmsg"
-	jsoniter "github.com/json-iterator/go"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type Issue struct {

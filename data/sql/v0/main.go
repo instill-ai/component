@@ -4,14 +4,16 @@ package sql
 import (
 	"context"
 	"database/sql"
-	_ "embed"
 	"fmt"
 	"sync"
 
-	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/x/errmsg"
+	_ "embed"
+
 	"github.com/jmoiron/sqlx"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/x/errmsg"
 )
 
 const (

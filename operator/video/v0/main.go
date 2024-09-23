@@ -3,12 +3,14 @@ package video
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"sync"
 
-	"github.com/instill-ai/component/base"
+	_ "embed"
+
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 const (
