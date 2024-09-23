@@ -1,6 +1,6 @@
 {
-  "TASK_DECLARE": {
-    "instillShortDescription": "Set the data.",
+  "TASK_ASSIGN": {
+    "instillShortDescription": "Assign the data.",
     "input": {
       "description": "Input",
       "instillEditOnNodeFields": [
@@ -9,7 +9,7 @@
       "instillUIOrder": 0,
       "properties": {
         "data": {
-          "description": "Specify the data you want to set.",
+          "description": "Specify the data you want to assign.",
           "instillAcceptFormats": [
             "*"
           ],
@@ -38,7 +38,7 @@
       "instillUIOrder": 0,
       "properties": {
         "data": {
-          "description": "The data you set.",
+          "description": "The data you assign.",
           "instillEditOnNodeFields": [],
           "instillFormat": "*",
           "instillUIOrder": 0,

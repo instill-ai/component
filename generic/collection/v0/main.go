@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	taskDeclare     = "TASK_DECLARE"
+	taskAssign      = "TASK_ASSIGN"
 	taskAppendArray = "TASK_APPEND_ARRAY"
 )
 
@@ -57,8 +57,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	e := &execution{ComponentExecution: x}
 
 	switch x.Task {
-	case taskDeclare:
-		e.execute = e.declare
+	case taskAssign:
+		e.execute = e.assign
 	case taskAppendArray:
 		e.execute = e.appendArray
 	default:
@@ -70,7 +70,7 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	return e, nil
 }
 
-func (e *execution) declare(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) assign(in *structpb.Struct) (*structpb.Struct, error) {
 	out := in
 	return out, nil
 }

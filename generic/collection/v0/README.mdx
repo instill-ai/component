@@ -8,7 +8,7 @@ description: "Learn about how to set up a VDP Collection component https://githu
 The Collection component is a generic component that allows users to manipulate collection-type data.
 It can carry out the following tasks:
 
-- [Declare](#declare)
+- [Assign](#assign)
 - [Append Array](#append-array)
 
 
@@ -31,15 +31,15 @@ The component configuration is defined and maintained [here](https://github.com/
 
 ## Supported Tasks
 
-### Declare
+### Assign
 
-Set the data.
+Assign the data.
 
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Task ID (required) | `task` | string | `TASK_DECLARE` |
-| Data (required) | `data` | any | Specify the data you want to set. |
+| Task ID (required) | `task` | string | `TASK_ASSIGN` |
+| Data (required) | `data` | any | Specify the data you want to assign. |
 
 
 
@@ -51,7 +51,7 @@ Set the data.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Data | `data` | any | The data you set. |
+| Data | `data` | any | The data you assign. |
 
 
 

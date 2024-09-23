@@ -1,6 +1,6 @@
 {
   "availableTasks": [
-    "TASK_DECLARE",
+    "TASK_ASSIGN",
     "TASK_APPEND_ARRAY"
   ],
   "custom": false,
