@@ -22,7 +22,7 @@ const (
 	taskUnion        = "TASK_UNION"
 	taskIntersection = "TASK_INTERSECTION"
 	taskDifference   = "TASK_DIFFERENCE"
-	taskAppendArray  = "TASK_APPEND_ARRAY"
+	taskAppend       = "TASK_APPEND"
 )
 
 var (
@@ -71,8 +71,8 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 		e.execute = e.intersection
 	case taskDifference:
 		e.execute = e.difference
-	case taskAppendArray:
-		e.execute = e.appendArray
+	case taskAppend:
+		e.execute = e.append
 	default:
 		return nil, errmsg.AddMessage(
 			fmt.Errorf("not supported task: %s", x.Task),
@@ -220,10 +220,10 @@ func (e *execution) assign(in *structpb.Struct) (*structpb.Struct, error) {
 	return out, nil
 }
 
-func (e *execution) appendArray(in *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) append(in *structpb.Struct) (*structpb.Struct, error) {
 	arr := in.Fields["array"]
-	data := in.Fields["element"]
-	arr.GetListValue().Values = append(arr.GetListValue().Values, data)
+	element := in.Fields["element"]
+	arr.GetListValue().Values = append(arr.GetListValue().Values, element)
 
 	out := &structpb.Struct{Fields: make(map[string]*structpb.Value)}
 	out.Fields["array"] = arr
