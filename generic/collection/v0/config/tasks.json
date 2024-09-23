@@ -1,0 +1,130 @@
+{
+  "TASK_DECLARE": {
+    "instillShortDescription": "Set the data.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "data"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "data": {
+          "description": "Specify the data you want to set.",
+          "instillAcceptFormats": [
+            "*"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "required": [],
+          "title": "Data"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillEditOnNodeFields": [
+        "data"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "data": {
+          "description": "The data you set.",
+          "instillEditOnNodeFields": [],
+          "instillFormat": "*",
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Data"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  },
+  "TASK_APPEND_ARRAY": {
+    "instillShortDescription": "Add data to the end of an array.",
+    "input": {
+      "description": "Input",
+      "instillEditOnNodeFields": [
+        "array",
+        "element"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "array": {
+          "description": "Specify the array you want to append to.",
+          "instillAcceptFormats": [
+            "array:*"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "items": {},
+          "required": [],
+          "title": "Array",
+          "type": "array"
+        },
+        "element": {
+          "description": "Specify the data you want to append.",
+          "instillAcceptFormats": [
+            "*"
+          ],
+          "instillUIMultiline": true,
+          "instillUIOrder": 0,
+          "instillUpstreamTypes": [
+            "value",
+            "reference",
+            "template"
+          ],
+          "required": [],
+          "title": "Data"
+        }
+      },
+      "required": [
+        "array",
+        "element"
+      ],
+      "title": "Input",
+      "type": "object"
+    },
+    "output": {
+      "description": "Output",
+      "instillEditOnNodeFields": [
+        "array"
+      ],
+      "instillUIOrder": 0,
+      "properties": {
+        "array": {
+          "description": "A updated array with the specified data appended to the end of it.",
+          "instillEditOnNodeFields": [],
+          "instillFormat": "array:*",
+          "instillUIOrder": 0,
+          "required": [],
+          "title": "Array",
+          "type": "array"
+        }
+      },
+      "required": [
+        "array"
+      ],
+      "title": "Output",
+      "type": "object"
+    }
+  }
+}

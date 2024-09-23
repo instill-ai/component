@@ -81,7 +81,7 @@ class PdfTransformer:
 					largest_text_height = height
 				elif height > second_largest_text_height and height < largest_text_height:
 					second_largest_text_height = height
-		
+
 		counter = Counter(heights)
 
 		# if there are too many subtitles, we don't use the title height.
@@ -90,7 +90,7 @@ class PdfTransformer:
 			self.title_height = float("inf")
 		else:
 			self.title_height = round(largest_text_height * tolerance)
-		
+
 		if counter[second_largest_text_height] > 50 or self.title_height == float("inf"):
 			self.subtitle_height = float("inf")
 		else:
@@ -466,7 +466,7 @@ if __name__ == "__main__":
 				images.append(image)
 
 			errors += pdf.errors
-			
+
 		output = {
 			"body": result,
 			"images": images,

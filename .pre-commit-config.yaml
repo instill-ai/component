@@ -4,6 +4,7 @@ repos:
     hooks:
       - id: check-yaml
       - id: check-json
+        exclude: ai/openai/v1
       - id: check-merge-conflict
       - id: end-of-file-fixer
         exclude: (?i).*testdata/
@@ -12,6 +13,7 @@ repos:
         exclude_types: [svg,mdx]
       - id: pretty-format-json
         args: [--autofix, --no-sort-keys]
+        exclude: ai/openai/v1
   - repo: https://github.com/dnephin/pre-commit-golang
     rev: v0.5.1
     hooks:
