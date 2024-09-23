@@ -7,25 +7,16 @@ description: "Learn about how to set up a VDP Instill App component https://gith
 
 The Instill App component is an application component that allows users to manipulate Instill App related resources..
 It can carry out the following tasks:
-
 - [Read Chat History](#read-chat-history)
 - [Write Chat Message](#write-chat-message)
-
-
 
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/application/instillapp/v0/config/definition.json).
-
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/application/instillapp/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/application/instillapp/v0/config/tasks.json) files respectively.
 
 
 
@@ -34,7 +25,6 @@ The component configuration is defined and maintained [here](https://github.com/
 ### Read Chat History
 
 Retrieve the chat history from the conversation.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -51,21 +41,12 @@ Retrieve the chat history from the conversation.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Chat Messages](#read-chat-history-chat-messages) | `messages` | array[object] | List of chat messages |
 
-
-
-
 <details>
 <summary> Output Objects in Read Chat History</summary>
-
-
 
 <h4 id="read-chat-history-chat-messages">Chat Messages</h4>
 
@@ -74,24 +55,11 @@ Retrieve the chat history from the conversation.
 | [Content](#read-chat-history-content) | `content` | array | The message content. |
 | Name | `name` | string | An optional name for the participant. Provides the model information to differentiate between participants of the same role. |
 | Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant'. |
-
-
-
-
-
-
-
 </details>
-
-
-
-
-
 
 ### Write Chat Message
 
 Write the chat message into the conversation in catalog.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -101,27 +69,18 @@ Write the chat message into the conversation in catalog.
 | Conversation ID (required) | `conversation-id` | string | Fill in your conversation ID. |
 | [Message](#write-chat-message-message) (required) | `message` | object | A chat message to be written into the conversation. |
 
-
-
 <details>
 <summary> Input Objects in Write Chat Message</summary>
 
-
-
 <h4 id="write-chat-message-message">Message</h4>
+
+A chat message to be written into the conversation.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Content | `content` | string | The contents of the message.  |
 | Role | `role` | string | The role of the author of this message. Now, we support 'user' and 'assistant'.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -130,13 +89,3 @@ Write the chat message into the conversation in catalog.
 | Message ID | `message-uid` | string | The unique identifier of the message. |
 | Create Time | `create-time` | string | The creation time of the message in ISO 8601 format |
 | Update Time | `update-time` | string | The update time of the message in ISO 8601 format |
-
-
-
-
-
-
-
-
-
-

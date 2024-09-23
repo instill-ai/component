@@ -7,7 +7,6 @@ description: "Learn about how to set up a VDP Freshdesk component https://github
 
 The Freshdesk component is an application component that allows users to use Freshdesk API to manage tickets, contacts and more..
 It can carry out the following tasks:
-
 - [Get Ticket](#get-ticket)
 - [Create Ticket](#create-ticket)
 - [Reply To Ticket](#reply-to-ticket)
@@ -24,29 +23,20 @@ It can carry out the following tasks:
 - [Get Group](#get-group)
 - [Get Skill](#get-skill)
 
-
-
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/application/freshdesk/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/application/freshdesk/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/application/freshdesk/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Freshdesk, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -59,23 +49,16 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Get Ticket
 
 Get ticket using ID
 
-
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_TICKET` |
 | Ticket ID (required) | `ticket-id` | integer | The ID of the ticket |
-
-
-
-
 
 
 
@@ -116,13 +99,8 @@ Get ticket using ID
 | Initial Sentiment Score (optional) | `initial-sentiment-score` | integer | The initial sentiment score of the ticket |
 | Custom Fields (optional) | `custom-fields` | object | Custom fields that the ticket have. Custom fields can be created or modified in Admin -> Ticket Fields |
 
-
-
-
 <details>
 <summary> Output Objects in Get Ticket</summary>
-
-
 
 <h4 id="get-ticket-attachments">Attachments</h4>
 
@@ -131,20 +109,11 @@ Get ticket using ID
 | Attachment Content Type | `content-type` | string | The type of the file |
 | Attachment Name | `name` | string | The name of the file |
 | Attachment URL | `url` | string | The URL to the attachment. |
-
-
-
 </details>
-
-
-
-
-
 
 ### Create Ticket
 
 Create ticket
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -170,27 +139,14 @@ Create ticket
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Ticket ID | `ticket-id` | integer | The ID of the ticket |
 | Created At | `created-at` | string | Timestamp that denotes when the ticket/conversation was created. In UTC format. |
 
-
-
-
-
-
-
-
-
 ### Reply To Ticket
 
 Reply to a ticket thread.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -206,27 +162,14 @@ Reply to a ticket thread.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Conversation ID | `conversation-id` | integer | The ID of the note or reply that is associated with the ticket |
 | Created At | `created-at` | string | Timestamp that denotes when the ticket/conversation was created. In UTC format. |
 
-
-
-
-
-
-
-
-
 ### Create Ticket Note
 
 Create a private/public note on a ticket thread.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -242,27 +185,14 @@ Create a private/public note on a ticket thread.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Conversation ID | `conversation-id` | integer | The ID of the note or reply that is associated with the ticket |
 | Created At | `created-at` | string | Timestamp that denotes when the ticket/conversation was created. In UTC format. |
 
-
-
-
-
-
-
-
-
 ### Get All Conversations
 
 Get all the conversations in a ticket. (Conversations are replies and notes that are added to a ticket)
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -273,22 +203,13 @@ Get all the conversations in a ticket. (Conversations are replies and notes that
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Conversations](#get-all-conversations-conversations) | `conversations` | array[object] | An array of conversations |
 | Conversations Length | `conversations-length` | integer | Number of conversations |
 
-
-
-
 <details>
 <summary> Output Objects in Get All Conversations</summary>
-
-
 
 <h4 id="get-all-conversations-conversations">Conversations</h4>
 
@@ -305,29 +226,16 @@ Get all the conversations in a ticket. (Conversations are replies and notes that
 | Support Email | `support-email` | string | Support email address. You can find it in Admin -> Email (under channel). |
 | To Emails | `to-emails` | array | Email addresses of agents/users who need to be notified about this conversation |
 | Incoming | `user-id` | integer | ID of the agent/contact replying to the ticket. |
-
-
-
 </details>
-
-
-
-
-
 
 ### Get Contact
 
 Get contact using ID
 
-
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_CONTACT` |
 | Contact ID (required) | `contact-id` | integer | ID of the contact |
-
-
-
-
 
 
 
@@ -358,13 +266,8 @@ Get contact using ID
 | Updated At (optional) | `updated-at` | string | Timestamp that denotes when the contact was last updated. In UTC format. |
 | Custom Fields (optional) | `custom-fields` | object | Custom fields that the contact have. Custom fields can be created or modified in Admin -> Customer Fields |
 
-
-
-
 <details>
 <summary> Output Objects in Get Contact</summary>
-
-
 
 <h4 id="get-contact-other-companies">Other Companies</h4>
 
@@ -372,20 +275,11 @@ Get contact using ID
 | :--- | :--- | :--- | :--- |
 | Company ID | `company-id` | integer | ID of the company |
 | View All Tickets | `view-all-tickets` | boolean | Set to true if the contact can see all the tickets that are associated with the company. |
-
-
-
 </details>
-
-
-
-
-
 
 ### Create Contact
 
 Create contact
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -412,36 +306,19 @@ Create contact
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Contact ID | `contact-id` | integer | ID of the contact |
 | Created At | `created-at` | string | Timestamp that denotes when the contact was created. In UTC format. |
 
-
-
-
-
-
-
-
-
 ### Get Company
 
 Get company using ID
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_COMPANY` |
 | Company ID (required) | `company-id` | integer | ID of the primary company to which the contact belongs |
-
-
-
-
 
 
 
@@ -461,18 +338,9 @@ Get company using ID
 | Updated At | `updated-at` | string | Timestamp that denotes when the company was last updated. In UTC format. |
 | Custom Fields (optional) | `custom-fields` | object | Custom fields that the company have. Custom fields can be created or modified in Admin -> Customer Fields |
 
-
-
-
-
-
-
-
-
 ### Create Company
 
 Create company
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -490,27 +358,14 @@ Create company
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Company ID | `company-id` | integer | ID of the company |
 | Created At | `created-at` | string | Timestamp that denotes when the company was created. In UTC format. |
 
-
-
-
-
-
-
-
-
 ### Get All
 
 Task to get all the IDs of existing contacts, companies, tickets, products, agents, roles, or skills. Note: products, agents, roles, and skills require admin privileges. Some of these might not work, depending on the plan you are on.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -522,36 +377,19 @@ Task to get all the IDs of existing contacts, companies, tickets, products, agen
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | IDs | `ids` | array[integer] | List of IDs |
 | ID Length | `id-length` | integer | Number of IDs |
 
-
-
-
-
-
-
-
-
 ### Get Product
 
 Get product using ID. This task will only work if you have admin privileges.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_PRODUCT` |
 | Product ID (required) | `product-id` | integer | Product ID |
-
-
-
-
 
 
 
@@ -566,27 +404,14 @@ Get product using ID. This task will only work if you have admin privileges.
 | Updated At | `updated-at` | string | Timestamp that denotes when the product was last updated |
 | Default | `default` | boolean | Set to true if the product is the default product |
 
-
-
-
-
-
-
-
-
 ### Get Agent
 
 Get agent using ID. This task will only work if you have admin privileges. Agents are those in your team who will login to Freshdesk.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_AGENT` |
 | Agent ID (required) | `agent-id` | integer | Agent ID |
-
-
-
-
 
 
 
@@ -615,27 +440,14 @@ Get agent using ID. This task will only work if you have admin privileges. Agent
 | Created At (optional) | `created-at` | string | Timestamp that denotes when the agent was created |
 | Updated At (optional) | `updated-at` | string | Timestamp that denotes when the agent was last updated |
 
-
-
-
-
-
-
-
-
 ### Get Role
 
 Get role using ID. This task will only work if you have admin privileges. Roles allow agents/collaborators to have different privileges.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_ROLE` |
 | Role ID (required) | `role-id` | integer | Role ID |
-
-
-
-
 
 
 
@@ -650,27 +462,14 @@ Get role using ID. This task will only work if you have admin privileges. Roles 
 | Created At | `created-at` | string | Timestamp that denotes when the role was created |
 | Updated At | `updated-at` | string | Timestamp that denotes when the role was last updated |
 
-
-
-
-
-
-
-
-
 ### Get Group
 
 Get group using ID. This task will only work if you have admin privileges. Agents can be classified into groups such as Customer Support.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_GROUP` |
 | Group ID (required) | `group-id` | integer | Group ID |
-
-
-
-
 
 
 
@@ -689,27 +488,14 @@ Get group using ID. This task will only work if you have admin privileges. Agent
 | Created At | `created-at` | string | Timestamp that denotes when the group was created |
 | Updated At | `updated-at` | string | Timestamp that denotes when the group was last updated |
 
-
-
-
-
-
-
-
-
 ### Get Skill
 
 Get skill using ID. This task will only work if you have admin privileges. Agents can be assigned skills, and it is possible for tickets to be automatically assigned to agents based on the skills they have.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_SKILL` |
 | Skill ID (required) | `skill-id` | integer | Skill ID |
-
-
-
-
 
 
 
@@ -723,13 +509,3 @@ Get skill using ID. This task will only work if you have admin privileges. Agent
 | Conditions | `conditions` | array | Conditions for the skill |
 | Created At | `created-at` | string | Timestamp that denotes when the skill was created |
 | Updated At | `updated-at` | string | Timestamp that denotes when the skill was last updated |
-
-
-
-
-
-
-
-
-
-

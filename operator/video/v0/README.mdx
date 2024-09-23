@@ -7,25 +7,16 @@ description: "Learn about how to set up a VDP Video component https://github.com
 
 The Video component is an operator component that allows users to extract and manipulate video from different sources.
 It can carry out the following tasks:
-
 - [Subsample Video](#subsample-video)
 - [Subsample Video Frames](#subsample-video-frames)
-
-
 
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/operator/video/v0/config/definition.json).
-
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/operator/video/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/operator/video/v0/config/tasks.json) files respectively.
 
 
 
@@ -34,7 +25,6 @@ The component configuration is defined and maintained [here](https://github.com/
 ### Subsample Video
 
 Subsample video into a new video
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -48,26 +38,13 @@ Subsample video into a new video
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Video | `video` | string | Base64 encoded sub-sampled video |
 
-
-
-
-
-
-
-
-
 ### Subsample Video Frames
 
 Subsample video into frames
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -81,20 +58,6 @@ Subsample video into frames
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Frames | `frames` | array[string] | Base64 encoded sub-sampled frames |
-
-
-
-
-
-
-
-
-
-

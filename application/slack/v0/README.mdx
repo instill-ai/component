@@ -7,33 +7,23 @@ description: "Learn about how to set up a VDP Slack component https://github.com
 
 The Slack component is an application component that allows users to get and send message on Slack.
 It can carry out the following tasks:
-
 - [Read Message](#read-message)
 - [Send Message](#send-message)
-
-
 
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/application/slack/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/application/slack/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/application/slack/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Slack, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -45,14 +35,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Read Message
 
 Get the latest message since specific date
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -64,21 +51,12 @@ Get the latest message since specific date
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Conversations](#read-message-conversations) | `conversations` | array[object] | An array of conversations with thread messages |
 
-
-
-
 <details>
 <summary> Output Objects in Read Message</summary>
-
-
 
 <h4 id="read-message-conversations">Conversations</h4>
 
@@ -91,11 +69,7 @@ Get the latest message since specific date
 | User UID | `user-id` | string | unique id from Slack |
 | User Name | `user-name` | string | user name in Slack |
 
-
-
-
-
-<h4 id="read-message-replied-messages">Replied messages</h4>
+<h4 id="read-message-replied-messages">Replied Messages</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -103,20 +77,11 @@ Get the latest message since specific date
 | Replied Message | `message` | string | message to reply a conversation |
 | User UID | `user-id` | string | unique id from Slack |
 | User Name | `user-name` | string | user name in Slack |
-
-
-
 </details>
-
-
-
-
-
 
 ### Send Message
 
 send message to a specific channel
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -128,20 +93,6 @@ send message to a specific channel
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result | `result` | string | result for sending message |
-
-
-
-
-
-
-
-
-
-

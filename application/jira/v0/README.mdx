@@ -7,7 +7,6 @@ description: "Learn about how to set up a VDP Jira component https://github.com/
 
 The Jira component is an application component that allows users to do anything available on Jira.
 It can carry out the following tasks:
-
 - [List Boards](#list-boards)
 - [List Issues](#list-issues)
 - [List Sprints](#list-sprints)
@@ -18,29 +17,20 @@ It can carry out the following tasks:
 - [Create Sprint](#create-sprint)
 - [Update Sprint](#update-sprint)
 
-
-
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/application/jira/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/application/jira/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/application/jira/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Atlassian, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -54,14 +44,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### List Boards
 
 List all boards in Jira
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -76,10 +63,6 @@ List all boards in Jira
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Boards](#list-boards-boards) (optional) | `boards` | array[object] | A array of boards in Jira |
@@ -88,13 +71,8 @@ List all boards in Jira
 | Total | `total` | integer | The total number of boards |
 | Is Last | `is-last` | boolean | Whether the last board is reached |
 
-
-
-
 <details>
 <summary> Output Objects in List Boards</summary>
-
-
 
 <h4 id="list-boards-boards">Boards</h4>
 
@@ -104,20 +82,11 @@ List all boards in Jira
 | Name | `name` | string | The name of the board |
 | Self | `self` | string | The URL of the board |
 | Type | `type` | string | The type of the board |
-
-
-
 </details>
-
-
-
-
-
 
 ### List Issues
 
 List issues in Jira
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -129,10 +98,6 @@ List issues in Jira
 
 
 
-
-
-
-
 <details>
 <summary>The <code>range</code> Object </summary>
 
@@ -140,80 +105,73 @@ List issues in Jira
 
 `range` must fulfill one of the following schemas:
 
+<h5 id="list-issues-all"><code>All</code></h5>
 
-##### `All`
+All issues
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Range | `range` | string |  Must be `"All"`   |
 
+<h5 id="list-issues-standard-issues"><code>Standard Issues</code></h5>
 
-
-##### `Standard Issues`
+Standard issues
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Range | `range` | string |  Must be `"Standard Issues"`   |
 
+<h5 id="list-issues-epics-only"><code>Epics only</code></h5>
 
-
-##### `Epics only`
+Epics only
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Range | `range` | string |  Must be `"Epics only"`   |
 
+<h5 id="list-issues-in-backlog-only"><code>In Backlog Only</code></h5>
 
-
-##### `In Backlog Only`
+In backlog only
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Range | `range` | string |  Must be `"In backlog only"`   |
 
+<h5 id="list-issues-issues-of-an-epic"><code>Issues of an Epic</code></h5>
 
-
-##### `Issues of an Epic`
+Issues of an epic
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Epic Key | `epic-key` | string |  The Key of the epic, e.g. `JRA-1330`   |
+| Epic Key | `epic-key` | string |  The Key of the epic, e.g. `JRA-1330`  |
 | Range | `range` | string |  Must be `"Issues of an epic"`   |
 
+<h5 id="list-issues-issues-of-a-sprint"><code>Issues of a Sprint</code></h5>
 
-
-##### `Issues of a Sprint`
+Issues of a sprint
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Range | `range` | string |  Must be `"Issues of a sprint"`   |
-| Sprint Name | `sprint-name` | string |  The name of the sprint   |
+| Sprint Name | `sprint-name` | string |  The name of the sprint  |
 
+<h5 id="list-issues-issues-without-epic-assigned"><code>Issues without Epic Assigned</code></h5>
 
-
-##### `Issues without Epic Assigned`
+Issues without Epic Assigned
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Range | `range` | string |  Must be `"Issues without epic assigned"`   |
 
+<h5 id="list-issues-jql-query"><code>JQL Query</code></h5>
 
-
-##### `JQL Query`
+JQL query
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| JQL | `jql` | string |  The JQL query. For example, `type = "Task" AND status = "Done"`. For more information, see <a href="https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-search-in-jira-cloud/">Advanced searching</a>   |
+| JQL | `jql` | string |  The JQL query. For example, `type = "Task" AND status = "Done"`. For more information, see <a href="https://support.atlassian.com/jira-software-cloud/docs/what-is-advanced-search-in-jira-cloud/">Advanced searching</a>  |
 | Range | `range` | string |  Must be `"JQL query"`   |
-
-
 </details>
-
-
-
-
-
-
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -222,13 +180,8 @@ List issues in Jira
 | Max Results | `max-results` | integer | The maximum number of boards |
 | Total | `total` | integer | The total number of boards |
 
-
-
-
 <details>
 <summary> Output Objects in List Issues</summary>
-
-
 
 <h4 id="list-issues-issues">Issues</h4>
 
@@ -242,20 +195,11 @@ List issues in Jira
 | Self | `self` | string | The URL of the issue |
 | Status | `status` | string | The status of the issue, can be: `To Do`, `In Progress`, `Done` |
 | Summary | `summary` | string | The summary of the issue |
-
-
-
 </details>
-
-
-
-
-
 
 ### List Sprints
 
 List sprints in Jira
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -268,10 +212,6 @@ List sprints in Jira
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Sprints](#list-sprints-sprints) (optional) | `sprints` | array[object] | A array of sprints in Jira |
@@ -279,13 +219,8 @@ List sprints in Jira
 | Max Results | `max-results` | integer | The maximum number of boards |
 | Total | `total` | integer | The total number of boards |
 
-
-
-
 <details>
 <summary> Output Objects in List Sprints</summary>
-
-
 
 <h4 id="list-sprints-sprints">Sprints</h4>
 
@@ -300,30 +235,17 @@ List sprints in Jira
 | Self | `self` | string | The URL of the sprint |
 | Start Date | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
 | State | `state` | string | The state of the sprint, can be: `active`, `closed`, `future` |
-
-
-
 </details>
-
-
-
-
-
 
 ### Get Issue
 
-Get an issue in Jira
-
+Get an issue in Jira. The issue will only be returned if the user has permission to view it. Issues returned from this resource include Agile fields, like sprint, closedSprints, flagged, and epic.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_ISSUE` |
 | Issue Key (required) | `issue-key` | string | The key of the issue, e.g. `JRA-1330` |
 | Update History | `update-history` | boolean | Whether the action taken is added to the user's Recent history, as shown under `Your Work` in Jira. |
-
-
-
-
 
 
 
@@ -340,27 +262,14 @@ Get an issue in Jira
 | Description (optional) | `description` | string | The description of the issue |
 | Status (optional) | `status` | string | The status of the issue, can be: `To Do`, `In Progress`, `Done` |
 
-
-
-
-
-
-
-
-
 ### Get Sprint
 
-Get a sprint in Jira
-
+Get a sprint in Jira. The sprint will only be returned if the user can view the board that the sprint was created on, or view at least one of the issues in the sprint.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_GET_SPRINT` |
 | Sprint ID (required) | `sprint-id` | integer | The ID of the sprint. The sprint will only be returned if you can view the board that the sprint was created on, or view at least one of the issues in the sprint. |
-
-
-
-
 
 
 
@@ -378,18 +287,9 @@ Get a sprint in Jira
 | Origin Board ID (optional) | `origin-board-id` | integer | The ID of the origin board |
 | Goal (optional) | `goal` | string | The Goal of the sprint |
 
-
-
-
-
-
-
-
-
 ### Create Issue
 
 Create an issue in Jira
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -401,10 +301,6 @@ Create an issue in Jira
 
 
 
-
-
-
-
 <details>
 <summary>The <code>issue-type</code> Object </summary>
 
@@ -412,47 +308,40 @@ Create an issue in Jira
 
 `issue-type` must fulfill one of the following schemas:
 
+<h5 id="create-issue-epic"><code>Epic</code></h5>
 
-##### `Epic`
+Epic
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Issue Type | `issue-type` | string |  Must be `"Epic"`   |
 
+<h5 id="create-issue-task"><code>Task</code></h5>
 
-
-##### `Task`
+Task
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Issue Type | `issue-type` | string |  Must be `"Task"`   |
 
+<h5 id="create-issue-subtask"><code>Subtask</code></h5>
 
-
-##### `Subtask`
+Subtask
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Issue Type | `issue-type` | string |  Must be `"Subtask"`   |
-| Parent Key | `parent-key` | string |  The key of the parent issue, e.g. `JRA-1330`   |
+| Parent Key | `parent-key` | string |  The key of the parent issue, e.g. `JRA-1330`  |
 
+<h5 id="create-issue-other"><code>Other</code></h5>
 
-
-##### `Other`
+Other
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Issue Type | `custom-issue-type` | string |  The type of the issue, can be: `Task`, `Epic`, `Subtask`, etc.   |
+| Issue Type | `custom-issue-type` | string |  The type of the issue, can be: `Task`, `Epic`, `Subtask`, etc.  |
 | Issue Type | `issue-type` | string |  Must be `"Other"`   |
-
-
 </details>
-
-
-
-
-
-
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -465,18 +354,9 @@ Create an issue in Jira
 | Description (optional) | `description` | string | The description of the issue |
 | Status (optional) | `status` | string | The status of the issue, can be: `To Do`, `In Progress`, `Done` |
 
-
-
-
-
-
-
-
-
 ### Update Issue
 
 Update an issue in Jira
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -487,10 +367,6 @@ Update an issue in Jira
 
 
 
-
-
-
-
 <details>
 <summary>The <code>update</code> Object </summary>
 
@@ -498,31 +374,24 @@ Update an issue in Jira
 
 `update` must fulfill one of the following schemas:
 
+<h5 id="update-issue-custom-update"><code>Custom Update</code></h5>
 
-##### `Custom Update`
+Custom update
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Update | `update` | string |  Must be `"Custom Update"`   |
-| Update Fields | `update-fields` | array |  The fields to update   |
+| Update Fields | `update-fields` | array |  The fields to update  |
 
+<h5 id="update-issue-move-issue-to-epic"><code>Move Issue to Epic</code></h5>
 
-
-##### `Move Issue to Epic`
+Move issue to epic
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| Epic Key | `epic-key` | string |  The key of the epic, e.g. `JRA-1330`   |
+| Epic Key | `epic-key` | string |  The key of the epic, e.g. `JRA-1330`  |
 | Update | `update` | string |  Must be `"Move Issue to Epic"`   |
-
-
 </details>
-
-
-
-
-
-
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -535,18 +404,9 @@ Update an issue in Jira
 | Description (optional) | `description` | string | The description of the issue |
 | Status (optional) | `status` | string | The status of the issue, can be: `To Do`, `In Progress`, `Done` |
 
-
-
-
-
-
-
-
-
 ### Create Sprint
 
 Create a sprint in Jira
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -556,10 +416,6 @@ Create a sprint in Jira
 | Goal (required) | `goal` | string | The goal of the sprint |
 | Start Date (required) | `start-date` | string | The start date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
 | End Date (required) | `end-date` | string | The end date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
-
-
-
-
 
 
 
@@ -577,18 +433,9 @@ Create a sprint in Jira
 | Origin Board ID (optional) | `origin-board-id` | integer | The ID of the origin board |
 | Goal (optional) | `goal` | string | The Goal of the sprint |
 
-
-
-
-
-
-
-
-
 ### Update Sprint
 
 Update a sprint in Jira
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -605,10 +452,6 @@ Update a sprint in Jira
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | ID | `id` | integer | The ID of the sprint |
@@ -620,15 +463,6 @@ Update a sprint in Jira
 | Complete Date (optional) | `complete-date` | string | The complete date of the sprint, e.g. 2018-03-05 (default 00:00 UTC+0). To adjust your time zone, please provide a more detailed RFC3339 format like `2018-03-05T09:00:00Z0000` |
 | Origin Board ID (optional) | `origin-board-id` | integer | The ID of the origin board |
 | Goal (optional) | `goal` | string | The Goal of the sprint |
-
-
-
-
-
-
-
-
-
 ## Example Recipes
 
 Recipe for the [Your Project Management Assistant ](https://instill.tech/instill-ai/pipelines/pm-assistant/playground) pipeline.
@@ -654,7 +488,7 @@ component:
         task: TASK_TEXT_GENERATION
         input:
             model: gpt-4o-mini
-            "n": 1
+            n: 1
             prompt: |-
                 From this list of issues:
                 ${jira-0.output.issues}

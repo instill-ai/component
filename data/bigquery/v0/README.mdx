@@ -7,33 +7,23 @@ description: "Learn about how to set up a VDP BigQuery component https://github.
 
 The BigQuery component is a data component that allows users to insert data to BigQuery tables.
 It can carry out the following tasks:
-
 - [Insert](#insert)
 - [Read](#read)
-
-
 
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/bigquery/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/data/bigquery/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/data/bigquery/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Google, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -48,14 +38,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Insert
 
 Insert data to BigQuery.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -66,26 +53,13 @@ Insert data to BigQuery.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Status of the upload operation |
 
-
-
-
-
-
-
-
-
 ### Read
 
 Read data from BigQuery.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -96,29 +70,10 @@ Read data from BigQuery.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Data](#read-data) | `data` | array[object] | The data to be read from BigQuery |
 
-
-
-
 <details>
 <summary> Output Objects in Read</summary>
-
-
-
-
-
 </details>
-
-
-
-
-
-
-

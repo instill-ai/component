@@ -84,7 +84,7 @@
               ],
               "instillUIOrder": 3,
               "order": 3,
-              "title": "Where to Add API Key to",
+              "title": "Auth Location",
               "type": "string"
             },
             "auth-type": {

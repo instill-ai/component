@@ -7,7 +7,6 @@ description: "Learn about how to set up a VDP Chroma component https://github.co
 
 The Chroma component is a data component that allows users to build and search vector datasets.
 It can carry out the following tasks:
-
 - [Batch Upsert](#batch-upsert)
 - [Upsert](#upsert)
 - [Query](#query)
@@ -15,29 +14,20 @@ It can carry out the following tasks:
 - [Create Collection](#create-collection)
 - [Delete Collection](#delete-collection)
 
-
-
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/chroma/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/data/chroma/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/data/chroma/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Chroma, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -50,14 +40,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Batch Upsert
 
 Upsert multiple vector items into a collection, existing items will be updated
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -69,20 +56,10 @@ Upsert multiple vector items into a collection, existing items will be updated
 | Array Document | `array-document` | array[string] | The array of document string values |
 | Array URI | `array-uri` | array[string] | The array of uri |
 
-
-
 <details>
 <summary> Input Objects in Batch Upsert</summary>
 
-
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -90,18 +67,9 @@ Upsert multiple vector items into a collection, existing items will be updated
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch add status |
 
-
-
-
-
-
-
-
-
 ### Upsert
 
 Upsert a vector item into a collection, existing item will be updated
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -117,26 +85,13 @@ Upsert a vector item into a collection, existing item will be updated
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Add status |
 
-
-
-
-
-
-
-
-
 ### Query
 
 Perform a vector search on a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -152,22 +107,13 @@ Perform a vector search on a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Result](#query-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
 
-
-
-
 <details>
 <summary> Output Objects in Query</summary>
-
-
 
 <h4 id="query-result">Result</h4>
 
@@ -177,28 +123,11 @@ Perform a vector search on a collection
 | [Items](#query-items) | `items` | array | The items returned from the vector search operation |
 | [Metadata](#query-metadata) | `metadata` | array | The metadata returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
-
-
-
-
-
-
-
-
-
-
-
 </details>
-
-
-
-
-
 
 ### Delete
 
 Delete vector items from a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -212,26 +141,13 @@ Delete vector items from a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
 
-
-
-
-
-
-
-
-
 ### Create Collection
 
 Create a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -245,26 +161,13 @@ Create a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create collection status |
 
-
-
-
-
-
-
-
-
 ### Delete Collection
 
 Delete a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -275,20 +178,6 @@ Delete a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
-
-
-
-
-
-
-
-
-
-

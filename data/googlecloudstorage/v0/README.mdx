@@ -7,34 +7,24 @@ description: "Learn about how to set up a VDP Google Cloud Storage component htt
 
 The Google Cloud Storage component is a data component that allows users to upload data to Google's Cloud Storage.
 It can carry out the following tasks:
-
 - [Upload](#upload)
 - [Read Objects](#read-objects)
 - [Create Bucket](#create-bucket)
-
-
 
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/googlecloudstorage/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/data/googlecloudstorage/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/data/googlecloudstorage/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Google, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -46,14 +36,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Upload
 
 Upload data to Google Cloud Storage.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -61,10 +48,6 @@ Upload data to Google Cloud Storage.
 | Bucket Name (required) | `bucket-name` | string | Name of the bucket to be used for object storage |
 | Object Name (required) | `object-name` | string | The name of the object to be created |
 | Data (required) | `data` | string | The data to be saved in the object |
-
-
-
-
 
 
 
@@ -78,18 +61,9 @@ Upload data to Google Cloud Storage.
 | Public URL (optional) | `public-url` | string | Anyone with this link can access the object on the public Internet |
 | Upload Status | `status` | string | Status of the upload operation |
 
-
-
-
-
-
-
-
-
 ### Read Objects
 
 Read objects from Google Cloud Storage.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -108,10 +82,6 @@ Read objects from Google Cloud Storage.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Text Objects](#read-objects-text-objects) (optional) | `text-objects` | array[object] | The text objects in the bucket |
@@ -120,13 +90,8 @@ Read objects from Google Cloud Storage.
 | [Audio Objects](#read-objects-audio-objects) (optional) | `audio-objects` | array[object] | The audio objects in the bucket |
 | [Video Objects](#read-objects-video-objects) (optional) | `video-objects` | array[object] | The video objects in the bucket |
 
-
-
-
 <details>
 <summary> Output Objects in Read Objects</summary>
-
-
 
 <h4 id="read-objects-text-objects">Text Objects</h4>
 
@@ -135,10 +100,6 @@ Read objects from Google Cloud Storage.
 | [Attributes](#read-objects-attributes) | `attributes` | object | The attributes of the object |
 | Data | `data` | string | The data of the object |
 
-
-
-
-
 <h4 id="read-objects-attributes">Attributes</h4>
 
 | Field | Field ID | Type | Note |
@@ -153,10 +114,6 @@ Read objects from Google Cloud Storage.
 | Owner | `owner` | string | The owner of the object |
 | Size | `size` | integer | The size of the object |
 | Storage Class | `storage-class` | string | The storage class of the object |
-
-
-
-
 
 <h4 id="read-objects-image-objects">Image Objects</h4>
 
@@ -165,10 +122,6 @@ Read objects from Google Cloud Storage.
 | [Attributes](#read-objects-attributes) | `attributes` | object | The attributes of the object |
 | Data | `data` | string | The data of the object |
 
-
-
-
-
 <h4 id="read-objects-attributes">Attributes</h4>
 
 | Field | Field ID | Type | Note |
@@ -183,10 +136,6 @@ Read objects from Google Cloud Storage.
 | Owner | `owner` | string | The owner of the object |
 | Size | `size` | integer | The size of the object |
 | Storage Class | `storage-class` | string | The storage class of the object |
-
-
-
-
 
 <h4 id="read-objects-document-objects">Document Objects</h4>
 
@@ -195,10 +144,6 @@ Read objects from Google Cloud Storage.
 | [Attributes](#read-objects-attributes) | `attributes` | object | The attributes of the object |
 | Data | `data` | string | The data of the object |
 
-
-
-
-
 <h4 id="read-objects-attributes">Attributes</h4>
 
 | Field | Field ID | Type | Note |
@@ -213,10 +158,6 @@ Read objects from Google Cloud Storage.
 | Owner | `owner` | string | The owner of the object |
 | Size | `size` | integer | The size of the object |
 | Storage Class | `storage-class` | string | The storage class of the object |
-
-
-
-
 
 <h4 id="read-objects-audio-objects">Audio Objects</h4>
 
@@ -225,10 +166,6 @@ Read objects from Google Cloud Storage.
 | [Attributes](#read-objects-attributes) | `attributes` | object | The attributes of the object |
 | Data | `data` | string | The data of the object |
 
-
-
-
-
 <h4 id="read-objects-attributes">Attributes</h4>
 
 | Field | Field ID | Type | Note |
@@ -243,10 +180,6 @@ Read objects from Google Cloud Storage.
 | Owner | `owner` | string | The owner of the object |
 | Size | `size` | integer | The size of the object |
 | Storage Class | `storage-class` | string | The storage class of the object |
-
-
-
-
 
 <h4 id="read-objects-video-objects">Video Objects</h4>
 
@@ -255,10 +188,6 @@ Read objects from Google Cloud Storage.
 | [Attributes](#read-objects-attributes) | `attributes` | object | The attributes of the object |
 | Data | `data` | string | The data of the object |
 
-
-
-
-
 <h4 id="read-objects-attributes">Attributes</h4>
 
 | Field | Field ID | Type | Note |
@@ -273,20 +202,11 @@ Read objects from Google Cloud Storage.
 | Owner | `owner` | string | The owner of the object |
 | Size | `size` | integer | The size of the object |
 | Storage Class | `storage-class` | string | The storage class of the object |
-
-
-
 </details>
-
-
-
-
-
 
 ### Create Bucket
 
 Read objects from Google Cloud Storage.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -299,22 +219,8 @@ Read objects from Google Cloud Storage.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result (optional) | `result` | string | The result of the operation |
 | Bucket Name (optional) | `name` | string | The name of the bucket |
 | Location (optional) | `location` | string | The location of the bucket |
-
-
-
-
-
-
-
-
-
-

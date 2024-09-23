@@ -190,7 +190,8 @@
                     "disallowed-special"
                   ],
                   "title": "Token",
-                  "type": "object"
+                  "type": "object",
+                  "description": "Language models have a token limit. You should not exceed the token limit. When you split your text into chunks it is therefore a good idea to count the number of tokens. There are many tokenizers. When you count tokens in your text you should use the same tokenizer as used in the language model."
                 },
                 {
                   "properties": {
@@ -256,7 +257,8 @@
                     "keep-separator"
                   ],
                   "title": "Recursive",
-                  "type": "object"
+                  "type": "object",
+                  "description": "This text splitter is the recommended one for generic text. It is parameterized by a list of characters. It tries to split on them in order until the chunks are small enough. The default list is [\"\\n\\n\", \"\\n\", \"\", \"\"]. This has the effect of trying to keep all paragraphs (and then sentences, and then words) together as long as possible, as those would generically seem to be the strongest semantically related pieces of text."
                 },
                 {
                   "properties": {
@@ -302,7 +304,8 @@
                     "code-blocks"
                   ],
                   "title": "Markdown",
-                  "type": "object"
+                  "type": "object",
+                  "description": "This text splitter is specially designed for Markdown format."
                 }
               ]
             }

@@ -7,7 +7,6 @@ description: "Learn about how to set up a VDP MongoDB component https://github.c
 
 The MongoDB component is a data component that allows users to access the MongoDB NoSQL database.
 It can carry out the following tasks:
-
 - [Insert](#insert)
 - [Insert Many](#insert-many)
 - [Find](#find)
@@ -19,29 +18,20 @@ It can carry out the following tasks:
 - [Drop Search Index](#drop-search-index)
 - [Vector Search](#vector-search)
 
-
-
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/mongodb/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/data/mongodb/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/data/mongodb/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with MongoDB, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -53,14 +43,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Insert
 
 Perform an insert operation
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -74,26 +61,13 @@ Perform an insert operation
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Insert status |
 
-
-
-
-
-
-
-
-
 ### Insert Many
 
 Perform an insert many operation
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -103,20 +77,10 @@ Perform an insert many operation
 | Array ID | `array-id` | array[string] | The array of id |
 | [Data](#insert-many-data) (required) | `array-data` | array[object] | The array data to be inserted |
 
-
-
 <details>
 <summary> Input Objects in Insert Many</summary>
 
-
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -124,18 +88,9 @@ Perform an insert many operation
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Insert many status |
 
-
-
-
-
-
-
-
-
 ### Find
 
 Perform a find operation
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -151,22 +106,13 @@ Perform a find operation
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Result](#find-result) | `result` | object | Result of the find operation |
 | Status | `status` | string | Find status |
 
-
-
-
 <details>
 <summary> Output Objects in Find</summary>
-
-
 
 <h4 id="find-result">Result</h4>
 
@@ -175,28 +121,11 @@ Perform a find operation
 | [Metadata](#find-metadata) | `data` | array | The data returned from the find operation |
 | [Documents](#find-documents) | `documents` | array | The documents returned from the find operation |
 | IDs | `ids` | array | The ids returned from the find operation |
-
-
-
-
-
-
-
-
-
-
-
 </details>
-
-
-
-
-
 
 ### Update
 
 Perform an update operation
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -211,26 +140,13 @@ Perform an update operation
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Update status |
 
-
-
-
-
-
-
-
-
 ### Delete
 
 Perform a delete operation
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -244,26 +160,13 @@ Perform a delete operation
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
 
-
-
-
-
-
-
-
-
 ### Drop Collection
 
 Delete the collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -275,26 +178,13 @@ Delete the collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
 
-
-
-
-
-
-
-
-
 ### Drop Database
 
 Delete the database
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -305,26 +195,13 @@ Delete the database
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete database status |
 
-
-
-
-
-
-
-
-
 ### Create Search Index
 
 Create a search index, only works for M10 or larger clusters
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -339,26 +216,13 @@ Create a search index, only works for M10 or larger clusters
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create index status |
 
-
-
-
-
-
-
-
-
 ### Drop Search Index
 
 Drop a search index, only works for M10 or larger clusters
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -371,26 +235,13 @@ Drop a search index, only works for M10 or larger clusters
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete index status |
 
-
-
-
-
-
-
-
-
 ### Vector Search
 
 Perform a vector search operation
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -410,22 +261,13 @@ Perform a vector search operation
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
 
-
-
-
 <details>
 <summary> Output Objects in Vector Search</summary>
-
-
 
 <h4 id="vector-search-result">Result</h4>
 
@@ -435,22 +277,4 @@ Perform a vector search operation
 | IDs | `ids` | array | The ids returned from the vector search operation |
 | [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
-
-
-
-
-
-
-
-
-
-
-
 </details>
-
-
-
-
-
-
-

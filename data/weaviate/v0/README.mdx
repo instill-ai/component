@@ -7,7 +7,6 @@ description: "Learn about how to set up a VDP Weaviate component https://github.
 
 The Weaviate component is a data component that allows users to build and search vector datasets.
 It can carry out the following tasks:
-
 - [Vector Search](#vector-search)
 - [Batch Insert](#batch-insert)
 - [Insert](#insert)
@@ -15,29 +14,20 @@ It can carry out the following tasks:
 - [Delete](#delete)
 - [Delete Collection](#delete-collection)
 
-
-
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/weaviate/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/data/weaviate/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/data/weaviate/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Weaviate, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -50,14 +40,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Vector Search
 
 Perform a vector search on a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -73,22 +60,13 @@ Perform a vector search on a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Upsert status |
 
-
-
-
 <details>
 <summary> Output Objects in Vector Search</summary>
-
-
 
 <h4 id="vector-search-result">Result</h4>
 
@@ -98,28 +76,11 @@ Perform a vector search on a collection
 | [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
 | [Objects](#vector-search-objects) | `objects` | array | The objects returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
-
-
-
-
-
-
-
-
-
-
-
 </details>
-
-
-
-
-
 
 ### Batch Insert
 
 Insert multiple vector objects into a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -129,20 +90,10 @@ Insert multiple vector objects into a collection
 | [Array Metadata](#batch-insert-array-metadata) (required) | `array-metadata` | array[object] | The array of vector metadata properties |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
 
-
-
 <details>
 <summary> Input Objects in Batch Insert</summary>
 
-
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -150,18 +101,9 @@ Insert multiple vector objects into a collection
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch insert status |
 
-
-
-
-
-
-
-
-
 ### Insert
 
 Insert a vector object into a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -175,26 +117,13 @@ Insert a vector object into a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
 
-
-
-
-
-
-
-
-
 ### Update
 
 Update vector object in a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -208,26 +137,13 @@ Update vector object in a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Update status |
 
-
-
-
-
-
-
-
-
 ### Delete
 
 Delete vector objects from a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -240,26 +156,13 @@ Delete vector objects from a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
 
-
-
-
-
-
-
-
-
 ### Delete Collection
 
 Delete a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -270,20 +173,6 @@ Delete a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
-
-
-
-
-
-
-
-
-
-
