@@ -125,7 +125,7 @@ func convertDataSpecToCompSpec(dataSpec *structpb.Struct) (*structpb.Struct, err
 	isFreeform := checkFreeForm(compSpec)
 
 	if _, ok := compSpec.Fields["type"]; !ok && !isFreeform {
-		return nil, fmt.Errorf("type missing: %+v", compSpec)
+		return nil, fmt.Errorf("type missing: %+v ee2 %+v", compSpec, isFreeform)
 	} else if _, ok := compSpec.Fields["instillUpstreamTypes"]; !ok && compSpec.Fields["type"].GetStringValue() == "object" {
 
 		if _, ok := compSpec.Fields["instillUIOrder"]; !ok {
@@ -349,6 +349,13 @@ func generateComponentSpec(title string, tasks []*pb.ComponentTask, taskStructs 
 func formatDataSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
 	// var err error
 	compSpec := proto.Clone(dataSpec).(*structpb.Struct)
+	if compSpec == nil {
+		return compSpec, nil
+	}
+	if compSpec.Fields == nil {
+		compSpec.Fields = make(map[string]*structpb.Value)
+		return compSpec, nil
+	}
 	if _, ok := compSpec.Fields["const"]; ok {
 		return compSpec, nil
 	}
@@ -356,7 +363,7 @@ func formatDataSpec(dataSpec *structpb.Struct) (*structpb.Struct, error) {
 	isFreeform := checkFreeForm(compSpec)
 
 	if _, ok := compSpec.Fields["type"]; !ok && !isFreeform {
-		return nil, fmt.Errorf("type missing: %+v", compSpec)
+		return nil, fmt.Errorf("type missing: %+v ee %+v", compSpec, isFreeform)
 	} else if compSpec.Fields["type"].GetStringValue() == "array" {
 
 		if _, ok := compSpec.Fields["instillUIOrder"]; !ok {
@@ -578,6 +585,9 @@ func checkFreeForm(compSpec *structpb.Struct) bool {
 
 	if instillFormat := compSpec.Fields["instillFormat"].GetStringValue(); instillFormat != "" {
 		formats = append(formats, instillFormat)
+	}
+	if len(formats) == 0 {
+		return true
 	}
 
 	for _, v := range formats {

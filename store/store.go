@@ -45,6 +45,7 @@ import (
 	"github.com/instill-ai/component/data/sql/v0"
 	"github.com/instill-ai/component/data/weaviate/v0"
 	"github.com/instill-ai/component/data/zilliz/v0"
+	"github.com/instill-ai/component/generic/collection/v0"
 	"github.com/instill-ai/component/generic/restapi/v0"
 	"github.com/instill-ai/component/operator/audio/v0"
 	"github.com/instill-ai/component/operator/base64/v0"
@@ -186,6 +187,7 @@ func Init(
 		compStore.Import(qdrant.Init(baseComp))
 		compStore.Import(instillartifact.Init(baseComp))
 		compStore.Import(restapi.Init(baseComp))
+		compStore.Import(collection.Init(baseComp))
 		compStore.Import(web.Init(baseComp))
 		compStore.Import(slack.Init(baseComp))
 		compStore.Import(email.Init(baseComp))
