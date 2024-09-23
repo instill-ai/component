@@ -35,11 +35,13 @@ var (
 type component struct {
 	base.Component
 
-	instillAPIKey string
+	instillAPIKey map[string]string
 }
 
 type execution struct {
 	base.ComponentExecution
+
+	component              *component
 	usesInstillCredentials bool
 	execute                func(*structpb.Struct, *base.Job, context.Context) (*structpb.Struct, error)
 }
@@ -58,16 +60,8 @@ func Init(bc base.Component) *component {
 }
 
 func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
-	resolvedSetup, resolved, err := c.resolveSetup(x.Setup)
-	if err != nil {
-		return nil, err
-	}
-
-	x.Setup = resolvedSetup
-
 	e := &execution{
-		ComponentExecution:     x,
-		usesInstillCredentials: resolved,
+		ComponentExecution: x,
 	}
 
 	switch x.Task {
@@ -91,15 +85,18 @@ func (e *execution) UsesInstillCredentials() bool {
 // WithInstillCredentials loads Instill credentials into the component, which
 // can be used to configure it with globally defined parameters instead of with
 // user-defined credential values.
-func (c *component) WithInstillCredentials(s map[string]any) *component {
-	c.instillAPIKey = base.ReadFromGlobalConfig(cfgAPIKey, s)
+func (c *component) WithInstillCredentials(vendor string, s map[string]any) *component {
+	if c.instillAPIKey == nil {
+		c.instillAPIKey = make(map[string]string)
+	}
+	c.instillAPIKey[vendor] = base.ReadFromGlobalConfig(cfgAPIKey, s)
 	return c
 }
 
 // resolveSetup checks whether the component is configured to use the Instill
 // credentials injected during initialization and, if so, returns a new setup
 // with the secret credential values.
-func (c *component) resolveSetup(setup *structpb.Struct) (*structpb.Struct, bool, error) {
+func (c *component) resolveSetup(vendor string, setup *structpb.Struct) (*structpb.Struct, bool, error) {
 	if setup == nil || setup.Fields == nil {
 		setup = &structpb.Struct{Fields: map[string]*structpb.Value{}}
 	}
@@ -110,10 +107,10 @@ func (c *component) resolveSetup(setup *structpb.Struct) (*structpb.Struct, bool
 		}
 	}
 
-	if c.instillAPIKey == "" {
+	if c.instillAPIKey[vendor] == "" {
 		return nil, false, base.NewUnresolvedCredential(cfgAPIKey)
 	}
 
-	setup.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.instillAPIKey)
+	setup.GetFields()[cfgAPIKey] = structpb.NewStringValue(c.instillAPIKey[vendor])
 	return setup, true, nil
 }

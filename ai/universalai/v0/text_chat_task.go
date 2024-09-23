@@ -21,6 +21,16 @@ func (e *execution) ExecuteTextChat(input *structpb.Struct, job *base.Job, ctx c
 	x := e.ComponentExecution
 	vendor := ModelVendorMap[inputStruct.Data.Model]
 
+	c := e.component
+	resolvedSetup, resolved, err := c.resolveSetup(vendor, x.Setup)
+
+	if err != nil {
+		return nil, err
+	}
+
+	x.Setup = resolvedSetup
+	e.usesInstillCredentials = resolved
+
 	client, err := newClient(x.GetSetup(), x.GetLogger(), vendor)
 
 	if err != nil {
