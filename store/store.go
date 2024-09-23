@@ -19,14 +19,12 @@ import (
 	"github.com/instill-ai/component/ai/ollama/v0"
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/ai/stabilityai/v0"
-	"github.com/instill-ai/component/ai/universalai/v0"
 	"github.com/instill-ai/component/application/asana/v0"
 	"github.com/instill-ai/component/application/email/v0"
 	"github.com/instill-ai/component/application/freshdesk/v0"
 	"github.com/instill-ai/component/application/github/v0"
 	"github.com/instill-ai/component/application/googlesearch/v0"
 	"github.com/instill-ai/component/application/hubspot/v0"
-	"github.com/instill-ai/component/application/instillapp/v0"
 	"github.com/instill-ai/component/application/jira/v0"
 	"github.com/instill-ai/component/application/numbers/v0"
 	"github.com/instill-ai/component/application/slack/v0"
@@ -125,11 +123,11 @@ func Init(
 			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
 			compStore.Import(conn)
 		}
-		{
-			conn := universalai.Init(baseComp)
-			conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
-			compStore.Import(conn)
-		}
+		// {
+		// 	conn := universalai.Init(baseComp)
+		// 	conn = conn.WithInstillCredentials(secrets[conn.GetDefinitionID()])
+		// 	compStore.Import(conn)
+		// }
 		{
 			// Anthropic
 			conn := anthropic.Init(baseComp)
@@ -171,7 +169,7 @@ func Init(
 			compStore.Import(conn)
 		}
 
-		compStore.Import(instillapp.Init(baseComp))
+		// compStore.Import(instillapp.Init(baseComp))
 		compStore.Import(bigquery.Init(baseComp))
 		compStore.Import(googlecloudstorage.Init(baseComp))
 		compStore.Import(googlesearch.Init(baseComp))
