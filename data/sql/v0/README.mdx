@@ -7,7 +7,6 @@ description: "Learn about how to set up a VDP SQL component https://github.com/i
 
 The SQL component is a data component that allows users to access the SQL database of your choice.
 It can carry out the following tasks:
-
 - [Insert](#insert)
 - [Insert Many](#insert-many)
 - [Update](#update)
@@ -16,30 +15,21 @@ It can carry out the following tasks:
 - [Create Table](#create-table)
 - [Drop Table](#drop-table)
 
-
-
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/sql/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/data/sql/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/data/sql/v0/config/tasks.json) files respectively.
 
 ## Setup
-
-
 
 
 In order to communicate with the
 external application, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -55,49 +45,41 @@ ${connection.<my-connection-id>}`.
 | [SSL/TLS](#ssl-tls) (required) | `ssl-tls` | object | Enable SSL/TLS  |
 
 
-
-
-
-
 <details>
 <summary>The <code>ssl-tls</code> Object </summary>
 
-#### Ssl Tls
+<h4 id="setup-ssl-tls">Ssl Tls</h4>
 
 `ssl-tls` must fulfill one of the following schemas:
 
-##### `No SSL/TLS`
+<h5 id="setup-no-ssl-tls"><code>No SSL/TLS</code></h5>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | SSL/TLS Type | `ssl-tls-type` | string |  Must be `"NO TLS"`   |
 
-##### `TLS`
+<h5 id="setup-tls"><code>TLS</code></h5>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| CA Certificate | `ssl-tls-ca` | string |  Base64 encoded CA certificate file    |
+| CA Certificate | `ssl-tls-ca` | string |  Base64 encoded CA certificate file  |
 | SSL/TLS Type | `ssl-tls-type` | string |  Must be `"TLS"`   |
 
-##### `mTLS`
+<h5 id="setup-mtls"><code>mTLS</code></h5>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| CA Certificate | `ssl-tls-ca` | string |  Base64 encoded CA certificate file    |
-| Client Certificate | `ssl-tls-cert` | string |  Base64 encoded client certificate file    |
-| Client Key | `ssl-tls-key` | string |  Base64 encoded client key file    |
+| CA Certificate | `ssl-tls-ca` | string |  Base64 encoded CA certificate file  |
+| Client Certificate | `ssl-tls-cert` | string |  Base64 encoded client certificate file  |
+| Client Key | `ssl-tls-key` | string |  Base64 encoded client key file  |
 | SSL/TLS Type | `ssl-tls-type` | string |  Must be `"mTLS"`   |
-
 </details>
-
-
 
 ## Supported Tasks
 
 ### Insert
 
 Perform insert operation
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -109,26 +91,13 @@ Perform insert operation
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Insert status |
 
-
-
-
-
-
-
-
-
 ### Insert Many
 
 Perform insert operation with multiple rows
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -136,20 +105,10 @@ Perform insert operation with multiple rows
 | Table Name (required) | `table-name` | string | The table name in the database to insert data into |
 | [Data](#insert-many-data) (required) | `array-data` | array[object] | The array data to be inserted |
 
-
-
 <details>
 <summary> Input Objects in Insert Many</summary>
 
-
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -157,18 +116,9 @@ Perform insert operation with multiple rows
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Insert many status |
 
-
-
-
-
-
-
-
-
 ### Update
 
 Perform update operation
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -181,26 +131,13 @@ Perform update operation
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Update status |
 
-
-
-
-
-
-
-
-
 ### Select
 
 Perform select operation
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -214,36 +151,18 @@ Perform select operation
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Rows](#select-rows) | `rows` | array[object] | The rows returned from the select operation |
 | Status | `status` | string | Select status |
 
-
-
-
 <details>
 <summary> Output Objects in Select</summary>
-
-
-
-
-
 </details>
-
-
-
-
-
 
 ### Delete
 
 Perform delete operation
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -255,26 +174,13 @@ Perform delete operation
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
 
-
-
-
-
-
-
-
-
 ### Create Table
 
 Create a table in the database
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -286,26 +192,13 @@ Create a table in the database
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create table status |
 
-
-
-
-
-
-
-
-
 ### Drop Table
 
 Drop a table in the database
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -316,20 +209,6 @@ Drop a table in the database
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop table status |
-
-
-
-
-
-
-
-
-
-

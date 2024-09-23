@@ -7,34 +7,24 @@ description: "Learn about how to set up a VDP Archetype AI component https://git
 
 The Archetype AI component is an AI component that allows users to connect the AI models served on the Archetype AI Platform.
 It can carry out the following tasks:
-
 - [Describe](#describe)
 - [Summarize](#summarize)
 - [Upload File](#upload-file)
-
-
 
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/ai/archetypeai/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/ai/archetypeai/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/ai/archetypeai/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Archetype AI, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -46,14 +36,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Describe
 
 Describe a video.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -65,21 +52,12 @@ Describe a video.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Descriptions](#describe-descriptions) | `descriptions` | array[object] | A set of descriptions corresponding to different moments in the video |
 
-
-
-
 <details>
 <summary> Output Objects in Describe</summary>
-
-
 
 <h4 id="describe-descriptions">Descriptions</h4>
 
@@ -88,20 +66,11 @@ Describe a video.
 | Description | `description` | string | The description of the frame |
 | Frame ID | `frame-id` | integer | The frame number in the video that is being described |
 | Timestamp | `timestamp` | number | The moment of the video (in seconds since the start) that is being described |
-
-
-
 </details>
-
-
-
-
-
 
 ### Summarize
 
 Summarize the image.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -113,26 +82,13 @@ Summarize the image.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Response | `response` | string | A text responding to the query |
 
-
-
-
-
-
-
-
-
 ### Upload File
 
 Upload file.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -143,20 +99,6 @@ Upload file.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | File ID | `file-id` | string | The ID to reference the file in queries |
-
-
-
-
-
-
-
-
-
-

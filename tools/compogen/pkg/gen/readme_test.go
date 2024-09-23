@@ -45,3 +45,22 @@ func TestComponentType_IndefiniteArticle(t *testing.T) {
 		})
 	}
 }
+
+func TestTitleCaseWithArticles(t *testing.T) {
+	c := qt.New(t)
+
+	testcases := []struct {
+		in   string
+		mod  func(rune) rune
+		want string
+	}{
+		{in: "the-quick_brown fox jumps-over a-lazy_dog", want: "The Quick Brown Fox Jumps Over a Lazy Dog"},
+	}
+
+	for _, tc := range testcases {
+		c.Run(tc.in, func(c *qt.C) {
+			got := titleCaseWithArticles(tc.in)
+			c.Check(got, qt.Equals, tc.want)
+		})
+	}
+}

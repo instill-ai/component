@@ -7,7 +7,6 @@ description: "Learn about how to set up a VDP Milvus component https://github.co
 
 The Milvus component is a data component that allows users to build and search vector datasets.
 It can carry out the following tasks:
-
 - [Vector Search](#vector-search)
 - [Upsert](#upsert)
 - [Batch Upsert](#batch-upsert)
@@ -19,29 +18,20 @@ It can carry out the following tasks:
 - [Create Index](#create-index)
 - [Drop Index](#drop-index)
 
-
-
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/milvus/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/data/milvus/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/data/milvus/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Milvus, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -55,14 +45,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Vector Search
 
 Perform a vector search on a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -82,22 +69,13 @@ Perform a vector search on a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
 
-
-
-
 <details>
 <summary> Output Objects in Vector Search</summary>
-
-
 
 <h4 id="vector-search-result">Result</h4>
 
@@ -107,28 +85,11 @@ Perform a vector search on a collection
 | IDs | `ids` | array | The ids returned from the vector search operation |
 | [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
-
-
-
-
-
-
-
-
-
-
-
 </details>
-
-
-
-
-
 
 ### Upsert
 
 Insert a vector data into a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -141,26 +102,13 @@ Insert a vector data into a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
 
-
-
-
-
-
-
-
-
 ### Batch Upsert
 
 Insert a batch of vector data into a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -169,20 +117,10 @@ Insert a batch of vector data into a collection
 | Partition Name | `partition-name` | string | The name of the partition to upsert the data from. If empty then default partition will be used |
 | [Array Data](#batch-upsert-array-data) (required) | `array-data` | array[object] | The data |
 
-
-
 <details>
 <summary> Input Objects in Batch Upsert</summary>
 
-
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -190,18 +128,9 @@ Insert a batch of vector data into a collection
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch upsert status |
 
-
-
-
-
-
-
-
-
 ### Delete
 
 Delete vector data from a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -214,26 +143,13 @@ Delete vector data from a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
 
-
-
-
-
-
-
-
-
 ### Create Collection
 
 Create a collectio, please refer to [Create-Collection](https://milvus.io/docs/manage-collections.md#Create-Collection)
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -247,20 +163,10 @@ Create a collectio, please refer to [Create-Collection](https://milvus.io/docs/m
 | [Index Parameters](#create-collection-index-parameters) | `index-params` | array[object] | The index parameters to be applied to the collection with milvus index parameters, please refer to [Create](https://milvus.io/api-reference/restful/v2.4.x/v2/Collection%20(v2)/Create.md) |
 | Parameters | `params` | object | The parameters to be applied to the collection with milvus parameters, please refer to [Parameters](https://milvus.io/docs/single-vector-search.md#Parameters) |
 
-
-
 <details>
 <summary> Input Objects in Create Collection</summary>
 
-
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -268,18 +174,9 @@ Create a collectio, please refer to [Create-Collection](https://milvus.io/docs/m
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create collection status |
 
-
-
-
-
-
-
-
-
 ### Drop Collection
 
 Drop a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -290,26 +187,13 @@ Drop a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop collection status |
 
-
-
-
-
-
-
-
-
 ### Create Partition
 
 Create a partition in a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -321,26 +205,13 @@ Create a partition in a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create partition status |
 
-
-
-
-
-
-
-
-
 ### Drop Partition
 
 Drop a partition from a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -352,26 +223,13 @@ Drop a partition from a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop partition status |
 
-
-
-
-
-
-
-
-
 ### Create Index
 
 Create an index in a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -383,26 +241,13 @@ Create an index in a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create index status |
 
-
-
-
-
-
-
-
-
 ### Drop Index
 
 Drop an index from a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -414,20 +259,6 @@ Drop an index from a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop index status |
-
-
-
-
-
-
-
-
-
-

@@ -7,26 +7,17 @@ description: "Learn about how to set up a VDP JSON component https://github.com/
 
 The JSON component is an operator component that allows users to manipulate and convert JSON entities.
 It can carry out the following tasks:
-
 - [Marshal](#marshal)
 - [Unmarshal](#unmarshal)
 - [jq](#jq)
-
-
 
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/operator/json/v0/config/definition.json).
-
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/operator/json/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/operator/json/v0/config/tasks.json) files respectively.
 
 
 
@@ -35,7 +26,6 @@ The component configuration is defined and maintained [here](https://github.com/
 ### Marshal
 
 Convert JSON to a string
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -46,26 +36,13 @@ Convert JSON to a string
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | JSON string | `string` | string | String representation of the JSON input |
 
-
-
-
-
-
-
-
-
 ### Unmarshal
 
 Convert a string to JSON
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -76,26 +53,13 @@ Convert a string to JSON
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | JSON | `json` | any | JSON entity extracted from the string input |
 
-
-
-
-
-
-
-
-
 ### jq
 
 Process JSON through a `jq` command
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -107,18 +71,9 @@ Process JSON through a `jq` command
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Results | `results` | array | The `jq` command results |
-
-
-
-
-
 [`jq`](https://jqlang.github.io/jq/) defines a syntax to "transform JSON in
 various ways, by selecting, iterating, reducing and otherwise mangling JSON
 documents". Depending on the command input and the `jq` filter, the type and
@@ -134,10 +89,6 @@ Here are some examples on how the `jq` syntax works.
 | `[{"id":1},{"id":2},{"id":3}]` | `.[] \| .id` | `[1, 2, 3]` |
 | `{"a":1,"b":2}` | `.a += 1 \| .b *= 2` | `[{ "a": 2, "b": 4 }]` |
 | `{"a":1} [2] 3` | `. as {$a} ?// [$a] ?// $a \| $a` | `[1, 2, 3]` |
-
-
-
-
 ## Example Recipes
 
 Recipe for the [Resume Screening](https://instill.tech/instill-ai/pipelines/structured-resume-screening/playground) pipeline.
@@ -155,7 +106,7 @@ component:
         task: TASK_TEXT_GENERATION
         input:
             model: gpt-4o-2024-08-06
-            "n": 1
+            n: 1
             prompt: |
                 Given an ${variable.resume} and a ${pdf-to-text.output.body}, create an automated system to screen and convert this information into a structured candidate profile. The system should extract key information such as:
 

@@ -3,8 +3,9 @@ package gen
 import (
 	"testing"
 
-	qt "github.com/frankban/quicktest"
 	"github.com/go-playground/validator/v10"
+
+	qt "github.com/frankban/quicktest"
 )
 
 func TestObjectSchema_Validate(t *testing.T) {
@@ -17,13 +18,13 @@ func TestObjectSchema_Validate(t *testing.T) {
 	validStruct := func() *objectSchema {
 		return &objectSchema{
 			Properties: map[string]property{
-				"stringval": property{
+				"stringval": {
 					Description: "a string",
 					Title:       "String Value",
 					Type:        "string",
 					Order:       &zero,
 				},
-				"intval": property{
+				"intval": {
 					Description: "an integer number",
 					Title:       "Integer value",
 					Type:        "integer",
@@ -31,7 +32,7 @@ func TestObjectSchema_Validate(t *testing.T) {
 				},
 			},
 			Required: []string{"a"},
-			Title:   "Object Schema",
+			Title:    "Object Schema",
 		}
 	}
 

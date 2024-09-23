@@ -7,11 +7,8 @@ description: "Learn about how to set up a VDP Email component https://github.com
 
 The Email component is an application component that allows users to get and send email from Mail Protocol.
 It can carry out the following tasks:
-
 - [Send Email](#send-email)
-- [Read Emails](#read-emails)
-
-You can connect to different email servers through the Email component.
+- [Read Emails](#read-emails)You can connect to different email servers through the Email component.
 Emails are fetched and sent using the IMAP and SMTP protocols, respectively. You can set the server address and port for each protocol in the component configuration.
 
 
@@ -19,24 +16,17 @@ Emails are fetched and sent using the IMAP and SMTP protocols, respectively. You
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/application/email/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/application/email/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/application/email/v0/config/tasks.json) files respectively.
 
 ## Setup
-
-
 
 
 In order to communicate with the
 external application, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -76,14 +66,11 @@ For App Password, please follow the steps below:
 
 
 
-
-
 ## Supported Tasks
 
 ### Send Email
 
 Send an email to recipients
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -98,40 +85,25 @@ Send an email to recipients
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result | `result` | string | The result of sending the email |
 
-
-
-
-
-
-
-
-
 ### Read Emails
 
 Read emails from a mailbox
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_READ_EMAILS` |
 | [Search](#read-emails-search) | `search` | object | The search criteria for the emails |
 
-
-
 <details>
 <summary> Input Objects in Read Emails</summary>
 
-
-
 <h4 id="read-emails-search">Search</h4>
+
+The search criteria for the emails
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -142,14 +114,7 @@ Read emails from a mailbox
 | Search From | `search-from` | string | Search for emails from a specific email address  |
 | Search Subject | `search-subject` | string | Search for emails with a specific subject  |
 | Search To | `search-to` | string | Search for emails to a specific email address  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -157,13 +122,8 @@ Read emails from a mailbox
 | :--- | :--- | :--- | :--- |
 | [Emails](#read-emails-emails) | `emails` | array[object] | The emails that match the search criteria |
 
-
-
-
 <details>
 <summary> Output Objects in Read Emails</summary>
-
-
 
 <h4 id="read-emails-emails">Emails</h4>
 
@@ -174,12 +134,7 @@ Read emails from a mailbox
 | Message | `message` | string | The message of the email |
 | Subject | `subject` | string | The subject of the email |
 | To | `to` | array | The email addresses of the recipient |
-
-
-
 </details>
-
-
 #### Mailbox
 
 You have to confirm what exactly the mailbox name is.
@@ -195,8 +150,3 @@ Take Gmail as an example, the mailbox names are following.
 #### Search From and Search To
 You need to input the exact same email address with `<` as a prefix and `>` as a suffix as the email you want to search for.
 For example, if you want to search for the email from `email@example.com`, you need to input `<email@example.com>`.
-
-
-
-
-

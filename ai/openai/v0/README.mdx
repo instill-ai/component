@@ -7,36 +7,26 @@ description: "Learn about how to set up a VDP OpenAI component https://github.co
 
 The OpenAI component is an AI component that allows users to connect the AI models served on the OpenAI Platform.
 It can carry out the following tasks:
-
 - [Text Generation](#text-generation)
 - [Text Embeddings](#text-embeddings)
 - [Speech Recognition](#speech-recognition)
 - [Text To Speech](#text-to-speech)
 - [Text To Image](#text-to-image)
 
-
-
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/ai/openai/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/ai/openai/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/ai/openai/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with OpenAI, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -49,14 +39,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Text Generation
 
-Provide text outputs in response to their inputs.
-
+OpenAI's text generation models (often called generative pre-trained transformers or large language models) have been trained to understand natural language, code, and images. The models provide text outputs in response to their inputs. The inputs to these models are also referred to as "prompts". Designing a prompt is essentially how you “program” a large language model model, usually by providing instructions or some examples of how to successfully complete a task.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -74,49 +61,34 @@ Provide text outputs in response to their inputs.
 | Presence Penalty | `presence-penalty` | number | Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. |
 | Frequency Penalty | `frequency-penalty` | number | Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. |
 
-
-
 <details>
 <summary> Input Objects in Text Generation</summary>
 
+<h4 id="text-generation-chat-history">Chat History</h4>
 
-
-<h4 id="text-generation-chat-history">Chat history</h4>
+Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format {"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"}.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | [Content](#text-generation-content) | `content` | array | The message content  |
 | Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant'  |
-
-
-
-
-
 <h4 id="text-generation-content">Content</h4>
+
+The message content
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | [Image URL](#text-generation-image-url) | `image-url` | object | The image URL  |
 | Text | `text` | string | The text content.  |
 | Type | `type` | string | The type of the content part.  <br/><details><summary><strong>Enum values</strong></summary><ul><li>`text`</li><li>`image-url`</li></ul></details>  |
+<h4 id="text-generation-image-url">Image Url</h4>
 
-
-
-
-
-<h4 id="text-generation-image-url">Image URL</h4>
+The image URL
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | URL | `url` | string | Either a URL of the image or the base64 encoded image data.  |
-
-
-
 </details>
-
-
-
-
 
 <details>
 <summary>The <code>response-format</code> Object </summary>
@@ -125,51 +97,33 @@ Provide text outputs in response to their inputs.
 
 `response-format` must fulfill one of the following schemas:
 
-
-##### `Text`
+<h5 id="text-generation-text"><code>Text</code></h5>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Type | `type` | string |  Must be `"text"`   |
 
-
-
-##### `JSON Object`
+<h5 id="text-generation-json-object"><code>JSON Object</code></h5>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Type | `type` | string |  Must be `"json_object"`   |
 
-
-
-##### `JSON Schema`
+<h5 id="text-generation-json-schema"><code>JSON Schema</code></h5>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
-| JSON Schema | `json-schema` | string |  Set up the schema of the structured output.   |
+| JSON Schema | `json-schema` | string |  Set up the schema of the structured output.  |
 | Type | `type` | string |  Must be `"json_schema"`   |
-
-
 </details>
-
-
-
-
-
-
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Texts | `texts` | array[string] | Texts |
 | [Usage](#text-generation-usage) (optional) | `usage` | object | Usage statistics related to the query |
 
-
-
-
 <details>
 <summary> Output Objects in Text Generation</summary>
-
-
 
 <h4 id="text-generation-usage">Usage</h4>
 
@@ -178,20 +132,11 @@ Provide text outputs in response to their inputs.
 | Completion tokens | `completion-tokens` | integer | Total number of tokens used (completion) |
 | Prompt tokens | `prompt-tokens` | integer | Total number of tokens used (prompt) |
 | Total tokens | `total-tokens` | integer | Total number of tokens used (prompt + completion) |
-
-
-
 </details>
-
-
-
-
-
 
 ### Text Embeddings
 
 Turn text into numbers, unlocking use cases like search.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -204,26 +149,13 @@ Turn text into numbers, unlocking use cases like search.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Embedding | `embedding` | array[number] | Embedding of the input text |
 
-
-
-
-
-
-
-
-
 ### Speech Recognition
 
 Turn audio into text.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -238,26 +170,13 @@ Turn audio into text.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Generated text |
 
-
-
-
-
-
-
-
-
 ### Text To Speech
 
 Turn text into lifelike spoken audio
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -272,26 +191,13 @@ Turn text into lifelike spoken audio
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Audio (optional) | `audio` | string | AI generated audio |
 
-
-
-
-
-
-
-
-
 ### Text To Image
 
 Generate or manipulate images with DALL·E.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -307,21 +213,12 @@ Generate or manipulate images with DALL·E.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Images](#text-to-image-images) | `results` | array[object] | Generated results |
 
-
-
-
 <details>
 <summary> Output Objects in Text To Image</summary>
-
-
 
 <h4 id="text-to-image-images">Images</h4>
 
@@ -329,16 +226,7 @@ Generate or manipulate images with DALL·E.
 | :--- | :--- | :--- | :--- |
 | Generated Image | `image` | string | Generated image |
 | Revised Prompt | `revised-prompt` | string | Revised prompt |
-
-
-
 </details>
-
-
-
-
-
-
 ## Example Recipes
 
 Recipe for the [PicassoAI: Cubist Creations at Your Command!](https://instill.tech/instill-ai/pipelines/picasso-ai/playground) pipeline.
@@ -383,11 +271,11 @@ component:
         task: TASK_TEXT_TO_IMAGE
         input:
             model: dall-e-3
-            "n": 1
+            n: 1
             prompt: |-
                 Using this primary color palette: ${variable.colour}
 
-                 ${mistral-0.output.text}
+                ${mistral-0.output.text}
             quality: standard
             size: 1024x1024
             style: vivid
@@ -425,7 +313,7 @@ component:
         task: TASK_TEXT_GENERATION
         input:
             model: gpt-4o-mini
-            "n": 1
+            n: 1
             prompt: |-
                 Talk about this topic in ${variable.language}  in a concise and beginner-friendly way:
                 ${variable.prompt}

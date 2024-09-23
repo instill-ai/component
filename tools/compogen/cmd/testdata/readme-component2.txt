@@ -44,6 +44,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
 -- tasks.json --
 {
   "TASK_DUMMY": {
+    "description": "Perform a dummy task.",
     "input": {
       "properties": {
         "durna": {
@@ -80,7 +81,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
   },
   "TASK_DUMMIER_THAN_DUMMY": {
     "title": "Dummier",
-    "instillShortDescription": "This task is dummier than `TASK_DUMMY`.",
+    "description": "This task is dummier than `TASK_DUMMY`.",
     "input": {
       "properties": {
         "cursus": {
@@ -184,25 +185,16 @@ description: "Learn about how to set up a VDP Dummy component https://github.com
 
 The Dummy component is an operator component that allows users to perform an action.
 It can carry out the following tasks:
-
 - [Dummy](#dummy)
 - [Dummier](#dummier)
-
-
 
 ## Release Stage
 
 `Beta`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/operator/dummy/v0/config/definition.json).
-
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/operator/dummy/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/operator/dummy/v0/config/tasks.json) files respectively.
 
 
 
@@ -210,6 +202,7 @@ The component configuration is defined and maintained [here](https://github.com/
 
 ### Dummy
 
+Perform a dummy task.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -220,39 +213,22 @@ The component configuration is defined and maintained [here](https://github.com/
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Orci (optional) | `orci` | string | Orci sagittis eu volutpat odio facilisis mauris sit |
-
-
-
-
-
 #### How to use the dummy task
 
 You might be tempted to think than dummier is better than dummy. However,
 one might be wise when choosing between them.
 
-
-
-
 ### Dummier
 
 This task is dummier than `TASK_DUMMY`.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DUMMIER_THAN_DUMMY` |
 | Cursus (required) | `cursus` | string | Cursus mattis molestie a iaculis at erat pellentesque adipiscing commodo |
-
-
-
-
 
 
 
@@ -266,13 +242,8 @@ This task is dummier than `TASK_DUMMY`.
 | Errors (optional) | `errors` | array[string] | Error messages, if any, during the dummy process |
 | Meta (optional) | `context` | any | Free-form metadata |
 
-
-
-
 <details>
 <summary> Output Objects in Dummier</summary>
-
-
 
 <h4 id="dummier-atem">Atem</h4>
 
@@ -280,17 +251,7 @@ This task is dummier than `TASK_DUMMY`.
 | :--- | :--- | :--- | :--- |
 | Arcu | `arcu` | string | Bibendum arcu vitae elementum curabitur vitae nunc sed velit |
 | Tincidunt tortor | `tortor` | string | Tincidunt tortor aliquam nulla |
-
-
-
 </details>
-
-
-
-
-
-
 ## Final words
 
 Thanks for reaching this point! No one really reads documentation thoroughly (:
-

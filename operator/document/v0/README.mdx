@@ -7,26 +7,17 @@ description: "Learn about how to set up a VDP Document component https://github.
 
 The Document component is an operator component that allows users to manipulate Document files.
 It can carry out the following tasks:
-
 - [Convert To Markdown](#convert-to-markdown)
 - [Convert To Text](#convert-to-text)
 - [Convert To Images](#convert-to-images)
-
-
 
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/operator/document/v0/config/definition.json).
-
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/operator/document/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/operator/document/v0/config/tasks.json) files respectively.
 
 
 
@@ -35,7 +26,6 @@ The component configuration is defined and maintained [here](https://github.com/
 ### Convert To Markdown
 
 Convert document to text in Markdown format.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -48,10 +38,6 @@ Convert document to text in Markdown format.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Body | `body` | string | Markdown text converted from the PDF document |
@@ -59,28 +45,15 @@ Convert document to text in Markdown format.
 | Images (optional) | `images` | array[string] | Images extracted from the document |
 | Error (optional) | `error` | string | Error message if any during the conversion process |
 
-
-
-
-
-
-
-
-
 ### Convert To Text
 
 Convert document to text.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CONVERT_TO_TEXT` |
 | Document (required) | `document` | string | Base64 encoded PDF/DOC/DOCX/XML/HTML/RTF/MD/PPTX/ODT/TIF/CSV/TXT/PNG document to be converted to plain text |
 | Filename | `filename` | string | The name of the file, please remember to add the file extension in the end of file name. e.g. 'example.pdf' |
-
-
-
-
 
 
 
@@ -94,18 +67,9 @@ Convert document to text.
 | MSecs | `msecs` | number | Time taken to convert the document |
 | Error | `error` | string | Error message if any during the conversion process |
 
-
-
-
-
-
-
-
-
 ### Convert To Images
 
 Convert PDF to images.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -117,23 +81,10 @@ Convert PDF to images.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Images | `images` | array[string] | Images converted from the PDF document |
 | Filenames (optional) | `filenames` | array[string] | The filenames of the images. The filenames will be appended with the page number. e.g. 'example-1.jpg' |
-
-
-
-
-
-
-
-
-
 ## Example Recipes
 
 Recipe for the [Content Reviewer](https://instill.tech/instill-ai/pipelines/contract-reviewer/playground) pipeline.

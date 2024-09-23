@@ -7,7 +7,6 @@ description: "Learn about how to set up a VDP Elasticsearch component https://gi
 
 The Elasticsearch component is a data component that allows users to access the Elasticsearch database.
 It can carry out the following tasks:
-
 - [Search](#search)
 - [Vector Search](#vector-search)
 - [Index](#index)
@@ -17,29 +16,20 @@ It can carry out the following tasks:
 - [Create Index](#create-index)
 - [Delete Index](#delete-index)
 
-
-
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/application/elasticsearch/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/application/elasticsearch/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/application/elasticsearch/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Elastic, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -52,14 +42,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Search
 
 Search for documents in Elasticsearch, support full text search
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -77,22 +64,13 @@ Search for documents in Elasticsearch, support full text search
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Search operation status |
 | [Result](#search-result) | `result` | object | Result of the search operation |
 
-
-
-
 <details>
 <summary> Output Objects in Search</summary>
-
-
 
 <h4 id="search-result">Result</h4>
 
@@ -101,28 +79,11 @@ Search for documents in Elasticsearch, support full text search
 | [Data](#search-data) | `data` | array | The data returned from the search operation |
 | [Documents](#search-documents) | `documents` | array | The documents returned from the search operation |
 | IDs | `ids` | array | The ids returned from the search operation |
-
-
-
-
-
-
-
-
-
-
-
 </details>
-
-
-
-
-
 
 ### Vector Search
 
 Search for vector similarity search in Elasticsearch
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -141,22 +102,13 @@ Search for vector similarity search in Elasticsearch
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Search operation status |
 | [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 
-
-
-
 <details>
 <summary> Output Objects in Vector Search</summary>
-
-
 
 <h4 id="vector-search-result">Result</h4>
 
@@ -166,28 +118,11 @@ Search for vector similarity search in Elasticsearch
 | IDs | `ids` | array | The ids returned from the vector search operation |
 | [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
-
-
-
-
-
-
-
-
-
-
-
 </details>
-
-
-
-
-
 
 ### Index
 
 Index a document into Elasticsearch
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -200,26 +135,13 @@ Index a document into Elasticsearch
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Index operation status |
 
-
-
-
-
-
-
-
-
 ### Multi Index
 
 Index multiple documents into Elasticsearch with bulk API
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -228,20 +150,10 @@ Index multiple documents into Elasticsearch with bulk API
 | Array ID | `array-id` | array[string] | The array of id |
 | [Array Data](#multi-index-array-data) (required) | `array-data` | array[object] | Array data to be indexed |
 
-
-
 <details>
 <summary> Input Objects in Multi Index</summary>
 
-
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -249,18 +161,9 @@ Index multiple documents into Elasticsearch with bulk API
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Index operation status |
 
-
-
-
-
-
-
-
-
 ### Update
 
 Update a document in Elasticsearch
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -276,26 +179,13 @@ Update a document in Elasticsearch
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Update operation status |
 
-
-
-
-
-
-
-
-
 ### Delete
 
 Delete documents from Elasticsearch
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -310,26 +200,13 @@ Delete documents from Elasticsearch
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete operation status |
 
-
-
-
-
-
-
-
-
 ### Create Index
 
 Create an index in Elasticsearch
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -341,26 +218,13 @@ Create an index in Elasticsearch
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create index operation status |
 
-
-
-
-
-
-
-
-
 ### Delete Index
 
 Delete an index in Elasticsearch
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -371,20 +235,6 @@ Delete an index in Elasticsearch
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete index operation status |
-
-
-
-
-
-
-
-
-
-

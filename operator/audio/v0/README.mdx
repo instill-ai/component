@@ -7,25 +7,16 @@ description: "Learn about how to set up a VDP Audio component https://github.com
 
 The Audio component is an operator component that allows users to extract and manipulate audio from different sources.
 It can carry out the following tasks:
-
 - [Chunk Audios](#chunk-audios)
 - [Slice Audio](#slice-audio)
-
-
 
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/operator/audio/v0/config/definition.json).
-
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/operator/audio/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/operator/audio/v0/config/tasks.json) files respectively.
 
 
 
@@ -34,7 +25,6 @@ The component configuration is defined and maintained [here](https://github.com/
 ### Chunk Audios
 
 Split audio file into chunks
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -46,26 +36,13 @@ Split audio file into chunks
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Audios | `audios` | array[string] | A list of base64 encoded audios |
 
-
-
-
-
-
-
-
-
 ### Slice Audio
 
 Specify a time range to slice an audio file
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -78,22 +55,9 @@ Specify a time range to slice an audio file
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Audio | `audio` | string | Base64 encoded audio slice |
-
-
-
-
-
-
-
-
-
 ## Example Recipes
 
 Recipe for the [Audio Transcription Generator](https://instill.tech/instill-ai/pipelines/audio-transcription/playground) pipeline.

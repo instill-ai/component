@@ -7,7 +7,6 @@ description: "Learn about how to set up a VDP Hugging Face component https://git
 
 The Hugging Face component is an AI component that allows users to connect the AI models served on the Hugging Face Platform.
 It can carry out the following tasks:
-
 - [Text Generation](#text-generation)
 - [Fill Mask](#fill-mask)
 - [Summarization](#summarization)
@@ -26,29 +25,20 @@ It can carry out the following tasks:
 - [Speech Recognition](#speech-recognition)
 - [Audio Classification](#audio-classification)
 
-
-
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/ai/huggingface/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/ai/huggingface/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/ai/huggingface/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Hugging Face, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -62,14 +52,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Text Generation
 
 Generating text is the task of producing new text. These models can, for example, fill in incomplete text or paraphrase.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -79,14 +66,12 @@ Generating text is the task of producing new text. These models can, for example
 | [Parameters](#text-generation-parameters) | `parameters` | object | Parameters |
 | [Options](#text-generation-options) | `options` | object | Options for the model |
 
-
-
 <details>
 <summary> Input Objects in Text Generation</summary>
 
-
-
 <h4 id="text-generation-parameters">Parameters</h4>
+
+Parameters
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -99,25 +84,15 @@ Generating text is the task of producing new text. These models can, for example
 | Temperature | `temperature` | number | The temperature of the sampling operation. 1 means regular sampling, 0 means always take the highest score, 100.0 is getting closer to uniform probability.  |
 | Top K | `top-k` | integer | Integer to define the top tokens considered within the sample operation to create new text.  |
 | Top P | `top-p` | number | Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p.  |
-
-
-
-
-
 <h4 id="text-generation-options">Options</h4>
+
+Options for the model
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | `use-cache` | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | `wait-for-model` | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -125,18 +100,9 @@ Generating text is the task of producing new text. These models can, for example
 | :--- | :--- | :--- | :--- |
 | Generated Text | `generated-text` | string | The continuated string |
 
-
-
-
-
-
-
-
-
 ### Fill Mask
 
-Masked language modeling is the task of masking some of the words in a sentence and predicting which words should replace those masks.
-
+Masked language modeling is the task of masking some of the words in a sentence and predicting which words should replace those masks. These models are useful when we want to get a statistical understanding of the language in which the model is trained in.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -145,27 +111,18 @@ Masked language modeling is the task of masking some of the words in a sentence 
 | String Input (required) | `inputs` | string | a string to be filled from, must contain the [MASK] token (check model card for exact name of the mask) |
 | [Options](#fill-mask-options) | `options` | object | Options for the model |
 
-
-
 <details>
 <summary> Input Objects in Fill Mask</summary>
 
-
-
 <h4 id="fill-mask-options">Options</h4>
+
+Options for the model
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | `use-cache` | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | `wait-for-model` | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -173,13 +130,8 @@ Masked language modeling is the task of masking some of the words in a sentence 
 | :--- | :--- | :--- | :--- |
 | [Results](#fill-mask-results) | `results` | array[object] | Results |
 
-
-
-
 <details>
 <summary> Output Objects in Fill Mask</summary>
-
-
 
 <h4 id="fill-mask-results">Results</h4>
 
@@ -189,20 +141,11 @@ Masked language modeling is the task of masking some of the words in a sentence 
 | Sequence | `sequence` | string | The actual sequence of tokens that ran against the model (may contain special tokens) |
 | Token | `token` | integer | The id of the token |
 | Token Str | `token-str` | string | The string representation of the token |
-
-
-
 </details>
-
-
-
-
-
 
 ### Summarization
 
-Summarization is the task of producing a shorter version of a document while preserving its important information.
-
+Summarization is the task of producing a shorter version of a document while preserving its important information. Some models can extract text from the original input, while other models can generate entirely new text.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -212,14 +155,12 @@ Summarization is the task of producing a shorter version of a document while pre
 | [Parameters](#summarization-parameters) | `parameters` | object | Parameters |
 | [Options](#summarization-options) | `options` | object | Options for the model |
 
-
-
 <details>
 <summary> Input Objects in Summarization</summary>
 
-
-
 <h4 id="summarization-parameters">Parameters</h4>
+
+Parameters
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -230,25 +171,15 @@ Summarization is the task of producing a shorter version of a document while pre
 | Temperature | `temperature` | number | The temperature of the sampling operation. 1 means regular sampling, 0 means always take the highest score, 100.0 is getting closer to uniform probability.  |
 | Top K | `top-k` | integer | Integer to define the top tokens considered within the sample operation to create new text.  |
 | Top P | `top-p` | number | Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p.  |
-
-
-
-
-
 <h4 id="summarization-options">Options</h4>
+
+Options for the model
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | `use-cache` | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | `wait-for-model` | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -256,18 +187,9 @@ Summarization is the task of producing a shorter version of a document while pre
 | :--- | :--- | :--- | :--- |
 | Summary Text | `summary-text` | string | The string after summarization |
 
-
-
-
-
-
-
-
-
 ### Text Classification
 
-Text Classification is the task of assigning a label or class to a given text.
-
+Text Classification is the task of assigning a label or class to a given text. Some use cases are sentiment analysis, natural language inference, and assessing grammatical correctness.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -276,27 +198,18 @@ Text Classification is the task of assigning a label or class to a given text.
 | String Input (required) | `inputs` | string | String input |
 | [Options](#text-classification-options) | `options` | object | Options for the model |
 
-
-
 <details>
 <summary> Input Objects in Text Classification</summary>
 
-
-
 <h4 id="text-classification-options">Options</h4>
+
+Options for the model
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | `use-cache` | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | `wait-for-model` | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -304,13 +217,8 @@ Text Classification is the task of assigning a label or class to a given text.
 | :--- | :--- | :--- | :--- |
 | [Results](#text-classification-results) | `results` | array[object] | Results |
 
-
-
-
 <details>
 <summary> Output Objects in Text Classification</summary>
-
-
 
 <h4 id="text-classification-results">Results</h4>
 
@@ -318,20 +226,11 @@ Text Classification is the task of assigning a label or class to a given text.
 | :--- | :--- | :--- | :--- |
 | Label | `label` | string | The label for the class (model specific) |
 | Score | `score` | number | A floats that represents how likely is that the text belongs the this class. |
-
-
-
 </details>
-
-
-
-
-
 
 ### Token Classification
 
-Token classification is a natural language understanding task in which a label is assigned to some tokens in a text.
-
+Token classification is a natural language understanding task in which a label is assigned to some tokens in a text. Some popular token classification subtasks are Named Entity Recognition (NER) and Part-of-Speech (PoS) tagging. NER models could be trained to identify specific entities in a text, such as dates, individuals and places; and PoS tagging would identify, for example, which words in a text are verbs, nouns, and punctuation marks.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -341,14 +240,12 @@ Token classification is a natural language understanding task in which a label i
 | [Parameters](#token-classification-parameters) | `parameters` | object | Parameters |
 | [Options](#token-classification-options) | `options` | object | Options for the model |
 
-
-
 <details>
 <summary> Input Objects in Token Classification</summary>
 
-
-
 <h4 id="token-classification-parameters">Parameters</h4>
+
+Parameters
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -358,25 +255,15 @@ simple: Entities are grouped according to the default schema (B-, I- tags get me
 first: Same as the simple strategy except words cannot end up with different tags. Words will use the tag of the first token when there is ambiguity.
 average: Same as the simple strategy except words cannot end up with different tags. Scores are averaged across tokens and then the maximum label is applied.
 max: Same as the simple strategy except words cannot end up with different tags. Word entity will be the token with the maximum score.  |
-
-
-
-
-
 <h4 id="token-classification-options">Options</h4>
+
+Options for the model
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | `use-cache` | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | `wait-for-model` | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -384,13 +271,8 @@ max: Same as the simple strategy except words cannot end up with different tags.
 | :--- | :--- | :--- | :--- |
 | [Results](#token-classification-results) | `results` | array[object] | Results |
 
-
-
-
 <details>
 <summary> Output Objects in Token Classification</summary>
-
-
 
 <h4 id="token-classification-results">Results</h4>
 
@@ -401,20 +283,11 @@ max: Same as the simple strategy except words cannot end up with different tags.
 | Score | `score` | number | How likely the entity was recognized. |
 | Start | `start` | integer | The offset stringwise where the answer is located. Useful to disambiguate if word occurs multiple times. |
 | Word | `word` | string | The string that was captured |
-
-
-
 </details>
-
-
-
-
-
 
 ### Translation
 
 Translation is the task of converting text from one language to another.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -423,27 +296,18 @@ Translation is the task of converting text from one language to another.
 | String Input (required) | `inputs` | string | String input |
 | [Options](#translation-options) | `options` | object | Options for the model |
 
-
-
 <details>
 <summary> Input Objects in Translation</summary>
 
-
-
 <h4 id="translation-options">Options</h4>
+
+Options for the model
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | `use-cache` | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | `wait-for-model` | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -451,18 +315,9 @@ Translation is the task of converting text from one language to another.
 | :--- | :--- | :--- | :--- |
 | Translation Text | `translation-text` | string | The string after translation |
 
-
-
-
-
-
-
-
-
 ### Zero Shot Classification
 
 Zero-shot text classification is a task in natural language processing where a model is trained on a set of labeled examples but is then able to classify new examples from previously unseen classes.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -472,38 +327,26 @@ Zero-shot text classification is a task in natural language processing where a m
 | [Parameters](#zero-shot-classification-parameters) | `parameters` | object | Parameters |
 | [Options](#zero-shot-classification-options) | `options` | object | Options for the model |
 
-
-
 <details>
 <summary> Input Objects in Zero Shot Classification</summary>
 
-
-
 <h4 id="zero-shot-classification-parameters">Parameters</h4>
+
+Parameters
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Candidate Labels | `candidate-labels` | array | a list of strings that are potential classes for inputs. (max 10 candidate-labels, for more, simply run multiple requests, results are going to be misleading if using too many candidate-labels anyway. If you want to keep the exact same, you can simply run multi-label=True and do the scaling on your end. )  |
 | Multi Label | `multi-label` | boolean | Boolean that is set to True if classes can overlap  |
-
-
-
-
-
 <h4 id="zero-shot-classification-options">Options</h4>
+
+Options for the model
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | `use-cache` | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | `wait-for-model` | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -513,18 +356,9 @@ Zero-shot text classification is a task in natural language processing where a m
 | Labels | `labels` | array[string] | The list of strings for labels that you sent (in order) |
 | Sequence (optional) | `sequence` | string | The string sent as an input |
 
-
-
-
-
-
-
-
-
 ### Question Answering
 
-Question Answering models can retrieve the answer to a question from a given text, which is useful for searching for an answer in a document.
-
+Question Answering models can retrieve the answer to a question from a given text, which is useful for searching for an answer in a document. Some question answering models can generate answers without context!
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -533,38 +367,26 @@ Question Answering models can retrieve the answer to a question from a given tex
 | [Inputs](#question-answering-inputs) (required) | `inputs` | object | Inputs |
 | [Options](#question-answering-options) | `options` | object | Options for the model |
 
-
-
 <details>
 <summary> Input Objects in Question Answering</summary>
 
-
-
 <h4 id="question-answering-inputs">Inputs</h4>
+
+Inputs
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Context | `context` | string | The context for answering the question.  |
 | Question | `question` | string | The question  |
-
-
-
-
-
 <h4 id="question-answering-options">Options</h4>
+
+Options for the model
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | `use-cache` | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | `wait-for-model` | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -575,18 +397,9 @@ Question Answering models can retrieve the answer to a question from a given tex
 | Score (optional) | `score` | number | A float that represents how likely that the answer is correct |
 | Start (optional) | `start` | integer | The index (string wise) of the start of the answer within context. |
 
-
-
-
-
-
-
-
-
 ### Table Question Answering
 
 Table Question Answering (Table QA) is the answering a question about an information on a given table.
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -595,38 +408,26 @@ Table Question Answering (Table QA) is the answering a question about an informa
 | [Inputs](#table-question-answering-inputs) (required) | `inputs` | object | Inputs |
 | [Options](#table-question-answering-options) | `options` | object | Options for the model |
 
-
-
 <details>
 <summary> Input Objects in Table Question Answering</summary>
 
-
-
 <h4 id="table-question-answering-inputs">Inputs</h4>
+
+Inputs
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Query | `query` | string | The query in plain text that you want to ask the table  |
 | Table | `table` | object | A table of data represented as a dict of list where entries are headers and the lists are all the values, all lists must have the same size.  |
-
-
-
-
-
 <h4 id="table-question-answering-options">Options</h4>
+
+Options for the model
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | `use-cache` | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | `wait-for-model` | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -637,18 +438,9 @@ Table Question Answering (Table QA) is the answering a question about an informa
 | Cells (optional) | `cells` | array[string] | a list of coordinates of the cells contents |
 | Coordinates (optional) | `coordinates` | array[array] | a list of coordinates of the cells referenced in the answer |
 
-
-
-
-
-
-
-
-
 ### Sentence Similarity
 
-Sentence Similarity is the task of determining how similar two texts are.
-
+Sentence Similarity is the task of determining how similar two texts are. Sentence similarity models convert input texts into vectors (embeddings) that capture semantic information and calculate how close (similar) they are between them. This task is particularly useful for information retrieval and clustering/grouping.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -657,38 +449,26 @@ Sentence Similarity is the task of determining how similar two texts are.
 | [Inputs](#sentence-similarity-inputs) (required) | `inputs` | object | Inputs |
 | [Options](#sentence-similarity-options) | `options` | object | Options for the model |
 
-
-
 <details>
 <summary> Input Objects in Sentence Similarity</summary>
 
-
-
 <h4 id="sentence-similarity-inputs">Inputs</h4>
+
+Inputs
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Sentences | `sentences` | array | A list of strings which will be compared against the source-sentence.  |
 | Source Sentence | `source-sentence` | string | The string that you wish to compare the other strings with. This can be a phrase, sentence, or longer passage, depending on the model being used.  |
-
-
-
-
-
 <h4 id="sentence-similarity-options">Options</h4>
+
+Options for the model
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | `use-cache` | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | `wait-for-model` | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -696,18 +476,9 @@ Sentence Similarity is the task of determining how similar two texts are.
 | :--- | :--- | :--- | :--- |
 | Scores | `scores` | array[number] | The associated similarity score for each of the given strings |
 
-
-
-
-
-
-
-
-
 ### Conversational
 
-Conversational response modelling is the task of generating conversational text that is relevant, coherent and knowledgable given a prompt.
-
+Conversational response modelling is the task of generating conversational text that is relevant, coherent and knowledgable given a prompt. These models have applications in chatbots, and as a part of voice assistants
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -717,26 +488,21 @@ Conversational response modelling is the task of generating conversational text 
 | [Parameters](#conversational-parameters) | `parameters` | object | Parameters |
 | [Options](#conversational-options) | `options` | object | Options for the model |
 
-
-
 <details>
 <summary> Input Objects in Conversational</summary>
 
-
-
 <h4 id="conversational-inputs">Inputs</h4>
+
+Inputs
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Generated Responses | `generated-responses` | array | A list of strings corresponding to the earlier replies from the model.  |
 | Past User Inputs | `past-user-inputs` | array | A list of strings corresponding to the earlier replies from the user. Should be of the same length of generated-responses.  |
 | Text | `text` | string | The last input from the user in the conversation.  |
-
-
-
-
-
 <h4 id="conversational-parameters">Parameters</h4>
+
+Parameters
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -747,25 +513,15 @@ Conversational response modelling is the task of generating conversational text 
 | Temperature | `temperature` | number | The temperature of the sampling operation. 1 means regular sampling, 0 means always take the highest score, 100.0 is getting closer to uniform probability.  |
 | Top K | `top-k` | integer | Integer to define the top tokens considered within the sample operation to create new text.  |
 | Top P | `top-p` | number | Float to define the tokens that are within the sample operation of text generation. Add tokens in the sample for more probable to least probable until the sum of the probabilities is greater than top-p.  |
-
-
-
-
-
 <h4 id="conversational-options">Options</h4>
+
+Options for the model
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Use Cache | `use-cache` | boolean | There is a cache layer on the inference API to speedup requests we have already seen. Most models can use those results as is as models are deterministic (meaning the results will be the same anyway). However if you use a non deterministic model, you can set this parameter to prevent the caching mechanism from being used resulting in a real new query.  |
 | Wait For Model | `wait-for-model` | boolean | If the model is not ready, wait for it instead of receiving 503. It limits the number of requests required to get your inference done. It is advised to only set this flag to true after receiving a 503 error as it will limit hanging in your application to known places.  |
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -774,13 +530,8 @@ Conversational response modelling is the task of generating conversational text 
 | [Conversation](#conversational-conversation) (optional) | `conversation` | object | A facility dictionary to send back for the next input (with the new user input addition). |
 | Generated Text | `generated-text` | string | The answer of the bot |
 
-
-
-
 <details>
 <summary> Output Objects in Conversational</summary>
-
-
 
 <h4 id="conversational-conversation">Conversation</h4>
 
@@ -788,20 +539,11 @@ Conversational response modelling is the task of generating conversational text 
 | :--- | :--- | :--- | :--- |
 | Generated Responses | `generated-responses` | array | List of strings. The last outputs from the model in the conversation, after the model has run. |
 | Past User Inputs | `past-user-inputs` | array | List of strings. The last inputs from the user in the conversation, after the model has run. |
-
-
-
 </details>
-
-
-
-
-
 
 ### Image Classification
 
-Image classification is the task of assigning a label or class to an entire image.
-
+Image classification is the task of assigning a label or class to an entire image. Images are expected to have only one class for each image. Image classification models take an image as input and return a prediction about which class the image belongs to.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -813,21 +555,12 @@ Image classification is the task of assigning a label or class to an entire imag
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Classes](#image-classification-classes) | `classes` | array[object] | Classes |
 
-
-
-
 <details>
 <summary> Output Objects in Image Classification</summary>
-
-
 
 <h4 id="image-classification-classes">Classes</h4>
 
@@ -835,20 +568,11 @@ Image classification is the task of assigning a label or class to an entire imag
 | :--- | :--- | :--- | :--- |
 | Label | `label` | string | The label for the class (model specific) |
 | Score | `score` | number | A float that represents how likely it is that the image file belongs to this class. |
-
-
-
 </details>
-
-
-
-
-
 
 ### Image Segmentation
 
-Image Segmentation divides an image into segments where each pixel in the image is mapped to an object.
-
+Image Segmentation divides an image into segments where each pixel in the image is mapped to an object. This task has multiple variants such as instance segmentation, panoptic segmentation and semantic segmentation.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -860,21 +584,12 @@ Image Segmentation divides an image into segments where each pixel in the image 
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Segments](#image-segmentation-segments) | `segments` | array[object] | Segments |
 
-
-
-
 <details>
 <summary> Output Objects in Image Segmentation</summary>
-
-
 
 <h4 id="image-segmentation-segments">Segments</h4>
 
@@ -883,20 +598,11 @@ Image Segmentation divides an image into segments where each pixel in the image 
 | Label | `label` | string | The label for the class (model specific) of a segment. |
 | Mask | `mask` | string | A str (base64 str of a single channel black-and-white img) representing the mask of a segment. |
 | Score | `score` | number | A float that represents how likely it is that the segment belongs to the given class. |
-
-
-
 </details>
-
-
-
-
-
 
 ### Object Detection
 
-Object Detection models allow users to identify objects of certain defined classes.
-
+Object Detection models allow users to identify objects of certain defined classes. Object detection models receive an image as input and output the images with bounding boxes and labels on detected objects.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -908,21 +614,12 @@ Object Detection models allow users to identify objects of certain defined class
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Objects](#object-detection-objects) | `objects` | array[object] | Objects |
 
-
-
-
 <details>
 <summary> Output Objects in Object Detection</summary>
-
-
 
 <h4 id="object-detection-objects">Objects</h4>
 
@@ -932,10 +629,6 @@ Object Detection models allow users to identify objects of certain defined class
 | Label | `label` | string | The label for the class (model specific) of a detected object. |
 | Score | `score` | number | A float that represents how likely it is that the detected object belongs to the given class. |
 
-
-
-
-
 <h4 id="object-detection-box">Box</h4>
 
 | Field | Field ID | Type | Note |
@@ -944,20 +637,11 @@ Object Detection models allow users to identify objects of certain defined class
 | X Min | `xmin` | number | X min |
 | Y Max | `ymax` | number | Y Max |
 | Y min | `ymin` | number | Y min |
-
-
-
 </details>
-
-
-
-
-
 
 ### Image To Text
 
-Image to text models output a text from a given image.
-
+Image to text models output a text from a given image. Image captioning or optical character recognition can be considered as the most common applications of image to text.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -969,26 +653,13 @@ Image to text models output a text from a given image.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Generated text |
 
-
-
-
-
-
-
-
-
 ### Speech Recognition
 
-Automatic Speech Recognition (ASR), also known as Speech to Text (STT), is the task of transcribing a given audio to text.
-
+Automatic Speech Recognition (ASR), also known as Speech to Text (STT), is the task of transcribing a given audio to text. It has many applications, such as voice user interfaces.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -1000,26 +671,13 @@ Automatic Speech Recognition (ASR), also known as Speech to Text (STT), is the t
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | The string that was recognized within the audio file. |
 
-
-
-
-
-
-
-
-
 ### Audio Classification
 
-Audio classification is the task of assigning a label or class to a given audio.
-
+Audio classification is the task of assigning a label or class to a given audio. It can be used for recognizing which command a user is giving or the emotion of a statement, as well as identifying a speaker.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -1031,21 +689,12 @@ Audio classification is the task of assigning a label or class to a given audio.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Classes](#audio-classification-classes) | `classes` | array[object] | Classes |
 
-
-
-
 <details>
 <summary> Output Objects in Audio Classification</summary>
-
-
 
 <h4 id="audio-classification-classes">Classes</h4>
 
@@ -1053,14 +702,4 @@ Audio classification is the task of assigning a label or class to a given audio.
 | :--- | :--- | :--- | :--- |
 | Label | `label` | string | The label for the class (model specific) |
 | Score | `score` | number | A float that represents how likely it is that the audio file belongs to this class. |
-
-
-
 </details>
-
-
-
-
-
-
-

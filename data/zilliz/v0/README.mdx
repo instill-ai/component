@@ -7,7 +7,6 @@ description: "Learn about how to set up a VDP Zilliz component https://github.co
 
 The Zilliz component is a data component that allows users to build and search vector datasets.
 It can carry out the following tasks:
-
 - [Vector Search](#vector-search)
 - [Upsert](#upsert)
 - [Batch Upsert](#batch-upsert)
@@ -17,29 +16,20 @@ It can carry out the following tasks:
 - [Create Partition](#create-partition)
 - [Drop Partition](#drop-partition)
 
-
-
 ## Release Stage
 
 `Alpha`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/zilliz/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/data/zilliz/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/data/zilliz/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 
-
-
 In order to communicate with Zilliz, the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -52,14 +42,11 @@ ${connection.<my-connection-id>}`.
 
 
 
-
-
 ## Supported Tasks
 
 ### Vector Search
 
 Perform a vector search on a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -79,22 +66,13 @@ Perform a vector search on a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
 
-
-
-
 <details>
 <summary> Output Objects in Vector Search</summary>
-
-
 
 <h4 id="vector-search-result">Result</h4>
 
@@ -104,28 +82,11 @@ Perform a vector search on a collection
 | IDs | `ids` | array | The ids returned from the vector search operation |
 | [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
-
-
-
-
-
-
-
-
-
-
-
 </details>
-
-
-
-
-
 
 ### Upsert
 
 Insert a vector data into a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -138,26 +99,13 @@ Insert a vector data into a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
 
-
-
-
-
-
-
-
-
 ### Batch Upsert
 
 Insert a batch of vector data into a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -166,20 +114,10 @@ Insert a batch of vector data into a collection
 | Partition Name | `partition-name` | string | The name of the partition to upsert the data from. If empty then default partition will be used |
 | [Array Data](#batch-upsert-array-data) (required) | `array-data` | array[object] | The data |
 
-
-
 <details>
 <summary> Input Objects in Batch Upsert</summary>
 
-
-
-
-
 </details>
-
-
-
-
 
 
 
@@ -187,18 +125,9 @@ Insert a batch of vector data into a collection
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch upsert status |
 
-
-
-
-
-
-
-
-
 ### Delete
 
 Delete vector data from a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -211,26 +140,13 @@ Delete vector data from a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
 
-
-
-
-
-
-
-
-
 ### Create Collection
 
 Create a collection, please refer to [create-collection-v2](https://docs.zilliz.com/reference/restful/create-collection-v2)
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -248,26 +164,13 @@ Create a collection, please refer to [create-collection-v2](https://docs.zilliz.
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create collection status |
 
-
-
-
-
-
-
-
-
 ### Drop Collection
 
 Drop a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -278,26 +181,13 @@ Drop a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop collection status |
 
-
-
-
-
-
-
-
-
 ### Create Partition
 
 Create a partition in a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -309,26 +199,13 @@ Create a partition in a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create partition status |
 
-
-
-
-
-
-
-
-
 ### Drop Partition
 
 Drop a partition from a collection
-
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -340,20 +217,6 @@ Drop a partition from a collection
 
 
 
-
-
-
-
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Drop partition status |
-
-
-
-
-
-
-
-
-
-

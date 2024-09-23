@@ -42,11 +42,11 @@ component:
         task: TASK_TEXT_TO_IMAGE
         input:
             model: dall-e-3
-            "n": 1
+            n: 1
             prompt: |-
                 Using this primary color palette: ${variable.colour}
 
-                 ${mistral-0.output.text}
+                ${mistral-0.output.text}
             quality: standard
             size: 1024x1024
             style: vivid
@@ -84,7 +84,7 @@ component:
         task: TASK_TEXT_GENERATION
         input:
             model: gpt-4o-mini
-            "n": 1
+            n: 1
             prompt: |-
                 Talk about this topic in ${variable.language}  in a concise and beginner-friendly way:
                 ${variable.prompt}

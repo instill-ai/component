@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
 	"github.com/go-playground/validator/v10"
+
+	qt "github.com/frankban/quicktest"
 )
 
 func TestDefinition_Validate(t *testing.T) {

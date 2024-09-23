@@ -116,6 +116,7 @@ cmp pkg/dummy/README.mdx want-readme.mdx
 -- tasks.json --
 {
   "TASK_DUMMY": {
+    "description": "Perform a dummy task.",
     "input": {
       "properties": {
         "durna": {
@@ -160,7 +161,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
                   },
                   "title": "Token",
                   "required": ["chunk-method"],
-                  "type": "object"
+                  "type": "object",
+                  "description": "Language models have a token limit. You should not exceed the token limit. When you split your text into chunks it is therefore a good idea to count the number of tokens. There are many tokenizers. When you count tokens in your text you should use the same tokenizer as used in the language model."
                 },
                 {
                   "properties": {
@@ -184,7 +186,8 @@ cmp pkg/dummy/README.mdx want-readme.mdx
                   },
                   "title": "Markdown",
                   "required": ["chunk-method"],
-                  "type": "object"
+                  "type": "object",
+                  "description": "This text splitter is specially designed for Markdown format."
                 }
               ]
             }
@@ -283,34 +286,23 @@ description: "Learn about how to set up a VDP Dummy component https://github.com
 
 The Dummy component is a data component that allows users to perform an action.
 It can carry out the following tasks:
-
 - [Dummy](#dummy)
-
-
 
 ## Release Stage
 
 `Coming Soon`
 
-
-
 ## Configuration
 
-The component configuration is defined and maintained [here](https://github.com/instill-ai/component/blob/main/data/dummy/v0/config/definition.json).
-
-
-
+The component definition and tasks are defined in the [definition.json](https://github.com/instill-ai/component/blob/main/data/dummy/v0/config/definition.json) and [tasks.json](https://github.com/instill-ai/component/blob/main/data/dummy/v0/config/tasks.json) files respectively.
 
 ## Setup
 
 <InfoBlock type="info" title="Prerequisites">An account at [dummy.io](https://dummy.io) is required.</InfoBlock>
 
-
-
-
 In order to communicate with Dummy Inc., the following connection details need to be
 provided. You may specify them directly in a pipeline recipe as key-value pairs
-withing the component's `setup` block, or you can create a **Connection** from
+within the component's `setup` block, or you can create a **Connection** from
 the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
@@ -323,38 +315,32 @@ ${connection.<my-connection-id>}`.
 
 This is some crucial information about setup: do it before execution.
 
-
-
-
-
 <details>
 <summary>The <code>authentication</code> Object </summary>
 
-#### Authentication
+<h4 id="setup-authentication">Authentication</h4>
 
 `authentication` must fulfill one of the following schemas:
 
-##### `No Auth`
+<h5 id="setup-no-auth"><code>No Auth</code></h5>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Auth Type | `auth-type` | string |  Must be `"NO_AUTH"`   |
 
-##### `Auth 1`
+<h5 id="setup-auth-1"><code>Auth 1</code></h5>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Auth Type | `auth-type` | string |  Must be `"AUTH_1"`   |
-| Auth Way | `auth-way` | string |  ways for Auth 1    <br/><details><summary><strong>Enum values</strong></summary><ul><li>`header`</li><li>`query`</li></ul></details>  |
-
+| Auth Way | `auth-way` | string |  ways for Auth 1  <br/><details><summary><strong>Enum values</strong></summary><ul><li>`header`</li><li>`query`</li></ul></details>  |
 </details>
-
-
 
 ## Supported Tasks
 
 ### Dummy
 
+Perform a dummy task.
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -362,26 +348,17 @@ This is some crucial information about setup: do it before execution.
 | Durna (required) | `durna` | string | Lorem ipsum dolor sit amet, consectetur adipiscing elit |
 | [Strategy](#dummy-strategy) | `strategy` | object | Chunking strategy |
 
-
-
 <details>
 <summary> Input Objects in Dummy</summary>
 
-
-
 <h4 id="dummy-strategy">Strategy</h4>
+
+Chunking strategy
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | [Chunk Setting](#dummy-chunk-setting) | `setting` | object | Chunk Setting  |
-
-
-
 </details>
-
-
-
-
 
 <details>
 <summary>The <code>setting</code> Object </summary>
@@ -390,44 +367,32 @@ This is some crucial information about setup: do it before execution.
 
 `setting` must fulfill one of the following schemas:
 
+<h5 id="dummy-token"><code>Token</code></h5>
 
-##### `Token`
+Language models have a token limit. You should not exceed the token limit. When you split your text into chunks it is therefore a good idea to count the number of tokens. There are many tokenizers. When you count tokens in your text you should use the same tokenizer as used in the language model.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Chunk Method | `chunk-method` | string |  Must be `"Token"`   |
-| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li></ul></details>  |
+| Model | `model-name` | string |  The name of the model used for tokenization.  <br/><details><summary><strong>Enum values</strong></summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li></ul></details>  |
 
+<h5 id="dummy-markdown"><code>Markdown</code></h5>
 
-
-##### `Markdown`
+This text splitter is specially designed for Markdown format.
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Chunk Method | `chunk-method` | string |  Must be `"Markdown"`   |
-| Model | `model-name` | string |  The name of the model used for tokenization.   <br/><details><summary><strong>Enum values</strong></summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li></ul></details>  |
-
-
+| Model | `model-name` | string |  The name of the model used for tokenization.  <br/><details><summary><strong>Enum values</strong></summary><ul><li>`gpt-4`</li><li>`gpt-3.5-turbo`</li></ul></details>  |
 </details>
-
-
-
-
-
-
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Conversations](#dummy-conversations) (optional) | `conversations` | array[object] | An array of conversations with thread messages |
 | Orci (optional) | `orci` | string | Orci sagittis eu volutpat odio facilisis mauris sit |
 
-
-
-
 <details>
 <summary> Output Objects in Dummy</summary>
-
-
 
 <h4 id="dummy-conversations">Conversations</h4>
 
@@ -438,23 +403,9 @@ This is some crucial information about setup: do it before execution.
 | Start Date | `start-date` | string | when a conversation starts |
 | [Replied messages](#dummy-replied-messages) | `thread-reply-messages` | array | replies in a conversation |
 
-
-
-
-
-<h4 id="dummy-replied-messages">Replied messages</h4>
+<h4 id="dummy-replied-messages">Replied Messages</h4>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Replied Message | `message` | string | message to reply a conversation |
-
-
-
 </details>
-
-
-
-
-
-
-
