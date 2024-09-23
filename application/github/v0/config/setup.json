@@ -16,8 +16,12 @@
       "type": "string"
     }
   },
-  "required": ["token"],
-  "instillEditOnNodeFields": ["token"],
+  "required": [
+    "token"
+  ],
+  "instillEditOnNodeFields": [
+    "token"
+  ],
   "instillOAuthConfig": {
     "authUrl": "https://github.com/login/oauth/authorize",
     "accessUrl": "https://github.com/login/oauth/access_token",
