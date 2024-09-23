@@ -1,7 +1,10 @@
 {
   "availableTasks": [
     "TASK_ASSIGN",
-    "TASK_APPEND_ARRAY"
+    "TASK_APPEND_ARRAY",
+    "TASK_UNION",
+    "TASK_INTERSECTION",
+    "TASK_DIFFERENCE"
   ],
   "custom": false,
   "documentationUrl": "https://www.instill.tech/docs/component/generic/collection",

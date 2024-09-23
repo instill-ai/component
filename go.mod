@@ -49,6 +49,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/pkoukk/tiktoken-go v0.1.6
 	github.com/redis/go-redis/v9 v9.5.1
+	github.com/samber/lo v1.47.0
 	github.com/santhosh-tekuri/jsonschema/v5 v5.3.0
 	github.com/slack-go/slack v0.12.5
 	github.com/stretchr/testify v1.9.0

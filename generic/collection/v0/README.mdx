@@ -9,6 +9,9 @@ The Collection component is a generic component that allows users to manipulate 
 It can carry out the following tasks:
 - [Assign](#assign)
 - [Append Array](#append-array)
+- [Union](#union)
+- [Intersection](#intersection)
+- [Difference](#difference)
 
 ## Release Stage
 
@@ -56,3 +59,55 @@ Add data to the end of an array.
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Array | `array` | array | A updated array with the specified data appended to the end of it. |
+
+### Union
+
+Find the union of the sets
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_UNION` |
+| Array (required) | `sets` | array | Specify the sets you want to union. |
+
+
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Array | `set` | array | The union set. |
+
+### Intersection
+
+Find the intersection of the sets
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_INTERSECTION` |
+| Array (required) | `sets` | array | Specify the sets you want to intersect. |
+
+
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Array | `set` | array | The intersection set. |
+
+### Difference
+
+Find the difference between the two sets, i.e. `set-a` \ `set-b`, identifying the elements that are in `set-a` but not in `set-b`.
+
+| Input | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Task ID (required) | `task` | string | `TASK_DIFFERENCE` |
+| Array (required) | `set-a` | array | Specify the set-a. |
+| Array (required) | `set-b` | array | Specify the set-b. |
+
+
+
+
+
+| Output | ID | Type | Description |
+| :--- | :--- | :--- | :--- |
+| Array | `set` | array | The difference set. |
