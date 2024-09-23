@@ -1,7 +1,8 @@
+---
 linters:
   enable:
     - stylecheck
 
 linters-settings:
   stylecheck:
-    checks: [ "all" ]
+    checks: [all]
