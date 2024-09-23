@@ -1,5 +1,5 @@
 build-doc:
-	@go install github.com/instill-ai/component/tools/compogen@latest
+	@cd ./tools/compogen && go install .
 
 gen-doc:
 	@rm -f $$(find . -name README.mdx | paste -d ' ' -s -)
