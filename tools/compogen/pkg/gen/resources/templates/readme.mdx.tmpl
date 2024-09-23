@@ -52,12 +52,12 @@ ${connection.<my-connection-id>}`.
 <details>
 <summary>The <code>{{ $key }}</code> Object </summary>
 
-{{ headerWithID $key "setup" }}
+{{ insertHeaderByObjectKey $key "setup" }}
 
 `{{ $key }}` must fulfill one of the following schemas:
 {{- range $idx, $option := $options }}
 
-{{ findConstantValue $option "setup" }}
+{{ insertHeaderByConstValue $option "setup" }}
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -90,7 +90,7 @@ ${connection.<my-connection-id>}`.
 {{ range $idx, $objectSchemaMap := $task.InputObjects }}
 {{- range $key, $schema := $objectSchemaMap }}
 {{- if $schema.Properties }}
-{{ headerWithID $key $task }}
+{{ insertHeaderByObjectKey $key $task }}
 {{ with $schema.Description }}
 {{ . }}
 {{ end }}
@@ -111,12 +111,12 @@ ${connection.<my-connection-id>}`.
 <details>
 <summary>The <code>{{ $key }}</code> Object </summary>
 
-{{ headerWithID $key $task }}
+{{ insertHeaderByObjectKey $key $task }}
 
 `{{ $key }}` must fulfill one of the following schemas:
 {{- range $idx, $option := $options }}
 {{ if $option.Properties }}
-{{ findConstantValue $option $task }}
+{{ insertHeaderByConstValue $option $task }}
 {{ with $option.Description }}
 {{ . }}
 {{ end }}
@@ -146,7 +146,7 @@ ${connection.<my-connection-id>}`.
 {{- range $key, $schema := $objectSchemaMap }}
 {{- if $schema.Properties }}
 
-{{ headerWithID $key $task }}
+{{ insertHeaderByObjectKey $key $task }}
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |

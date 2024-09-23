@@ -161,15 +161,14 @@ func (g *READMEGenerator) Generate() error {
 	}
 
 	readme, err := template.New("readme").Funcs(template.FuncMap{
-		"firstToLower":          firstToLower,
-		"asAnchor":              blackfriday.SanitizedAnchorName,
-		"loadExtraContent":      g.loadExtraContent,
-		"enumValues":            enumValues,
-		"findConstantValue":     findConstantValue,
-		"anchorSetup":           anchorSetup,
-		"anchorTaskObject":      anchorTaskObject,
-		"titleCaseWithArticles": titleCaseWithArticles,
-		"headerWithID":          headerWithID,
+		"firstToLower":             firstToLower,
+		"asAnchor":                 blackfriday.SanitizedAnchorName,
+		"loadExtraContent":         g.loadExtraContent,
+		"enumValues":               enumValues,
+		"anchorSetup":              anchorSetup,
+		"anchorTaskObject":         anchorTaskObject,
+		"insertHeaderByObjectKey":  insertHeaderByObjectKey,
+		"insertHeaderByConstValue": insertHeaderByConstValue,
 		"hosts": func() []host {
 			return []host{
 				{Name: "Instill-Cloud", URL: "https://api.instill.tech"},
@@ -542,26 +541,6 @@ func enumValues(enum []string) string {
 	return result
 }
 
-func findConstantValue(option objectSchema, taskOrString interface{}) string {
-	var prefix string
-	switch v := taskOrString.(type) {
-	case readmeTask:
-		prefix = blackfriday.SanitizedAnchorName(v.Title)
-	case string:
-		prefix = blackfriday.SanitizedAnchorName(v)
-	default:
-		// Handle unexpected types, maybe return an error or use a default value
-		prefix = "unknown"
-	}
-
-	for _, prop := range option.Properties {
-		if prop.Const != "" {
-			return fmt.Sprintf(`<h5 id="%s-%s"><code>%s</code></h5>`, prefix, blackfriday.SanitizedAnchorName(option.Title), option.Title)
-		}
-	}
-	return ""
-}
-
 // List of words to keep in lowercase (articles, conjunctions, prepositions)
 var lowercaseWords = map[string]bool{
 	"a":    true,
@@ -658,7 +637,7 @@ func anchorTaskWithProperty(prop property, taskName string) string {
 	return prop.Title
 }
 
-func headerWithID(key string, taskOrString interface{}) string {
+func insertHeaderByObjectKey(key string, taskOrString interface{}) string {
 	var prefix string
 	switch v := taskOrString.(type) {
 	case readmeTask:
@@ -670,4 +649,24 @@ func headerWithID(key string, taskOrString interface{}) string {
 		prefix = "unknown"
 	}
 	return fmt.Sprintf(`<h4 id="%s-%s">%s</h4>`, prefix, blackfriday.SanitizedAnchorName(key), titleCaseWithArticles(key))
+}
+
+func insertHeaderByConstValue(option objectSchema, taskOrString interface{}) string {
+	var prefix string
+	switch v := taskOrString.(type) {
+	case readmeTask:
+		prefix = blackfriday.SanitizedAnchorName(v.Title)
+	case string:
+		prefix = blackfriday.SanitizedAnchorName(v)
+	default:
+		// Handle unexpected types, maybe return an error or use a default value
+		prefix = "unknown"
+	}
+
+	for _, prop := range option.Properties {
+		if prop.Const != "" {
+			return fmt.Sprintf(`<h5 id="%s-%s"><code>%s</code></h5>`, prefix, blackfriday.SanitizedAnchorName(option.Title), option.Title)
+		}
+	}
+	return ""
 }
