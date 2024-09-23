@@ -53,7 +53,7 @@
       "type": "object"
     }
   },
-  "TASK_APPEND_ARRAY": {
+  "TASK_APPEND": {
     "instillShortDescription": "Add data to the end of an array.",
     "input": {
       "description": "Input",
