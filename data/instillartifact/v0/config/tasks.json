@@ -813,7 +813,7 @@
           "type": "string"
         },
         "create-time": {
-          "description": "TThe creation time of the source file in ISO 8601 format",
+          "description": "The creation time of the source file in ISO 8601 format",
           "instillFormat": "string",
           "instillUIOrder": 2,
           "title": "Create Time",
