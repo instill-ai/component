@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.28.0-beta](https://github.com/instill-ai/component/compare/v0.27.5-beta...v0.28.0-beta) (2024-09-24)
+
+
+### Features
+
+* **ai:** build standardised ai component ([#344](https://github.com/instill-ai/component/issues/344)) ([e46d228](https://github.com/instill-ai/component/commit/e46d2285a96364a99b8a388382c5a94569632b05))
+* **collection:** introduce `collection` component ([#353](https://github.com/instill-ai/component/issues/353)) ([dac1850](https://github.com/instill-ai/component/commit/dac18504643603d1fc25997f80d744ee71470cb0))
+* **collection:** introduce TASK_UNION, TASK_INTERSECTION and TASK_DIFFERENCE ([#357](https://github.com/instill-ai/component/issues/357)) ([1b68dad](https://github.com/instill-ai/component/commit/1b68dadfca3af1f51c3c87c379a42c1577c844ba))
+* **document:** support xls and csv ([#337](https://github.com/instill-ai/component/issues/337)) ([892c51f](https://github.com/instill-ai/component/commit/892c51f5d1e5db7b46100ae43bf9f6fa6cc7d6ca))
+* **instillapp:** implement read and write chat message task ([#348](https://github.com/instill-ai/component/issues/348)) ([2c8a6a0](https://github.com/instill-ai/component/commit/2c8a6a066b584f1de8668b03a7814c271908e6b0))
+* **integration:** support OAuth connection in Slack and GitHub components ([#349](https://github.com/instill-ai/component/issues/349)) ([2527767](https://github.com/instill-ai/component/commit/25277673765b9072247ac5e11bb7462ff8e563b6))
+
+
+### Bug Fixes
+
+* **compogen:** fix wrong anchors and missing object descriptions ([#356](https://github.com/instill-ai/component/issues/356)) ([315ef6c](https://github.com/instill-ai/component/commit/315ef6c78c24753d6f1a53d38e9d8aaba34dadba))
+* **instillartifact:** fix bugs ([#352](https://github.com/instill-ai/component/issues/352)) ([d916f3b](https://github.com/instill-ai/component/commit/d916f3b42d59dc4931ad86533ed728b9ec410380))
+* patch asana component bugs when calling real api ([#328](https://github.com/instill-ai/component/issues/328)) ([a821f47](https://github.com/instill-ai/component/commit/a821f47c514447911056c0b0717c42feaa8edb3a))
+* **web:** fix bugs related to web operator ([#351](https://github.com/instill-ai/component/issues/351)) ([c390a6f](https://github.com/instill-ai/component/commit/c390a6fc4ae2fed4ae602af6d9fd99e730cab42f))
+
 ## [0.27.5-beta](https://github.com/instill-ai/component/compare/v0.27.4-beta...v0.27.5-beta) (2024-09-18)
 
 
