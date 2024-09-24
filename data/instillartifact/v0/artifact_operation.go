@@ -7,11 +7,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/component/internal/util"
-	artifactPB "github.com/instill-ai/protogen-go/artifact/artifact/v1alpha"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/util"
+
+	artifactPB "github.com/instill-ai/protogen-go/artifact/artifact/v1alpha"
 )
 
 type UploadFileInput struct {

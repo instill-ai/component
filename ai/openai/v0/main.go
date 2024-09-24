@@ -4,7 +4,6 @@ package openai
 import (
 	"bufio"
 	"context"
-	_ "embed"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -12,6 +11,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	_ "embed"
 
 	"github.com/gabriel-vasile/mimetype"
 	"google.golang.org/protobuf/encoding/protojson"

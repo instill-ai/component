@@ -3,14 +3,16 @@ package weaviate
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"sync"
 
-	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/x/errmsg"
+	_ "embed"
+
 	"github.com/weaviate/weaviate-go-client/v4/weaviate"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/x/errmsg"
 )
 
 const (

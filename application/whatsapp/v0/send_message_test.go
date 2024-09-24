@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/base"
 )
 
 type MockWhatsAppClientSendMessage struct{}

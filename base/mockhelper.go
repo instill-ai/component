@@ -2,6 +2,7 @@ package base
 
 import (
 	"github.com/gojuno/minimock/v3"
+
 	"github.com/instill-ai/component/internal/mock"
 )
 

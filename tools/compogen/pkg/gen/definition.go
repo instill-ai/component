@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"strings"
 
-	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+
+	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 type releaseStage pb.ComponentDefinition_ReleaseStage

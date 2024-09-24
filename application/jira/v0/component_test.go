@@ -9,10 +9,12 @@ import (
 	"strings"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
-	"github.com/instill-ai/component/base"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/base"
 )
 
 const (

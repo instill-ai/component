@@ -6,10 +6,11 @@ package ai
 import (
 	"testing"
 
-	qt "github.com/frankban/quicktest"
 	"github.com/gofrs/uuid"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
 
 	"github.com/instill-ai/component/ai/openai/v0"
 	"github.com/instill-ai/component/base"

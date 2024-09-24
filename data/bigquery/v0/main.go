@@ -3,19 +3,21 @@ package bigquery
 
 import (
 	"context"
-	_ "embed"
 	"errors"
 	"fmt"
 	"sync"
 
+	_ "embed"
+
 	"cloud.google.com/go/bigquery"
-	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
+
+	pb "github.com/instill-ai/protogen-go/vdp/pipeline/v1beta"
 )
 
 const (

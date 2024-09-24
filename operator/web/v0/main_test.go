@@ -7,6 +7,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/frankban/quicktest"
+
 	"github.com/instill-ai/component/base"
 )
 

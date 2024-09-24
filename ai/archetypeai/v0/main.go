@@ -4,14 +4,15 @@ package archetypeai
 import (
 	"bytes"
 	"context"
-	_ "embed"
 	"fmt"
 	"strings"
 	"sync"
 
-	"google.golang.org/protobuf/types/known/structpb"
+	_ "embed"
 
 	"github.com/gofrs/uuid"
+	"google.golang.org/protobuf/types/known/structpb"
+
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
 	"github.com/instill-ai/component/internal/util/httpclient"

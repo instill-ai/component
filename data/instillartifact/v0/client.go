@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/instill-ai/component/internal/util"
-	artifactPB "github.com/instill-ai/protogen-go/artifact/artifact/v1alpha"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
+
+	"github.com/instill-ai/component/internal/util"
+
+	artifactPB "github.com/instill-ai/protogen-go/artifact/artifact/v1alpha"
 )
 
 const maxPayloadSize int = 1024 * 1024 * 32

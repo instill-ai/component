@@ -1,9 +1,8 @@
 package redis
 
 import (
-	"fmt"
-
 	"crypto/tls"
+	"fmt"
 
 	"google.golang.org/protobuf/types/known/structpb"
 

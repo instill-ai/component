@@ -3,10 +3,11 @@ package googlesearch
 
 import (
 	"context"
-	_ "embed"
 	"encoding/json"
 	"fmt"
 	"sync"
+
+	_ "embed"
 
 	"google.golang.org/api/customsearch/v1"
 	"google.golang.org/api/option"

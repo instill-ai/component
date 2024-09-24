@@ -1,9 +1,10 @@
 package mistralai
 
 import (
-	mistralSDK "github.com/gage-technologies/mistral-go"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	mistralSDK "github.com/gage-technologies/mistral-go"
 )
 
 type MistralClient struct {

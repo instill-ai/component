@@ -8,12 +8,13 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	qt "github.com/frankban/quicktest"
-	"github.com/instill-ai/component/base"
 	"github.com/jmoiron/sqlx"
-
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/base"
 )
 
 type MockSQLClient struct{}

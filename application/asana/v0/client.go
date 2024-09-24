@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"strings"
 
+	"go.uber.org/zap"
+	"google.golang.org/protobuf/types/known/structpb"
+
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
-	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type Client struct {

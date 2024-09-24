@@ -9,8 +9,10 @@ import (
 	"code.sajari.com/docconv"
 	"github.com/frankban/quicktest"
 	"github.com/gojuno/minimock/v3"
+
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/mock"
+
 	artifactPB "github.com/instill-ai/protogen-go/artifact/artifact/v1alpha"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )

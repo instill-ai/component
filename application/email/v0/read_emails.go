@@ -10,8 +10,9 @@ import (
 	"github.com/emersion/go-imap/v2"
 	"github.com/emersion/go-imap/v2/imapclient"
 	"github.com/emersion/go-message/mail"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 // Decide it temporarily

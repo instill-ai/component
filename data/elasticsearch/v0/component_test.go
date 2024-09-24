@@ -8,10 +8,12 @@ import (
 	"testing"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
-	qt "github.com/frankban/quicktest"
-	"github.com/instill-ai/component/base"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/base"
 )
 
 func MockESSearch(wantResp SearchOutput) *esapi.Response {

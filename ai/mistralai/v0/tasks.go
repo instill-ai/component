@@ -3,9 +3,11 @@ package mistralai
 import (
 	"fmt"
 
-	mistralSDK "github.com/gage-technologies/mistral-go"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	mistralSDK "github.com/gage-technologies/mistral-go"
+
+	"github.com/instill-ai/component/base"
 )
 
 type ChatMessage struct {

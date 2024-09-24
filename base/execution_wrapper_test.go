@@ -7,10 +7,11 @@ import (
 
 	_ "embed"
 
-	qt "github.com/frankban/quicktest"
-	"github.com/instill-ai/component/internal/mock"
-
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/internal/mock"
 )
 
 func TestExecutionWrapper_GetComponent(t *testing.T) {

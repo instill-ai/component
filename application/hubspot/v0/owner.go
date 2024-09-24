@@ -1,13 +1,16 @@
 package hubspot
 
 import (
-	_ "embed"
 	"fmt"
 	"strings"
 
-	hubspot "github.com/belong-inc/go-hubspot"
-	"github.com/instill-ai/component/base"
+	_ "embed"
+
 	"google.golang.org/protobuf/types/known/structpb"
+
+	hubspot "github.com/belong-inc/go-hubspot"
+
+	"github.com/instill-ai/component/base"
 )
 
 // following go-hubspot sdk format

@@ -9,12 +9,13 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"google.golang.org/protobuf/types/known/structpb"
+
 	qt "github.com/frankban/quicktest"
+
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util/httpclient"
 	"github.com/instill-ai/x/errmsg"
-
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 const (

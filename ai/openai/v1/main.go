@@ -2,9 +2,10 @@ package openaiv1
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"sync"
+
+	_ "embed"
 
 	"google.golang.org/protobuf/types/known/structpb"
 

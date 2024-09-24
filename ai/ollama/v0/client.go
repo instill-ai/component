@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/instill-ai/component/internal/util/httpclient"
 	"go.uber.org/zap"
+
+	"github.com/instill-ai/component/internal/util/httpclient"
 )
 
 // reference: https://github.com/ollama/ollama/blob/main/docs/api.md

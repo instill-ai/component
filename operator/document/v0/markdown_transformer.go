@@ -10,11 +10,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/extrame/xls"
+	"github.com/xuri/excelize/v2"
+
+	md "github.com/JohannesKaufmann/html-to-markdown"
+
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
-	"github.com/xuri/excelize/v2"
 )
 
 type MarkdownTransformer interface {

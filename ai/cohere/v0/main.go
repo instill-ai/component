@@ -3,13 +3,16 @@ package cohere
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"sync"
 
-	cohereSDK "github.com/cohere-ai/cohere-go/v2"
-	"github.com/instill-ai/component/base"
+	_ "embed"
+
 	"google.golang.org/protobuf/types/known/structpb"
+
+	cohereSDK "github.com/cohere-ai/cohere-go/v2"
+
+	"github.com/instill-ai/component/base"
 )
 
 const (

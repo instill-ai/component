@@ -7,11 +7,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/instill-ai/x/errmsg"
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/x/errmsg"
 )
 
 // IExecution allows components to be executed.

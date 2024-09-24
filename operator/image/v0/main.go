@@ -9,7 +9,7 @@ import (
 	"image"
 	"sync"
 
-	_ "embed" // embed
+	_ "embed"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"

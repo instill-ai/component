@@ -3,9 +3,10 @@ package universalai
 import (
 	"fmt"
 
-	openaiv1 "github.com/instill-ai/component/ai/openai/v1"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	openaiv1 "github.com/instill-ai/component/ai/openai/v1"
 )
 
 func newClient(setup *structpb.Struct, logger *zap.Logger, vendor string) (interface{}, error) {

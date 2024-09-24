@@ -3,10 +3,11 @@ package anthropic
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"slices"
 	"sync"
+
+	_ "embed"
 
 	"google.golang.org/protobuf/types/known/structpb"
 

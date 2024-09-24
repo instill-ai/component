@@ -3,15 +3,17 @@ package mongodb
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"sync"
 
-	"github.com/instill-ai/component/base"
-	"github.com/instill-ai/x/errmsg"
+	_ "embed"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/x/errmsg"
 )
 
 const (

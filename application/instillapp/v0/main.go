@@ -8,9 +8,11 @@ import (
 
 	_ "embed"
 
-	"github.com/instill-ai/component/base"
-	appPB "github.com/instill-ai/protogen-go/app/app/v1alpha"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
+
+	appPB "github.com/instill-ai/protogen-go/app/app/v1alpha"
 )
 
 const (

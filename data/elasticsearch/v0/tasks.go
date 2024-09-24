@@ -8,8 +8,9 @@ import (
 	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 type IndexInput struct {

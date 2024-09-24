@@ -3,8 +3,9 @@ package pinecone
 
 import (
 	"context"
-	_ "embed"
 	"sync"
+
+	_ "embed"
 
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"

@@ -4,8 +4,9 @@ import (
 	"context"
 
 	"github.com/google/go-github/v62/github"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 type RepositoriesService interface {

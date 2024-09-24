@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"testing"
 
-	cohereSDK "github.com/cohere-ai/cohere-go/v2"
-	qt "github.com/frankban/quicktest"
-	"github.com/instill-ai/component/base"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	cohereSDK "github.com/cohere-ai/cohere-go/v2"
+	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/base"
 )
 
 const (

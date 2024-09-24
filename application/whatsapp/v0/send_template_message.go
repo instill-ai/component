@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	"github.com/instill-ai/component/base"
 )
 
 // this file is used to handle send template message. Send template message will be divided into 4 tasks:

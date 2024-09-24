@@ -6,10 +6,12 @@ import (
 	"testing"
 	"time"
 
-	qt "github.com/frankban/quicktest"
-	"github.com/instill-ai/component/base"
 	"github.com/slack-go/slack"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/base"
 )
 
 type MockSlackClient struct{}

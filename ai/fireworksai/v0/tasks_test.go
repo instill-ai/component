@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"testing"
 
-	qt "github.com/frankban/quicktest"
 	"github.com/gojuno/minimock/v3"
-	"github.com/instill-ai/component/base"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	qt "github.com/frankban/quicktest"
+
+	"github.com/instill-ai/component/base"
 )
 
 func TestComponent_Tasks(t *testing.T) {

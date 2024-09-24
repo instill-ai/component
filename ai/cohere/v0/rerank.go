@@ -3,9 +3,11 @@ package cohere
 import (
 	"fmt"
 
-	cohereSDK "github.com/cohere-ai/cohere-go/v2"
-	"github.com/instill-ai/component/base"
 	"google.golang.org/protobuf/types/known/structpb"
+
+	cohereSDK "github.com/cohere-ai/cohere-go/v2"
+
+	"github.com/instill-ai/component/base"
 )
 
 type RerankInput struct {

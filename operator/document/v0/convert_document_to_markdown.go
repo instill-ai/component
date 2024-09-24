@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"google.golang.org/protobuf/types/known/structpb"
+
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type ConvertDocumentToMarkdownInput struct {

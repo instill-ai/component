@@ -3,15 +3,16 @@ package slack
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"sync"
 
+	_ "embed"
+
+	"github.com/slack-go/slack"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/x/errmsg"
-	"github.com/slack-go/slack"
 )
 
 const (
