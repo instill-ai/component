@@ -387,6 +387,10 @@ func (rt *readmeTask) parseObjectProperties(properties map[string]property, isIn
 			continue
 		}
 
+		if arrayToBeSkipped(op) {
+			continue
+		}
+
 		op.replaceDescription()
 
 		if op.Type == "object" {
@@ -620,6 +624,10 @@ func anchorSetupFromProperty(prop property) string {
 
 func isSemiStructuredObject(p property) bool {
 	return p.Type == "object" && p.Properties == nil && p.OneOf == nil
+}
+
+func arrayToBeSkipped(op property) bool {
+	return op.Type == "array" && op.Items.Type == "object" && op.Items.Properties == nil
 }
 
 func anchorTaskObject(p interface{}, task readmeTask) string {
