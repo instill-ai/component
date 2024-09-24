@@ -75,7 +75,7 @@
           }
         },
         "filter": {
-          "description": "The properties filter to be applied to the data with Qdrant filter, please refer to https://api.qdrant.tech/api-reference/search/points filter section",
+          "description": "The properties filter to be applied to the data with Qdrant filter, please refer to [filter section](https://api.qdrant.tech/api-reference/search/points).",
           "instillAcceptFormats": [
             "semi-structured/*",
             "object"
@@ -91,7 +91,7 @@
           "required": []
         },
         "params": {
-          "description": "The additional parameters to be passed to the search, please refer to https://api.qdrant.tech/api-reference/search/points params section",
+          "description": "The additional parameters to be passed to the search, please refer to [params section](https://api.qdrant.tech/api-reference/search/points).",
           "instillAcceptFormats": [
             "semi-structured/*",
             "object"
@@ -506,7 +506,7 @@
           "type": "string"
         },
         "filter": {
-          "description": "The properties filter to be applied to the data with Qdrant filter, please refer to https://api.qdrant.tech/api-reference/points/delete-points filter section",
+          "description": "The properties filter to be applied to the data with Qdrant filter, please refer to [filter section](https://api.qdrant.tech/api-reference/points/delete-points).",
           "instillAcceptFormats": [
             "semi-structured/*",
             "object"
@@ -590,7 +590,7 @@
           "type": "string"
         },
         "config": {
-          "description": "The configuration of the collection. Please refer to https://api.qdrant.tech/api-reference/collections/create-collection",
+          "description": "The configuration of the collection. Please refer to [here](https://api.qdrant.tech/api-reference/collections/create-collection).",
           "instillAcceptFormats": [
             "semi-structured/*",
             "object"
