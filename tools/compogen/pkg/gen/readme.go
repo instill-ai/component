@@ -329,9 +329,7 @@ func parseResourceProperties(o *objectSchema) []resourceProperty {
 		case "":
 			prop.Type = "any"
 		}
-		prop.Description = strings.ReplaceAll(prop.Description, "\n", " ")
-		prop.Description = strings.ReplaceAll(prop.Description, "{", "\\{")
-		prop.Description = strings.ReplaceAll(prop.Description, "}", "\\}")
+		prop.replaceDescription()
 
 		propMap[k] = prop
 	}
@@ -388,6 +386,8 @@ func (rt *readmeTask) parseObjectProperties(properties map[string]property, isIn
 		if isSemiStructuredObject(op) {
 			continue
 		}
+
+		op.replaceDescription()
 
 		if op.Type == "object" {
 
@@ -669,4 +669,10 @@ func insertHeaderByConstValue(option objectSchema, taskOrString interface{}) str
 		}
 	}
 	return ""
+}
+
+func (prop *property) replaceDescription() {
+	prop.Description = strings.ReplaceAll(prop.Description, "\n", " ")
+	prop.Description = strings.ReplaceAll(prop.Description, "{", "\\{")
+	prop.Description = strings.ReplaceAll(prop.Description, "}", "\\}")
 }
