@@ -108,6 +108,14 @@ func (e *ExecutionWrapper) Execute(ctx context.Context, jobs []*Job) (err error)
 	for batchIdx, job := range wrappedJobs {
 		outputs[batchIdx] = job.Output.(*outputWriter).GetOutput()
 	}
+
+	// Universal AI component set usesInstillCredentials when it executes, which is different from other AI components.
+	h, err = newUH(e)
+
+	if err != nil {
+		return err
+	}
+
 	if err := h.Collect(ctx, inputs, outputs); err != nil {
 		return err
 	}

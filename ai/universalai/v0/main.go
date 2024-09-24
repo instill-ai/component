@@ -62,6 +62,7 @@ func Init(bc base.Component) *component {
 func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution, error) {
 	e := &execution{
 		ComponentExecution: x,
+		component:          c,
 	}
 
 	switch x.Task {

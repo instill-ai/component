@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"google.golang.org/protobuf/types/known/structpb"
+
 	"github.com/instill-ai/component/ai"
-	openaiv1 "github.com/instill-ai/component/ai/openai/v1"
 	"github.com/instill-ai/component/base"
 	"github.com/instill-ai/component/internal/util/httpclient"
-	"google.golang.org/protobuf/types/known/structpb"
+
+	openaiv1 "github.com/instill-ai/component/ai/openai/v1"
 )
 
 func (e *execution) ExecuteTextChat(input *structpb.Struct, job *base.Job, ctx context.Context) (*structpb.Struct, error) {
@@ -21,8 +23,7 @@ func (e *execution) ExecuteTextChat(input *structpb.Struct, job *base.Job, ctx c
 	x := e.ComponentExecution
 	vendor := ModelVendorMap[inputStruct.Data.Model]
 
-	c := e.component
-	resolvedSetup, resolved, err := c.resolveSetup(vendor, x.Setup)
+	resolvedSetup, resolved, err := e.component.resolveSetup(vendor, x.Setup)
 
 	if err != nil {
 		return nil, err
