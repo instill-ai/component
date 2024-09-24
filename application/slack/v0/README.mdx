@@ -28,9 +28,13 @@ the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Token (required) | `token` | string | Fill in your Slack app access token. For more information about how to access to create app tokens, please refer to the Slack API documentation.  |
+
+</div>
 
 
 
@@ -41,24 +45,33 @@ ${connection.<my-connection-id>}`.
 
 Get the latest message since specific date
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_READ_MESSAGE` |
 | Channel Name (required) | `channel-name` | string | A channel name display in Slack |
 | Start to read date | `start-to-read-date` | string | earliest date in all read messages |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Conversations](#read-message-conversations) | `conversations` | array[object] | An array of conversations with thread messages |
+</div>
 
 <details>
 <summary> Output Objects in Read Message</summary>
 
 <h4 id="read-message-conversations">Conversations</h4>
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -68,8 +81,11 @@ Get the latest message since specific date
 | [Replied messages](#read-message-replied-messages) | `thread-reply-messages` | array | replies in a conversation |
 | User UID | `user-id` | string | unique id from Slack |
 | User Name | `user-name` | string | user name in Slack |
+</div>
 
 <h4 id="read-message-replied-messages">Replied Messages</h4>
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -77,22 +93,30 @@ Get the latest message since specific date
 | Replied Message | `message` | string | message to reply a conversation |
 | User UID | `user-id` | string | unique id from Slack |
 | User Name | `user-name` | string | user name in Slack |
+</div>
 </details>
 
 ### Send Message
 
 send message to a specific channel
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_WRITE_MESSAGE` |
 | Channel Name (required) | `channel-name` | string | A channel name display in Slack |
 | Message (required) | `message` | string | message to be sent to the target channel |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Result | `result` | string | result for sending message |
+</div>

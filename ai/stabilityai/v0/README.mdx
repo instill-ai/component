@@ -28,9 +28,13 @@ the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | API Key | `api-key` | string | Fill in your Stability AI API key. To find your keys, visit <a href="https://platform.stability.ai/account/keys">here</a>  |
+
+</div>
 
 
 
@@ -40,6 +44,8 @@ ${connection.<my-connection-id>}`.
 ### Text to Image
 
 Generate a new image from a text prompt.
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -56,19 +62,26 @@ Generate a new image from a text prompt.
 | Seed | `seed` | integer | Random noise seed (omit this option or use `0` for a random seed) |
 | Steps | `steps` | integer | Number of diffusion steps to run. |
 | Style Preset | `style-preset` | string | Pass in a style preset to guide the image model towards a particular style. This list of style presets is subject to change. |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Images | `images` | array[string] | Generated images |
 | Seeds | `seeds` | array[number] | Seeds of generated images |
+</div>
 
 ### Image to Image
 
 Modify an image based on a text prompt.
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -88,12 +101,17 @@ Modify an image based on a text prompt.
 | Step Schedule End | `step-schedule-end` | number | Skips a proportion of the end of the diffusion steps, allowing the init_image to influence the final generated image.  Lower values will result in more influence from the init_image, while higher values will result in more influence from the diffusion steps. |
 | Steps | `steps` | integer | Number of diffusion steps to run. |
 | Style Preset | `style-preset` | string | Pass in a style preset to guide the image model towards a particular style. This list of style presets is subject to change. |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Images | `images` | array[string] | Generated images |
 | Seeds | `seeds` | array[number] | Seeds of generated images |
+</div>

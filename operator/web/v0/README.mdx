@@ -27,6 +27,8 @@ The component definition and tasks are defined in the [definition.json](https://
 
 Crawl the website contents and manipulate html with jquery command. The sequence of jquery commands will be executed in the order of only-main-content, remove-tags, and only-include-tags.
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CRAWL_WEBSITE` |
@@ -39,19 +41,26 @@ Crawl the website contents and manipulate html with jquery command. The sequence
 | Remove Tags | `remove-tags` | array[string] | A list of tags, classes, and ids to remove from the output. If empty, no tags will be removed. Example: 'script, .ad, #footer' |
 | Only Include Tags | `only-include-tags` | array[string] | A list of tags, classes, and ids to include in the output. If empty, all tags will be included. Example: 'script, .ad, #footer' |
 | Timeout | `timeout` | integer | The time to wait for the page to load in milliseconds. Min 0, Max 60000. |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Pages](#crawl-website-pages) | `pages` | array[object] | The scraped webpages |
+</div>
 
 <details>
 <summary> Output Objects in Crawl Website</summary>
 
 <h4 id="crawl-website-pages">Pages</h4>
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -59,28 +68,38 @@ Crawl the website contents and manipulate html with jquery command. The sequence
 | Link HTML | `link-html` | string | The scraped raw html of the link associated with this webpage link |
 | Link Text | `link-text` | string | The scraped text of the link associated with this webpage link, in plain text |
 | Title | `title` | string | The title of a webpage link, in plain text |
+</div>
 </details>
 
 ### Scrape Sitemap
 
 Scrape the sitemap information
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SCRAPE_SITEMAP` |
 | Sitemap URL (required) | `url` | string | The URL of the sitemap to scrape |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | List | `list` | array | The list of information in a sitemap |
+</div>
 
 ### Scrape Webpage
 
 Scrape the webpage contents and manipulate html with jquery command. The sequence of jquery commands will be executed in the order of only-main-content, remove-tags, and only-include-tags.
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -91,10 +110,14 @@ Scrape the webpage contents and manipulate html with jquery command. The sequenc
 | Remove Tags | `remove-tags` | array[string] | A list of tags, classes, and ids to remove from the output. If empty, no tags will be removed. Example: 'script, .ad, #footer' |
 | Only Include Tags | `only-include-tags` | array[string] | A list of tags, classes, and ids to include in the output. If empty, all tags will be included. Example: 'script, .ad, #footer' |
 | Timeout | `timeout` | integer | The time to wait for the page to load in milliseconds. Min 0, Max 60000. Please set it as 0 if you only want to collect static content. |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -103,17 +126,21 @@ Scrape the webpage contents and manipulate html with jquery command. The sequenc
 | HTML (optional) | `html` | string | The scraped html of the webpage |
 | [Metadata](#scrape-webpage-metadata) (optional) | `metadata` | object | The metadata of the webpage |
 | Links on Page (optional) | `links-on-page` | array[string] | The list of links on the webpage |
+</div>
 
 <details>
 <summary> Output Objects in Scrape Webpage</summary>
 
 <h4 id="scrape-webpage-metadata">Metadata</h4>
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Description | `description` | string | The description of the webpage |
 | Source URL | `source-url` | string | The source URL of the webpage |
 | Title | `title` | string | The title of the webpage |
+</div>
 </details>
 ## Example Recipes
 

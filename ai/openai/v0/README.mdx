@@ -31,10 +31,14 @@ the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | API Key | `api-key` | string | Fill in your OpenAI API key. To find your keys, visit your OpenAI's API Keys page.  |
 | Organization ID | `organization` | string | Specify which organization is used for the requests. Usage will count against the specified organization's subscription quota.  |
+
+</div>
 
 
 
@@ -44,6 +48,8 @@ ${connection.<my-connection-id>}`.
 ### Text Generation
 
 OpenAI's text generation models (often called generative pre-trained transformers or large language models) have been trained to understand natural language, code, and images. The models provide text outputs in response to their inputs. The inputs to these models are also referred to as "prompts". Designing a prompt is essentially how you “program” a large language model model, usually by providing instructions or some examples of how to successfully complete a task.
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -60,6 +66,8 @@ OpenAI's text generation models (often called generative pre-trained transformer
 | Top P | `top-p` | number | An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.  We generally recommend altering this or `temperature` but not both.  |
 | Presence Penalty | `presence-penalty` | number | Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics. |
 | Frequency Penalty | `frequency-penalty` | number | Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim. |
+</div>
+
 
 <details>
 <summary> Input Objects in Text Generation</summary>
@@ -68,26 +76,35 @@ OpenAI's text generation models (often called generative pre-trained transformer
 
 Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}.
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | [Content](#text-generation-content) | `content` | array | The message content  |
 | Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+</div>
 <h4 id="text-generation-content">Content</h4>
 
 The message content
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | [Image URL](#text-generation-image-url) | `image-url` | object | The image URL  |
 | Text | `text` | string | The text content.  |
 | Type | `type` | string | The type of the content part.  <br/><details><summary><strong>Enum values</strong></summary><ul><li>`text`</li><li>`image-url`</li></ul></details>  |
+</div>
 <h4 id="text-generation-image-url">Image URL</h4>
 
 The image URL
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | URL | `url` | string | Either a URL of the image or the base64 encoded image data.  |
+</div>
 </details>
 
 <details>
@@ -99,44 +116,61 @@ The image URL
 
 <h5 id="text-generation-text"><code>Text</code></h5>
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Type | `type` | string |  Must be `"text"`   |
+</div>
 
 <h5 id="text-generation-json-object"><code>JSON Object</code></h5>
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Type | `type` | string |  Must be `"json_object"`   |
+</div>
 
 <h5 id="text-generation-json-schema"><code>JSON Schema</code></h5>
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | JSON Schema | `json-schema` | string |  Set up the schema of the structured output.  |
 | Type | `type` | string |  Must be `"json_schema"`   |
+</div>
 </details>
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Texts | `texts` | array[string] | Texts |
 | [Usage](#text-generation-usage) (optional) | `usage` | object | Usage statistics related to the query |
+</div>
 
 <details>
 <summary> Output Objects in Text Generation</summary>
 
 <h4 id="text-generation-usage">Usage</h4>
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Completion tokens | `completion-tokens` | integer | Total number of tokens used (completion) |
 | Prompt tokens | `prompt-tokens` | integer | Total number of tokens used (prompt) |
 | Total tokens | `total-tokens` | integer | Total number of tokens used (prompt + completion) |
+</div>
 </details>
 
 ### Text Embeddings
 
 Turn text into numbers, unlocking use cases like search.
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -144,18 +178,25 @@ Turn text into numbers, unlocking use cases like search.
 | Model (required) | `model` | string | ID of the model to use. |
 | Text (required) | `text` | string | The text |
 | Dimensions | `dimensions` | integer | The number of dimensions the resulting output embeddings should have. Only supported in text-embedding-3 and later models. |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Embedding | `embedding` | array[number] | Embedding of the input text |
+</div>
 
 ### Speech Recognition
 
 Turn audio into text.
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -165,18 +206,25 @@ Turn audio into text.
 | Prompt | `prompt` | string | An optional text to guide the model's style or continue a previous audio segment. The prompt should match the audio language.  |
 | Language | `language` | string | The language of the input audio. Supplying the input language in <a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">ISO-639-1</a> format will improve accuracy and latency.  |
 | Temperature | `temperature` | number | The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use <a href="https://en.wikipedia.org/wiki/Log_probability">log probability</a> to automatically increase the temperature until certain thresholds are hit.  |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Generated text |
+</div>
 
 ### Text to Speech
 
 Turn text into lifelike spoken audio
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -186,18 +234,25 @@ Turn text into lifelike spoken audio
 | Voice (required) | `voice` | string | The voice to use when generating the audio. Supported voices are `alloy`, `echo`, `fable`, `onyx`, `nova`, and `shimmer`. |
 | Response Format | `response-format` | string | The format to audio in. Supported formats are `mp3`, `opus`, `aac`, and `flac`. |
 | Speed | `speed` | number | The speed of the generated audio. Select a value from `0.25` to `4.0`. `1.0` is the default. |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Audio (optional) | `audio` | string | AI generated audio |
+</div>
 
 ### Text to Image
 
 Generate or manipulate images with DALL·E.
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -208,24 +263,32 @@ Generate or manipulate images with DALL·E.
 | Quality | `quality` | string | The quality of the image that will be generated. `hd` creates images with finer details and greater consistency across the image. This param is only supported for `dall-e-3`. |
 | Size | `size` | string | The size of the generated images. Must be one of `256x256`, `512x512`, or `1024x1024` for `dall-e-2`. Must be one of `1024x1024`, `1792x1024`, or `1024x1792` for `dall-e-3` models. |
 | N | `style` | string | The style of the generated images. Must be one of `vivid` or `natural`. Vivid causes the model to lean towards generating hyper-real and dramatic images. Natural causes the model to produce more natural, less hyper-real looking images. This param is only supported for `dall-e-3`. |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Images](#text-to-image-images) | `results` | array[object] | Generated results |
+</div>
 
 <details>
 <summary> Output Objects in Text to Image</summary>
 
 <h4 id="text-to-image-images">Images</h4>
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Generated Image | `image` | string | Generated image |
 | Revised Prompt | `revised-prompt` | string | Revised prompt |
+</div>
 </details>
 ## Example Recipes
 

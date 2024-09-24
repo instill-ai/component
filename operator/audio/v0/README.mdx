@@ -26,23 +26,32 @@ The component definition and tasks are defined in the [definition.json](https://
 
 Split audio file into chunks
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CHUNK_AUDIOS` |
 | Audio (required) | `audio` | string | Base64 encoded audio file to be split |
 | Chunk count (required) | `chunk-count` | integer | Number of chunks to equally split the audio into |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Audios | `audios` | array[string] | A list of base64 encoded audios |
+</div>
 
 ### Slice Audio
 
 Specify a time range to slice an audio file
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -50,14 +59,19 @@ Specify a time range to slice an audio file
 | Audio (required) | `audio` | string | Base64 encoded audio file to be sliced |
 | Start time (required) | `start-time` | integer | Start time of the slice in seconds |
 | End time (required) | `end-time` | integer | End time of the slice in seconds |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Audio | `audio` | string | Base64 encoded audio slice |
+</div>
 ## Example Recipes
 
 Recipe for the [Audio Transcription Generator](https://instill.tech/instill-ai/pipelines/audio-transcription/playground) pipeline.
