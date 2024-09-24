@@ -1,8 +1,6 @@
-build-doc:
-	@cd ./tools/compogen && go install .
-
 gen-doc:
 	@rm -f $$(find . -name README.mdx | paste -d ' ' -s -)
+	@cd ./tools/compogen && go install .
 	@go generate -run compogen ./...
 
 gen-mock:

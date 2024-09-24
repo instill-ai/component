@@ -294,7 +294,7 @@ func parseREADMETasks(availableTasks []string, tasks map[string]task) ([]readmeT
 		rt.parseOneOfsProperties(t.Input.Properties)
 
 		if rt.Title = t.Title; rt.Title == "" {
-			rt.Title = componentbase.TaskIDToTitle(at)
+			rt.Title = titleCaseWithArticles(componentbase.TaskIDToTitle(at))
 		}
 
 		readmeTasks[i] = rt
@@ -541,6 +541,12 @@ func enumValues(enum []string) string {
 	return result
 }
 
+// List of words to keep in uppercase
+var uppercaseWords = map[string]bool{
+	"ocr": true,
+	"url": true,
+}
+
 // List of words to keep in lowercase (articles, conjunctions, prepositions)
 var lowercaseWords = map[string]bool{
 	"a":    true,
@@ -573,7 +579,10 @@ func titleCaseWithArticles(s string) string {
 	// Apply title case to each word
 	for i, word := range words {
 		lowerWord := strings.ToLower(word)
-		if i != 0 && lowercaseWords[lowerWord] {
+		if uppercaseWords[lowerWord] {
+			// Keep the word uppercase if it's in the uppercaseWords list
+			words[i] = strings.ToUpper(word)
+		} else if i != 0 && lowercaseWords[lowerWord] {
 			// Keep the word lowercase if it's not the first word and is in the lowercaseWords list
 			words[i] = lowerWord
 		} else {
