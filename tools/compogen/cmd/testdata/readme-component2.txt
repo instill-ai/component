@@ -204,18 +204,25 @@ The component definition and tasks are defined in the [definition.json](https://
 
 Perform a dummy task.
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DUMMY` |
 | Durna (required) | `durna` | string | Lorem ipsum dolor sit amet, consectetur adipiscing elit |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Orci (optional) | `orci` | string | Orci sagittis eu volutpat odio facilisis mauris sit |
+</div>
 #### How to use the dummy task
 
 You might be tempted to think than dummier is better than dummy. However,
@@ -225,14 +232,20 @@ one might be wise when choosing between them.
 
 This task is dummier than `TASK_DUMMY`.
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DUMMIER_THAN_DUMMY` |
 | Cursus (required) | `cursus` | string | Cursus mattis molestie a iaculis at erat pellentesque adipiscing commodo |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -241,16 +254,20 @@ This task is dummier than `TASK_DUMMY`.
 | Nullam non | `nullam_non` | number | Id faucibus nisl tincidunt eget nullam non |
 | Errors (optional) | `errors` | array[string] | Error messages, if any, during the dummy process |
 | Meta (optional) | `context` | any | Free-form metadata |
+</div>
 
 <details>
 <summary> Output Objects in Dummier</summary>
 
 <h4 id="dummier-atem">Atem</h4>
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Arcu | `arcu` | string | Bibendum arcu vitae elementum curabitur vitae nunc sed velit |
 | Tincidunt tortor | `tortor` | string | Tincidunt tortor aliquam nulla |
+</div>
 </details>
 ## Final words
 
