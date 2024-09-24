@@ -32,10 +32,14 @@ the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | API Key (required) | `api-key` | string | Fill in your Qdrant API key. Please refer to clusters in Qdrant data access control  |
 | Qdrant URL Endpoint (required) | `url` | string | Fill in your Qdrant URL endpoint. Please refer to clusters in Qdrant cluster details  |
+
+</div>
 
 
 
@@ -45,6 +49,8 @@ ${connection.<my-connection-id>}`.
 ### Vector Search
 
 Perform a vector search on a collection
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -56,20 +62,27 @@ Perform a vector search on a collection
 | Filter | `filter` | object | The properties filter to be applied to the data with Qdrant filter, please refer to [filter section](https://api.qdrant.tech/api-reference/search/points). |
 | Params | `params` | object | The additional parameters to be passed to the search, please refer to [params section](https://api.qdrant.tech/api-reference/search/points). |
 | Min Score | `min-score` | number | The minimum score of the points to be returned |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | [Result](#vector-search-result) | `result` | object | Result of the vector search operation |
 | Status | `status` | string | Vector search status |
+</div>
 
 <details>
 <summary> Output Objects in Vector Search</summary>
 
 <h4 id="vector-search-result">Result</h4>
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
@@ -77,11 +90,14 @@ Perform a vector search on a collection
 | [Metadata](#vector-search-metadata) | `metadata` | array | The metadata returned from the vector search operation |
 | [Points](#vector-search-points) | `points` | array | The points returned from the vector search operation |
 | Vectors | `vectors` | array | The vectors returned from the vector search operation |
+</div>
 </details>
 
 ### Batch Upsert
 
 Insert multiple vector points into a collection
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -91,18 +107,25 @@ Insert multiple vector points into a collection
 | [Array Metadata](#batch-upsert-array-metadata) | `array-metadata` | array[object] | The array of vector metadata payload |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
 | Ordering | `ordering` | string | The ordering guarantees of the batch upsert |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Batch upsert status |
+</div>
 
 ### Upsert
 
 Upsert a vector point into a collection
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -112,18 +135,25 @@ Upsert a vector point into a collection
 | Metadata | `metadata` | object | The vector metadata payload |
 | Vector (required) | `vector` | array[number] | An array of dimensions for the vector value |
 | Ordering | `ordering` | string | The ordering guarantees of the batch upsert |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Upsert status |
+</div>
 
 ### Delete
 
 Delete vector points from a collection
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -132,46 +162,65 @@ Delete vector points from a collection
 | ID | `id` | string | The ID of the point |
 | Filter | `filter` | object | The properties filter to be applied to the data with Qdrant filter, please refer to [filter section](https://api.qdrant.tech/api-reference/points/delete-points). |
 | Ordering | `ordering` | string | The ordering guarantees of the batch upsert |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete status |
+</div>
 
 ### Create Collection
 
 Create a collection
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CREATE_COLLECTION` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to create |
 | Config (required) | `config` | object | The configuration of the collection. Please refer to [here](https://api.qdrant.tech/api-reference/collections/create-collection). |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Create collection status |
+</div>
 
 ### Delete Collection
 
 Delete a collection
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_DELETE_COLLECTION` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to delete |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Status | `status` | string | Delete collection status |
+</div>

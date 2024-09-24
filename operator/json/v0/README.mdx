@@ -27,53 +27,74 @@ The component definition and tasks are defined in the [definition.json](https://
 
 Convert JSON to a string
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_MARSHAL` |
 | JSON (required) | `json` | any | JSON entity to be marshaled. It can be any valid JSON datatype (e.g. number, string, hash, array). |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | JSON string | `string` | string | String representation of the JSON input |
+</div>
 
 ### Unmarshal
 
 Convert a string to JSON
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_UNMARSHAL` |
 | String (required) | `string` | string | JSON string to be unmarshaled. It can represent any valid JSON datatype (e.g. number, string, hash, array). |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | JSON | `json` | any | JSON entity extracted from the string input |
+</div>
 
 ### jq
 
 Process JSON through a `jq` command
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_JQ` |
 | JSON value | `json-value` | any | JSON entity to be processed by the filter. It can be any valid JSON datatype (e.g. number, string, hash, array). |
 | Filter (required) | `jq-filter` | string | Filter, in `jq` syntax, that will be applied to the JSON input |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Results | `results` | array | The `jq` command results |
+</div>
 [`jq`](https://jqlang.github.io/jq/) defines a syntax to "transform JSON in
 various ways, by selecting, iterating, reducing and otherwise mangling JSON
 documents". Depending on the command input and the `jq` filter, the type and

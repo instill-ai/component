@@ -28,10 +28,14 @@ the [**Integration Settings**](https://www.instill.tech/docs/vdp/integration)
 page and reference the whole `setup` as `setup:
 ${connection.<my-connection-id>}`.
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | Endpoint (required) | `endpoint` | string | Fill in your Ollama hosting endpoint. ### WARNING ###: As of 2024-07-26, the Ollama component does not support authentication methods. To prevent unauthorized access to your Ollama serving resources, please implement additional security measures such as IP whitelisting.  |
 | Model Auto-Pull (required) | `auto-pull` | boolean | Automatically pull the requested models from the Ollama server if the model is not found in the local cache.  |
+
+</div>
 
 
 
@@ -41,6 +45,8 @@ ${connection.<my-connection-id>}`.
 ### Text Generation Chat
 
 Open-source large language models (OSS LLMs) are artificial intelligence models with publicly accessible code and architecture, allowing for free use, modification, and distribution. These models can provide performance comparable to proprietary alternatives. Ollama is a tool that enables you to run and interact with OSS LLMs using limited computational resources. You can install Ollama from: [here](https://ollama.com).
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -54,6 +60,8 @@ Open-source large language models (OSS LLMs) are artificial intelligence models 
 | Temperature | `temperature` | number | The temperature for sampling |
 | Top K | `top-k` | integer | Top k for sampling |
 | Max new tokens | `max-new-tokens` | integer | The maximum number of tokens for model to generate |
+</div>
+
 
 <details>
 <summary> Input Objects in Text Generation Chat</summary>
@@ -62,33 +70,45 @@ Open-source large language models (OSS LLMs) are artificial intelligence models 
 
 Incorporate external chat history, specifically previous messages within the conversation. Please note that System Message will be ignored and will not have any effect when this field is populated. Each message should adhere to the format: : \{"role": "The message role, i.e. 'system', 'user' or 'assistant'", "content": "message content"\}.
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | [Content](#text-generation-chat-content) | `content` | array | The message content  |
 | Role | `role` | string | The message role, i.e. 'system', 'user' or 'assistant'  |
+</div>
 <h4 id="text-generation-chat-content">Content</h4>
 
 The message content
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | [Image URL](#text-generation-chat-image-url) | `image-url` | object | The image URL  |
 | Text | `text` | string | The text content.  |
 | Type | `type` | string | The type of the content part.  <br/><details><summary><strong>Enum values</strong></summary><ul><li>`text`</li><li>`image_url`</li></ul></details>  |
+</div>
 <h4 id="text-generation-chat-image-url">Image URL</h4>
 
 The image URL
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Field | Field ID | Type | Note |
 | :--- | :--- | :--- | :--- |
 | URL | `url` | string | Either a URL of the image or the base64 encoded image data.  |
+</div>
 </details>
 
 
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Text | `text` | string | Model Output |
+</div>
 #### Local Ollama Instance
 
 To set up an Ollama instance on your local machine, follow the instructions below:
@@ -106,16 +126,23 @@ To set up an Ollama instance on your local machine, follow the instructions belo
 
 An embedding is a list of floating point numbers that captures semantic information about the text that it represents.
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_TEXT_EMBEDDINGS` |
 | Model Name (required) | `model` | string | The OSS model to be used, check [here](https://ollama.com/library) for list of models available |
 | Text (required) | `text` | string | The text |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Embedding | `embedding` | array[number] | Embedding of the input text |
+</div>

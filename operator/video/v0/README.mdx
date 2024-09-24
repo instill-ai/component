@@ -26,6 +26,8 @@ The component definition and tasks are defined in the [definition.json](https://
 
 Subsample video into a new video
 
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
+
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_SUBSAMPLE_VIDEO` |
@@ -33,18 +35,25 @@ Subsample video into a new video
 | FPS (required) | `fps` | number | Frames per second |
 | Start time | `start-time` | string | Start time in seconds, format is hh:mm:ss |
 | Duration | `duration` | string | Duration in seconds, format is hh:mm:ss |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Video | `video` | string | Base64 encoded sub-sampled video |
+</div>
 
 ### Subsample Video Frames
 
 Subsample video into frames
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
@@ -53,11 +62,16 @@ Subsample video into frames
 | FPS (required) | `fps` | number | Frames per second |
 | Start time | `start-time` | string | Start time in seconds, format is hh:mm:ss |
 | Duration | `duration` | string | Duration in seconds, format is hh:mm:ss |
+</div>
 
 
 
 
+
+
+<div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Frames | `frames` | array[string] | Base64 encoded sub-sampled frames |
+</div>
