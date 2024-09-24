@@ -235,6 +235,10 @@ func readLine(rawRunes []rune, currentPosition *int) string {
 func isTable(block string) bool {
 	lines := strings.Split(block, "\n")
 	for _, line := range lines {
+		trimmedLine := strings.TrimSpace(line)
+		if len(trimmedLine) == 0 {
+			continue
+		}
 		if !isRow(line) {
 			return false
 		}
