@@ -242,7 +242,7 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to find documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned",
+          "description": "The filter to find documents, please refer to [the documentations](https://www.mongodb.com/docs/manual/reference/operator/query/). If empty then all documents will be returned",
           "instillAcceptFormats": [
             "semi-structured/*",
             "object"
@@ -423,7 +423,7 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to update documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned",
+          "description": "The filter to update documents, please refer to [the documentations](https://www.mongodb.com/docs/manual/reference/operator/query/). If empty then all documents will be returned",
           "instillAcceptFormats": [
             "semi-structured/*",
             "object"
@@ -536,7 +536,7 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to delete documents, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned",
+          "description": "The filter to delete documents, please refer to [the documentations](https://www.mongodb.com/docs/manual/reference/operator/query/). If empty then all documents will be returned",
           "instillAcceptFormats": [
             "semi-structured/*",
             "object"
@@ -755,7 +755,7 @@
           "type": "string"
         },
         "syntax": {
-          "description": "The syntax structure of the search index, please refer to the MongoDB documentation for more information. search https://www.mongodb.com/docs/atlas/atlas-search/create-index/. vectorSearch https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-type/",
+          "description": "The syntax structure of the search index, please refer to the MongoDB documentation for more information. search [here](https://www.mongodb.com/docs/atlas/atlas-search/create-index/). vectorSearch [here](https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-type/)",
           "instillAcceptFormats": [
             "semi-structured/*",
             "object"
@@ -1004,7 +1004,7 @@
           "type": "string"
         },
         "filter": {
-          "description": "The filter to be used for vector search, need to first create filter vectorSearch search index, please refer to the documentations https://www.mongodb.com/docs/manual/reference/operator/query/. If empty then all documents will be returned to be used for vector search",
+          "description": "The filter to be used for vector search, need to first create filter vectorSearch search index, please refer to [the documentations](https://www.mongodb.com/docs/manual/reference/operator/query/). If empty then all documents will be returned to be used for vector search",
           "instillAcceptFormats": [
             "semi-structured/*",
             "object"

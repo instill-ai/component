@@ -74,7 +74,7 @@
           }
         },
         "filter": {
-          "description": "The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters",
+          "description": "The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to [here](https://weaviate.io/developers/weaviate/search/filters).",
           "instillAcceptFormats": [
             "semi-structured/*",
             "object"
@@ -453,7 +453,7 @@
           "type": "string"
         },
         "filter": {
-          "description": "The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters",
+          "description": "The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to [here](https://weaviate.io/developers/weaviate/search/filters).",
           "instillAcceptFormats": [
             "semi-structured/*",
             "object"

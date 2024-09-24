@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "token": {
-      "description": "Fill in your WhatsApp access token. Go here for more information: https://developers.facebook.com/docs/whatsapp/cloud-api/get-started",
+      "description": "Fill in your WhatsApp access token. Go [here](https://developers.facebook.com/docs/whatsapp/cloud-api/get-started) for more information",
       "instillUpstreamTypes": [
         "reference"
       ],

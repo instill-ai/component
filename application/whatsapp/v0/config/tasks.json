@@ -47,7 +47,7 @@
           "type": "string"
         },
         "language-code": {
-          "description": "The code of the language in which the template is used. Supported languages: https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages",
+          "description": "The code of the language in which the template is used. [Supported languages](https://developers.facebook.com/docs/whatsapp/api/messages/message-templates#supported-languages)",
           "instillAcceptFormats": [
             "string"
           ],
@@ -563,7 +563,7 @@
     }
   },
   "TASK_SEND_TEXT_MESSAGE": {
-    "instillShortDescription": "Send text message. Note: Message can only be sent when the 24-hour customer service window is open. For more information: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows",
+    "instillShortDescription": "Send text message. Note: Message can only be sent when the 24-hour customer service window is open. For more information, please visit [here](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows)",
     "input": {
       "description": "Text input",
       "instillUIOrder": 0,
@@ -644,7 +644,7 @@
     }
   },
   "TASK_SEND_MEDIA_MESSAGE": {
-    "instillShortDescription": "Send media message. Media supported: video, audio, document, image. Note: Message can only be sent when the 24-hour customer service window is open. For more information: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows",
+    "instillShortDescription": "Send media message. Media supported: video, audio, document, image. Note: Message can only be sent when the 24-hour customer service window is open. For more information, please visit [here](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows)",
     "input": {
       "description": "Media input",
       "instillUIOrder": 0,
@@ -729,7 +729,7 @@
     }
   },
   "TASK_SEND_LOCATION_MESSAGE": {
-    "instillShortDescription": "Send location message. Note: Message can only be sent when the 24-hour customer service window is open. For more information: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows",
+    "instillShortDescription": "Send location message. Note: Message can only be sent when the 24-hour customer service window is open. For more information, please visit [here](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows)",
     "input": {
       "description": "Location input",
       "instillUIOrder": 0,
@@ -800,7 +800,7 @@
     }
   },
   "TASK_SEND_CONTACT_MESSAGE": {
-    "instillShortDescription": "Send contact message. Note: Message can only be sent when the 24-hour customer service window is open. For more information: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows",
+    "instillShortDescription": "Send contact message. Note: Message can only be sent when the 24-hour customer service window is open. For more information, please visit [here](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows)",
     "input": {
       "description": "Contact input",
       "instillUIOrder": 0,
@@ -987,7 +987,7 @@
     }
   },
   "TASK_SEND_INTERACTIVE_CALL_TO_ACTION_URL_BUTTON_MESSAGE": {
-    "instillShortDescription": "Send interactive Call-To-Action URL button message. Note: Message can only be sent when the 24-hour customer service window is open. For more information: https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows ",
+    "instillShortDescription": "Send interactive Call-To-Action URL button message. Note: Message can only be sent when the 24-hour customer service window is open. For more information, please visit [here](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#customer-service-windows).",
     "input": {
       "description": "Interactive CTA URL button input",
       "instillUIOrder": 0,

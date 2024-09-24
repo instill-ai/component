@@ -53,7 +53,7 @@ Perform a vector search on a collection
 | Vector | `vector` | array[number] | An array of dimensions for the vector query, optional. If not provided, all objects will be returned |
 | Limit | `limit` | integer | The limit of objects, empty for all objects |
 | Fields | `fields` | array[string] | The fields to return in the objects. If empty then all fields will be returned |
-| Filter | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters |
+| Filter | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to [here](https://weaviate.io/developers/weaviate/search/filters). |
 | Tenant | `tenant` | string | The tenant to perform the vector search on |
 
 
@@ -90,10 +90,7 @@ Insert multiple vector objects into a collection
 | [Array Metadata](#batch-insert-array-metadata) (required) | `array-metadata` | array[object] | The array of vector metadata properties |
 | Array Vector (required) | `array-vector` | array[array] | The array of vector values |
 
-<details>
-<summary> Input Objects in Batch Insert</summary>
 
-</details>
 
 
 
@@ -150,7 +147,7 @@ Delete vector objects from a collection
 | Task ID (required) | `task` | string | `TASK_DELETE` |
 | Collection Name (required) | `collection-name` | string | The name of the collection to delete the object from |
 | ID | `id` | string | The ID of the object |
-| Filter | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to https://weaviate.io/developers/weaviate/search/filters |
+| Filter | `filter` | object | The properties filter to be applied to the data with GraphQL queries, which starts with WHERE field, please refer to [here](https://weaviate.io/developers/weaviate/search/filters). |
 
 
 
