@@ -4,11 +4,23 @@ from io import BytesIO
 import json
 import base64
 from collections import Counter
+from pdfplumber.page import Page
+
 
 class PdfTransformer:
-	def __init__(self, x, display_image_tag=False, image_index=0):
-		# self.path = path
-		# x can be a path or a file object.
+	pdf: pdfplumber.PDF
+	raw_pages: list[Page]
+	metadata: dict
+	display_image_tag: bool
+	image_index: int
+	errors: list[str]
+	pages: list[Page]
+	lines: list[dict]
+	images: list[dict]
+	tables: list[dict]
+	base64_images: list[dict]
+
+	def __init__(self, x: BytesIO, display_image_tag: bool = False, image_index: int = 0):
 		self.pdf = pdfplumber.open(x)
 		self.raw_pages = self.pdf.pages
 		self.metadata = self.pdf.metadata
@@ -37,7 +49,7 @@ class PdfTransformer:
 
 		self.result = ""
 
-	def process_image(self, i):
+	def process_image(self, i: int):
 		for page in self.pages:
 			images = page.images
 			for image in images:
@@ -49,7 +61,7 @@ class PdfTransformer:
 				self.images.append(image)
 		self.image_index = i
 
-	def encode_image(self, image, page, i):
+	def encode_image(self, image: dict, page: Page, i: int):
 		bbox = [image['x0'], page.cropbox[3]-image['y1'],  image['x1'], page.cropbox[3]-image['y0']]
 		# There is a bug in pdfplumber that it can't target the image position correctly.
 		try:
@@ -96,7 +108,7 @@ class PdfTransformer:
 		else:
 			self.subtitle_height = round(second_largest_text_height * tolerance)
 
-	def set_paragraph_information(self, lines):
+	def set_paragraph_information(self, lines: list[dict]):
 		def round_to_nearest_upper_bound(value, step=3): # for the golden sample case
 			"""
 			Round the value to the nearest upper bound based on the given step.
@@ -142,7 +154,7 @@ class PdfTransformer:
 		return self.result
 
 	# It can add more calculation for the future development when we want to extend more use cases.
-	def process_line(self, lines, page_number):
+	def process_line(self, lines: list[dict], page_number: int):
 		for idx, line in enumerate(lines):
 			line["line_height"] = line["bottom"] - line["top"]
 			line["line_width"] = line["x1"] - line["x0"]
@@ -151,7 +163,7 @@ class PdfTransformer:
 			line["page_number"] = page_number
 			self.lines.append(line)
 
-	def process_table(self, page):
+	def process_table(self, page: Page):
 		tables = page.find_tables(
 			table_settings={
 				"vertical_strategy": "lines",
@@ -168,7 +180,7 @@ class PdfTransformer:
 				self.tables.append(table_info)
 
 	# TODO: Implement paragraph strategy
-	def paragraph_strategy(self, lines, subtitle_height=14):
+	def paragraph_strategy(self, lines: list[dict], subtitle_height: int = 14):
 		# TODO: Implement paragraph strategy
 		# judge the non-title line in a page.
 		# If there is a line with indent, return "indent"
@@ -179,7 +191,7 @@ class PdfTransformer:
 			if line["line_height"] < subtitle_height:
 				paragraph_lines_start_positions.append(line["x0"])
 
-	def set_line_type(self, title_height=16, subtitle_height=14, paragraph_strategy="indent"):
+	def set_line_type(self, title_height: int = 16, subtitle_height: int = 14, paragraph_strategy: str = "indent"):
 		lines = self.lines
 		current_paragraph = []
 		paragraph_start_position = 0
@@ -229,7 +241,7 @@ class PdfTransformer:
 					paragraph_start_position = line["x0"]
 		self.lines = lines
 
-	def transform_line_to_markdown(self, lines):
+	def transform_line_to_markdown(self, lines: list[dict]):
 		result = ""
 		to_be_processed_table = []
 		for i, line in enumerate(lines):
@@ -323,7 +335,7 @@ class PdfTransformer:
 
 		return result
 
-	def line_process(self, line, i, lines, current_result):
+	def line_process(self, line: dict, i: int, lines: list[dict], current_result: str):
 		result = ""
 		if "type" not in line:
 			return line["text"]
@@ -359,7 +371,7 @@ class PdfTransformer:
 				result += "\n"
 		return result
 
-	def meet_table(self, line, page_number):
+	def meet_table(self, line: dict, page_number: int):
 		tables = self.tables
 		for table in tables:
 			if table["page_number"] == page_number:
@@ -370,7 +382,7 @@ class PdfTransformer:
 				else:
 					None
 
-	def transform_table_markdown(self, table):
+	def transform_table_markdown(self, table: dict):
 		result = ""
 		texts = table["text"]
 		for i, row in enumerate(texts):
@@ -398,7 +410,7 @@ class PdfTransformer:
 
 		return result
 
-	def insert_image(self, line, next_line):
+	def insert_image(self, line: dict, next_line: dict):
 		result = ""
 		images = self.images
 		to_be_removed_images = []
