@@ -1,10 +1,13 @@
-import pdfplumber
-import sys
-from io import BytesIO
 import json
 import base64
+import sys
+from io import BytesIO
 from collections import Counter
+
+import pdfplumber
 from pdfplumber.page import Page
+
+from .pdf_image_processor import PageImageProcessor
 
 
 class PdfTransformer:
@@ -51,15 +54,11 @@ class PdfTransformer:
 
 	def process_image(self, i: int):
 		for page in self.pages:
-			images = page.images
-			for image in images:
-				image["page_number"] = page.page_number
-				image["img_number"] = i
-				i += 1
-				img_base64 = self.encode_image(image, page, i)
-				image["img_base64"] = img_base64
-				self.images.append(image)
-		self.image_index = i
+			image_processor = PageImageProcessor(page=page, i=i)
+			images = image_processor.produce_images_by_blocks()
+			self.images += images
+
+		self.image_index = image_processor.image_index
 
 	def encode_image(self, image: dict, page: Page, i: int):
 		bbox = [image['x0'], page.cropbox[3]-image['y1'],  image['x1'], page.cropbox[3]-image['y0']]
@@ -146,7 +145,6 @@ class PdfTransformer:
 		self.paragraph_distance = paragraph_distance
 		self.paragraph_width = paragraph_width
 		self.zero_indent_distance = zero_indent_distance
-
 
 	def execute(self):
 		self.set_line_type(self.title_height, self.subtitle_height, "indent")
