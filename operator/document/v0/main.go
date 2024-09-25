@@ -25,7 +25,7 @@ var (
 	definitionJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
-	//go:embed python/transformPDFToMarkdown.py
+	//go:embed python/transform_pdf_to_markdown.py
 	pythonPDFPlumberConverter string
 	once                      sync.Once
 	comp                      *component
