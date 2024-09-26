@@ -44,6 +44,17 @@
           ],
           "title": "Display Image Tag",
           "type": "boolean"
+        },
+        "display-all-page-image": {
+          "default": false,
+          "description": "Whether to respond the whole page as the images if we detect there could be images in the page. It will only support DOCX/DOC/PPTX/PPT/PDF.",
+          "instillUIOrder": 3,
+          "instillUpstreamTypes": [
+            "reference",
+            "value"
+          ],
+          "title": "Display All Page Image",
+          "type": "boolean"
         }
       },
       "required": [
@@ -87,6 +98,16 @@
           "instillUIOrder": 3,
           "title": "Error",
           "type": "string"
+        },
+        "all-page-images": {
+          "description": "The image contains all the pages in the document if we detect there could be images in the page. It will only support DOCX/DOC/PPTX/PPT/PDF.",
+          "instillFormat": "array:image/*",
+          "instillUIOrder": 4,
+          "items": {
+            "type": "string"
+          },
+          "title": "All Page Images",
+          "type": "array"
         }
       },
       "required": [

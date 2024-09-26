@@ -9,16 +9,20 @@ import (
 )
 
 type converterOutput struct {
-	Body   string   `json:"body"`
-	Images []string `json:"images"`
-	Error  []string `json:"error"`
+	Body          string   `json:"body"`
+	Images        []string `json:"images"`
+	ParsingError  []string `json:"parsing_error"`
+	SystemError   string   `json:"system_error"`
+	AllPageImages []string `json:"all_page_images"`
+	AllPage       bool     `json:"display_all_page_image"`
 }
 
-func convertPDFToMarkdownWithPDFPlumber(base64Text string, displayImageTag bool) (converterOutput, error) {
+func convertPDFToMarkdownWithPDFPlumber(base64Text string, displayImageTag bool, displayAllPage bool) (converterOutput, error) {
 
 	paramsJSON, err := json.Marshal(map[string]interface{}{
-		"PDF":               base.TrimBase64Mime(base64Text),
-		"display-image-tag": displayImageTag,
+		"PDF":                    base.TrimBase64Mime(base64Text),
+		"display-image-tag":      displayImageTag,
+		"display-all-page-image": displayAllPage,
 	})
 	var output converterOutput
 
@@ -59,6 +63,10 @@ func convertPDFToMarkdownWithPDFPlumber(base64Text string, displayImageTag bool)
 	err = json.Unmarshal(outputBytes, &output)
 	if err != nil {
 		return output, fmt.Errorf("failed to unmarshal output: %w", err)
+	}
+
+	if output.SystemError != "" {
+		return output, fmt.Errorf("failed to convert pdf to markdown: %s", output.SystemError)
 	}
 
 	return output, nil

@@ -35,7 +35,7 @@ class PageImageProcessor:
                 img_page = page
 
             img_obj = img_page.to_image(resolution=500)
-            img_base64 = self.encode_image(image=img_obj)
+            img_base64 = self.__class__.encode_image(image=img_obj)
 
             image["page_number"] = page.page_number
             image["img_number"] = self.image_index
@@ -77,14 +77,14 @@ class PageImageProcessor:
             if self.is_blank_pil_image(im=im):
                 continue
 
-            img_base64 = self.encode_image(image=im)
+            img_base64 = self.__class__.encode_image(image=im)
             block_image["page_number"] = page.page_number
             block_image["img_number"] = self.image_index
             self.image_index += 1
             block_image["img_base64"] = img_base64
             self.images.append(block_image)
 
-    def encode_image(self, image: PageImage) -> str:
+    def encode_image(image: PageImage) -> str:
         buffer = BytesIO()
         image.save(buffer, format="PNG")
         buffer.seek(0)

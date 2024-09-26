@@ -21,6 +21,7 @@ class PDFTransformer:
 	images: list[dict]
 	tables: list[dict]
 	base64_images: list[dict]
+	page_numbers_with_images: list[int]
 
 	def __init__(self, x: BytesIO, display_image_tag: bool = False, image_index: int = 0):
 		self.pdf = pdfplumber.open(x)
@@ -29,6 +30,7 @@ class PDFTransformer:
 		self.display_image_tag = display_image_tag
 		self.image_index = image_index
 		self.errors = []
+		self.page_numbers_with_images = []
 
 	def preprocess(self):
 		self.set_heights()
@@ -59,6 +61,9 @@ class PDFTransformer:
 			processed_images = image_processor.images
 			self.images += processed_images
 			image_index = image_processor.image_index
+
+			if page.page_number not in self.page_numbers_with_images:
+				self.page_numbers_with_images.append(page.page_number)
 
 		self.image_index = image_processor.image_index
 
