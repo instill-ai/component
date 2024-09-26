@@ -45,7 +45,8 @@ func convertPDFToMarkdownWithPDFPlumber(base64Text string, displayImageTag bool)
 
 	outputBytes, err := cmdRunner.CombinedOutput()
 	if err != nil {
-		return output, fmt.Errorf("failed to run python script: %w", err)
+		errorStr := string(outputBytes)
+		return output, fmt.Errorf("failed to run python script: %w, %s", err, errorStr)
 	}
 
 	writeErr := <-errChan
