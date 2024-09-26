@@ -26,7 +26,9 @@ func convertPDFToMarkdownWithPDFPlumber(base64Text string, displayImageTag bool)
 		return output, fmt.Errorf("failed to marshal params: %w", err)
 	}
 
-	cmdRunner := exec.Command(pythonInterpreter, "-c", pythonPDFPlumberConverter)
+	pythonCode := imageProcessor + pdfTransformer + executionFile
+
+	cmdRunner := exec.Command(pythonInterpreter, "-c", pythonCode)
 	stdin, err := cmdRunner.StdinPipe()
 
 	if err != nil {
