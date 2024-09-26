@@ -1,13 +1,10 @@
 package document
 
 import (
-	"bytes"
-	"encoding/base64"
+	"encoding/json"
 	"fmt"
-	"image/jpeg"
 	"strings"
 
-	"github.com/gen2brain/go-fitz"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
@@ -48,48 +45,31 @@ func ConvertDocumentToImage(inputStruct *ConvertDocumentToImagesInput) (*Convert
 		base64PDF = strings.Split(inputStruct.Document, ",")[1]
 	}
 
-	fileContent, err := base64.StdEncoding.DecodeString(base64PDF)
+	paramsJSON := map[string]interface{}{
+		"PDF":      base.TrimBase64Mime(base64PDF),
+		"filename": inputStruct.Filename,
+	}
+
+	pythonCode := imageProcessor + pdfTransformer + taskConvertToImagesExecution
+
+	outputBytes, err := util.ExecutePythonCode(pythonCode, paramsJSON)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode base64 string: %w", err)
+		return nil, fmt.Errorf("failed to run python script: %w", err)
 	}
 
-	pdfToBeConverted, err := fitz.NewFromMemory(fileContent)
+	output := ConvertDocumentToImagesOutput{}
+
+	err = json.Unmarshal(outputBytes, &output)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to create PDF from memory: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal output: %w", err)
 	}
 
-	defer pdfToBeConverted.Close()
-
-	images := make([]string, pdfToBeConverted.NumPage())
-	filenames := make([]string, pdfToBeConverted.NumPage())
-
-	for n := 0; n < pdfToBeConverted.NumPage(); n++ {
-		img, err := pdfToBeConverted.Image(n)
-		if err != nil {
-			return nil, fmt.Errorf("failed to extract image from PDF: %w", err)
-		}
-
-		var buf bytes.Buffer
-		err = jpeg.Encode(&buf, img, &jpeg.Options{Quality: jpeg.DefaultQuality})
-
-		if err != nil {
-			return nil, fmt.Errorf("failed to encode image to JPEG: %w", err)
-		}
-
-		imgBase64Str := base64.StdEncoding.EncodeToString(buf.Bytes())
-		images[n] = fmt.Sprintf("data:image/jpeg;base64,%s", imgBase64Str)
-
-		filename := strings.Split(inputStruct.Filename, ".")[0]
-		filenames[n] = fmt.Sprintf("%s_%d.jpg", filename, n)
+	if len(output.Filenames) == 0 {
+		output.Filenames = []string{}
 	}
-
-	outputStruct := ConvertDocumentToImagesOutput{
-		Images:    images,
-		Filenames: filenames,
-	}
-	return &outputStruct, nil
+	return &output, nil
 }
 
 func (e *execution) convertDocumentToImages(input *structpb.Struct) (*structpb.Struct, error) {
