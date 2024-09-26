@@ -25,10 +25,19 @@ var (
 	definitionJSON []byte
 	//go:embed config/tasks.json
 	tasksJSON []byte
-	//go:embed python/transformPDFToMarkdown.py
-	pythonPDFPlumberConverter string
-	once                      sync.Once
-	comp                      *component
+
+	//go:embed execution/task_convert_to_markdown.py
+	taskConvertToMarkdownExecution string
+	//go:embed pdf_to_markdown/pdf_transformer.py
+	pdfTransformer string
+	//go:embed pdf_to_markdown/page_image_processor.py
+	imageProcessor string
+
+	//go:embed execution/task_convert_to_images.py
+	taskConvertToImagesExecution string
+
+	once sync.Once
+	comp *component
 )
 
 type component struct {
@@ -85,7 +94,7 @@ func (c *component) CreateExecution(x base.ComponentExecution) (base.IExecution,
 	case taskConvertToText:
 		e.execute = e.convertToText
 	case taskConvertToImages:
-		e.execute = e.convertPDFToImages
+		e.execute = e.convertDocumentToImages
 	default:
 		return nil, fmt.Errorf("%s task is not supported", x.Task)
 	}

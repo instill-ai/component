@@ -1,83 +1,86 @@
 package document
 
 import (
-	"bytes"
-	"encoding/base64"
+	"encoding/json"
 	"fmt"
-	"image/jpeg"
 	"strings"
 
-	"github.com/gen2brain/go-fitz"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	"github.com/instill-ai/component/base"
+	"github.com/instill-ai/component/internal/util"
 )
 
-type ConvertPDFToImagesInput struct {
-	PDF      string `json:"pdf"`
+type ConvertDocumentToImagesInput struct {
+	Document string `json:"document"`
 	Filename string `json:"filename"`
 }
 
-type ConvertPDFToImagesOutput struct {
+type ConvertDocumentToImagesOutput struct {
 	Images    []string `json:"images"`
 	Filenames []string `json:"filenames"`
 }
 
-func ConvertPDFToImage(inputStruct *ConvertPDFToImagesInput) (*ConvertPDFToImagesOutput, error) {
-	base64String := strings.Split(inputStruct.PDF, ",")[1]
-	fileContent, err := base64.StdEncoding.DecodeString(base64String)
+func ConvertDocumentToImage(inputStruct *ConvertDocumentToImagesInput) (*ConvertDocumentToImagesOutput, error) {
 
+	contentType, err := util.GetContentTypeFromBase64(inputStruct.Document)
 	if err != nil {
-		return nil, fmt.Errorf("failed to decode base64 string: %w", err)
+		return nil, err
 	}
 
-	pdfToBeConverted, err := fitz.NewFromMemory(fileContent)
+	fileExtension := util.TransformContentTypeToFileExtension(contentType)
 
-	if err != nil {
-		return nil, fmt.Errorf("failed to create PDF from memory: %w", err)
+	if fileExtension == "" {
+		return nil, fmt.Errorf("unsupported file type")
 	}
 
-	defer pdfToBeConverted.Close()
-
-	images := make([]string, pdfToBeConverted.NumPage())
-	filenames := make([]string, pdfToBeConverted.NumPage())
-
-	for n := 0; n < pdfToBeConverted.NumPage(); n++ {
-		img, err := pdfToBeConverted.Image(n)
-		if err != nil {
-			return nil, fmt.Errorf("failed to extract image from PDF: %w", err)
-		}
-
-		var buf bytes.Buffer
-		err = jpeg.Encode(&buf, img, &jpeg.Options{Quality: jpeg.DefaultQuality})
+	var base64PDF string
+	if fileExtension != "pdf" {
+		base64PDF, err = ConvertToPDF(inputStruct.Document, fileExtension)
 
 		if err != nil {
-			return nil, fmt.Errorf("failed to encode image to JPEG: %w", err)
+			return nil, fmt.Errorf("failed to encode file to base64: %w", err)
 		}
-
-		imgBase64Str := base64.StdEncoding.EncodeToString(buf.Bytes())
-		images[n] = fmt.Sprintf("data:image/jpeg;base64,%s", imgBase64Str)
-
-		filename := strings.Split(inputStruct.Filename, ".")[0]
-		filenames[n] = fmt.Sprintf("%s_%d.jpg", filename, n)
+	} else {
+		base64PDF = strings.Split(inputStruct.Document, ",")[1]
 	}
 
-	outputStruct := ConvertPDFToImagesOutput{
-		Images:    images,
-		Filenames: filenames,
+	paramsJSON := map[string]interface{}{
+		"PDF":      base.TrimBase64Mime(base64PDF),
+		"filename": inputStruct.Filename,
 	}
-	return &outputStruct, nil
+
+	pythonCode := imageProcessor + pdfTransformer + taskConvertToImagesExecution
+
+	outputBytes, err := util.ExecutePythonCode(pythonCode, paramsJSON)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to run python script: %w", err)
+	}
+
+	output := ConvertDocumentToImagesOutput{}
+
+	err = json.Unmarshal(outputBytes, &output)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal output: %w", err)
+	}
+
+	if len(output.Filenames) == 0 {
+		output.Filenames = []string{}
+	}
+	return &output, nil
 }
 
-func (e *execution) convertPDFToImages(input *structpb.Struct) (*structpb.Struct, error) {
+func (e *execution) convertDocumentToImages(input *structpb.Struct) (*structpb.Struct, error) {
 
-	inputStruct := ConvertPDFToImagesInput{}
+	inputStruct := ConvertDocumentToImagesInput{}
 	err := base.ConvertFromStructpb(input, &inputStruct)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert input struct: %w", err)
 	}
 
-	outputStruct, err := ConvertPDFToImage(&inputStruct)
+	outputStruct, err := ConvertDocumentToImage(&inputStruct)
 	if err != nil {
 		return nil, err
 	}

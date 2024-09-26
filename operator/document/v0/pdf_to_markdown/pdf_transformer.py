@@ -1,20 +1,36 @@
-import pdfplumber
-import sys
+
 from io import BytesIO
-import json
-import base64
 from collections import Counter
 
-class PdfTransformer:
-	def __init__(self, x, display_image_tag=False, image_index=0):
-		# self.path = path
-		# x can be a path or a file object.
+import pdfplumber
+from pdfplumber.page import Page
+
+# TODO: Deal with the import error when running the code in the docker container
+# from page_image_processor import PageImageProcessor
+
+
+class PDFTransformer:
+	pdf: pdfplumber.PDF
+	raw_pages: list[Page]
+	metadata: dict
+	display_image_tag: bool
+	image_index: int
+	errors: list[str]
+	pages: list[Page]
+	lines: list[dict]
+	images: list[dict]
+	tables: list[dict]
+	base64_images: list[dict]
+	page_numbers_with_images: list[int]
+
+	def __init__(self, x: BytesIO, display_image_tag: bool = False, image_index: int = 0):
 		self.pdf = pdfplumber.open(x)
 		self.raw_pages = self.pdf.pages
 		self.metadata = self.pdf.metadata
 		self.display_image_tag = display_image_tag
 		self.image_index = image_index
 		self.errors = []
+		self.page_numbers_with_images = []
 
 	def preprocess(self):
 		self.set_heights()
@@ -37,33 +53,19 @@ class PdfTransformer:
 
 		self.result = ""
 
-	def process_image(self, i):
+	def process_image(self, i: int):
+		image_index = i
 		for page in self.pages:
-			images = page.images
-			for image in images:
-				image["page_number"] = page.page_number
-				image["img_number"] = i
-				i += 1
-				img_base64 = self.encode_image(image, page, i)
-				image["img_base64"] = img_base64
-				self.images.append(image)
-		self.image_index = i
+			image_processor = PageImageProcessor(page=page, image_index=image_index)
+			image_processor.produce_images_by_blocks()
+			processed_images = image_processor.images
+			self.images += processed_images
+			image_index = image_processor.image_index
 
-	def encode_image(self, image, page, i):
-		bbox = [image['x0'], page.cropbox[3]-image['y1'],  image['x1'], page.cropbox[3]-image['y0']]
-		# There is a bug in pdfplumber that it can't target the image position correctly.
-		try:
-			img_page = page.crop(bbox=bbox)
-		except Exception as e:
-			self.errors.append(f"image {i} got error: {str(e)}, so it convert all pages into image.")
-			img_page = page
+			if page.page_number not in self.page_numbers_with_images:
+				self.page_numbers_with_images.append(page.page_number)
 
-		img_obj = img_page.to_image(resolution=500)
-		buffer = BytesIO()
-		img_obj.save(buffer, format="PNG")
-		buffer.seek(0)
-		img_data = buffer.getvalue()
-		return "data:image/png;base64," + base64.b64encode(img_data).decode("utf-8")
+		self.image_index = image_processor.image_index
 
 	def set_heights(self):
 		tolerance = 0.95
@@ -96,7 +98,7 @@ class PdfTransformer:
 		else:
 			self.subtitle_height = round(second_largest_text_height * tolerance)
 
-	def set_paragraph_information(self, lines):
+	def set_paragraph_information(self, lines: list[dict]):
 		def round_to_nearest_upper_bound(value, step=3): # for the golden sample case
 			"""
 			Round the value to the nearest upper bound based on the given step.
@@ -135,14 +137,13 @@ class PdfTransformer:
 		self.paragraph_width = paragraph_width
 		self.zero_indent_distance = zero_indent_distance
 
-
 	def execute(self):
 		self.set_line_type(self.title_height, self.subtitle_height, "indent")
 		self.result = self.transform_line_to_markdown(self.lines)
 		return self.result
 
 	# It can add more calculation for the future development when we want to extend more use cases.
-	def process_line(self, lines, page_number):
+	def process_line(self, lines: list[dict], page_number: int):
 		for idx, line in enumerate(lines):
 			line["line_height"] = line["bottom"] - line["top"]
 			line["line_width"] = line["x1"] - line["x0"]
@@ -151,7 +152,7 @@ class PdfTransformer:
 			line["page_number"] = page_number
 			self.lines.append(line)
 
-	def process_table(self, page):
+	def process_table(self, page: Page):
 		tables = page.find_tables(
 			table_settings={
 				"vertical_strategy": "lines",
@@ -168,7 +169,7 @@ class PdfTransformer:
 				self.tables.append(table_info)
 
 	# TODO: Implement paragraph strategy
-	def paragraph_strategy(self, lines, subtitle_height=14):
+	def paragraph_strategy(self, lines: list[dict], subtitle_height: int = 14):
 		# TODO: Implement paragraph strategy
 		# judge the non-title line in a page.
 		# If there is a line with indent, return "indent"
@@ -179,7 +180,7 @@ class PdfTransformer:
 			if line["line_height"] < subtitle_height:
 				paragraph_lines_start_positions.append(line["x0"])
 
-	def set_line_type(self, title_height=16, subtitle_height=14, paragraph_strategy="indent"):
+	def set_line_type(self, title_height: int = 16, subtitle_height: int = 14, paragraph_strategy: str = "indent"):
 		lines = self.lines
 		current_paragraph = []
 		paragraph_start_position = 0
@@ -229,7 +230,7 @@ class PdfTransformer:
 					paragraph_start_position = line["x0"]
 		self.lines = lines
 
-	def transform_line_to_markdown(self, lines):
+	def transform_line_to_markdown(self, lines: list[dict]):
 		result = ""
 		to_be_processed_table = []
 		for i, line in enumerate(lines):
@@ -323,7 +324,7 @@ class PdfTransformer:
 
 		return result
 
-	def line_process(self, line, i, lines, current_result):
+	def line_process(self, line: dict, i: int, lines: list[dict], current_result: str):
 		result = ""
 		if "type" not in line:
 			return line["text"]
@@ -359,7 +360,7 @@ class PdfTransformer:
 				result += "\n"
 		return result
 
-	def meet_table(self, line, page_number):
+	def meet_table(self, line: dict, page_number: int):
 		tables = self.tables
 		for table in tables:
 			if table["page_number"] == page_number:
@@ -370,7 +371,7 @@ class PdfTransformer:
 				else:
 					None
 
-	def transform_table_markdown(self, table):
+	def transform_table_markdown(self, table: dict):
 		result = ""
 		texts = table["text"]
 		for i, row in enumerate(texts):
@@ -398,7 +399,7 @@ class PdfTransformer:
 
 		return result
 
-	def insert_image(self, line, next_line):
+	def insert_image(self, line: dict, next_line: dict):
 		result = ""
 		images = self.images
 		to_be_removed_images = []
@@ -434,44 +435,3 @@ class PdfTransformer:
 			self.images.remove(image)
 
 		return result
-
-if __name__ == "__main__":
-	json_str = sys.stdin.buffer.read().decode('utf-8')
-	params = json.loads(json_str)
-	display_image_tag = params["display-image-tag"]
-	pdf_string = params["PDF"]
-	decoded_bytes = base64.b64decode(pdf_string)
-	pdf_file_obj = BytesIO(decoded_bytes)
-	pdf = PdfTransformer(pdf_file_obj, display_image_tag)
-
-	result = ""
-	images = []
-	separator_number = 30
-	image_idx = 0
-	errors = []
-
-	try:
-		times = len(pdf.raw_pages) // separator_number + 1
-		for i in range(times):
-			pdf = PdfTransformer(pdf_file_obj, display_image_tag, image_idx)
-			if i == times - 1:
-				pdf.pages = pdf.raw_pages[i*separator_number:]
-			else:
-				pdf.pages = pdf.raw_pages[i*separator_number:(i+1)*separator_number]
-
-			pdf.preprocess()
-			image_idx = pdf.image_index
-			result += pdf.execute()
-			for image in pdf.base64_images:
-				images.append(image)
-
-			errors += pdf.errors
-
-		output = {
-			"body": result,
-			"images": images,
-			"error": errors
-		}
-		print(json.dumps(output))
-	except Exception as e:
-		print(json.dumps({"error": [str(e)]}))

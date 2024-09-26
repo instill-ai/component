@@ -24,21 +24,23 @@ type MarkdownTransformer interface {
 }
 
 type PDFToMarkdownTransformer struct {
-	Base64EncodedText string
-	FileExtension     string
-	DisplayImageTag   bool
-	PDFConvertFunc    func(string, bool) (converterOutput, error)
+	Base64EncodedText   string
+	FileExtension       string
+	DisplayImageTag     bool
+	DisplayAllPageImage bool
+	PDFConvertFunc      func(string, bool, bool) (converterOutput, error)
 }
 
 func (t PDFToMarkdownTransformer) Transform() (converterOutput, error) {
-	return t.PDFConvertFunc(t.Base64EncodedText, t.DisplayImageTag)
+	return t.PDFConvertFunc(t.Base64EncodedText, t.DisplayImageTag, t.DisplayAllPageImage)
 }
 
 type DocxDocToMarkdownTransformer struct {
-	Base64EncodedText string
-	FileExtension     string
-	DisplayImageTag   bool
-	PDFConvertFunc    func(string, bool) (converterOutput, error)
+	Base64EncodedText   string
+	FileExtension       string
+	DisplayImageTag     bool
+	DisplayAllPageImage bool
+	PDFConvertFunc      func(string, bool, bool) (converterOutput, error)
 }
 
 func (t DocxDocToMarkdownTransformer) Transform() (converterOutput, error) {
@@ -49,14 +51,15 @@ func (t DocxDocToMarkdownTransformer) Transform() (converterOutput, error) {
 		return converterOutput{}, fmt.Errorf("failed to encode file to base64: %w", err)
 	}
 
-	return t.PDFConvertFunc(base64PDF, t.DisplayImageTag)
+	return t.PDFConvertFunc(base64PDF, t.DisplayImageTag, t.DisplayAllPageImage)
 }
 
 type PptPptxToMarkdownTransformer struct {
-	Base64EncodedText string
-	FileExtension     string
-	DisplayImageTag   bool
-	PDFConvertFunc    func(string, bool) (converterOutput, error)
+	Base64EncodedText   string
+	FileExtension       string
+	DisplayImageTag     bool
+	DisplayAllPageImage bool
+	PDFConvertFunc      func(string, bool, bool) (converterOutput, error)
 }
 
 func (t PptPptxToMarkdownTransformer) Transform() (converterOutput, error) {
@@ -67,7 +70,7 @@ func (t PptPptxToMarkdownTransformer) Transform() (converterOutput, error) {
 		return converterOutput{}, fmt.Errorf("failed to encode file to base64: %w", err)
 	}
 
-	return t.PDFConvertFunc(base64PDF, t.DisplayImageTag)
+	return t.PDFConvertFunc(base64PDF, t.DisplayImageTag, t.DisplayAllPageImage)
 }
 
 type HTMLToMarkdownTransformer struct {

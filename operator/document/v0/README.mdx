@@ -35,6 +35,7 @@ Convert document to text in Markdown format.
 | Document (required) | `document` | string | Base64 encoded PDF/DOCX/DOC/PPTX/PPT/HTML/XLSX/XLS/CSV to be converted to text in Markdown format |
 | Filename | `filename` | string | The name of the file, please remember to add the file extension in the end of file name. e.g. 'example.pdf' |
 | Display Image Tag | `display-image-tag` | boolean | Whether to display image tag in the markdown text. Default is 'false'. It is only applicable for convert-2024-08-28 converter. And, it is only applicable for the type of PPTX/PPT/DOCX/DOC/PDF. |
+| Display All Page Image | `display-all-page-image` | boolean | Whether to respond the whole page as the images if we detect there could be images in the page. It will only support DOCX/DOC/PPTX/PPT/PDF. |
 </div>
 
 
@@ -50,6 +51,7 @@ Convert document to text in Markdown format.
 | Filename (optional) | `filename` | string | The name of the file |
 | Images (optional) | `images` | array[string] | Images extracted from the document |
 | Error (optional) | `error` | string | Error message if any during the conversion process |
+| All Page Images (optional) | `all-page-images` | array[string] | The image contains all the pages in the document if we detect there could be images in the page. It will only support DOCX/DOC/PPTX/PPT/PDF. |
 </div>
 
 ### Convert to Text
@@ -83,14 +85,14 @@ Convert document to text.
 
 ### Convert to Images
 
-Convert PDF to images.
+Convert Document to images.
 
 <div class="markdown-col-no-wrap" data-col-1 data-col-2>
 
 | Input | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
 | Task ID (required) | `task` | string | `TASK_CONVERT_TO_IMAGES` |
-| PDF (required) | `pdf` | string | Base64 encoded PDF to be converted to images |
+| PDF (required) | `document` | string | Base64 encoded PDF/DOCX/DOC/PPT/PPTX to be converted to images |
 | Filename | `filename` | string | The name of the file, please remember to add the file extension in the end of file name. e.g. 'example.pdf' |
 </div>
 
@@ -103,7 +105,7 @@ Convert PDF to images.
 
 | Output | ID | Type | Description |
 | :--- | :--- | :--- | :--- |
-| Images | `images` | array[string] | Images converted from the PDF document |
+| Images | `images` | array[string] | Images converted from the document |
 | Filenames (optional) | `filenames` | array[string] | The filenames of the images. The filenames will be appended with the page number. e.g. 'example-1.jpg' |
 </div>
 ## Example Recipes
