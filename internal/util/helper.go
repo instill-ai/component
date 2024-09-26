@@ -2,10 +2,12 @@ package util
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os/exec"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -257,4 +259,48 @@ func GetDataURL(base64Image string) string {
 
 func hasDataPrefix(base64Image string) bool {
 	return strings.HasPrefix(base64Image, "data:")
+}
+
+var pythonInterpreter string = "/opt/venv/bin/python"
+
+func ExecutePythonCode(pythonCode string, params map[string]interface{}) ([]byte, error) {
+
+	paramsJSON, err := json.Marshal(params)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal params: %w", err)
+	}
+
+	cmdRunner := exec.Command(pythonInterpreter, "-c", pythonCode)
+
+	stdin, err := cmdRunner.StdinPipe()
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to get stdin pipe: %w", err)
+	}
+
+	errChan := make(chan error, 1)
+	go func() {
+		defer stdin.Close()
+		_, err := stdin.Write(paramsJSON)
+		if err != nil {
+			errChan <- err
+			return
+		}
+		errChan <- nil
+	}()
+
+	outputBytes, err := cmdRunner.CombinedOutput()
+
+	if err != nil {
+		errorStr := string(outputBytes)
+		return nil, fmt.Errorf("failed to run python script: %w, %s", err, errorStr)
+	}
+
+	writeErr := <-errChan
+	if writeErr != nil {
+		return nil, fmt.Errorf("failed to write to stdin: %w", writeErr)
+	}
+
+	return outputBytes, nil
 }
