@@ -14,6 +14,7 @@ class PageImageProcessor:
         self.page = page
         self.lines = page.extract_text_lines(layout=True, strip=True, return_chars=False)
         self.images = []
+        self.errors = []
         page.flush_cache()
         page.get_textmap.cache_clear()
         self.image_index = image_index
