@@ -24,7 +24,11 @@ class PdfTransformer:
 	base64_images: list[dict]
 
 	def __init__(self, x: BytesIO, display_image_tag: bool = False, image_index: int = 0):
-		self.pdf = pdfplumber.open(x)
+		try:
+			self.pdf = pdfplumber.open(x)
+		except Exception as e:
+			self.errors = [str(e)]
+			self.pdf = pdfplumber.open(x, repair=True)
 		self.raw_pages = self.pdf.pages
 		self.metadata = self.pdf.metadata
 		self.display_image_tag = display_image_tag
