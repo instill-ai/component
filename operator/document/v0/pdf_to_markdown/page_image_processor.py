@@ -2,8 +2,8 @@ import base64
 from io import BytesIO
 from PIL import Image
 
-
 from pdfplumber.page import Page
+from pdfplumber.display import PageImage
 
 class PageImageProcessor:
     page: Page
@@ -20,20 +20,42 @@ class PageImageProcessor:
 
     def produce_images_by_blocks(self) -> None:
         saved_blocks = []
-        images = page.images
         page = self.page
+        images = page.images
 
-        for _, image in enumerate(images):
-            img_base64, image_bbox = self.encode_image(image=image, page=page, i=self.i)
+        # Process images detect by pdfplumber
+        for i, image in enumerate(images):
+            bbox = (image["x0"], image["top"], image["x1"], image["bottom"])
+		    # There is a bug in pdfplumber that it can't target the image position correctly.
+            try:
+                img_page = page.crop(bbox=bbox)
+            except Exception as e:
+                self.errors.append(f"image {i} got error: {str(e)}, so it convert all pages into image.")
+                bbox = (0, 0, page.width, page.height)
+                img_page = page
+
+            img_obj = img_page.to_image(resolution=500)
+            img_base64 = self.encode_image(image=img_obj)
+
             image["page_number"] = page.page_number
             image["img_number"] = self.image_index
             self.image_index += 1
             image["img_base64"] = img_base64
-            saved_blocks.append(image_bbox)
+            saved_blocks.append(bbox)
             self.images.append(image)
 
+        # (x0, top, x1, bottom)
         blocks = self.calculate_blank_blocks(page=page)
+
         for _, block in enumerate(blocks):
+            block_dict = self.get_block_dict(block)
+            block_image = {
+                "page_number": int,
+                "img_number":  int,
+                "img_base64":  str,
+                "top":         block_dict["top"],
+                "bottom":      block_dict["bottom"],
+            }
             overlap = False
             for saved_block in saved_blocks:
                 if self.is_overlap(block1=saved_block, block2=block):
@@ -51,35 +73,31 @@ class PageImageProcessor:
             cropped_page = page.crop(block)
 
             im = cropped_page.to_image(resolution=200)
+
             if self.is_blank_pil_image(im=im):
                 continue
 
-            img_base64, image_bbox = self.encode_image(image=block, page=page, i=self.i)
-            image["page_number"] = page.page_number
-            image["img_number"] = self.i
+            img_base64 = self.encode_image(image=im)
+            block_image["page_number"] = page.page_number
+            block_image["img_number"] = self.image_index
             self.image_index += 1
-            image["img_base64"] = img_base64
-            self.images.append(image)
+            block_image["img_base64"] = img_base64
+            self.images.append(block_image)
 
-
-    def encode_image(self, image: dict, page: Page, i: int) -> list[str | tuple]:
-        bbox = (image["x0"], image["top"], image["x1"], image["bottom"])
-		# There is a bug in pdfplumber that it can't target the image position correctly.
-        try:
-            img_page = page.crop(bbox=bbox)
-        except Exception as e:
-            self.errors.append(f"image {i} got error: {str(e)}, so it convert all pages into image.")
-            bbox = (0, 0, page.width, page.height)
-            img_page = page
-
-        img_page = page.crop(bbox=bbox)
-        img_obj = img_page.to_image(resolution=500)
+    def encode_image(self, image: PageImage) -> str:
         buffer = BytesIO()
-        img_obj.save(buffer, format="PNG")
+        image.save(buffer, format="PNG")
         buffer.seek(0)
         img_data = buffer.getvalue()
-        return ["data:image/png;base64," + base64.b64encode(img_data).decode("utf-8"), bbox]
+        return "data:image/png;base64," + base64.b64encode(img_data).decode("utf-8")
 
+    def get_block_dict(self, block: tuple) -> dict:
+        return {
+            "x0":     block[0],
+            "top":    block[1],
+            "x1":     block[2],
+            "bottom": block[3],
+        }
 
     def calculate_blank_blocks(self, page: Page) -> list[tuple]:
         page_width = page.width

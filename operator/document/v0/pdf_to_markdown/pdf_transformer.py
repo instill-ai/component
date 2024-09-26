@@ -52,28 +52,15 @@ class PDFTransformer:
 		self.result = ""
 
 	def process_image(self, i: int):
+		image_index = i
 		for page in self.pages:
-			image_processor = PageImageProcessor(page=page, i=i)
-			images = image_processor.produce_images_by_blocks()
-			self.images += images
+			image_processor = PageImageProcessor(page=page, image_index=image_index)
+			image_processor.produce_images_by_blocks()
+			processed_images = image_processor.images
+			self.images += processed_images
+			image_index = image_processor.image_index
 
 		self.image_index = image_processor.image_index
-
-	def encode_image(self, image: dict, page: Page, i: int):
-		bbox = [image['x0'], page.cropbox[3]-image['y1'],  image['x1'], page.cropbox[3]-image['y0']]
-		# There is a bug in pdfplumber that it can't target the image position correctly.
-		try:
-			img_page = page.crop(bbox=bbox)
-		except Exception as e:
-			self.errors.append(f"image {i} got error: {str(e)}, so it convert all pages into image.")
-			img_page = page
-
-		img_obj = img_page.to_image(resolution=500)
-		buffer = BytesIO()
-		img_obj.save(buffer, format="PNG")
-		buffer.seek(0)
-		img_data = buffer.getvalue()
-		return "data:image/png;base64," + base64.b64encode(img_data).decode("utf-8")
 
 	def set_heights(self):
 		tolerance = 0.95
