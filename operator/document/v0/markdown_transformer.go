@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/csv"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -245,7 +246,7 @@ func ConvertToPDF(base64Encoded, fileExtension string) (string, error) {
 		return "", fmt.Errorf("failed to create temporary document: %w", err)
 	}
 	inputFileName := tempPpt.Name()
-	defer os.Remove(inputFileName)
+	// defer os.Remove(inputFileName)
 
 	err = writeDecodeToFile(base64Encoded, tempPpt)
 	if err != nil {
@@ -256,7 +257,7 @@ func ConvertToPDF(base64Encoded, fileExtension string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to create temporary directory: %s", err.Error())
 	}
-	defer os.RemoveAll(tempDir)
+	// defer os.RemoveAll(tempDir)
 
 	cmd := exec.Command("libreoffice", "--headless", "--convert-to", "pdf", inputFileName)
 	cmd.Env = append(os.Environ(), "HOME="+tempDir)
@@ -270,18 +271,25 @@ func ConvertToPDF(base64Encoded, fileExtension string) (string, error) {
 	// So, we need to remove the path and keep only the file name.
 	noPathFileName := filepath.Base(inputFileName)
 	tempPDFName := strings.TrimSuffix(noPathFileName, filepath.Ext(inputFileName)) + ".pdf"
-	defer os.Remove(tempPDFName)
+	// defer os.Remove(tempPDFName)
 
 	base64PDF, err := encodeFileToBase64(tempPDFName)
 
 	if err != nil {
 		// In the different containers, we have the different versions of LibreOffice, which means the behavior of LibreOffice may be different.
 		// So, we need to handle the case when the generated PDF is not in the temp directory.
+
+		log.Printf("fileExtension: %s", fileExtension)
+		log.Printf("tempPDFName: %s", tempPDFName)
+		log.Printf("tempDir: %s", tempDir)
+		log.Printf("inputFileName: %s", inputFileName)
+
 		if fileExtension == "pdf" {
 			base64PDF, err := encodeFileToBase64(inputFileName)
 			if err != nil {
 				return "", fmt.Errorf("failed to encode file to base64: %w", err)
 			}
+			log.Printf("base64PDF: %s", base64PDF)
 			return base64PDF, nil
 		}
 	}
