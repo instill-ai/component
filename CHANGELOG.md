@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.29.0-beta](https://github.com/instill-ai/component/compare/v0.28.0-beta...v0.29.0-beta) (2024-09-27)
+
+
+### Features
+
+* **compogen:** add table css and update doc ([#370](https://github.com/instill-ai/component/issues/370)) ([c59b167](https://github.com/instill-ai/component/commit/c59b167f59da672c8cf82c0858e492992435a428))
+* **document:** improve image extraction from pdf ([#372](https://github.com/instill-ai/component/issues/372)) ([39cdb2c](https://github.com/instill-ai/component/commit/39cdb2c4f9ba2f8740f936eb4575a8e624556eec))
+* **openai:** use batch inference for embedding ([#375](https://github.com/instill-ai/component/issues/375)) ([cc897af](https://github.com/instill-ai/component/commit/cc897af67db2198e4dce2de6ed0d9a491d584e3a))
+
+
+### Bug Fixes
+
+* **compogen:** fix json format ([#364](https://github.com/instill-ai/component/issues/364)) ([e6619ce](https://github.com/instill-ai/component/commit/e6619ce5b32baac185a776957851a59f2d5acf93))
+* **text:** bug about table judgement in markdown chunking ([#367](https://github.com/instill-ai/component/issues/367)) ([1ab13e2](https://github.com/instill-ai/component/commit/1ab13e2630ea1dacee075709c2ae76217a1af667))
+* the input validator can not validate array format ([#379](https://github.com/instill-ai/component/issues/379)) ([38074c8](https://github.com/instill-ai/component/commit/38074c88d942bf5fc3b9d94dc2c61fa3691f4c44))
+* **web:** fix bugs and improve the performance ([#377](https://github.com/instill-ai/component/issues/377)) ([f0f4f89](https://github.com/instill-ai/component/commit/f0f4f89bd1a54db514e5774a6a1e0ca798ae1d3a))
+
 ## [0.28.0-beta](https://github.com/instill-ai/component/compare/v0.27.5-beta...v0.28.0-beta) (2024-09-24)
 
 
