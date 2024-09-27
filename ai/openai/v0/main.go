@@ -585,7 +585,6 @@ func (e *execution) executeEmbedding(ctx context.Context, client *httpclient.Cli
 		outputStruct := TextEmbeddingsOutput{
 			Embedding: resp.Data[idx].Embedding,
 		}
-		fmt.Println("idx", idx, resp.Data[idx].Embedding[:10])
 		output, err := base.ConvertToStructpb(outputStruct)
 		if err != nil {
 			job.Error.Error(ctx, err)
