@@ -2,6 +2,7 @@ package base
 
 import (
 	"encoding/base64"
+	"fmt"
 	"mime"
 	"strings"
 
@@ -30,9 +31,23 @@ type InstillAcceptFormatsSchema []string
 func (s InstillAcceptFormatsSchema) Validate(ctx jsonschema.ValidationContext, v interface{}) error {
 
 	// TODO: We should design a better approach to validate the Base64 data.
-
+	fmt.Println("Validate")
 	switch v := v.(type) {
 
+	case []any:
+		// TODO: We should validate the data type as well, not just check if
+		// it's an array.
+		ok := false
+		for _, instillAcceptFormat := range s {
+			if strings.HasPrefix(instillAcceptFormat, "array:") {
+				ok = true
+			}
+		}
+		if !ok {
+			return ctx.Error("instillAcceptFormats", "expected one of %v", s)
+		}
+
+		return nil
 	case string:
 		mimeType := ""
 		for _, instillAcceptFormat := range s {
