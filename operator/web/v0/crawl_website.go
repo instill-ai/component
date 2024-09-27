@@ -3,12 +3,15 @@ package web
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"net/url"
 	"strings"
+	"sync"
+	"time"
 
+	"golang.org/x/exp/rand"
 	"google.golang.org/protobuf/types/known/structpb"
 
+	"github.com/PuerkitoBio/goquery"
 	colly "github.com/gocolly/colly/v2"
 
 	"github.com/instill-ai/component/base"
@@ -42,6 +45,22 @@ type ScrapeWebsiteInput struct {
 	OnlyIncludeTags []string `json:"only-include-tags"`
 	// Timeout: The number of milliseconds to wait before scraping the web page. Min 0, Max 60000.
 	Timeout int `json:"timeout"`
+	// MaxDepth: The maximum depth of the pages to scrape.
+	MaxDepth int `json:"max-depth"`
+}
+
+func (inputStruct *ScrapeWebsiteInput) Preset() {
+	if inputStruct.IncludeLinkHTML == nil {
+		b := false
+		inputStruct.IncludeLinkHTML = &b
+	}
+	if inputStruct.IncludeLinkText == nil {
+		b := false
+		inputStruct.IncludeLinkText = &b
+	}
+	if inputStruct.MaxK < 0 {
+		inputStruct.MaxK = 0
+	}
 }
 
 // ScrapeWebsiteOutput defines the output of the scrape website task
@@ -51,6 +70,128 @@ type ScrapeWebsiteOutput struct {
 }
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+// Scrape crawls a webpage and returns a slice of PageInfo
+func (e *execution) CrawlWebsite(input *structpb.Struct) (*structpb.Struct, error) {
+	inputStruct := ScrapeWebsiteInput{}
+	err := base.ConvertFromStructpb(input, &inputStruct)
+
+	if err != nil {
+		return nil, fmt.Errorf("error converting input to struct: %v", err)
+	}
+
+	inputStruct.Preset()
+
+	output := ScrapeWebsiteOutput{}
+
+	c := initColly(inputStruct)
+
+	var mu sync.Mutex
+	pageLinks := []string{}
+
+	// On every a element which has href attribute call callback
+	// Wont be called if error occurs
+	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
+		// If we set output.Pages to the slice of PageInfo, it will take a longer time if the first html page has a lot of links.
+		// To improve the small Max-K execution time, we will use a separate slice to store the links.
+		// However, when K is big, the output length could be less than K.
+		// So, I set twice the MaxK to stop the scraping.
+		if inputStruct.MaxK > 0 && len(pageLinks) >= inputStruct.MaxK*2 {
+			return
+		}
+
+		link := e.Attr("href")
+
+		if util.InSlice(pageLinks, link) {
+			return
+		}
+
+		pageLinks = append(pageLinks, link)
+
+		_ = e.Request.Visit(link)
+	})
+
+	// Set error handler
+	c.OnError(func(r *colly.Response, err error) {
+		log.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
+
+	c.OnRequest(func(r *colly.Request) {
+		// Before length of output page is over, we should always send request.
+		if inputStruct.MaxK > 0 && len(output.Pages) >= inputStruct.MaxK {
+			r.Abort()
+			return
+		}
+
+		// Set a random user agent to avoid being blocked by websites
+		r.Headers.Set("User-Agent", randomString())
+	})
+
+	c.OnResponse(func(r *colly.Response) {
+
+		strippedURL := stripQueryAndTrailingSlash(r.Request.URL)
+
+		page := PageInfo{}
+
+		page.Link = strippedURL.String()
+
+		html := string(r.Body)
+		ioReader := strings.NewReader(html)
+		doc, err := goquery.NewDocumentFromReader(ioReader)
+
+		if err != nil {
+			fmt.Printf("Error parsing %s: %v", strippedURL.String(), err)
+			return
+		}
+
+		title := util.ScrapeWebpageTitle(doc)
+		page.Title = title
+
+		if *inputStruct.IncludeLinkHTML {
+			page.LinkHTML = html
+		}
+
+		if *inputStruct.IncludeLinkText {
+			domain, err := util.GetDomainFromURL(strippedURL.String())
+
+			if err != nil {
+				log.Printf("Error getting domain from %s: %v", strippedURL.String(), err)
+				return
+			}
+
+			markdown, err := util.ScrapeWebpageHTMLToMarkdown(html, domain)
+
+			if err != nil {
+				log.Printf("Error scraping text from %s: %v", strippedURL.String(), err)
+				return
+			}
+
+			page.LinkText = markdown
+		}
+
+		defer mu.Unlock()
+		mu.Lock()
+		// If we do not set this condition, the length of output.Pages could be over the limit.
+		if len(output.Pages) < inputStruct.MaxK {
+			output.Pages = append(output.Pages, page)
+		}
+	})
+
+	// Start scraping
+	if !strings.HasPrefix(inputStruct.TargetURL, "http://") && !strings.HasPrefix(inputStruct.TargetURL, "https://") {
+		inputStruct.TargetURL = "https://" + inputStruct.TargetURL
+	}
+	_ = c.Visit(inputStruct.TargetURL)
+	c.Wait()
+
+	outputStruct, err := base.ConvertToStructpb(output)
+	if err != nil {
+		return nil, fmt.Errorf("error converting output to struct: %v", err)
+	}
+
+	return outputStruct, nil
+
+}
 
 // randomString generates a random string of length 10-20
 func randomString() string {
@@ -72,131 +213,32 @@ func stripQueryAndTrailingSlash(u *url.URL) *url.URL {
 	return u
 }
 
-// existsInSlice checks if a string exists in a slice
-func existsInSlice(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true // Item already exists, so don't add it again
-		}
-	}
-	return false // Item doesn't exist, so add it to the slice
-}
-
-// Scrape crawls a webpage and returns a slice of PageInfo
-func (e *execution) CrawlWebsite(input *structpb.Struct) (*structpb.Struct, error) {
-	inputStruct := ScrapeWebsiteInput{}
-	err := base.ConvertFromStructpb(input, &inputStruct)
-
-	if err != nil {
-		return nil, fmt.Errorf("error converting input to struct: %v", err)
-	}
-
-	output := ScrapeWebsiteOutput{}
-
-	if inputStruct.IncludeLinkHTML == nil {
-		b := false
-		inputStruct.IncludeLinkHTML = &b
-	}
-	if inputStruct.IncludeLinkText == nil {
-		b := false
-		inputStruct.IncludeLinkText = &b
-	}
-	if inputStruct.MaxK < 0 {
-		inputStruct.MaxK = 0
-	}
-
-	pageLinks := []string{}
-
+func initColly(inputStruct ScrapeWebsiteInput) *colly.Collector {
 	c := colly.NewCollector(
-		colly.Async(),
+		colly.MaxDepth(inputStruct.MaxDepth),
+		colly.Async(true),
 	)
+
+	// Limit the number of requests to avoid being blocked.
+	// Set it to 10 first in case sending too many requests at once.
+	var parallel int
+	if inputStruct.MaxK < 10 {
+		parallel = inputStruct.MaxK
+	} else {
+		parallel = 10
+	}
+
+	_ = c.Limit(&colly.LimitRule{
+		DomainGlob:  "*",
+		Parallelism: parallel,
+	})
+
+	c.SetRequestTimeout(time.Duration(inputStruct.Timeout) * time.Millisecond)
+
 	if len(inputStruct.AllowedDomains) > 0 {
 		c.AllowedDomains = inputStruct.AllowedDomains
 	}
 	c.AllowURLRevisit = false
 
-	// On every a element which has href attribute call callback
-	// Wont be called if error occurs
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		link := e.Attr("href")
-		err := c.Visit(e.Request.AbsoluteURL(link))
-		if err != nil {
-			log.Println("Error visiting link:", link, "Error:", err)
-		}
-	})
-
-	// Set error handler
-	c.OnError(func(r *colly.Response, err error) {
-		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
-	})
-
-	c.OnRequest(func(r *colly.Request) {
-
-		if inputStruct.MaxK > 0 && len(output.Pages) >= inputStruct.MaxK {
-			r.Abort()
-			return
-		}
-
-		// Set a random user agent to avoid being blocked by websites
-		r.Headers.Set("User-Agent", randomString())
-		// Strip query parameters and trailing '/' from the URL
-		strippedURL := stripQueryAndTrailingSlash(r.URL)
-		// Check if the URL already exists in the slice
-		if !existsInSlice(pageLinks, strippedURL.String()) {
-			// Add the URL to the slice if it doesn't already exist
-			pageLinks = append(pageLinks, strippedURL.String())
-			// Scrape the webpage information
-			doc, err := getDocAfterRequestURL(strippedURL.String(), inputStruct.Timeout)
-			if err != nil {
-				fmt.Printf("Error parsing %s: %v", strippedURL.String(), err)
-				return
-			}
-			page := PageInfo{}
-			title := util.ScrapeWebpageTitle(doc)
-			page.Title = title
-			page.Link = strippedURL.String()
-
-			if *inputStruct.IncludeLinkHTML || *inputStruct.IncludeLinkText {
-				html, err := util.ScrapeWebpageHTML(doc)
-				if err != nil {
-					fmt.Printf("Error scraping HTML from %s: %v", strippedURL.String(), err)
-					return
-				}
-
-				if *inputStruct.IncludeLinkHTML {
-					page.LinkHTML = html
-				}
-
-				if *inputStruct.IncludeLinkText {
-					domain, err := util.GetDomainFromURL(strippedURL.String())
-					if err != nil {
-						fmt.Printf("Error getting domain from %s: %v", strippedURL.String(), err)
-						return
-					}
-					markdown, err := util.ScrapeWebpageHTMLToMarkdown(html, domain)
-					if err != nil {
-						fmt.Printf("Error scraping text from %s: %v", strippedURL.String(), err)
-						return
-					}
-					page.LinkText = markdown
-				}
-			}
-			output.Pages = append(output.Pages, page)
-		}
-	})
-
-	// Start scraping
-	if !strings.HasPrefix(inputStruct.TargetURL, "http://") && !strings.HasPrefix(inputStruct.TargetURL, "https://") {
-		inputStruct.TargetURL = "https://" + inputStruct.TargetURL
-	}
-	_ = c.Visit(inputStruct.TargetURL)
-	c.Wait()
-
-	outputStruct, err := base.ConvertToStructpb(output)
-	if err != nil {
-		return nil, fmt.Errorf("error converting output to struct: %v", err)
-	}
-
-	return outputStruct, nil
-
+	return c
 }
