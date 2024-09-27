@@ -2,10 +2,10 @@ package web
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"net/url"
 	"strings"
+	"sync"
 
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -108,20 +108,35 @@ func (e *execution) CrawlWebsite(input *structpb.Struct) (*structpb.Struct, erro
 	pageLinks := []string{}
 
 	c := colly.NewCollector(
-		colly.Async(),
+		colly.Async(true),
 	)
+
+	err = c.Limit(&colly.LimitRule{Parallelism: inputStruct.MaxK})
+
+	if err != nil {
+		return nil, fmt.Errorf("error setting limit rule: %v", err)
+	}
+
 	if len(inputStruct.AllowedDomains) > 0 {
 		c.AllowedDomains = inputStruct.AllowedDomains
 	}
 	c.AllowURLRevisit = false
 
+	var mu sync.Mutex
+
 	// On every a element which has href attribute call callback
 	// Wont be called if error occurs
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
+		if inputStruct.MaxK > 0 && len(output.Pages) >= inputStruct.MaxK {
+			return
+		}
+
 		link := e.Attr("href")
-		err := c.Visit(e.Request.AbsoluteURL(link))
-		if err != nil {
-			log.Println("Error visiting link:", link, "Error:", err)
+		if !util.InSlice(pageLinks, link) {
+			err = e.Request.Visit(link)
+			if err != nil {
+				fmt.Printf("Error visiting %s: %v", link, err)
+			}
 		}
 	})
 
@@ -132,6 +147,8 @@ func (e *execution) CrawlWebsite(input *structpb.Struct) (*structpb.Struct, erro
 
 	c.OnRequest(func(r *colly.Request) {
 
+		defer mu.Unlock()
+		mu.Lock()
 		if inputStruct.MaxK > 0 && len(output.Pages) >= inputStruct.MaxK {
 			r.Abort()
 			return
