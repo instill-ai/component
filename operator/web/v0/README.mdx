@@ -41,6 +41,7 @@ Crawl the website contents and manipulate html with jquery command. The sequence
 | Remove Tags | `remove-tags` | array[string] | A list of tags, classes, and ids to remove from the output. If empty, no tags will be removed. Example: 'script, .ad, #footer' |
 | Only Include Tags | `only-include-tags` | array[string] | A list of tags, classes, and ids to include in the output. If empty, all tags will be included. Example: 'script, .ad, #footer' |
 | Timeout | `timeout` | integer | The time to wait for the page to load in milliseconds. Min 0, Max 60000. |
+| Max Depth | `max-depth` | integer | The max number of depth the crawler will go. If the number is set to 1, the crawler will only scrape the target URL. If the number is set to 0, the crawler will scrape all the pages until the count of pages meets max-k. |
 </div>
 
 

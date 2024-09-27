@@ -181,6 +181,21 @@
           "maximum": 60000,
           "title": "Timeout",
           "type": "integer"
+        },
+        "max-depth": {
+          "default": 0,
+          "description": "The max number of depth the crawler will go. If the number is set to 1, the crawler will only scrape the target URL. If the number is set to 0, the crawler will scrape all the pages until the count of pages meets max-k.",
+          "instillAcceptFormats": [
+            "integer"
+          ],
+          "instillUIOrder": 9,
+          "instillUpstreamTypes": [
+            "value",
+            "reference"
+          ],
+          "minimum": 0,
+          "title": "Max Depth",
+          "type": "integer"
         }
       },
       "required": [
