@@ -159,6 +159,9 @@ func CompileInstillAcceptFormats(sch *structpb.Struct) error {
 				}
 			}
 			if len(itemInstillAcceptFormats) > 0 {
+				if _, ok := sch.Fields["items"]; !ok {
+					sch.Fields["items"] = structpb.NewStructValue(&structpb.Struct{Fields: make(map[string]*structpb.Value)})
+				}
 				sch.Fields["items"].GetStructValue().Fields["instillAcceptFormats"], err = structpb.NewValue(itemInstillAcceptFormats)
 				if err != nil {
 					return err
