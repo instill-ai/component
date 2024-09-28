@@ -506,7 +506,7 @@
             "reference",
             "template"
           ],
-          "title": "System message",
+          "title": "System Message",
           "type": "string"
         },
         "temperature": {
