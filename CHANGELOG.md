@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.29.1-beta](https://github.com/instill-ai/component/compare/v0.29.0-beta...v0.29.1-beta) (2024-09-30)
+
+
+### Bug Fixes
+
+* **docs:** fix tasks.json inconsistent issue ([#381](https://github.com/instill-ai/component/issues/381)) ([63f4703](https://github.com/instill-ai/component/commit/63f47039b9edfbd46bca00f6aeeb99dea8dcfc66))
+
 ## [0.29.0-beta](https://github.com/instill-ai/component/compare/v0.28.0-beta...v0.29.0-beta) (2024-09-27)
 
 
