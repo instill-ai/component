@@ -109,7 +109,7 @@
             "value",
             "reference"
           ],
-          "title": "Max new tokens",
+          "title": "Max New Tokens",
           "type": "integer"
         },
         "model": {
@@ -184,7 +184,7 @@
             "reference",
             "template"
           ],
-          "title": "System message",
+          "title": "System Message",
           "type": "string"
         },
         "temperature": {

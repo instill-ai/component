@@ -10,7 +10,7 @@
       "type": "object",
       "properties": {
         "data": {
-          "title": "Chat data",
+          "title": "Chat Data",
           "description": "Input data",
           "instillShortDescription": "Input data",
           "type": "object",
@@ -219,7 +219,7 @@
           "type": "object",
           "properties": {
             "max-tokens": {
-              "title": "Max new tokens",
+              "title": "Max New Tokens",
               "type": "integer",
               "description": "The maximum number of tokens for model to generate",
               "instillShortDescription": "The maximum number of tokens for model to generate",
@@ -241,7 +241,7 @@
               "instillUIOrder": 1
             },
             "n": {
-              "title": "Number of choices",
+              "title": "Number of Choices",
               "type": "integer",
               "description": "How many chat completion choices to generate for each input message.",
               "instillShortDescription": "How many chat completion choices to generate for each input message.",
@@ -286,7 +286,7 @@
             }
           },
           "required": [],
-          "instillUIOrder": 0,
+          "instillUIOrder": 1,
           "title": "Input Parameter"
         }
       },
@@ -316,7 +316,7 @@
                 "type": "object",
                 "properties": {
                   "finish-reason": {
-                    "title": "Finish reason",
+                    "title": "Finish Reason",
                     "type": "string",
                     "description": "The reason the model stopped generating tokens.",
                     "instillShortDescription": "The reason the model stopped generating tokens.",
@@ -393,7 +393,7 @@
               "type": "object",
               "properties": {
                 "completion-tokens": {
-                  "title": "Completion tokens",
+                  "title": "Completion Tokens",
                   "type": "integer",
                   "description": "Number of tokens in the generated response.",
                   "instillShortDescription": "Number of tokens in the generated response.",
@@ -401,7 +401,7 @@
                   "instillUIOrder": 0
                 },
                 "prompt-tokens": {
-                  "title": "Prompt tokens",
+                  "title": "Prompt Tokens",
                   "type": "integer",
                   "description": "Number of tokens in the prompt.",
                   "instillShortDescription": "Number of tokens in the prompt.",
@@ -409,7 +409,7 @@
                   "instillUIOrder": 1
                 },
                 "total-tokens": {
-                  "title": "Total tokens",
+                  "title": "Total Tokens",
                   "type": "integer",
                   "description": "Total number of tokens used in the request (prompt + completion).",
                   "instillShortDescription": "Total number of tokens used in the request (prompt + completion).",
